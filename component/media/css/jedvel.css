@@ -1,0 +1,103 @@
+/**
+ * @package       JED
+ *
+ * @subpackage    vels / Vulnerable Items List
+ *
+ * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+.com_jed_vel {
+    background-color: #f3f3f3;
+}
+
+
+.vel_container {
+    background-color: #ffffff;
+}
+
+.vel-header {
+    position: relative;
+    background-color: #fff;
+    margin-top: 10px;
+    border: 1px solid rgba(0,0,0,0.15);
+    padding: 0 0 10px;
+}
+
+.vel-header h1 {
+    margin-top: 0;
+    text-transform: uppercase;
+    padding: 5px 20px 5px 15px;
+    background-color: #f6f6f6;
+    color: #333;
+    font-size: 1em;
+}
+/*.vel-header .control-group .control-label {
+    margin-top: 0;
+
+    text-transform: uppercase;
+    padding: 5px 20px 5px 15px;
+    
+    width:100% !important;
+}*/
+.vel-header label {
+   
+
+    text-transform: uppercase;
+    padding: 5px 20px 5px 15px;
+    background-color: #f6f6f6;
+    color: #333;
+    font-size: 1em;
+    width:100% !important;
+}
+.vel-header input {
+  /*  width: 90%;
+    align-items: center;*/
+}
+
+.vel-header-row {
+    --gutter-x:0 !important;
+}
+
+.vel-header-value {
+    text-align: center;
+}
+
+.vel-tabs a {
+    text-transform: uppercase;
+}
+
+.tab-content div {
+    background-color: #ffffff;
+    /*border: 1px solid rgba(0,0,0,0.15);*/
+}
+
+div.vel-container {
+    background-color: #ffffff;
+}
+
+
+.widget h1 {
+    margin-top: 0;
+    text-transform: uppercase;
+    padding: 5px 20px 5px 15px;
+    background-color: #f6f6f6;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.widget .container {
+    padding: 0px 20px 10px 20px;
+    width: 100%;
+}
+
+.widget {
+    position: relative;
+    padding: 0;
+    /*background-color: #fff;*/
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(0,0,0,0.15);
+}
+
+

@@ -1,0 +1,81 @@
+/* ==========================================================================
+   Extension page
+   ========================================================================== */
+
+.jed-extension-header {
+  padding-top: 32px;
+  font-size: 18px;
+  background: #fff;
+  border-top: 1px solid rgba($dark, .1);
+  border-bottom: 1px solid rgba($dark, .1);
+}
+
+.jed-extension-header__content {
+  @media (min-width: 768px) {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  a:not([class]) {
+    color: $blue-darker;
+    text-decoration: underline;
+
+    &:focus,
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.jed-extension-header__item {
+  @media (min-width: 768px) {
+    width: 50%;
+  }
+}
+
+.jed-extension-header__info {
+  display: flex;
+  margin-top: -16px;
+  margin-bottom: 24px;
+  font-size: 16px;
+}
+
+.jed-extension-header__buttons {
+  display: flex;
+  margin-bottom: 24px;
+
+  @media (min-width: 768px) {
+    justify-content: flex-end;
+  }
+
+  .button:not(:last-child) {
+    margin-right: 20px;
+  }
+}
+
+.jed-extension-header__developer {
+  margin-right: 2em;
+  color: $blue-darker;
+}
+
+.jed-extension {
+  padding-top: 32px;
+  margin-bottom: 32px;
+
+  .jed-container {
+    @include jedbox();
+    padding: 32px;
+  }
+}
+
+.jed-extension__image {
+  margin: -32px -32px 32px;
+}
+
+.extension-tags {
+  min-height: 40px;
+
+  [class^="icon-"] {
+    margin-right: 8px;
+  }
+}

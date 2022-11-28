@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PhpIncludePathManager">
+    <include_path>
+      <path value="$PROJECT_DIR$/../../master/joomla4" />
+      <path value="$USER_HOME$/Sites/jed4/configuration.php" />
+      <path value="$PROJECT_DIR$/component/backend/vendor/michelf/php-markdown" />
+      <path value="$PROJECT_DIR$/component/backend/vendor/composer" />
+    </include_path>
+  </component>
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.1">
+    <option name="suggestChangeDefaultLanguageLevel" value="false" />
+  </component>
+</project>

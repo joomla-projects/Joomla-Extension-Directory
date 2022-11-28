@@ -1,0 +1,10 @@
+@import "variables/color";
+
+// Shame
+$container-max-width: 1170px;
+$fluid-type-min-width: 600px;
+$fluid-type-max-width: 1200px;
+
+@import "mixins/box";
+@import "mixins/fluid-attribute";
+@import "mixins/width";

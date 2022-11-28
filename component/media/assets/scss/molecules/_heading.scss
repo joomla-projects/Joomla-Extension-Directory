@@ -1,0 +1,22 @@
+/* ==========================================================================
+   Heading
+   ========================================================================== */
+
+.heading {
+  margin-bottom: 32px;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  line-height: 1.2em;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.heading--xl {
+  @include fluid-attribute(font-size, 24px, 48px);
+}
+
+.heading--m {
+  @include fluid-attribute(font-size, 18px, 24px);
+}

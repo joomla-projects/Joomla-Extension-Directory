@@ -1,0 +1,11 @@
+@mixin fluid-attribute($attribute, $min-value, $max-value, $min-screen: $fluid-type-min-width, $max-screen: $fluid-type-max-width) {
+  #{$attribute}: $min-value;
+
+  @media screen and (min-width: $min-screen) {
+    #{$attribute}: calc-interpolation($min-screen, $min-value, $max-screen, $max-value);
+  }
+
+  @media screen and (min-width: $max-screen) {
+    #{$attribute}: $max-value;
+  }
+}

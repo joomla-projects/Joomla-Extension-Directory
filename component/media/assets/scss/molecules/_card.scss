@@ -1,0 +1,113 @@
+/* ==========================================================================
+   Card
+   ========================================================================== */
+
+.card {
+  @include jedbox();
+  padding: 16px;
+  border-radius: 4px;
+}
+
+/* Header */
+.card__header {
+  margin-bottom: 8px;
+}
+
+.card__extension-title {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+  color: $dark;
+
+  /* Cover entire card so clicking the entire card is possible */
+  &::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 3;
+    display: block;
+    content: " ";
+    background: transparent;
+  }
+}
+
+.card__extension-developer {
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: $dark-lightest;
+}
+
+/* Description */
+.card__description {
+  position: relative;
+  max-height: 22px * 4;
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 22px;
+
+  &::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    height: 66px;
+    content: " ";
+    background: linear-gradient(to top, #fff, rgba(#fff, 0));
+  }
+}
+
+/* Footer */
+.card__footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  margin-bottom: -4px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+
+/* Card modifiers
+   ========================================================================== */
+
+.card--extension {
+  /* For the title link that covers the entire card */
+  position: relative;
+
+  /* Hover / focus styling, use focus-within since the link is on the title */
+  &:hover,
+  &:focus-within {
+    box-shadow: 0 0 8px rgba($dark, .25);
+  }
+
+  /* Pull image back to 3px away from the card side */
+  .card__image {
+    position: relative;
+    margin: -13px -13px 16px;
+    overflow: hidden;
+    border-radius: 3px 3px 0 0;
+
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      max-width: none;
+    }
+  }
+
+  /* Adjusted stars size within cards */
+  .stars-wrapper,
+  .star {
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .stars-wrapper {
+    color: $dark-lightest;
+  }
+}

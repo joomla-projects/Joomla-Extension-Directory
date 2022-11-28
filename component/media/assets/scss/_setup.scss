@@ -1,0 +1,72 @@
+/* ==========================================================================
+   Setup
+   ========================================================================== */
+
+/**
+ * Resetting styling for default .container because we have our own (jed-container)
+ */
+
+.body .container.container {
+  width: auto;
+  max-width: none;
+  padding: 0;
+  margin-right: -20px;
+  margin-left: -20px;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  line-height: 1.5em;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  @include fluid-attribute(font-size, 16px, 18px);
+
+  @media (min-width: 768px) {
+    margin-right: 0;
+    margin-left: 0;
+  }
+}
+
+/**
+ * Target the body span12
+ */
+
+.body .container .span12 {
+  /* For the "hacked" moduletable search */
+  position: relative;
+
+  /* Set proper spacing for mobile/desktop */
+  & > .moduletable {
+    &:first-child {
+      padding-right: 32px;
+      padding-left: 32px;
+      margin-bottom: 10px;
+    }
+
+    &:nth-child(2) {
+      position: relative;
+      padding-right: 32px;
+      padding-left: 32px;
+    }
+  }
+
+  /* Include the maxwidth styling for each div that's not a wrapper */
+  & > div:not(.jed-wrapper) {
+    @include jedmaxwidth();
+  }
+}
+
+/**
+ * JED wrappers
+ *
+ * Cover entire viewport width. Make sure a wrapper holds a jed-container to maximize the width of the content
+ */
+
+.jed-wrapper,
+.jed-cards-wrapper {
+  padding-right: 32px;
+  padding-left: 32px;
+}
+
+.jed-cards-wrapper {
+  margin-bottom: 32px;
+}

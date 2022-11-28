@@ -1,0 +1,104 @@
+/**
+ * Review form
+ */
+#more-fields {
+    max-width: 800px;
+}
+.body #more-fields.notshown {
+    max-height: 0!important;
+}
+.body #more-fields {
+    max-height: 1800px!important;
+}
+#jed_review input,
+#jed_review textarea {
+  border-radius: 3px;
+}
+#jed_review input[type="submit"] {
+    padding: 4px 40px;
+    width: 200px;
+}
+#jed_review .form-actions .btn-primary:hover {
+    background-color: #ef6c00;
+    border-top: 2px solid #ef6c00;
+}
+#jed_review .elementTextarea textarea {
+    height: 6em;
+    width: 85%;
+    margin-bottom: 2px;
+}
+.control-label .star {
+    color: #E53935;
+    font-weight: 600;
+    font-size: 16px;
+}
+.ratings-container {
+    margin-bottom: 20px;
+}
+.rating-field .control-label {
+  display: inline-block;
+  width: 150px;
+}
+.rating-field .controls {
+  display: inline-block;
+}
+
+@media (max-width: 480px) {
+    #jed_review .elementTextarea textarea {
+        height: 10em;
+    }
+    #jed_review input[type="submit"] {
+        width: 100%;
+    }   
+    #jed_review .form-actions {
+        padding: 0;
+        background: 0;
+        border: 0;
+    } 
+}
+
+/**
+ * Rating field
+ */
+.rating-selector {
+    display: -webkit-flex;
+    display: flex;        
+    align-items: center;
+}
+.rating-selector .clear-rating,
+.rating-selector .clear-rating:hover,
+.rating-selector .clear-rating:focus {
+    margin-right: 10px;
+    color: #ff6226;
+}
+.rating-selector.rated .clear-rating {
+    color: #e0e0e0;
+}
+.clear-rating span {
+    vertical-align: middle;
+}
+.clear-rating span:before {
+    font-size: 20px;
+}
+.live-rating {
+    margin-left: 10px;
+}
+.star-rating {
+    width: 0;
+    position: relative;
+    display:inline-block;
+    background-image: url(./images/star_0.svg);
+    background-position: 0 0;
+    background-repeat: repeat-x;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);    
+}
+
+.star-rating .star-value {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: url('./images/star_1.svg') ;
+    background-repeat: repeat-x;
+    cursor: pointer;
+}
+

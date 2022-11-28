@@ -1,0 +1,34 @@
+/* CSS Document */
+
+div.col-md-4 {
+  border: solid;
+}
+
+#top-heading {
+  border: solid;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+#fields-row {
+  margin-bottom: 12px;
+}
+
+#button-row {
+  margin-bottom: 12px;
+}
+
+.taskheading {
+  font-weight: bold;
+  font-size: larger;
+  display: block;
+}
+
+.taskdescription {
+  margin-left: 12px;
+  display: block;
+}
+.dbdefinitions {
+    margin-top:6px;
+}
+

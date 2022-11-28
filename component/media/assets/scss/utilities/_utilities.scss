@@ -1,0 +1,60 @@
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+
+/* Using double classes to have a bigger chance of winning over other elements (specificity)
+   without having to use !important */
+
+/* Visibility */
+.display-block.display-block {
+  display: block;
+}
+
+.visually-hidden.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: none;
+  backface-visibility: hidden;
+}
+
+/* Alignment */
+.align-right.align-right {
+  text-align: right;
+}
+
+.align-boxes.align-boxes {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Margin */
+.margin-bottom.margin-bottom {
+  margin-bottom: 64px;
+}
+
+.margin-bottom-half.margin-bottom-half {
+  margin-bottom: 32px;
+}
+
+/* Font size */
+.font-size-xl.font-size-xl {
+  font-size: 20px;
+  line-height: 32px;
+}
+
+.font-size-s.font-size-s {
+  font-size: 15px;
+  line-height: 22px;
+}
+
+/* Placeholders */
+.image-placeholder.image-placeholder {
+  width: 100%;
+  padding-top: 43.75%;
+  background: lighten($dark, 75%);
+}

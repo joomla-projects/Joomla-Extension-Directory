@@ -1,0 +1,91 @@
+/* ==========================================================================
+   Button
+   ========================================================================== */
+
+.button-group {
+  margin-bottom: -12px;
+}
+
+.button {
+  display: inline-block;
+  height: 40px;
+  padding-right: 16px;
+  padding-left: 16px;
+  margin-right: 8px;
+  margin-bottom: 12px;
+  font-size: 18px;
+  line-height: 40px;
+  color: $dark;
+  vertical-align: middle;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  -webkit-appearance: none;
+
+  /* Some space between buttons */
+  &:last-child {
+    margin-right: 0;
+  }
+
+  /* Default focus/hover styling */
+  &:focus,
+  &:hover {
+    color: $dark;
+    text-decoration: none;
+  }
+}
+
+
+/* Button styles
+   ========================================================================== */
+
+/* Blue button */
+.button--blue {
+  color: #fff;
+  background: $blue;
+
+  &:focus,
+  &:hover {
+    color: #fff;
+    background: $blue-darker;
+  }
+}
+
+/* Grey button */
+.button--grey {
+  background: #f5f5f5;
+  border: 1px solid #6d6d6d;
+
+  &:focus,
+  &:hover {
+    background: #eee;
+    border-color: #555;
+  }
+}
+
+/* Big button */
+.button--big {
+  height: 48px;
+  padding-right: 24px;
+  padding-left: 24px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 48px;
+}
+
+/* Icon button (make them square) */
+.button--icon-only {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  padding-right: 0;
+  padding-left: 0;
+  font-size: 24px;
+  line-height: 24px;
+
+  /* For big buttons */
+  &.button--big {
+    width: 48px;
+  }
+}

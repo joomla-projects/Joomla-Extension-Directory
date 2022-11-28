@@ -1,0 +1,24 @@
+{
+  "name": "joomla/jed",
+  "description": "Joomla Extensions Directory",
+  "type": "project",
+  "keywords": [
+    "joomla",
+    "directory",
+    "extensions"
+  ],
+  "homepage": "https://extensions.joomla.org",
+  "license": "GPL-2.0-or-later",
+  "config": {
+    "vendor-dir": "component/backend/vendor",
+    "platform": {
+      "php": "8.1.999"
+    }
+  },
+  "require": {
+    "php": "^8.1",
+    "michelf/php-markdown": "^1.4",
+    "ext-simplexml": "*",
+    "ext-dom": "*"
+  }
+}

@@ -1,0 +1,15 @@
+/* ==========================================================================
+   Compatibility labels
+   ========================================================================== */
+
+.compatibility-wrapper {
+  display: flex;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  color: $dark-lightest;
+}
+
+[class^="compatible-with"]:not(:first-child) {
+  margin-left: 16px;
+}

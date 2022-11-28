@@ -1,0 +1,28 @@
+/* ==========================================================================
+   JED Container
+   ========================================================================== */
+
+/**
+ * A JED Container follows the width of a jdotorg template container.
+ * The reason we've got our own is because we'd like to have some sections spanning the entire viewport
+ * We are using a jed-wrapper for that and add a jed-container inside to set the max-width for the content again
+ */
+
+.jed-container {
+  @include jedmaxwidth();
+
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  [class^="icon-"],
+  [class^="icon-"]::before,
+  [class*=" icon-"]::before {
+    width: 1em;
+    height: 1em;
+    line-height: 1em;
+  }
+}

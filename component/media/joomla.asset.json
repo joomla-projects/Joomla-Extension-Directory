@@ -1,0 +1,275 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "com_jed",
+  "version": "4.0.0",
+  "description": "Joomla Extension Directory",
+  "license": "GPL-2.0-or-later",
+  "assets": [
+    {
+      "name": "com_jed.jedVel",
+      "type": "style",
+      "uri": "media/com_jed/css/jedvel.css"
+    },
+    {
+      "name": "com_jed.vulnerableItemBuildTitle",
+      "type": "script",
+      "uri": "media/com_jed/js/vulnerableItemBuildTitle.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.vulnerableItemBuildPublicDescription",
+      "type": "script",
+      "uri": "media/com_jed/js/vulnerableItemBuildPublicDescription.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.vulnerableItemhideshowOtherbox",
+      "type": "script",
+      "uri": "media/com_jed/js/vulnerableItemhideshowOtherbox.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.jedTickets",
+      "type": "style",
+      "uri": "media/com_jed/css/jedtickets.css"
+    },
+    {
+      "name": "com_jed.ticketGetmessagetemplate",
+      "type": "script",
+      "uri": "media/com_jed/js/ticketGetmessagetemplate.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.ticketVELDeveloperUpdateActionButton",
+      "type": "script",
+      "uri": "media/com_jed/js/ticketVELDeveloperUpdateActionButton.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.jedMigrate",
+      "type": "style",
+      "uri": "media/com_jed/css/jedmigrate.css"
+    },
+    {
+      "name": "com_jed.oldjed",
+      "type": "style",
+      "uri": "media/com_jed/css/oldjed.css",
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.newjed",
+      "type": "style",
+      "uri": "media/com_jed/css/newjed.css",
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.jazstyle",
+      "type": "style",
+      "uri": "media/com_jed/css/jazstyle.css",
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.autoComplete",
+      "type": "script",
+      "uri": "media/com_jed/js/autoComplete.js",
+      "attributes": {
+        "defer": false
+      },
+      "package": "autoComplete",
+      "version": "8.3.2"
+    },
+    {
+      "name": "com_jed.autoComplete",
+      "type": "style",
+      "uri": "media/com_jed/css/autoComplete.css",
+      "package": "autoComplete",
+      "version": "8.3.2"
+    },
+    {
+      "name": "com_jed.autoComplete",
+      "type": "preset",
+      "dependencies": [
+        "com_jed.autoComplete#style",
+        "com_jed.autoComplete#script"
+      ],
+      "package": "autoComplete",
+      "version": "8.3.2"
+    }, 
+      {
+      "name": "com_jed.reviewForm-showHideEntryForm",
+      "type": "script",
+      "uri": "media/com_jed/js/reviewForm-showHideEntryForm.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+      },
+    {
+      "name": "com_jed.reviewForm-rateJS",
+      "type": "script",
+      "uri": "media/com_jed/js/rater-js.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.reviewForm-ratingFieldJS",
+      "type": "script",
+      "uri": "media/com_jed/js/rating-field.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.raterJSstyle",
+      "type": "style",
+      "uri": "media/com_jed/css/rater.css",
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.reviewForm-changeRequired",
+      "type": "script",
+      "uri": "media/com_jed/js/reviewForm-changeRequired.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.rater-pure-js",
+      "type": "script",
+      "uri": "media/com_jed/js/rater-pure-js.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.rating-pure-field-js",
+      "type": "script",
+      "uri": "media/com_jed/js/rating-pure-field.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.jquery_dataTables",
+      "type": "style",
+      "uri": "https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"
+    },
+    {
+      "name": "com_jed.dataTables_bootstrap5css",
+      "type": "style",
+      "uri": "https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css"
+    },
+    {
+      "name": "com_jed.responsive_dataTablescss",
+      "type": "style",
+      "uri": "https://cdn.datatables.net/responsive/2.3.0/css/responsive.bootstrap5.min.css"
+    },
+    {
+      "name": "com_jed.dataTables_responsive",
+      "type": "script",
+      "uri": "media/com_jed/js/dataTables.responsive.min.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "rucourses",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.jquery_dataTables",
+      "type": "script",
+      "uri": "https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "rucourses",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.bootstrap_dataTables",
+      "type": "script",
+      "uri": "https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "rucourses",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.responsive_dataTables",
+      "type": "script",
+      "uri": "https://cdn.datatables.net/responsive/2.3.0/js/dataTables.responsive.min.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "rucourses",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.responsive_bootstrap",
+      "type": "script",
+      "uri": "https://cdn.datatables.net/responsive/2.3.0/js/responsive.bootstrap5.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "rucourses",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.reviews_data",
+      "type": "script",
+      "uri": "media/com_jed/js/reviews_data.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.ticketPublishUnPublishReview",
+      "type": "script",
+      "uri": "media/com_jed/js/ticketPublishUnPublishReview.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    }
+
+  ]
+}
