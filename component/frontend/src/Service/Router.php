@@ -10,6 +10,7 @@ namespace Jed\Component\Jed\Site\Service;
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Categories\CategoryFactoryInterface;
 use Joomla\CMS\Categories\CategoryInterface;
@@ -54,6 +55,14 @@ class Router extends RouterView
 	 */
 	private CategoryFactoryInterface $categoryFactory;
 
+	/**
+	 * Class constructor.
+	 *
+	 * @param   CMSApplication  $app   Application-object that the router should use
+	 * @param   AbstractMenu    $menu  Menu-object that the router should use
+	 *
+	 * @since   3.4
+	 */
 	public function __construct(SiteApplication $app = null, AbstractMenu $menu, DatabaseInterface $db, MVCFactory $factory, CategoryFactoryInterface $categoryFactory)
 	{
 		parent::__construct($app, $menu);
@@ -76,7 +85,7 @@ class Router extends RouterView
 		$extension = new RouterViewConfiguration('extension');
 		$extension
 			->setKey('id')
-			->setParent($extensions, 'catid')
+			->setParent($extensions, 'primary_category_id')
 			->addLayout('edit');
 		$this->registerView($extension);
 
@@ -177,11 +186,27 @@ class Router extends RouterView
 		return [];
 	}
 
+	/**
+	 * @param $segment
+	 * @param $query
+	 *
+	 * @return int
+	 *
+	 * @since 4.0.0
+	 */
 	public function getExtensionId($segment, $query)
 	{
 		return (int) $segment;
 	}
 
+	/**
+	 * @param $id
+	 * @param $query
+	 *
+	 * @return array|string[]
+	 *
+	 * @since 4.0.0
+	 */
 	public function getExtensionSegment($id, $query)
 	{
 		if (strpos($id, ':'))
@@ -194,8 +219,8 @@ class Router extends RouterView
 		$db        = $this->getDatabase();
 		$query     = $db->getQuery(true);
 		$query->select($db->quoteName('alias'))
-		      ->from($db->quoteName('#__jed_extensions'))
-		      ->where($db->quoteName('id') . ' = :id')
+		      ->from($db->quoteName('#__jed_extension_varied_data'))
+		      ->where($db->quoteName('extension_id') . ' = :id')
 		      ->bind(':id', $id, ParameterType::INTEGER);
 		$db->setQuery($query);
 

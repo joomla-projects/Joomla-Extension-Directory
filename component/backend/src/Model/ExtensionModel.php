@@ -433,15 +433,9 @@ class ExtensionModel extends AdminModel
 		{
 			/* Convert cmsobject to stdClass */
 			$s = $item->getProperties();
-			//echo "<pre>";
-			//var_dump($s);
-			//echo "</pre>";
 
 			$this->_item = (object) $s;
-			/*   echo "<pre>";
-			   var_dump($this->_item);
-			   echo "</pre>";*/
-			//   var_dump(array_values(json_decode($this->_item->includes)));
+
 			if (isset($this->_item->includes))
 			{
 				$this->_item->includes = array_values(json_decode($this->_item->includes));
@@ -458,17 +452,12 @@ class ExtensionModel extends AdminModel
 
 			if (isset($this->_item->modified_by))
 			{
-				//MFHERE
 				$this->_item->modified_by_name = JedHelper::getUserById($this->_item->modified_by)->name;
 			}
 
 			/* Load Category Hierarchy */
 			if (is_null($this->_item->primary_category_id))
 			{
-				//	echo "<pre>";
-				//	print_r($this->_item);
-				//	echo "</pre>";
-				//	exit();
 				$this->_item->category_hierarchy = "";
 			}
 			else
@@ -486,6 +475,8 @@ class ExtensionModel extends AdminModel
 				{
 					if ($v->is_default_data === 1)
 					{
+						$this->_item->title = $v->title;
+						$this->_item->alias = $v->alias;
 						$this->_item->intro_text   = $v->intro_text;
 						$this->_item->support_link = $v->support_link;
 					}
@@ -494,13 +485,6 @@ class ExtensionModel extends AdminModel
 			/* Load Scores */
 			try
 			{
-				if(is_null($this->_item->id))
-				{
-					echo "<pre>";
-					print_r($this->_item);
-					echo "</pre>";
-					exit();
-				}
 				$this->_item->scores            = $this->getScores($this->_item->id);
 			}
 			catch (Exception $e)
@@ -541,7 +525,6 @@ class ExtensionModel extends AdminModel
 			$this->_item->type  = $supplytype;
 			$score              = $score / $supplycounter;
 			$this->_item->score = floor($score / 5);
-			//echo "<pre>";print_r($this->_item);echo "</pre>";exit();
 			$this->_item->score_string = JedscoreHelper::getStars($this->_item->score);
 			if ($this->_item->number_of_reviews == 0)
 			{

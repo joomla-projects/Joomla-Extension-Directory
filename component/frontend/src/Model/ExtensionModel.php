@@ -220,6 +220,8 @@ class ExtensionModel extends ItemModel
 			{
 				continue;
 			}
+			$this->_item->title = $v->title;
+			$this->_item->alias = $v->alias;
 
 			$this->_item->intro_text   = $v->intro_text;
 			$this->_item->support_link = $v->support_link;

@@ -117,12 +117,14 @@ class ExtensionsModel extends ListModel
 		$query = $db->getQuery(true)
 
 		// Select the required fields from the table.
+			// $query->select('varied.description as description, varied.title as title, varied.alias as alias');
+		//        $query->join('INNER', '#__jed_extension_varied_data AS varied ON varied.extension_id = a.id and varied.is_default_data=1');
 		->select(
 				$db->quoteName(
 					[
 						'a.id',
-						'a.title',
-						'a.alias',
+						'varied.title',
+						'varied.alias',
 						'a.created_by',
 						'a.modified_on',
 						'a.created_on',
@@ -173,6 +175,8 @@ class ExtensionsModel extends ListModel
 				. ' ON ' . $db->quoteName('supply_type.id') . ' = ' . $db->quoteName('varied.supply_option_id')
 			)
             ->select('GROUP_CONCAT(`supply_type`.`title`) as type');
+
+		$query->where('varied.is_default_data=1');
 		
 		// Filter by published state
 		$published = $this->getState('filter.state');

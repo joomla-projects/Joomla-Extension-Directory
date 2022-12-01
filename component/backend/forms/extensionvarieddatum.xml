@@ -26,7 +26,9 @@
     </fieldset>
 
     <fieldset name="info">
-
+        <field name="title" filter="safehtml" type="text" label="JGLOBAL_TITLE"
+               hint="COM_JED_FORM_LBL_EXTENSION_TITLE"/>
+        <field name="alias" type="text" class="inputbox" generator="title" label="JFIELD_ALIAS_LABEL" hint="JALIAS"/>
         <field name="intro_text" editor="tinymce" buttons="false" filter="JComponentHelper::filterText"
                type="editor" label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_INTRO_TEXT"
                hint="COM_JED_FORM_LBL_EX TENSIONVARIEDDATUM_INTRO_TEXT"/>

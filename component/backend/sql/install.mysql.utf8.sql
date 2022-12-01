@@ -592,8 +592,6 @@ CREATE TABLE `#__jed_reviews_comments`
 CREATE TABLE `#__jed_extensions`
 (
     `id`                    int unsigned NOT NULL AUTO_INCREMENT,
-    `title`                 varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
-    `alias`                 varchar(255) CHARACTER SET utf8 COLLATE utf8_bin              DEFAULT NULL,
     `joomla_versions`       varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
     `popular`               tinyint(1)                                                    DEFAULT '0',
     `requires_registration` tinyint(1)                                                    DEFAULT '0',
@@ -639,6 +637,8 @@ CREATE TABLE `#__jed_extension_varied_data`
     `id`                        int unsigned NOT NULL AUTO_INCREMENT,
     `extension_id`              int unsigned                                                  DEFAULT '0',
     `supply_option_id`          int unsigned                                                  DEFAULT '0',
+    `title`                     varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
+    `alias`                     varchar(255) CHARACTER SET utf8 COLLATE utf8_bin              DEFAULT NULL,
     `intro_text`                varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
     `description`               text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     `homepage_link`             varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
