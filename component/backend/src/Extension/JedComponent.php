@@ -10,6 +10,7 @@ namespace Jed\Component\Jed\Administrator\Extension;
 
 defined('JPATH_PLATFORM') or die;
 
+use Exception;
 use Jed\Component\Jed\Administrator\Service\Html\Jed;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Categories\CategoryServiceInterface;
@@ -19,10 +20,12 @@ use Joomla\CMS\Component\Router\RouterServiceTrait;
 use Joomla\CMS\Dispatcher\DispatcherInterface;
 use Joomla\CMS\Extension\BootableExtensionInterface;
 use Joomla\CMS\Extension\MVCComponent;
+use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\HTML\HTMLRegistryAwareTrait;
 use Joomla\CMS\Tag\TagServiceInterface;
 use Joomla\CMS\Tag\TagServiceTrait;
 use Psr\Container\ContainerInterface;
+use stdClass;
 use function defined;
 
 /**
@@ -70,9 +73,42 @@ class JedComponent extends MVCComponent implements BootableExtensionInterface, C
 	 */
 	protected function getTableNameForSection(string $section = null): string
 	{
-		return 'jed.extensions';
+		return 'jed_extensions';
 	}
 
+
+	/**
+	 * Adds Count Items for Category Manager.
+	 *
+	 * @param   stdClass[]  $items    The category objects
+	 * @param   string       $section  The section
+	 *
+	 * @return  void
+	 *
+	 * @since   4.0.0
+	 * @throws  Exception
+	 */
+	public function countItems(array $items, string $section)
+	{
+		$config = (object) array(
+			'related_tbl'   => $this->getTableNameForSection($section),
+			'state_col'     => $this->getStateColumnForSection($section),
+			'group_col'     => 'primary_category_id',
+			'relation_type' => 'category_or_group',
+		);
+
+		ContentHelper::countRelations($items, $config);
+	}
+
+	/**
+	 * Returns the dispatcher for the given application.
+	 *
+	 * @param   CMSApplicationInterface  $application  The application
+	 *
+	 * @return  DispatcherInterface
+	 *
+	 * @since   4.0.0
+	 */
 	public function getDispatcher(CMSApplicationInterface $application): DispatcherInterface
 	{
 		// Load our custom Composer dependencies before dispatching the component
