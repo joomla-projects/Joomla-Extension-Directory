@@ -21,8 +21,8 @@
         <filename>index.html</filename>
     </files>
 
-    <languages folder="frontend/language">
-        <language tag="en-GB">en-GB/en-GB.com_jed.ini</language>
+    <languages folder="frontend/language/en-GB">
+        <language tag="en-GB">com_jed.ini</language>
     </languages>
 
     <administration>
