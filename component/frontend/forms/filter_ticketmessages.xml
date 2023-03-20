@@ -6,7 +6,7 @@
                class="js-stools-search-string"/>
 
         <field name="ticket_id" type="sql" label="COM_JED_TICKETMESSAGE_FIELD_TICKET_ID_LABEL"
-               query="SELECT `id` AS `id`, `ticket_subject` AS val FROM `#__jedtickets`"
+               query="SELECT `id` AS `id`, `ticket_subject` AS val FROM `#__jed_jedtickets`"
                header="COM_JED_TICKETMESSAGE_FIELD_TICKET_ID_FILTER_LABEL" key_field="id" value_field="val"
                class="inputbox" onchange="this.form.submit()" translate="true"/>
 

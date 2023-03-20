@@ -81,9 +81,9 @@ class TicketmessagesModel extends ListModel
 					$db = Factory::getContainer()->get('DatabaseDriver');
 					$query = $db->getQuery(true);
 					$query
-						->select('`#__jedtickets_3591992`.`ticket_subject`')
-						->from($db->quoteName('#__jedtickets', '#__jedtickets_3591992'))
-						->where($db->quoteName('#__jedtickets_3591992.id') . ' = ' . $db->quote($db->escape($value)));
+						->select('`#__jed_jedtickets_3591992`.`ticket_subject`')
+						->from($db->quoteName('#__jed_jedtickets', '#__jed_jedtickets_3591992'))
+						->where($db->quoteName('#__jed_jedtickets_3591992.id') . ' = ' . $db->quote($db->escape($value)));
 
 					$db->setQuery($query);
 					$results = $db->loadObject();
@@ -135,7 +135,7 @@ class TicketmessagesModel extends ListModel
 		$query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
 		// Join over the foreign key 'ticket_id'
 		$query->select('`jt`.`ticket_subject` AS jt_ticket_subject');
-		$query->join('LEFT', '#__jedtickets AS jt ON jt.`id` = a.`ticket_id`');
+		$query->join('LEFT', '#__jed_jedtickets AS jt ON jt.`id` = a.`ticket_id`');
 		if (JedHelper::isAdminOrSuperUser())
 		{
 			$query->where("a.created_by = " . JedHelper::getUser()->get("id"));
@@ -162,7 +162,7 @@ class TicketmessagesModel extends ListModel
 			else
 			{
 				$search = $db->Quote('%' . $db->escape($search, true) . '%');
-				$query->where('( a.subject LIKE ' . $search . '  OR #__jedtickets_3591992.ticket_subject LIKE ' . $search . ' )');
+				$query->where('( a.subject LIKE ' . $search . '  OR #__jed_jedtickets_3591992.ticket_subject LIKE ' . $search . ' )');
 			}
 		}
 
