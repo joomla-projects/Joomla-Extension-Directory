@@ -14,7 +14,7 @@ namespace Jed\Component\Jed\Site\View\Ticketmessageform;
 defined('_JEXEC') or die;
 
 use Exception;
-use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
