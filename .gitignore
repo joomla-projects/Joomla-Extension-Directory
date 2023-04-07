@@ -10,3 +10,6 @@
 
 ### Installation packages built through Phing
 /release/
+
+### PHPStorm Files
+.idea/
