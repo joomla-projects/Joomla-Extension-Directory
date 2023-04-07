@@ -36,7 +36,7 @@ class HtmlView extends BaseHtmlView
 	 * @var    object
 	 * @since  4.0.0
 	 */
-	protected $item;
+	protected mixed $item;
 
 
 	/**
@@ -113,14 +113,9 @@ class HtmlView extends BaseHtmlView
 		$this->item        = $this->get('Item');
 		$this->params      = ComponentHelper::getParams('com_jed');
 		$this->migrate_xml = $this->getMigrateXML();
-		if (!is_null($_GET['task']))
-		{
-			$this->task = $_GET['task'];
-		}
-		else
-		{
-			$this->task = "";
-		}
+		$app  = Factory::getApplication();
+		$input = $app->input->getInputForRequestMethod();
+		$this->task = $input->get('task','');
 
 		$this->addToolbar();
 
