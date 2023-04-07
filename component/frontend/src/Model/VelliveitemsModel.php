@@ -58,10 +58,9 @@ class VelliveitemsModel extends ListModel
 	 *
 	 * @since 4.0.0
 	 */
-	public function getItems()
+	public function getItems() : mixed
 	{
 		$items = parent::getItems();
-
 		foreach ($items as $item)
 		{
 			// Always create a slug for sef URL's
@@ -89,7 +88,7 @@ class VelliveitemsModel extends ListModel
 		$query = $db->getQuery(true);
 
 
-		$query->select("id,`title` AS `title`, `alias` AS `alias`, `state` AS `published`, IF((`modified` > `created`),DATE_FORMAT(`modified`,'%d %M %Y'),DATE_FORMAT(`created`,'%d %M %Y')) AS `publication_date`,IF((`modified` > `created`),`modified`,`created`) AS `publication_date_sort`");
+		$query->select("id,`title` AS `title`, `alias` AS `alias`, `public_description` as `public_description`, `state` AS `published`, IF((`modified` > `created`),DATE_FORMAT(`modified`,'%d %M %Y'),DATE_FORMAT(`created`,'%d %M %Y')) AS `publication_date`,IF((`modified` > `created`),`modified`,`created`) AS `publication_date_sort`");
 
 		$query->from($db->qn('#__jed_vel_vulnerable_item', 'a'));
 
