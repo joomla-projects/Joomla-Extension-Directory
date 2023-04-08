@@ -621,6 +621,7 @@ CREATE TABLE `#__jed_extensions`
     `created_on`            datetime                                                      DEFAULT NULL,
     `modified_on`           datetime                                                      DEFAULT NULL,
     `state`                 int                                                           DEFAULT '0',
+    `title`                 varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
     PRIMARY KEY (`id`),
     KEY `FK_jed_extensions_category_id` (`primary_category_id`),
     KEY `FKC_jed_extensions_user` (`created_by`),
