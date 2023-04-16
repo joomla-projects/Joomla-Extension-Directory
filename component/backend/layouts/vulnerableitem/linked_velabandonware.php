@@ -20,14 +20,14 @@ $rawData            = $displayData->getData();
 
 /* Set up Data fieldsets */
 
-$fieldsets['aboutyou']['title'] = JTEXT::_('COM_JED_VEL_GENERAL_FIELD_ABOUT_YOU_LABEL');
+$fieldsets['aboutyou']['title'] = Text::_('COM_JED_VEL_GENERAL_FIELD_ABOUT_YOU_LABEL');
 
 $fieldsets['aboutyou']['fields'] = array(
 	'reporter_fullname',
 	'reporter_email',
 	'reporter_organisation');
 
-$fieldsets['extensiondetails']['title']  = JTEXT::_('COM_JED_VEL_ABANDONEDREPORT_EXTENSION_TITLE');
+$fieldsets['extensiondetails']['title']  = Text::_('COM_JED_VEL_ABANDONEDREPORT_EXTENSION_TITLE');
 $fieldsets['extensiondetails']['fields'] = array(
 	'extension_name',
 	'developer_name',

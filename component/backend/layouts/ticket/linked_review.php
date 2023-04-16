@@ -134,8 +134,8 @@ JedHelper::lockFormFields($linked_form, array('published'));
 <?php
 
 
-$fieldsets['scores']['title']       = JTEXT::_('COM_JED_REVIEW_SCORES_TITLE');
-$fieldsets['scores']['description'] = JTEXT::_('COM_JED_REVIEW_SCORES_DESCR');
+$fieldsets['scores']['title']       = Text::_('COM_JED_REVIEW_SCORES_TITLE');
+$fieldsets['scores']['description'] = Text::_('COM_JED_REVIEW_SCORES_DESCR');
 $fieldsets['scores']['fields']      = array(
 
 	'functionality',
@@ -146,8 +146,8 @@ $fieldsets['scores']['fields']      = array(
 	'overall_score');
 
 
-$fieldsets['comments']['title']       = JTEXT::_('COM_JED_REVIEW_COMMENTS_TITLE');
-$fieldsets['comments']['description'] = JTEXT::_('COM_JED_REVIEW_COMMENTS_DESCR');
+$fieldsets['comments']['title']       = Text::_('COM_JED_REVIEW_COMMENTS_TITLE');
+$fieldsets['comments']['description'] = Text::_('COM_JED_REVIEW_COMMENTS_DESCR');
 $fieldsets['comments']['fields']      = array('functionality_comment',
 	'ease_of_use_comment',
 	'support_comment',

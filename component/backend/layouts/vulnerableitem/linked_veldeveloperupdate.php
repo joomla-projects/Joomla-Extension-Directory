@@ -17,13 +17,13 @@ $rawData            = $displayData->getData();
 
 /* Set up Data fieldsets */
 
-$fieldsets['aboutyou']['title']  = JTEXT::_('COM_JED_VEL_GENERAL_FIELD_ABOUT_YOU_LABEL');
+$fieldsets['aboutyou']['title']  = Text::_('COM_JED_VEL_GENERAL_FIELD_ABOUT_YOU_LABEL');
 $fieldsets['aboutyou']['fields'] = array(
 	'contact_fullname',
 	'contact_organisation',
 	'contact_email');
 
-$fieldsets['vulnerabilitydetails']['title']  = JTEXT::_('COM_JED_VEL_GENERAL_VULNERABILITY_DETAILS_TITLE');
+$fieldsets['vulnerabilitydetails']['title']  = Text::_('COM_JED_VEL_GENERAL_VULNERABILITY_DETAILS_TITLE');
 $fieldsets['vulnerabilitydetails']['fields'] = array(
 	'vulnerable_item_name',
 	'vulnerable_item_version',

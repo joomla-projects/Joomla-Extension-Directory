@@ -61,8 +61,8 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
 			$default_values['ip_address']   = $_SERVER['REMOTE_ADDR'];
 			$default_values['created_on']   = Factory::getDate()->toSql();
 			$this->form->bind($default_values);
-			$fieldsets['overview']['title']       = JTEXT::_('COM_JED_REVIEW_OVERVIEW_TITLE') . $this->extension_details->title;
-			$fieldsets['overview']['description'] = JTEXT::_('COM_JED_REVIEW_OVERVIEW_DESCR');
+			$fieldsets['overview']['title']       = Text::_('COM_JED_REVIEW_OVERVIEW_TITLE') . $this->extension_details->title;
+			$fieldsets['overview']['description'] = Text::_('COM_JED_REVIEW_OVERVIEW_DESCR');
 			$fieldsets['overview']['fields']      = array('id',
 				'supply_option_id', 'version',
 				'extension_id', 'used_for');
@@ -88,15 +88,15 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
 			$field = $this->form->setField($xml);
 
 
-			$fieldsets['details']['title']       = JTEXT::_('COM_JED_REVIEW_DETAILS_TITLE');
-			$fieldsets['details']['description'] = JTEXT::_('COM_JED_REVIEW_DETAILS_DESCR');
+			$fieldsets['details']['title']       = Text::_('COM_JED_REVIEW_DETAILS_TITLE');
+			$fieldsets['details']['description'] = Text::_('COM_JED_REVIEW_DETAILS_DESCR');
 			$fieldsets['details']['fields']      = array('title',
 				'alias',
 				'body');
 			$fieldsets['details']['hidden']      = array('alias');
 
-			$fieldsets['scores']['title']       = JTEXT::_('COM_JED_REVIEW_SCORES_TITLE');
-			$fieldsets['scores']['description'] = JTEXT::_('COM_JED_REVIEW_SCORES_DESCR');
+			$fieldsets['scores']['title']       = Text::_('COM_JED_REVIEW_SCORES_TITLE');
+			$fieldsets['scores']['description'] = Text::_('COM_JED_REVIEW_SCORES_DESCR');
 			$fieldsets['scores']['fields']      = array(
 				'func_num',
 				'ease_num',
@@ -119,8 +119,8 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
 
             
             
-			$fieldsets['comments']['title']       = JTEXT::_('COM_JED_REVIEW_COMMENTS_TITLE');
-			$fieldsets['comments']['description'] = JTEXT::_('COM_JED_REVIEW_COMMENTS_DESCR');
+			$fieldsets['comments']['title']       = Text::_('COM_JED_REVIEW_COMMENTS_TITLE');
+			$fieldsets['comments']['description'] = Text::_('COM_JED_REVIEW_COMMENTS_DESCR');
 			$fieldsets['comments']['fields']      = array('functionality_comment',
 				'ease_of_use_comment',
 				'support_comment',
@@ -152,6 +152,7 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
                           method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
 
 						<?php
+                        $fscount=0;
 						foreach ($fieldsets as $fs)
 						{
 

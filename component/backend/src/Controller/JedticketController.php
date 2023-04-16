@@ -50,7 +50,8 @@ class JedticketController extends FormController
 
         $this->task = $_POST['task'];
 
-        if ($this->task == "jedticket.assignDeveloperUpdatetoVEL") {
+		if ($this->task == "jedticket.assignDeveloperUpdatetoVEL")
+		{
             $ticketId    = $_POST["jform"]['id'];
             $reportId    = $_POST["jform"]['linked_item_id'];
             $vel_item_id = $_POST["jform"]['vel_item_id'];
@@ -66,6 +67,7 @@ class JedticketController extends FormController
             $app = Factory::getApplication();
             $app->enqueueMessage('Developer Update linked to Existing VEL Item', 'success');
             $this->setRedirect(Route::_('index.php?option=com_jed&view=jedticket&layout=edit&id=' . (int) $ticketId, false));
+
         }
     }
 
@@ -80,7 +82,8 @@ class JedticketController extends FormController
 
         $this->task = $_POST['task'];
 
-        if ($this->task == "jedticket.copyAbandonedReporttoVEL") {
+		if ($this->task == "jedticket.copyAbandonedReporttoVEL")
+		{
 
             $reportId = $_POST["jform"]['linked_item_id'];
 
@@ -133,7 +136,8 @@ class JedticketController extends FormController
     {
         $db         = Factory::getContainer()->get('DatabaseDriver');
         $this->task = $_POST['task'];
-        if ($this->task == "jedticket.copyReporttoVEL") {
+		if ($this->task == "jedticket.copyReporttoVEL")
+		{
 
             /*SELECT   `id`, `vulnerable_item_name`, `vulnerable_item_version`, `title`, `internal_description`, `status`, `report_id`, `jed`, `risk_level`, `start_version`, `vulnerable_version`, `patch_version`, `recommendation`, `update_notice`, `exploit_type`, `exploit_other_description`, `xml_manifest`, `manifest_location`, `install_data`, `discovered_by`, `discoverer_public`, `fixed_by`, `coordinated_by`, `jira`, `cve_id`, `cwe_id`, `cvssthirty_base`, `cvssthirty_base_score`, `cvssthirty_temp`, `cvssthirty_temp_score`, `cvssthirty_env`, `cvssthirty_env_score`, `public_description`, `alias`, `created_by`, `modified_by`, `created`, `modified`, `checked_out`, `checked_out_time`, `state` FROM  #__jed_vel_vulnerable_item` */
             $reportId = $_POST["jform"]['linked_item_id'];
@@ -218,7 +222,8 @@ class JedticketController extends FormController
 
         $this->task = $_POST['task'];
 
-        if ($this->task == "jedticket.gotoVEL") {
+	if ($this->task == "jedticket.gotoVEL")
+	{
 
             $jform     = $_POST['jform'];
             $ticket_id = $jform['id'];
@@ -242,7 +247,8 @@ class JedticketController extends FormController
     {
         $db         = Factory::getContainer()->get('DatabaseDriver');
         $this->task = $_POST['task'];
-        if ($this->task == "jedticket.linkDeveloperUpdatetoVEL") {
+	if ($this->task == "jedticket.linkDeveloperUpdatetoVEL")
+	{
             $jform     = $_POST['jform'];
             $ticket_id = $jform['id'];
 
@@ -275,7 +281,8 @@ class JedticketController extends FormController
         $this->task = $_POST['task'];
 
 
-        if ($this->task == "jedticket.sendmessage") {
+        if ($this->task == "jedticket.sendmessage") 
+	{
             /* Functionality
 			1 - Verify
 			2 - Send email with mesage

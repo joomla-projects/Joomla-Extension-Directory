@@ -211,7 +211,7 @@ $wa->useStyle('com_jed.jazstyle');
 					</td>
 					<td>
 						<?php $class = ($canChange) ? 'active' : 'disabled'; ?>
-						<a class="btn btn-micro <?php echo $class; ?>" href="<?php echo ($canChange) ? JRoute::_('index.php?option=com_jed&task=extension.publish&id=' . $item->id . '&state=' . (($item->state + 1) % 2), false, 2) : '#'; ?>">
+						<a class="btn btn-micro <?php echo $class; ?>" href="<?php echo ($canChange) ? Route::_('index.php?option=com_jed&task=extension.publish&id=' . $item->id . '&state=' . (($item->state + 1) % 2), false, 2) : '#'; ?>">
 						<?php if ($item->state == 1): ?>
 							<i class="icon-publish"></i>
 						<?php else: ?>

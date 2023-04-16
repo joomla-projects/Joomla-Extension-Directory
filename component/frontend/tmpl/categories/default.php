@@ -15,7 +15,7 @@ use Joomla\CMS\Router\Route;
 
 
 $wa = $this->document->getWebAssetManager();
-$wa->useStyle('com_jed.oldjed')
+$wa->useStyle('com_jed.newjed')
 	->useScript('form.validate');
 HTMLHelper::_('bootstrap.tooltip');
 
@@ -63,7 +63,7 @@ $catlist = $this->items;
                                         <li class="jed-home-subcategories-child had-items">
                                             <a href="<?= Route::_(sprintf('index.php?option=com_jed&view=extensions&catid=%d&id=%d', $sc->parent_id, $sc->id)) ?>">
 											    <?php echo $sc->title; ?></a>
-                                            <span class=" badge-info">	<?php echo 0 + $sc->numitems; ?></span>
+                                            <span class=" badge-info-cat">	<?php echo 0 + $sc->numitems; ?></span>
                                         </li>
 								    <?php }
 

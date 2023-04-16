@@ -100,9 +100,7 @@ else
                     <th class=''>
 						<?php echo HTMLHelper::_('grid.sort', 'COM_JED_VEL_GENERAL_FIELD_PASSED_TO_VEL_LABEL', 'a.passed_to_vel', $listDirn, $listOrder); ?>
                     </th>
-                    <th class=''>
-						<?php echo HTMLHelper::_('grid.sort', 'COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_LABEL', 'a.data_source', $listDirn, $listOrder); ?>
-                    </th>
+
                     <th class=''>
 						<?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_FIELD_DATE_SUBMITTED_LABEL', 'a.date_submitted', $listDirn, $listOrder); ?>
                     </th>
@@ -143,11 +141,7 @@ else
 							<?php echo $item->id; ?>
                         </td>
                         <td>
-							<?php $canCheckin = JedHelper::getUser()->authorise('core.manage', 'com_jed.' . $item->id) || $item->checked_out == JedHelper::getUser()->id; ?>
-							<?php if ($canCheckin && $item->checked_out > 0) : ?>
 
-                                <a href="<?php echo Route::_('index.php?option=com_jed&task=velabandonedreport.checkin&id=' . $item->id . '&' . Session::getFormToken() . '=1'); ?>">                    <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'velabandonedreport.', false); ?></a>
-							<?php endif; ?>
                             <a href="<?php echo Route::_('index.php?option=com_jed&view=velabandonedreport&id=' . (int) $item->id); ?>">
 								<?php echo $this->escape($item->reporter_fullname); ?></a>
                         </td>
@@ -179,10 +173,7 @@ else
 
 							<?php echo $item->passed_to_vel; ?>
                         </td>
-                        <td>
 
-							<?php echo $item->data_source; ?>
-                        </td>
                         <td>
 
 							<?php

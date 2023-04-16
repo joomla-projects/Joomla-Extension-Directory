@@ -67,18 +67,18 @@ else
                   action="<?php echo Route::_('index.php?option=com_jed&task=veldeveloperupdateform.save'); ?>"
                   method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
 				<?php
-				$fieldsets['overview']['title']       = JTEXT::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_OVERVIEW_TITLE');
-				$fieldsets['overview']['description'] = JTEXT::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_OVERVIEW_DESCR');
+				$fieldsets['overview']['title']       = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_OVERVIEW_TITLE');
+				$fieldsets['overview']['description'] = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_OVERVIEW_DESCR');
+                $fieldsets['overview']['fields'] = array();
 
-
-				$fieldsets['aboutyou']['title']       = JTEXT::_('COM_JED_VEL_GENERAL_FIELD_ABOUT_YOU_LABEL');
+				$fieldsets['aboutyou']['title']       = Text::_('COM_JED_VEL_GENERAL_FIELD_ABOUT_YOU_LABEL');
 				$fieldsets['aboutyou']['description'] = "";
 				$fieldsets['aboutyou']['fields']      = array(
 					'contact_fullname',
 					'contact_organisation',
 					'contact_email');
 
-				$fieldsets['vulnerabilitydetails']['title']       = JTEXT::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_VULNERABILITY_DETAILS_TITLE');
+				$fieldsets['vulnerabilitydetails']['title']       = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_VULNERABILITY_DETAILS_TITLE');
 				$fieldsets['vulnerabilitydetails']['description'] = "";
 				$fieldsets['vulnerabilitydetails']['fields']      = array(
 					'vulnerable_item_name',
@@ -87,27 +87,22 @@ else
 					'new_version_number');
 
 				$fieldsets['vulnerabilitydetails2']['title']       = "";
-				$fieldsets['vulnerabilitydetails2']['description'] = JTEXT::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_VULNERABILITY_DETAILS_2_DESCR');
+				$fieldsets['vulnerabilitydetails2']['description'] = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_VULNERABILITY_DETAILS_2_DESCR');
 				$fieldsets['vulnerabilitydetails2']['fields']      = array(
 					'update_notice_url',
 					'changelog_url');
 
 				$fieldsets['vulnerabilitydetails3']['title']       = "";
-				$fieldsets['vulnerabilitydetails3']['description'] = JTEXT::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_VULNERABILITY_DETAILS_3_DESCR');
+				$fieldsets['vulnerabilitydetails3']['description'] = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_VULNERABILITY_DETAILS_3_DESCR');
 				$fieldsets['vulnerabilitydetails3']['fields']      = array(
 					'download_url',
 					'consent_to_process');
 
 
 				$fieldsets['final']['title']       = "";
-				$fieldsets['final']['description'] = JTEXT::_('COM_JED_VEL_DEVELOPERUPDATES_FINAL_DESCRIPTION');
+				$fieldsets['final']['description'] = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FINAL_DESCRIPTION');
 
-				$fieldsets['final']['fields'] = array('captcha',
-					'vel_item_id',
-					'update_data_source',
-					'update_date_submitted',
-					'data_source',
-					'update_user_ip');
+				$fieldsets['final']['fields'] = array('captcha');
 				$fscount                      = 0;
 
 
@@ -130,7 +125,10 @@ else
 					{
 						echo $fs['description'];
 					}
-					$fields = $fs['fields'];
+
+                    $fields = $fs['fields'];
+
+
 
 					foreach ($fields as $field)
 					{

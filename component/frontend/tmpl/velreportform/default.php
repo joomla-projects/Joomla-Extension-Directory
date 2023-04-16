@@ -71,12 +71,12 @@ else
 
 				<?php
 
-				$fieldsets['overview']['title']       = JTEXT::_('COM_JED_VEL_REPORTS_OVERVIEW_TITLE');
-				$fieldsets['overview']['description'] = JTEXT::_('COM_JED_VEL_REPORTS_OVERVIEW_DESCR');
+				$fieldsets['overview']['title']       = Text::_('COM_JED_VEL_REPORTS_OVERVIEW_TITLE');
+				$fieldsets['overview']['description'] = Text::_('COM_JED_VEL_REPORTS_OVERVIEW_DESCR');
 				$fieldsets['overview']['fields']      = array();
 
 
-				$fieldsets['aboutyou']['title']       = JTEXT::_('COM_JED_VEL_GENERAL_FIELD_ABOUT_YOU_LABEL');
+				$fieldsets['aboutyou']['title']       = Text::_('COM_JED_VEL_GENERAL_FIELD_ABOUT_YOU_LABEL');
 				$fieldsets['aboutyou']['description'] = "";
 				$fieldsets['aboutyou']['fields']      = array(
 					'reporter_fullname',
@@ -84,7 +84,7 @@ else
 					'reporter_organisation',
 					'pass_details_ok');
 
-				$fieldsets['vulnerabilitydetails']['title']       = JTEXT::_('COM_JED_VEL_GENERAL_VULNERABILITY_DETAILS_TITLE');
+				$fieldsets['vulnerabilitydetails']['title']       = Text::_('COM_JED_VEL_GENERAL_VULNERABILITY_DETAILS_TITLE');
 				$fieldsets['vulnerabilitydetails']['description'] = "";
 				$fieldsets['vulnerabilitydetails']['fields']      = array(
 					'vulnerability_type',
@@ -99,14 +99,14 @@ else
 					'vulnerability_publicly_url',
 					'vulnerability_specific_impact');
 
-				$fieldsets['developerdetails']['title']       = JTEXT::_('COM_JED_VEL_REPORTS_DEVELOPER_DETAILS_TITLE');
-				$fieldsets['developerdetails']['description'] = JTEXT::_('COM_JED_VEL_REPORTS_DEVELOPER_DETAILS_DESCRIPTION');
+				$fieldsets['developerdetails']['title']       = Text::_('COM_JED_VEL_REPORTS_DEVELOPER_DETAILS_TITLE');
+				$fieldsets['developerdetails']['description'] = Text::_('COM_JED_VEL_REPORTS_DEVELOPER_DETAILS_DESCRIPTION');
 				$fieldsets['developerdetails']['fields']      = array(
 					'developer_communication_type',
 					'developer_patch_download_url');
 
 				$fieldsets['moredeveloperdetails']['title']       = "";
-				$fieldsets['moredeveloperdetails']['description'] = JTEXT::_('COM_JED_VEL_REPORTS_FORM_DEVELOPER_DETAILS_MORE_DESCR');
+				$fieldsets['moredeveloperdetails']['description'] = Text::_('COM_JED_VEL_REPORTS_FORM_DEVELOPER_DETAILS_MORE_DESCR');
 				$fieldsets['moredeveloperdetails']['fields']      = array(
 					'developer_name',
 					'developer_contact_email',
@@ -115,19 +115,19 @@ else
 					'tracking_db_id');
 
 
-				$fieldsets['additionaldeveloperdetails']['title']       = JTEXT::_('COM_JED_VEL_REPORTS_DEVELOPER_DETAILS_ADDITIONAL_TITLE_LABEL');
+				$fieldsets['additionaldeveloperdetails']['title']       = Text::_('COM_JED_VEL_REPORTS_DEVELOPER_DETAILS_ADDITIONAL_TITLE_LABEL');
 				$fieldsets['additionaldeveloperdetails']['description'] = "";
 				$fieldsets['additionaldeveloperdetails']['fields']      = array(
 					'developer_additional_info');
 
-				$fieldsets['filelocation']['title']       = JTEXT::_('COM_JED_VEL_REPORTS_FILELOCATION_TITLE');
+				$fieldsets['filelocation']['title']       = Text::_('COM_JED_VEL_REPORTS_FILELOCATION_TITLE');
 				$fieldsets['filelocation']['description'] = "";
 				$fieldsets['filelocation']['fields']      = array(
 					'download_url',
 					'consent_to_process');
 
 				$fieldsets['final']['title']       = "";
-				$fieldsets['final']['description'] = JTEXT::_('COM_JED_VEL_REPORTS_FORM_FINAL_DESCR');
+				$fieldsets['final']['description'] = Text::_('COM_JED_VEL_REPORTS_FORM_FINAL_DESCR');
 
 				$fieldsets['final']['fields'] = array('captcha', 'passed_to_vel',
 					'date_submitted',

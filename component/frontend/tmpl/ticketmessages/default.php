@@ -97,7 +97,8 @@ $wa->useStyle('com_jed.list');
                         <?php if (isset($this->items[0]->state)) : ?>
                             <?php $class = ($canChange) ? 'active' : 'disabled'; ?>
                             <td class="center">
-                                <a class="btn btn-micro <?php echo $class; ?>" href="<?php echo ($canChange) ? Route::_('index.php?option=com_jed&task=ticketmessage.publish&id=' . $item->id . '&state=' . (($item->state + 1) % 2), false, 2) : '#'; ?>">
+                            <a class="btn btn-micro <?php echo $class; ?>"
+                               href="<?php echo ($canChange) ? Route::_('index.php?option=com_jed&task=ticketmessage.publish&id=' . $item->id . '&state=' . (($item->state + 1) % 2), false, 2) : '#'; ?>">
                                     <?php if ($item->state == 1) : ?>
                                         <i class="icon-publish"></i>
                                     <?php else : ?>
@@ -129,10 +130,13 @@ $wa->useStyle('com_jed.list');
                         <?php if ($canEdit || $canDelete) : ?>
                             <td class="center">
                                 <?php $canCheckin = JedHelper::getUser()->authorise('core.manage', 'com_jed.' . $item->id) || $this->item->checked_out == JedHelper::getUser()->id; ?>
-                                <?php if ($canEdit && $item->checked_out == 0) : ?> <a href="<?php echo Route::_('index.php?option=com_jed&task=ticketmessage.edit&id=' . $item->id, false, 2); ?>" class="btn btn-mini" type="button"><i class="icon-edit"></i></a>
+							<?php if ($canEdit && $item->checked_out == 0): ?>                            <a
+                                    href="<?php echo Route::_('index.php?option=com_jed&task=ticketmessage.edit&id=' . $item->id, false, 2); ?>"
+                                    class="btn btn-mini" type="button"><i class="icon-edit"></i></a>
                                 <?php endif; ?>
                                 <?php if ($canDelete) : ?>
-                                    <a href="<?php echo Route::_('index.php?option=com_jed&task=ticketmessageform.remove&id=' . $item->id, false, 2); ?>" class="btn btn-mini delete-button" type="button"><i class="icon-trash"></i></a>
+                                <a href="<?php echo Route::_('index.php?option=com_jed&task=ticketmessageform.remove&id=' . $item->id, false, 2); ?>"
+                                   class="btn btn-mini delete-button" type="button"><i class="icon-trash"></i></a>
                                 <?php endif; ?>
                             </td>
                         <?php endif; ?>

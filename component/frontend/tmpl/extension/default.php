@@ -42,7 +42,7 @@ $this->document->getWebAssetManager()
 	->useStyle('com_jed.jazstyle');
 
 ?>
-
+<div class="jed-cards-wrapper">
 <article class="container mb-5">
 	<header class="row gap-2">
 		<div class="col d-flex flex-column gap-2 mb-3">
@@ -200,6 +200,8 @@ $this->document->getWebAssetManager()
 	}
 	?>
 </article>
+</div>
+
 
 
 <?php //echo LayoutHelper::render('extension.extension-single', $this->item) ?>

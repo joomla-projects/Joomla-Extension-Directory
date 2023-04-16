@@ -10,6 +10,7 @@ namespace Jed\Component\Jed\Site\Controller;
 
 defined('_JEXEC') or die;
 
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;

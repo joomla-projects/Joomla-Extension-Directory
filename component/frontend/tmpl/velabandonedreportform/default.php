@@ -69,19 +69,19 @@ else
 
 				<?php
 
-				$fieldsets['overview']['title']       = JTEXT::_('COM_JED_VEL_ABANDONEDREPORTS_OVERVIEW_TITLE');
-				$fieldsets['overview']['description'] = JTEXT::_('COM_JED_VEL_ABANDONEDREPORTS_OVERVIEW_DESCRIPTION');
+				$fieldsets['overview']['title']       = Text::_('COM_JED_VEL_ABANDONEDREPORTS_OVERVIEW_TITLE');
+				$fieldsets['overview']['description'] = Text::_('COM_JED_VEL_ABANDONEDREPORTS_OVERVIEW_DESCRIPTION');
 				$fieldsets['overview']['fields']      = array();
 
 
-				$fieldsets['aboutyou']['title']       = JTEXT::_('COM_JED_VEL_GENERAL_FIELD_ABOUT_YOU_LABEL');
+				$fieldsets['aboutyou']['title']       = Text::_('COM_JED_VEL_GENERAL_FIELD_ABOUT_YOU_LABEL');
 				$fieldsets['aboutyou']['description'] = "";
 				$fieldsets['aboutyou']['fields']      = array(
 					'reporter_fullname',
 					'reporter_email',
 					'reporter_organisation');
 
-				$fieldsets['extensiondetails']['title']       = JTEXT::_('COM_JED_VEL_ABANDONEDREPORTS_EXTENSION_TITLE');
+				$fieldsets['extensiondetails']['title']       = Text::_('COM_JED_VEL_ABANDONEDREPORTS_EXTENSION_TITLE');
 				$fieldsets['extensiondetails']['description'] = "";
 				$fieldsets['extensiondetails']['fields']      = array(
 					'extension_name',
