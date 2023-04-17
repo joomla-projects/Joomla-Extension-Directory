@@ -1,0 +1,35 @@
+---
+kind: pipeline
+name: default
+
+clone:
+
+steps:
+  - name: composer
+    image: joomlaprojects/docker-images:php8.2
+    volumes:
+      - name: composer-cache
+        path: /tmp/composer-cache
+    commands:
+      - composer validate --no-check-all --strict
+      - composer install --no-progress --no-suggest
+
+  - name: phpcs
+    image: joomlaprojects/docker-images:php8.1
+    depends_on: [ composer ]
+    commands:
+      - echo $(date)
+      - ./component/backend/vendor/bin/php-cs-fixer fix -vvv --dry-run --diff
+      - ./component/backend/vendor/bin/phpcs --extensions=php -p --standard=ruleset.xml .
+      - echo $(date)
+
+volumes:
+  - name: composer-cache
+    host:
+      path: /tmp/composer-cache
+
+---
+kind: signature
+hmac: 6e3268de4dd6b64f6d0e8b80b48c99eaa28ac92d179c9b24103b3096999391b3
+
+...
