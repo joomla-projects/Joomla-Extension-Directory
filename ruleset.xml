@@ -6,6 +6,7 @@
 
     <!-- Exclude 3rd party libraries and Framework code. -->
     <exclude-pattern type="relative">^component/backend/vendor/*</exclude-pattern>
+	<exclude-pattern type="relative">^component/backend/layouts/*</exclude-pattern>
     <exclude-pattern type="relative">^libraries/*</exclude-pattern>
 
     <rule ref="PSR12" />
