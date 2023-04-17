@@ -55,7 +55,7 @@ foreach ($this->ticket_messages as $ticketMessage) {
     echo JHtml::_('bootstrap.endSlide');
 }
 echo HTMLHelper::_('bootstrap.endAccordion');
-					?>
+?>
                 </div>
             </div>
         </div>
@@ -70,7 +70,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
 echo 'on ';
 //var_dump($rawData);exit();
 echo JedHelper::prettyDate($rawData['created_on']);
-					?></div>
+?></div>
                 </div>
             </div>
         </div>
