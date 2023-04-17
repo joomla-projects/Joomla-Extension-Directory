@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package           JED
  *
@@ -7,40 +8,45 @@
  * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
  * @license           GNU General Public License version 2 or later; see LICENSE.txt
  */
+
 // No direct access to file
-defined('_JEXEC') or die('Restricted access');
+// phpcs:disable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:enable PSR1.Files.SideEffects
 
 /** @var $displayData array */
-$headerlabeloptions = array('hiddenLabel' => true);
-$fieldhiddenoptions = array('hidden' => true);
+$headerlabeloptions = ['hiddenLabel' => true];
+$fieldhiddenoptions = ['hidden' => true];
 $rawData            = $displayData->getData();
 
 /* Set up Data fieldsets */
 
 $fieldsets['aboutyou']['title']  = Text::_('COM_JED_VEL_GENERAL_FIELD_ABOUT_YOU_LABEL');
-$fieldsets['aboutyou']['fields'] = array(
-	'contact_fullname',
-	'contact_organisation',
-	'contact_email');
+$fieldsets['aboutyou']['fields'] = [
+    'contact_fullname',
+    'contact_organisation',
+    'contact_email'];
 
 $fieldsets['vulnerabilitydetails']['title']  = Text::_('COM_JED_VEL_GENERAL_VULNERABILITY_DETAILS_TITLE');
-$fieldsets['vulnerabilitydetails']['fields'] = array(
-	'vulnerable_item_name',
-	'vulnerable_item_version',
-	'extension_update',
-	'new_version_number',
-	'update_notice_url',
-	'changelog_url',
-	'download_url',
-	'consent_to_process',
-	'update_date_submitted');
+$fieldsets['vulnerabilitydetails']['fields'] = [
+    'vulnerable_item_name',
+    'vulnerable_item_version',
+    'extension_update',
+    'new_version_number',
+    'update_notice_url',
+    'changelog_url',
+    'download_url',
+    'consent_to_process',
+    'update_date_submitted'];
 
 
 $fieldsets['final']['title']       = "VEL Details";
 $fieldsets['final']['description'] = "";
 
-$fieldsets['final']['fields'] = array(
-	'vel_item_id');
+$fieldsets['final']['fields'] = [
+    'vel_item_id'];
 $fscount                      = 0;
 
 ?>
@@ -50,14 +56,10 @@ $fscount                      = 0;
             <h1><?php echo $fieldsets['vulnerabilitydetails']['title']; ?></h1>
             <div class="container">
                 <div class="row">
-					<?php foreach ($fieldsets['vulnerabilitydetails']['fields'] as $field)
-					{
-
-						$displayData->setFieldAttribute($field, 'readonly', 'true');
-						echo $displayData->renderField($field, null, null, array('class' => 'control-wrapper-' . $field));
-
-
-					} ?>
+                    <?php foreach ($fieldsets['vulnerabilitydetails']['fields'] as $field) {
+                        $displayData->setFieldAttribute($field, 'readonly', 'true');
+                        echo $displayData->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+                    } ?>
                 </div>
             </div>
         </div>
@@ -68,14 +70,10 @@ $fscount                      = 0;
             <h1><?php echo $fieldsets['aboutyou']['title']; ?></h1>
             <div class="container">
                 <div class="row">
-					<?php foreach ($fieldsets['aboutyou']['fields'] as $field)
-					{
-
-						$displayData->setFieldAttribute($field, 'readonly', 'true');
-						echo $displayData->renderField($field, null, null, array('class' => 'control-wrapper-' . $field));
-
-
-					} ?>
+                    <?php foreach ($fieldsets['aboutyou']['fields'] as $field) {
+                        $displayData->setFieldAttribute($field, 'readonly', 'true');
+                        echo $displayData->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+                    } ?>
                     <input type="hidden" id="veldeveloperupdate_id" name="jform[veldeveloperupdate_id]"
                            value="<?php echo $rawData->get('id'); ?>">
                 </div>
@@ -86,14 +84,10 @@ $fscount                      = 0;
             <h1><?php echo $fieldsets['final']['title']; ?></h1>
             <div class="container">
                 <div class="row">
-					<?php foreach ($fieldsets['final']['fields'] as $field)
-					{
-
-						//$displayData->setFieldAttribute($field, 'readonly', 'true');
-						echo $displayData->renderField($field, null, null, array('class' => 'control-wrapper-' . $field));
-
-
-					} ?>
+                    <?php foreach ($fieldsets['final']['fields'] as $field) {
+                        //$displayData->setFieldAttribute($field, 'readonly', 'true');
+                        echo $displayData->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+                    } ?>
                     <div id="veldeveloperbutton"></div>
                 </div>
             </div>

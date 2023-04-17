@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -8,7 +9,9 @@
 
 namespace Jed\Component\Jed\Administrator\View\Home;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
@@ -30,86 +33,88 @@ use Joomla\Registry\Registry;
  */
 class HtmlView extends BaseHtmlView
 {
-	/**
-	 * The active filters
-	 *
-	 * @var    array
-	 * @since  4.0.0
-	 */
-	public array $activeFilters = [];
-	/**
-	 * The form filter
-	 *
-	 * @var    Form|null
-	 * @since  4.0.0
-	 */
-	public ?Form $filterForm;
-	/**
-	 * List of items to show
-	 *
-	 * @var    array
-	 * @since  4.0.0
-	 */
-	protected array $items = [];
+    /**
+     * The active filters
+     *
+     * @var    array
+     * @since  4.0.0
+     */
+    public array $activeFilters = [];
+    /**
+     * The form filter
+     *
+     * @var    Form|null
+     * @since  4.0.0
+     */
+    public ?Form $filterForm;
+    /**
+     * List of items to show
+     *
+     * @var    array
+     * @since  4.0.0
+     */
+    protected array $items = [];
 
-	/**
-	 * Pagination object
-	 *
-	 * @var    Pagination
-	 * @since  4.0.0
-	 */
-	protected Pagination $pagination;
+    /**
+     * Pagination object
+     *
+     * @var    Pagination
+     * @since  4.0.0
+     */
+    protected Pagination $pagination;
 
-	/**
-	 * The model state
-	 *
-	 * @var    Registry
-	 * @since  4.0.0
-	 */
-	protected Registry $state;
+    /**
+     * The model state
+     *
+     * @var    Registry
+     * @since  4.0.0
+     */
+    protected Registry $state;
 
-	/**
-	 * Add the page title and toolbar.
-	 *
-	 * @since  4.0.0
-	 * @throws Exception
-	 */
-	private function addToolbar(): void
-	{
-		ToolBarHelper::title(Text::_('COM_JED'));
+    /**
+     * Add the page title and toolbar.
+     *
+     * @since  4.0.0
+     * @throws Exception
+     */
+    private function addToolbar(): void
+    {
+        ToolBarHelper::title(Text::_('COM_JED'));
 
-		$user = Factory::getApplication()->getIdentity();
+        $user = Factory::getApplication()->getIdentity();
 
-		if ($user->authorise('core.admin', 'com_jed')
-			|| $user->authorise(
-				'core.options', 'com_jed'
-			))
-		{
-			$bar = Toolbar::getInstance();
+        if (
+            $user->authorise('core.admin', 'com_jed')
+            || $user->authorise(
+                'core.options',
+                'com_jed'
+            )
+        ) {
+            $bar = Toolbar::getInstance();
 
-			JedHelper::addConfigToolbar($bar);
+            JedHelper::addConfigToolbar($bar);
 
 
-			ToolbarHelper::preferences('com_jed');
-		}
-	}
+            ToolbarHelper::preferences('com_jed');
+        }
+    }
 
-	/**
-	 * Execute and display a template script.
-	 *
-	 * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
-	 *
-	 * @return  void
-	 *
-	 * @since  4.0.0
-	 * @throws  Exception
-	 */
-	public function display($tpl = null): void
-	{
-		/** @var HomeModel $model */
+    /**
+     * Execute and display a template script.
+     *
+     * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+     *
+     * @return  void
+     *
+     * @since  4.0.0
+     * @throws  Exception
+     */
+    public function display($tpl = null): void
+    {
+        /** @var HomeModel $model */
 
-		$this->addToolbar();
+        $this->addToolbar();
 
-		parent::display($tpl);
-	}
+        parent::display($tpl);
+    }
 }

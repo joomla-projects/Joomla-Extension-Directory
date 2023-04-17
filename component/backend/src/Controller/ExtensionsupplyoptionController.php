@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -8,7 +9,9 @@
 
 namespace Jed\Component\Jed\Administrator\Controller;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\MVC\Controller\FormController;
 
@@ -19,5 +22,5 @@ use Joomla\CMS\MVC\Controller\FormController;
  */
 class ExtensionsupplyoptionController extends FormController
 {
-	protected $view_list = 'extensionsupplyoptions';
+    protected $view_list = 'extensionsupplyoptions';
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package       JED
  *
@@ -8,7 +9,9 @@
 
 namespace Jed\Component\Jed\Administrator\Field;
 
-defined('JPATH_BASE') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Factory;
@@ -21,44 +24,40 @@ use Joomla\CMS\Form\FormField;
  */
 class CreatedbyField extends FormField
 {
-	/**
-	 * The form field type.
-	 *
-	 * @var        string
-	 * @since  4.0.0
-	 */
-	protected $type = 'createdby';
+    /**
+     * The form field type.
+     *
+     * @var        string
+     * @since  4.0.0
+     */
+    protected $type = 'createdby';
 
-	/**
-	 * Method to get the field input markup.
-	 *
-	 * @return    string    The field input markup.
-	 *
-	 * @since  4.0.0
-	 */
-	protected function getInput(): string
-	{
-		// Initialize variables.
-		$html = array();
+    /**
+     * Method to get the field input markup.
+     *
+     * @return    string    The field input markup.
+     *
+     * @since  4.0.0
+     */
+    protected function getInput(): string
+    {
+        // Initialize variables.
+        $html = [];
 
-		// Load user
-		$user_id = $this->value;
+        // Load user
+        $user_id = $this->value;
 
-		if ($user_id)
-		{
-			$user = JedHelper::getUserById($user_id);
-		}
-		else
-		{
-			$user   = JedHelper::getUser();
-			$html[] = '<input type="hidden" name="' . $this->name . '" value="' . $user->id . '" />';
-		}
+        if ($user_id) {
+            $user = JedHelper::getUserById($user_id);
+        } else {
+            $user   = JedHelper::getUser();
+            $html[] = '<input type="hidden" name="' . $this->name . '" value="' . $user->id . '" />';
+        }
 
-		if (!$this->hidden)
-		{
-			$html[] = "<div>" . $user->name . " (" . $user->username . ")</div>";
-		}
+        if (!$this->hidden) {
+            $html[] = "<div>" . $user->name . " (" . $user->username . ")</div>";
+        }
 
-		return implode($html);
-	}
+        return implode($html);
+    }
 }

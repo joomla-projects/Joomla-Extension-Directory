@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -19,56 +20,55 @@ use RuntimeException;
 
 class RouterFactory implements RouterFactoryInterface
 {
-	/**
-	 * The category factory object for ATS
-	 *
-	 * @var   CategoryFactoryInterface
-	 * @since 4.0.0
-	 */
-	private $categoryFactory;
+    /**
+     * The category factory object for ATS
+     *
+     * @var   CategoryFactoryInterface
+     * @since 4.0.0
+     */
+    private $categoryFactory;
 
-	/**
-	 * The database factory object
-	 *
-	 * @var   DatabaseInterface|null
-	 * @since 4.0.0
-	 */
-	private $db;
+    /**
+     * The database factory object
+     *
+     * @var   DatabaseInterface|null
+     * @since 4.0.0
+     */
+    private $db;
 
-	/**
-	 * THe MVC factory object
-	 *
-	 * @var   MVCFactoryInterface
-	 * @since 4.0.0
-	 */
-	private $factory;
+    /**
+     * THe MVC factory object
+     *
+     * @var   MVCFactoryInterface
+     * @since 4.0.0
+     */
+    private $factory;
 
-	/**
-	 * The extension's namespace
-	 *
-	 * @var   string
-	 * @since 4.0.0
-	 */
-	private $namespace;
+    /**
+     * The extension's namespace
+     *
+     * @var   string
+     * @since 4.0.0
+     */
+    private $namespace;
 
-	public function __construct(string $namespace, DatabaseInterface $db = null, MVCFactoryInterface $factory, CategoryFactoryInterface $categoryFactory)
-	{
-		$this->namespace       = $namespace;
-		$this->factory         = $factory;
-		$this->db              = $db;
-		$this->categoryFactory = $categoryFactory;
-	}
+    public function __construct(string $namespace, DatabaseInterface $db = null, MVCFactoryInterface $factory, CategoryFactoryInterface $categoryFactory)
+    {
+        $this->namespace       = $namespace;
+        $this->factory         = $factory;
+        $this->db              = $db;
+        $this->categoryFactory = $categoryFactory;
+    }
 
-	/** @inheritdoc */
-	public function createRouter(CMSApplicationInterface $application, AbstractMenu $menu): RouterInterface
-	{
-		$className = trim($this->namespace, '\\') . '\\' . ucfirst($application->getName()) . '\\Service\\Router';
+    /** @inheritdoc */
+    public function createRouter(CMSApplicationInterface $application, AbstractMenu $menu): RouterInterface
+    {
+        $className = trim($this->namespace, '\\') . '\\' . ucfirst($application->getName()) . '\\Service\\Router';
 
-		if (!class_exists($className))
-		{
-			throw new RuntimeException('No router available for this application.');
-		}
+        if (!class_exists($className)) {
+            throw new RuntimeException('No router available for this application.');
+        }
 
-		return new $className($application, $menu, $this->db, $this->factory, $this->categoryFactory);
-	}
+        return new $className($application, $menu, $this->db, $this->factory, $this->categoryFactory);
+    }
 }

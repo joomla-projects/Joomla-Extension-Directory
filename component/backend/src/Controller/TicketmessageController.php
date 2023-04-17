@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package       JED
  *
@@ -10,9 +11,12 @@
 
 namespace Jed\Component\Jed\Administrator\Controller;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\MVC\Controller\FormController;
+
 use function defined;
 
 /**
@@ -22,13 +26,12 @@ use function defined;
  */
 class TicketmessageController extends FormController
 {
-	/**
-	 * A string showing the plural of the current object
-	 *
-	 * @var    string
-	 *
-	 * @since  4.0.0
-	 */
-	protected $view_list = 'ticketmessages';
-
-} 
+    /**
+     * A string showing the plural of the current object
+     *
+     * @var    string
+     *
+     * @since  4.0.0
+     */
+    protected $view_list = 'ticketmessages';
+}

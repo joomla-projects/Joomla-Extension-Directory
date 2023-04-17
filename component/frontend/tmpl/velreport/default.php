@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package       JED
  *
@@ -9,13 +10,14 @@
  */
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Language\Text;
 
-if (!is_null($this->item))
-{
-	?>
+if (!is_null($this->item)) {
+    ?>
 
     <div class="item_fields">
 
@@ -151,7 +153,7 @@ if (!is_null($this->item))
                 <th><?php echo Text::_('COM_JED_VEL_GENERAL_FIELD_CONSENT_TO_PROCESS_NOTIFICATION_LABEL'); ?></th>
                 <td><?php echo $this->item->consent_to_process; ?></td>
             </tr>
-			<?php /*
+            <?php /*
             <tr>
                 <th><?php echo Text::_('COM_JED_VEL_GENERAL_FIELD_PASSED_TO_VEL_LABEL'); ?></th>
                 <td><?php echo $this->item->passed_to_vel; ?></td>
@@ -202,15 +204,13 @@ if (!is_null($this->item))
     </div>
 
 
-	<?php
-}
-else
-{ ?>
+    <?php
+} else { ?>
     <div class="jed-error">
-		<?php echo Text::sprintf('COM_JED_VEL_REDIRECT_TO_MY_LISTS', Text::_('COM_JED_VEL_REDIRECT_VELREPORT')); ?>
+        <?php echo Text::sprintf('COM_JED_VEL_REDIRECT_TO_MY_LISTS', Text::_('COM_JED_VEL_REDIRECT_VELREPORT')); ?>
         <br/>
         <a href="index.php?option=com_jed&view=velreports" class="btn btn-primary"><?php echo Text::_('JYES'); ?></a>
     </div>
-	<?php
+    <?php
 }
 ?>

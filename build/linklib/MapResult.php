@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package   buildfiles
  * @copyright Copyright (c)2010-2021 Nicholas K. Dionysopoulos / Akeeba Ltd
@@ -16,95 +17,93 @@ namespace Akeeba\LinkLibrary;
  */
 class MapResult
 {
-	private $symlinkFiles = [];
+    private $symlinkFiles = [];
 
-	private $hardLinkFiles = [];
+    private $hardLinkFiles = [];
 
-	private $symlinkFolders = [];
+    private $symlinkFolders = [];
 
-	public function __get(string $name)
-	{
-		switch ($name)
-		{
-			case 'dirs':
-				return $this->getSymlinkFolders();
-				break;
+    public function __get(string $name)
+    {
+        switch ($name) {
+            case 'dirs':
+                return $this->getSymlinkFolders();
+                break;
 
-			case 'files':
-				return $this->getSymlinkFiles();
-				break;
+            case 'files':
+                return $this->getSymlinkFiles();
+                break;
 
-			case 'hardfiles':
-				return $this->getHardLinkFiles();
-				break;
-		}
+            case 'hardfiles':
+                return $this->getHardLinkFiles();
+                break;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public function __set(string $name, $value)
-	{
-		switch ($name)
-		{
-			case 'dirs':
-				$this->setSymlinkFolders($value);
-				break;
+    public function __set(string $name, $value)
+    {
+        switch ($name) {
+            case 'dirs':
+                $this->setSymlinkFolders($value);
+                break;
 
-			case 'files':
-				$this->setSymlinkFiles($value);
-				break;
+            case 'files':
+                $this->setSymlinkFiles($value);
+                break;
 
-			case 'hardfiles':
-				$this->setHardLinkFiles($value);
-				break;
-		}
-	}
+            case 'hardfiles':
+                $this->setHardLinkFiles($value);
+                break;
+        }
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getSymlinkFiles()
-	{
-		return $this->symlinkFiles;
-	}
+    /**
+     * @return array
+     */
+    public function getSymlinkFiles()
+    {
+        return $this->symlinkFiles;
+    }
 
-	/**
-	 * @param array $symlinkFiles
-	 */
-	public function setSymlinkFiles(array $symlinkFiles)
-	{
-		$this->symlinkFiles = $symlinkFiles;
-	}
+    /**
+     * @param array $symlinkFiles
+     */
+    public function setSymlinkFiles(array $symlinkFiles)
+    {
+        $this->symlinkFiles = $symlinkFiles;
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getHardLinkFiles()
-	{
-		return $this->hardLinkFiles;
-	}
+    /**
+     * @return array
+     */
+    public function getHardLinkFiles()
+    {
+        return $this->hardLinkFiles;
+    }
 
-	/**
-	 * @param array $hardLinkFiles
-	 */
-	public function setHardLinkFiles(array $hardLinkFiles)
-	{
-		$this->hardLinkFiles = $hardLinkFiles;
-	}
+    /**
+     * @param array $hardLinkFiles
+     */
+    public function setHardLinkFiles(array $hardLinkFiles)
+    {
+        $this->hardLinkFiles = $hardLinkFiles;
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getSymlinkFolders()
-	{
-		return $this->symlinkFolders;
-	}
+    /**
+     * @return array
+     */
+    public function getSymlinkFolders()
+    {
+        return $this->symlinkFolders;
+    }
 
-	/**
-	 * @param array $symlinkFolders
-	 */
-	public function setSymlinkFolders(array $symlinkFolders)
-	{
-		$this->symlinkFolders = $symlinkFolders;
-	}
+    /**
+     * @param array $symlinkFolders
+     */
+    public function setSymlinkFolders(array $symlinkFolders)
+    {
+        $this->symlinkFolders = $symlinkFolders;
+    }
 }

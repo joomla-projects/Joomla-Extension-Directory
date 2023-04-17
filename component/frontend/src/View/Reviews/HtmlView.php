@@ -8,8 +8,11 @@
  */
 
 namespace Jed\Component\Jed\Site\View\Reviews;
+
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
@@ -44,20 +47,19 @@ class HtmlView extends BaseHtmlView
     {
         $app = Factory::getApplication();
 
-        $this->state = $this->get('State');
-        $this->items = $this->get('Items');
-        $this->pagination = $this->get('Pagination');
-        $this->params = $app->getParams('com_jed');
-        $this->filterForm = $this->get('FilterForm');
+        $this->state         = $this->get('State');
+        $this->items         = $this->get('Items');
+        $this->pagination    = $this->get('Pagination');
+        $this->params        = $app->getParams('com_jed');
+        $this->filterForm    = $this->get('FilterForm');
         $this->activeFilters = $this->get('ActiveFilters');
 
         // Check for errors.
-	if (count($errors = $this->get('Errors')))
-	{
+        if (count($errors = $this->get('Errors'))) {
             throw new Exception(implode("\n", $errors));
         }
 
-        $this->_prepareDocument();
+        $this->prepareDocument();
         parent::display($tpl);
     }
 
@@ -68,7 +70,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      */
-    protected function _prepareDocument()
+    protected function prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
@@ -110,7 +112,7 @@ class HtmlView extends BaseHtmlView
 
 
         // Add Breadcrumbs
-        $pathway = $app->getPathway();
+        $pathway         = $app->getPathway();
         $breadcrumbTitle = Text::_('COM_JED_TITLE_REVIEWS');
 
         if (!in_array($breadcrumbTitle, $pathway->getPathwayNames())) {

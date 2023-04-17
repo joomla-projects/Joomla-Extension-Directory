@@ -6,6 +6,8 @@
 
     <!-- Exclude 3rd party libraries and Framework code. -->
     <exclude-pattern type="relative">^component/backend/vendor/*</exclude-pattern>
+	<exclude-pattern type="relative">^component/backend/layouts/*</exclude-pattern>
+    <exclude-pattern type="relative">^libraries/*</exclude-pattern>
 
     <rule ref="PSR12" />
 
@@ -17,26 +19,42 @@
         </properties>
     </rule>
 
+    <rule ref="PSR1.Files.SideEffects">
+        <exclude-pattern type="relative">build/lib/phpStormSourceHandling\.php</exclude-pattern>
+    </rule>
+
+    <rule ref="PSR1.Classes.ClassDeclaration">
+        <exclude-pattern type="relative">build/lib/phpStormSourceHandling\.php</exclude-pattern>
+        <exclude-pattern type="relative">build/lib/ZipmeFileSet\.php</exclude-pattern>
+        <exclude-pattern type="relative">build/tasks/AutoversionTask\.php</exclude-pattern>
+        <exclude-pattern type="relative">build/tasks/PhpStormSources\.php</exclude-pattern>
+        <exclude-pattern type="relative">build/tasks/RelinkSiteTask\.php</exclude-pattern>
+        <exclude-pattern type="relative">build/tasks/XmlVersionTask\.php</exclude-pattern>
+        <exclude-pattern type="relative">build/tasks/ZipmeTask\.php</exclude-pattern>
+
+        <exclude-pattern type="relative">component/installscript\.php</exclude-pattern>
+    </rule>
+
     <rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
-        <exclude-pattern type="relative">plugins/system/cache/cache\.php</exclude-pattern>
+        <exclude-pattern type="relative">component/frontend/src/Model/CategoriesModel\.php</exclude-pattern>
+        <exclude-pattern type="relative">component/backend/src/Model/ExtensionModel\.php</exclude-pattern>
     </rule>
 
     <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
-        <exclude-pattern type="relative">libraries/src/Utility/BufferStreamHandler\.php</exclude-pattern>
+        <exclude-pattern type="relative">build/linklib/LinkHelper\.php</exclude-pattern>
+        <exclude-pattern type="relative">component/frontend/src/Helper/JedHelper\.php</exclude-pattern>
+        <exclude-pattern type="relative">component/installscript\.php</exclude-pattern>
     </rule>
 
     <rule ref="PSR2.Methods.MethodDeclaration.Underscore">
-        <!-- should be reconsidered -->
-        <exclude-pattern type="relative">libraries/cms\.php</exclude-pattern>
-        <exclude-pattern type="relative">libraries/loader\.php</exclude-pattern>
-    </rule>
-
-    <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
-        <!-- expected -->
-        <exclude-pattern type="relative">administrator/components/com_joomlaupdate/finalisation\.php</exclude-pattern>
+        <exclude-pattern type="relative">component/backend/src/Table/*\.php</exclude-pattern>
     </rule>
 
     <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
-        <exclude-pattern type="relative">index\.php</exclude-pattern>
+        <exclude-pattern type="relative">build/tasks/ZipmeTask\.php</exclude-pattern>
+    </rule>
+
+    <rule ref="Squiz.Classes.ValidClassName">
+        <exclude-pattern type="relative">component/installscript\.php</exclude-pattern>
     </rule>
 </ruleset>

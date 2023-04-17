@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package           JED
  *
@@ -12,16 +13,20 @@
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Language\Text;
 
-defined('_JEXEC') or die('Restricted access');
+// phpcs:disable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:enable PSR1.Files.SideEffects
 /* @var $displayData array */
-$headerlabeloptions = array('hiddenLabel' => true, 'readonly' => true);
-$fieldhiddenoptions = array('hidden' => true);
+$headerlabeloptions = ['hiddenLabel' => true, 'readonly' => true];
+$fieldhiddenoptions = ['hidden' => true];
 $linked_form        = $displayData["linked_form"];
 //echo "<pre>";print_r($displayData);echo "</pre>";exit();
 $linked_extension = $displayData["extension"];
 $linked_data      = $displayData["linked_data"];
 
-JedHelper::lockFormFields($linked_form, array('published'));
+JedHelper::lockFormFields($linked_form, ['published']);
 
 ?>
 <div class="span10 form-horizontal">
@@ -61,20 +66,20 @@ JedHelper::lockFormFields($linked_form, array('published'));
     <P>&nbsp;</P>
     <div class="row ticket-header-row">
         <div class="col-md-6   ticket-header">
-			<?php echo $linked_form->renderField('title', null, null); ?>
+            <?php echo $linked_form->renderField('title', null, null); ?>
         </div>
         <div class="col-md-6   ticket-header">
 
-			<?php echo $linked_form->renderField('alias', null, null); ?>
+            <?php echo $linked_form->renderField('alias', null, null); ?>
         </div>
 
     </div>
     <div class="row ticket-header-row">
         <div class="col-md-12   ticket-header">
-			<?php echo $linked_form->renderField('body', null, null); ?>
+            <?php echo $linked_form->renderField('body', null, null); ?>
         </div>
         <div class="col-md-12   ticket-header">
-			<?php echo $linked_form->renderField('used_for', null, null); ?>
+            <?php echo $linked_form->renderField('used_for', null, null); ?>
         </div>
     </div>
     <div class="row ticket-header-row">
@@ -82,7 +87,7 @@ JedHelper::lockFormFields($linked_form, array('published'));
             <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_FUNCTIONALITY_LABEL') . ' - ' . $linked_data[0]->functionality; ?></h1>
         </div>
         <div class="col-md-10   ticket-header">
-			<?php echo $linked_form->renderField('functionality_comment', null, null, $headerlabeloptions); ?>
+            <?php echo $linked_form->renderField('functionality_comment', null, null, $headerlabeloptions); ?>
         </div>
     </div>
     <div class="row ticket-header-row">
@@ -90,7 +95,7 @@ JedHelper::lockFormFields($linked_form, array('published'));
             <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_EASE_OF_USE_LABEL') . ' - ' . $linked_data[0]->ease_of_use; ?></h1>
         </div>
         <div class="col-md-10   ticket-header">
-			<?php echo $linked_form->renderField('ease_of_use_comment', null, null, $headerlabeloptions); ?>
+            <?php echo $linked_form->renderField('ease_of_use_comment', null, null, $headerlabeloptions); ?>
         </div>
     </div>
     <div class="row ticket-header-row">
@@ -98,7 +103,7 @@ JedHelper::lockFormFields($linked_form, array('published'));
             <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_SUPPORT_LABEL') . ' - ' . $linked_data[0]->support; ?></h1>
         </div>
         <div class="col-md-10   ticket-header">
-			<?php echo $linked_form->renderField('support_comment', null, null, $headerlabeloptions); ?>
+            <?php echo $linked_form->renderField('support_comment', null, null, $headerlabeloptions); ?>
         </div>
     </div>
     <div class="row ticket-header-row">
@@ -106,7 +111,7 @@ JedHelper::lockFormFields($linked_form, array('published'));
             <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_DOCUMENTATION_LABEL') . ' - ' . $linked_data[0]->documentation; ?></h1>
         </div>
         <div class="col-md-10   ticket-header">
-			<?php echo $linked_form->renderField('documentation_comment', null, null, $headerlabeloptions); ?>
+            <?php echo $linked_form->renderField('documentation_comment', null, null, $headerlabeloptions); ?>
         </div>
     </div>
     <div class="row ticket-header-row">
@@ -114,7 +119,7 @@ JedHelper::lockFormFields($linked_form, array('published'));
             <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_VALUE_FOR_MONEY_LABEL') . ' - ' . $linked_data[0]->value_for_money; ?></h1>
         </div>
         <div class="col-md-10   ticket-header">
-			<?php echo $linked_form->renderField('value_for_money_comment', null, null, $headerlabeloptions); ?>
+            <?php echo $linked_form->renderField('value_for_money_comment', null, null, $headerlabeloptions); ?>
         </div>
     </div>
     <div class="row ticket-header-row">
@@ -136,31 +141,31 @@ JedHelper::lockFormFields($linked_form, array('published'));
 
 $fieldsets['scores']['title']       = Text::_('COM_JED_REVIEW_SCORES_TITLE');
 $fieldsets['scores']['description'] = Text::_('COM_JED_REVIEW_SCORES_DESCR');
-$fieldsets['scores']['fields']      = array(
+$fieldsets['scores']['fields']      = [
 
-	'functionality',
-	'ease_of_use',
-	'support',
-	'documentation',
-	'value_for_money',
-	'overall_score');
+    'functionality',
+    'ease_of_use',
+    'support',
+    'documentation',
+    'value_for_money',
+    'overall_score'];
 
 
 $fieldsets['comments']['title']       = Text::_('COM_JED_REVIEW_COMMENTS_TITLE');
 $fieldsets['comments']['description'] = Text::_('COM_JED_REVIEW_COMMENTS_DESCR');
-$fieldsets['comments']['fields']      = array('functionality_comment',
-	'ease_of_use_comment',
-	'support_comment',
-	'documentation_comment',
-	'value_for_money_comment');
-$fieldsets['comments']['hidden']      = array();
+$fieldsets['comments']['fields']      = ['functionality_comment',
+    'ease_of_use_comment',
+    'support_comment',
+    'documentation_comment',
+    'value_for_money_comment'];
+$fieldsets['comments']['hidden']      = [];
 
 $fieldsets['hidden']['title']       = '';
 $fieldsets['hidden']['description'] = '';
-$fieldsets['hidden']['fields']      = array('flagged',
-	'ip_address',
-	'published',
-	'created_on');
+$fieldsets['hidden']['fields']      = ['flagged',
+    'ip_address',
+    'published',
+    'created_on'];
 $fieldsets['hidden']['hidden']      = $fieldsets['hidden']['fields']
 
 ?>

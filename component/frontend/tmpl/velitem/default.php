@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package       JED
  *
@@ -9,7 +10,9 @@
  */
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 
 use Jed\Component\Jed\Site\Helper\JedHelper;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -8,7 +9,9 @@
 
 namespace Jed\Component\Jed\Site\Dispatcher;
 
-defined('JPATH_PLATFORM') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Dispatcher\ComponentDispatcher;
 
@@ -19,15 +22,15 @@ use Joomla\CMS\Dispatcher\ComponentDispatcher;
  */
 class Dispatcher extends ComponentDispatcher
 {
-	/**
-	 * Dispatch a controller task. Redirecting the user if appropriate.
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 */
-	public function dispatch()
-	{
-		parent::dispatch();
-	}
+    /**
+     * Dispatch a controller task. Redirecting the user if appropriate.
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     */
+    public function dispatch()
+    {
+        parent::dispatch();
+    }
 }

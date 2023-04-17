@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package       JED
  *
@@ -9,13 +10,14 @@
  */
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Language\Text;
 
-if (!is_null($this->item))
-{
-	?>
+if (!is_null($this->item)) {
+    ?>
 
     <div class="item_fields">
 
@@ -87,7 +89,7 @@ if (!is_null($this->item))
                 <th><?php echo Text::_('COM_JED_GENERAL_FIELD_DATE_SUBMITTED_LABEL'); ?></th>
                 <td><?php echo $this->item->update_date_submitted; ?></td>
             </tr>
-			<?php /*
+            <?php /*
 
             <tr>
                 <th><?php echo Text::_('COM_JED_VEL_GENERAL_FIELD_VEL_ITEM_ID_LABEL'); ?></th>
@@ -129,16 +131,14 @@ if (!is_null($this->item))
     </div>
 
 
-	<?php
-}
-else
-{ ?>
+    <?php
+} else { ?>
     <div class="jed-error">
-		<?php echo Text::sprintf('COM_JED_VEL_REDIRECT_TO_MY_LISTS', Text::_('COM_JED_VEL_REDIRECT_DEVELOPERUPDATES')); ?>
+        <?php echo Text::sprintf('COM_JED_VEL_REDIRECT_TO_MY_LISTS', Text::_('COM_JED_VEL_REDIRECT_DEVELOPERUPDATES')); ?>
         <br/>
         <a href="index.php?option=com_jed&view=veldeveloperupdates"
            class="btn btn-primary"><?php echo Text::_('JYES'); ?></a>
     </div>
-	<?php
+    <?php
 }
 ?>

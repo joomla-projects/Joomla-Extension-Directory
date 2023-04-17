@@ -11,7 +11,9 @@
 
 namespace Jed\Component\Jed\Administrator\Controller;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 
 use Exception;
@@ -21,6 +23,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
+
 use function defined;
 
 /**
@@ -50,8 +53,7 @@ class JedticketController extends FormController
 
         $this->task = $_POST['task'];
 
-		if ($this->task == "jedticket.assignDeveloperUpdatetoVEL")
-		{
+        if ($this->task == "jedticket.assignDeveloperUpdatetoVEL") {
             $ticketId    = $_POST["jform"]['id'];
             $reportId    = $_POST["jform"]['linked_item_id'];
             $vel_item_id = $_POST["jform"]['vel_item_id'];
@@ -67,7 +69,6 @@ class JedticketController extends FormController
             $app = Factory::getApplication();
             $app->enqueueMessage('Developer Update linked to Existing VEL Item', 'success');
             $this->setRedirect(Route::_('index.php?option=com_jed&view=jedticket&layout=edit&id=' . (int) $ticketId, false));
-
         }
     }
 
@@ -82,9 +83,7 @@ class JedticketController extends FormController
 
         $this->task = $_POST['task'];
 
-		if ($this->task == "jedticket.copyAbandonedReporttoVEL")
-		{
-
+        if ($this->task == "jedticket.copyAbandonedReporttoVEL") {
             $reportId = $_POST["jform"]['linked_item_id'];
 
             $querySelect = $db->getQuery(true)
@@ -94,10 +93,10 @@ class JedticketController extends FormController
 
             $queryInsert = $db->getQuery(true)
                 ->insert('#__jed_vel_vulnerable_item')
-                ->columns($db->qn(array(
+                ->columns($db->qn([
                     'id', 'vulnerable_item_name', 'vulnerable_item_version', 'title', 'internal_description', 'status', 'report_id', 'jed', 'risk_level', 'start_version', 'vulnerable_version', 'patch_version', 'recommendation',
-                    'update_notice', 'exploit_type', 'exploit_other_description', 'xml_manifest', 'manifest_location', 'install_data', 'discovered_by', 'public_description'
-                )))
+                    'update_notice', 'exploit_type', 'exploit_other_description', 'xml_manifest', 'manifest_location', 'install_data', 'discovered_by', 'public_description',
+                ]))
                 ->values($querySelect);
             //echo $queryInsert->__toString();exit();
             $db->setQuery($queryInsert);
@@ -107,10 +106,10 @@ class JedticketController extends FormController
 
             $queryUpdate = $db->getQuery(true)
                 ->update('#__jed_vel_abandoned_report')
-                ->set(array(
+                ->set([
                     $db->qn('passed_to_vel') . ' = 1',
-                    ($db->qn('vel_item_id') . ' = ' . $newVel)
-                ))
+                    ($db->qn('vel_item_id') . ' = ' . $newVel),
+                ])
                 ->where($db->qn('id') . ' = ' . $reportId);
 
             $db->setQuery($queryUpdate);
@@ -118,7 +117,7 @@ class JedticketController extends FormController
 
             /* CHECK IN THIS MODEL */
             $model = $this->getModel();
-            $cid   = $this->input->get('id', array(), 'array');
+            $cid   = $this->input->get('id', [], 'array');
             $model->checkIn($cid[0]);
 
             $this->setRedirect(Route::_('index.php?option=com_jed&view=velvulnerableitem&task=velvulnerableitem.edit&id=' . (int) $newVel, false));
@@ -136,10 +135,16 @@ class JedticketController extends FormController
     {
         $db         = Factory::getContainer()->get('DatabaseDriver');
         $this->task = $_POST['task'];
-		if ($this->task == "jedticket.copyReporttoVEL")
-		{
-
-            /*SELECT   `id`, `vulnerable_item_name`, `vulnerable_item_version`, `title`, `internal_description`, `status`, `report_id`, `jed`, `risk_level`, `start_version`, `vulnerable_version`, `patch_version`, `recommendation`, `update_notice`, `exploit_type`, `exploit_other_description`, `xml_manifest`, `manifest_location`, `install_data`, `discovered_by`, `discoverer_public`, `fixed_by`, `coordinated_by`, `jira`, `cve_id`, `cwe_id`, `cvssthirty_base`, `cvssthirty_base_score`, `cvssthirty_temp`, `cvssthirty_temp_score`, `cvssthirty_env`, `cvssthirty_env_score`, `public_description`, `alias`, `created_by`, `modified_by`, `created`, `modified`, `checked_out`, `checked_out_time`, `state` FROM  #__jed_vel_vulnerable_item` */
+        if ($this->task == "jedticket.copyReporttoVEL") {
+            /*SELECT   `id`, `vulnerable_item_name`, `vulnerable_item_version`,
+            `title`, `internal_description`, `status`, `report_id`, `jed`, `risk_level`,
+             `start_version`, `vulnerable_version`, `patch_version`, `recommendation`, `update_notice`,
+            `exploit_type`, `exploit_other_description`, `xml_manifest`, `manifest_location`,
+            `install_data`, `discovered_by`, `discoverer_public`, `fixed_by`, `coordinated_by`,
+            `jira`, `cve_id`, `cwe_id`, `cvssthirty_base`, `cvssthirty_base_score`, `cvssthirty_temp`,
+            `cvssthirty_temp_score`, `cvssthirty_env`, `cvssthirty_env_score`, `public_description`,
+            `alias`, `created_by`, `modified_by`, `created`, `modified`, `checked_out`, `checked_out_time`,
+            `state` FROM  #__jed_vel_vulnerable_item` */
             $reportId = $_POST["jform"]['linked_item_id'];
 
             $exploit_string = Text::_('COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_OPTION_' . $_POST["jform"]['exploit_type']);
@@ -153,10 +158,10 @@ class JedticketController extends FormController
 
             $queryInsert = $db->getQuery(true)
                 ->insert('#__jed_vel_vulnerable_item')
-                ->columns($db->qn(array(
+                ->columns($db->qn([
                     'id', 'vulnerable_item_name', 'vulnerable_item_version', 'title', 'internal_description', 'status', 'report_id', 'jed', 'risk_level', 'start_version', 'vulnerable_version', 'patch_version', 'recommendation',
-                    'update_notice', 'exploit_type', 'exploit_other_description', 'xml_manifest', 'manifest_location', 'install_data', 'discovered_by', 'public_description', 'created'
-                )))
+                    'update_notice', 'exploit_type', 'exploit_other_description', 'xml_manifest', 'manifest_location', 'install_data', 'discovered_by', 'public_description', 'created',
+                ]))
                 ->values($querySelect);
 
             $db->setQuery($queryInsert);
@@ -166,10 +171,10 @@ class JedticketController extends FormController
 
             $queryUpdate = $db->getQuery(true)
                 ->update('#__jed_vel_report')
-                ->set(array(
+                ->set([
                     $db->qn('passed_to_vel') . ' = 1',
-                    ($db->qn('vel_item_id') . ' = ' . $newVel)
-                ))
+                    ($db->qn('vel_item_id') . ' = ' . $newVel),
+                ])
                 ->where($db->qn('id') . ' = ' . $reportId);
 
             $db->setQuery($queryUpdate);
@@ -178,7 +183,7 @@ class JedticketController extends FormController
 
             /* CHECK IN THIS MODEL */
             $model = $this->getModel();
-            $cid   = $this->input->get('id', array(), 'array');
+            $cid   = $this->input->get('id', [], 'array');
             $model->checkIn($cid[0]);
             $this->setRedirect(Route::_('index.php?option=com_jed&view=velvulnerableitem&task=velvulnerableitem.edit&id=' . (int) $newVel, false));
         }
@@ -195,7 +200,7 @@ class JedticketController extends FormController
 
     public function getTemplate()
     {
-        //	Session::checkToken('post') or die;
+        //  Session::checkToken('post') or die;
         $app     = Factory::getApplication();
         $camp_id = $app->input->get('itemId', 0, 'int');
         $db      = Factory::getContainer()->get('DatabaseDriver');
@@ -222,9 +227,7 @@ class JedticketController extends FormController
 
         $this->task = $_POST['task'];
 
-	if ($this->task == "jedticket.gotoVEL")
-	{
-
+        if ($this->task == "jedticket.gotoVEL") {
             $jform     = $_POST['jform'];
             $ticket_id = $jform['id'];
 
@@ -247,8 +250,7 @@ class JedticketController extends FormController
     {
         $db         = Factory::getContainer()->get('DatabaseDriver');
         $this->task = $_POST['task'];
-	if ($this->task == "jedticket.linkDeveloperUpdatetoVEL")
-	{
+        if ($this->task == "jedticket.linkDeveloperUpdatetoVEL") {
             $jform     = $_POST['jform'];
             $ticket_id = $jform['id'];
 
@@ -265,7 +267,7 @@ class JedticketController extends FormController
 
             /* CHECK IN THIS MODEL */
             $model = $this->getModel();
-            $cid   = $this->input->get('id', array(), 'array');
+            $cid   = $this->input->get('id', [], 'array');
             $model->checkIn($cid[0]);
             $this->setRedirect(Route::_('index.php?option=com_jed&view=velvulnerableitem&task=velvulnerableitem.edit&id=' . (int) $vel_id, false));
         }
@@ -281,14 +283,13 @@ class JedticketController extends FormController
         $this->task = $_POST['task'];
 
 
-        if ($this->task == "jedticket.sendmessage") 
-	{
+        if ($this->task == "jedticket.sendmessage") {
             /* Functionality
-			1 - Verify
-			2 - Send email with mesage
-			3 - Store message to database
-			4 - Redirect back to ticket so message history reloads
-			*/
+            1 - Verify
+            2 - Send email with mesage
+            3 - Store message to database
+            4 - Redirect back to ticket so message history reloads
+            */
             // var_dump($_POST['jform']);exit();
             $subject = $_POST['jform']['message_subject'];
             $message = $_POST['jform']['message_text'];
@@ -321,12 +322,12 @@ class JedticketController extends FormController
             $internal_note['summary']   = $summary;
             $internal_note['note']      = $note;
             /*$internal_note['ordering']         = 0;
-			$internal_note['state']            = 0;
-			$internal_note['checked_out']      = 0;
-			$internal_note['checked_out_time'] = '0000-00-00 00:00:00';
-			$internal_note['created_by']       = $user->id;
-			$internal_note['modified_by']      = $user->id;
-			$internal_note['created_on']       = 'now()';*/
+            $internal_note['state']            = 0;
+            $internal_note['checked_out']      = 0;
+            $internal_note['checked_out_time'] = '0000-00-00 00:00:00';
+            $internal_note['created_by']       = $user->id;
+            $internal_note['modified_by']      = $user->id;
+            $internal_note['created_on']       = 'now()';*/
 
             $ticket_internal_notes_model->save($internal_note);
         }
@@ -348,19 +349,19 @@ class JedticketController extends FormController
         //$user                               = Factory::getUser();
         $ticket_message_model               = $this->getModel('Ticketmessage', 'Administrator');
 
-        $ticket_message['id']               = 0;
+        $ticket_message['id']                = 0;
         $ticket_message['ticket_id']         = $ticket_id;
         $ticket_message['subject']           = $subject;
         $ticket_message['message']           = $message;
         $ticket_message['message_direction'] = 0; /* 1 for coming in, 0 for going out */
-        $ticket_message['created_by']       = $user->id;
-        $ticket_message['modified_by']      = $user->id;
-        $ticket_message['created_on']       = 'now()';
-        $ticket_message['modified_on']      = 'now()';
-        $ticket_message['state']            = 0;
-        $ticket_message['ordering']         = 0;
-        $ticket_message['checked_out']      = 0;
-        $ticket_message['checked_out_time'] = '0000-00-00 00:00:00';
+        $ticket_message['created_by']        = $user->id;
+        $ticket_message['modified_by']       = $user->id;
+        $ticket_message['created_on']        = 'now()';
+        $ticket_message['modified_on']       = 'now()';
+        $ticket_message['state']             = 0;
+        $ticket_message['ordering']          = 0;
+        $ticket_message['checked_out']       = 0;
+        $ticket_message['checked_out_time']  = '0000-00-00 00:00:00';
 
 
         $ticket_message_model->save($ticket_message);

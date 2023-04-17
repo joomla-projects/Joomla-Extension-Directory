@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package        JED
  *
@@ -8,7 +9,9 @@
 
 namespace Jed\Component\Jed\Administrator\Controller;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
 use Joomla\CMS\Factory;
@@ -21,35 +24,34 @@ use Joomla\CMS\MVC\Controller\FormController;
  */
 class ReviewController extends FormController
 {
-	protected $view_list = 'reviews';
+    protected $view_list = 'reviews';
 
 
-	/**
-	 * setPublished
-	 *
-	 * function for ajax setting a review's published status
-	 *
-	 * @since 4.0.0
-	 * @throws Exception
-	 */
+    /**
+     * setPublished
+     *
+     * function for ajax setting a review's published status
+     *
+     * @since 4.0.0
+     * @throws Exception
+     */
 
-	public function setPublished()
-	{
-		//	Session::checkToken('post') or die;
-		$app       = Factory::getApplication();
-		$review_id = $app->input->get('itemId', 0, 'int');
+    public function setPublished()
+    {
+        //  Session::checkToken('post') or die;
+        $app       = Factory::getApplication();
+        $review_id = $app->input->get('itemId', 0, 'int');
 
-		$option_id = $app->input->get('optionId', 0, 'int');
-		$db        = Factory::getContainer()->get('DatabaseDriver');
+        $option_id = $app->input->get('optionId', 0, 'int');
+        $db        = Factory::getContainer()->get('DatabaseDriver');
 
-		$fields     = array($db->quoteName('published') . ' = ' . $db->quote($option_id));
-		$conditions = array($db->quoteName('id') . ' = ' . $db->quote($review_id));
+        $fields     = [$db->quoteName('published') . ' = ' . $db->quote($option_id)];
+        $conditions = [$db->quoteName('id') . ' = ' . $db->quote($review_id)];
 
 
-		$queryUpdate = $db->getQuery(true)
-			->update($db->quoteName('#__jed_reviews'))->set($fields)->where($conditions);
-		$db->setQuery($queryUpdate);
-		$db->execute();
-
-	}
+        $queryUpdate = $db->getQuery(true)
+            ->update($db->quoteName('#__jed_reviews'))->set($fields)->where($conditions);
+        $db->setQuery($queryUpdate);
+        $db->execute();
+    }
 }

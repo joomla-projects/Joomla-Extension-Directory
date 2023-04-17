@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -8,7 +9,9 @@
 
 namespace Jed\Component\Jed\Administrator\Controller;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 
 use Exception;
@@ -24,92 +27,87 @@ use Joomla\Utilities\ArrayHelper;
  */
 class ReviewscommentsController extends AdminController
 {
-	/**
-	 * Method to clone existing Reviewscomments
-	 *
-	 * @return  void
-	 *
-	 * @throws  Exception
-	 * @since 4.0.0
-	 */
-	public function duplicate()
-	{
-		// Check for request forgeries
-		$this->checkToken();
+    /**
+     * Method to clone existing Reviewscomments
+     *
+     * @return  void
+     *
+     * @throws  Exception
+     * @since 4.0.0
+     */
+    public function duplicate()
+    {
+        // Check for request forgeries
+        $this->checkToken();
 
-		// Get id(s)
-		$pks = $this->input->post->get('cid', array(), 'array');
+        // Get id(s)
+        $pks = $this->input->post->get('cid', [], 'array');
 
-		try
-		{
-			if (empty($pks))
-			{
-				throw new Exception(Text::_('COM_JED_NO_ELEMENT_SELECTED'));
-			}
+        try {
+            if (empty($pks)) {
+                throw new Exception(Text::_('COM_JED_NO_ELEMENT_SELECTED'));
+            }
 
-			ArrayHelper::toInteger($pks);
-			$model = $this->getModel();
-			$model->duplicate($pks);
-			$this->setMessage(Text::_('COM_JED_ITEMS_SUCCESS_DUPLICATED'));
-		}
-		catch (Exception $e)
-		{
-			Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
-		}
+            ArrayHelper::toInteger($pks);
+            $model = $this->getModel();
+            $model->duplicate($pks);
+            $this->setMessage(Text::_('COM_JED_ITEMS_SUCCESS_DUPLICATED'));
+        } catch (Exception $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+        }
 
-		$this->setRedirect('index.php?option=com_jed&view=reviewscomments');
-	}
+        $this->setRedirect('index.php?option=com_jed&view=reviewscomments');
+    }
 
-	/**
-	 * Proxy for getModel.
-	 *
-	 * @param   string  $name    Optional. Model name
-	 * @param   string  $prefix  Optional. Class prefix
-	 * @param   array   $config  Optional. Configuration array for model
-	 *
-	 * @return  object	The Model
-	 *
-	 * @since   4.0.0
-	 */
-	public function getModel($name = 'Reviewcomment', $prefix = 'Administrator', $config = array()) : object
-	{
-		return parent::getModel($name, $prefix, array('ignore_request' => true));
-	}
+    /**
+     * Proxy for getModel.
+     *
+     * @param   string  $name    Optional. Model name
+     * @param   string  $prefix  Optional. Class prefix
+     * @param   array   $config  Optional. Configuration array for model
+     *
+     * @return  object  The Model
+     *
+     * @since   4.0.0
+     */
+    public function getModel($name = 'Reviewcomment', $prefix = 'Administrator', $config = []): object
+    {
+        return parent::getModel($name, $prefix, ['ignore_request' => true]);
+    }
 
-	
 
-	/**
-	 * Method to save the submitted ordering values for records via AJAX.
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 *
-	 * @throws  Exception
-	 */
-	public function saveOrderAjax()
-	{
-		// Get the input
-		$input = Factory::getApplication()->input;
-		$pks   = $input->post->get('cid', array(), 'array');
-		$order = $input->post->get('order', array(), 'array');
 
-		// Sanitize the input
-		ArrayHelper::toInteger($pks);
-		ArrayHelper::toInteger($order);
+    /**
+     * Method to save the submitted ordering values for records via AJAX.
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     *
+     * @throws  Exception
+     */
+    public function saveOrderAjax()
+    {
+        // Get the input
+        $input = Factory::getApplication()->input;
+        $pks   = $input->post->get('cid', [], 'array');
+        $order = $input->post->get('order', [], 'array');
 
-		// Get the model
-		$model = $this->getModel();
+        // Sanitize the input
+        ArrayHelper::toInteger($pks);
+        ArrayHelper::toInteger($order);
 
-		// Save the ordering
-		$return = $model->saveorder($pks, $order);
+        // Get the model
+        $model = $this->getModel();
 
-		if ($return)
-		{
-			echo "1";
-		}
+        // Save the ordering
+        $return = $model->saveorder($pks, $order);
 
-		// Close the application
-		Factory::getApplication()->close();
-	}
+        if ($return) {
+            echo "1";
+        }
+
+        // Close the application
+        Factory::getApplication()->close();
+    }
 }
