@@ -10,8 +10,11 @@
  */
 
 namespace Jed\Component\Jed\Site\View\Ticketmessageform;
+
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
@@ -73,7 +76,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      */
-    protected function _prepareDocument()
+    protected function prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
@@ -142,7 +145,7 @@ class HtmlView extends BaseHtmlView
         }
 
 
-        $this->_prepareDocument();
+        $this->prepareDocument();
 
         parent::display($tpl);
     }

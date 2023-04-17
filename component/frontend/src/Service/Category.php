@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -7,8 +8,11 @@
  */
 
 namespace Jed\Component\Jed\Site\Service;
+
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Categories\Categories;
 
@@ -19,23 +23,23 @@ use Joomla\CMS\Categories\Categories;
  */
 class Category extends Categories
 {
-	/**
-	 * Class constructor
-	 *
-	 * @param   array  $options  Array of options
-	 *
-	 * @since   11.1
-	 */
-	public function __construct($options = array())
-	{
-		$options = array_merge($options, [
-			'extension'  => 'com_jed',
-			'table'      => '#__jed_extensions',
-			'field'      => 'primary_category_id',
-			'key'        => 'id',
-			'statefield' => 'published',
-		]);
+    /**
+     * Class constructor
+     *
+     * @param   array  $options  Array of options
+     *
+     * @since   11.1
+     */
+    public function __construct($options = [])
+    {
+        $options = array_merge($options, [
+            'extension'  => 'com_jed',
+            'table'      => '#__jed_extensions',
+            'field'      => 'primary_category_id',
+            'key'        => 'id',
+            'statefield' => 'published',
+        ]);
 
-		parent::__construct($options);
-	}
+        parent::__construct($options);
+    }
 }

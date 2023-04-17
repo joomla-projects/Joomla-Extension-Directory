@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -6,7 +7,9 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * @param   string   $image          The url of the image location
@@ -27,40 +30,40 @@ extract($displayData);
 ?>
 
 <li class="jed-grid__item">
-	<div class="card card--extension">
-		<div class="card__image">
-			<div class="image-placeholder">
-				<?php if ($image): ?>
-					<img src="<?php echo $image; ?>" alt="<?php echo $title; ?>"/>
-				<?php endif; ?>
-			</div>
-		</div>
-		<div class="card__header">
-			<a href="<?php echo $link; ?>" class="card__extension-title"><?php echo $title; ?></a>
-			<div class="card__extension-developer">By <?php echo $developer; ?></div>
-			<div class="align-boxes">
-				<div class="stars-wrapper">
-					<?php echo $score_string; ?>
-					<?php echo $reviews; ?>
-				</div>
-				<?php if ($compatibility) : ?>
-					<div class="compatibility-wrapper">
-						<?php /*foreach ($compatibility as $version): ?>
-							<div class="compatible-with-joomla<?php echo $version; ?>">
-								<span class="visually-hidden">Joomla</span>
-								<span aria-hidden="true" class="icon-joomla"></span> <?php echo $version; ?>
-							</div>
-						<?php endforeach; */ echo $compatibility; ?>
-					</div>
-				<?php endif; ?>
-			</div>
-		</div>
-		<div class="card__description">
-			<?php echo $description; ?>
-		</div>
-		<div class="card__footer">
-			<div class="card__extension-type"><?php echo $type; ?></div>
-			<div class="card__extension-category"><?php echo $category; ?></div>
-		</div>
-	</div>
+    <div class="card card--extension">
+        <div class="card__image">
+            <div class="image-placeholder">
+                <?php if ($image) : ?>
+                    <img src="<?php echo $image; ?>" alt="<?php echo $title; ?>"/>
+                <?php endif; ?>
+            </div>
+        </div>
+        <div class="card__header">
+            <a href="<?php echo $link; ?>" class="card__extension-title"><?php echo $title; ?></a>
+            <div class="card__extension-developer">By <?php echo $developer; ?></div>
+            <div class="align-boxes">
+                <div class="stars-wrapper">
+                    <?php echo $score_string; ?>
+                    <?php echo $reviews; ?>
+                </div>
+                <?php if ($compatibility) : ?>
+                    <div class="compatibility-wrapper">
+                        <?php /*foreach ($compatibility as $version): ?>
+                            <div class="compatible-with-joomla<?php echo $version; ?>">
+                                <span class="visually-hidden">Joomla</span>
+                                <span aria-hidden="true" class="icon-joomla"></span> <?php echo $version; ?>
+                            </div>
+                        <?php endforeach; */ echo $compatibility; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <div class="card__description">
+            <?php echo $description; ?>
+        </div>
+        <div class="card__footer">
+            <div class="card__extension-type"><?php echo $type; ?></div>
+            <div class="card__extension-category"><?php echo $category; ?></div>
+        </div>
+    </div>
 </li>

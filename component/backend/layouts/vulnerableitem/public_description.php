@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package           JED
  *
@@ -7,12 +8,17 @@
  * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
  * @license           GNU General Public License version 2 or later; see LICENSE.txt
  */
+
 // No direct access to $displayData file
-defined('_JEXEC') or die('Restricted access');
+// phpcs:disable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:enable PSR1.Files.SideEffects
 
 /** @var $displayData array */
-$headerlabeloptions = array('hiddenLabel' => true);
-$fieldhiddenoptions = array('hidden' => true);
+$headerlabeloptions = ['hiddenLabel' => true];
+$fieldhiddenoptions = ['hidden' => true];
 ?>
 
 <div class="row vel-header-row">
@@ -22,7 +28,7 @@ $fieldhiddenoptions = array('hidden' => true);
                 <span class="icon-wand"></span>
             </button>
         </h1>
-		<?php echo $displayData->renderField('public_description', null, null, $headerlabeloptions); ?>
+        <?php echo $displayData->renderField('public_description', null, null, $headerlabeloptions); ?>
     </div>
 </div>
 <div class="row vel-header-row">
@@ -32,7 +38,7 @@ $fieldhiddenoptions = array('hidden' => true);
                 <span class="icon-wand"></span>
             </button>
         </h1>
-		<?php echo $displayData->renderField('alias', null, null, $headerlabeloptions); ?>
+        <?php echo $displayData->renderField('alias', null, null, $headerlabeloptions); ?>
     </div>
 </div>
    

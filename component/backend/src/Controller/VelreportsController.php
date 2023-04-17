@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package       JED
  *
@@ -10,12 +11,15 @@
 
 namespace Jed\Component\Jed\Administrator\Controller;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\Utilities\ArrayHelper;
+
 use function defined;
 
 /**
@@ -25,55 +29,54 @@ use function defined;
  */
 class VelreportsController extends AdminController
 {
-	/**
-	 * Proxy for getModel.
-	 *
-	 * @param   string  $name    Optional. Model name
-	 * @param   string  $prefix  Optional. Class prefix
-	 * @param   array   $config  Optional. Configuration array for model
-	 *
-	 * @return  object    The Model
-	 *
-	 * @since   4.0.0
-	 * @throws  Exception
-	 */
-	public function getModel($name = 'Velreport', $prefix = 'Administrator', $config = ['ignore_request' => true]): object
-	{
-		return parent::getModel($name, $prefix, $config);
-	}
+    /**
+     * Proxy for getModel.
+     *
+     * @param   string  $name    Optional. Model name
+     * @param   string  $prefix  Optional. Class prefix
+     * @param   array   $config  Optional. Configuration array for model
+     *
+     * @return  object    The Model
+     *
+     * @since   4.0.0
+     * @throws  Exception
+     */
+    public function getModel($name = 'Velreport', $prefix = 'Administrator', $config = ['ignore_request' => true]): object
+    {
+        return parent::getModel($name, $prefix, $config);
+    }
 
-	/**
-	 * Method to save the submitted ordering values for records via AJAX.
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 *
-	 * @throws Exception
-	 */
-	public function saveOrderAjax()
-	{
-		// Get the input
-		$input = Factory::getApplication()->input;
-		$pks   = $input->post->get('cid', array(), 'array');
-		$order = $input->post->get('order', array(), 'array');
+    /**
+     * Method to save the submitted ordering values for records via AJAX.
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     *
+     * @throws Exception
+     */
+    public function saveOrderAjax()
+    {
+        // Get the input
+        $input = Factory::getApplication()->input;
+        $pks   = $input->post->get('cid', [], 'array');
+        $order = $input->post->get('order', [], 'array');
 
-		// Sanitize the input
-		ArrayHelper::toInteger($pks);
-		ArrayHelper::toInteger($order);
+        // Sanitize the input
+        ArrayHelper::toInteger($pks);
+        ArrayHelper::toInteger($order);
 
-		// Get the model
-		$model = $this->getModel();
+        // Get the model
+        $model = $this->getModel();
 
-		// Save the ordering
-		$return = $model->saveorder($pks, $order);
+        // Save the ordering
+        $return = $model->saveorder($pks, $order);
 
-		if ($return)
-		{
-			echo "1";
-		}
+        if ($return) {
+            echo "1";
+        }
 
-		// Close the application
-		Factory::getApplication()->close();
-	}
+        // Close the application
+        Factory::getApplication()->close();
+    }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -6,7 +7,9 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Administrator\Extension\JedComponent;
 use Jed\Component\Jed\Administrator\Provider\RouterFactory;
@@ -27,35 +30,35 @@ use Joomla\DI\ServiceProviderInterface;
  *
  * @since  4.0.0
  */
-return new class implements ServiceProviderInterface {
-	/**
-	 * Registers the service provider with a DI container.
-	 *
-	 * @param   Container  $container  The DI container.
-	 *
-	 * @return  void
-	 *
-	 * @since  4.0.0
-	 */
-	public function register(Container $container)
-	{
-		$container->registerServiceProvider(new CategoryFactory('\\Jed\\Component\\Jed'));
-		$container->registerServiceProvider(new MVCFactory('\\Jed\\Component\\Jed'));
-		$container->registerServiceProvider(new ComponentDispatcherFactory('\\Jed\\Component\\Jed'));
-		$container->registerServiceProvider(new RouterFactory('\\Jed\\Component\\Jed'));
+return new class () implements ServiceProviderInterface {
+    /**
+     * Registers the service provider with a DI container.
+     *
+     * @param   Container  $container  The DI container.
+     *
+     * @return  void
+     *
+     * @since  4.0.0
+     */
+    public function register(Container $container)
+    {
+        $container->registerServiceProvider(new CategoryFactory('\\Jed\\Component\\Jed'));
+        $container->registerServiceProvider(new MVCFactory('\\Jed\\Component\\Jed'));
+        $container->registerServiceProvider(new ComponentDispatcherFactory('\\Jed\\Component\\Jed'));
+        $container->registerServiceProvider(new RouterFactory('\\Jed\\Component\\Jed'));
 
-		$container->set(
-			ComponentInterface::class,
-			function (Container $container) {
-				$component = new JedComponent($container->get(ComponentDispatcherFactoryInterface::class));
+        $container->set(
+            ComponentInterface::class,
+            function (Container $container) {
+                $component = new JedComponent($container->get(ComponentDispatcherFactoryInterface::class));
 
-				$component->setRegistry($container->get(Registry::class));
-				$component->setMVCFactory($container->get(MVCFactoryInterface::class));
-				$component->setCategoryFactory($container->get(CategoryFactoryInterface::class));
-				$component->setRouterFactory($container->get(RouterFactoryInterface::class));
+                $component->setRegistry($container->get(Registry::class));
+                $component->setMVCFactory($container->get(MVCFactoryInterface::class));
+                $component->setCategoryFactory($container->get(CategoryFactoryInterface::class));
+                $component->setRouterFactory($container->get(RouterFactoryInterface::class));
 
-				return $component;
-			}
-		);
-	}
+                return $component;
+            }
+        );
+    }
 };

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package       JED
  *
@@ -8,10 +9,14 @@
  * @license       GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-defined('_JEXEC') or die('Restricted access');
+// phpcs:disable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:enable PSR1.Files.SideEffects
 /** @var $displayData array */
-$headerlabeloptions = array('hiddenLabel' => true);
-$fieldhiddenoptions = array('hidden' => true);
+$headerlabeloptions = ['hiddenLabel' => true];
+$fieldhiddenoptions = ['hidden' => true];
 ?>
 <div class="span10 form-horizontal">
 
@@ -19,11 +24,11 @@ $fieldhiddenoptions = array('hidden' => true);
         <div class="col-md-3 ticket-header">
             <h1>Subject</h1>
 
-			<?php echo $displayData->renderField('ticket_subject', null, null, $headerlabeloptions); ?>
+            <?php echo $displayData->renderField('ticket_subject', null, null, $headerlabeloptions); ?>
         </div>
         <div class="col-md-3  ticket-header">
             <h1>Category</h1>
-			<?php echo $displayData->renderField('ticket_category_type', null, null, $headerlabeloptions); ?>
+            <?php echo $displayData->renderField('ticket_category_type', null, null, $headerlabeloptions); ?>
         </div>
         <div class="col-md-3  ticket-header">
             <div class="row mf">

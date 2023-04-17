@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package       JED
  *
@@ -9,7 +10,9 @@
 
 namespace Jed\Component\Jed\Administrator\Field;
 
-defined('JPATH_BASE') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
@@ -23,34 +26,33 @@ use Joomla\CMS\Form\FormField;
  */
 class ModifiedbyField extends FormField
 {
-	/**
-	 * The form field type.
-	 *
-	 * @var        string
-	 * @since  4.0.0
-	 */
-	protected $type = 'modifiedby';
+    /**
+     * The form field type.
+     *
+     * @var        string
+     * @since  4.0.0
+     */
+    protected $type = 'modifiedby';
 
-	/**
-	 * Method to get the field input markup.
-	 *
-	 * @return    string    The field input markup.
-	 *
-	 * @since  4.0.0
-	 * @throws Exception
-	 */
-	protected function getInput(): string
-	{
-		// Initialize variables.
-		$html   = array();
-		$user   = JedHelper::getUser();
+    /**
+     * Method to get the field input markup.
+     *
+     * @return    string    The field input markup.
+     *
+     * @since  4.0.0
+     * @throws Exception
+     */
+    protected function getInput(): string
+    {
+        // Initialize variables.
+        $html   = [];
+        $user   = JedHelper::getUser();
 
-		$html[] = '<input type="hidden" name="' . $this->name . '" value="' . $user->id . '" />';
-		if (!$this->hidden)
-		{
-			$html[] = "<div>" . $user->name . " (" . $user->username . ")</div>";
-		}
+        $html[] = '<input type="hidden" name="' . $this->name . '" value="' . $user->id . '" />';
+        if (!$this->hidden) {
+            $html[] = "<div>" . $user->name . " (" . $user->username . ")</div>";
+        }
 
-		return implode($html);
-	}
+        return implode($html);
+    }
 }

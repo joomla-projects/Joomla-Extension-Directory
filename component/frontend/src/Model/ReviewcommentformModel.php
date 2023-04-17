@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -7,8 +8,11 @@
  */
 
 namespace Jed\Component\Jed\Site\Model;
+
 // No direct access.
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
 use Joomla\CMS\Factory;
@@ -25,459 +29,425 @@ use Joomla\CMS\Object\CMSObject;
  */
 class ReviewcommentformModel extends FormModel
 {
-	private $item = null;
+    private $item = null;
 
-	
-       /**
-        * Checks whether or not a user is manager or super user
-        *
-        * @return bool
-        */
-        public function isAdminOrSuperUser()
-        {
-            try{
-                $user = JedHelper::getUser();
-                return in_array("8", $user->groups) || in_array("7", $user->groups);
-            }catch(Exception $exc){
+
+    /**
+     * Checks whether or not a user is manager or super user
+     *
+     * @return bool
+     */
+    public function isAdminOrSuperUser()
+    {
+        try {
+            $user = JedHelper::getUser();
+            return in_array("8", $user->groups) || in_array("7", $user->groups);
+        } catch (Exception $exc) {
+            return false;
+        }
+    }
+
+
+    /**
+     * This method revises if the $id of the item belongs to the current user
+     * @param   integer     $id     The id of the item
+     * @return  boolean             true if the user is the owner of the row, false if not.
+     *
+     */
+    public function userIDItem($id)
+    {
+        try {
+            $user  = JedHelper::getUser();
+            $db    = Factory::getDbo();
+
+            $query = $db->getQuery(true);
+            $query->select("id")
+                  ->from($db->quoteName('#__jed_reviews_comments'))
+                  ->where("id = " . $db->escape($id))
+                  ->where("created_by = " . $user->id);
+
+            $db->setQuery($query);
+
+            $results = $db->loadObject();
+            if ($results) {
+                return true;
+            } else {
                 return false;
             }
+        } catch (Exception $exc) {
+            return false;
+        }
+    }
+
+    /**
+     * Method to auto-populate the model state.
+     *
+     * Note. Calling getState in this method will result in recursion.
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     *
+     * @throws  Exception
+     * @throws Exception
+     * @throws Exception
+     * @throws Exception
+     */
+    protected function populateState()
+    {
+        $app = Factory::getApplication('com_jed');
+
+        // Load state from the request userState on edit or from the passed variable on default
+        if (Factory::getApplication()->input->get('layout') == 'edit') {
+            $id = Factory::getApplication()->getUserState('com_jed.edit.reviewcomment.id');
+        } else {
+            $id = Factory::getApplication()->input->get('id');
+            Factory::getApplication()->setUserState('com_jed.edit.reviewcomment.id', $id);
         }
 
-	
-        /**
-         * This method revises if the $id of the item belongs to the current user
-         * @param   integer     $id     The id of the item
-         * @return  boolean             true if the user is the owner of the row, false if not.
-         *
-         */
-        public function userIDItem($id){
-            try{
+        $this->setState('reviewcomment.id', $id);
+
+        // Load the parameters.
+        $params       = $app->getParams();
+        $params_array = $params->toArray();
+
+        if (isset($params_array['item_id'])) {
+            $this->setState('reviewcomment.id', $params_array['item_id']);
+        }
+
+        $this->setState('params', $params);
+    }
+
+    /**
+     * Method to get an ojbect.
+     *
+     * @param   integer  $id  The id of the object to get.
+     *
+     * @return  Object|boolean Object on success, false on failure.
+     *
+     * @throws  Exception
+     * @throws Exception
+     * @throws Exception
+     */
+    public function getItem($id = null)
+    {
+        if ($this->item === null) {
+            $this->item = false;
+
+            if (empty($id)) {
+                $id = $this->getState('reviewcomment.id');
+            }
+
+            // Get a level row instance.
+            $table      = $this->getTable();
+            $properties = $table->getProperties();
+            $this->item = ArrayHelper::toObject($properties, CMSObject::class);
+
+            if ($table !== false && $table->load($id) && !empty($table->id)) {
                 $user = JedHelper::getUser();
-                $db    = Factory::getDbo();
+                $id   = $table->id;
+                if (empty($id) || $this->isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+                    $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 
-                $query = $db->getQuery(true);
-                $query->select("id")
-                      ->from($db->quoteName('#__jed_reviews_comments'))
-                      ->where("id = " . $db->escape($id))
-                      ->where("created_by = " . $user->id);
+                    if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
+                        $canEdit = $user->id == $table->created_by;
+                    }
 
-                $db->setQuery($query);
+                    if (!$canEdit) {
+                        throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+                    }
 
-                $results = $db->loadObject();
-                if ($results){
-                    return true;
-                }else{
-                    return false;
+                    // Check published state.
+                    if ($published = $this->getState('filter.published')) {
+                        if (isset($table->state) && $table->state != $published) {
+                            return $this->item;
+                        }
+                    }
+
+                    // Convert the Table to a clean CMSObject.
+                    $properties = $table->getProperties(1);
+                    $this->item = ArrayHelper::toObject($properties, CMSObject::class);
+
+                    if (isset($this->item->primary_category_id) && is_object($this->item->primary_category_id)) {
+                        $this->item->primary_category_id = ArrayHelper::fromObject($this->item->primary_category_id);
+                    }
+                } else {
+                    throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
                 }
-            }catch(Exception $exc){
-                return false;
             }
         }
 
-	/**
-	 * Method to auto-populate the model state.
-	 *
-	 * Note. Calling getState in this method will result in recursion.
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 *
-	 * @throws  Exception
-	 * @throws Exception
-	 * @throws Exception
-	 * @throws Exception
-	 */
-	protected function populateState()
-	{
-		$app = Factory::getApplication('com_jed');
+        return $this->item;
+    }
 
-		// Load state from the request userState on edit or from the passed variable on default
-		if (Factory::getApplication()->input->get('layout') == 'edit')
-		{
-			$id = Factory::getApplication()->getUserState('com_jed.edit.reviewcomment.id');
-		}
-		else
-		{
-			$id = Factory::getApplication()->input->get('id');
-			Factory::getApplication()->setUserState('com_jed.edit.reviewcomment.id', $id);
-		}
+    /**
+     * Method to get the table
+     *
+     * @param   string  $type    Name of the Table class
+     * @param   string  $prefix  Optional prefix for the table class name
+     * @param   array   $config  Optional configuration array for Table object
+     *
+     * @return  Table|boolean Table if found, boolean false on failure
+     * @throws Exception
+     * @throws Exception
+     */
+    public function getTable($type = 'Reviewcomment', $prefix = 'Administrator', $config = [])
+    {
+        return parent::getTable($type, $prefix, $config);
+    }
 
-		$this->setState('reviewcomment.id', $id);
+    /**
+     * Get an item by alias
+     *
+     * @param   string  $alias  Alias string
+     *
+     * @return int Element id
+     * @throws Exception
+     * @throws Exception
+     */
+    public function getItemIdByAlias($alias)
+    {
+        $table      = $this->getTable();
+        $properties = $table->getProperties();
 
-		// Load the parameters.
-		$params       = $app->getParams();
-		$params_array = $params->toArray();
+        if (!in_array('alias', $properties)) {
+            return null;
+        }
 
-		if (isset($params_array['item_id']))
-		{
-				$this->setState('reviewcomment.id', $params_array['item_id']);
-		}
+        $table->load(['alias' => $alias]);
+        $id = $table->id;
 
-		$this->setState('params', $params);
-	}
+        if (empty($id) || $this->isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+            return $id;
+        } else {
+            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+        }
+    }
 
-	/**
-	 * Method to get an ojbect.
-	 *
-	 * @param   integer  $id  The id of the object to get.
-	 *
-	 * @return  Object|boolean Object on success, false on failure.
-	 *
-	 * @throws  Exception
-	 * @throws Exception
-	 * @throws Exception
-	 */
-	public function getItem($id = null)
-	{
-		if ($this->item === null)
-		{
-			$this->item = false;
+    /**
+     * Method to check in an item.
+     *
+     * @param   integer  $id  The id of the row to check out.
+     *
+     * @return  boolean True on success, false on failure.
+     *
+     * @since   4.0.0
+     * @throws Exception
+     * @throws Exception
+     */
+    public function checkin($id = null)
+    {
+        // Get the id.
+        $id = (!empty($id)) ? $id : (int) $this->getState('reviewcomment.id');
+        if (!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
+            if ($id) {
+                // Initialise the table
+                $table = $this->getTable();
 
-			if (empty($id))
-			{
-				$id = $this->getState('reviewcomment.id');
-			}
+                // Attempt to check the row in.
+                if (method_exists($table, 'checkin')) {
+                    if (!$table->checkin($id)) {
+                        return false;
+                    }
+                }
+            }
 
-			// Get a level row instance.
-			$table = $this->getTable();
-			$properties = $table->getProperties();
-			$this->item = ArrayHelper::toObject($properties, CMSObject::class);
+            return true;
+        } else {
+            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+        }
+    }
 
-			if ($table !== false && $table->load($id) && !empty($table->id))
-			{
-				$user = JedHelper::getUser();
-				$id   = $table->id;
-				if(empty($id) || $this->isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id){
+    /**
+     * Method to check out an item for editing.
+     *
+     * @param   integer  $id  The id of the row to check out.
+     *
+     * @return  boolean True on success, false on failure.
+     *
+     * @since   4.0.0
+     * @throws Exception
+     * @throws Exception
+     */
+    public function checkout($id = null)
+    {
+        // Get the user id.
+        $id = (!empty($id)) ? $id : (int) $this->getState('reviewcomment.id');
+        if (!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
+            if ($id) {
+                // Initialise the table
+                $table = $this->getTable();
 
-				$canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
+                // Get the current user object.
+                $user = JedHelper::getUser();
 
-				if (!$canEdit && $user->authorise('core.edit.own', 'com_jed'))
-				{
-					$canEdit = $user->id == $table->created_by;
-				}
+                // Attempt to check the row out.
+                if (method_exists($table, 'checkout')) {
+                    if (!$table->checkout($user->get('id'), $id)) {
+                        return false;
+                    }
+                }
+            }
 
-				if (!$canEdit)
-				{
-					throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-				}
+            return true;
+        } else {
+            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+        }
+    }
 
-				// Check published state.
-				if ($published = $this->getState('filter.published'))
-				{
-					if (isset($table->state) && $table->state != $published)
-					{
-						return $this->item;
-					}
-				}
+    /**
+     * Method to get the profile form.
+     *
+     * The base form is loaded from XML
+     *
+     * @param   array    $data      An optional array of data for the form to interogate.
+     * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+     *
+     * @return  Form    A Form object on success, false on failure
+     *
+     * @since   4.0.0
+     * @throws Exception
+     * @throws Exception
+     */
+    public function getForm($data = [], $loadData = true, $formname = 'jform')
+    {
+        // Get the form.
+        $form = $this->loadForm(
+            'com_jed.reviewcomment',
+            'reviewcommentform',
+            [
+                        'control'   => $formname,
+                        'load_data' => $loadData,
+                ]
+        );
 
-				// Convert the Table to a clean CMSObject.
-				$properties = $table->getProperties(1);
-				$this->item = ArrayHelper::toObject($properties, CMSObject::class);
-				
-		if (isset($this->item->primary_category_id) && is_object($this->item->primary_category_id))
-		{
-			$this->item->primary_category_id = ArrayHelper::fromObject($this->item->primary_category_id);
-		}
+        if (empty($form)) {
+            return false;
+        }
 
-				} else {
-                                                throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-                                          }
-			}
-		}
+        return $form;
+    }
 
-		return $this->item;
-	}
+    /**
+     * Method to get the data that should be injected in the form.
+     *
+     * @return  array  The default data is an empty array.
+     * @since   4.0.0
+     * @throws Exception
+     * @throws Exception
+     */
+    protected function loadFormData()
+    {
+        $data = Factory::getApplication()->getUserState('com_jed.edit.reviewcomment.data', []);
 
-	/**
-	 * Method to get the table
-	 *
-	 * @param   string  $type    Name of the Table class
-	 * @param   string  $prefix  Optional prefix for the table class name
-	 * @param   array   $config  Optional configuration array for Table object
-	 *
-	 * @return  Table|boolean Table if found, boolean false on failure
-	 * @throws Exception
-	 * @throws Exception
-	 */
-	public function getTable($type = 'Reviewcomment', $prefix = 'Administrator', $config = array())
-	{
-		return parent::getTable($type, $prefix, $config);
-	}
+        if (empty($data)) {
+            $data = $this->getItem();
+        }
 
-	/**
-	 * Get an item by alias
-	 *
-	 * @param   string  $alias  Alias string
-	 *
-	 * @return int Element id
-	 * @throws Exception
-	 * @throws Exception
-	 */
-	public function getItemIdByAlias($alias)
-	{
-		$table      = $this->getTable();
-		$properties = $table->getProperties();
+        if ($data) {
+            return $data;
+        }
 
-		if (!in_array('alias', $properties))
-		{
-				return null;
-		}
+        return [];
+    }
 
-		$table->load(array('alias' => $alias));
-		$id = $table->id;
+    /**
+     * Method to save the form data.
+     *
+     * @param   array  $data  The form data
+     *
+     * @return  bool
+     *
+     * @since   4.0.0
+     * @throws Exception
+     * @throws  Exception
+     * @throws Exception
+     */
+    public function save($data)
+    {
+        $id    = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('reviewcomment.id');
+        $state = (!empty($data['state'])) ? 1 : 0;
+        $user  = Factory::getUser();
 
-		if(empty($id) || $this->isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id){
-			return $id;
-		} else {
-                                                throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-                                          }
-	}
+        if (!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
+            if ($id) {
+                // Check the user can edit this item
+                $authorised = $user->authorise('core.edit', 'com_jed') || $authorised = $user->authorise('core.edit.own', 'com_jed');
+            } else {
+                // Check the user can create new items in this section
+                $authorised = $user->authorise('core.create', 'com_jed');
+            }
 
-	/**
-	 * Method to check in an item.
-	 *
-	 * @param   integer  $id  The id of the row to check out.
-	 *
-	 * @return  boolean True on success, false on failure.
-	 *
-	 * @since   4.0.0
-	 * @throws Exception
-	 * @throws Exception
-	 */
-	public function checkin($id = null)
-	{
-		// Get the id.
-		$id = (!empty($id)) ? $id : (int) $this->getState('reviewcomment.id');
-		if(!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()){
-		if ($id)
-		{
-			// Initialise the table
-			$table = $this->getTable();
+            if ($authorised !== true) {
+                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
 
-			// Attempt to check the row in.
-			if (method_exists($table, 'checkin'))
-			{
-				if (!$table->checkin($id))
-				{
-					return false;
-				}
-			}
-		}
+            $table = $this->getTable();
 
-		return true;
-		}else{
-                               throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-                           }
-	}
 
-	/**
-	 * Method to check out an item for editing.
-	 *
-	 * @param   integer  $id  The id of the row to check out.
-	 *
-	 * @return  boolean True on success, false on failure.
-	 *
-	 * @since   4.0.0
-	 * @throws Exception
-	 * @throws Exception
-	 */
-	public function checkout($id = null)
-	{
-		// Get the user id.
-		$id = (!empty($id)) ? $id : (int) $this->getState('reviewcomment.id');
-		if(!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()){
-		if ($id)
-		{
-			// Initialise the table
-			$table = $this->getTable();
 
-			// Get the current user object.
-			$user = JedHelper::getUser();
+            if ($table->save($data) === true) {
+                return $table->id;
+            } else {
+                return false;
+            }
+        } else {
+            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+        }
+    }
 
-			// Attempt to check the row out.
-			if (method_exists($table, 'checkout'))
-			{
-				if (!$table->checkout($user->get('id'), $id))
-				{
-					return false;
-				}
-			}
-		}
+    /**
+     * Method to delete data
+     *
+     * @param   int  $pk  Item primary key
+     *
+     * @return  int  The id of the deleted item
+     *
+     * @since   4.0.0
+     * @throws Exception
+     *
+     * @throws  Exception
+     * @throws Exception
+     * @throws Exception
+     */
+    public function delete($id)
+    {
+        $user = Factory::getUser();
 
-		return true;
-		}else{
-                               throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-                           }
-	}
+        if (!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
+            if (empty($id)) {
+                $id = (int) $this->getState('reviewcomment.id');
+            }
 
-	/**
-	 * Method to get the profile form.
-	 *
-	 * The base form is loaded from XML
-	 *
-	 * @param   array    $data      An optional array of data for the form to interogate.
-	 * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
-	 *
-	 * @return  Form    A Form object on success, false on failure
-	 *
-	 * @since   4.0.0
-	 * @throws Exception
-	 * @throws Exception
-	 */
-	public function getForm($data = array(), $loadData = true, $formname = 'jform')
-	{
-		// Get the form.
-		$form = $this->loadForm('com_jed.reviewcomment', 'reviewcommentform', array(
-						'control'   => $formname,
-						'load_data' => $loadData
-				)
-		);
+            if ($id == 0 || $this->getItem($id) == null) {
+                throw new Exception(Text::_('COM_JED_ITEM_DOESNT_EXIST'), 404);
+            }
 
-		if (empty($form))
-		{
-				return false;
-		}
+            if ($user->authorise('core.delete', 'com_jed') !== true) {
+                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
 
-		return $form;
-	}
+            $table = $this->getTable();
 
-	/**
-	 * Method to get the data that should be injected in the form.
-	 *
-	 * @return  array  The default data is an empty array.
-	 * @since   4.0.0
-	 * @throws Exception
-	 * @throws Exception
-	 */
-	protected function loadFormData()
-	{
-		$data = Factory::getApplication()->getUserState('com_jed.edit.reviewcomment.data', array());
+            if ($table->delete($id) !== true) {
+                throw new Exception(Text::_('JERROR_FAILED'), 501);
+            }
 
-		if (empty($data))
-		{
-			$data = $this->getItem();
-		}
+            return $id;
+        } else {
+            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+        }
+    }
 
-		if ($data)
-		{
-			
+    /**
+     * Check if data can be saved
+     *
+     * @return bool
+     */
+    public function getCanSave()
+    {
+        $table = $this->getTable();
 
-			return $data;
-		}
-
-		return array();
-	}
-
-	/**
-	 * Method to save the form data.
-	 *
-	 * @param   array  $data  The form data
-	 *
-	 * @return  bool
-	 *
-	 * @since   4.0.0
-	 * @throws Exception
-	 * @throws  Exception
-	 * @throws Exception
-	 */
-	public function save($data)
-	{
-		$id    = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('reviewcomment.id');
-		$state = (!empty($data['state'])) ? 1 : 0;
-		$user  = Factory::getUser();
-
-		if(!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()){
-		if ($id)
-		{
-			// Check the user can edit this item
-			$authorised = $user->authorise('core.edit', 'com_jed') || $authorised = $user->authorise('core.edit.own', 'com_jed');
-		}
-		else
-		{
-			// Check the user can create new items in this section
-			$authorised = $user->authorise('core.create', 'com_jed');
-		}
-
-		if ($authorised !== true)
-		{
-			throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-		}
-
-		$table = $this->getTable();
-
-		
-
-		if ($table->save($data) === true)
-		{
-			return $table->id;
-		}
-		else
-		{
-			return false;
-		}
-		}else{
-                               throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-                           }
-	}
-
-	/**
-	 * Method to delete data
-	 *
-	 * @param   int  $pk  Item primary key
-	 *
-	 * @return  int  The id of the deleted item
-	 *
-	 * @since   4.0.0
-	 * @throws Exception
-	 *
-	 * @throws  Exception
-	 * @throws Exception
-	 * @throws Exception
-	 */
-	public function delete($id)
-	{
-		$user = Factory::getUser();
-
-		if(!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()){
-		if (empty($id))
-		{
-			$id = (int) $this->getState('reviewcomment.id');
-		}
-
-		if ($id == 0 || $this->getItem($id) == null)
-		{
-				throw new Exception(Text::_('COM_JED_ITEM_DOESNT_EXIST'), 404);
-		}
-
-		if ($user->authorise('core.delete', 'com_jed') !== true)
-		{
-				throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-		}
-
-		$table = $this->getTable();
-
-		if ($table->delete($id) !== true)
-		{
-				throw new Exception(Text::_('JERROR_FAILED'), 501);
-		}
-
-		return $id;
-		}else{
-                               throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-                           }
-	}
-
-	/**
-	 * Check if data can be saved
-	 *
-	 * @return bool
-	 */
-	public function getCanSave()
-	{
-		$table = $this->getTable();
-
-		return $table !== false;
-	}
-
+        return $table !== false;
+    }
 }

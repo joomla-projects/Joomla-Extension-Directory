@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -6,7 +7,9 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 ?>
 
@@ -28,7 +31,7 @@ defined('_JEXEC') or die;
                 <li>Purpose of using the extension (i.e., I used this extension for a magazine site.)</li>
                 <li>Level of difficulty</li>
                 <li>Your experience level with Joomla and web technologies</li>
-            </ul>	</div>
+            </ul>   </div>
         <div class="col-md-6 alert alert-error">
             <h3><span class="fa fa-times"></span> Not allowed</h3>
             <ul class='review-disallowed-list'>
@@ -41,7 +44,7 @@ defined('_JEXEC') or die;
                 <li>Submissions via an IP masking service or VPN</li>
                 <li>One-line Reviews</li>
                 <li>Self promotion or spam</li>
-            </ul>	</div>
+            </ul>   </div>
     </div>
  </div>
 <div><button id="reviewBtn" >Continue</button></div>

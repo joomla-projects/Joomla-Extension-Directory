@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package       JED
  *
@@ -7,14 +8,20 @@
  * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
  * @license       GNU General Public License version 2 or later; see LICENSE.txt
  */
+
 // No direct access to file
-defined('_JEXEC') or die('Restricted access');
+// phpcs:disable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:enable PSR1.Files.SideEffects
 
 
 use Joomla\CMS\Language\Text;
+
 /* @var $displayData array */
-$headerlabeloptions = array('hiddenLabel' => true);
-$fieldhiddenoptions = array('hidden' => true);
+$headerlabeloptions = ['hiddenLabel' => true];
+$fieldhiddenoptions = ['hidden' => true];
 //var_dump($displayData);exit();
 $rawData = $displayData->getData();
 
@@ -22,24 +29,24 @@ $rawData = $displayData->getData();
 
 $fieldsets['aboutyou']['title'] = Text::_('COM_JED_VEL_REPORT_ABOUT_YOU_TITLE');
 
-$fieldsets['aboutyou']['fields'] = array(
-	'reporter_fullname',
-	'reporter_email',
-	'reporter_organisation');
+$fieldsets['aboutyou']['fields'] = [
+    'reporter_fullname',
+    'reporter_email',
+    'reporter_organisation'];
 
 $fieldsets['extensiondetails']['title']  = Text::_('COM_JED_VEL_ABANDONEDREPORT_EXTENSION_TITLE');
-$fieldsets['extensiondetails']['fields'] = array(
-	'extension_name',
-	'developer_name',
-	'extension_version',
-	'extension_url',
-	'abandoned_reason',
-	'consent_to_process');
+$fieldsets['extensiondetails']['fields'] = [
+    'extension_name',
+    'developer_name',
+    'extension_version',
+    'extension_url',
+    'abandoned_reason',
+    'consent_to_process'];
 
 $fieldsets['extra']['title']       = "Extra";
 $fieldsets['extra']['description'] = "";
-$fieldsets['extra']['fields']      = array(
-	'vel_item_id');
+$fieldsets['extra']['fields']      = [
+    'vel_item_id'];
 
 ?>
 <div class="row">
@@ -48,14 +55,10 @@ $fieldsets['extra']['fields']      = array(
             <h1><?php echo $fieldsets['extensiondetails']['title']; ?></h1>
             <div class="container">
                 <div class="row">
-					<?php foreach ($fieldsets['extensiondetails']['fields'] as $field)
-					{
-
-						$displayData->setFieldAttribute($field, 'readonly', 'true');
-						echo $displayData->renderField($field, null, null, array('class' => 'control-wrapper-' . $field));
-
-
-					} ?>
+                    <?php foreach ($fieldsets['extensiondetails']['fields'] as $field) {
+                        $displayData->setFieldAttribute($field, 'readonly', 'true');
+                        echo $displayData->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+                    } ?>
                 </div>
             </div>
         </div>
@@ -63,14 +66,10 @@ $fieldsets['extra']['fields']      = array(
             <h1><?php echo $fieldsets['extra']['title']; ?></h1>
             <div class="container">
                 <div class="row">
-					<?php foreach ($fieldsets['extra']['fields'] as $field)
-					{
-
-						$displayData->setFieldAttribute($field, 'readonly', 'true');
-						echo $displayData->renderField($field, null, null, array('class' => 'control-wrapper-' . $field));
-
-
-					} ?>
+                    <?php foreach ($fieldsets['extra']['fields'] as $field) {
+                        $displayData->setFieldAttribute($field, 'readonly', 'true');
+                        echo $displayData->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+                    } ?>
                 </div>
             </div>
         </div>
@@ -81,14 +80,10 @@ $fieldsets['extra']['fields']      = array(
             <h1><?php echo $fieldsets['aboutyou']['title']; ?></h1>
             <div class="container">
                 <div class="row">
-					<?php foreach ($fieldsets['aboutyou']['fields'] as $field)
-					{
-
-						$displayData->setFieldAttribute($field, 'readonly', 'true');
-						echo $displayData->renderField($field, null, null, array('class' => 'control-wrapper-' . $field));
-
-
-					} ?>
+                    <?php foreach ($fieldsets['aboutyou']['fields'] as $field) {
+                        $displayData->setFieldAttribute($field, 'readonly', 'true');
+                        echo $displayData->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+                    } ?>
                 </div>
             </div>
         </div>
@@ -97,20 +92,17 @@ $fieldsets['extra']['fields']      = array(
             <h1>Actions</h1>
             <div class="container">
                 <div class="row">
-					<?php
-					if ($rawData->get('vel_item_id') > 0)
-					{
-						echo Text::_('COM_JED_GENERAL_LABEL_NO_ACTIONS');
-					}
-					else
-					{
-						?>
+                    <?php
+                    if ($rawData->get('vel_item_id') > 0) {
+                        echo Text::_('COM_JED_GENERAL_LABEL_NO_ACTIONS');
+                    } else {
+                        ?>
                         <button type="button" class="btn btn-primary"
                                 onclick="Joomla.submitbutton('jedticket.copyAbandonedReporttoVEL')">
-							<?php echo Text::_('COM_JED_VEL_GENERAL_BUTTON_CREATE_ABANDONED_VEL'); ?>
+                            <?php echo Text::_('COM_JED_VEL_GENERAL_BUTTON_CREATE_ABANDONED_VEL'); ?>
                         </button>
-						<?php
-					} ?>
+                        <?php
+                    } ?>
                 </div>
             </div>
         </div>

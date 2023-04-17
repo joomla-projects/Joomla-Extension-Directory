@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package       JED
  *
@@ -10,11 +11,13 @@
 
 namespace Jed\Component\Jed\Site\Controller;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\MVC\Controller\FormController;
-use function defined;
 
+use function defined;
 
 /**
  * VEL Patched Items Controller Class.
@@ -23,19 +26,19 @@ use function defined;
  */
 class VelpatcheditemsController extends FormController
 {
-	/**
-	 * Proxy for getModel.
-	 *
-	 * @param   string  $name    The model name. Optional.
-	 * @param   string  $prefix  The class prefix. Optional
-	 * @param   array   $config  Configuration array for model. Optional
-	 *
-	 * @return  object    The model
-	 *
-	 * @since 4.0.0
-	 */
-	public function getModel($name = 'Velpatcheditems', $prefix = 'Site', $config = array()): object
-	{
-		return parent::getModel($name, $prefix, array('ignore_request' => true));
-	}
+    /**
+     * Proxy for getModel.
+     *
+     * @param   string  $name    The model name. Optional.
+     * @param   string  $prefix  The class prefix. Optional
+     * @param   array   $config  Configuration array for model. Optional
+     *
+     * @return  object    The model
+     *
+     * @since 4.0.0
+     */
+    public function getModel($name = 'Velpatcheditems', $prefix = 'Site', $config = []): object
+    {
+        return parent::getModel($name, $prefix, ['ignore_request' => true]);
+    }
 }
