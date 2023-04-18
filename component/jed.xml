@@ -27,7 +27,12 @@
 
     <administration>
         <!-- Menu entries -->
-        <menu view="jed">COM_JED</menu>
+        <menu view="jed">
+            COM_JED
+            <params>
+                <dashboard>jed</dashboard>
+            </params>
+        </menu>
         <submenu>
             <menu>COM_JED_TITLE_HOME</menu>
 
