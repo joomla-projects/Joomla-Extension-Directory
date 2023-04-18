@@ -74,6 +74,10 @@ class Router extends RouterView
         $this->setDatabase($db);
         $this->setMVCFactory($factory);
 
+        $homepage = new RouterViewConfiguration('homepage');
+        $this->registerView($homepage);
+
+        // Extensions
         $categories = new RouterViewConfiguration('categories');
         $categories->setKey('id');
         $this->registerView($categories);
@@ -92,9 +96,81 @@ class Router extends RouterView
             ->addLayout('edit');
         $this->registerView($extension);
 
-        // TODO
+        $extensionform = new RouterViewConfiguration('extensionform');
+        $this->registerView($extensionform);
+        $extensionvarieddatum = new RouterViewConfiguration('extensionvarieddatum');
+        $this->registerView($extensionvarieddatum);
 
-        parent::__construct($app, $menu);
+        // JED Tickets
+        $jedtickets = new RouterViewConfiguration('jedtickets');
+        $this->registerView($jedtickets);
+        $jedticket = new RouterViewConfiguration('jedticket');
+        $jedticket->setKey('id')->setParent($jedtickets);
+        $this->registerView($jedticket);
+        $jedticketform = new RouterViewConfiguration('jedticketform');
+        $this->registerView($jedticketform);
+
+        // Reviews
+        $reviews = new RouterViewConfiguration('reviews');
+        $this->registerView($reviews);
+        $review = new RouterViewConfiguration('review');
+        $review->setKey('id')->setParent($reviews);
+        $this->registerView($review);
+        $reviewform = new RouterViewConfiguration('reviewform');
+        $this->registerView($reviewform);
+        $reviewscomments = new RouterViewConfiguration('reviewscomments');
+        $this->registerView($reviewscomments);
+        $reviewcomment = new RouterViewConfiguration('reviewcomment');
+        $reviewcomment->setKey('id')->setParent($reviewscomments);
+        $this->registerView($reviewcomment);
+        $reviewcommentform = new RouterViewConfiguration('reviewcommentform');
+        $this->registerView($reviewcommentform);
+
+        // Tickets
+        $ticketmessages = new RouterViewConfiguration('ticketmessages');
+        $this->registerView($ticketmessages);
+        $ticketmessage = new RouterViewConfiguration('ticketmessage');
+        $ticketmessage->setKey('id')->setParent($ticketmessages);
+        $this->registerView($ticketmessage);
+        $ticketmessageform = new RouterViewConfiguration('ticketmessageform');
+        $this->registerView($ticketmessageform);
+
+        // VEL list
+        $velabandonedreports = new RouterViewConfiguration('velabandonedreports');
+        $this->registerView($velabandonedreports);
+        $velabandonedreport = new RouterViewConfiguration('velabandonedreport');
+        $velabandonedreport->setKey('id')->setParent($velabandonedreports);
+        $this->registerView($velabandonedreport);
+        $velabandonedreportform = new RouterViewConfiguration('velabandonedreportform');
+        $this->registerView($velabandonedreportform);
+
+        $veldeveloperupdates = new RouterViewConfiguration('veldeveloperupdates');
+        $this->registerView($veldeveloperupdates);
+        $veldeveloperupdate = new RouterViewConfiguration('veldeveloperupdate');
+        $veldeveloperupdate->setKey('id')->setParent($veldeveloperupdates);
+        $this->registerView($veldeveloperupdate);
+        $veldeveloperupdateform = new RouterViewConfiguration('veldeveloperupdateform');
+        $this->registerView($veldeveloperupdateform);
+
+        $velabandoneditems = new RouterViewConfiguration('velabandoneditems');
+        $this->registerView($velabandoneditems);
+        $velitem = new RouterViewConfiguration('velitem');
+        $this->registerView($velitem);
+        $velliveitems = new RouterViewConfiguration('velliveitems');
+        $this->registerView($velliveitems);
+        $velpatcheditems = new RouterViewConfiguration('velpatcheditems');
+        $this->registerView($velpatcheditems);
+
+        // VEL reports
+        $velreports = new RouterViewConfiguration('velreports');
+        $this->registerView($velreports);
+
+        $velreport = new RouterViewConfiguration('velreport');
+        $velreport->setKey('id')->setParent($velreports);
+        $this->registerView($velreport);
+
+        $velreportform = new RouterViewConfiguration('velreportform');
+        $this->registerView($velreportform);
 
         $this->attachRule(new MenuRules($this));
         $this->attachRule(new StandardRules($this));
@@ -254,5 +330,75 @@ class Router extends RouterView
         }
 
         return $this->categoryCache[$key];
+    }
+
+    public function getJedticketId($segment, $query)
+    {
+        return $segment;
+    }
+
+    public function getJedticketSegment($id, $query)
+    {
+        return [$id];
+    }
+
+    public function getReviewId($segment, $query)
+    {
+        return $segment;
+    }
+
+    public function getReviewSegment($id, $query)
+    {
+        return [$id];
+    }
+
+    public function getReviewcommentId($segment, $query)
+    {
+        return $segment;
+    }
+
+    public function getReviewcommentSegment($id, $query)
+    {
+        return [$id];
+    }
+
+    public function getTicketmessageId($segment, $query)
+    {
+        return $segment;
+    }
+
+    public function getTicketmessageSegment($id, $query)
+    {
+        return [$id];
+    }
+
+    public function getVelabandonedreportId($segment, $query)
+    {
+        return $segment;
+    }
+
+    public function getVelabandonedreportSegment($id, $query)
+    {
+        return [$id];
+    }
+
+    public function getVeldeveloperupdateId($segment, $query)
+    {
+        return $segment;
+    }
+
+    public function getVeldeveloperupdateSegment($id, $query)
+    {
+        return [$id];
+    }
+
+    public function getVelreportId($segment, $query)
+    {
+        return $segment;
+    }
+
+    public function getVelreportSegment($id, $query)
+    {
+        return [$id];
     }
 }
