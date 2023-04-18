@@ -8,8 +8,11 @@
  * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
  * @license       GNU General Public License version 2 or later; see LICENSE.txt
  */
+
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -115,7 +118,6 @@ $wa->useStyle('com_jed.list');
                         <td>
                             <?php $canCheckin = JedHelper::getUser()->authorise('core.manage', 'com_jed.' . $item->id) || $item->checked_out == JedHelper::getUser()->id; ?>
                             <?php if ($canCheckin && $item->checked_out > 0) : ?>
-
                                 <a href="<?php echo Route::_('index.php?option=com_jed&task=ticketmessage.checkin&id=' . $item->id . '&' . Session::getFormToken() . '=1'); ?>"> <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'ticketmessage.', false); ?></a>
                             <?php endif; ?>
                             <a href="<?php echo Route::_('index.php?option=com_jed&view=ticketmessage&id=' . (int) $item->id); ?>">
@@ -130,10 +132,11 @@ $wa->useStyle('com_jed.list');
                         <?php if ($canEdit || $canDelete) : ?>
                             <td class="center">
                                 <?php $canCheckin = JedHelper::getUser()->authorise('core.manage', 'com_jed.' . $item->id) || $this->item->checked_out == JedHelper::getUser()->id; ?>
-							<?php if ($canEdit && $item->checked_out == 0): ?>                            <a
+                            <?php if ($canEdit && $item->checked_out == 0) :
+                                ?>                            <a
                                     href="<?php echo Route::_('index.php?option=com_jed&task=ticketmessage.edit&id=' . $item->id, false, 2); ?>"
                                     class="btn btn-mini" type="button"><i class="icon-edit"></i></a>
-                                <?php endif; ?>
+                            <?php endif; ?>
                                 <?php if ($canDelete) : ?>
                                 <a href="<?php echo Route::_('index.php?option=com_jed&task=ticketmessageform.remove&id=' . $item->id, false, 2); ?>"
                                    class="btn btn-mini delete-button" type="button"><i class="icon-trash"></i></a>

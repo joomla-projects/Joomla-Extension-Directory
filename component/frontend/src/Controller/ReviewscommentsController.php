@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -8,9 +9,12 @@
 
 namespace Jed\Component\Jed\Site\Controller;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\MVC\Controller\FormController;
+
 use function defined;
 
 /**
@@ -20,19 +24,19 @@ use function defined;
  */
 class ReviewscommentsController extends FormController
 {
-	/**
-	 * Proxy for getModel.
-	 *
-	 * @param   string  $name    The model name. Optional.
-	 * @param   string  $prefix  The class prefix. Optional
-	 * @param   array   $config  Configuration array for model. Optional
-	 *
-	 * @return  object	The model
-	 *
-	 * @since   4.0.0
-	 */
-	public function getModel($name = 'Reviewscomments', $prefix = 'Site', $config = array())
-	{
-		return parent::getModel($name, $prefix, array('ignore_request' => true));
-	}
+    /**
+     * Proxy for getModel.
+     *
+     * @param   string  $name    The model name. Optional.
+     * @param   string  $prefix  The class prefix. Optional
+     * @param   array   $config  Configuration array for model. Optional
+     *
+     * @return  object  The model
+     *
+     * @since   4.0.0
+     */
+    public function getModel($name = 'Reviewscomments', $prefix = 'Site', $config = [])
+    {
+        return parent::getModel($name, $prefix, ['ignore_request' => true]);
+    }
 }

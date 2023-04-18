@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -8,9 +9,12 @@
 
 namespace Jed\Component\Jed\Administrator\Model;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+
 use function defined;
 
 /**
@@ -21,5 +25,4 @@ use function defined;
  */
 class HomeModel extends BaseDatabaseModel
 {
-
 }

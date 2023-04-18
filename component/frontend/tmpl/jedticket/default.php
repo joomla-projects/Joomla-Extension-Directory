@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package       JED
  *
@@ -9,7 +10,9 @@
  */
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -20,9 +23,8 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
 $canEdit = JedHelper::getUser()->authorise('core.edit', 'com_jed');
 
-if (!$canEdit && JedHelper::getUser()->authorise('core.edit.own', 'com_jed'))
-{
-	$canEdit = JedHelper::getUser()->id == $this->item->created_by;
+if (!$canEdit && JedHelper::getUser()->authorise('core.edit.own', 'com_jed')) {
+    $canEdit = JedHelper::getUser()->id == $this->item->created_by;
 }
 
 $wa->getRegistry()->addExtensionRegistryFile('com_jed');
@@ -136,8 +138,7 @@ HTMLHelper::_('bootstrap.tooltip');
 </div>
 
 <?php $canCheckin = JedHelper::getUser()->authorise('core.manage', 'com_jed.' . $this->item->id) || $this->item->checked_out == JedHelper::getUser()->id; ?>
-<?php if ($canEdit && $this->item->checked_out == 0): ?>
-
+<?php if ($canEdit && $this->item->checked_out == 0) : ?>
     <a class="btn btn-outline-primary"
        href="<?php echo Route::_('index.php?option=com_jed&task=jedticket.edit&id=' . $this->item->id); ?>"><?php echo Text::_("JGLOBAL_EDIT"); ?></a>
 <?php elseif ($canCheckin && $this->item->checked_out > 0) : ?>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -8,10 +9,13 @@
 
 namespace Jed\Component\Jed\Site\View\Homepage;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Jed\Component\Jed\Site\Helper\JedHelper;
+
 use function defined;
 
 /**

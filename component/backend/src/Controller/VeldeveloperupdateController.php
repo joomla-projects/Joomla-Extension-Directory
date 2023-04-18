@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package       JED
  *
@@ -10,7 +11,9 @@
 
 namespace Jed\Component\Jed\Administrator\Controller;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\MVC\Controller\FormController;
 
@@ -21,12 +24,12 @@ use Joomla\CMS\MVC\Controller\FormController;
  */
 class VeldeveloperupdateController extends FormController
 {
-	/**
-	 * A string showing the plural of the current object
-	 *
-	 * @var    string
-	 *
-	 * @since  4.0.0
-	 */
-	protected $view_list = 'Veldeveloperupdates';
+    /**
+     * A string showing the plural of the current object
+     *
+     * @var    string
+     *
+     * @since  4.0.0
+     */
+    protected $view_list = 'Veldeveloperupdates';
 }

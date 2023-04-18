@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package       JED
  *
@@ -9,7 +10,9 @@
  */
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -17,9 +20,8 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
 $canEdit = JedHelper::getUser()->authorise('core.edit', 'com_jed');
 
-if (!$canEdit && JedHelper::getUser()->authorise('core.edit.own', 'com_jed'))
-{
-	$canEdit = JedHelper::getUser()->id == $this->item->created_by;
+if (!$canEdit && JedHelper::getUser()->authorise('core.edit.own', 'com_jed')) {
+    $canEdit = JedHelper::getUser()->id == $this->item->created_by;
 }
 ?>
 
@@ -86,7 +88,7 @@ if (!$canEdit && JedHelper::getUser()->authorise('core.edit.own', 'com_jed'))
             <th><?php echo Text::_('COM_JED_GENERAL_FIELD_DATE_SUBMITTED_LABEL'); ?></th>
             <td><?php echo $this->item->date_submitted; ?></td>
         </tr>
-		<?php /*
+        <?php /*
         <tr>
             <th><?php echo Text::_('COM_JED_VEL_GENERAL_FIELD_VEL_ITEM_ID_LABEL'); ?></th>
             <td><?php echo $this->item->vel_item_id; ?></td>
@@ -97,7 +99,7 @@ if (!$canEdit && JedHelper::getUser()->authorise('core.edit.own', 'com_jed'))
             <td><?php echo $this->item->data_source; ?></td>
         </tr>
 
-      
+
 
         <tr>
             <th><?php echo Text::_('COM_JED_VEL_REPORTS_FIELD_USER_IP_LABEL'); ?></th>

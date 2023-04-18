@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -8,7 +9,9 @@
 
 namespace Jed\Component\Jed\Site\Field;
 
-defined('JPATH_BASE') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Form\FormField;
 
@@ -19,26 +22,26 @@ use Joomla\CMS\Form\FormField;
  */
 class FileMultipleField extends FormField
 {
-	/**
-	 * The form field type.
-	 *
-	 * @var    string
-	 * @since  4.0.0
-	 */
-	protected $type = 'filemultiple';
+    /**
+     * The form field type.
+     *
+     * @var    string
+     * @since  4.0.0
+     */
+    protected $type = 'filemultiple';
 
-	/**
-	 * Method to get the field input markup.
-	 *
-	 * @return  string    The field input markup.
-	 *
-	 * @since   4.0.0
-	 */
-	protected function getInput()
-	{
-		// Initialize variables.
-		$html = '<input type="file" name="' . $this->name . '[]" multiple >';
+    /**
+     * Method to get the field input markup.
+     *
+     * @return  string    The field input markup.
+     *
+     * @since   4.0.0
+     */
+    protected function getInput()
+    {
+        // Initialize variables.
+        $html = '<input type="file" name="' . $this->name . '[]" multiple >';
 
-		return $html;
-	}
+        return $html;
+    }
 }

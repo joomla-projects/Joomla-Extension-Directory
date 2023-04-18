@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -21,44 +22,44 @@ use Joomla\DI\Container;
  */
 class RouterFactory implements \Joomla\DI\ServiceProviderInterface
 {
-	/**
-	 * The component's namespace
-	 *
-	 * @var     string
-	 *
-	 * @since   4.0.0
-	 */
-	private $namespace;
+    /**
+     * The component's namespace
+     *
+     * @var     string
+     *
+     * @since   4.0.0
+     */
+    private $namespace;
 
-	/**
-	 * Router factory constructor.
-	 *
-	 * @param   string  $namespace  The namespace
-	 *
-	 * @since   4.0.0
-	 */
-	public function __construct(string $namespace)
-	{
-		$this->namespace = $namespace;
-	}
+    /**
+     * Router factory constructor.
+     *
+     * @param   string  $namespace  The namespace
+     *
+     * @since   4.0.0
+     */
+    public function __construct(string $namespace)
+    {
+        $this->namespace = $namespace;
+    }
 
-	/**
-	 * @inheritDoc
-	 *
-	 * @since 4.0.0
-	 */
-	public function register(Container $container)
-	{
-		$container->set(
-			RouterFactoryInterface::class,
-			function (Container $container) {
-				return new \Jed\Component\Jed\Administrator\Service\RouterFactory(
-					$this->namespace,
-					$container->get(DatabaseInterface::class),
-					$container->get(MVCFactoryInterface::class),
-					$container->get(CategoryFactoryInterface::class)
-				);
-			}
-		);
-	}
+    /**
+     * @inheritDoc
+     *
+     * @since 4.0.0
+     */
+    public function register(Container $container)
+    {
+        $container->set(
+            RouterFactoryInterface::class,
+            function (Container $container) {
+                return new \Jed\Component\Jed\Administrator\Service\RouterFactory(
+                    $this->namespace,
+                    $container->get(DatabaseInterface::class),
+                    $container->get(MVCFactoryInterface::class),
+                    $container->get(CategoryFactoryInterface::class)
+                );
+            }
+        );
+    }
 }

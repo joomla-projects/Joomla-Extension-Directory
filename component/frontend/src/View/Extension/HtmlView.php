@@ -8,8 +8,11 @@
  */
 
 namespace Jed\Component\Jed\Site\View\Extension;
+
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
@@ -23,135 +26,119 @@ use Joomla\CMS\Language\Text;
  */
 class HtmlView extends BaseHtmlView
 {
-	protected $state;
+    protected $state;
 
-	protected $item;
+    protected $item;
 
-	protected $form;
+    protected $form;
 
-	protected $params;
+    protected $params;
 
-	/**
-	 * Display the view
-	 *
-	 * @param   string  $tpl  Template name
-	 *
-	 * @return void
-	 *
-	 * @throws Exception
-	 *
-	 * @since 4.0.0
-	 */
-	public function display($tpl = null)
-	{
-		$app  = Factory::getApplication();
-		$user = Factory::getUser();
+    /**
+     * Display the view
+     *
+     * @param   string  $tpl  Template name
+     *
+     * @return void
+     *
+     * @throws Exception
+     *
+     * @since 4.0.0
+     */
+    public function display($tpl = null)
+    {
+        $app  = Factory::getApplication();
+        $user = Factory::getUser();
 
-		$this->state  = $this->get('State');
-		$this->item   = $this->get('Item');
-       
-		$this->params = $app->getParams('com_jed');
+        $this->state  = $this->get('State');
+        $this->item   = $this->get('Item');
 
-		if (!empty($this->item))
-		{
-			$this->form = $this->get('Form');
-		}
+        $this->params = $app->getParams('com_jed');
 
-		// Check for errors.
-		if (count($errors = $this->get('Errors')))
-		{
-			throw new Exception(implode("\n", $errors));
-		}
+        if (!empty($this->item)) {
+            $this->form = $this->get('Form');
+        }
 
-		
+        // Check for errors.
+        if (count($errors = $this->get('Errors'))) {
+            throw new Exception(implode("\n", $errors));
+        }
 
-		if ($this->_layout == 'edit')
-		{
-			$authorised = $user->authorise('core.create', 'com_jed');
 
-			if ($authorised !== true)
-			{
-				throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'));
-			}
-		}
 
-		$this->_prepareDocument();
-		parent::display($tpl);
-	}
+        if ($this->_layout == 'edit') {
+            $authorised = $user->authorise('core.create', 'com_jed');
 
-	/**
-	 * Prepares the document
-	 *
-	 * @return void
-	 *
-	 * @throws Exception
-	 *
-	 * @since 4.0.0
-	 */
-	protected function _prepareDocument()
-	{
-		$app   = Factory::getApplication();
-		$menus = $app->getMenu();
-		$title = null;
+            if ($authorised !== true) {
+                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'));
+            }
+        }
 
-		// Because the application sets a default page title,
-		// We need to get it from the menu item itself
-		$menu = $menus->getActive();
+        $this->prepareDocument();
+        parent::display($tpl);
+    }
 
-		if ($menu)
-		{
-			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
-		}
-		else
-		{
-			$this->params->def('page_heading', Text::_('COM_JED_DEFAULT_PAGE_TITLE'));
-		}
+    /**
+     * Prepares the document
+     *
+     * @return void
+     *
+     * @throws Exception
+     *
+     * @since 4.0.0
+     */
+    protected function prepareDocument()
+    {
+        $app   = Factory::getApplication();
+        $menus = $app->getMenu();
+        $title = null;
 
-		$title = $this->params->get('page_title', '');
+        // Because the application sets a default page title,
+        // We need to get it from the menu item itself
+        $menu = $menus->getActive();
 
-		if (empty($title))
-		{
-			$title = $app->get('sitename');
-		}
-		elseif ($app->get('sitename_pagetitles', 0) == 1)
-		{
-			$title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
-		}
-		elseif ($app->get('sitename_pagetitles', 0) == 2)
-		{
-			$title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
-		}
+        if ($menu) {
+            $this->params->def('page_heading', $this->params->get('page_title', $menu->title));
+        } else {
+            $this->params->def('page_heading', Text::_('COM_JED_DEFAULT_PAGE_TITLE'));
+        }
 
-		$this->document->setTitle($title);
+        $title = $this->params->get('page_title', '');
 
-		if ($this->params->get('menu-meta_description'))
-		{
-			$this->document->setDescription($this->params->get('menu-meta_description'));
-		}
+        if (empty($title)) {
+            $title = $app->get('sitename');
+        } elseif ($app->get('sitename_pagetitles', 0) == 1) {
+            $title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
+        } elseif ($app->get('sitename_pagetitles', 0) == 2) {
+            $title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
+        }
 
-		if ($this->params->get('menu-meta_keywords'))
-		{
-			$this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
-		}
+        $this->document->setTitle($title);
 
-		if ($this->params->get('robots'))
-		{
-			$this->document->setMetadata('robots', $this->params->get('robots'));
-		}
+        if ($this->params->get('menu-meta_description')) {
+            $this->document->setDescription($this->params->get('menu-meta_description'));
+        }
 
-		
-            // Add Breadcrumbs
-            $pathway = $app->getPathway();
-                        $breadcrumbList = Text::_('COM_JED_TITLE_EXTENSIONS');
-            
-                        if(!in_array($breadcrumbList, $pathway->getPathwayNames())) {
-                            $pathway->addItem($breadcrumbList, "index.php?option=com_jed&view=extensions");
-                        }
-                        $breadcrumbTitle = Text::_('COM_JED_TITLE_EXTENSION');
-            
-                        if(!in_array($breadcrumbTitle, $pathway->getPathwayNames())) {
-                            $pathway->addItem($breadcrumbTitle);    
-                        }
-                
-	}
+        if ($this->params->get('menu-meta_keywords')) {
+            $this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
+        }
+
+        if ($this->params->get('robots')) {
+            $this->document->setMetadata('robots', $this->params->get('robots'));
+        }
+
+
+        // Add Breadcrumbs
+        $pathway        = $app->getPathway();
+        $breadcrumbList = Text::_('COM_JED_TITLE_EXTENSIONS');
+
+        if (!in_array($breadcrumbList, $pathway->getPathwayNames())) {
+            $pathway->addItem($breadcrumbList, "index.php?option=com_jed&view=extensions");
+        }
+        $breadcrumbTitle = Text::_('COM_JED_TITLE_EXTENSION');
+
+        if (!in_array($breadcrumbTitle, $pathway->getPathwayNames())) {
+            $pathway->addItem($breadcrumbTitle);
+        }
+    }
 }

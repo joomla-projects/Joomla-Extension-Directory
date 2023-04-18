@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -8,11 +9,13 @@
 
 use Joomla\CMS\Language\Text;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 ?>
 <h3>
-	<?php echo Text::_('COM_JED_TITLE_HOME'); ?>
+    <?php echo Text::_('COM_JED_TITLE_HOME'); ?>
 
 </h3>
 

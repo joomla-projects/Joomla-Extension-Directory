@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    JED
  *
@@ -6,7 +7,11 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Installer\InstallerAdapter;
 use Joomla\CMS\Language\Text;
@@ -19,186 +24,160 @@ use Joomla\CMS\Log\Log;
  */
 class Com_JedInstallerScript
 {
+    /**
+     * Minimum Joomla version to check
+     *
+     * @var    string
+     * @since  4.0.0
+     */
+
+    private string $minimumJoomlaVersion = '4.0';
+
+
+    /**
+     * Minimum PHP version to check
+     *
+     * @var    string
+     * @since  4.0.0
+     */
 
-	/**
-	 * Minimum Joomla version to check
-	 *
-	 * @var    string
-	 * @since  4.0.0
-	 */
+    private string $minimumPHPVersion = JOOMLA_MINIMUM_PHP;
 
-	private string $minimumJoomlaVersion = '4.0';
 
+    /**
+     * Method to install the extension
+     *
+     * @param   InstallerAdapter  $parent  The class calling this method
+     *
+     * @return  boolean  True on success
+     *
+     * @since  4.0.0
+     */
+
+    public function install(Joomla\CMS\Installer\InstallerAdapter $parent): bool
+    {
+        echo Text::_('COM_JED_INSTALLERSCRIPT_INSTALL');
 
-	/**
-	 * Minimum PHP version to check
-	 *
-	 * @var    string
-	 * @since  4.0.0
-	 */
+        return true;
+    }
 
-	private string $minimumPHPVersion = JOOMLA_MINIMUM_PHP;
+    /**
+     * Function called after extension installation/update/removal procedure commences
+     *
+     * @param   string            $type    The type of change (install, update or discover_install, not uninstall)
+     * @param   InstallerAdapter  $parent  The class calling this method
+     *
+     * @return  boolean  True on success
+     *
+     * @since  4.0.0
+     *
 
+     */
+
+    public function postflight(
+        string $type,
+        Joomla\CMS\Installer\InstallerAdapter $parent
+    ): bool {
 
-	/**
-	 * Method to install the extension
-	 *
-	 * @param   InstallerAdapter  $parent  The class calling this method
-	 *
-	 * @return  boolean  True on success
-	 *
-	 * @since  4.0.0
-	 */
+        echo Text::_('COM_JED_INSTALLERSCRIPT_POSTFLIGHT');
 
-	public function install(Joomla\CMS\Installer\InstallerAdapter $parent): bool
-	{
-		echo Text::_('COM_JED_INSTALLERSCRIPT_INSTALL');
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * Function called after extension installation/update/removal procedure commences
-	 *
-	 * @param   string            $type    The type of change (install, update or discover_install, not uninstall)
-	 * @param   InstallerAdapter  $parent  The class calling this method
-	 *
-	 * @return  boolean  True on success
-	 *
-	 * @since  4.0.0
-	 *
+    /**
+     * Function called before extension installation/update/removal procedure commences
+     *
+     * @param   string            $type    The type of change (install, update or discover_install, not uninstall)
+     * @param   InstallerAdapter  $parent  The class calling this method
+     *
+     * @return  boolean  True on success
+     *
+     * @since  4.0.0
+     *
+     * @throws Exception
+     */
 
-	 */
+    public function preflight(
+        string $type,
+        Joomla\CMS\Installer\InstallerAdapter $parent
+    ): bool {
 
-	public function postflight(string                                $type,
-	                           Joomla\CMS\Installer\InstallerAdapter $parent): bool
+        if ($type !== 'uninstall') {
+            // Check for the minimum PHP version before continuing
 
-	{
+            if (!empty($this->minimumPHPVersion) && version_compare(PHP_VERSION, $this->minimumPHPVersion, '<')) {
+                Log::add(
+                    Text::sprintf('JLIB_INSTALLER_MINIMUM_PHP', $this->minimumPHPVersion),
+                    Log::WARNING,
+                    'jerror'
+                );
 
-		echo Text::_('COM_JED_INSTALLERSCRIPT_POSTFLIGHT');
 
+                return false;
+            }
 
-		return true;
 
-	}
+            // Check for the minimum Joomla version before continuing
 
-	/**
-	 * Function called before extension installation/update/removal procedure commences
-	 *
-	 * @param   string            $type    The type of change (install, update or discover_install, not uninstall)
-	 * @param   InstallerAdapter  $parent  The class calling this method
-	 *
-	 * @return  boolean  True on success
-	 *
-	 * @since  4.0.0
-	 *
-	 * @throws Exception
-	 */
+            if (!empty($this->minimumJoomlaVersion) && version_compare(JVERSION, $this->minimumJoomlaVersion, '<')) {
+                Log::add(
+                    Text::sprintf('JLIB_INSTALLER_MINIMUM_JOOMLA', $this->minimumJoomlaVersion),
+                    Log::WARNING,
+                    'jerror'
+                );
 
-	public function preflight(string                                $type,
-	                          Joomla\CMS\Installer\InstallerAdapter $parent): bool
 
-	{
+                return false;
+            }
+        }
 
-		if ($type !== 'uninstall')
-		{
 
-			// Check for the minimum PHP version before continuing
+        echo Text::_('COM_JED_INSTALLERSCRIPT_PREFLIGHT');
 
-			if (!empty($this->minimumPHPVersion) && version_compare(PHP_VERSION, $this->minimumPHPVersion, '<'))
-			{
 
-				Log::add(
+        return true;
+    }
 
-					Text::sprintf('JLIB_INSTALLER_MINIMUM_PHP', $this->minimumPHPVersion),
+    /**
+     * Method to uninstall the extension
+     *
+     * @param   InstallerAdapter  $parent  The class calling this method
+     *
+     * @return  boolean  True on success
+     *
+     * @since  4.0.0
+     */
 
-					Log::WARNING,
+    public function uninstall(
+        Joomla\CMS\Installer\InstallerAdapter $parent
+    ): bool {
 
-					'jerror'
+        echo Text::_('COM_JED_INSTALLERSCRIPT_UNINSTALL');
 
-				);
 
+        return true;
+    }
 
-				return false;
+    /**
+     * Method to update the extension
+     *
+     * @param   InstallerAdapter  $parent  The class calling this method
+     *
+     * @return  boolean  True on success
+     *
+     * @since  4.0.0
+     *
 
-			}
+     */
 
+    public function update(
+        Joomla\CMS\Installer\InstallerAdapter $parent
+    ): bool {
 
-			// Check for the minimum Joomla version before continuing
+        echo Text::_('COM_JED_INSTALLERSCRIPT_UPDATE');
 
-			if (!empty($this->minimumJoomlaVersion) && version_compare(JVERSION, $this->minimumJoomlaVersion, '<'))
-			{
 
-				Log::add(
-
-					Text::sprintf('JLIB_INSTALLER_MINIMUM_JOOMLA', $this->minimumJoomlaVersion),
-
-					Log::WARNING,
-
-					'jerror'
-
-				);
-
-
-				return false;
-
-			}
-
-		}
-
-
-		echo Text::_('COM_JED_INSTALLERSCRIPT_PREFLIGHT');
-
-
-		return true;
-
-	}
-
-	/**
-	 * Method to uninstall the extension
-	 *
-	 * @param   InstallerAdapter  $parent  The class calling this method
-	 *
-	 * @return  boolean  True on success
-	 *
-	 * @since  4.0.0
-	 */
-
-	public function uninstall(
-		Joomla\CMS\Installer\InstallerAdapter $parent): bool
-
-	{
-
-		echo Text::_('COM_JED_INSTALLERSCRIPT_UNINSTALL');
-
-
-		return true;
-
-	}
-
-	/**
-	 * Method to update the extension
-	 *
-	 * @param   InstallerAdapter  $parent  The class calling this method
-	 *
-	 * @return  boolean  True on success
-	 *
-	 * @since  4.0.0
-	 *
-
-	 */
-
-	public function update(
-		Joomla\CMS\Installer\InstallerAdapter $parent): bool
-
-	{
-
-		echo Text::_('COM_JED_INSTALLERSCRIPT_UPDATE');
-
-
-		return true;
-
-	}
-
+        return true;
+    }
 }
-
