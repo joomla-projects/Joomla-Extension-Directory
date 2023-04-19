@@ -1,10 +1,16 @@
 {
   "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
-  "name": "com_jed",
-  "version": "4.0.0",
-  "description": "Joomla Extension Directory",
-  "license": "GPL-2.0-or-later",
   "assets": [
+    {
+      "name": "com_jed.list",
+      "type": "style",
+      "uri": "media/com_jed/css/list.css"
+    },
+    {
+      "name": "com_jed.form",
+      "type": "style",
+      "uri": "media/com_jed/css/form.css"
+    },
     {
       "name": "com_jed.jedVel",
       "type": "style",
@@ -117,8 +123,8 @@
       ],
       "package": "autoComplete",
       "version": "8.3.2"
-    }, 
-      {
+    },
+    {
       "name": "com_jed.reviewForm-showHideEntryForm",
       "type": "script",
       "uri": "media/com_jed/js/reviewForm-showHideEntryForm.js",
@@ -127,7 +133,7 @@
       },
       "package": "jed",
       "version": "4.0.0"
-      },
+    },
     {
       "name": "com_jed.reviewForm-rateJS",
       "type": "script",
@@ -270,6 +276,9 @@
       "package": "jed",
       "version": "4.0.0"
     }
-
-  ]
+  ],
+  "description": "Joomla Extension Directory",
+  "license": "GPL-2.0-or-later",
+  "name": "com_jed",
+  "version": "4.0.0"
 }
