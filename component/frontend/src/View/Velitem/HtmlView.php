@@ -40,7 +40,7 @@ class HtmlView extends BaseHtmlView
      * @var    Form|null
      * @since  4.0.0
      */
-    protected ?Form $form;
+    protected mixed $form;
 
     /**
      * The item object
@@ -48,7 +48,7 @@ class HtmlView extends BaseHtmlView
      * @var    stdClass
      * @since  4.0.0
      */
-    protected stdClass $item;
+    protected mixed $item;
 
     /**
      * Get the state
@@ -64,7 +64,7 @@ class HtmlView extends BaseHtmlView
      * @var    Registry
      * @since  4.0.0
      */
-    protected Registry $params;
+    protected mixed $params;
 
     /**
      * Prepares the document
@@ -75,7 +75,7 @@ class HtmlView extends BaseHtmlView
      * @throws Exception
      *
      */
-    protected function prepareDocument()
+    protected function _prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
@@ -142,7 +142,7 @@ class HtmlView extends BaseHtmlView
             throw new Exception(implode("\n", $errors));
         }
 
-        $this->prepareDocument();
+        $this->_prepareDocument();
         parent::display($tpl);
     }
 

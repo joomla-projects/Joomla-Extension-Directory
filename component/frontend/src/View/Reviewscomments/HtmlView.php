@@ -26,43 +26,13 @@ use Joomla\CMS\Language\Text;
  */
 class HtmlView extends BaseHtmlView
 {
-    protected $items;
+    protected array $items;
 
-    protected $pagination;
+    protected Pagination $pagination;
 
-    protected $state;
+    protected CMSObject $state;
 
-    protected $params;
-
-    /**
-     * Display the view
-     *
-     * @param   string  $tpl  Template name
-     *
-     * @return void
-     *
-     * @throws Exception
-     * @throws Exception
-     * @throws Exception
-     */
-    public function display($tpl = null)
-    {
-        $app = Factory::getApplication();
-
-        $this->state      = $this->get('State');
-        $this->items      = $this->get('Items');
-        $this->pagination = $this->get('Pagination');
-        $this->params     = $app->getParams('com_jed');
-
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
-        }
-
-        $this->prepareDocument();
-        parent::display($tpl);
-    }
+    protected mixed $params;
 
     /**
      * Prepares the document
@@ -72,7 +42,7 @@ class HtmlView extends BaseHtmlView
      * @throws Exception
      * @throws Exception
      */
-    protected function prepareDocument()
+    protected function _prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
@@ -120,6 +90,36 @@ class HtmlView extends BaseHtmlView
         if (!in_array($breadcrumbTitle, $pathway->getPathwayNames())) {
             $pathway->addItem($breadcrumbTitle);
         }
+    }
+
+    /**
+     * Display the view
+     *
+     * @param   string  $tpl  Template name
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     *
+     * @throws Exception
+     */
+    public function display($tpl = null)
+    {
+        $app = Factory::getApplication();
+
+        $this->state      = $this->get('State');
+        $this->items      = $this->get('Items');
+        $this->pagination = $this->get('Pagination');
+        $this->params     = $app->getParams('com_jed');
+
+
+        // Check for errors.
+        if (count($errors = $this->get('Errors'))) {
+            throw new Exception(implode("\n", $errors));
+        }
+
+        $this->_prepareDocument();
+        parent::display($tpl);
     }
 
     /**

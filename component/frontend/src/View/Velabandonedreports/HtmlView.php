@@ -24,7 +24,6 @@ use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\Registry\Registry;
-use Jed\Component\Jed\Site\Helper\JedHelper;
 
 use function defined;
 
@@ -70,7 +69,7 @@ class HtmlView extends BaseHtmlView
      * @var     CMSObject
      * @since   4.0.0
      */
-    protected $state;
+    protected CMSObject $state;
 
     /**
      * Get the Params
@@ -78,7 +77,7 @@ class HtmlView extends BaseHtmlView
      * @var    Registry
      * @since  4.0.0
      */
-    protected Registry $params;
+    protected mixed $params;
 
     /**
      * Prepares the document
@@ -89,7 +88,7 @@ class HtmlView extends BaseHtmlView
      * @throws Exception
      *
      */
-    protected function prepareDocument()
+    protected function _prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
@@ -157,7 +156,7 @@ class HtmlView extends BaseHtmlView
             throw new Exception(implode("\n", $errors));
         }
 
-        $this->prepareDocument();
+        $this->_prepareDocument();
         parent::display($tpl);
     }
 

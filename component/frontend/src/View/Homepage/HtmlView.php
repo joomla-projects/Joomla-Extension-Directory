@@ -14,7 +14,6 @@ namespace Jed\Component\Jed\Site\View\Homepage;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Jed\Component\Jed\Site\Helper\JedHelper;
 
 use function defined;
 

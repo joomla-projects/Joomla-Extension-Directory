@@ -18,8 +18,10 @@ namespace Jed\Component\Jed\Site\View\Jedtickets;
 
 use Exception;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Pagination\Pagination;
 
 /**
@@ -29,6 +31,8 @@ use Joomla\CMS\Pagination\Pagination;
  */
 class HtmlView extends BaseHtmlView
 {
+    public Form $filterForm;
+    public array $activeFilters;
     /**
      * An array of items
      *
@@ -36,7 +40,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected $items;
+    protected array $items;
     /**
      * The pagination object
      *
@@ -44,15 +48,15 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected $pagination;
+    protected Pagination $pagination;
     /**
      * The model state
      *
-     * @var  object
+     * @var  CMSObject
      *
      * @since 4.0.0
      */
-    protected $state;
+    protected CMSObject $state;
     /**
      * The components parameters
      *
@@ -60,7 +64,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected $params;
+    protected mixed $params;
 
     /**
      * Prepares the document
@@ -71,11 +75,10 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      */
-    protected function prepareDocument()
+    protected function _prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
-        $title = null;
 
         // Because the application sets a default page title,
         // we need to get it from the menu item itself
@@ -139,7 +142,7 @@ class HtmlView extends BaseHtmlView
             throw new Exception(implode("\n", $errors));
         }
 
-        $this->prepareDocument();
+        $this->_prepareDocument();
         parent::display($tpl);
     }
 
@@ -152,7 +155,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    public function getState($state)
+    public function getState(mixed $state): bool
     {
         return $this->state->{$state} ?? false;
     }

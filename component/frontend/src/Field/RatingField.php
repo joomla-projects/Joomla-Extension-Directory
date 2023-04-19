@@ -13,11 +13,7 @@ namespace Jed\Component\Jed\Site\Field;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Field\ListField;
-use Joomla\CMS\HTML\HTMLHelper;
 
 /**
 // https://www.cssscript.com/star-rating-component-javascript-rater/
@@ -57,9 +53,9 @@ class RatingField extends ListField
      * @var    string
      * @since  4.0.0
      */
-    protected $type = 'rating';
+    protected string $type = 'rating';
 
-    protected $layout = 'joomla.form.field.list-fancy-select';
+    protected string $layout = 'joomla.form.field.list-fancy-select';
 
 
     /**

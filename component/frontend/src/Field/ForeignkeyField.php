@@ -17,6 +17,7 @@ use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Field\ListField;
+use Joomla\Database\Exception\ExecutionFailureException;
 
 use function is_array;
 use function is_int;
@@ -31,13 +32,19 @@ use function is_string;
 class ForeignKeyField extends ListField
 {
     /**
-     * The form field type.
+     * The ForeignKey field type.
      *
      * @var    string
      * @since  4.0.0
      */
     protected $type = 'foreignkey';
 
+    /**
+     * The sublayout to use when rendering the results.
+     *
+     * @var    string
+     * @since  2.5
+     */
     protected $layout = 'joomla.form.field.list-fancy-select';
 
     /**
@@ -46,9 +53,9 @@ class ForeignKeyField extends ListField
      * @var    boolean
      * @since  4.0.0
      */
-    protected $translate = true;
+    protected bool $translate = true;
 
-    protected $header = false;
+    protected bool $header = false;
 
     private $input_type;
 
@@ -71,7 +78,7 @@ class ForeignKeyField extends ListField
      *
      * @since   4.0.0
      */
-    protected function processQuery()
+    protected function processQuery(): string
     {
         // Type of input the field shows
         $this->input_type = $this->getAttribute('input_type');
@@ -99,8 +106,17 @@ class ForeignKeyField extends ListField
         // Flag to identify if the fk_value hides the trashed items
         $this->hideTrashed = (int) $this->getAttribute('hide_trashed', 0);
 
+        // Flag to identify if the fk_value hides the unpublished items
+        $this->hideUnpublished = (int)$this->getAttribute('hide_unpublished', 0);
+
+        // Flag to identify if the fk_value hides the published items
+        $this->hidePublished = (int)$this->getAttribute('hide_published', 0);
+
+        // Flag to identify if the fk_value hides the archived items
+        $this->hideArchived = (int)$this->getAttribute('hide_archived', 0);
+
         // Flag to identify if the fk has default order
-        $this->ordering = (int) $this->getAttribute('ordering', 0);
+        $this->fk_ordering = (string)$this->getAttribute('fk_ordering');
 
         // The where SQL for foreignkey
         $this->condition = (string) $this->getAttribute('condition');
@@ -113,7 +129,7 @@ class ForeignKeyField extends ListField
         $fk_value = '';
 
         // Load all the field options
-        $db    = Factory::getDbo();
+        $db    = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
 
         // Support for multiple fields on fk_values
@@ -148,119 +164,27 @@ class ForeignKeyField extends ListField
             $query->where($db->quoteName('state') . ' != -2');
         }
 
-        if ($this->ordering) {
-            $query->order('ordering ASC');
+        if ($this->hideUnpublished) {
+            $query->where($db->quoteName('state') . ' != 0');
+        }
+
+        if ($this->hidePublished) {
+            $query->where($db->quoteName('state') . ' != 1');
+        }
+
+        if ($this->hideArchived) {
+            $query->where($db->quoteName('state') . ' != 2');
+            }
+
+        if ($this->fk_ordering) {
+            $query->order($this->fk_ordering);
         }
 
         if ($this->condition) {
             $query->where($this->condition);
         }
 
-        // Only join on data that the user has created
-        $user = Factory::getUser();
-        if (!empty($user->id)) {
-            $query->where("created_by = " . (int)$user->id);
-        }
 
         return $query;
-    }
-
-    /**
-     * Method to get the field input for a foreignkey field.
-     *
-     * @return  string  The field input.
-     *
-     * @since   4.0.0
-     * @throws Exception
-     */
-    protected function getInput()
-    {
-        $data = $this->getLayoutData();
-
-        if (!is_array($this->value) && !empty($this->value)) {
-            if (is_object($this->value)) {
-                $this->value = get_object_vars($this->value);
-            }
-
-            // String in format 2,5,4
-            if (is_string($this->value)) {
-                $this->value = explode(',', $this->value);
-            }
-
-            // Integer is given
-            if (is_int($this->value)) {
-                $this->value = [$this->value];
-            }
-
-            $data['value'] = $this->value;
-        }
-
-        $data['options']       = $this->getOptions();
-
-        return $this->getRenderer($this->layout)->render($data);
-    }
-
-    /**
-     * Method to get the field options.
-     *
-     * @return  array  The field option objects.
-     *
-     * @since   4.0.0
-     * @throws Exception
-     * @throws Exception
-     */
-    protected function getOptions()
-    {
-        $options = [];
-        $db      = Factory::getDbo();
-        try {
-            $db->setQuery($this->processQuery());
-            $results = $db->loadObjectList();
-        } catch (ExecutionFailureException $e) {
-            Factory::getApplication()->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
-        }
-
-        // Add header.
-        if (!empty($this->header)) {
-            $options[] = (object) ["value" => '', "text" => Text::_($this->header)];
-        }
-
-        if (!empty($this->option_value_field) || !empty($this->option_key_field)) {
-            $options[] = (object) ["value" => $this->option_key_field, "text" => Text::_($this->option_value_field)];
-        }
-
-        // Build the field options.
-        if (!empty($results)) {
-            foreach ($results as $item) {
-                $options[] = (object) [
-                                    "value" => $item->{$this->key_field},
-                                    "text"  => $this->translate == true ? Text::_($item->{$this->value_field}) : $item->{$this->value_field},
-                                ];
-            }
-        }
-
-        // Merge any additional options in the XML definition.
-        $options = array_merge(parent::getOptions(), $options);
-
-        return $options;
-    }
-
-    /**
-     * Wrapper method for getting attributes from the form element
-     *
-     * @param   string  $attr_name  Attribute name
-     * @param   mixed   $default    Optional value to return if attribute not found
-     *
-     * @return mixed The value of the attribute if it exists, null otherwise
-     *
-     * @since 4.0.0
-     */
-    public function getAttribute($attr_name, $default = null)
-    {
-        if (!empty($this->element[$attr_name])) {
-            return $this->element[$attr_name];
-        } else {
-            return $default;
-        }
     }
 }

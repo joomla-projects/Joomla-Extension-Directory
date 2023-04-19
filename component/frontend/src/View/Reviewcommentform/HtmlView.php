@@ -26,13 +26,13 @@ use Joomla\CMS\Language\Text;
  */
 class HtmlView extends BaseHtmlView
 {
-    protected $state;
+    protected CMSObject $state;
 
-    protected $item;
+    protected mixed $item;
 
-    protected $form;
+    protected mixed $form;
 
-    protected $params;
+    protected mixed $params;
 
     protected $canSave;
 
@@ -43,8 +43,6 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @throws Exception
-     * @throws Exception
      * @throws Exception
      */
     public function display($tpl = null)
@@ -65,7 +63,7 @@ class HtmlView extends BaseHtmlView
 
 
 
-        $this->prepareDocument();
+        $this->_prepareDocument();
 
         parent::display($tpl);
     }
@@ -76,9 +74,8 @@ class HtmlView extends BaseHtmlView
      * @return void
      *
      * @throws Exception
-     * @throws Exception
      */
-    protected function prepareDocument()
+    protected function _prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();

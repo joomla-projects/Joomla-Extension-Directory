@@ -60,9 +60,9 @@ class RatingField extends ListField
      * @var    string
      * @since  4.0.0
      */
-    protected $type = 'rating';
+    protected string $type = 'rating';
 
-    protected $layout = 'joomla.form.field.list-fancy-select';
+    protected string $layout = 'joomla.form.field.list-fancy-select';
 
     /**
      * The translate.

@@ -31,12 +31,12 @@ HTMLHelper::_('bootstrap.tooltip');
 $lang = Factory::getLanguage();
 $lang->load('com_jed', JPATH_SITE);
 
-$user    = Factory::getUser();
+$user    = JedHelper::getUser();
 $canEdit = JedHelper::canUserEdit($this->item);
 
 $isLoggedIn  = JedHelper::IsLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
-//print_r($this->extension_details);exit();
+
 echo LayoutHelper::render('review.guidelines', $this->extension_details);
 
 ?>

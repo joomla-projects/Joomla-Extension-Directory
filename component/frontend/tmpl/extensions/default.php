@@ -9,11 +9,7 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-// phpcs:disable PSR1.Files.SideEffects
-// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
-// phpcs:enable PSR1.Files.SideEffects
-// phpcs:enable PSR1.Files.SideEffects
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\HTML\HTMLHelper;
@@ -22,7 +18,6 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Layout\LayoutHelper;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
-HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');
@@ -31,17 +26,15 @@ $user       = JedHelper::getUser();
 $userId     = $user->get('id');
 $listOrder  = $this->state->get('list.ordering');
 $listDirn   = $this->state->get('list.direction');
-$canCreate  = $user->authorise('core.create', 'com_jed') && file_exists(JPATH_COMPONENT . DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR . 'extensionform.xml');
-$canEdit    = $user->authorise('core.edit', 'com_jed') && file_exists(JPATH_COMPONENT .  DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR . 'extensionform.xml');
+$canCreate  = $user->authorise('core.create', 'com_jed');
+$canEdit    = $user->authorise('core.edit', 'com_jed');
 $canCheckin = $user->authorise('core.manage', 'com_jed');
 $canChange  = $user->authorise('core.edit.state', 'com_jed');
 $canDelete  = $user->authorise('core.delete', 'com_jed');
 
 // Import CSS
-try {
-    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-} catch (Exception $e) {
-}
+
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.jazstyle');
 ?>
 

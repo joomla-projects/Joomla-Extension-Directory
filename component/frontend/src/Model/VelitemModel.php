@@ -32,6 +32,14 @@ use function defined;
 class VelitemModel extends ItemModel
 {
     /**
+     * The item object
+     *
+     * @var    object
+     * @since  4.0.0
+     */
+    public $_item;
+
+    /**
      * Method to get a single Vulnerable Item.
      *
      * @param   null  $pk  The id of the object to get.

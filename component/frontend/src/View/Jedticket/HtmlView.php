@@ -37,7 +37,7 @@ class HtmlView extends BaseHtmlView
      * @var    CMSObject
      * @since  4.0.0
      */
-    protected $state;
+    protected CMSObject $state;
 
     /**
      * The item object
@@ -45,7 +45,7 @@ class HtmlView extends BaseHtmlView
      * @var    object
      * @since  4.0.0
      */
-    protected $item;
+    protected mixed $item;
 
     /**
      * The Form object
@@ -54,7 +54,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since  4.0.0
      */
-    protected $form;
+    protected mixed $form;
 
     /**
      * The components parameters
@@ -63,7 +63,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected $params;
+    protected mixed $params;
 
     /**
      * Prepares the document
@@ -75,11 +75,10 @@ class HtmlView extends BaseHtmlView
      * @throws Exception
      *
      */
-    protected function prepareDocument()
+    protected function _prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
-        $title = null;
 
         // Because the application sets a default page title,
         // We need to get it from the menu item itself
@@ -155,7 +154,7 @@ class HtmlView extends BaseHtmlView
             }
         }
 
-        $this->prepareDocument();
+        $this->_prepareDocument();
 
         parent::display($tpl);
     }

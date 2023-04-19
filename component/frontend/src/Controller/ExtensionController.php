@@ -13,12 +13,12 @@ namespace Jed\Component\Jed\Site\Controller;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Router\Route;
-use Exception;
 
 use function defined;
 
@@ -73,8 +73,6 @@ class ExtensionController extends BaseController
      * @return    void
      *
      * @since   4.0.0
-     * @throws Exception
-     * @throws  Exception
      * @throws Exception
      */
     public function publish()
@@ -166,8 +164,6 @@ class ExtensionController extends BaseController
      * @return void
      *
      * @since 4.0.0
-     * @throws Exception
-     *
      * @throws Exception
      */
     public function remove()

@@ -22,7 +22,6 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
-HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');
@@ -34,8 +33,8 @@ $listDirn    = $this->state->get('list.direction');
 $isLoggedIn  = JedHelper::IsLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
 
-$canCreate = $isLoggedIn && file_exists(JPATH_COMPONENT . DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR . 'jedticketform.xml');
-$canEdit   = $isLoggedIn && file_exists(JPATH_COMPONENT . DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR . 'jedticketform.xml');
+$canCreate = $isLoggedIn;
+$canEdit   = $isLoggedIn;
 
 
 // Import CSS

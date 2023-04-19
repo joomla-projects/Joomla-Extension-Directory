@@ -21,6 +21,7 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Object\CMSObject;
 
 /**
  * View class for a list of Jed.
@@ -35,14 +36,14 @@ class HtmlView extends BaseHtmlView
      * @var    CMSObject
      * @since  4.0.0
      */
-    protected $state;
+    protected CMSObject $state;
     /**
      * The item object
      *
      * @var    object
      * @since  4.0.0
      */
-    protected $item;
+    protected mixed $item;
     /**
      * The Form object
      *
@@ -50,7 +51,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since  4.0.0
      */
-    protected $form;
+    protected mixed $form;
     /**
      * The components parameters
      *
@@ -58,7 +59,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected $params;
+    protected mixed $params;
 
     /**
      * Prepares the document
@@ -69,7 +70,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      */
-    protected function prepareDocument()
+    protected function _prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
@@ -148,7 +149,7 @@ class HtmlView extends BaseHtmlView
             }
         }
 
-        $this->prepareDocument();
+        $this->_prepareDocument();
 
         parent::display($tpl);
     }

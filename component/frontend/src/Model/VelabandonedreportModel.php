@@ -34,6 +34,14 @@ use function defined;
  */
 class VelabandonedreportModel extends ItemModel
 {
+    /**
+     * The item object
+     *
+     * @var    object
+     * @since  4.0.0
+     */
+    public $_item;
+
     /** Data Table
      * @since 4.0.0
      **/

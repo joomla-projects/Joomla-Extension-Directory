@@ -24,7 +24,6 @@ use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\Registry\Registry;
 use stdClass;
-use Jed\Component\Jed\Site\Helper\JedHelper;
 
 use function defined;
 
@@ -41,7 +40,7 @@ class HtmlView extends BaseHtmlView
      * @var     CMSObject
      * @since   4.0.0
      */
-    protected $state;
+    protected CMSObject $state;
 
     /**
      * The item to be viewed
@@ -49,7 +48,7 @@ class HtmlView extends BaseHtmlView
      * @var    stdClass
      * @since  4.0.0
      */
-    protected $item;
+    protected mixed $item;
 
     /**
      * Form with settings
@@ -57,7 +56,7 @@ class HtmlView extends BaseHtmlView
      * @var    Form|null
      * @since  4.0.0
      */
-    protected $form;
+    protected mixed $form;
 
     /**
      * Get the Params
@@ -65,7 +64,7 @@ class HtmlView extends BaseHtmlView
      * @var    Registry
      * @since  4.0.0
      */
-    protected $params;
+    protected mixed $params;
 
     /**
      * Does user have permission to save form
@@ -73,7 +72,7 @@ class HtmlView extends BaseHtmlView
      * @var    bool
      * @since  4.0.0
      */
-    protected $canSave;
+    protected bool $canSave;
 
     /**
      * Prepares the document
@@ -84,7 +83,7 @@ class HtmlView extends BaseHtmlView
      * @throws Exception
      *
      */
-    protected function prepareDocument()
+    protected function _prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
@@ -151,7 +150,7 @@ class HtmlView extends BaseHtmlView
         }
 
 
-        $this->prepareDocument();
+        $this->_prepareDocument();
 
         parent::display($tpl);
     }

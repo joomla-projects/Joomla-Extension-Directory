@@ -20,7 +20,6 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\MVC\Model\FormModel;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
@@ -36,10 +35,10 @@ class ReviewformModel extends FormModel
     /**
      * The item object
      *
-     * @var    object
+     * @var    mixed
      * @since  4.0.0
      */
-    private $item = null;
+    private mixed $item = null;
 
     /**
      * Data Table
@@ -69,7 +68,7 @@ class ReviewformModel extends FormModel
      * @since    4.0.0
      * @throws Exception
      */
-    public function getForm($data = [], $loadData = true, $formname = 'jform'): ?Form
+    public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
     {
         // Get the form.
         $form = $this->loadForm(
@@ -315,16 +314,16 @@ class ReviewformModel extends FormModel
                 $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
 
 
-                $ticket_model = BaseDatabaseModel::getInstance('Jedticketform', 'JedModel', ['ignore_request' => true]);
-
+                //$ticket_model = BaseDatabaseModel::getInstance('Jedticketform', 'JedModel', ['ignore_request' => true]);
+                $ticket_model = new JedticketformModel();
                 $ticket_model->save($ticket);
 
                 $ticket_id = $ticket_model->getId();
                 /* We need to store the incoming ticket message */
                 $ticket_message['ticket_id'] = $ticket_id;
 
-                $ticket_message_model = BaseDatabaseModel::getInstance('Ticketmessageform', 'JedModel', ['ignore_request' => true]);
-                //$ticket_message_model = $this->getModel('Ticketmessageform', 'Site');
+                //$ticket_message_model = BaseDatabaseModel::getInstance('Ticketmessageform', 'JedModel', ['ignore_request' => true]);
+                $ticket_message_model = new TicketmessageformModel();
 
                 $ticket_message_model->save($ticket_message);
 

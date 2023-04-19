@@ -35,7 +35,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected $items;
+    protected array $items;
     /**
      * The pagination object
      *
@@ -43,7 +43,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected $pagination;
+    protected Pagination $pagination;
     /**
      * The model state
      *
@@ -51,7 +51,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected $state;
+    protected CMSObject $state;
     /**
      * The components parameters
      *
@@ -59,7 +59,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected $params;
+    protected mixed $params;
 
     /**
      * Prepares the document
@@ -70,7 +70,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      */
-    protected function prepareDocument()
+    protected function _prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
@@ -138,7 +138,7 @@ class HtmlView extends BaseHtmlView
             throw new Exception(implode("\n", $errors));
         }
 
-        $this->prepareDocument();
+        $this->_prepareDocument();
         parent::display($tpl);
     }
 

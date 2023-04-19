@@ -27,7 +27,7 @@ HTMLHelper::_('bootstrap.tooltip');
 $lang = Factory::getLanguage();
 $lang->load('com_jed', JPATH_SITE);
 
-$user    = Factory::getUser();
+$user    = JedHelper::getUser();
 $canEdit = JedHelper::canUserEdit($this->item, $user);
 
 

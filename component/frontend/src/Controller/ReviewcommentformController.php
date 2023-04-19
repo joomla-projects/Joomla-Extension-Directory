@@ -35,7 +35,6 @@ class ReviewcommentformController extends FormController
      *
      * @since   4.0.0
      *
-     * @throws  Exception
      * @throws Exception
      */
     public function edit($key = null, $urlVar = null)
@@ -72,9 +71,6 @@ class ReviewcommentformController extends FormController
      * @return  void
      *
      * @since   4.0.0
-     * @throws Exception
-     * @throws  Exception
-     * @throws Exception
      * @throws Exception
      */
     public function save($key = null, $urlVar = null)
@@ -164,7 +160,8 @@ class ReviewcommentformController extends FormController
      *
      * @return void
      *
-     * @throws Exception
+     * @since 4.0.0
+     *
      * @throws Exception
      */
     public function cancel($key = null)
@@ -194,9 +191,6 @@ class ReviewcommentformController extends FormController
      * @return  void
      *
      * @since   4.0.0
-     * @throws Exception
-     *
-     * @throws  Exception
      * @throws Exception
      */
     public function remove()

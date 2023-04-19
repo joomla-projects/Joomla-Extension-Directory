@@ -19,7 +19,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Uri\Uri;
 
 $wa = $this->document->getWebAssetManager();
 $wa->getRegistry()->addExtensionRegistryFile('com_jed');
@@ -30,8 +29,9 @@ HTMLHelper::_('bootstrap.tooltip');
 // Load admin language file
 $lang = Factory::getLanguage();
 $lang->load('com_jed', JPATH_SITE);
-$doc = Factory::getDocument();
-$doc->addScript(Uri::base() . '/media/com_jed/js/form.js');
+// Import CSS
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa->useStyle('com_jed.form');
 
 $user    = JedHelper::getUser();
 $canEdit = JedHelper::canUserEdit($this->item);

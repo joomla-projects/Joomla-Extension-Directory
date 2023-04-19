@@ -22,7 +22,6 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\MVC\Model\FormModel;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
@@ -39,10 +38,10 @@ class VeldeveloperupdateformModel extends FormModel
     /**
      * The item object
      *
-     * @var    object
+     * @var    mixed
      * @since  4.0.0
      */
-    private $item = null;
+    private mixed $item = null;
 
     /** Data Table
      * @since 4.0.0
@@ -98,7 +97,7 @@ class VeldeveloperupdateformModel extends FormModel
      * @since 4.0.0
      * @throws Exception
      */
-    public function checkout($pk = null)
+    public function checkout($pk = null): bool
     {
         // Get the user id.
         $pk = (!empty($pk)) ? $pk : (int) $this->getState('veldeveloperupdate.id');
@@ -180,7 +179,7 @@ class VeldeveloperupdateformModel extends FormModel
      * @throws Exception
      *
      */
-    public function getItem($id = null)
+    public function getItem($id = null): mixed
     {
         if ($this->item === null) {
             $this->item = false;
@@ -199,7 +198,7 @@ class VeldeveloperupdateformModel extends FormModel
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 
                     if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
-                        $canEdit = $user->id == $table->created_by;
+                        $canEdit = $user->id == $table->get('created_by');
                     }
 
                     if (!$canEdit) {
@@ -254,7 +253,7 @@ class VeldeveloperupdateformModel extends FormModel
      * @since 4.0.0
      * @throws Exception
      */
-    protected function loadFormData()
+    protected function loadFormData(): array
     {
         $data = Factory::getApplication()->getUserState('com_jed.edit.veldeveloperupdate.data', []);
 
@@ -407,15 +406,16 @@ class VeldeveloperupdateformModel extends FormModel
                 $ticket_message['message']           = $ticket['ticket_text'];
                 $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
 
-
-                $ticket_model = BaseDatabaseModel::getInstance('Jedticketform', 'JedModel', ['ignore_request' => true]);
+                $ticket_model = new JedticketformModel();
+                //$ticket_model = BaseDatabaseModel::getInstance('Jedticketform', 'JedModel', ['ignore_request' => true]);
                 $ticket_model->save($ticket);
                 $ticket_id = $ticket_model->getId();
                 /* We need to store the incoming ticket message */
                 $ticket_message['ticket_id'] = $ticket_id;
 
-                $ticket_message_model = BaseDatabaseModel::getInstance('Ticketmessageform', 'JedModel', ['ignore_request' => true]);
+                //$ticket_message_model = BaseDatabaseModel::getInstance('Ticketmessageform', 'JedModel', ['ignore_request' => true]);
                 //$ticket_message_model = $this->getModel('Ticketmessageform', 'Site');
+                $ticket_message_model = new TicketmessageformModel();
 
                 $ticket_message_model->save($ticket_message);
 

@@ -34,8 +34,7 @@ $catlist = $this->items;
         echo "<h1>" . Text::_('COM_JED_CATEGORIES_NONE_LABEL') . "</h1>";
     } else {
         foreach ($catlist as $c) {
-            if ($c->id == 25) {
-            } else {
+            if ($c->id !== 25) {
                 if ($rowc == 1) {
                     echo '<div class="row">';
                 }

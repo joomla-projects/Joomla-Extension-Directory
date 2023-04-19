@@ -26,6 +26,7 @@ $canEdit = JedHelper::getUser()->authorise('core.edit', 'com_jed');
 if (!$canEdit && JedHelper::getUser()->authorise('core.edit.own', 'com_jed')) {
     $canEdit = JedHelper::getUser()->id == $this->item->created_by;
 }
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
 $wa->getRegistry()->addExtensionRegistryFile('com_jed');
 $wa->useStyle('com_jed.oldjed');

@@ -36,7 +36,6 @@ class ReviewcommentController extends BaseController
      * @since   4.0.0
      *
      * @throws  Exception
-     * @throws Exception
      */
     public function edit()
     {
@@ -72,9 +71,6 @@ class ReviewcommentController extends BaseController
      * @return    void
      *
      * @since   4.0.0
-     * @throws Exception
-     * @throws  Exception
-     * @throws Exception
      * @throws Exception
      */
     public function publish()
@@ -129,7 +125,6 @@ class ReviewcommentController extends BaseController
      *
      * @since   4.0.0
      * @throws Exception
-     * @throws Exception
      */
     public function checkin()
     {
@@ -167,8 +162,6 @@ class ReviewcommentController extends BaseController
      *
      * @return void
      *
-     * @throws Exception
-     * @throws Exception
      * @throws Exception
      */
     public function remove()

@@ -15,12 +15,10 @@ namespace Jed\Component\Jed\Site\View\Reviewform;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Jed\Component\Jed\Site\Model\ExtensionModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
-use function Laminas\Diactoros\marshalProtocolVersionFromSapi;
 
 /**
  * View class for a list of Jed.
@@ -29,19 +27,45 @@ use function Laminas\Diactoros\marshalProtocolVersionFromSapi;
  */
 class HtmlView extends BaseHtmlView
 {
-    protected $state;
+    /**
+     * The model state
+     *
+     * @var  mixed
+     *
+     * @since 4.0.0
+     */
+    protected CMSObject $state;
 
-    protected $item;
+    /**
+     * The item object
+     *
+     * @var    mixed
+     * @since  4.0.0
+     */
+    protected mixed $item;
 
-    protected $form;
+    /**
+     * The Form object
+     *
+     * @var    mixed
+     *
+     * @since  4.0.0
+     */
+    protected mixed $form;
+    /**
+     * The components parameters
+     *
+     * @var  object
+     *
+     * @since 4.0.0
+     */
+    protected mixed $params;
 
-    protected $params;
+    protected bool $canSave;
 
-    protected $canSave;
+    protected mixed $extension_details;
 
-    protected $extension_details;
-
-    protected $supplytypes;
+    protected mixed $supplytypes;
 
     /**
      * Display the view
@@ -50,23 +74,24 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
+     * @since 4.0.0
      * @throws Exception
      *
-     * @since 4.0.0
      */
     public function display($tpl = null)
     {
-        $app  = Factory::getApplication();
+        $app = Factory::getApplication();
 
-        $this->state      = $this->get('State');
-        $this->item       = $this->get('Item');
-        $this->params     = $app->getParams('com_jed');
-        $this->canSave    = $this->get('CanSave');
-        $this->form       = $this->get('Form');
+        $this->state   = $this->get('State');
+        $this->item    = $this->get('Item');
+        $this->params  = $app->getParams('com_jed');
+        $this->canSave = $this->get('CanSave');
+        $this->form    = $this->get('Form');
 
-        $input                   = $app->input;
-        $extension_id            = $input->get('extension_id', -1, 'int');
-        $extension_model         = BaseDatabaseModel::getInstance('Extension', 'JedModel', ['ignore_request' => true]);
+        $input        = $app->input;
+        $extension_id = $input->get('extension_id', -1, 'int');
+        //$extension_model         = BaseDatabaseModel::getInstance('Extension', 'JedModel', ['ignore_request' => true]);
+        $extension_model         = new ExtensionModel();
         $this->extension_details = $extension_model->getItem($extension_id);
         $this->supplytypes       = $extension_model->getSupplyTypes($extension_id);
 
@@ -76,12 +101,10 @@ class HtmlView extends BaseHtmlView
         }
 
 
-
-        $this->prepareDocument();
+        $this->_prepareDocument();
 
         parent::display($tpl);
     }
-
     /**
      * Prepares the document
      *
@@ -91,7 +114,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected function prepareDocument()
+    protected function _prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();

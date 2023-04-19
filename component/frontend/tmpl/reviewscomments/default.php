@@ -18,18 +18,18 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 
-HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-$user       = Factory::getUser();
+$user       = JedHelper::getUser();
 $userId     = $user->get('id');
 $listOrder  = $this->state->get('list.ordering');
 $listDirn   = $this->state->get('list.direction');
-$canCreate  = $user->authorise('core.create', 'com_jed') && file_exists(JPATH_COMPONENT . DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR . 'reviewcommentform.xml');
-$canEdit    = $user->authorise('core.edit', 'com_jed') && file_exists(JPATH_COMPONENT .  DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR . 'reviewcommentform.xml');
+$canCreate  = $user->authorise('core.create', 'com_jed');
+$canEdit    = $user->authorise('core.edit', 'com_jed');
 $canCheckin = $user->authorise('core.manage', 'com_jed');
 $canChange  = $user->authorise('core.edit.state', 'com_jed');
 $canDelete  = $user->authorise('core.delete', 'com_jed');

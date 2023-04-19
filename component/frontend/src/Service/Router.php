@@ -34,8 +34,8 @@ use function defined;
 /**
  * JED Router.
  *
- * @since     4.0.0
  * @package   JED
+ * @since     4.0.0
  */
 class Router extends RouterView
 {
@@ -45,16 +45,16 @@ class Router extends RouterView
     /**
      * The category cache
      *
-     * @since 4.0.0
      * @var   array
+     * @since 4.0.0
      */
     private array $categoryCache = [];
 
     /**
      * The category factory
      *
-     * @since 4.0.0
      * @var   CategoryFactoryInterface
+     * @since 4.0.0
      */
     private CategoryFactoryInterface $categoryFactory;
 
@@ -110,7 +110,7 @@ class Router extends RouterView
      * @return  mixed   The id of this item or false
      * @since   4.0.0
      */
-    public function getCategoriesId($segment, $query)
+    public function getCategoriesId(string $segment, array $query): int|bool|null
     {
         return $this->getCategoryId($segment, $query);
     }
@@ -124,7 +124,7 @@ class Router extends RouterView
      * @return  array|string  The segments of this item
      * @since   4.0.0
      */
-    public function getCategoriesSegment($id, $query)
+    public function getCategoriesSegment(string $id, array $query): array|string
     {
         return $this->getCategorySegment($id, $query);
     }
@@ -138,7 +138,7 @@ class Router extends RouterView
      * @return  mixed   The id of this item or false
      * @since   4.0.0
      */
-    public function getCategoryId($segment, $query)
+    public function getCategoryId(string $segment, array $query): int|bool|null
     {
         $id = $query['id'] ?? 'root';
 
@@ -166,7 +166,7 @@ class Router extends RouterView
      * @return  array|string  The segments of this item
      * @since   4.0.0
      */
-    public function getCategorySegment($id, $query)
+    public function getCategorySegment(string $id, array $query): array|string
     {
         $category = $this->getCategories(['access' => true])->get($id);
 
@@ -192,7 +192,7 @@ class Router extends RouterView
      *
      * @since 4.0.0
      */
-    public function getExtensionId($segment, $query)
+    public function getExtensionId($segment, $query): int
     {
         return (int) $segment;
     }
@@ -205,7 +205,7 @@ class Router extends RouterView
      *
      * @since 4.0.0
      */
-    public function getExtensionSegment($id, $query)
+    public function getExtensionSegment($id, $query): array
     {
         if (strpos($id, ':')) {
             return [(int) $id => $id];
@@ -226,12 +226,28 @@ class Router extends RouterView
         return [$numericId => $id];
     }
 
-    public function getExtensionsId($segment, $query)
+    /**
+     * @param $segment
+     * @param $query
+     *
+     * @return bool|int|null
+     *
+     * @since 4.0.0
+     */
+    public function getExtensionsId($segment, $query): bool|int|null
     {
         return $this->getCategoryId($segment, $query);
     }
 
-    public function getExtensionsSegment($id, $query)
+    /**
+     * @param $id
+     * @param $query
+     *
+     * @return array|string
+     *
+     * @since 4.0.0
+     */
+    public function getExtensionsSegment($id, $query): array|string
     {
         return $this->getCategorySegment($id, $query);
     }

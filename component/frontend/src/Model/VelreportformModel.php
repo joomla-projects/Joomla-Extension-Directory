@@ -22,7 +22,6 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\MVC\Model\FormModel;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
@@ -40,10 +39,10 @@ class VelreportformModel extends FormModel
     /**
      * The item object
      *
-     * @var    object
+     * @var    mixed
      * @since  4.0.0
      */
-    private $item = null;
+    private mixed $item = null;
 
     /** Data Table
      * @since 4.0.0
@@ -105,7 +104,7 @@ class VelreportformModel extends FormModel
      * @since 4.0.0
      * @throws Exception
      */
-    public function getItem(int $id = null)
+    public function getItem(int $id = null): mixed
     {
         if ($this->item === null) {
             $this->item = false;
@@ -125,7 +124,7 @@ class VelreportformModel extends FormModel
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 
                     if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
-                        $canEdit = $user->id == $table->created_by;
+                        $canEdit = $user->id == $table->get('created_by');
                     }
 
                     if (!$canEdit) {
@@ -167,7 +166,7 @@ class VelreportformModel extends FormModel
      * @since 4.0.0
      * @throws Exception
      */
-    public function getTable($name = 'Velreport', $prefix = 'Administrator', $options = [])
+    public function getTable($name = 'Velreport', $prefix = 'Administrator', $options = []): Table|bool
     {
 
         return parent::getTable($name, $prefix, $options);
@@ -263,7 +262,7 @@ class VelreportformModel extends FormModel
      * @since 4.0.0
      * @throws Exception
      */
-    protected function loadFormData()
+    protected function loadFormData(): array
     {
         $data = Factory::getApplication()->getUserState('com_jed.edit.velreport.data', []);
 
@@ -495,17 +494,17 @@ class VelreportformModel extends FormModel
                 $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
 
 
-                $ticket_model = BaseDatabaseModel::getInstance('Jedticketform', 'JedModel', ['ignore_request' => true]);
-
+                //$ticket_model = BaseDatabaseModel::getInstance('Jedticketform', 'JedModel', ['ignore_request' => true]);
+                $ticket_model = new JedticketformModel();
                 $ticket_model->save($ticket);
 
                 $ticket_id = $ticket_model->getId();
                 /* We need to store the incoming ticket message */
                 $ticket_message['ticket_id'] = $ticket_id;
 
-                $ticket_message_model = BaseDatabaseModel::getInstance('Ticketmessageform', 'JedModel', ['ignore_request' => true]);
+                //$ticket_message_model = BaseDatabaseModel::getInstance('Ticketmessageform', 'JedModel', ['ignore_request' => true]);
                 //$ticket_message_model = $this->getModel('Ticketmessageform', 'Site');
-
+                $ticket_message_model = new TicketmessageformModel();
                 $ticket_message_model->save($ticket_message);
 
                 /* We need to email standard message to user and store message in ticket */

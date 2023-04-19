@@ -18,6 +18,7 @@ use Exception;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Object\CMSObject;
 
 /**
  * View class Extension Form.
@@ -26,15 +27,15 @@ use Joomla\CMS\Language\Text;
  */
 class HtmlView extends BaseHtmlView
 {
-    protected $state;
+    protected CMSObject $state;
 
-    protected $item;
+    protected mixed $item;
 
-    protected $form;
+    protected mixed $form;
 
-    protected $params;
+    protected mixed $params;
 
-    protected $canSave;
+    protected bool $canSave;
 
     /**
      * Display the view
@@ -62,7 +63,7 @@ class HtmlView extends BaseHtmlView
 
 
 
-        $this->prepareDocument();
+        $this->_prepareDocument();
 
         parent::display($tpl);
     }
@@ -76,11 +77,10 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected function prepareDocument()
+    protected function _prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
-        $title = null;
 
         // Because the application sets a default page title,
         // we need to get it from the menu item itself

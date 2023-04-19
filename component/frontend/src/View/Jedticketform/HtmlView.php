@@ -17,7 +17,6 @@ namespace Jed\Component\Jed\Site\View\Jedticketform;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
@@ -37,14 +36,14 @@ class HtmlView extends BaseHtmlView
      * @var    CMSObject
      * @since  4.0.0
      */
-    protected $state;
+    protected CMSObject $state;
     /**
      * The item object
      *
      * @var    object
      * @since  4.0.0
      */
-    protected $item;
+    protected mixed $item;
     /**
      * The Form object
      *
@@ -52,7 +51,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since  4.0.0
      */
-    protected $form;
+    protected mixed $form;
     /**
      * The components parameters
      *
@@ -60,14 +59,14 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected $params;
+    protected mixed $params;
     /**
      * Does user have permission to save form
      *
      * @var    bool
      * @since  4.0.0
      */
-    protected $canSave;
+    protected bool $canSave;
 
     /**
      * Prepares the document
@@ -78,11 +77,10 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      */
-    protected function prepareDocument()
+    protected function _prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
-        $title = null;
 
         // Because the application sets a default page title,
         // we need to get it from the menu item itself
@@ -132,8 +130,7 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null)
     {
-        $app  = Factory::getApplication();
-        $user = JedHelper::getUser();
+        $app = Factory::getApplication();
 
         $this->state   = $this->get('State');
         $this->item    = $this->get('Item');
@@ -147,7 +144,7 @@ class HtmlView extends BaseHtmlView
         }
 
 
-        $this->prepareDocument();
+        $this->_prepareDocument();
 
         parent::display($tpl);
     }
