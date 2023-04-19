@@ -17,8 +17,8 @@ namespace Jed\Component\Jed\Administrator\Model;
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
 
 /**
@@ -41,11 +41,11 @@ class ExtensionvarieddatumModel extends AdminModel
      */
     protected $text_prefix = 'COM_JED';
     /**
-     * @var    null  Item data
+     * @var    mixed  Item data
      *
      * @since  4.0.0
      */
-    protected $item = null;
+    protected mixed $item = null;
 
 
     /**
@@ -60,7 +60,7 @@ class ExtensionvarieddatumModel extends AdminModel
      * @since   4.0.0
      *
      */
-    public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
+    public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
     {
         // Get the form.
         $form = $this->loadForm(
@@ -91,7 +91,7 @@ class ExtensionvarieddatumModel extends AdminModel
      * @since   4.0.0
      *
      */
-    public function getFormTemplate(): Form
+    public function getFormTemplate(): Form|bool
     {
         // Get the form.
         $form = $this->loadForm(
@@ -122,7 +122,7 @@ class ExtensionvarieddatumModel extends AdminModel
      * @since   4.0.0
      *
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null): CMSObject
     {
 
         return parent::getItem($pk);
@@ -141,7 +141,7 @@ class ExtensionvarieddatumModel extends AdminModel
      * @since   4.0.0
      *
      */
-    public function getTable($name = 'Extensionvarieddatum', $prefix = 'Administrator', $options = [])
+    public function getTable($name = 'Extensionvarieddatum', $prefix = 'Administrator', $options = []): Table
     {
         return parent::getTable($name, $prefix, $options);
     }
@@ -155,7 +155,7 @@ class ExtensionvarieddatumModel extends AdminModel
      * @since   4.0.0
      *
      */
-    protected function loadFormData()
+    protected function loadFormData(): mixed
     {
         // Check the session for previously entered form data.
         $data = Factory::getApplication()->getUserState('com_jed.edit.extensionvarieddatum.data', []);

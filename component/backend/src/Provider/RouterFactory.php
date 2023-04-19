@@ -14,13 +14,14 @@ use Joomla\CMS\Component\Router\RouterFactoryInterface;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Database\DatabaseInterface;
 use Joomla\DI\Container;
+use Joomla\DI\ServiceProviderInterface;
 
 /**
  * @package     Jed\Component\Jed\Administrator\Provider
  *
  * @since       4.0.0
  */
-class RouterFactory implements \Joomla\DI\ServiceProviderInterface
+class RouterFactory implements ServiceProviderInterface
 {
     /**
      * The component's namespace

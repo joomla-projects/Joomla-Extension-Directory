@@ -40,7 +40,7 @@ class TimecreatedField extends FormField
      *
      * @since   4.0.0
      */
-    protected function getInput()
+    protected function getInput(): string
     {
         // Initialize variables.
         $html = [];

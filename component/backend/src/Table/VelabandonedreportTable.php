@@ -88,36 +88,6 @@ class VelabandonedreportTable extends Table
     }
 
     /**
-     * Returns the parent asset's id. If you have a tree structure, retrieve the parent's id using the external key field
-     *
-     * @param   Table|null  $table  Table name
-     * @param   int|null    $id     Id
-     *
-     * @return integer The id on success, false on failure.
-     * @see   Table::_getAssetParentId
-     *
-     * @since 4.0.0
-     */
-    protected function _getAssetParentId(Table $table = null, $id = null)
-    {
-        // We will retrieve the parent-asset from the Asset-table
-        $assetParent = Table::getInstance('Asset');
-
-        // Default: if no asset-parent can be found we take the global asset
-        $assetParentId = $assetParent->getRootId();
-
-        // The item has the component as asset-parent
-        $assetParent->loadByName('com_jed');
-
-        // Return the found asset-parent-id
-        if ($assetParent->id) {
-            $assetParentId = $assetParent->id;
-        }
-
-        return $assetParentId;
-    }
-
-    /**
      * Overloaded bind function to pre-process the params.
      *
      * @param   array  $src     Named array

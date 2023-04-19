@@ -14,9 +14,7 @@ namespace Jed\Component\Jed\Administrator\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\CMS\Router\Route;
 
 use function defined;
 
@@ -71,7 +69,6 @@ class DisplayController extends BaseController
                 $extensionimageModel       = $this->getModel('Extensionimage');
                 $extensionscoreModel       = $this->getModel('Extensionscore');
                 $extensionvarieddatumModel = $this->getModel('Extensionvarieddatum');
-
 
 
                 // And push the model into the view

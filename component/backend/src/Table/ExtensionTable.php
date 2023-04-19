@@ -61,37 +61,6 @@ class ExtensionTable extends Table
     }
 
     /**
-     * Returns the parent asset's id. If you have a tree structure, retrieve the parent's id using the external key field
-     *
-     * @param   Table|null    $table  Table name
-     * @param   integer|null  $id     Id
-     *
-     * @return mixed The id on success, false on failure.
-     *
-     * @see Table::_getAssetParentId
-     *
-     * @since 4.0.0
-     */
-    protected function _getAssetParentId(Table $table = null, $id = null)
-    {
-        // We will retrieve the parent-asset from the Asset-table
-        $assetParent = Table::getInstance('Asset');
-
-        // Default: if no asset-parent can be found we take the global asset
-        $assetParentId = $assetParent->getRootId();
-
-        // The item has the component as asset-parent
-        $assetParent->loadByName('com_jed');
-
-        // Return the found asset-parent-id
-        if ($assetParent->id) {
-            $assetParentId = $assetParent->id;
-        }
-
-        return $assetParentId;
-    }
-
-    /**
      * Overloaded bind function to pre-process the params.
      *
      * @param   array  $src     Named array
@@ -258,16 +227,18 @@ class ExtensionTable extends Table
     public function check(): bool
     {
         // If there is an ordering column and this is a new row then get the next ordering value
-        if (property_exists($this, 'ordering') && $this->id == 0) {
+        if (property_exists($this, 'ordering') && $this->get('id') == 0) {
             $this->ordering = self::getNextOrder();
         }
 
         // Check if alias is unique
         if (!$this->isUnique('alias')) {
             $count        = 0;
-            $currentAlias = $this->alias;
-            while (!$this->isUnique('alias')) {
-                $this->alias = $currentAlias . '-' . $count++;
+            $currentAlias = $this->get('alias');
+            while (!$this->isUnique($this->get('alias'))) {
+            }
+            {
+                $this->set('alias', $currentAlias . '-' . $count++);
             }
         }
 
@@ -297,7 +268,7 @@ class ExtensionTable extends Table
      *
      * @since   4.0.0
      */
-    public function getTypeAlias()
+    public function getTypeAlias(): string
     {
         return $this->typeAlias;
     }

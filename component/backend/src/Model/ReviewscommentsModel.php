@@ -15,7 +15,6 @@ namespace Jed\Component\Jed\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 
@@ -76,7 +75,8 @@ class ReviewscommentsModel extends ListModel
     protected function getListQuery(): QueryInterface
     {
         // Create a new query object.
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
 
         // Select the required fields from the table.

@@ -12,6 +12,7 @@ namespace Jed\Component\Jed\Administrator\Traits;
 
 use Exception;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Service\Category;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\Database\ParameterType;
@@ -171,7 +172,7 @@ trait ExtensionUtilities
             $supply = $variedDatum->supply_type;
 
             if (!empty($variedDatum->logo)) {
-                $variedDatum->logo = \Jed\Component\Jed\Site\Helper\JedHelper::formatImage($variedDatum->logo, ImageSize::LARGE);
+                $variedDatum->logo = JedHelper::formatImage($variedDatum->logo, ImageSize::LARGE);
             }
 
             if ($variedDatum->is_default_data == 1 && empty($variedDatum->intro_text)) {

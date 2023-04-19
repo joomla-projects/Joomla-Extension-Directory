@@ -40,7 +40,7 @@ class TimeupdatedField extends FormField
      *
      * @since   4.0.0
      */
-    protected function getInput()
+    protected function getInput(): string
     {
         // Initialize variables.
         $html = [];
@@ -48,7 +48,7 @@ class TimeupdatedField extends FormField
         $old_time_updated = $this->value;
         $hidden           = (bool) $this->element['hidden'];
 
-        if ($hidden == null || !$hidden) {
+        if (!$hidden) {
             if (!strtotime($old_time_updated)) {
                 $html[] = '-';
             } else {

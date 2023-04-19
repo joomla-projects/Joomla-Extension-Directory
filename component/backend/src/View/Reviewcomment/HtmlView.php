@@ -18,6 +18,7 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
@@ -27,11 +28,11 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
  */
 class HtmlView extends BaseHtmlView
 {
-    protected $state;
+    protected CMSObject $state;
 
-    protected $item;
+    protected mixed $item;
 
-    protected $form;
+    protected mixed $form;
 
     /**
      * Display the view

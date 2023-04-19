@@ -20,6 +20,7 @@ use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
 
 /**
@@ -40,10 +41,10 @@ class VelabandonedreportModel extends AdminModel
      */
     protected $text_prefix = 'COM_JED';
     /**
-     * @var null  Item data
+     * @var mixed  Item data
      * @since  4.0.0
      */
-    protected $item = null;
+    protected mixed $item = null;
 
     /**
      * Method to get the record form.
@@ -57,7 +58,7 @@ class VelabandonedreportModel extends AdminModel
      *
      * @throws
      */
-    public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
+    public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
     {
 
         // Get the form.
@@ -87,7 +88,7 @@ class VelabandonedreportModel extends AdminModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null): bool|CMSObject
     {
         return parent::getItem($pk);
     }
@@ -118,7 +119,7 @@ class VelabandonedreportModel extends AdminModel
      *
      * @throws
      */
-    protected function loadFormData()
+    protected function loadFormData(): mixed
     {
         // Check the session for previously entered form data.
         $data = Factory::getApplication()->getUserState('com_jed.edit.velabandonedreport.data', []);

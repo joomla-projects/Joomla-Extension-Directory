@@ -142,7 +142,8 @@ class ReviewsModel extends ListModel
     protected function getListQuery(): QueryInterface
     {
         // Create a new query object.
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
 
         // Select the required fields from the table.

@@ -22,6 +22,7 @@ use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -42,11 +43,11 @@ class HtmlView extends BaseHtmlView
     /**
      * The model state
      *
-     * @var  object
+     * @var  CMSObject
      *
      * @since 4.0.0
      */
-    protected $state;
+    protected CMSObject $state;
 
     /**
      * Add the page title and toolbar.
@@ -65,14 +66,6 @@ class HtmlView extends BaseHtmlView
 
         $toolbar = Toolbar::getInstance();
 
-        // Check if the form exists before showing the add/edit buttons
-        $formPath = JPATH_COMPONENT_ADMINISTRATOR . '/src/View/Jedtickets';
-
-        if (file_exists($formPath)) {
-            if ($canDo->get('core.create')) {
-                //  $toolbar->addNew('jedticket.add');
-            }
-        }
 
         if ($canDo->get('core.edit.state')) {
             $dropdown = $toolbar->dropdownButton('status-group')
@@ -199,7 +192,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    public function getState($state): bool
+    public function getState(mixed $state): bool
     {
         return $this->state->{$state} ?? false;
     }

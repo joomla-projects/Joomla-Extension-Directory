@@ -15,7 +15,7 @@ namespace Jed\Component\Jed\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\Factory;
+use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\Database\QueryInterface;
@@ -52,11 +52,10 @@ class ExtensionimagesModel extends ListModel
      *
      * @since 4.0.0
      */
-    public function getItems()
+    public function getItems(): mixed
     {
         return parent::getItems();
     }
-
 
     /**
      * Build an SQL query to load the list data.
@@ -68,7 +67,8 @@ class ExtensionimagesModel extends ListModel
     protected function getListQuery(): QueryInterface
     {
         // Create a new query object.
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
 
         // Select the required fields from the table.
@@ -78,7 +78,7 @@ class ExtensionimagesModel extends ListModel
         // Join over the users for the checked out user
         $query->select("uc.name AS uEditor");
         $query->join("LEFT", "#__users AS uc ON uc.id=a.checked_out");
-        if (!$this->isAdminOrSuperUser()) {
+        if (jedHelper::isAdminOrSuperUser()) {
             $query->where("a.created_by = " . JedHelper::getUser()->get("id"));
         }
 

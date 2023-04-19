@@ -19,6 +19,7 @@ use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table as Table;
 use Joomla\Database\DatabaseDriver;
+use Joomla\Registry\Registry;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
 /**
@@ -56,37 +57,6 @@ class ExtensionvarieddatumTable extends Table
         $k = $this->_tbl_key;
 
         return $this->typeAlias . '.' . (int) $this->$k;
-    }
-
-    /**
-     * Returns the parent asset's id. If you have a tree structure, retrieve the parent's id using the external key field
-     *
-     * @param   Table|null    $table  Table name
-     * @param   integer|null  $id     Id
-     *
-     * @return mixed The id on success, false on failure.
-     *
-     * @see Table::_getAssetParentId
-     *
-     * @since 4.0.0
-     */
-    protected function _getAssetParentId(Table $table = null, $id = null)
-    {
-        // We will retrieve the parent-asset from the Asset-table
-        $assetParent = Table::getInstance('Asset');
-
-        // Default: if no asset-parent can be found we take the global asset
-        $assetParentId = $assetParent->getRootId();
-
-        // The item has the component as asset-parent
-        $assetParent->loadByName('com_jed');
-
-        // Return the found asset-parent-id
-        if ($assetParent->id) {
-            $assetParentId = $assetParent->id;
-        }
-
-        return $assetParentId;
     }
 
     /**
@@ -160,7 +130,7 @@ class ExtensionvarieddatumTable extends Table
 
         if (isset($src['metadata']) && is_array($src['metadata'])) {
             $registry = new Registry();
-            $registry->loadArray($array['metadata']);
+            $registry->loadArray($src['metadata']);
             $src['metadata'] = (string) $registry;
         }
 
@@ -199,7 +169,7 @@ class ExtensionvarieddatumTable extends Table
     public function check(): bool
     {
         // If there is an ordering column and this is a new row then get the next ordering value
-        if (property_exists($this, 'ordering') && $this->id == 0) {
+        if (property_exists($this, 'ordering') && $this->get('id') == 0) {
             $this->ordering = self::getNextOrder();
         }
 
@@ -230,7 +200,7 @@ class ExtensionvarieddatumTable extends Table
      *
      * @since   4.0.0
      */
-    public function getTypeAlias()
+    public function getTypeAlias(): string
     {
         return $this->typeAlias;
     }

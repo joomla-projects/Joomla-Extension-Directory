@@ -20,10 +20,10 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\Registry\Registry;
 
 /**
  * View for JED Home.
@@ -66,10 +66,10 @@ class HtmlView extends BaseHtmlView
     /**
      * The model state
      *
-     * @var    Registry
+     * @var    CMSObject
      * @since  4.0.0
      */
-    protected Registry $state;
+    protected CMSObject $state;
 
     /**
      * Add the page title and toolbar.

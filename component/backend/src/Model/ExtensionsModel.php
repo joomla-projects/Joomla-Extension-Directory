@@ -15,7 +15,6 @@ namespace Jed\Component\Jed\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\Database\QueryInterface;
@@ -83,10 +82,11 @@ class ExtensionsModel extends ListModel
      *
      * @since 4.0.0
      */
-    public function getItems()
+    public function getItems(): mixed
     {
         $items = parent::getItems();
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db    = $this->getDatabase();
+
         $query = $db->getQuery(true)
             ->select('COUNT(' . $db->quoteName('id') . ')')
             ->from($db->quoteName('#__jed_reviews'));
@@ -115,7 +115,8 @@ class ExtensionsModel extends ListModel
     protected function getListQuery(): QueryInterface
     {
         // Create a new query object.
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true)
 
         // Select the required fields from the table.

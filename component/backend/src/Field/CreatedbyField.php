@@ -14,7 +14,6 @@ namespace Jed\Component\Jed\Administrator\Field;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
 
 /**

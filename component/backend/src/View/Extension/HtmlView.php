@@ -19,6 +19,7 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
@@ -28,48 +29,67 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
  */
 class HtmlView extends BaseHtmlView
 {
-    protected $state;
 
-    protected $item;
+    public mixed $extensionvarieddata;
+    protected CMSObject $state;
+    protected mixed $item;
+    protected mixed $form;
+    protected mixed $forms;
+    protected mixed $extension;
+    protected mixed $extensionimages;
+    protected mixed $extensionscores;
+    protected mixed $extensionimage;
+    protected mixed $extensionscore;
+    protected mixed $extensionvarieddatum_form;
+    protected mixed $varied_forms;
 
-    protected $form;
+    /**
+     * Add the page title and toolbar.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     * @throws Exception
+     *
+     */
+    protected function addToolbar()
+    {
+        Factory::getApplication()->input->set('hidemainmenu', true);
 
-    protected $varied_forms;
-    /**
-     * @var mixed
-     * @since version
-     */
-    protected $extension;
-    /**
-     * @var mixed
-     * @since version
-     */
-    protected $extensionimages;
-    /**
-     * @var mixed
-     * @since version
-     */
-    protected $extensionscores;
-    /**
-     * @var mixed
-     * @since version
-     */
-    public $extensionvarieddata;
-    /**
-     * @var mixed
-     * @since version
-     */
-    protected $extensionimage;
-    /**
-     * @var mixed
-     * @since version
-     */
-    protected $extensionscore;
-    /**
-     * @var mixed
-     * @since version
-     */
-    protected $extensionvarieddatum_form;
+        $user = JedHelper::getUser();
+
+        if (isset($this->item->checked_out)) {
+            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+        } else {
+            $checkedOut = false;
+        }
+
+        $canDo = JedHelper::getActions();
+
+        ToolbarHelper::title(Text::_('COM_JED_TITLE_EXTENSION'), "generic");
+
+        // If not checked out, can save the item.
+        if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create')))) {
+            ToolbarHelper::apply('extension.apply', 'JTOOLBAR_APPLY');
+            ToolbarHelper::save('extension.save', 'JTOOLBAR_SAVE');
+        }
+
+        if (!$checkedOut && ($canDo->get('core.create'))) {
+            ToolbarHelper::custom(
+                'extension.save2new',
+                'save-new.png',
+                'save-new_f2.png',
+                'JTOOLBAR_SAVE_AND_NEW',
+                false
+            );
+        }
+
+        if (empty($this->item->id)) {
+            ToolbarHelper::cancel('extension.cancel', 'JTOOLBAR_CANCEL');
+        } else {
+            ToolbarHelper::cancel('extension.cancel', 'JTOOLBAR_CLOSE');
+        }
+    }
 
     /**
      * Display the view

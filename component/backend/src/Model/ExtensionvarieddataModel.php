@@ -15,7 +15,8 @@ namespace Jed\Component\Jed\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\Factory;
+use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\Database\QueryInterface;
@@ -74,7 +75,7 @@ class ExtensionvarieddataModel extends ListModel
      *
      * @since 4.0.0
      */
-    public function getItems()
+    public function getItems(): mixed
     {
         $items = parent::getItems();
 
@@ -84,7 +85,7 @@ class ExtensionvarieddataModel extends ListModel
                 $textValue = [];
 
                 foreach ($values as $value) {
-                    $db    = Factory::getDbo();
+                    $db    = $this->getDatabase();
                     $query = $db->getQuery(true);
                     $query
                         ->select('`#__jed_extensions_3727155`.`id`')
@@ -107,7 +108,7 @@ class ExtensionvarieddataModel extends ListModel
                 $textValue = [];
 
                 foreach ($values as $value) {
-                    $db    = Factory::getDbo();
+                    $db    = $this->getDatabase();
                     $query = $db->getQuery(true);
                     $query
                         ->select('`#__jed_extension_supply_options_3727156`.`title`')
@@ -140,7 +141,8 @@ class ExtensionvarieddataModel extends ListModel
     protected function getListQuery(): QueryInterface
     {
         // Create a new query object.
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
 
         // Select the required fields from the table.
@@ -155,7 +157,7 @@ class ExtensionvarieddataModel extends ListModel
         // Join over the users for the checked out user
         $query->select("uc.name AS uEditor");
         $query->join("LEFT", "#__users AS uc ON uc.id=a.checked_out");
-        if (!$this->isAdminOrSuperUser()) {
+        if (!JedHelper::isAdminOrSuperUser()) {
             $query->where("a.created_by = " . JedHelper::getUser()->get("id"));
         }
         // Join over the foreign key 'extension_id'
@@ -187,7 +189,7 @@ class ExtensionvarieddataModel extends ListModel
                 $query->where('a.id = ' . (int) substr($search, 3));
             } else {
                 $search = $db->Quote('%' . $db->escape($search, true) . '%');
-                //  $query->where('(a.title LIKE ' . $search . ') ');
+                $query->where('(a.title LIKE ' . $search . ') ');
             }
         }
 

@@ -278,6 +278,24 @@ class JedHelper
     }
 
     /**
+     * Checks whether or not a user is manager or super user
+     *
+     * @return bool
+     *
+     * @since 4.0.0
+     */
+    public static function isAdminOrSuperUser(): bool
+    {
+        try {
+            $user = self::getUser();
+
+            return in_array("8", $user->groups) || in_array("7", $user->groups);
+        } catch (Exception $exc) {
+            return false;
+        }
+    }
+
+    /**
      * Lock form fields
      *
      * This takes a form and marks all fields as readonly/disabled
@@ -324,4 +342,31 @@ class JedHelper
             return 'Sorry an error occured';
         }
     }
+
+    /**
+     * Gets the files attached to an item
+     *
+     * @param   int     $pk     The item's id
+     *
+     * @param   string  $table  The table's name
+     *
+     * @param   string  $field  The field's name
+     *
+     * @return  array  The files
+     *
+     */
+     public static function getFiles(int $pk, string $table, string $field): array
+     {
+          $db = Factory::getContainer()->get('DatabaseDriver');
+          $query = $db->getQuery(true);
+
+          $query
+               ->select($field)
+               ->from($table)
+               ->where('id = ' . $pk);
+
+          $db->setQuery($query);
+
+          return explode(',', $db->loadResult());
+     }
 }

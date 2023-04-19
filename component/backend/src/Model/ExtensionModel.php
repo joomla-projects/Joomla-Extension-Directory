@@ -28,9 +28,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\User\User;
-use Michelf;
 use RuntimeException;
-use SimpleXMLElement;
 use stdClass;
 
 /**
@@ -61,7 +59,7 @@ class ExtensionModel extends AdminModel
      *
      * @since  4.0.0
      */
-    protected stdClass $_item;
+    protected mixed $item;
 
     /**
      * Get the filename of the given extension ID.
@@ -74,7 +72,8 @@ class ExtensionModel extends AdminModel
      */
     public function getFilename(int $extensionId): stdClass
     {
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true)
             ->select(
                 $db->quoteName(
@@ -109,7 +108,7 @@ class ExtensionModel extends AdminModel
      * @since   4.0.0
      * @throws Exception
      */
-    public function getForm($data = [], $loadData = true, $formname = 'jform_extension'): Form
+    public function getForm($data = [], $loadData = true, $formname = 'jform_extension'): Form|bool
     {
         // Get the form.
         $form = $this->loadForm('com_jed.extension', 'extension', ['control' => $formname, 'load_data' => $loadData]);
@@ -128,7 +127,7 @@ class ExtensionModel extends AdminModel
      * @since   4.0.0
      * @throws Exception
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null): mixed
     {
 
 
@@ -308,7 +307,8 @@ class ExtensionModel extends AdminModel
      */
     public function getReviews(int $extension_id): array
     {
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
         $query->select('a.*,u.name as created_by_name')
             ->from($db->quoteName('#__jed_reviews', 'a'))
@@ -355,7 +355,8 @@ class ExtensionModel extends AdminModel
      */
     public function getScores(int $extension_id): array
     {
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
         $query->select('*')
             ->from($db->quoteName('#__jed_extension_scores'))
@@ -381,7 +382,7 @@ class ExtensionModel extends AdminModel
      * @param   array    $data      An optional array of data for the form to interogate.
      * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
      *
-     * @return  Form|boolean  A \JForm object on success, false on failure
+     * @return  Form|boolean  A Form object on success, false on failure
      *
      * @since   4.0.0
      * @throws Exception
@@ -498,7 +499,7 @@ class ExtensionModel extends AdminModel
             //echo "<pre>";print_r($this->_item);echo "</pre>";exit();
 
             if ($this->_item->logo <> "") {
-                $this->_item->logo = \Jed\Component\Jed\Site\Helper\JedHelper::formatImage($this->_item->logo, ImageSize::SMALL);
+                $this->_item->logo = JedHelper::formatImage($this->_item->logo, ImageSize::SMALL);
             }
 
 
@@ -506,7 +507,8 @@ class ExtensionModel extends AdminModel
             $this->_item->developer_company = $this->getDeveloperName($this->_item->created_by);
 
 
-            /*  $db    = Factory::getContainer()->get('DatabaseDriver');
+            /*	$db = $this->getDatabase();
+
             $query = $db->getQuery(true);
             $query->select('supply_options.title AS supply_type, a.*')
                 ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
@@ -698,7 +700,7 @@ class ExtensionModel extends AdminModel
      */
     private function removePublishedReason(int $extensionId): void
     {
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
         $query = $db->getQuery(true)
             ->delete($db->quoteName('#__jed_extensions_published_reasons'))
             ->where($db->quoteName('extension_id') . ' = ' . $extensionId);
@@ -718,7 +720,8 @@ class ExtensionModel extends AdminModel
      */
     private function storeExtensionTypes(int $extensionId, array $types): void
     {
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true)
             ->delete($db->quoteName('#__jed_extensions_types'))
             ->where($db->quoteName('extension_id') . ' = ' . $extensionId);
@@ -763,7 +766,8 @@ class ExtensionModel extends AdminModel
      */
     private function storeImages(int $extensionId, array $images): void
     {
-        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
 
         $query = $db->getQuery(true)
             ->delete($db->quoteName('#__jed_extensions_images'))
@@ -814,12 +818,7 @@ class ExtensionModel extends AdminModel
      *
      * @since   4.0.0
      */
-    public function storeNote(
-        string $body,
-        int $developerId,
-        int $userId,
-        int $extensionId
-    ): void {
+    public function storeNote(string $body, int $developerId, int $userId, int $extensionId): void {
         $developer = User::getInstance($developerId);
 
         if ($developer->get('id', null) === null) {
@@ -860,7 +859,8 @@ class ExtensionModel extends AdminModel
         int $extensionId,
         array $relatedCategoryIds
     ): void {
-        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
 
         $query = $db->getQuery(true)
             ->delete($db->quoteName('#__jed_extensions_categories'))
@@ -912,7 +912,8 @@ class ExtensionModel extends AdminModel
         array $versions,
         string $type
     ): void {
-        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
 
         $query = $db->getQuery(true)
             ->delete($db->quoteName('#__jed_extensions_' . $type . '_versions'))

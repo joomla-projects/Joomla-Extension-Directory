@@ -18,6 +18,8 @@ use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table as Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Registry\Registry;
@@ -88,37 +90,6 @@ class ExtensionimageTable extends Table
     }
 
     /**
-     * Returns the parent asset's id. If you have a tree structure, retrieve the parent's id using the external key field
-     *
-     * @param   Table|null    $table  Table name
-     * @param   integer|null  $id     Id
-     *
-     * @return mixed The id on success, false on failure.
-     *
-     * @see   Table::_getAssetParentId
-     *
-     * @since 4.0.0
-     */
-    protected function _getAssetParentId(Table $table = null, $id = null)
-    {
-        // We will retrieve the parent-asset from the Asset-table
-        $assetParent = Table::getInstance('Asset');
-
-        // Default: if no asset-parent can be found we take the global asset
-        $assetParentId = $assetParent->getRootId();
-
-        // The item has the component as asset-parent
-        $assetParent->loadByName('com_jed');
-
-        // Return the found asset-parent-id
-        if ($assetParent->id) {
-            $assetParentId = $assetParent->id;
-        }
-
-        return $assetParentId;
-    }
-
-    /**
      * Overloaded bind function to pre-process the params.
      *
      * @param   array  $src     Named array
@@ -132,7 +103,6 @@ class ExtensionimageTable extends Table
      */
     public function bind($src, $ignore = ''): ?string
     {
-        $date = Factory::getDate();
         $task = Factory::getApplication()->input->get('task');
 
         $input = Factory::getApplication()->input;
@@ -221,7 +191,7 @@ class ExtensionimageTable extends Table
     public function check(): bool
     {
         // If there is an ordering column and this is a new row then get the next ordering value
-        if (property_exists($this, 'ordering') && $this->id == 0) {
+        if (property_exists($this, 'ordering') && $this->get('id') == 0) {
             $this->ordering = self::getNextOrder();
         }
 
@@ -246,8 +216,6 @@ class ExtensionimageTable extends Table
             $this->filename = "";
 
             foreach ($files['filename'] as $singleFile) {
-                jimport('joomla.filesystem.file');
-
                 // Check if the server found any error.
                 $fileError = $singleFile['error'];
                 $message   = '';
@@ -272,11 +240,10 @@ class ExtensionimageTable extends Table
                     }
                 } elseif ($fileError == 4) {
                     if (isset($array['filename'])) {
-                        $this->filename = $array['filename'];
+                        $this->set('filename', $array['filename']);
                     }
                 } else {
                     // Replace any special characters in the filename
-                    jimport('joomla.filesystem.file');
                     $filename   = File::stripExt($singleFile['name']);
                     $extension  = File::getExt($singleFile['name']);
                     $filename   = preg_replace("/[^A-Za-z0-9]/i", "-", $filename);
@@ -291,13 +258,15 @@ class ExtensionimageTable extends Table
                             return false;
                         }
                     }
-
-                    $this->filename .= (!empty($this->filename)) ? "," : "";
-                    $this->filename .= $filename;
+                    $lfname = $this->get('filename');
+                    $this->set('filename', $lfname .= (!empty($lfname)) ? "," : "");
+                    $lfname = $this->get('filename');
+                    $this->set('filename', $lfname .= $filename);
                 }
             }
         } else {
-            $this->filename .= $array['filename_hidden'];
+            $lfname = $this->get('filename');
+            $this->set('filename', $lfname .= $array['filename_hidden']);
         }
 
         return parent::check();
@@ -318,17 +287,15 @@ class ExtensionimageTable extends Table
         $result = parent::delete($pk);
 
         if ($result) {
-            jimport('joomla.filesystem.file');
-
-            $checkImageVariableType = gettype($this->filename);
+            $checkImageVariableType = gettype($this->get('filename'));
 
             switch ($checkImageVariableType) {
                 case 'string':
-                    File::delete(JPATH_ROOT . '//tmp/' . $this->filename);
+                    File::delete(JPATH_ROOT . '/tmp/' . $this->filename);
                     break;
                 default:
                     foreach ($this->filename as $filenameFile) {
-                        File::delete(JPATH_ROOT . '//tmp/' . $filenameFile);
+                        File::delete(JPATH_ROOT . '/tmp/' . $filenameFile);
                     }
             }
         }
@@ -343,7 +310,7 @@ class ExtensionimageTable extends Table
      *
      * @since   4.0.0
      */
-    public function getTypeAlias()
+    public function getTypeAlias(): string
     {
         return $this->typeAlias;
     }

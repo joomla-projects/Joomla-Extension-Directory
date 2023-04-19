@@ -19,6 +19,7 @@ use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table as Table;
 use Joomla\Database\DatabaseDriver;
+use Joomla\Registry\Registry;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
 /**
@@ -159,7 +160,7 @@ class ReviewcommentTable extends Table
     public function check(): bool
     {
         // If there is an ordering column and this is a new row then get the next ordering value
-        if (property_exists($this, 'ordering') && $this->id == 0) {
+        if (property_exists($this, 'ordering') && $this->get('id') == 0) {
             $this->ordering = self::getNextOrder();
         }
 
@@ -188,7 +189,7 @@ class ReviewcommentTable extends Table
      *
      * @since   4.0.0
      */
-    public function getTypeAlias()
+    public function getTypeAlias(): string
     {
         return $this->typeAlias;
     }

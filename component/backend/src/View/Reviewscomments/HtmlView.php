@@ -18,6 +18,8 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
@@ -29,11 +31,11 @@ use Joomla\Component\Content\Administrator\Extension\ContentComponent;
  */
 class HtmlView extends BaseHtmlView
 {
-    protected $items;
+    protected array $items;
 
-    protected $pagination;
+    protected Pagination $pagination;
 
-    protected $state;
+    protected CMSObject $state;
 
     /**
      * Display the view

@@ -21,6 +21,7 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
@@ -37,7 +38,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected $state;
+    protected CMSObject $state;
 
     /**
      * The item object
@@ -51,7 +52,7 @@ class HtmlView extends BaseHtmlView
      * @var    object
      * @since  4.0.0
      */
-    protected $item;
+    protected mixed $item;
 
     /**
      * The Form object
@@ -67,7 +68,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since  4.0.0
      */
-    protected $form;
+    protected mixed $form;
 
     /**
      * Add the page title and toolbar.

@@ -173,7 +173,7 @@ class MessagetemplateTable extends Table
     public function check(): bool
     {
         // If there is an ordering column and this is a new row then get the next ordering value
-        if (property_exists($this, 'ordering') && $this->id == 0) {
+        if (property_exists($this, 'ordering') && $this->get('id') == 0) {
             $this->ordering = self::getNextOrder();
         }
 

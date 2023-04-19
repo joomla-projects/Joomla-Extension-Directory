@@ -20,6 +20,7 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Registry\Registry;
@@ -44,10 +45,10 @@ class HtmlView extends BaseHtmlView
     /**
      * The model state
      *
-     * @var    Registry
+     * @var    CMSObject
      * @since  4.0.0
      */
-    protected $state;
+    protected CMSObject $state;
 
     /**
      * Component Parameters
@@ -55,7 +56,7 @@ class HtmlView extends BaseHtmlView
      * @var    Registry
      * @since  4.0.0
      */
-    protected $params = null;
+    protected mixed $params = null;
 
     /**
      * Migration SQL

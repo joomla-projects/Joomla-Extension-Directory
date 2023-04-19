@@ -15,7 +15,6 @@ namespace Jed\Component\Jed\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\Database\QueryInterface;
@@ -66,7 +65,7 @@ class ExtensionscoresModel extends ListModel
      *
      * @since 4.0.0
      */
-    public function getItems()
+    public function getItems(): mixed
     {
         $items = parent::getItems();
 
@@ -76,7 +75,7 @@ class ExtensionscoresModel extends ListModel
                 $textValue = [];
 
                 foreach ($values as $value) {
-                    $db    = Factory::getDbo();
+                    $db    = $this->getDatabase();
                     $query = $db->getQuery(true);
                     $query
                         ->select('`#__jed_extensions_3727473`.`title`')
@@ -99,7 +98,7 @@ class ExtensionscoresModel extends ListModel
                 $textValue = [];
 
                 foreach ($values as $value) {
-                    $db    = Factory::getDbo();
+                    $db    = $this->getDatabase();
                     $query = $db->getQuery(true);
                     $query
                         ->select('`#__jed_extension_supply_options_3727474`.`title`')
@@ -131,7 +130,8 @@ class ExtensionscoresModel extends ListModel
     protected function getListQuery(): QueryInterface
     {
         // Create a new query object.
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
 
         // Select the required fields from the table.
@@ -179,7 +179,7 @@ class ExtensionscoresModel extends ListModel
                 $query->where('a.id = ' . (int) substr($search, 3));
             } else {
                 $search = $db->Quote('%' . $db->escape($search, true) . '%');
-                //  $query->where('(a.title LIKE ' . $search . ') ');
+                $query->where('(a.title LIKE ' . $search . ') ');
             }
         }
 

@@ -17,7 +17,6 @@ namespace Jed\Component\Jed\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
@@ -90,7 +89,8 @@ class JedticketsModel extends ListModel
 
                     foreach ($values as $value)
                     {
-                        $db    = Factory::getContainer()->get('DatabaseDriver');
+                        $db = $this->getDatabase();
+
                         $query = $db->getQuery(true);
                         $query
                             ->select('`jtc`.`categorytype`')
@@ -116,7 +116,8 @@ class JedticketsModel extends ListModel
 
                 foreach ($values as $value)
                 {
-                    $db    = Factory::getContainer()->get('DatabaseDriver');
+                    $db = $this->getDatabase();
+
                     $query = $db->getQuery(true);
                     $query
                         ->select('`jtg`.`name`')
@@ -142,7 +143,8 @@ class JedticketsModel extends ListModel
 
                 foreach ($values as $value)
                 {
-                    $db    = Factory::getContainer()->get('DatabaseDriver');
+                    $db = $this->getDatabase();
+
                     $query = $db->getQuery(true);
                     $query
                         ->select('`jt_linked_item_types`.`title`')
@@ -176,7 +178,8 @@ class JedticketsModel extends ListModel
     protected function getListQuery(): QueryInterface
     {
         // Create a new query object.
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
 
         // Select the required fields from the table.

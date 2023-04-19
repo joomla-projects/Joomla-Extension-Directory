@@ -91,36 +91,6 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
     }
 
     /**
-     * Returns the parent asset's id. If you have a tree structure, retrieve the parent's id using the external key field
-     *
-     * @param   Table|null  $table  Table name
-     * @param   int|null    $id     Id
-     *
-     * @return mixed The id on success, false on failure.
-     * @see   Table::_getAssetParentId
-     *
-     * @since 4.0.0
-     */
-    protected function _getAssetParentId(Table $table = null, $id = null)
-    {
-        // We will retrieve the parent-asset from the Asset-table
-        $assetParent = Table::getInstance('Asset');
-
-        // Default: if no asset-parent can be found we take the global asset
-        $assetParentId = $assetParent->getRootId();
-
-        // The item has the component as asset-parent
-        $assetParent->loadByName('com_jed');
-
-        // Return the found asset-parent-id
-        if ($assetParent->id) {
-            $assetParentId = $assetParent->id;
-        }
-
-        return $assetParentId;
-    }
-
-    /**
      * Overloaded bind function to pre-process the params.
      *
      * @param   array  $src     Named array
@@ -268,8 +238,6 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
      */
     public function check(): bool
     {
-
-
         // Support multi file field: xml_manifest
         $app   = Factory::getApplication();
         $files = $app->input->files->get('jform', [], 'raw');
@@ -280,14 +248,14 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
             $oldFiles = JedHelper::getFiles($this->id, $this->_tbl, 'xml_manifest');
 
             foreach ($oldFiles as $f) {
-                $oldFile = JPATH_ROOT . '//tmp/' . $f;
+                $oldFile = JPATH_ROOT . '/tmp/' . $f;
 
                 if (file_exists($oldFile) && !is_dir($oldFile)) {
                     unlink($oldFile);
                 }
             }
 
-            $this->xml_manifest = "";
+            $this->set('xml_manifest', "");
 
             foreach ($files['xml_manifest'] as $singleFile) {
                 jimport('joomla.filesystem.file');
@@ -316,7 +284,7 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
                     }
                 } elseif ($fileError == 4) {
                     if (isset($array['xml_manifest'])) {
-                        $this->xml_manifest = $array['xml_manifest'];
+                        $this->set('xml_manifest', $array['xml_manifest']);
                     }
                 } else {
                     // Check for filesize
@@ -329,7 +297,7 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
                     }
 
                     // Replace any special characters in the filename
-                    jimport('joomla.filesystem.file');
+
                     $filename   = File::stripExt($singleFile['name']);
                     $extension  = File::getExt($singleFile['name']);
                     $filename   = preg_replace("/[^A-Za-z0-9]/i", "-", $filename);
@@ -344,13 +312,15 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
                             return false;
                         }
                     }
-
-                    $this->xml_manifest .= (!empty($this->xml_manifest)) ? "," : "";
-                    $this->xml_manifest .= $filename;
+                    $xml_man = $this->get('xml_manifest');
+                    $this->set('xml_manifest', $xml_man .= (!empty($xml_man)) ? "," : "");
+                    $xml_man = $this->get('xml_manifest');
+                    $this->set('xml_manifest', $xml_man .= $filename);
                 }
             }
         } else {
-            $this->xml_manifest .= $array['xml_manifest_hidden'];
+            $xml_man = $this->get('xml_manifest');
+            $this->set('xml_manifest', $xml_man .= $array['xml_manifest_hidden']);
         }
 
         return parent::check();
@@ -371,17 +341,15 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
         $result = parent::delete($pk);
 
         if ($result) {
-            jimport('joomla.filesystem.file');
-
-            $checkImageVariableType = gettype($this->xml_manifest);
+            $checkImageVariableType = gettype($this->get('xml_manifest'));
 
             switch ($checkImageVariableType) {
                 case 'string':
-                    File::delete(JPATH_ROOT . '//tmp/' . $this->xml_manifest);
+                    File::delete(JPATH_ROOT . '/tmp/' . $this->xml_manifest);
                     break;
                 default:
                     foreach ($this->xml_manifest as $xml_manifestFile) {
-                        File::delete(JPATH_ROOT . '//tmp/' . $xml_manifestFile);
+                        File::delete(JPATH_ROOT . '/tmp/' . $xml_manifestFile);
                     }
             }
         }
@@ -413,7 +381,7 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
      *
      * @since   4.0.0
      */
-    public function store($updateNulls = true)
+    public function store($updateNulls = true): bool
     {
         return parent::store($updateNulls);
     }

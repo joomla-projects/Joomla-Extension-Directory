@@ -30,6 +30,12 @@ enum ImageSize
      */
     case LARGE;
 
+    /**
+     *
+     * @return array
+     *
+     * @since version
+     */
     public function getMaximumDimensions(): array
     {
         return match ($this) {

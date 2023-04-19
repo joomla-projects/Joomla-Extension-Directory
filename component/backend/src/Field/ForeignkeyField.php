@@ -56,9 +56,9 @@ class ForeignKeyField extends ListField
      * @var    boolean
      * @since   4.0.0
      */
-    protected $translate = true;
+    protected bool $translate = true;
 
-    protected $header = false;
+    protected bool $header = false;
 
     private $input_type;
 
@@ -74,6 +74,8 @@ class ForeignKeyField extends ListField
 
     private $condition;
 
+    private $value_multiple;
+
     /**
      * Wrapper method for getting attributes from the form element
      *
@@ -84,7 +86,7 @@ class ForeignKeyField extends ListField
      *
      * @since 4.0.0
      */
-    public function getAttribute($name, $default = null)
+    public function getAttribute($name, $default = null) : mixed
     {
         if (!empty($this->element[$name])) {
             return $this->element[$name];
@@ -205,8 +207,17 @@ class ForeignKeyField extends ListField
         // Flag to identify if the fk_value hides the trashed items
         $this->hideTrashed = (int) $this->getAttribute('hide_trashed', 0);
 
+        // Flag to identify if the fk_value hides the unpublished items
+        $this->hideUnpublished = (int)$this->getAttribute('hide_unpublished', 0);
+
+        // Flag to identify if the fk_value hides the published items
+        $this->hidePublished = (int)$this->getAttribute('hide_published', 0);
+
+        // Flag to identify if the fk_value hides the archived items
+        $this->hideArchived = (int)$this->getAttribute('hide_archived', 0);
+
         // Flag to identify if the fk has default order
-        $this->ordering = (int) $this->getAttribute('ordering', 0);
+        $this->fk_ordering = (string)$this->getAttribute('fk_ordering');
 
         // The where SQL for foreignkey
         $this->condition = (string) $this->getAttribute('condition');
@@ -254,8 +265,20 @@ class ForeignKeyField extends ListField
             $query->where($db->quoteName('state') . ' != -2');
         }
 
-        if ($this->ordering) {
-            $query->order('ordering ASC');
+        if ($this->hideUnpublished) {
+            $query->where($db->quoteName('state') . ' != 0');
+        }
+
+        if ($this->hidePublished) {
+            $query->where($db->quoteName('state') . ' != 1');
+        }
+
+        if ($this->hideArchived) {
+            $query->where($db->quoteName('state') . ' != 2');
+        }
+
+        if ($this->fk_ordering) {
+            $query->order($this->fk_ordering);
         }
 
         if ($this->condition) {

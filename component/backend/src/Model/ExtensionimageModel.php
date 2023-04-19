@@ -17,7 +17,6 @@ namespace Jed\Component\Jed\Administrator\Model;
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
@@ -48,8 +47,6 @@ class ExtensionimageModel extends AdminModel
      */
     protected $item = null;
 
-
-
     /**
      * Method to get the record form.
      *
@@ -61,7 +58,7 @@ class ExtensionimageModel extends AdminModel
      * @throws Exception
      * @since   4.0.0
      */
-    public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
+    public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
     {
         // Get the form.
         $form = $this->loadForm(
@@ -91,7 +88,7 @@ class ExtensionimageModel extends AdminModel
      * @throws Exception
      * @since   4.0.0
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null) : CMSObject
     {
 
         return parent::getItem($pk);

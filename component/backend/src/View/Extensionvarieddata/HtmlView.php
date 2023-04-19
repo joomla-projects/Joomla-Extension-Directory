@@ -16,9 +16,12 @@ namespace Jed\Component\Jed\Administrator\View\Extensionvarieddata;
 
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
@@ -30,41 +33,11 @@ use Joomla\Component\Content\Administrator\Extension\ContentComponent;
  */
 class HtmlView extends BaseHtmlView
 {
-    protected $items;
-
-    protected $pagination;
-
-    protected $state;
-
-    /**
-     * Display the view
-     *
-     * @param   string  $tpl  Template name
-     *
-     * @return void
-     *
-     * @throws Exception
-     *
-     * @since 4.0.0
-     */
-    public function display($tpl = null)
-    {
-        $this->state         = $this->get('State');
-        $this->items         = $this->get('Items');
-        $this->pagination    = $this->get('Pagination');
-        $this->filterForm    = $this->get('FilterForm');
-        $this->activeFilters = $this->get('ActiveFilters');
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
-        }
-
-        $this->addToolbar();
-
-        $this->sidebar = Sidebar::render();
-        parent::display($tpl);
-    }
+    public ?Form $filterForm;
+    public array $activeFilters = [];
+    protected array $items;
+    protected Pagination $pagination;
+    protected CMSObject $state;
 
     /**
      * Add the page title and toolbar.
@@ -77,21 +50,17 @@ class HtmlView extends BaseHtmlView
      */
     protected function addToolbar()
     {
-        $state = $this->get('State');
         $canDo = JedHelper::getActions();
 
         ToolbarHelper::title(Text::_('COM_JED_TITLE_EXTENSIONVARIEDDATA'), "generic");
 
         $toolbar = Toolbar::getInstance('toolbar');
 
-        // Check if the form exists before showing the add/edit buttons
-        $formPath = JPATH_COMPONENT_ADMINISTRATOR . '/src/View/Extensionvarieddata';
 
-        if (file_exists($formPath)) {
             if ($canDo->get('core.create')) {
                 $toolbar->addNew('extensionvarieddatum.add');
             }
-        }
+
 
         if ($canDo->get('core.edit.state')) {
             $dropdown = $toolbar->dropdownButton('status-group')
@@ -188,7 +157,7 @@ class HtmlView extends BaseHtmlView
      *
      * @return bool
      */
-    public function getState($state)
+    public function getState(mixed $state): bool
     {
         return $this->state->{$state} ?? false;
     }

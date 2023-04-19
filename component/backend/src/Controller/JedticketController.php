@@ -252,7 +252,6 @@ class JedticketController extends FormController
         $this->task = $_POST['task'];
         if ($this->task == "jedticket.linkDeveloperUpdatetoVEL") {
             $jform     = $_POST['jform'];
-            $ticket_id = $jform['id'];
 
             $vel_id          = $jform['vel_item_id'];
             $vel_devupdateid = $jform['veldeveloperupdate_id'];
@@ -346,7 +345,7 @@ class JedticketController extends FormController
      */
     public function storeMessage(int $ticket_id, $subject, $message)
     {
-        //$user                               = Factory::getUser();
+        $user                 = JedHelper::getUser();
         $ticket_message_model               = $this->getModel('Ticketmessage', 'Administrator');
 
         $ticket_message['id']                = 0;

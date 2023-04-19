@@ -17,7 +17,6 @@ namespace Jed\Component\Jed\Administrator\Model;
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
@@ -42,11 +41,11 @@ class ExtensionscoreModel extends AdminModel
      */
     protected $text_prefix = 'COM_JED';
     /**
-     * @var    null  Item data
+     * @var    mixed  Item data
      *
      * @since  4.0.0
      */
-    protected $item = null;
+    protected mixed $item = null;
 
 
     /**
@@ -79,13 +78,13 @@ class ExtensionscoreModel extends AdminModel
      *
      * @param   null  $pk  The id of the primary key.
      *
-     * @return CMSObject Object on success
+     * @return CMSObject|bool Object on success
      *
      * @throws Exception
      * @since   4.0.0
      *
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null): CMSObject|bool
     {
 
         return parent::getItem($pk);
@@ -118,7 +117,7 @@ class ExtensionscoreModel extends AdminModel
      * @since   4.0.0
      *
      */
-    protected function loadFormData()
+    protected function loadFormData(): mixed
     {
         // Check the session for previously entered form data.
         $data = Factory::getApplication()->getUserState('com_jed.edit.extensionscore.data', []);

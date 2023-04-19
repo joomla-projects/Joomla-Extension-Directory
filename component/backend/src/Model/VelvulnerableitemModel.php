@@ -20,7 +20,7 @@ use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Model\AdminModel;
-use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
 
 /**
@@ -43,11 +43,11 @@ class VelvulnerableitemModel extends AdminModel
      */
     protected $text_prefix = 'COM_JED';
     /**
-     * @var    null  Item data
+     * @var    mixed  Item data
      *
      * @since  4.0.0
      */
-    protected $item = null;
+    protected mixed $item = null;
 
     /**
      * @var int ID Of VEL Report
@@ -73,7 +73,7 @@ class VelvulnerableitemModel extends AdminModel
      *
      * @throws Exception
      */
-    public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
+    public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
     {
 
         // Get the form.
@@ -103,7 +103,7 @@ class VelvulnerableitemModel extends AdminModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null): CMSObject|bool
     {
 
         return parent::getItem($pk);
@@ -146,7 +146,8 @@ class VelvulnerableitemModel extends AdminModel
         $output['velabandonware']     = null;
 
         $velReportData  = $this->getVelReportData($vel_item_id);
-        $velReportModel = BaseDatabaseModel::getInstance('Velreport', 'JedModel', ['ignore_request' => true]);
+        //$velReportModel = BaseDatabaseModel::getInstance('Velreport', 'JedModel', ['ignore_request' => true]);
+        $velReportModel = new VelreportModel();
         $velReportForm  = $velReportModel->getForm($velReportData, false);
         $velReportForm->bind($velReportData);
 
@@ -155,7 +156,8 @@ class VelvulnerableitemModel extends AdminModel
         $output['velreport']['form']  = $velReportForm;
 
         $velDeveloperUpdateData  = $this->getvelDeveloperUpdateData($vel_item_id);
-        $velDeveloperUpdateModel = BaseDatabaseModel::getInstance('Veldeveloperupdate', 'JedModel', ['ignore_request' => true]);
+        //$velDeveloperUpdateModel = BaseDatabaseModel::getInstance('Veldeveloperupdate', 'JedModel', ['ignore_request' => true]);
+        $velDeveloperUpdateModel = new VeldeveloperupdateModel();
         $velDeveloperUpdateForm  = $velDeveloperUpdateModel->getForm($velDeveloperUpdateData, false);
         $velDeveloperUpdateForm->bind($velDeveloperUpdateData);
 
@@ -164,7 +166,8 @@ class VelvulnerableitemModel extends AdminModel
         $output['veldeveloperupdate']['form']  = $velDeveloperUpdateForm;
 
         $velAbandonwareDataData  = $this->getvelAbandonwareData($vel_item_id);
-        $velAbandonwareDataModel = BaseDatabaseModel::getInstance('Velabandonedreport', 'JedModel', ['ignore_request' => true]);
+        //$velAbandonwareDataModel = BaseDatabaseModel::getInstance('Velabandonedreport', 'JedModel', ['ignore_request' => true]);
+        $velAbandonwareDataModel = new VelabandonedreportModel();
         $velAbandonwareDataForm  = $velAbandonwareDataModel->getForm($velAbandonwareDataData, false);
         $velAbandonwareDataForm->bind($velAbandonwareDataData);
 
@@ -184,11 +187,11 @@ class VelvulnerableitemModel extends AdminModel
      *
      * @since 4.0.0
      */
-    public function getVelAbandonwareData(int $vel_item_id)
+    public function getVelAbandonwareData(int $vel_item_id): array
     {
-
         // Create a new query object.
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
 
         // Select some fields
@@ -197,11 +200,7 @@ class VelvulnerableitemModel extends AdminModel
         // From the vel_report table
         $query->from($db->quoteName('#__jed_vel_abandoned_report', 'a'));
 
-        if (is_numeric($vel_item_id)) {
-            $query->where('a.vel_item_id = ' . (int) $vel_item_id);
-        } else {
-            $query->where('a.vel_item_id = -5');
-        }
+        $query->where('a.vel_item_id = ' . $vel_item_id);
 
 
         // Load the items
@@ -225,9 +224,9 @@ class VelvulnerableitemModel extends AdminModel
      */
     public function getVelDeveloperUpdateData(int $vel_item_id)
     {
-
         // Create a new query object.
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
 
         // Select some fields
@@ -236,11 +235,8 @@ class VelvulnerableitemModel extends AdminModel
         // From the vel_report table
         $query->from($db->quoteName('#__jed_vel_developer_update', 'a'));
 
-        if (is_numeric($vel_item_id)) {
-            $query->where('a.vel_item_id = ' . (int) $vel_item_id);
-        } else {
-            $query->where('a.vel_item_id = -5');
-        }
+
+        $query->where('a.vel_item_id = ' . $vel_item_id);
 
 
         // Load the items
@@ -262,11 +258,11 @@ class VelvulnerableitemModel extends AdminModel
      *
      * @since version
      */
-    public function getVelReportData(int $vel_item_id)
+    public function getVelReportData(int $vel_item_id): array
     {
-
         // Create a new query object.
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
 
         // Select some fields
@@ -276,11 +272,7 @@ class VelvulnerableitemModel extends AdminModel
         $query->from($db->quoteName('#__jed_vel_report', 'a'));
 
 
-        if (is_numeric($vel_item_id)) {
-            $query->where('a.vel_item_id = ' . (int) $vel_item_id);
-        } else {
-            $query->where('a.vel_item_id = -5');
-        }
+        $query->where('a.vel_item_id = ' . $vel_item_id);
 
 
         // Load the items
@@ -302,7 +294,7 @@ class VelvulnerableitemModel extends AdminModel
      *
      * @throws Exception
      */
-    protected function loadFormData()
+    protected function loadFormData(): mixed
     {
         // Check the session for previously entered form data.
         $data = Factory::getApplication()->getUserState('com_jed.edit.velvulnerableitem.data', []);
@@ -367,27 +359,5 @@ class VelvulnerableitemModel extends AdminModel
         return $data;
     }
 
-    /**
-     * Prepare and sanitise the table prior to saving.
-     *
-     * @param   Table  $table  Table Object
-     *
-     * @return  void
-     *
-     * @since   4.0.0
-     */
-    protected function prepareTable($table)
-    {
-        jimport('joomla.filter.output');
 
-        if (empty($table->id)) {
-            // Set ordering to the last item if not set
-            if (@$table->ordering === '') {
-                $db = Factory::getContainer()->get('DatabaseDriver');
-                $db->setQuery('SELECT MAX(ordering) FROM #__jed_vel_vulnerable_item');
-                $max             = $db->loadResult();
-                $table->ordering = $max + 1;
-            }
-        }
-    }
 }

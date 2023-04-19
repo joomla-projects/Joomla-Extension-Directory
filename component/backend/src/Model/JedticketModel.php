@@ -106,9 +106,6 @@ class JedticketModel extends AdminModel
     public function getItem($pk = null): CMSObject
     {
 
-        //  $db    = Factory::getContainer()->get('DatabaseDriver');
-        //  $query = $db->getQuery(true);
-
         $pk   = (!empty($pk)) ? $pk : (int) $this->getState($this->getName() . '.id');
         $item = parent::getItem($pk);
 
@@ -171,9 +168,9 @@ class JedticketModel extends AdminModel
      */
     public function getReviewData(): array
     {
-
         // Create a new query object.
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
 
         // Select all fields
@@ -233,7 +230,8 @@ class JedticketModel extends AdminModel
         $output['sample_creator'] = $user;
 
         // Create a new query object.
-        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
 
         //Extensions
         $query = $db->getQuery(true);
@@ -364,7 +362,8 @@ class JedticketModel extends AdminModel
             1 - Look to see if there are notes, if not set flag
             2 - If there are notes store them in array in reverse date order
             3 - Create Empty New notes array / flag for holding */
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
         // Select some fields
         $query->select('a.*');
@@ -401,9 +400,9 @@ class JedticketModel extends AdminModel
      */
     public function getTicketMessages(): array
     {
-
         // Create a new query object.
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
 
         // Select some fields
@@ -444,9 +443,9 @@ class JedticketModel extends AdminModel
      */
     public function getVelAbandonedReportData(): array
     {
-
         // Create a new query object.
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
 
         // Select some fields
@@ -487,9 +486,9 @@ class JedticketModel extends AdminModel
      */
     public function getVelDeveloperUpdateData(): array
     {
-
         // Create a new query object.
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
 
         // Select some fields
@@ -530,9 +529,9 @@ class JedticketModel extends AdminModel
      */
     public function getVelReportData(): array
     {
-
         // Create a new query object.
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db = $this->getDatabase();
+
         $query = $db->getQuery(true);
 
         // Select some fields
