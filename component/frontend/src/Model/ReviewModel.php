@@ -12,6 +12,7 @@ namespace Jed\Component\Jed\Site\Model;
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
@@ -30,21 +31,7 @@ use Joomla\Utilities\ArrayHelper;
  */
 class ReviewModel extends ItemModel
 {
-    /** Data Table
-     * @var string
-     * @since 4.0.0
-     **/
-    private string $dbtable = "#__jed_reviews";
-
-    /**
-     * Owner id - used in review query
-     *
-     * @var int|null
-     *
-     * @since 4.0.0
-     */
-    protected ?int $owner_id = null;
-
+    public const PROCESSING_WINDOW = 30;
     /**
      * Log how the score is generated.
      *
@@ -53,7 +40,6 @@ class ReviewModel extends ItemModel
      * @since 4.0.0
      */
     public array $log = [];
-
     /**
      * Admin test mode - outputs the log
      * @var bool
@@ -61,25 +47,6 @@ class ReviewModel extends ItemModel
      * @since 4.0.0
      */
     public bool $testMode = false;
-
-    /**
-     * Fields to score on
-     *
-     * @var array
-     *
-     * @since 4.0.0
-     */
-    protected ?array $score_fields = null;
-
-    /**
-     * Fields to score on
-     *
-     * @var array
-     *
-     * @since 4.0.0
-     */
-    protected array $ratings = ['functionality', 'ease_of_use', 'support', 'documentation', 'value_for_money'];
-
     /**
      * Set to false in review import from jed_migrate.
      * Determines if the extension review score should be calculated
@@ -90,7 +57,6 @@ class ReviewModel extends ItemModel
      * @since 4.0.0
      */
     public bool $doScore = true;
-
     /**
      * Message to show if user can not add a review
      *
@@ -99,7 +65,30 @@ class ReviewModel extends ItemModel
      * @since 4.0.0
      */
     public string $accessMsg = '';
-
+    /**
+     * Owner id - used in review query
+     *
+     * @var int|null
+     *
+     * @since 4.0.0
+     */
+    protected ?int $owner_id = null;
+    /**
+     * Fields to score on
+     *
+     * @var array
+     *
+     * @since 4.0.0
+     */
+    protected ?array $score_fields = null;
+    /**
+     * Fields to score on
+     *
+     * @var array
+     *
+     * @since 4.0.0
+     */
+    protected array $ratings = ['functionality', 'ease_of_use', 'support', 'documentation', 'value_for_money'];
     /**
      * Count all reviews regardless of language filter
      *
@@ -112,28 +101,11 @@ class ReviewModel extends ItemModel
     protected int $defaultLimit = 10;
 
     // 30 Minutes of Processing Window
-    public const PROCESSING_WINDOW = 30;
-
-    /**
-     * Constructor
-     *
-     * @param   array                $config   An array of configuration options (name, state, dbo, table_path, ignore_request).
-     *
-     * @since   3.0
-     * @throws  Exception
-     */
-    public function __construct($config = [])
-    {
-        parent::__construct($config);
-
-        $this->score_fields = [
-            'functionality'   => Text::_('COM_JED_REVIEWS_FIELD_FUNCTIONALITY_LABEL'),
-            'ease_of_use'     => Text::_('COM_JED_REVIEWS_FIELD_EASE_OF_USE_LABEL'),
-            'support'         => Text::_('COM_JED_REVIEWS_FIELD_SUPPORT_LABEL'),
-            'documentation'   => Text::_('COM_JED_REVIEWS_FIELD_DOCUMENTATION_LABEL'),
-            'value_for_money' => Text::_('COM_JED_REVIEWS_FIELD_VALUE_FOR_MONEY_LABEL'),
-        ];
-    }
+    /** Data Table
+     * @var string
+     * @since 4.0.0
+     **/
+    private string $dbtable = "#__jed_reviews";
 
     /**
      * Method to check in an item.
@@ -148,7 +120,7 @@ class ReviewModel extends ItemModel
     public function checkin($id = null): bool
     {
         // Get the id.
-        $id = (!empty($id)) ? $id : (int) $this->getState('review.id');
+        $id = (!empty($id)) ? $id : (int)$this->getState('review.id');
         if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($id) {
                 // Initialise the table
@@ -181,7 +153,7 @@ class ReviewModel extends ItemModel
     public function checkout($id = null): bool
     {
         // Get the user id.
-        $id = (!empty($id)) ? $id : (int) $this->getState('review.id');
+        $id = (!empty($id)) ? $id : (int)$this->getState('review.id');
 
         if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($id) {
@@ -211,9 +183,9 @@ class ReviewModel extends ItemModel
      * @param   int  $id  Element id
      *
      * @return  bool
+     * @since 4.0.0
      * @throws Exception
      *
-     * @since 4.0.0
      */
     public function delete(int $id): bool
     {
@@ -260,7 +232,7 @@ class ReviewModel extends ItemModel
                     }
 
                     // Convert the Table to a clean CMSObject.
-                    $properties  = $table->getProperties(1);
+                    $properties = $table->getProperties(1);
                     $this->item = ArrayHelper::toObject($properties, CMSObject::class);
                 } else {
                     throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
@@ -278,7 +250,10 @@ class ReviewModel extends ItemModel
                 $this->item->extension_id = ArrayHelper::fromObject($this->item->extension_id);
             }
 
-            $values = (is_array($this->item->extension_id)) ? $this->item->extension_id : explode(',', $this->item->extension_id);
+            $values = (is_array($this->item->extension_id)) ? $this->item->extension_id : explode(
+                ',',
+                $this->item->extension_id
+            );
 
             $textValue = [];
 
@@ -307,7 +282,10 @@ class ReviewModel extends ItemModel
                 $this->item->supply_option_id = ArrayHelper::fromObject($this->item->supply_option_id);
             }
 
-            $values = (is_array($this->item->supply_option_id)) ? $this->item->supply_option_id : explode(',', $this->item->supply_option_id);
+            $values = (is_array($this->item->supply_option_id)) ? $this->item->supply_option_id : explode(
+                ',',
+                $this->item->supply_option_id
+            );
 
             $textValue = [];
 
@@ -328,7 +306,10 @@ class ReviewModel extends ItemModel
                 }
             }
 
-            $this->item->supply_option_id = !empty($textValue) ? implode(', ', $textValue) : $this->item->supply_option_id;
+            $this->item->supply_option_id = !empty($textValue) ? implode(
+                ', ',
+                $textValue
+            ) : $this->item->supply_option_id;
         }
 
         if (isset($this->item->created_by)) {
@@ -336,6 +317,40 @@ class ReviewModel extends ItemModel
         }
 
         return $this->item;
+    }
+
+    /**
+     * Get the id of an item by alias
+     *
+     * @param   string  $alias  Item alias
+     *
+     * @return  mixed
+     *
+     * @since 4.0.0
+     * @throws Exception
+     */
+    public function getItemIdByAlias(string $alias)
+    {
+        $table      = $this->getTable();
+        $properties = $table->getProperties();
+        $result     = null;
+        $aliasKey   = null;
+
+        $aliasKey = JedHelper::getAliasFieldNameByView('review');
+
+
+        if (key_exists('alias', $properties)) {
+            $table->load(['alias' => $alias]);
+            $result = $table->id;
+        } elseif (isset($aliasKey) && key_exists($aliasKey, $properties)) {
+            $table->load([$aliasKey => $alias]);
+            $result = $table->id;
+        }
+        if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+            return $result;
+        } else {
+            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+        }
     }
 
     /**
@@ -399,42 +414,6 @@ class ReviewModel extends ItemModel
     }
 
     /**
-     * Get the id of an item by alias
-     *
-     * @param   string  $alias  Item alias
-     *
-     * @return  mixed
-     *
-     * @since 4.0.0
-     * @throws Exception
-     */
-    public function getItemIdByAlias(string $alias)
-    {
-        $table      = $this->getTable();
-        $properties = $table->getProperties();
-        $result     = null;
-        $aliasKey   = null;
-
-        $aliasKey = JedHelper::getAliasFieldNameByView('review');
-
-
-
-        if (key_exists('alias', $properties)) {
-            $table->load(['alias' => $alias]);
-            $result = $table->id;
-        } elseif (isset($aliasKey) && key_exists($aliasKey, $properties)) {
-            $table->load([$aliasKey => $alias]);
-            $result = $table->id;
-        }
-        if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
-            return $result;
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-        }
-    }
-
-
-    /**
      * Publish the element
      *
      * @param   int  $id     Item id
@@ -456,5 +435,26 @@ class ReviewModel extends ItemModel
         } else {
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
         }
+    }
+
+    /**
+     * Constructor
+     *
+     * @param   array  $config  An array of configuration options (name, state, dbo, table_path, ignore_request).
+     *
+     * @since   3.0
+     * @throws  Exception
+     */
+    public function __construct($config = [])
+    {
+        parent::__construct($config);
+
+        $this->score_fields = [
+            'functionality'   => Text::_('COM_JED_REVIEWS_FIELD_FUNCTIONALITY_LABEL'),
+            'ease_of_use'     => Text::_('COM_JED_REVIEWS_FIELD_EASE_OF_USE_LABEL'),
+            'support'         => Text::_('COM_JED_REVIEWS_FIELD_SUPPORT_LABEL'),
+            'documentation'   => Text::_('COM_JED_REVIEWS_FIELD_DOCUMENTATION_LABEL'),
+            'value_for_money' => Text::_('COM_JED_REVIEWS_FIELD_VALUE_FOR_MONEY_LABEL'),
+        ];
     }
 }

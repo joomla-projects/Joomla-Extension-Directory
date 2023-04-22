@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package           JED
  *
- * @subpackage    TICKETS
+ * @subpackage        TICKETS
  *
  * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @license           GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Site\Model;
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
@@ -58,7 +59,7 @@ class TicketmessageModel extends ItemModel
     public function checkout(int $id = null): bool
     {
         // Get the user id.
-        $id = (!empty($id)) ? $id : (int) $this->getState('ticketmessage.id');
+        $id = (!empty($id)) ? $id : (int)$this->getState('ticketmessage.id');
 
         if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($id) {
@@ -107,7 +108,8 @@ class TicketmessageModel extends ItemModel
 
             // Attempt to load the row.
             if ($table->load($pk)) {
-                if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+                if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == JedHelper::getUser(
+                    )->id) {
                     // Check published state.
                     if ($published = $this->getState('filter.published')) {
                         if (isset($table->state) && $table->state != $published) {
@@ -116,7 +118,7 @@ class TicketmessageModel extends ItemModel
                     }
 
                     // Convert the Table to a clean CMSObject.
-                    $properties  = $table->getProperties(1);
+                    $properties = $table->getProperties(1);
                     $this->item = ArrayHelper::toObject($properties, CMSObject::class);
                 } else {
                     throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
@@ -142,7 +144,10 @@ class TicketmessageModel extends ItemModel
                 $this->item->ticket_id = ArrayHelper::fromObject($this->item->ticket_id);
             }
 
-            $values = (is_array($this->item->ticket_id)) ? $this->item->ticket_id : explode(',', $this->item->ticket_id);
+            $values = (is_array($this->item->ticket_id)) ? $this->item->ticket_id : explode(
+                ',',
+                $this->item->ticket_id
+            );
 
             $textValue = [];
 

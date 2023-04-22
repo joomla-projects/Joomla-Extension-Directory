@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package           JED
  *
- * @subpackage    TICKETS
+ * @subpackage        TICKETS
  *
  * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @license           GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Site\Model;
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
@@ -50,7 +51,7 @@ class JedticketModel extends ItemModel
     public function checkin(int $id = null): bool
     {
         // Get the id.
-        $id = (!empty($id)) ? $id : (int) $this->getState('jedticket.id');
+        $id = (!empty($id)) ? $id : (int)$this->getState('jedticket.id');
         if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($id) {
                 // Initialise the table
@@ -83,7 +84,7 @@ class JedticketModel extends ItemModel
     public function checkout(int $id = null): bool
     {
         // Get the user id.
-        $id = (!empty($id)) ? $id : (int) $this->getState('jedticket.id');
+        $id = (!empty($id)) ? $id : (int)$this->getState('jedticket.id');
 
         if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($id) {
@@ -120,7 +121,6 @@ class JedticketModel extends ItemModel
      */
     public function getItem($pk = null)
     {
-
         $app = Factory::getApplication();
 
         if ($this->item === null) {
@@ -144,7 +144,7 @@ class JedticketModel extends ItemModel
                     }
 
                     // Convert the Table to a clean CMSObject.
-                    $properties  = $table->getProperties(1);
+                    $properties = $table->getProperties(1);
                     $this->item = ArrayHelper::toObject($properties, CMSObject::class);
                 } else {
                     $app->enqueueMessage("Sorry you did not create that item", "message");
@@ -160,7 +160,9 @@ class JedticketModel extends ItemModel
 
 
         if (!empty($this->item->ticket_origin) || $this->item->ticket_origin == 0) {
-            $this->item->ticket_origin = Text::_('COM_JED_JEDTICKETS_FIELD_TICKET_ORIGIN_LABEL_OPTION_' . $this->item->ticket_origin);
+            $this->item->ticket_origin = Text::_(
+                'COM_JED_JEDTICKETS_FIELD_TICKET_ORIGIN_LABEL_OPTION_' . $this->item->ticket_origin
+            );
         }
 
         if (isset($this->item->ticket_category_type) && $this->item->ticket_category_type != '') {
@@ -168,7 +170,10 @@ class JedticketModel extends ItemModel
                 $this->item->ticket_category_type = ArrayHelper::fromObject($this->item->ticket_category_type);
             }
 
-            $values = (is_array($this->item->ticket_category_type)) ? $this->item->ticket_category_type : explode(',', $this->item->ticket_category_type);
+            $values = (is_array($this->item->ticket_category_type)) ? $this->item->ticket_category_type : explode(
+                ',',
+                $this->item->ticket_category_type
+            );
 
             $textValue = [];
 
@@ -189,7 +194,10 @@ class JedticketModel extends ItemModel
                 }
             }
 
-            $this->item->ticket_category_type = !empty($textValue) ? implode(', ', $textValue) : $this->item->ticket_category_type;
+            $this->item->ticket_category_type = !empty($textValue) ? implode(
+                ', ',
+                $textValue
+            ) : $this->item->ticket_category_type;
         }
 
         if (isset($this->item->allocated_group) && $this->item->allocated_group != '') {
@@ -197,7 +205,10 @@ class JedticketModel extends ItemModel
                 $this->item->allocated_group = ArrayHelper::fromObject($this->item->allocated_group);
             }
 
-            $values = (is_array($this->item->allocated_group)) ? $this->item->allocated_group : explode(',', $this->item->allocated_group);
+            $values = (is_array($this->item->allocated_group)) ? $this->item->allocated_group : explode(
+                ',',
+                $this->item->allocated_group
+            );
 
             $textValue = [];
 
@@ -218,7 +229,10 @@ class JedticketModel extends ItemModel
                 }
             }
 
-            $this->item->allocated_group = !empty($textValue) ? implode(', ', $textValue) : $this->item->allocated_group;
+            $this->item->allocated_group = !empty($textValue) ? implode(
+                ', ',
+                $textValue
+            ) : $this->item->allocated_group;
         }
 
         if (isset($this->item->allocated_to)) {
@@ -230,7 +244,10 @@ class JedticketModel extends ItemModel
                 $this->item->linked_item_type = ArrayHelper::fromObject($this->item->linked_item_type);
             }
 
-            $values = (is_array($this->item->linked_item_type)) ? $this->item->linked_item_type : explode(',', $this->item->linked_item_type);
+            $values = (is_array($this->item->linked_item_type)) ? $this->item->linked_item_type : explode(
+                ',',
+                $this->item->linked_item_type
+            );
 
             $textValue = [];
 
@@ -251,7 +268,10 @@ class JedticketModel extends ItemModel
                 }
             }
 
-            $this->item->linked_item_type = !empty($textValue) ? implode(', ', $textValue) : $this->item->linked_item_type;
+            $this->item->linked_item_type = !empty($textValue) ? implode(
+                ', ',
+                $textValue
+            ) : $this->item->linked_item_type;
         }
 
         if (!empty($this->item->ticket_status) || $this->item->ticket_status == 0) {
@@ -287,7 +307,6 @@ class JedticketModel extends ItemModel
         $aliasKey   = null;
 
         $aliasKey = JedHelper::getAliasFieldNameByView('jedticket');
-
 
 
         if (key_exists('alias', $properties)) {

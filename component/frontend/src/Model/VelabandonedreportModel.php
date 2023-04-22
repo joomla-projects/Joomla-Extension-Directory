@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package           JED
  *
- * @subpackage    VEL
+ * @subpackage        VEL
  *
  * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @license           GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Site\Model;
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
@@ -24,8 +25,6 @@ use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
-
-use function defined;
 
 /**
  * VEL Abandoned Report Model Class.
@@ -61,7 +60,7 @@ class VelabandonedreportModel extends ItemModel
     public function checkin(int $id = null): bool
     {
         // Get the id.
-        $id = (!empty($id)) ? $id : (int) $this->getState('velabandonedreport.id');
+        $id = (!empty($id)) ? $id : (int)$this->getState('velabandonedreport.id');
         if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($id) {
                 // Initialise the table
@@ -95,7 +94,7 @@ class VelabandonedreportModel extends ItemModel
     public function checkout(int $id = null): bool
     {
         // Get the user id.
-        $id = (!empty($id)) ? $id : (int) $this->getState('velabandonedreport.id');
+        $id = (!empty($id)) ? $id : (int)$this->getState('velabandonedreport.id');
 
         if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($id) {
@@ -153,7 +152,7 @@ class VelabandonedreportModel extends ItemModel
                     }
 
                     // Convert the Table to a clean CMSObject.
-                    $properties  = $table->getProperties(1);
+                    $properties = $table->getProperties(1);
                     $this->item = ArrayHelper::toObject($properties, CMSObject::class);
                 } else {
                     $app->enqueueMessage("Sorry you did not create that report item", "message");
@@ -172,15 +171,21 @@ class VelabandonedreportModel extends ItemModel
 
 
         if (!empty($this->item->consent_to_process) || $this->item->consent_to_process == 0) {
-            $this->item->consent_to_process = Text::_('COM_JED_GENERAL_CONSENT_TO_PROCESS_OPTION_' . $this->item->consent_to_process);
+            $this->item->consent_to_process = Text::_(
+                'COM_JED_GENERAL_CONSENT_TO_PROCESS_OPTION_' . $this->item->consent_to_process
+            );
         }
 
         if (!empty($this->item->passed_to_vel) || $this->item->passed_to_vel == 0) {
-            $this->item->passed_to_vel = Text::_('COM_JED_VEL_GENERAL_FIELD_PASSED_TO_VEL_OPTION_' . $this->item->passed_to_vel);
+            $this->item->passed_to_vel = Text::_(
+                'COM_JED_VEL_GENERAL_FIELD_PASSED_TO_VEL_OPTION_' . $this->item->passed_to_vel
+            );
         }
 
         if (!empty($this->item->data_source) || $this->item->data_source == 0) {
-            $this->item->data_source = Text::_('COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_' . $this->item->data_source);
+            $this->item->data_source = Text::_(
+                'COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_' . $this->item->data_source
+            );
         }
 
         if (isset($this->item->created_by)) {
