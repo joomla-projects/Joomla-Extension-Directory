@@ -244,21 +244,19 @@ class JedHelper
      */
     public static function getPublishedIcon(int $state): string
     {
-        switch ($state) {
-            // Rejected
+        switch ($state) { //Rejected
             case '-1':
                 $icon = 'unpublish';
                 break;
-            // Approved
-            case '1':
+            case '1':// Approved
                 $icon = 'publish';
                 break;
-            // Awaiting response
-            case '2':
+
+            case '2':// Awaiting response
                 $icon = 'expired';
                 break;
-            // Pending
-            case '0':
+
+            case '0':// Pending
             default:
                 $icon = 'pending';
                 break;
