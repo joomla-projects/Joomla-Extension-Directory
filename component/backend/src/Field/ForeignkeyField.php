@@ -292,9 +292,9 @@ class ForeignKeyField extends ListField
         $user = JedHelper::getUser();
         // If the user is not an admin, then restrict the options to only be own
         if (!empty($user->id) && !in_array("8", $user->getAuthorisedGroups()) && !in_array(
-                "7",
-                $user->getAuthorisedGroups()
-            )) {
+            "7",
+            $user->getAuthorisedGroups()
+        )) {
             $query->where("created_by = " . (int)$user->id);
         }
 

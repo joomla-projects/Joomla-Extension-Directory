@@ -65,9 +65,9 @@ class HtmlView extends BaseHtmlView
         $toolbar = Toolbar::getInstance();
 
 
-            if ($canDo->get('core.create')) {
-                $toolbar->addNew('extensionsupplyoption.add');
-            }
+        if ($canDo->get('core.create')) {
+            $toolbar->addNew('extensionsupplyoption.add');
+        }
 
         if ($canDo->get('core.edit.state')) {
             $dropdown = $toolbar->dropdownButton('status-group')

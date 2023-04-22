@@ -104,8 +104,8 @@ class HtmlView extends BaseHtmlView
         // Show trash and delete for components that uses the state field
         if (isset($this->items[0]->state)) {
             if ($this->state->get('filter.state') == ContentComponent::CONDITION_TRASHED && $canDo->get(
-                    'core.delete'
-                )) {
+                'core.delete'
+            )) {
                 $toolbar->delete('extensionimages.delete')
                     ->text('JTOOLBAR_EMPTY_TRASH')
                     ->message('JGLOBAL_CONFIRM_DELETE')

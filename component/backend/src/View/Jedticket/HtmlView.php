@@ -147,66 +147,6 @@ class HtmlView extends BaseHtmlView
      */
     protected mixed $ticket_help;
 
-    /**
-     * Add the page title and toolbar.
-     *
-     * @return void
-     *
-     * @since 4.0.0
-     * @throws Exception
-     *
-     */
-    protected function addToolbar()
-    {
-        Factory::getApplication()->input->set('hidemainmenu', true);
-
-        $user  = JedHelper::getUser();
-        $isNew = ($this->item->id == 0);
-
-        if (isset($this->item->checked_out)) {
-            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
-        } else {
-            $checkedOut = false;
-        }
-
-        $canDo = JedHelper::getActions();
-
-        ToolbarHelper::title(Text::_('COM_JED_TITLE_JEDTICKET'), "generic");
-
-        // If not checked out, can save the item.
-        if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create')))) {
-            ToolbarHelper::apply('jedticket.apply');
-            ToolbarHelper::save('jedticket.save');
-        }
-
-        if (!$checkedOut && ($canDo->get('core.create'))) {
-            ToolbarHelper::custom(
-                'jedticket.save2new',
-                'save-new.png',
-                'save-new_f2.png',
-                'JTOOLBAR_SAVE_AND_NEW',
-                false
-            );
-        }
-
-        // If an existing item, can save to a copy.
-        if (!$isNew && $canDo->get('core.create')) {
-            ToolbarHelper::custom(
-                'jedticket.save2copy',
-                'save-copy.png',
-                'save-copy_f2.png',
-                'JTOOLBAR_SAVE_AS_COPY',
-                false
-            );
-        }
-
-
-        if (empty($this->item->id)) {
-            ToolbarHelper::cancel('jedticket.cancel');
-        } else {
-            ToolbarHelper::cancel('jedticket.cancel', 'JTOOLBAR_CLOSE');
-        }
-    }
 
     /**
      * Add the page title and toolbar.
@@ -289,10 +229,9 @@ class HtmlView extends BaseHtmlView
         $this->ticket_help      = $this->get('TicketHelp');
         $this->linked_item_type = $this->item->linked_item_type;
 
-        if ($this->linked_item_type === 2) // Extension
-        {
+        if ($this->linked_item_type === 2) { // Extension
             //$this->linked_item_Model     = $app->bootComponent('com_jed')->getMVCFactory()
-            //	->createModel('Extension', 'Administrator', ['ignore_request' => true]);
+            //  ->createModel('Extension', 'Administrator', ['ignore_request' => true]);
             $this->linked_item_Model     = new ExtensionModel();
             $this->related_object_string = "Sorry but extensions as related object are not currently coded.";
             //$this->linked_item_data = $this->get('ExtensionData');
@@ -300,11 +239,10 @@ class HtmlView extends BaseHtmlView
 
             //$this->linked_form->bind($this->linked_item_data);
         }
-        if ($this->linked_item_type === 3) //Review
-        {
+        if ($this->linked_item_type === 3) { //Review
             $this->linked_item_Model = new ReviewModel();
             //$this->linked_item_Model     = $app->bootComponent('com_jed')->getMVCFactory()
-            //	->createModel('Review', 'Administrator', ['ignore_request' => true]);
+            //  ->createModel('Review', 'Administrator', ['ignore_request' => true]);
             $this->related_object_string = "Sorry but reviews as related object are not currently coded.";
 
             $this->linked_item_data = $this->get('ReviewData');
@@ -347,11 +285,10 @@ class HtmlView extends BaseHtmlView
             $this->linked_extension_varieddata_form->bind($this->linked_extension_varieddata);
             $this->linked_extension_data->varied_form = $this->linked_extension_varieddata_form;
         }
-        if ($this->linked_item_type === 4) // VEL Report
-        {
+        if ($this->linked_item_type === 4) { // VEL Report
             $this->linked_item_Model = new VelreportModel();
             //$this->linked_item_Model = $app->bootComponent('com_jed')->getMVCFactory()
-            //	->createModel('Velreport', 'Administrator', ['ignore_request' => true]);
+            //  ->createModel('Velreport', 'Administrator', ['ignore_request' => true]);
 
             $this->linked_item_data = $this->get('VelReportData');
 
@@ -363,11 +300,10 @@ class HtmlView extends BaseHtmlView
                 $this->related_object_string = "Awaiting creation of VEL Item";
             }
         }
-        if ($this->linked_item_type === 5) // VEL Developer Update
-        {
+        if ($this->linked_item_type === 5) { // VEL Developer Update
             $this->linked_item_Model = new VeldeveloperupdateModel();
             //$this->linked_item_Model = $app->bootComponent('com_jed')->getMVCFactory()
-            //	->createModel('Veldeveloperupdate', 'Administrator', ['ignore_request' => true]);
+            //  ->createModel('Veldeveloperupdate', 'Administrator', ['ignore_request' => true]);
 
             $this->linked_item_data = $this->get('VelDeveloperUpdateData');
 
@@ -379,10 +315,9 @@ class HtmlView extends BaseHtmlView
                 $this->related_object_string = "Awaiting Linking to VEL Item";
             }
         }
-        if ($this->linked_item_type === 6) // VEL Abandonware Report
-        {
-            //$this->linked_item_Model = $app->bootComponent('com_jed')->getMVCFactory()
-            //	->createModel('Velabandonedreport', 'Administrator', ['ignore_request' => true]);
+        if ($this->linked_item_type === 6) { // VEL Abandonware Report
+        //$this->linked_item_Model = $app->bootComponent('com_jed')->getMVCFactory()
+            //  ->createModel('Velabandonedreport', 'Administrator', ['ignore_request' => true]);
             $this->linked_item_Model = new VelabandonedreportModel();
             $this->linked_item_data  = $this->get('VelAbandonedReportData');
 

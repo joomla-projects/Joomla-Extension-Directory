@@ -57,9 +57,9 @@ class HtmlView extends BaseHtmlView
         $toolbar = Toolbar::getInstance('toolbar');
 
 
-            if ($canDo->get('core.create')) {
-                $toolbar->addNew('extensionvarieddatum.add');
-            }
+        if ($canDo->get('core.create')) {
+            $toolbar->addNew('extensionvarieddatum.add');
+        }
 
 
         if ($canDo->get('core.edit.state')) {
