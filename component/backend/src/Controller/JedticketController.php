@@ -1,30 +1,29 @@
 <?php
 
 /**
- * @package           JED
+ * @package               JED
  *
- * @subpackage        Tickets
+ * @subpackage            Tickets
  *
  * @copyright         (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license           GNU General Public License version 2 or later; see LICENSE.txt
+ * @license               GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Controller;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 
 use Exception;
-use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\Helper\JedemailHelper;
+use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
-
-use function defined;
 
 /**
  * JED Ticket Controller class
@@ -68,7 +67,9 @@ class JedticketController extends FormController
 
             $app = Factory::getApplication();
             $app->enqueueMessage('Developer Update linked to Existing VEL Item', 'success');
-            $this->setRedirect(Route::_('index.php?option=com_jed&view=jedticket&layout=edit&id=' . (int) $ticketId, false));
+            $this->setRedirect(
+                Route::_('index.php?option=com_jed&view=jedticket&layout=edit&id=' . (int)$ticketId, false)
+            );
         }
     }
 
@@ -87,16 +88,39 @@ class JedticketController extends FormController
             $reportId = $_POST["jform"]['linked_item_id'];
 
             $querySelect = $db->getQuery(true)
-                ->select("0,`extension_name` as vulnerable_item_name, `extension_version` as vulnerable_item_version, CONCAT(`extension_name`,', ',`extension_version`,', ','Abandoned') AS title,'',3 AS 'status'," . $reportId . ",'','' AS 'risk_level',   `extension_version`, `extension_version`,'' AS 'patch_version','','',5 AS 'exploit_type','' AS 'exploit_other_description','' AS 'xml_manifest','' AS 'manifest_location', '' AS 'install_data', `reporter_fullname` AS 'discovered_by',''")
+                ->select(
+                    "0,`extension_name` as vulnerable_item_name, `extension_version` as vulnerable_item_version, CONCAT(`extension_name`,', ',`extension_version`,', ','Abandoned') AS title,'',3 AS 'status'," . $reportId . ",'','' AS 'risk_level',   `extension_version`, `extension_version`,'' AS 'patch_version','','',5 AS 'exploit_type','' AS 'exploit_other_description','' AS 'xml_manifest','' AS 'manifest_location', '' AS 'install_data', `reporter_fullname` AS 'discovered_by',''"
+                )
                 ->from('#__jed_vel_abandoned_report')
                 ->where('id = ' . $reportId);
 
             $queryInsert = $db->getQuery(true)
                 ->insert('#__jed_vel_vulnerable_item')
-                ->columns($db->qn([
-                    'id', 'vulnerable_item_name', 'vulnerable_item_version', 'title', 'internal_description', 'status', 'report_id', 'jed', 'risk_level', 'start_version', 'vulnerable_version', 'patch_version', 'recommendation',
-                    'update_notice', 'exploit_type', 'exploit_other_description', 'xml_manifest', 'manifest_location', 'install_data', 'discovered_by', 'public_description',
-                ]))
+                ->columns(
+                    $db->qn([
+                        'id',
+                        'vulnerable_item_name',
+                        'vulnerable_item_version',
+                        'title',
+                        'internal_description',
+                        'status',
+                        'report_id',
+                        'jed',
+                        'risk_level',
+                        'start_version',
+                        'vulnerable_version',
+                        'patch_version',
+                        'recommendation',
+                        'update_notice',
+                        'exploit_type',
+                        'exploit_other_description',
+                        'xml_manifest',
+                        'manifest_location',
+                        'install_data',
+                        'discovered_by',
+                        'public_description',
+                    ])
+                )
                 ->values($querySelect);
             //echo $queryInsert->__toString();exit();
             $db->setQuery($queryInsert);
@@ -120,7 +144,12 @@ class JedticketController extends FormController
             $cid   = $this->input->get('id', [], 'array');
             $model->checkIn($cid[0]);
 
-            $this->setRedirect(Route::_('index.php?option=com_jed&view=velvulnerableitem&task=velvulnerableitem.edit&id=' . (int) $newVel, false));
+            $this->setRedirect(
+                Route::_(
+                    'index.php?option=com_jed&view=velvulnerableitem&task=velvulnerableitem.edit&id=' . (int)$newVel,
+                    false
+                )
+            );
         }
     }
 
@@ -147,21 +176,47 @@ class JedticketController extends FormController
             `state` FROM  #__jed_vel_vulnerable_item` */
             $reportId = $_POST["jform"]['linked_item_id'];
 
-            $exploit_string = Text::_('COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_OPTION_' . $_POST["jform"]['exploit_type']);
+            $exploit_string = Text::_(
+                'COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_OPTION_' . $_POST["jform"]['exploit_type']
+            );
 
             //  var_dump($_POST);
             $querySelect = $db->getQuery(true)
-                ->select("0,vulnerable_item_name, vulnerable_item_version, CONCAT(`vulnerable_item_name`,', ',`vulnerable_item_version`,', ','" . $exploit_string . "') as title,'',0 AS 'status',`id`,`jed_url`,'' AS 'risk_level',`vulnerable_item_version`, `vulnerable_item_version`,'' AS 'patch_version','','',`exploit_type`,`exploit_other_description`,
-'' AS 'xml_manifest','' AS 'manifest_location', '' AS 'install_data', `reporter_fullname` AS 'discovered_by','',now()")
+                ->select(
+                    "0,vulnerable_item_name, vulnerable_item_version, CONCAT(`vulnerable_item_name`,', ',`vulnerable_item_version`,', ','" . $exploit_string . "') as title,'',0 AS 'status',`id`,`jed_url`,'' AS 'risk_level',`vulnerable_item_version`, `vulnerable_item_version`,'' AS 'patch_version','','',`exploit_type`,`exploit_other_description`,
+'' AS 'xml_manifest','' AS 'manifest_location', '' AS 'install_data', `reporter_fullname` AS 'discovered_by','',now()"
+                )
                 ->from('#__jed_vel_report')
                 ->where('id = ' . $reportId);
 
             $queryInsert = $db->getQuery(true)
                 ->insert('#__jed_vel_vulnerable_item')
-                ->columns($db->qn([
-                    'id', 'vulnerable_item_name', 'vulnerable_item_version', 'title', 'internal_description', 'status', 'report_id', 'jed', 'risk_level', 'start_version', 'vulnerable_version', 'patch_version', 'recommendation',
-                    'update_notice', 'exploit_type', 'exploit_other_description', 'xml_manifest', 'manifest_location', 'install_data', 'discovered_by', 'public_description', 'created',
-                ]))
+                ->columns(
+                    $db->qn([
+                        'id',
+                        'vulnerable_item_name',
+                        'vulnerable_item_version',
+                        'title',
+                        'internal_description',
+                        'status',
+                        'report_id',
+                        'jed',
+                        'risk_level',
+                        'start_version',
+                        'vulnerable_version',
+                        'patch_version',
+                        'recommendation',
+                        'update_notice',
+                        'exploit_type',
+                        'exploit_other_description',
+                        'xml_manifest',
+                        'manifest_location',
+                        'install_data',
+                        'discovered_by',
+                        'public_description',
+                        'created',
+                    ])
+                )
                 ->values($querySelect);
 
             $db->setQuery($queryInsert);
@@ -185,7 +240,12 @@ class JedticketController extends FormController
             $model = $this->getModel();
             $cid   = $this->input->get('id', [], 'array');
             $model->checkIn($cid[0]);
-            $this->setRedirect(Route::_('index.php?option=com_jed&view=velvulnerableitem&task=velvulnerableitem.edit&id=' . (int) $newVel, false));
+            $this->setRedirect(
+                Route::_(
+                    'index.php?option=com_jed&view=velvulnerableitem&task=velvulnerableitem.edit&id=' . (int)$newVel,
+                    false
+                )
+            );
         }
     }
 
@@ -224,7 +284,6 @@ class JedticketController extends FormController
      */
     public function gotoVEL()
     {
-
         $this->task = $_POST['task'];
 
         if ($this->task == "jedticket.gotoVEL") {
@@ -236,7 +295,12 @@ class JedticketController extends FormController
             $model = $this->getModel();
 
             $model->checkIn($ticket_id);
-            $this->setRedirect(Route::_('index.php?option=com_jed&view=velvulnerableitem&task=velvulnerableitem.edit&id=' . (int) $vel_id, false));
+            $this->setRedirect(
+                Route::_(
+                    'index.php?option=com_jed&view=velvulnerableitem&task=velvulnerableitem.edit&id=' . (int)$vel_id,
+                    false
+                )
+            );
         }
     }
 
@@ -251,15 +315,15 @@ class JedticketController extends FormController
         $db         = Factory::getContainer()->get('DatabaseDriver');
         $this->task = $_POST['task'];
         if ($this->task == "jedticket.linkDeveloperUpdatetoVEL") {
-            $jform     = $_POST['jform'];
+            $jform = $_POST['jform'];
 
             $vel_id          = $jform['vel_item_id'];
             $vel_devupdateid = $jform['veldeveloperupdate_id'];
 
             $queryUpdate = $db->getQuery(true)
                 ->update('#__jed_vel_developer_update')
-                ->set($db->qn('vel_item_id') . ' = ' . (int) $vel_id)
-                ->where($db->qn('id') . ' = ' . (int) $vel_devupdateid);
+                ->set($db->qn('vel_item_id') . ' = ' . (int)$vel_id)
+                ->where($db->qn('id') . ' = ' . (int)$vel_devupdateid);
 
             $db->setQuery($queryUpdate);
             $db->execute();
@@ -268,7 +332,12 @@ class JedticketController extends FormController
             $model = $this->getModel();
             $cid   = $this->input->get('id', [], 'array');
             $model->checkIn($cid[0]);
-            $this->setRedirect(Route::_('index.php?option=com_jed&view=velvulnerableitem&task=velvulnerableitem.edit&id=' . (int) $vel_id, false));
+            $this->setRedirect(
+                Route::_(
+                    'index.php?option=com_jed&view=velvulnerableitem&task=velvulnerableitem.edit&id=' . (int)$vel_id,
+                    false
+                )
+            );
         }
     }
 
@@ -297,7 +366,7 @@ class JedticketController extends FormController
             $ticket_user = JedHelper::getUserById($_POST['jform']['created_by_num']);
             JedemailHelper::sendEmail($subject, $message, $ticket_user, 'mark@burninglight.co.uk');
             $this->storeMessage($id, $subject, $message);
-            $this->setRedirect(Route::_('index.php?option=com_jed&view=jedticket&layout=edit&id=' . (int) $id, false));
+            $this->setRedirect(Route::_('index.php?option=com_jed&view=jedticket&layout=edit&id=' . (int)$id, false));
         }
     }
 
@@ -330,7 +399,9 @@ class JedticketController extends FormController
 
             $ticket_internal_notes_model->save($internal_note);
         }
-        $this->setRedirect(Route::_('index.php?option=com_jed&view=jedticket&layout=edit&id=' . (int) $ticket_id, false));
+        $this->setRedirect(
+            Route::_('index.php?option=com_jed&view=jedticket&layout=edit&id=' . (int)$ticket_id, false)
+        );
     }
 
     /**
@@ -345,8 +416,8 @@ class JedticketController extends FormController
      */
     public function storeMessage(int $ticket_id, $subject, $message)
     {
-        $user                 = JedHelper::getUser();
-        $ticket_message_model               = $this->getModel('Ticketmessage', 'Administrator');
+        $user                                = JedHelper::getUser();
+        $ticket_message_model                = $this->getModel('Ticketmessage', 'Administrator');
 
         $ticket_message['id']                = 0;
         $ticket_message['ticket_id']         = $ticket_id;

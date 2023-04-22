@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package           JED
  *
- * @subpackage    Tickets
+ * @subpackage        Tickets
  *
  * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @license           GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Model;
@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Administrator\Model;
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
@@ -29,40 +30,13 @@ use Joomla\Database\QueryInterface;
 class TicketinternalnotesModel extends ListModel
 {
     /**
-     * Constructor.
-     *
-     * @param   array  $config  An optional associative array of configuration settings.
-     *
-     * @see           ListModel
-     * @since         4.0.0
-     * @throws  Exception
-     */
-    public function __construct($config = [])
-    {
-        if (empty($config['filter_fields'])) {
-            $config['filter_fields'] = [
-                'id', 'a.`id`',
-                'ordering', 'a.`ordering`',
-                'state', 'a.`state`',
-                'created_by', 'a.`created_by`',
-                'modified_by', 'a.`modified_by`',
-                'summary', 'a.`summary`',
-                'note', 'a.`note`',
-                'ticket_id', 'a.`ticket_id`',
-            ];
-        }
-
-        parent::__construct($config);
-    }
-
-    /**
      * Get an array of data items
      *
      * @return mixed Array of data items on success, false on failure.
      *
      * @since 4.0.0
      */
-    public function getItems() : mixed
+    public function getItems(): mixed
     {
         $items = parent::getItems();
 
@@ -78,7 +52,9 @@ class TicketinternalnotesModel extends ListModel
                     $query
                         ->select('`#__jed_jedtickets_3591975`.`ticket_subject`')
                         ->from($db->quoteName('#__jed_jedtickets', '#__jed_jedtickets_3591975'))
-                        ->where($db->quoteName('#__jed_jedtickets_3591975.id') . ' = ' . $db->quote($db->escape($value)));
+                        ->where(
+                            $db->quoteName('#__jed_jedtickets_3591975.id') . ' = ' . $db->quote($db->escape($value))
+                        );
 
                     $db->setQuery($query);
                     $results = $db->loadObject();
@@ -139,7 +115,7 @@ class TicketinternalnotesModel extends ListModel
         $published = $this->getState('filter.state');
 
         if (is_numeric($published)) {
-            $query->where('a.state = ' . (int) $published);
+            $query->where('a.state = ' . (int)$published);
         } elseif (empty($published)) {
             $query->where('(a.state IN (0, 1))');
         }
@@ -149,7 +125,7 @@ class TicketinternalnotesModel extends ListModel
 
         if (!empty($search)) {
             if (stripos($search, 'id:') === 0) {
-                $query->where('a.id = ' . (int) substr($search, 3));
+                $query->where('a.id = ' . (int)substr($search, 3));
             } else {
                 $search = $db->Quote('%' . $db->escape($search, true) . '%');
                 $query->where('( a.summary LIKE ' . $search . '  OR  a.note LIKE ' . $search . ' )');
@@ -219,5 +195,40 @@ class TicketinternalnotesModel extends ListModel
             $this->setState('filter.component', $parts[0]);
             $this->setState('filter.section', $parts[1]);
         }
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param   array  $config  An optional associative array of configuration settings.
+     *
+     * @see           ListModel
+     * @since         4.0.0
+     * @throws  Exception
+     */
+    public function __construct($config = [])
+    {
+        if (empty($config['filter_fields'])) {
+            $config['filter_fields'] = [
+                'id',
+                'a.`id`',
+                'ordering',
+                'a.`ordering`',
+                'state',
+                'a.`state`',
+                'created_by',
+                'a.`created_by`',
+                'modified_by',
+                'a.`modified_by`',
+                'summary',
+                'a.`summary`',
+                'note',
+                'a.`note`',
+                'ticket_id',
+                'a.`ticket_id`',
+            ];
+        }
+
+        parent::__construct($config);
     }
 }

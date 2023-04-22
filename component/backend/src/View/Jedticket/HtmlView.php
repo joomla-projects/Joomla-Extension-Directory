@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Administrator\View\Jedticket;
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
@@ -208,6 +209,66 @@ class HtmlView extends BaseHtmlView
     }
 
     /**
+     * Add the page title and toolbar.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     * @throws Exception
+     *
+     */
+    protected function addToolbar()
+    {
+        Factory::getApplication()->input->set('hidemainmenu', true);
+
+        $user  = JedHelper::getUser();
+        $isNew = ($this->item->id == 0);
+
+        if (isset($this->item->checked_out)) {
+            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+        } else {
+            $checkedOut = false;
+        }
+
+        $canDo = JedHelper::getActions();
+
+        ToolbarHelper::title(Text::_('COM_JED_TITLE_JEDTICKET'), "generic");
+
+        // If not checked out, can save the item.
+        if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create')))) {
+            ToolbarHelper::apply('jedticket.apply');
+            ToolbarHelper::save('jedticket.save');
+        }
+
+        if (!$checkedOut && ($canDo->get('core.create'))) {
+            ToolbarHelper::custom(
+                'jedticket.save2new',
+                'save-new.png',
+                'save-new_f2.png',
+                'JTOOLBAR_SAVE_AND_NEW',
+                false
+            );
+        }
+
+        // If an existing item, can save to a copy.
+        if (!$isNew && $canDo->get('core.create')) {
+            ToolbarHelper::custom(
+                'jedticket.save2copy',
+                'save-copy.png',
+                'save-copy_f2.png',
+                'JTOOLBAR_SAVE_AS_COPY',
+                false
+            );
+        }
+
+        if (empty($this->item->id)) {
+            ToolbarHelper::cancel('jedticket.cancel');
+        } else {
+            ToolbarHelper::cancel('jedticket.cancel', 'JTOOLBAR_CLOSE');
+        }
+    }
+
+    /**
      * Display the view
      *
      * @param   string  $tpl  Template name
@@ -323,7 +384,7 @@ class HtmlView extends BaseHtmlView
             //$this->linked_item_Model = $app->bootComponent('com_jed')->getMVCFactory()
             //	->createModel('Velabandonedreport', 'Administrator', ['ignore_request' => true]);
             $this->linked_item_Model = new VelabandonedreportModel();
-            $this->linked_item_data = $this->get('VelAbandonedReportData');
+            $this->linked_item_data  = $this->get('VelAbandonedReportData');
 
             $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
             $this->linked_form->bind($this->linked_item_data);
@@ -344,54 +405,6 @@ class HtmlView extends BaseHtmlView
         $this->addToolbar();
 
         parent::display($tpl);
-    }
-
-    /**
-     * Add the page title and toolbar.
-     *
-     * @return void
-     *
-     * @since 4.0.0
-     * @throws Exception
-     *
-     */
-    protected function addToolbar()
-    {
-        Factory::getApplication()->input->set('hidemainmenu', true);
-
-        $user  = JedHelper::getUser();
-        $isNew = ($this->item->id == 0);
-
-        if (isset($this->item->checked_out)) {
-            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
-        } else {
-            $checkedOut = false;
-        }
-
-        $canDo = JedHelper::getActions();
-
-        ToolbarHelper::title(Text::_('COM_JED_TITLE_JEDTICKET'), "generic");
-
-        // If not checked out, can save the item.
-        if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create')))) {
-            ToolbarHelper::apply('jedticket.apply');
-            ToolbarHelper::save('jedticket.save');
-        }
-
-        if (!$checkedOut && ($canDo->get('core.create'))) {
-            ToolbarHelper::custom('jedticket.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
-        }
-
-        // If an existing item, can save to a copy.
-        if (!$isNew && $canDo->get('core.create')) {
-            ToolbarHelper::custom('jedticket.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
-        }
-
-        if (empty($this->item->id)) {
-            ToolbarHelper::cancel('jedticket.cancel');
-        } else {
-            ToolbarHelper::cancel('jedticket.cancel', 'JTOOLBAR_CLOSE');
-        }
     }
 
     /**

@@ -19,7 +19,6 @@ use Jed\Component\Jed\Site\Model\ExtensionModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
-
 /**
  * View class for a list of Jed.
  *

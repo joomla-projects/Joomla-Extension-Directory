@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package           JED
  *
- * @subpackage    VEL
+ * @subpackage        VEL
  *
  * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @license           GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Model;
@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Administrator\Model;
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
@@ -60,13 +61,13 @@ class VeldeveloperupdateModel extends AdminModel
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
     {
-
         // Get the form.
         $form = $this->loadForm(
             'com_jed.veldeveloperupdate',
             'veldeveloperupdate',
-            ['control'        => $formname,
-                  'load_data' => $loadData,
+            [
+                'control'   => $formname,
+                'load_data' => $loadData,
             ]
         );
 
@@ -105,7 +106,7 @@ class VeldeveloperupdateModel extends AdminModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getTable($name = 'Veldeveloperupdate', $prefix = 'Administrator', $options = []) : Table
+    public function getTable($name = 'Veldeveloperupdate', $prefix = 'Administrator', $options = []): Table
     {
         return parent::getTable($name, $prefix, $options);
     }
@@ -135,7 +136,7 @@ class VeldeveloperupdateModel extends AdminModel
             // Support for multiple or not foreign key field: consent_to_process
             $array = [];
 
-            foreach ((array) $data->consent_to_process as $value) {
+            foreach ((array)$data->consent_to_process as $value) {
                 if (!is_array($value)) {
                     $array[] = $value;
                 }
@@ -147,7 +148,7 @@ class VeldeveloperupdateModel extends AdminModel
             // Support for multiple or not foreign key field: update_data_source
             $array = [];
 
-            foreach ((array) $data->update_data_source as $value) {
+            foreach ((array)$data->update_data_source as $value) {
                 if (!is_array($value)) {
                     $array[] = $value;
                 }

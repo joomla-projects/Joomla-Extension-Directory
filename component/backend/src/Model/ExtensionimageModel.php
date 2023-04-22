@@ -12,6 +12,7 @@ namespace Jed\Component\Jed\Administrator\Model;
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
@@ -55,8 +56,8 @@ class ExtensionimageModel extends AdminModel
      *
      * @return  Form|bool  A Form object on success, false on failure
      *
-     * @throws Exception
      * @since   4.0.0
+     * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
     {
@@ -85,12 +86,11 @@ class ExtensionimageModel extends AdminModel
      *
      * @return CMSObject Object on success
      *
-     * @throws Exception
      * @since   4.0.0
+     * @throws Exception
      */
-    public function getItem($pk = null) : CMSObject
+    public function getItem($pk = null): CMSObject
     {
-
         return parent::getItem($pk);
     }
 
@@ -98,14 +98,14 @@ class ExtensionimageModel extends AdminModel
      * Returns a reference to the a Table object, always creating it.
      *
      * @param   string  $name     The table type to instantiate
-     * @param   string  $prefix  A prefix for the table class name. Optional.
+     * @param   string  $prefix   A prefix for the table class name. Optional.
      * @param   array   $options  Configuration array for model. Optional.
      *
      * @return  Table    A database object
      *
-     * @throws Exception
      * @since   4.0.0
      *
+     * @throws Exception
      */
     public function getTable($name = 'Extensionimage', $prefix = 'Administrator', $options = []): Table
     {
@@ -117,9 +117,9 @@ class ExtensionimageModel extends AdminModel
      *
      * @return  mixed  The data for the form.
      *
-     * @throws Exception
      * @since   4.0.0
      *
+     * @throws Exception
      */
     protected function loadFormData()
     {

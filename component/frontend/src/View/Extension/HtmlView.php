@@ -20,7 +20,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
 
-
 /**
  * View class for an individual Extension
  *

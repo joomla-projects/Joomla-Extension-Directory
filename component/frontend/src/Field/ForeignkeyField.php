@@ -1,28 +1,23 @@
 <?php
 
 /**
- * @package    JED
+ * @package        JED
  *
  * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @license        GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Field;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\Language\Text;
 use Joomla\Database\Exception\ExecutionFailureException;
-
-use function is_array;
-use function is_int;
-use function is_object;
-use function is_string;
 
 /**
  * Supports a value from an external table
@@ -87,24 +82,24 @@ class ForeignKeyField extends ListField
         $this->table = $this->getAttribute('table');
 
         // The field that the field will save on the database
-        $this->key_field = (string) $this->getAttribute('key_field');
+        $this->key_field = (string)$this->getAttribute('key_field');
 
         // The column that the field shows in the input
-        $this->value_field = (string) $this->getAttribute('value_field');
+        $this->value_field = (string)$this->getAttribute('value_field');
 
         // The option field that the field will save on the database
-        $this->option_key_field = (string) $this->getAttribute('option_key_field');
+        $this->option_key_field = (string)$this->getAttribute('option_key_field');
 
         // The option value that the field shows in the input
-        $this->option_value_field = (string) $this->getAttribute('option_value_field');
+        $this->option_value_field = (string)$this->getAttribute('option_value_field');
 
         // Flag to identify if the fk_value is multiple
-        $this->value_multiple = (int) $this->getAttribute('value_multiple', 0);
+        $this->value_multiple = (int)$this->getAttribute('value_multiple', 0);
 
-        $this->required = (string) $this->getAttribute('required', 0);
+        $this->required = (string)$this->getAttribute('required', 0);
 
         // Flag to identify if the fk_value hides the trashed items
-        $this->hideTrashed = (int) $this->getAttribute('hide_trashed', 0);
+        $this->hideTrashed = (int)$this->getAttribute('hide_trashed', 0);
 
         // Flag to identify if the fk_value hides the unpublished items
         $this->hideUnpublished = (int)$this->getAttribute('hide_unpublished', 0);
@@ -119,10 +114,10 @@ class ForeignKeyField extends ListField
         $this->fk_ordering = (string)$this->getAttribute('fk_ordering');
 
         // The where SQL for foreignkey
-        $this->condition = (string) $this->getAttribute('condition');
+        $this->condition = (string)$this->getAttribute('condition');
 
         // Flag for translate options
-        $this->translate = (bool) $this->getAttribute('translate');
+        $this->translate = (bool)$this->getAttribute('translate');
 
         // Initialize variables.
         $html     = '';
@@ -135,9 +130,9 @@ class ForeignKeyField extends ListField
         // Support for multiple fields on fk_values
         if ($this->value_multiple == 1) {
             // Get the fields for multiple value
-            $this->value_fields = (string) $this->getAttribute('value_field_multiple');
+            $this->value_fields = (string)$this->getAttribute('value_field_multiple');
             $this->value_fields = explode(',', $this->value_fields);
-            $this->separator    = (string) $this->getAttribute('separator');
+            $this->separator    = (string)$this->getAttribute('separator');
 
             $fk_value = ' CONCAT(';
 
@@ -174,7 +169,7 @@ class ForeignKeyField extends ListField
 
         if ($this->hideArchived) {
             $query->where($db->quoteName('state') . ' != 2');
-            }
+        }
 
         if ($this->fk_ordering) {
             $query->order($this->fk_ordering);

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package        JED
  *
  * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @license        GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\View\Extensionimages;
@@ -12,6 +12,7 @@ namespace Jed\Component\Jed\Administrator\View\Extensionimages;
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
@@ -57,9 +58,9 @@ class HtmlView extends BaseHtmlView
         $toolbar = Toolbar::getInstance('toolbar');
 
 
-            if ($canDo->get('core.create')) {
-                $toolbar->addNew('extensionimage.add');
-            }
+        if ($canDo->get('core.create')) {
+            $toolbar->addNew('extensionimage.add');
+        }
 
 
         if ($canDo->get('core.edit.state')) {
@@ -79,9 +80,9 @@ class HtmlView extends BaseHtmlView
             } elseif (isset($this->items[0])) {
                 // If this component does not use state then show a direct delete button as we can not trash
                 $toolbar->delete('extensionimages.delete')
-                ->text('JTOOLBAR_EMPTY_TRASH')
-                ->message('JGLOBAL_CONFIRM_DELETE')
-                ->listCheck(true);
+                    ->text('JTOOLBAR_EMPTY_TRASH')
+                    ->message('JGLOBAL_CONFIRM_DELETE')
+                    ->listCheck(true);
             }
 
             $childBar->standardButton('duplicate')
@@ -100,10 +101,11 @@ class HtmlView extends BaseHtmlView
         }
 
 
-
         // Show trash and delete for components that uses the state field
         if (isset($this->items[0]->state)) {
-            if ($this->state->get('filter.state') == ContentComponent::CONDITION_TRASHED && $canDo->get('core.delete')) {
+            if ($this->state->get('filter.state') == ContentComponent::CONDITION_TRASHED && $canDo->get(
+                    'core.delete'
+                )) {
                 $toolbar->delete('extensionimages.delete')
                     ->text('JTOOLBAR_EMPTY_TRASH')
                     ->message('JGLOBAL_CONFIRM_DELETE')

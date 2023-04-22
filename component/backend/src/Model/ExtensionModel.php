@@ -11,7 +11,8 @@ namespace Jed\Component\Jed\Administrator\Model;
 
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
@@ -30,6 +31,8 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\User\User;
 use RuntimeException;
 use stdClass;
+
+use function defined;
 
 /**
  * Extension model.
@@ -100,10 +103,10 @@ class ExtensionModel extends AdminModel
     /**
      * Method to get the record form.
      *
-     * @param   array    $data      An optional array of data for the form to interogate.
-     * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+     * @param   array  $data      An optional array of data for the form to interogate.
+     * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
      *
-     * @return  Form|boolean  A \JForm object on success, false on failure
+     * @return  Form|bool  A \JForm object on success, false on failure
      *
      * @since   4.0.0
      * @throws Exception
@@ -120,7 +123,7 @@ class ExtensionModel extends AdminModel
     /**
      * Method to get a single record.
      *
-     * @param   integer  $pk  The id of the primary key.
+     * @param   int  $pk  The id of the primary key.
      *
      * @return  stdClass    Object on success, false on failure.
      *
@@ -129,134 +132,7 @@ class ExtensionModel extends AdminModel
      */
     public function getItem($pk = null): mixed
     {
-
-
         return $this->getvariedItem($pk, 0);
-    }
-
-    /**
-     * Returns a reference to the a Table object, always creating it.
-     *
-     * @param   string  $name     The table type to instantiate
-     * @param   string  $prefix   A prefix for the table class name. Optional.
-     * @param   array   $options  Configuration array for model. Optional.
-     *
-     * @return  Table    A database object
-     *
-     * @since   4.0.0
-     * @throws Exception
-     */
-    public function getTable($name = 'Extension', $prefix = 'Administrator', $options = []): Table
-    {
-        return parent::getTable($name, $prefix, $options);
-    }
-
-    /**
-     * Method to get the data that should be injected in the form.
-     *
-     * @return  mixed  The data for the form.
-     *
-     * @since   4.0.0
-     * @throws Exception
-     */
-    protected function loadFormData()
-    {
-        // Check the session for previously entered form data.
-        $data = Factory::getApplication()->getUserState('com_jed.edit.extension.data', []);
-
-        if (empty($data)) {
-            $data = $this->getItem();
-
-
-            $this->_item = $data;
-
-
-            // Support for multiple or not foreign key field: uses_updater
-            $array = [];
-
-            foreach ((array) $data->uses_updater as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->uses_updater = $array;
-            }
-
-            // Support for multiple or not foreign key field: primary_category_id
-            $array = [];
-
-            foreach ((array) $data->primary_category_id as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->primary_category_id = $array;
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * Prepare and sanitise the table prior to saving.
-     *
-     * @param   Table  $table  Table Object
-     *
-     * @return  void
-     *
-     * @since   4.0.0
-     */
-    protected function prepareTable($table)
-    {
-    }
-
-    /**
-     * Method to save the form data.
-     *
-     * @param   array  $data  The form data.
-     *
-     * @return  boolean  True on success, False on error.
-     *
-     * @since   4.0.0
-     *
-     * @throws  Exception
-     */
-    public function save($data): bool
-    {
-        unset($data['created_on']);
-
-        if (!$data['id']) {
-            $data['created_by'] = Factory::getApplication()->getSession()->get('user')->get('id');
-        }
-
-        if (!parent::save($data)) {
-            return false;
-        }
-
-        $extensionId = $this->getState($this->getName() . '.id');
-
-        /*  if ((int) $data['approve']['approved'] !== 3)
-            {
-                $this->removeApprovedReason((int) $data['id']);
-            }
-
-            if ((int) $data['publish']['published'] === 1)
-            {
-                $this->removePublishedReason((int) $data['id']);
-            }
-
-            $this->storeRelatedCategories($extensionId, $data['related'] ?? []);
-            $this->storeVersions($extensionId, $data['phpVersion'] ?? [], 'php');
-            $this->storeVersions(
-                $extensionId, $data['joomlaVersion'] ?? [], 'joomla'
-            );
-            $this->storeExtensionTypes($extensionId, $data['extensionTypes'] ?? []);
-            $this->storeImages($extensionId, $data['images'] ?? []);
-    */
-
-        return true;
     }
 
     /**
@@ -286,7 +162,13 @@ class ExtensionModel extends AdminModel
         $query2->select('supply_options.id AS supply_id, supply_options.title AS supply_type')
             //  $query2->select('"3" AS supply_id, "Cloud/Service" AS supply_type')
             ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
-            ->join('LEFT', $db->quoteName('#__jed_extension_supply_options', 'supply_options') . ' ON supply_options.id=a.supply_option_id')
+            ->join(
+                'LEFT',
+                $db->quoteName(
+                    '#__jed_extension_supply_options',
+                    'supply_options'
+                ) . ' ON supply_options.id=a.supply_option_id'
+            )
             ->where($db->quoteName('extension_id') . ' = ' . $extension_id . ' and supply_options.id>2');
 
 
@@ -377,12 +259,29 @@ class ExtensionModel extends AdminModel
     }
 
     /**
+     * Returns a reference to the a Table object, always creating it.
+     *
+     * @param   string  $name     The table type to instantiate
+     * @param   string  $prefix   A prefix for the table class name. Optional.
+     * @param   array   $options  Configuration array for model. Optional.
+     *
+     * @return  Table    A database object
+     *
+     * @since   4.0.0
+     * @throws Exception
+     */
+    public function getTable($name = 'Extension', $prefix = 'Administrator', $options = []): Table
+    {
+        return parent::getTable($name, $prefix, $options);
+    }
+
+    /**
      * Method to get the varied data form.
      *
-     * @param   array    $data      An optional array of data for the form to interogate.
-     * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+     * @param   array  $data      An optional array of data for the form to interogate.
+     * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
      *
-     * @return  Form|boolean  A Form object on success, false on failure
+     * @return  Form|bool  A Form object on success, false on failure
      *
      * @since   4.0.0
      * @throws Exception
@@ -390,7 +289,11 @@ class ExtensionModel extends AdminModel
     public function getVariedDataForm($data = [], $loadData = true, $formname = 'jform_extensionvarieddata'): Form
     {
         // Get the form.
-        $form = $this->loadForm('com_jed.extensionvarieddatum', 'extensionvarieddatum', ['control' => $formname, 'load_data' => $loadData]);
+        $form = $this->loadForm(
+            'com_jed.extensionvarieddatum',
+            'extensionvarieddatum',
+            ['control' => $formname, 'load_data' => $loadData]
+        );
 
 
         return $form ?? new Form('com_jed.extensionvarieddatum');
@@ -409,13 +312,11 @@ class ExtensionModel extends AdminModel
      */
     public function getvariedItem(int $pk = null, int $supply_option_type = 0)
     {
-
-
         if ($item = parent::getItem($pk)) {
             /* Convert cmsobject to stdClass */
             $s = $item->getProperties();
 
-            $this->_item = (object) $s;
+            $this->_item = (object)$s;
 
             if (isset($this->_item->includes)) {
                 $this->_item->includes = array_values(json_decode($this->_item->includes));
@@ -454,7 +355,7 @@ class ExtensionModel extends AdminModel
             }
             /* Load Scores */
             try {
-                $this->_item->scores            = $this->getScores($this->_item->id);
+                $this->_item->scores = $this->getScores($this->_item->id);
             } catch (Exception $e) {
             }
 
@@ -554,6 +455,152 @@ class ExtensionModel extends AdminModel
     }
 
     /**
+     * Method to get the data that should be injected in the form.
+     *
+     * @return  mixed  The data for the form.
+     *
+     * @since   4.0.0
+     * @throws Exception
+     */
+    protected function loadFormData()
+    {
+        // Check the session for previously entered form data.
+        $data = Factory::getApplication()->getUserState('com_jed.edit.extension.data', []);
+
+        if (empty($data)) {
+            $data = $this->getItem();
+
+
+            $this->_item = $data;
+
+
+            // Support for multiple or not foreign key field: uses_updater
+            $array = [];
+
+            foreach ((array)$data->uses_updater as $value) {
+                if (!is_array($value)) {
+                    $array[] = $value;
+                }
+            }
+            if (!empty($array)) {
+                $data->uses_updater = $array;
+            }
+
+            // Support for multiple or not foreign key field: primary_category_id
+            $array = [];
+
+            foreach ((array)$data->primary_category_id as $value) {
+                if (!is_array($value)) {
+                    $array[] = $value;
+                }
+            }
+            if (!empty($array)) {
+                $data->primary_category_id = $array;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Prepare and sanitise the table prior to saving.
+     *
+     * @param   Table  $table  Table Object
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     */
+    protected function prepareTable($table)
+    {
+    }
+
+    /**
+     * Remove approved reasons.
+     *
+     * @param   int  $extensionId  The extension ID to remove the approved reasons for
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     */
+    private function removeApprovedReason(int $extensionId): void
+    {
+        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->delete($db->quoteName('#__jed_extensions_approved_reasons'))
+            ->where($db->quoteName('extension_id') . ' = ' . $extensionId);
+        $db->setQuery($query)
+            ->execute();
+    }
+
+    /**
+     * Remove published reasons.
+     *
+     * @param   int  $extensionId  The extension ID to remove the published reasons for
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     */
+    private function removePublishedReason(int $extensionId): void
+    {
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->delete($db->quoteName('#__jed_extensions_published_reasons'))
+            ->where($db->quoteName('extension_id') . ' = ' . $extensionId);
+        $db->setQuery($query)
+            ->execute();
+    }
+
+    /**
+     * Method to save the form data.
+     *
+     * @param   array  $data  The form data.
+     *
+     * @return  bool  True on success, False on error.
+     *
+     * @since   4.0.0
+     *
+     * @throws  Exception
+     */
+    public function save($data): bool
+    {
+        unset($data['created_on']);
+
+        if (!$data['id']) {
+            $data['created_by'] = Factory::getApplication()->getSession()->get('user')->get('id');
+        }
+
+        if (!parent::save($data)) {
+            return false;
+        }
+
+        $extensionId = $this->getState($this->getName() . '.id');
+
+        /*  if ((int) $data['approve']['approved'] !== 3)
+            {
+                $this->removeApprovedReason((int) $data['id']);
+            }
+
+            if ((int) $data['publish']['published'] === 1)
+            {
+                $this->removePublishedReason((int) $data['id']);
+            }
+
+            $this->storeRelatedCategories($extensionId, $data['related'] ?? []);
+            $this->storeVersions($extensionId, $data['phpVersion'] ?? [], 'php');
+            $this->storeVersions(
+                $extensionId, $data['joomlaVersion'] ?? [], 'joomla'
+            );
+            $this->storeExtensionTypes($extensionId, $data['extensionTypes'] ?? []);
+            $this->storeImages($extensionId, $data['images'] ?? []);
+    */
+
+        return true;
+    }
+
+    /**
      * Method to save the approved state.
      *
      * @param   array  $data  The form data.
@@ -573,7 +620,7 @@ class ExtensionModel extends AdminModel
         }
 
         $db          = Factory::getContainer()->get('DatabaseDriver');
-        $extensionId = (int) $data['id'];
+        $extensionId = (int)$data['id'];
 
         /** @var ExtensionTable $table */
         $table = $this->getTable('Extension');
@@ -586,7 +633,7 @@ class ExtensionModel extends AdminModel
 
         $this->removeApprovedReason($extensionId);
 
-        if (empty($data['approvedReason']) || (int) $data['approved'] !== 3) {
+        if (empty($data['approvedReason']) || (int)$data['approved'] !== 3) {
             return;
         }
 
@@ -613,25 +660,6 @@ class ExtensionModel extends AdminModel
     }
 
     /**
-     * Remove approved reasons.
-     *
-     * @param   int  $extensionId  The extension ID to remove the approved reasons for
-     *
-     * @return  void
-     *
-     * @since   4.0.0
-     */
-    private function removeApprovedReason(int $extensionId): void
-    {
-        $db    = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true)
-            ->delete($db->quoteName('#__jed_extensions_approved_reasons'))
-            ->where($db->quoteName('extension_id') . ' = ' . $extensionId);
-        $db->setQuery($query)
-            ->execute();
-    }
-
-    /**
      * Method to save the published state.
      *
      * @param   array  $data  The form data.
@@ -650,7 +678,7 @@ class ExtensionModel extends AdminModel
         }
 
         $db          = Factory::getContainer()->get('DatabaseDriver');
-        $extensionId = (int) $data['id'];
+        $extensionId = (int)$data['id'];
 
         /** @var ExtensionTable $table */
         $table = $this->getTable('Extension');
@@ -663,7 +691,7 @@ class ExtensionModel extends AdminModel
 
         $this->removePublishedReason($extensionId);
 
-        if (empty($data['publishedReason']) || (int) $data['published'] === 1) {
+        if (empty($data['publishedReason']) || (int)$data['published'] === 1) {
             return;
         }
 
@@ -685,25 +713,6 @@ class ExtensionModel extends AdminModel
             }
         );
 
-        $db->setQuery($query)
-            ->execute();
-    }
-
-    /**
-     * Remove published reasons.
-     *
-     * @param   int  $extensionId  The extension ID to remove the published reasons for
-     *
-     * @return  void
-     *
-     * @since   4.0.0
-     */
-    private function removePublishedReason(int $extensionId): void
-    {
-        $db = $this->getDatabase();
-        $query = $db->getQuery(true)
-            ->delete($db->quoteName('#__jed_extensions_published_reasons'))
-            ->where($db->quoteName('extension_id') . ' = ' . $extensionId);
         $db->setQuery($query)
             ->execute();
     }
@@ -794,7 +803,7 @@ class ExtensionModel extends AdminModel
         array_walk(
             $images,
             static function ($image, $key) use (&$query, $db, $extensionId) {
-                $order = (int) str_replace('images', '', $key) + 1;
+                $order = (int)str_replace('images', '', $key) + 1;
                 $query->values(
                     $extensionId . ',' . $db->quote($image['image']) . ','
                     . $order
@@ -818,7 +827,8 @@ class ExtensionModel extends AdminModel
      *
      * @since   4.0.0
      */
-    public function storeNote(string $body, int $developerId, int $userId, int $extensionId): void {
+    public function storeNote(string $body, int $developerId, int $userId, int $extensionId): void
+    {
         $developer = User::getInstance($developerId);
 
         if ($developer->get('id', null) === null) {

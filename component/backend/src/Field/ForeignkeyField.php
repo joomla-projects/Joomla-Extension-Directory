@@ -1,26 +1,27 @@
 <?php
 
 /**
- * @package       JED
+ * @package           JED
  *
- * @subpackage    Tickets
+ * @subpackage        Tickets
  *
  * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @license           GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Field;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\Language\Text;
 use Joomla\Database\Exception\ExecutionFailureException;
-use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
 use function is_array;
 use function is_int;
@@ -86,7 +87,7 @@ class ForeignKeyField extends ListField
      *
      * @since 4.0.0
      */
-    public function getAttribute($name, $default = null) : mixed
+    public function getAttribute($name, $default = null): mixed
     {
         if (!empty($this->element[$name])) {
             return $this->element[$name];
@@ -151,19 +152,21 @@ class ForeignKeyField extends ListField
 
         // Add header.
         if (!empty($this->header)) {
-            $options[] = (object) ["value" => '', "text" => Text::_($this->header)];
+            $options[] = (object)["value" => '', "text" => Text::_($this->header)];
         }
 
         if (!empty($this->option_value_field) || !empty($this->option_key_field)) {
-            $options[] = (object) ["value" => $this->option_key_field, "text" => Text::_($this->option_value_field)];
+            $options[] = (object)["value" => $this->option_key_field, "text" => Text::_($this->option_value_field)];
         }
 
         // Build the field options.
         if (!empty($results)) {
             foreach ($results as $item) {
-                $options[] = (object) [
+                $options[] = (object)[
                     "value" => $item->{$this->key_field},
-                    "text"  => $this->translate == true ? Text::_($item->{$this->value_field}) : $item->{$this->value_field},
+                    "text"  => $this->translate == true ? Text::_(
+                        $item->{$this->value_field}
+                    ) : $item->{$this->value_field},
                 ];
             }
         }
@@ -188,24 +191,24 @@ class ForeignKeyField extends ListField
         $this->table = $this->getAttribute('table');
 
         // The field that the field will save on the database
-        $this->key_field = (string) $this->getAttribute('key_field');
+        $this->key_field = (string)$this->getAttribute('key_field');
 
         // The column that the field shows in the input
-        $this->value_field = (string) $this->getAttribute('value_field');
+        $this->value_field = (string)$this->getAttribute('value_field');
 
         // The option field that the field will save on the database
-        $this->option_key_field = (string) $this->getAttribute('option_key_field');
+        $this->option_key_field = (string)$this->getAttribute('option_key_field');
 
         // The option value that the field shows in the input
-        $this->option_value_field = (string) $this->getAttribute('option_value_field');
+        $this->option_value_field = (string)$this->getAttribute('option_value_field');
 
         // Flag to identify if the fk_value is multiple
-        $this->value_multiple = (int) $this->getAttribute('value_multiple', 0);
+        $this->value_multiple = (int)$this->getAttribute('value_multiple', 0);
 
-        $this->required = (string) $this->getAttribute('required', 0);
+        $this->required = (string)$this->getAttribute('required', 0);
 
         // Flag to identify if the fk_value hides the trashed items
-        $this->hideTrashed = (int) $this->getAttribute('hide_trashed', 0);
+        $this->hideTrashed = (int)$this->getAttribute('hide_trashed', 0);
 
         // Flag to identify if the fk_value hides the unpublished items
         $this->hideUnpublished = (int)$this->getAttribute('hide_unpublished', 0);
@@ -220,10 +223,10 @@ class ForeignKeyField extends ListField
         $this->fk_ordering = (string)$this->getAttribute('fk_ordering');
 
         // The where SQL for foreignkey
-        $this->condition = (string) $this->getAttribute('condition');
+        $this->condition = (string)$this->getAttribute('condition');
 
         // Flag for translate options
-        $this->translate = (bool) $this->getAttribute('translate');
+        $this->translate = (bool)$this->getAttribute('translate');
 
         // Initialize variables.
         $html     = '';
@@ -236,9 +239,9 @@ class ForeignKeyField extends ListField
         // Support for multiple fields on fk_values
         if ($this->value_multiple == 1) {
             // Get the fields for multiple value
-            $this->value_fields = (string) $this->getAttribute('value_field_multiple');
+            $this->value_fields = (string)$this->getAttribute('value_field_multiple');
             $this->value_fields = explode(',', $this->value_fields);
-            $this->separator    = (string) $this->getAttribute('separator');
+            $this->separator    = (string)$this->getAttribute('separator');
 
             $fk_value = ' CONCAT(';
 
@@ -288,8 +291,11 @@ class ForeignKeyField extends ListField
         // Only join on data that the user has created
         $user = JedHelper::getUser();
         // If the user is not an admin, then restrict the options to only be own
-        if (!empty($user->id) && !in_array("8", $user->getAuthorisedGroups()) && !in_array("7", $user->getAuthorisedGroups())) {
-            $query->where("created_by = " . (int) $user->id);
+        if (!empty($user->id) && !in_array("8", $user->getAuthorisedGroups()) && !in_array(
+                "7",
+                $user->getAuthorisedGroups()
+            )) {
+            $query->where("created_by = " . (int)$user->id);
         }
 
         return $query;

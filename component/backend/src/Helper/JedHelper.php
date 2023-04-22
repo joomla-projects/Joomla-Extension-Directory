@@ -11,6 +11,7 @@ namespace Jed\Component\Jed\Administrator\Helper;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 
@@ -22,8 +23,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\User;
 use Joomla\Registry\Registry;
-
-use function defined;
 
 /**
  * JED Helper
@@ -161,7 +160,13 @@ class JedHelper
         $assetName = 'com_jed';
 
         $actions = [
-            'core.admin', 'core.manage', 'core.create', 'core.edit', 'core.edit.own', 'core.edit.state', 'core.delete',
+            'core.admin',
+            'core.manage',
+            'core.create',
+            'core.edit',
+            'core.edit.own',
+            'core.edit.state',
+            'core.delete',
         ];
 
         foreach ($actions as $action) {
@@ -186,15 +191,15 @@ class JedHelper
             case '-1':
                 $icon = 'unpublish';
                 break;
-                // Approved
+            // Approved
             case '1':
                 $icon = 'publish';
                 break;
-                // Awaiting response
+            // Awaiting response
             case '2':
                 $icon = 'expired';
                 break;
-                // Pending
+            // Pending
             case '0':
             default:
                 $icon = 'pending';
@@ -202,6 +207,33 @@ class JedHelper
         }
 
         return '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
+    }
+
+    /**
+     * Gets the files attached to an item
+     *
+     * @param   int     $pk     The item's id
+     *
+     * @param   string  $table  The table's name
+     *
+     * @param   string  $field  The field's name
+     *
+     * @return  array  The files
+     *
+     */
+    public static function getFiles(int $pk, string $table, string $field): array
+    {
+        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true);
+
+        $query
+            ->select($field)
+            ->from($table)
+            ->where('id = ' . $pk);
+
+        $db->setQuery($query);
+
+        return explode(',', $db->loadResult());
     }
 
     /**
@@ -219,15 +251,15 @@ class JedHelper
             case '-1':
                 $icon = 'unpublish';
                 break;
-                // Approved
+            // Approved
             case '1':
                 $icon = 'publish';
                 break;
-                // Awaiting response
+            // Awaiting response
             case '2':
                 $icon = 'expired';
                 break;
-                // Pending
+            // Pending
             case '0':
             default:
                 $icon = 'pending';
@@ -266,7 +298,6 @@ class JedHelper
      */
     public static function getUserById($userId): User\User
     {
-
         try {//$user   = Factory::getUser();
             $container   = Factory::getContainer();
             $userFactory = $container->get('user.factory');
@@ -309,7 +340,6 @@ class JedHelper
      */
     public static function lockFormFields(Form $form, array $excluded): bool
     {
-
         $fields = $form->getFieldset();
         foreach ($fields as $field) :
             if (in_array($field->getAttribute('name'), $excluded)) {
@@ -333,7 +363,6 @@ class JedHelper
      **/
     public static function prettyDate(string $datestr): string
     {
-
         try {
             $d = new DateTime($datestr);
 
@@ -342,31 +371,4 @@ class JedHelper
             return 'Sorry an error occured';
         }
     }
-
-    /**
-     * Gets the files attached to an item
-     *
-     * @param   int     $pk     The item's id
-     *
-     * @param   string  $table  The table's name
-     *
-     * @param   string  $field  The field's name
-     *
-     * @return  array  The files
-     *
-     */
-     public static function getFiles(int $pk, string $table, string $field): array
-     {
-          $db = Factory::getContainer()->get('DatabaseDriver');
-          $query = $db->getQuery(true);
-
-          $query
-               ->select($field)
-               ->from($table)
-               ->where('id = ' . $pk);
-
-          $db->setQuery($query);
-
-          return explode(',', $db->loadResult());
-     }
 }
