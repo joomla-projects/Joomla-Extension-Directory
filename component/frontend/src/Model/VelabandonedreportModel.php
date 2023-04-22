@@ -39,7 +39,7 @@ class VelabandonedreportModel extends ItemModel
      * @var    object
      * @since  4.0.0
      */
-    public $_item;
+    public $item;
 
     /** Data Table
      * @since 4.0.0

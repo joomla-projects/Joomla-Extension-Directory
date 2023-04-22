@@ -37,7 +37,7 @@ class VelitemModel extends ItemModel
      * @var    object
      * @since  4.0.0
      */
-    public $_item;
+    public $item;
 
     /**
      * Method to get a single Vulnerable Item.

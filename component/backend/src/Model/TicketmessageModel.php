@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package           JED
  *
- * @subpackage    Tickets
+ * @subpackage        Tickets
  *
  * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @license           GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Model;
@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Administrator\Model;
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
@@ -60,15 +61,10 @@ class TicketmessageModel extends AdminModel
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
     {
-
-        // Get the form.
-        $form = $this->loadForm(
-            'com_jed.ticketmessage',
-            'ticketmessage',
-            ['control'        => $formname,
-                  'load_data' => $loadData,
-            ]
-        );
+        $form = $this->loadForm('com_jed.ticketmessage', 'ticketmessage', [
+            'control'   => $formname,
+            'load_data' => $loadData,
+        ]);
 
 
         if (empty($form)) {
