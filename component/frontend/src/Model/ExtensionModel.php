@@ -89,7 +89,6 @@ class ExtensionModel extends ItemModel
      */
     public function checkin(int $id = null): bool
     {
-        // Get the id.
         $id = (!empty($id)) ? $id : (int)$this->getState('extension.id');
         if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($id) {
@@ -122,7 +121,6 @@ class ExtensionModel extends ItemModel
      */
     public function checkout(int $id = null): bool
     {
-        // Get the user id.
         $id = (!empty($id)) ? $id : (int)$this->getState('extension.id');
 
         if (!$id && !JedHelper::userIDItem($id, $this->dbtable) && !JedHelper::isAdminOrSuperUser()) {
@@ -314,12 +312,7 @@ class ExtensionModel extends ItemModel
 
         $db = $this->getDatabase();
 
-        foreach ([
-                'Free'  => 1,
-                'Paid'  => 2,
-                'Cloud' => 3,
-            ] as $key => $supplyId
-        ) {
+        foreach (['Free' => 1, 'Paid' => 2, 'Cloud' => 3,] as $key => $supplyId) {
             $query = $db->getQuery(true)
                 ->select('*')
                 ->from($db->quoteName('#__jed_reviews'))
