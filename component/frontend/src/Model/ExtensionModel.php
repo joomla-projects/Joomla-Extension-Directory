@@ -157,8 +157,8 @@ class ExtensionModel extends ItemModel
      */
     public function getItem($pk = null)
     {
-        if ($this->_item === null) {
-            $this->_item = false;
+        if ($this->item === null) {
+            $this->item = false;
 
             if (empty($pk)) {
                 $pk = $this->getState('extension.id');
@@ -176,48 +176,48 @@ class ExtensionModel extends ItemModel
 
                 // Convert the Table to a clean CMSObject.
                 $properties  = $table->getProperties(1);
-                $this->_item = ArrayHelper::toObject($properties, CMSObject::class);
+                $this->item = ArrayHelper::toObject($properties, CMSObject::class);
             }
 
-            if (empty($this->_item)) {
+            if (empty($this->item)) {
                 throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 404);
             }
         }
 
 
-        if (isset($this->_item->created_by)) {
-            $this->_item->created_by_name = JedHelper::getUserById($this->_item->created_by)->name;
+        if (isset($this->item->created_by)) {
+            $this->item->created_by_name = JedHelper::getUserById($this->item->created_by)->name;
         }
 
-        if (isset($this->_item->modified_by)) {
-            $this->_item->modified_by_name = JedHelper::getUserById($this->_item->modified_by)->name;
+        if (isset($this->item->modified_by)) {
+            $this->item->modified_by_name = JedHelper::getUserById($this->item->modified_by)->name;
         }
 
         // Load Category Hierarchy
-        $this->_item->category_hierarchy = $this->getCategoryHierarchy($this->_item->primary_category_id);
+        $this->item->category_hierarchy = $this->getCategoryHierarchy($this->item->primary_category_id);
 
         // Load Varied Data
-        $this->_item->varied_data = $this->getVariedData($this->_item->id);
+        $this->item->varied_data = $this->getVariedData($this->item->id);
 
-        foreach ($this->_item->varied_data as $v) {
+        foreach ($this->item->varied_data as $v) {
             if ($v->is_default_data !== 1) {
                 continue;
             }
-            $this->_item->title = $v->title;
-            $this->_item->alias = $v->alias;
+            $this->item->title = $v->title;
+            $this->item->alias = $v->alias;
 
-            $this->_item->intro_text   = $v->intro_text;
-            $this->_item->support_link = $v->support_link;
+            $this->item->intro_text   = $v->intro_text;
+            $this->item->support_link = $v->support_link;
         }
 
         // Load Scores
-        $this->_item->scores            = $this->getScores($this->_item->id);
-        $this->_item->number_of_reviews = 0;
+        $this->item->scores            = $this->getScores($this->item->id);
+        $this->item->number_of_reviews = 0;
         $score                          = 0;
         $supplycounter                  = 0;
         $supplytype                     = '';
 
-        foreach ($this->_item->scores as $s) {
+        foreach ($this->item->scores as $s) {
             $supplycounter = $supplycounter + 1;
             $supplytype    = match ($s->supply_option_id) {
                 1 => 'Free',
@@ -230,33 +230,33 @@ class ExtensionModel extends ItemModel
             $score = $score + $s->value_for_money_score;
             $score = $score + $s->documentation_score;
 
-            $this->_item->number_of_reviews = $this->_item->number_of_reviews + $s->number_of_reviews;
+            $this->item->number_of_reviews = $this->item->number_of_reviews + $s->number_of_reviews;
         }
 
-        $this->_item->type         = $supplytype;
+        $this->item->type         = $supplytype;
         $score                     = $score / $supplycounter;
-        $this->_item->score        = floor($score / 5);
-        $this->_item->score_string = JedscoreHelper::getStars($this->_item->score);
+        $this->item->score        = floor($score / 5);
+        $this->item->score_string = JedscoreHelper::getStars($this->item->score);
 
-        if ($this->_item->number_of_reviews == 0) {
-            $this->_item->review_string = '';
-        } elseif ($this->_item->number_of_reviews == 1) {
-            $this->_item->review_string = '<span>' . $this->_item->number_of_reviews . ' review</span>';
-        } elseif ($this->_item->number_of_reviews > 1) {
-            $this->_item->review_string = '<span>' . $this->_item->number_of_reviews . ' reviews</span>';
+        if ($this->item->number_of_reviews == 0) {
+            $this->item->review_string = '';
+        } elseif ($this->item->number_of_reviews == 1) {
+            $this->item->review_string = '<span>' . $this->item->number_of_reviews . ' review</span>';
+        } elseif ($this->item->number_of_reviews > 1) {
+            $this->item->review_string = '<span>' . $this->item->number_of_reviews . ' reviews</span>';
         }
 
         // Load Reviews
-        $this->_item->reviews = $this->getReviews($this->_item->id);
+        $this->item->reviews = $this->getReviews($this->item->id);
 
-        if (!empty($this->_item->logo)) {
-            $this->_item->logo = JedHelper::formatImage($this->_item->logo, ImageSize::SMALL);
+        if (!empty($this->item->logo)) {
+            $this->item->logo = JedHelper::formatImage($this->item->logo, ImageSize::SMALL);
         }
 
-        $this->_item->developer_email   = JedHelper::getUserById($this->_item->created_by)->email;
-        $this->_item->developer_company = $this->getDeveloperName($this->_item->created_by);
+        $this->item->developer_email   = JedHelper::getUserById($this->item->created_by)->email;
+        $this->item->developer_company = $this->getDeveloperName($this->item->created_by);
 
-        return $this->_item;
+        return $this->item;
     }
 
     /**
@@ -496,7 +496,7 @@ class ExtensionModel extends ItemModel
                        )
                        ->where($db->quoteName('e.id') . ' = :eid ')
                        ->order($db->quoteName('s.created_time') . ' DESC')
-                       ->bind(':eid', $this->_item->id, ParameterType::INTEGER);
+                       ->bind(':eid', $this->item->id, ParameterType::INTEGER);
 
         $row = $db->setQuery($query)->loadObject();
         $msg = [];

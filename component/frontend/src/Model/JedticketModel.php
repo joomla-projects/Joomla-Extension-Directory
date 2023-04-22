@@ -123,8 +123,8 @@ class JedticketModel extends ItemModel
 
         $app = Factory::getApplication();
 
-        if ($this->_item === null) {
-            $this->_item = false;
+        if ($this->item === null) {
+            $this->item = false;
 
             if (empty($pk)) {
                 $pk = $this->getState('jedticket.id');
@@ -145,7 +145,7 @@ class JedticketModel extends ItemModel
 
                     // Convert the Table to a clean CMSObject.
                     $properties  = $table->getProperties(1);
-                    $this->_item = ArrayHelper::toObject($properties, CMSObject::class);
+                    $this->item = ArrayHelper::toObject($properties, CMSObject::class);
                 } else {
                     $app->enqueueMessage("Sorry you did not create that item", "message");
 
@@ -153,22 +153,22 @@ class JedticketModel extends ItemModel
                 }
             }
 
-            if (empty($this->_item)) {
+            if (empty($this->item)) {
                 throw new Exception(Text::_('COM_JED_SECURITY_CANT_LOAD'), 404);
             }
         }
 
 
-        if (!empty($this->_item->ticket_origin) || $this->_item->ticket_origin == 0) {
-            $this->_item->ticket_origin = Text::_('COM_JED_JEDTICKETS_FIELD_TICKET_ORIGIN_LABEL_OPTION_' . $this->_item->ticket_origin);
+        if (!empty($this->item->ticket_origin) || $this->item->ticket_origin == 0) {
+            $this->item->ticket_origin = Text::_('COM_JED_JEDTICKETS_FIELD_TICKET_ORIGIN_LABEL_OPTION_' . $this->item->ticket_origin);
         }
 
-        if (isset($this->_item->ticket_category_type) && $this->_item->ticket_category_type != '') {
-            if (is_object($this->_item->ticket_category_type)) {
-                $this->_item->ticket_category_type = ArrayHelper::fromObject($this->_item->ticket_category_type);
+        if (isset($this->item->ticket_category_type) && $this->item->ticket_category_type != '') {
+            if (is_object($this->item->ticket_category_type)) {
+                $this->item->ticket_category_type = ArrayHelper::fromObject($this->item->ticket_category_type);
             }
 
-            $values = (is_array($this->_item->ticket_category_type)) ? $this->_item->ticket_category_type : explode(',', $this->_item->ticket_category_type);
+            $values = (is_array($this->item->ticket_category_type)) ? $this->item->ticket_category_type : explode(',', $this->item->ticket_category_type);
 
             $textValue = [];
 
@@ -189,15 +189,15 @@ class JedticketModel extends ItemModel
                 }
             }
 
-            $this->_item->ticket_category_type = !empty($textValue) ? implode(', ', $textValue) : $this->_item->ticket_category_type;
+            $this->item->ticket_category_type = !empty($textValue) ? implode(', ', $textValue) : $this->item->ticket_category_type;
         }
 
-        if (isset($this->_item->allocated_group) && $this->_item->allocated_group != '') {
-            if (is_object($this->_item->allocated_group)) {
-                $this->_item->allocated_group = ArrayHelper::fromObject($this->_item->allocated_group);
+        if (isset($this->item->allocated_group) && $this->item->allocated_group != '') {
+            if (is_object($this->item->allocated_group)) {
+                $this->item->allocated_group = ArrayHelper::fromObject($this->item->allocated_group);
             }
 
-            $values = (is_array($this->_item->allocated_group)) ? $this->_item->allocated_group : explode(',', $this->_item->allocated_group);
+            $values = (is_array($this->item->allocated_group)) ? $this->item->allocated_group : explode(',', $this->item->allocated_group);
 
             $textValue = [];
 
@@ -218,19 +218,19 @@ class JedticketModel extends ItemModel
                 }
             }
 
-            $this->_item->allocated_group = !empty($textValue) ? implode(', ', $textValue) : $this->_item->allocated_group;
+            $this->item->allocated_group = !empty($textValue) ? implode(', ', $textValue) : $this->item->allocated_group;
         }
 
-        if (isset($this->_item->allocated_to)) {
-            $this->_item->allocated_to_name = JedHelper::getUserById($this->_item->allocated_to)->name;
+        if (isset($this->item->allocated_to)) {
+            $this->item->allocated_to_name = JedHelper::getUserById($this->item->allocated_to)->name;
         }
 
-        if (isset($this->_item->linked_item_type) && $this->_item->linked_item_type != '') {
-            if (is_object($this->_item->linked_item_type)) {
-                $this->_item->linked_item_type = ArrayHelper::fromObject($this->_item->linked_item_type);
+        if (isset($this->item->linked_item_type) && $this->item->linked_item_type != '') {
+            if (is_object($this->item->linked_item_type)) {
+                $this->item->linked_item_type = ArrayHelper::fromObject($this->item->linked_item_type);
             }
 
-            $values = (is_array($this->_item->linked_item_type)) ? $this->_item->linked_item_type : explode(',', $this->_item->linked_item_type);
+            $values = (is_array($this->item->linked_item_type)) ? $this->item->linked_item_type : explode(',', $this->item->linked_item_type);
 
             $textValue = [];
 
@@ -251,22 +251,22 @@ class JedticketModel extends ItemModel
                 }
             }
 
-            $this->_item->linked_item_type = !empty($textValue) ? implode(', ', $textValue) : $this->_item->linked_item_type;
+            $this->item->linked_item_type = !empty($textValue) ? implode(', ', $textValue) : $this->item->linked_item_type;
         }
 
-        if (!empty($this->_item->ticket_status) || $this->_item->ticket_status == 0) {
-            $this->_item->ticket_status = Text::_('JSTATUS_OPTION_' . $this->_item->ticket_status);
+        if (!empty($this->item->ticket_status) || $this->item->ticket_status == 0) {
+            $this->item->ticket_status = Text::_('JSTATUS_OPTION_' . $this->item->ticket_status);
         }
 
-        if (isset($this->_item->created_by)) {
-            $this->_item->created_by_name = JedHelper::getUserById($this->_item->created_by)->name;
+        if (isset($this->item->created_by)) {
+            $this->item->created_by_name = JedHelper::getUserById($this->item->created_by)->name;
         }
 
-        if (isset($this->_item->modified_by)) {
-            $this->_item->modified_by_name = JedHelper::getUserById($this->_item->modified_by)->name;
+        if (isset($this->item->modified_by)) {
+            $this->item->modified_by_name = JedHelper::getUserById($this->item->modified_by)->name;
         }
 
-        return $this->_item;
+        return $this->item;
     }
 
     /**

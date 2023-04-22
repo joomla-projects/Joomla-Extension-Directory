@@ -85,8 +85,8 @@ class VelreportModel extends ItemModel
     public function getItem($pk = null)
     {
         $app = Factory::getApplication();
-        if ($this->_item === null) {
-            $this->_item = false;
+        if ($this->item === null) {
+            $this->item = false;
 
             if (empty($pk)) {
                 $pk = $this->getState('velreport.id');
@@ -112,7 +112,7 @@ class VelreportModel extends ItemModel
                     // Convert the JTable to a clean JObject.
                     $properties = $table->getProperties(1);
 
-                    $this->_item = ArrayHelper::toObject($properties, 'JObject');
+                    $this->item = ArrayHelper::toObject($properties, 'JObject');
                 } else {
                     $app->enqueueMessage("Sorry you did not create that report item", "message");
 
@@ -121,7 +121,7 @@ class VelreportModel extends ItemModel
                 }
             }
 
-            if (empty($this->_item)) {
+            if (empty($this->item)) {
                 $app->enqueueMessage(Text::_('COM_JED_SECURITY_CANT_LOAD'), "message");
 
                 return null;
@@ -129,51 +129,51 @@ class VelreportModel extends ItemModel
         }
 
 
-        if (!JedHelper::is_blank($this->_item->pass_details_ok)) {
-            $this->_item->pass_details_ok = Text::_('COM_JED_VEL_REPORTS_FIELD_PASS_DETAILS_OK_OPTION_' . $this->_item->pass_details_ok);
+        if (!JedHelper::is_blank($this->item->pass_details_ok)) {
+            $this->item->pass_details_ok = Text::_('COM_JED_VEL_REPORTS_FIELD_PASS_DETAILS_OK_OPTION_' . $this->item->pass_details_ok);
         }
 
-        if (!JedHelper::is_blank($this->_item->vulnerability_type)) {
-            $this->_item->vulnerability_type = Text::_('COM_JED_VEL_GENERAL_FIELD_VULNERABILITY_TYPE_OPTION_' . $this->_item->vulnerability_type);
+        if (!JedHelper::is_blank($this->item->vulnerability_type)) {
+            $this->item->vulnerability_type = Text::_('COM_JED_VEL_GENERAL_FIELD_VULNERABILITY_TYPE_OPTION_' . $this->item->vulnerability_type);
         }
 
-        if (!JedHelper::is_blank($this->_item->exploit_type)) {
-            $this->_item->exploit_type = Text::_('COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_OPTION_' . $this->_item->exploit_type);
+        if (!JedHelper::is_blank($this->item->exploit_type)) {
+            $this->item->exploit_type = Text::_('COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_OPTION_' . $this->item->exploit_type);
         }
 
-        if (!JedHelper::is_blank($this->_item->vulnerability_actively_exploited)) {
-            $this->_item->vulnerability_actively_exploited = Text::_('COM_JED_VEL_REPORTS_FIELD_VULNERABILITY_ACTIVELY_EXPLOITED_OPTION_' . $this->_item->vulnerability_actively_exploited);
+        if (!JedHelper::is_blank($this->item->vulnerability_actively_exploited)) {
+            $this->item->vulnerability_actively_exploited = Text::_('COM_JED_VEL_REPORTS_FIELD_VULNERABILITY_ACTIVELY_EXPLOITED_OPTION_' . $this->item->vulnerability_actively_exploited);
         }
 
-        if (!JedHelper::is_blank($this->_item->vulnerability_publicly_available)) {
-            $this->_item->vulnerability_publicly_available = Text::_('COM_JED_VEL_REPORTS_FIELD_VULNERABILITY_PUBLICLY_AVAILABLE_OPTION_' . $this->_item->vulnerability_publicly_available);
+        if (!JedHelper::is_blank($this->item->vulnerability_publicly_available)) {
+            $this->item->vulnerability_publicly_available = Text::_('COM_JED_VEL_REPORTS_FIELD_VULNERABILITY_PUBLICLY_AVAILABLE_OPTION_' . $this->item->vulnerability_publicly_available);
         }
 
-        if (!JedHelper::is_blank($this->_item->developer_communication_type)) {
-            $this->_item->developer_communication_type = Text::_('COM_JED_VEL_GENERAL_FIELD_DEVELOPER_COMMUNICATION_TYPE_OPTION_' . $this->_item->developer_communication_type);
+        if (!JedHelper::is_blank($this->item->developer_communication_type)) {
+            $this->item->developer_communication_type = Text::_('COM_JED_VEL_GENERAL_FIELD_DEVELOPER_COMMUNICATION_TYPE_OPTION_' . $this->item->developer_communication_type);
         }
 
-        if (!JedHelper::is_blank($this->_item->consent_to_process)) {
-            $this->_item->consent_to_process = Text::_('COM_JED_GENERAL_CONSENT_TO_PROCESS_OPTION_' . $this->_item->consent_to_process);
+        if (!JedHelper::is_blank($this->item->consent_to_process)) {
+            $this->item->consent_to_process = Text::_('COM_JED_GENERAL_CONSENT_TO_PROCESS_OPTION_' . $this->item->consent_to_process);
         }
 
-        if (!JedHelper::is_blank($this->_item->passed_to_vel)) {
-            $this->_item->passed_to_vel = Text::_('COM_JED_VEL_GENERAL_FIELD_PASSED_TO_VEL_OPTION_' . $this->_item->passed_to_vel);
+        if (!JedHelper::is_blank($this->item->passed_to_vel)) {
+            $this->item->passed_to_vel = Text::_('COM_JED_VEL_GENERAL_FIELD_PASSED_TO_VEL_OPTION_' . $this->item->passed_to_vel);
         }
 
-        if (!JedHelper::is_blank($this->_item->data_source)) {
-            $this->_item->data_source = Text::_('COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_' . $this->_item->data_source);
+        if (!JedHelper::is_blank($this->item->data_source)) {
+            $this->item->data_source = Text::_('COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_' . $this->item->data_source);
         }
 
-        if (isset($this->_item->created_by)) {
-            $this->_item->created_by_name = JedHelper::getUserById($this->_item->created_by)->name;
+        if (isset($this->item->created_by)) {
+            $this->item->created_by_name = JedHelper::getUserById($this->item->created_by)->name;
         }
 
-        if (isset($this->_item->modified_by)) {
-            $this->_item->modified_by_name = JedHelper::getUserById($this->_item->modified_by)->name;
+        if (isset($this->item->modified_by)) {
+            $this->item->modified_by_name = JedHelper::getUserById($this->item->modified_by)->name;
         }
 
-        return $this->_item;
+        return $this->item;
     }
 
     /**

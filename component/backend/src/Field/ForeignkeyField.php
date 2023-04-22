@@ -291,10 +291,7 @@ class ForeignKeyField extends ListField
         // Only join on data that the user has created
         $user = JedHelper::getUser();
         // If the user is not an admin, then restrict the options to only be own
-        if (!empty($user->id) && !in_array("8", $user->getAuthorisedGroups()) && !in_array(
-            "7",
-            $user->getAuthorisedGroups()
-        )) {
+        if (!empty($user->id) && !in_array("8", $user->getAuthorisedGroups()) && !in_array("7", $user->getAuthorisedGroups())) {
             $query->where("created_by = " . (int)$user->id);
         }
 

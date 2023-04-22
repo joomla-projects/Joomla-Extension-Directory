@@ -7,6 +7,7 @@
  * @copyright   A copyright
  * @license     A "Slug" license name e.g. GPL2
  */
+
 use Joomla\CMS\Router\Route;
 
 // phpcs:disable PSR1.Files.SideEffects

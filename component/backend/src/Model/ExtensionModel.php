@@ -316,54 +316,54 @@ class ExtensionModel extends AdminModel
             /* Convert cmsobject to stdClass */
             $s = $item->getProperties();
 
-            $this->_item = (object)$s;
+            $this->item = (object)$s;
 
-            if (isset($this->_item->includes)) {
-                $this->_item->includes = array_values(json_decode($this->_item->includes));
+            if (isset($this->item->includes)) {
+                $this->item->includes = array_values(json_decode($this->item->includes));
             }
-            if (isset($this->_item->joomla_versions)) {
-                $this->_item->joomla_versions = array_values(json_decode($this->_item->joomla_versions));
+            if (isset($this->item->joomla_versions)) {
+                $this->item->joomla_versions = array_values(json_decode($this->item->joomla_versions));
             }
-            if (isset($this->_item->created_by)) {
-                $this->_item->created_by_name = JedHelper::getUserById($this->_item->created_by)->name;
+            if (isset($this->item->created_by)) {
+                $this->item->created_by_name = JedHelper::getUserById($this->item->created_by)->name;
             }
 
-            if (isset($this->_item->modified_by)) {
-                $this->_item->modified_by_name = JedHelper::getUserById($this->_item->modified_by)->name;
+            if (isset($this->item->modified_by)) {
+                $this->item->modified_by_name = JedHelper::getUserById($this->item->modified_by)->name;
             }
 
             /* Load Category Hierarchy */
-            if (is_null($this->_item->primary_category_id)) {
-                $this->_item->category_hierarchy = "";
+            if (is_null($this->item->primary_category_id)) {
+                $this->item->category_hierarchy = "";
             } else {
-                $this->_item->category_hierarchy = $this->getCategoryHierarchy($this->_item->primary_category_id);
+                $this->item->category_hierarchy = $this->getCategoryHierarchy($this->item->primary_category_id);
             }
 
             /* Load Varied Data */
 
-            if (is_null($this->_item->varied_data)) {
-                $this->_item->varied_data = $this->getVariedData($this->_item->id, $supply_option_type);
+            if (is_null($this->item->varied_data)) {
+                $this->item->varied_data = $this->getVariedData($this->item->id, $supply_option_type);
 
-                foreach ($this->_item->varied_data as $v) {
+                foreach ($this->item->varied_data as $v) {
                     if ($v->is_default_data === 1) {
-                        $this->_item->title        = $v->title;
-                        $this->_item->alias        = $v->alias;
-                        $this->_item->intro_text   = $v->intro_text;
-                        $this->_item->support_link = $v->support_link;
+                        $this->item->title        = $v->title;
+                        $this->item->alias        = $v->alias;
+                        $this->item->intro_text   = $v->intro_text;
+                        $this->item->support_link = $v->support_link;
                     }
                 }
             }
             /* Load Scores */
             try {
-                $this->_item->scores = $this->getScores($this->_item->id);
+                $this->item->scores = $this->getScores($this->item->id);
             } catch (Exception $e) {
             }
 
-            $this->_item->number_of_reviews = 0;
+            $this->item->number_of_reviews = 0;
             $score                          = 0;
             $supplycounter                  = 0;
             $supplytype                     = '';
-            foreach ($this->_item->scores as $s) {
+            foreach ($this->item->scores as $s) {
                 $supplycounter = $supplycounter + 1;
                 if ($s->supply_option_id == 1) {
                     $supplytype .= 'Free';
@@ -381,34 +381,34 @@ class ExtensionModel extends AdminModel
                 $score                          = $score + $s->support_score;
                 $score                          = $score + $s->value_for_money_score;
                 $score                          = $score + $s->documentation_score;
-                $this->_item->number_of_reviews = $this->_item->number_of_reviews + $s->number_of_reviews;
+                $this->item->number_of_reviews = $this->item->number_of_reviews + $s->number_of_reviews;
             }
-            $this->_item->type         = $supplytype;
+            $this->item->type         = $supplytype;
             $score                     = $score / $supplycounter;
-            $this->_item->score        = floor($score / 5);
-            $this->_item->score_string = JedscoreHelper::getStars($this->_item->score);
-            if ($this->_item->number_of_reviews == 0) {
-                $this->_item->review_string = '';
-            } elseif ($this->_item->number_of_reviews == 1) {
-                $this->_item->review_string = '<span>' . $this->_item->number_of_reviews . ' review</span>';
-            } elseif ($this->_item->number_of_reviews > 1) {
-                $this->_item->review_string = '<span>' . $this->_item->number_of_reviews . ' reviews</span>';
+            $this->item->score        = floor($score / 5);
+            $this->item->score_string = JedscoreHelper::getStars($this->item->score);
+            if ($this->item->number_of_reviews == 0) {
+                $this->item->review_string = '';
+            } elseif ($this->item->number_of_reviews == 1) {
+                $this->item->review_string = '<span>' . $this->item->number_of_reviews . ' review</span>';
+            } elseif ($this->item->number_of_reviews > 1) {
+                $this->item->review_string = '<span>' . $this->item->number_of_reviews . ' reviews</span>';
             }
             /* Load Reviews */
 
-            $this->_item->reviews = $this->getReviews($this->_item->id);
-            //echo "<pre>";print_r($this->_item);echo "</pre>";exit();
+            $this->item->reviews = $this->getReviews($this->item->id);
+            //echo "<pre>";print_r($this->item);echo "</pre>";exit();
 
-            if ($this->_item->logo <> "") {
-                $this->_item->logo = JedHelper::formatImage($this->_item->logo, ImageSize::SMALL);
+            if ($this->item->logo <> "") {
+                $this->item->logo = JedHelper::formatImage($this->item->logo, ImageSize::SMALL);
             }
 
 
-            $this->_item->developer_email   = JedHelper::getUserById($this->_item->created_by)->email;
-            $this->_item->developer_company = $this->getDeveloperName($this->_item->created_by);
+            $this->item->developer_email   = JedHelper::getUserById($this->item->created_by)->email;
+            $this->item->developer_company = $this->getDeveloperName($this->item->created_by);
 
 
-            /*	$db = $this->getDatabase();
+            /*  $db = $this->getDatabase();
 
             $query = $db->getQuery(true);
             $query->select('supply_options.title AS supply_type, a.*')
@@ -448,7 +448,7 @@ class ExtensionModel extends AdminModel
             }
             $item->varied_data = $retval; */
 
-            return $this->_item;
+            return $this->item;
         }
 
         return new stdClass();
@@ -471,7 +471,7 @@ class ExtensionModel extends AdminModel
             $data = $this->getItem();
 
 
-            $this->_item = $data;
+            $this->item = $data;
 
 
             // Support for multiple or not foreign key field: uses_updater

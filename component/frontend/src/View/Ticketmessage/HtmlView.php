@@ -70,7 +70,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      */
-    protected function _prepareDocument()
+    protected function prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
@@ -149,7 +149,7 @@ class HtmlView extends BaseHtmlView
             }
         }
 
-        $this->_prepareDocument();
+        $this->prepareDocument();
 
         parent::display($tpl);
     }

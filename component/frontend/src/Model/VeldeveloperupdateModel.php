@@ -131,8 +131,8 @@ class VeldeveloperupdateModel extends ItemModel
     public function getItem($pk = null)
     {
         $app = Factory::getApplication();
-        if ($this->_item === null) {
-            $this->_item = false;
+        if ($this->item === null) {
+            $this->item = false;
 
             if (empty($pk)) {
                 $pk = $this->getState('veldeveloperupdate.id');
@@ -157,7 +157,7 @@ class VeldeveloperupdateModel extends ItemModel
 
                     // Convert the JTable to a clean JObject.
                     $properties  = $table->getProperties(1);
-                    $this->_item = ArrayHelper::toObject($properties, 'JObject');
+                    $this->item = ArrayHelper::toObject($properties, 'JObject');
                 } else {
                     $app->enqueueMessage("Sorry you did not create that report item", "message");
 
@@ -166,7 +166,7 @@ class VeldeveloperupdateModel extends ItemModel
                 }
             }
 
-            if (empty($this->_item)) {
+            if (empty($this->item)) {
                 $app->enqueueMessage(Text::_('COM_JED_SECURITY_CANT_LOAD'), "message");
 
                 return null;
@@ -174,23 +174,23 @@ class VeldeveloperupdateModel extends ItemModel
         }
 
 
-        if (!empty($this->_item->consent_to_process)) {
-            $this->_item->consent_to_process = Text::_('COM_JED_GENERAL_CONSENT_TO_PROCESS_OPTION_' . $this->_item->consent_to_process);
+        if (!empty($this->item->consent_to_process)) {
+            $this->item->consent_to_process = Text::_('COM_JED_GENERAL_CONSENT_TO_PROCESS_OPTION_' . $this->item->consent_to_process);
         }
 
-        if (!empty($this->_item->update_data_source)) {
-            $this->_item->update_data_source = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FIELD_UPDATE_DATA_SOURCE_OPTION_' . $this->_item->update_data_source);
+        if (!empty($this->item->update_data_source)) {
+            $this->item->update_data_source = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FIELD_UPDATE_DATA_SOURCE_OPTION_' . $this->item->update_data_source);
         }
 
-        if (isset($this->_item->created_by)) {
-            $this->_item->created_by_name = JedHelper::getUserById($this->_item->created_by)->name;
+        if (isset($this->item->created_by)) {
+            $this->item->created_by_name = JedHelper::getUserById($this->item->created_by)->name;
         }
 
-        if (isset($this->_item->modified_by)) {
-            $this->_item->modified_by_name = JedHelper::getUserById($this->_item->modified_by)->name;
+        if (isset($this->item->modified_by)) {
+            $this->item->modified_by_name = JedHelper::getUserById($this->item->modified_by)->name;
         }
 
-        return $this->_item;
+        return $this->item;
     }
 
     /**

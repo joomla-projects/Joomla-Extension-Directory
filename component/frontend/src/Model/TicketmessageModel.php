@@ -38,7 +38,7 @@ class TicketmessageModel extends ItemModel
      * @var    object
      * @since  4.0.0
      */
-    public $_item;
+    public $item;
 
     /** Data Table
      * @since 4.0.0
@@ -95,8 +95,8 @@ class TicketmessageModel extends ItemModel
      */
     public function getItem($pk = null)
     {
-        if ($this->_item === null) {
-            $this->_item = false;
+        if ($this->item === null) {
+            $this->item = false;
 
             if (empty($pk)) {
                 $pk = $this->getState('ticketmessage.id');
@@ -117,32 +117,32 @@ class TicketmessageModel extends ItemModel
 
                     // Convert the Table to a clean CMSObject.
                     $properties  = $table->getProperties(1);
-                    $this->_item = ArrayHelper::toObject($properties, CMSObject::class);
+                    $this->item = ArrayHelper::toObject($properties, CMSObject::class);
                 } else {
                     throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
                 }
             }
 
-            if (empty($this->_item)) {
+            if (empty($this->item)) {
                 throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 404);
             }
         }
 
 
-        if (isset($this->_item->created_by)) {
-            $this->_item->created_by_name = JedHelper::getUserById($this->_item->created_by)->name;
+        if (isset($this->item->created_by)) {
+            $this->item->created_by_name = JedHelper::getUserById($this->item->created_by)->name;
         }
 
-        if (isset($this->_item->modified_by)) {
-            $this->_item->modified_by_name = JedHelper::getUserById($this->_item->modified_by)->name;
+        if (isset($this->item->modified_by)) {
+            $this->item->modified_by_name = JedHelper::getUserById($this->item->modified_by)->name;
         }
 
-        if (isset($this->_item->ticket_id) && $this->_item->ticket_id != '') {
-            if (is_object($this->_item->ticket_id)) {
-                $this->_item->ticket_id = ArrayHelper::fromObject($this->_item->ticket_id);
+        if (isset($this->item->ticket_id) && $this->item->ticket_id != '') {
+            if (is_object($this->item->ticket_id)) {
+                $this->item->ticket_id = ArrayHelper::fromObject($this->item->ticket_id);
             }
 
-            $values = (is_array($this->_item->ticket_id)) ? $this->_item->ticket_id : explode(',', $this->_item->ticket_id);
+            $values = (is_array($this->item->ticket_id)) ? $this->item->ticket_id : explode(',', $this->item->ticket_id);
 
             $textValue = [];
 
@@ -163,10 +163,10 @@ class TicketmessageModel extends ItemModel
                 }
             }
 
-            $this->_item->ticket_id = !empty($textValue) ? implode(', ', $textValue) : $this->_item->ticket_id;
+            $this->item->ticket_id = !empty($textValue) ? implode(', ', $textValue) : $this->item->ticket_id;
         }
 
-        return $this->_item;
+        return $this->item;
     }
 
     /**

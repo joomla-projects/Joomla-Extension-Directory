@@ -136,8 +136,8 @@ class ExtensionvarieddatumModel extends ItemModel
      */
     public function getItem($id = null)
     {
-        if ($this->_item === null) {
-            $this->_item = false;
+        if ($this->item === null) {
+            $this->item = false;
 
             if (empty($id)) {
                 $id = $this->getState('extensionvarieddatum.id');
@@ -158,25 +158,25 @@ class ExtensionvarieddatumModel extends ItemModel
 
                     // Convert the Table to a clean CMSObject.
                     $properties  = $table->getProperties(1);
-                    $this->_item = ArrayHelper::toObject($properties, CMSObject::class);
+                    $this->item = ArrayHelper::toObject($properties, CMSObject::class);
                 } else {
                     throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
                 }
             }
 
-            if (empty($this->_item)) {
+            if (empty($this->item)) {
                 throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 404);
             }
         }
 
 
 
-        if (isset($this->_item->extension_id) && $this->_item->extension_id != '') {
-            if (is_object($this->_item->extension_id)) {
-                $this->_item->extension_id = ArrayHelper::fromObject($this->_item->extension_id);
+        if (isset($this->item->extension_id) && $this->item->extension_id != '') {
+            if (is_object($this->item->extension_id)) {
+                $this->item->extension_id = ArrayHelper::fromObject($this->item->extension_id);
             }
 
-            $values = (is_array($this->_item->extension_id)) ? $this->_item->extension_id : explode(',', $this->_item->extension_id);
+            $values = (is_array($this->item->extension_id)) ? $this->item->extension_id : explode(',', $this->item->extension_id);
 
             $textValue = [];
 
@@ -197,15 +197,15 @@ class ExtensionvarieddatumModel extends ItemModel
                 }
             }
 
-            $this->_item->extension_id = !empty($textValue) ? implode(', ', $textValue) : $this->_item->extension_id;
+            $this->item->extension_id = !empty($textValue) ? implode(', ', $textValue) : $this->item->extension_id;
         }
 
-        if (isset($this->_item->supply_option_id) && $this->_item->supply_option_id != '') {
-            if (is_object($this->_item->supply_option_id)) {
-                $this->_item->supply_option_id = ArrayHelper::fromObject($this->_item->supply_option_id);
+        if (isset($this->item->supply_option_id) && $this->item->supply_option_id != '') {
+            if (is_object($this->item->supply_option_id)) {
+                $this->item->supply_option_id = ArrayHelper::fromObject($this->item->supply_option_id);
             }
 
-            $values = (is_array($this->_item->supply_option_id)) ? $this->_item->supply_option_id : explode(',', $this->_item->supply_option_id);
+            $values = (is_array($this->item->supply_option_id)) ? $this->item->supply_option_id : explode(',', $this->item->supply_option_id);
 
             $textValue = [];
 
@@ -226,14 +226,14 @@ class ExtensionvarieddatumModel extends ItemModel
                 }
             }
 
-            $this->_item->supply_option_id = !empty($textValue) ? implode(', ', $textValue) : $this->_item->supply_option_id;
+            $this->item->supply_option_id = !empty($textValue) ? implode(', ', $textValue) : $this->item->supply_option_id;
         }
 
-        if (isset($this->_item->created_by)) {
-            $this->_item->created_by_name = JedHelper::getUser($this->_item->created_by)->name;
+        if (isset($this->item->created_by)) {
+            $this->item->created_by_name = JedHelper::getUser($this->item->created_by)->name;
         }
 
-        return $this->_item;
+        return $this->item;
     }
 
 

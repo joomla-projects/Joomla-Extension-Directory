@@ -358,6 +358,4 @@ class VelvulnerableitemModel extends AdminModel
 
         return $data;
     }
-
-
 }

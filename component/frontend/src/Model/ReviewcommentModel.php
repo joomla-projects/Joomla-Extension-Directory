@@ -136,8 +136,8 @@ class ReviewcommentModel extends ItemModel
      */
     public function getItem($id = null)
     {
-        if ($this->_item === null) {
-            $this->_item = false;
+        if ($this->item === null) {
+            $this->item = false;
 
             if (empty($id)) {
                 $id = $this->getState('reviewcomment.id');
@@ -158,24 +158,24 @@ class ReviewcommentModel extends ItemModel
 
                     // Convert the Table to a clean CMSObject.
                     $properties  = $table->getProperties(1);
-                    $this->_item = ArrayHelper::toObject($properties, CMSObject::class);
+                    $this->item = ArrayHelper::toObject($properties, CMSObject::class);
                 } else {
                     throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
                 }
             }
 
-            if (empty($this->_item)) {
+            if (empty($this->item)) {
                 throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 404);
             }
         }
 
 
 
-        if (isset($this->_item->created_by)) {
-            $this->_item->created_by_name = JedHelper::getUser($this->_item->created_by)->name;
+        if (isset($this->item->created_by)) {
+            $this->item->created_by_name = JedHelper::getUser($this->item->created_by)->name;
         }
 
-        return $this->_item;
+        return $this->item;
     }
 
 

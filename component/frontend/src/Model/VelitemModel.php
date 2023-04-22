@@ -53,8 +53,8 @@ class VelitemModel extends ItemModel
     public function getItem($pk = null)
     {
 
-        if ($this->_item === null) {
-            $this->_item = false;
+        if ($this->item === null) {
+            $this->item = false;
 
             if (empty($pk)) {
                 $pk = $this->getState('velitem.id');
@@ -89,19 +89,19 @@ class VelitemModel extends ItemModel
                 }
 
                 // set data object to item.
-                $this->_item = $data;
+                $this->item = $data;
             } catch (Exception $e) {
                 if ($e->getCode() == 404) {
                     // Need to go through the error handler to allow Redirect to work.
                     throw $e;
                 } else {
                     $this->setError($e);
-                    $this->_item = false;
+                    $this->item = false;
                 }
             }
         }
 
-        return $this->_item;
+        return $this->item;
     }
 
     /**
