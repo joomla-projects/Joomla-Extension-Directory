@@ -108,8 +108,8 @@ class TicketmessageModel extends ItemModel
 
             // Attempt to load the row.
             if ($table->load($pk)) {
-                if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == JedHelper::getUser(
-                    )->id) {
+                if (empty($result) || JedHelper::isAdminOrSuperUser() ||
+                    $table->created_by == JedHelper::getUser()->id) {
                     // Check published state.
                     if ($published = $this->getState('filter.published')) {
                         if (isset($table->state) && $table->state != $published) {
