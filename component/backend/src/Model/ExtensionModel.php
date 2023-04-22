@@ -360,9 +360,9 @@ class ExtensionModel extends AdminModel
             }
 
             $this->item->number_of_reviews = 0;
-            $score                          = 0;
-            $supplycounter                  = 0;
-            $supplytype                     = '';
+            $score                         = 0;
+            $supplycounter                 = 0;
+            $supplytype                    = '';
             foreach ($this->item->scores as $s) {
                 $supplycounter = $supplycounter + 1;
                 if ($s->supply_option_id == 1) {
@@ -376,15 +376,15 @@ class ExtensionModel extends AdminModel
 
                     $supplytype .= $comma . 'Paid';
                 }
-                $score                          = $score + $s->functionality_score;
-                $score                          = $score + $s->ease_of_use_score;
-                $score                          = $score + $s->support_score;
-                $score                          = $score + $s->value_for_money_score;
-                $score                          = $score + $s->documentation_score;
+                $score                         = $score + $s->functionality_score;
+                $score                         = $score + $s->ease_of_use_score;
+                $score                         = $score + $s->support_score;
+                $score                         = $score + $s->value_for_money_score;
+                $score                         = $score + $s->documentation_score;
                 $this->item->number_of_reviews = $this->item->number_of_reviews + $s->number_of_reviews;
             }
             $this->item->type         = $supplytype;
-            $score                     = $score / $supplycounter;
+            $score                    = $score / $supplycounter;
             $this->item->score        = floor($score / 5);
             $this->item->score_string = JedscoreHelper::getStars($this->item->score);
             if ($this->item->number_of_reviews == 0) {
