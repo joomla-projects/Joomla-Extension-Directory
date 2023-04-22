@@ -230,8 +230,6 @@ class HtmlView extends BaseHtmlView
         $this->linked_item_type = $this->item->linked_item_type;
 
         if ($this->linked_item_type === 2) { // Extension
-            //$this->linked_item_Model     = $app->bootComponent('com_jed')->getMVCFactory()
-            //  ->createModel('Extension', 'Administrator', ['ignore_request' => true]);
             $this->linked_item_Model     = new ExtensionModel();
             $this->related_object_string = "Sorry but extensions as related object are not currently coded.";
             //$this->linked_item_data = $this->get('ExtensionData');
@@ -240,9 +238,7 @@ class HtmlView extends BaseHtmlView
             //$this->linked_form->bind($this->linked_item_data);
         }
         if ($this->linked_item_type === 3) { //Review
-            $this->linked_item_Model = new ReviewModel();
-            //$this->linked_item_Model     = $app->bootComponent('com_jed')->getMVCFactory()
-            //  ->createModel('Review', 'Administrator', ['ignore_request' => true]);
+            $this->linked_item_Model     = new ReviewModel();
             $this->related_object_string = "Sorry but reviews as related object are not currently coded.";
 
             $this->linked_item_data = $this->get('ReviewData');
@@ -256,7 +252,6 @@ class HtmlView extends BaseHtmlView
 
             //$this->linked_extension_data holds actual data plus extension_form
 
-            //$extension_model = BaseDatabaseModel::getInstance('Extension', 'JedModel', ['ignore_request' => true]);
             $extension_model = new ExtensionModel();
 
             $this->linked_extension_data = $extension_model->getvariedItem(
@@ -287,37 +282,35 @@ class HtmlView extends BaseHtmlView
         }
         if ($this->linked_item_type === 4) { // VEL Report
             $this->linked_item_Model = new VelreportModel();
-            //$this->linked_item_Model = $app->bootComponent('com_jed')->getMVCFactory()
-            //  ->createModel('Velreport', 'Administrator', ['ignore_request' => true]);
 
             $this->linked_item_data = $this->get('VelReportData');
 
             $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
             $this->linked_form->bind($this->linked_item_data);
             if ($this->linked_item_data[0]->vel_item_id > 0) {
-                $this->related_object_string = '<button type="button" class="btn btn-primary"  onclick="Joomla.submitbutton(\'jedticket.gotoVEL\')">View VEL Item ' . $this->linked_item_data[0]->vel_item_id . '</button>';
+                $this->related_object_string = '<button type="button" class="btn btn-primary"  ' .
+                    'onclick="Joomla.submitbutton(\'jedticket.gotoVEL\')">View VEL Item ' .
+                    $this->linked_item_data[0]->vel_item_id . '</button>';
             } else {
                 $this->related_object_string = "Awaiting creation of VEL Item";
             }
         }
         if ($this->linked_item_type === 5) { // VEL Developer Update
             $this->linked_item_Model = new VeldeveloperupdateModel();
-            //$this->linked_item_Model = $app->bootComponent('com_jed')->getMVCFactory()
-            //  ->createModel('Veldeveloperupdate', 'Administrator', ['ignore_request' => true]);
 
             $this->linked_item_data = $this->get('VelDeveloperUpdateData');
 
             $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
             $this->linked_form->bind($this->linked_item_data);
             if ($this->linked_item_data[0]->vel_item_id > 0) {
-                $this->related_object_string = '<button type="button" class="btn btn-primary"  onclick="Joomla.submitbutton(\'jedticket.gotoVEL\')">View VEL Item ' . $this->linked_item_data[0]->vel_item_id . '</button>';
+                $this->related_object_string = '<button type="button" class="btn btn-primary" ' .
+                    'onclick="Joomla.submitbutton(\'jedticket.gotoVEL\')">View VEL Item ' .
+                    $this->linked_item_data[0]->vel_item_id . '</button>';
             } else {
                 $this->related_object_string = "Awaiting Linking to VEL Item";
             }
         }
         if ($this->linked_item_type === 6) { // VEL Abandonware Report
-        //$this->linked_item_Model = $app->bootComponent('com_jed')->getMVCFactory()
-            //  ->createModel('Velabandonedreport', 'Administrator', ['ignore_request' => true]);
             $this->linked_item_Model = new VelabandonedreportModel();
             $this->linked_item_data  = $this->get('VelAbandonedReportData');
 
