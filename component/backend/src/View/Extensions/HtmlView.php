@@ -48,6 +48,36 @@ class HtmlView extends BaseHtmlView
     protected CMSObject $state;
 
     /**
+     * Display the view
+     *
+     * @param   string  $tpl  Template name
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     * @throws Exception
+     *
+     */
+    public function display($tpl = null)
+    {
+        $this->state         = $this->get('State');
+        $this->items         = $this->get('Items');
+        $this->pagination    = $this->get('Pagination');
+        $this->filterForm    = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
+
+        // Check for errors.
+        if (count($errors = $this->get('Errors'))) {
+            throw new Exception(implode("\n", $errors));
+        }
+
+        $this->addToolbar();
+
+        $this->sidebar = Sidebar::render();
+        parent::display($tpl);
+    }
+
+    /**
      * Add the page title and toolbar.
      *
      * @return  void
@@ -124,7 +154,9 @@ class HtmlView extends BaseHtmlView
     /**
      * Method to order fields
      *
-     * @return void
+     * @return array
+     *
+     * @since 4.0.0
      */
     protected function getSortFields()
     {
@@ -152,6 +184,8 @@ class HtmlView extends BaseHtmlView
      * @param   mixed  $state  State
      *
      * @return bool
+     *
+     * @since 4.0.0
      */
     public function getState(mixed $state): bool
     {

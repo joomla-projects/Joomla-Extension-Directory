@@ -341,16 +341,15 @@ class ExtensionModel extends AdminModel
 
             /* Load Varied Data */
 
-            if (is_null($this->item->varied_data)) {
-                $this->item->varied_data = $this->getVariedData($this->item->id, $supply_option_type);
 
-                foreach ($this->item->varied_data as $v) {
-                    if ($v->is_default_data === 1) {
-                        $this->item->title        = $v->title;
-                        $this->item->alias        = $v->alias;
-                        $this->item->intro_text   = $v->intro_text;
-                        $this->item->support_link = $v->support_link;
-                    }
+            $this->item->varied_data = $this->getVariedData($this->item->id, $supply_option_type);
+
+            foreach ($this->item->varied_data as $v) {
+                if ($v->is_default_data === 1) {
+                    $this->item->title        = $v->title;
+                    $this->item->alias        = $v->alias;
+                    $this->item->intro_text   = $v->intro_text;
+                    $this->item->support_link = $v->support_link;
                 }
             }
             /* Load Scores */

@@ -132,7 +132,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    public function getState($state): bool
+    public function getState(mixed $state): bool
     {
         return $this->state->{$state} ?? false;
     }

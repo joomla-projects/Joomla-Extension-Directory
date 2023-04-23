@@ -239,17 +239,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
     </div>
     <?php echo HTMLHelper::_('uitab.endTab');
 
-echo HTMLHelper::_('uitab.addTab', 'viewHelpTab', 'viewhelpoldtickets', Text::_('Hi There', true)); ?>
-    <div class="widget">
-        <h1>I'm Empty</h1>
-        <div class="container">
-            <div class="row">
-                <p>Hello</p>
-            </div>
 
-        </div>
-    </div>
-    <?php echo HTMLHelper::_('uitab.endTab');
 echo HTMLHelper::_('uitab.endTabSet'); ?>
 </div>
 

@@ -194,7 +194,6 @@ class JedticketModel extends AdminModel
         $query->select("supply_options.title AS supply_type");
         $query->join("LEFT", "#__jed_extension_supply_options AS supply_options ON supply_options.id=a.supply_option_id");
 
-
         // Load the items
         $db->setQuery($query);
         $db->execute();
@@ -238,9 +237,10 @@ class JedticketModel extends AdminModel
 
         // Select all fields
 
-        $query->select('a.*');
+        $query->select('a.*, `b`.`title`, `b`.`alias`');
 
         $query->from($db->quoteName('#__jed_extensions', 'a'));
+        $query->join("inner", "`#__jed_extension_varied_data` as b", "`b`.`extension_id` = `a`.`id`");
 
         $query->where('a.created_by = ' . $ticket_creator);
 

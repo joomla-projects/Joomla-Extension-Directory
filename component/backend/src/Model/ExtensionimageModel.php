@@ -121,7 +121,7 @@ class ExtensionimageModel extends AdminModel
      *
      * @throws Exception
      */
-    protected function loadFormData()
+    protected function loadFormData(): mixed
     {
         // Check the session for previously entered form data.
         $data = Factory::getApplication()->getUserState('com_jed.edit.extensionimage.data', []);

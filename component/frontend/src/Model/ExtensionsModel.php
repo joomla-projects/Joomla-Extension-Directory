@@ -181,7 +181,7 @@ class ExtensionsModel extends ListModel
         $query->join('INNER', '#__jed_extension_varied_data AS varied ON varied.extension_id = a.id and varied.is_default_data=1');
 
 
-        if (!Factory::getUser()->authorise('core.edit', 'com_jed')) {
+        if (!JedHelper::getUser()->authorise('core.edit', 'com_jed')) {
             $query->where('a.state = 1');
         } else {
             $query->where('(a.state IN (0, 1))'); //Published 0=unpublished, 1=published, 2=unpublished by author
@@ -227,7 +227,7 @@ class ExtensionsModel extends ListModel
      */
     public function getScores(int $extension_id): array
     {
-        $db    = Factory::getDbo();
+        $db    = $this->getDatabase();
         $query = $db->getQuery(true);
         $query->select('*')
             ->from($db->quoteName('#__jed_extension_scores'))

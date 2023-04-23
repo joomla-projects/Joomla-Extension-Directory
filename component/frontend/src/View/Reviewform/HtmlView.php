@@ -18,6 +18,8 @@ use Exception;
 use Jed\Component\Jed\Site\Model\ExtensionModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Object\CMSObject;
 
 /**
  * View class for a list of Jed.

@@ -17,10 +17,14 @@ namespace Jed\Component\Jed\Administrator\Helper;
 
 use DateTime;
 use Exception;
+use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\User;
 use Joomla\Registry\Registry;
 
@@ -366,5 +370,75 @@ class JedHelper
         } catch (Exception $e) {
             return 'Sorry an error occured';
         }
+    }
+
+    /**
+     * Function to format JED Extension Images
+     *
+     * @param   string  $filename  The image filename
+     * @param   string  $size      Size of image, small|large
+     *
+     * @return  string  Full image url
+     *
+     * @since   4.0.0
+     */
+    public static function formatImage(string $filename, ImageSize $size = ImageSize::SMALL): string
+    {
+        if (!$filename) {
+            return '';
+        }
+
+        if (str_starts_with($filename, 'http://') || str_starts_with($filename, 'https://')) {
+            return $filename;
+        }
+
+        $params = ComponentHelper::getParams('com_jed');
+        $cdnUrl = rtrim($params->get('cdn_url', 'https://extensionscdn.joomla.org'), '/');
+
+        $lastDot      = strrpos($filename, '.');
+        $partialName  = substr($filename, 0, $lastDot - 1);
+        $extension    = substr($filename, $lastDot);
+        $bestFilename = match ($size) {
+            ImageSize::ORIGINAL => $filename,
+            ImageSize::SMALL    => $partialName . '_small' . $extension,
+            ImageSize::LARGE    => $partialName . '_large' . $extension,
+        };
+
+        // TODO Check if the resized file exists; if not resize it
+
+        // TODO If the file cannot be resized AND I am configured to use a CDN, fall back to the legacy CDN URLs
+        if (false && $params->get('use_cdn', 0)) {
+            $bestFilename = match ($size) {
+                ImageSize::ORIGINAL => $filename,
+                ImageSize::SMALL    => $partialName . '_resizeDown400px175px16' . $extension,
+                ImageSize::LARGE    => $partialName . '_resizeDown1200px525px16' . $extension,
+            };
+
+            return $cdnUrl . '/cache/fab_image/' . $bestFilename;
+        }
+
+        // If I am configured to use a CDN, use the https://extensionscdn.joomla.org CDN
+        if ($params->get('use_cdn', 0)) {
+            return $cdnUrl . '/cache/' . $bestFilename;
+        }
+
+        // No CDN (e.g. local development). Where should I get my image from?
+        if (File::exists(JPATH_ROOT . '/' . ltrim($bestFilename, '/\\'))) {
+            return Uri::root() . ltrim($bestFilename, '/\\');
+        }
+
+        if (File::exists(JPATH_ROOT . '/' . ltrim($filename, '/\\'))) {
+            return Uri::root() . ltrim($filename, '/\\');
+        }
+
+        if (File::exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($bestFilename, '/\\'))) {
+            return Uri::root() . 'media/com_jed/' . ltrim($bestFilename, '/\\');
+        }
+
+        if (File::exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($filename, '/\\'))) {
+            return Uri::root() . 'media/com_jed/' . ltrim($filename, '/\\');
+        }
+
+        return '';
     }
 }
