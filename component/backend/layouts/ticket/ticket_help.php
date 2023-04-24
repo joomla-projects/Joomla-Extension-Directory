@@ -195,7 +195,7 @@ foreach ($displayData['reviews'] as $review) {
         $ico = '';
     }
 
-    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_help_review_group', $review->id . ' - ' . $review->title . '&nbsp;' .
+    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_help_reviews_group', $review->id . ' - ' . $review->title . '&nbsp;' .
         JedHelper::prettyDate($review->created_on) . '&nbsp;', 'ticket_help_reviews_group' . '_slide' . ($slideid++));
     echo "<p>Review Summary here</p>";
     echo JHtml::_('bootstrap.endSlide');

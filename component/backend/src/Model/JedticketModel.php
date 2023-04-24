@@ -224,7 +224,7 @@ class JedticketModel extends AdminModel
 
         $user                     = $userFactory->loadUserById($this->ticket_creator);
         $output['ticket_creator'] = $user;
-        $ticket_creator           = 71796;
+        $ticket_creator           = 1069;
         $user                     = $userFactory->loadUserById($ticket_creator); //CMSOvject user
         $output['sample_creator'] = $user;
 
@@ -240,7 +240,7 @@ class JedticketModel extends AdminModel
         $query->select('a.*, `b`.`title`, `b`.`alias`');
 
         $query->from($db->quoteName('#__jed_extensions', 'a'));
-        $query->join("inner", "`#__jed_extension_varied_data` as b", "`b`.`extension_id` = `a`.`id`");
+        $query->join("inner","`#__jed_extension_varied_data` as b","`b`.`extension_id` = `a`.`id`");
 
         $query->where('a.created_by = ' . $ticket_creator);
 
@@ -281,16 +281,16 @@ class JedticketModel extends AdminModel
         $output['reviews'] = $db->loadObjectList();
 
 
-        // old tickets
+        // old tickets This section commented out for public github
         //SELECT * FROM bl_j3_mar22.wqyh6_rsticketspro_tickets WHERE customer_id=71796;
-        $query = $db->getQuery(true);
+      /*  $query = $db->getQuery(true);
         $query->select('*')
             ->from('bl_j3_mar22.wqyh6_rsticketspro_tickets')
             ->where('customer_id=' . $ticket_creator);
-        $db->setQuery($query);
+        $db->setQuery($query);*/
 
         //$output['oldtickets']
-        $oldtickets = $db->loadObjectList();
+        $oldtickets = []; // $db->loadObjectList();
         foreach ($oldtickets as $oneItem) {
             //SELECT * FROM bl_j3_mar22wqyh6_rsticketspro_ticket_messages WHERE user_id=71796;
             $query = $db->getQuery(true);
