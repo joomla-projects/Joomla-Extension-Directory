@@ -283,11 +283,11 @@ class JedticketModel extends AdminModel
 
         // old tickets This section commented out for public github
         //SELECT * FROM bl_j3_mar22.wqyh6_rsticketspro_tickets WHERE customer_id=71796;
-      /*  $query = $db->getQuery(true);
-        $query->select('*')
-            ->from('bl_j3_mar22.wqyh6_rsticketspro_tickets')
-            ->where('customer_id=' . $ticket_creator);
-        $db->setQuery($query);*/
+        /*  $query = $db->getQuery(true);
+          $query->select('*')
+              ->from('bl_j3_mar22.wqyh6_rsticketspro_tickets')
+              ->where('customer_id=' . $ticket_creator);
+          $db->setQuery($query);*/
 
         //$output['oldtickets']
         $oldtickets = []; // $db->loadObjectList();
