@@ -19,8 +19,8 @@ steps:
     depends_on: [ composer ]
     commands:
       - echo $(date)
-      - ./src/administrator/components/com_jed/vendor/bin/php-cs-fixer fix -vvv --dry-run --diff
-      - ./src/administrator/components/com_jed/vendor/bin/phpcs --extensions=php -p --standard=ruleset.xml .
+      - ./vendor/bin/php-cs-fixer fix -vvv --dry-run --diff
+      - ./vendor/bin/phpcs --extensions=php -p --standard=ruleset.xml src/
       - echo $(date)
 
 volumes:
@@ -30,6 +30,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 18e4d251a49437161fd2391a9de521a4479ff62d39baacc76a5ebb17a9b592a1
+hmac: 6e3268de4dd6b64f6d0e8b80b48c99eaa28ac92d179c9b24103b3096999391b3
 
 ...

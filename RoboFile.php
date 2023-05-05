@@ -16,7 +16,7 @@
 use Joomla\Jorobo\Tasks\loadTasks as loadReleaseTasks;
 use Robo\Tasks;
 
-require_once 'src/administrator/components/com_jed/vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
 if (!defined('JPATH_BASE')) {
     define('JPATH_BASE', __DIR__);
