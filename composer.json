@@ -10,9 +10,8 @@
   "homepage": "https://extensions.joomla.org",
   "license": "GPL-2.0-or-later",
   "config": {
-    "vendor-dir": "component/backend/vendor",
     "platform": {
-      "php": "8.1.999"
+      "php": "8.1.0"
     }
   },
   "require": {
