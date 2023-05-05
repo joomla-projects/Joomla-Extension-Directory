@@ -12,7 +12,7 @@
     <namespace path="src">Jed\Component\Jed</namespace>
     <scriptfile>script.php</scriptfile>
 
-    <files folder="frontend">
+    <files folder="components/com_jed">
         <folder>forms</folder>
         <folder>language</folder>
         <folder>layouts</folder>
@@ -53,7 +53,7 @@
 			</menu>
         </submenu>
 
-        <files folder="backend">
+        <files folder="administrator/components/com_jed">
             <folder>forms</folder>
             <folder>layouts</folder>
             <folder>services</folder>
@@ -65,13 +65,13 @@
             <file>config.xml</file>
         </files>
 
-        <languages folder="backend/language">
+        <languages folder="administrator/components/com_jed/language">
             <language tag="en-GB">en-GB/com_jed.ini</language>
             <language tag="en-GB">en-GB/com_jed.sys.ini</language>
         </languages>
     </administration>
 
-    <media destination="com_jed" folder="media">
+    <media destination="com_jed" folder="media/com_jed">
         <folder>assets</folder>
         <folder>css</folder>
         <folder>js</folder>
