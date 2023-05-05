@@ -13,8 +13,8 @@ CREATE TABLE `#__jed_message_templates`
     `ticket_status` tinyint      NOT NULL DEFAULT '0',
     `created_by`    int          NOT NULL DEFAULT '0',
     `modified_by`   int          NOT NULL DEFAULT '0',
-    `created`       datetime     NOT NULL DEFAULT '0000-00-00 00:00:00',
-    `modified`      datetime     NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `created`       datetime,
+    `modified`      datetime,
     `state`         tinyint(1)   NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
@@ -47,7 +47,7 @@ INSERT INTO `#__jed_message_templates`(`title`, `subject`, `template`, `email_ty
 ('Extension: LC3 - License Link does not Mention Extensions', 'Extension: LC3 - License Link does not Mention Extensions', '<p>Hi,</p>\r\n<p>The license link that you have provided does not mention extensions. Your license page should reference specifically how your extensions are licensed.</p>\r\n<p>Please make the necessary changes to this page on your website and then open a ticket under \"Current Listing Support\" and ask for it to be checked again.</p>\r\n<p>Kind Regards</p>', 2, 652, 652, '2021-05-13 14:40:36', '2021-05-13 14:40:36', 1),
 ('Extension: LC4 - Invalid License Type', 'Extension: LC4 - Invalid License Type', '<p>Hi,</p>\r\n<p>Your extension has been found to have an invalid license type. Extensions are required to be GNU/GPL or AGPL licensed. <em><strong>LGPL is for library extensions only.</strong></em> Any other license type is unacceptable.</p>\r\n<p>Please make the necessary changes to your website and your extension, upload an amended zip file to your listing and then open a ticket under \"Current Listing Support\" and ask for it to be checked again.</p>\r\n<p>Kind Regards</p>', 2, 652, 652, '2021-05-13 14:40:36', '2021-05-13 14:40:36', 1),
 ('Extension: US1 - Update Server Requirement', 'Extension: US1 - Update Server Requirement', '<p><span style=\"font-weight: 400;\">Hi,</span></p>\r\n<p><span style=\"font-weight: 400;\">Extensions uploaded to JED after 10th January 2017 are required to implement the Joomla! Update System as detailed in this documentation page: </span><a href=\"support/knowledgebase/item/joomla-update-system-requirement\"><span style=\"font-weight: 400;\">https://extensions.joomla.org/support/knowledgebase/item/joomla-update-system-requirement</span></a></p>\r\n<p><span style=\"font-weight: 400;\">Please make the necessary changes to your extension and upload an amended zipfile to your listing. Also, please ensure that you have checked the ‘Joomla Update System’ checkbox on the edit page of your listing.</span></p>\r\n<p><span style=\"font-weight: 400;\">When you’ve finished your changes please open a ticket under “New Listing Support” and ask for it to be checked again.</span></p>\r\n<p><span style=\"font-weight: 400;\">Kind Regards,</span></p>\r\n<p><span style=\"font-weight: 400;\">[Your Name]</span></p>', 2, 652, 652, '2021-05-13 14:40:36', '2021-05-13 14:40:36', 1),
-('Extension: PE1 - Under Investigation', 'Extension: PE1 - Under Investigation', '<p>Hi,</p>\r\n<p>Your extension has been tagged as under investigation.&nbsp;</p>\r\n<p>Please open a ticket under \"Current Listing Support\" to contact the JED team.</p>\r\n<p>Best Regards</p>', 2, 652, 652, '2021-05-13 14:40:36', '2021-05-13 14:40:36', 1)
+('Extension: PE1 - Under Investigation', 'Extension: PE1 - Under Investigation', '<p>Hi,</p>\r\n<p>Your extension has been tagged as under investigation.&nbsp;</p>\r\n<p>Please open a ticket under \"Current Listing Support\" to contact the JED team.</p>\r\n<p>Best Regards</p>', 2, 652, 652, '2021-05-13 14:40:36', '2021-05-13 14:40:36', 1);
 INSERT INTO `#__jed_message_templates`(`id`, `title`, `subject`, `template`, `email_type`, `created_by`, `modified_by`, `created`, `modified`, `state`) VALUES
 (1000, 'System Messages: Thank you for contacting ', 'Confirmation of Submission', '<p>Thank you for contacting the Joomla Extension Directory (JED).</p>\r\n<p>A ticket has been created on our system and is awaiting review by a member of the JED Team.</p>\r\n<p>You will be notified by email when an update is made to your ticket.</p>\r\n<p>You can view your tickets by clicking on blah-blah-blah link.</p>', 1, 652, 652, '2021-05-13 14:40:36', '2021-05-13 14:40:36', 1);
 UPDATE `#__jed_message_templates` set ticket_status=1 where id in (6,7,8,9,10,11,12,13,14,15,16,17,18,20,21,22,23,24,25);
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_groups`
 
 INSERT INTO `#__jed_ticket_groups`(`id`, `name`, `ordering`, `state`, `checked_out`, `checked_out_time`, `created_by`, `modified_by`) VALUES
 (1, 'Any', 0, 1, NULL, NULL, 652, 652),
-(2, 'Team Leadership', 0, 1, NULL NULL, 652, 652),
+(2, 'Team Leadership', 0, 1, NULL, NULL, 652, 652),
 (3, 'Listing Specialist', 0, 1, NULL, NULL, 652, 652),
 (4, 'Review Specialist', 0, 1, NULL, NULL, 652, 652),
 (5, 'Support Speciailist', 0, 1, NULL, NULL, 652, 652),
@@ -168,8 +168,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_vel_report`
     `user_ip`                          VARCHAR(20)  NOT NULL DEFAULT '',
     `created_by`                       INT          NOT NULL DEFAULT '0',
     `modified_by`                      INT          NOT NULL DEFAULT '0',
-    `created`                          DATETIME     NOT NULL DEFAULT '0000-00-00 00:00:00',
-    `modified`                         DATETIME     NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `created`                          DATETIME,
+    `modified`                         DATETIME,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
@@ -194,8 +194,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_vel_developer_update`
     `update_user_ip`          varchar(20)  NOT NULL DEFAULT '',
     `created_by`              int          NOT NULL DEFAULT '0',
     `modified_by`             int          NOT NULL DEFAULT '0',
-    `created`                 datetime     NOT NULL DEFAULT '0000-00-00 00:00:00',
-    `modified`                datetime     NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `created`                 datetime,
+    `modified`                datetime,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
@@ -219,8 +219,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_vel_abandoned_report`
     `user_ip`               VARCHAR(20)      NULL     DEFAULT '',
     `created_by`            INT(11)          NULL     DEFAULT 0,
     `modified_by`           INT(11)          NULL     DEFAULT 0,
-    `created`               DATETIME         NULL     DEFAULT '0000-00-00',
-    `modified`              DATETIME         NULL     DEFAULT '0000-00-00',
+    `created`               DATETIME,
+    `modified`              DATETIME,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
@@ -263,8 +263,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_vel_vulnerable_item`
     `alias`                     varchar(255)  NOT NULL DEFAULT '',
     `created_by`                int           NOT NULL DEFAULT '0',
     `modified_by`               int           NOT NULL DEFAULT '0',
-    `created`                   datetime      NOT NULL DEFAULT '0000-00-00 00:00:00',
-    `modified`                  datetime      NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `created`                   datetime,
+    `modified`                  datetime,
     `checked_out`               int unsigned,
     `checked_out_time`          datetime,
     `state`                     tinyint       NOT NULL DEFAULT '0',
@@ -279,7 +279,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_messages`
     `id`                int unsigned NOT NULL AUTO_INCREMENT,
     `ticket_id`         int          DEFAULT '0',
     `subject`           varchar(255) NOT NULL,
-    `message`           text COLLATE NOT NULL,
+    `message`           text,
     `message_direction` int          DEFAULT '0',
     `ordering`          int          DEFAULT '0',
     `state`             tinyint(1)   DEFAULT '1',
@@ -330,9 +330,9 @@ CREATE TABLE IF NOT EXISTS `#__jed_jedtickets`
     `state`                   INT              NULL DEFAULT 0,
     `ordering`                INT              NULL DEFAULT 0,
     `created_by`              INT(11)          NULL DEFAULT 0,
-    `created_on`              DATETIME         NULL DEFAULT '0000-00-00',
+    `created_on`              DATETIME,
     `modified_by`             INT(11)          NULL DEFAULT 0,
-    `modified_on`             DATETIME         NULL DEFAULT '0000-00-00',
+    `modified_on`             DATETIME,
     `checked_out`             int unsigned,
     `checked_out_time`        datetime,
     PRIMARY KEY (`id`)
@@ -340,7 +340,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_jedtickets`
 
 /*Table structure for table `#__jed_extension_supply_options` */
 
-CREATE TABLE `#__jed_extension_supply_options`
+CREATE TABLE IF NOT EXISTS `#__jed_extension_supply_options`
 (
     `id`               int unsigned NOT NULL AUTO_INCREMENT,
     `title`            varchar(255) DEFAULT '',
@@ -361,7 +361,7 @@ INSERT INTO `#__jed_extension_supply_options`(`id`, `title`, `state`, `ordering`
 (3, 'Cloud', 1, 3, NULL, NULL, 627, 627);
 
 
-CREATE TABLE `#__jed_reviews`
+CREATE TABLE IF NOT EXISTS `#__jed_reviews`
 (
     `id`                      int unsigned NOT NULL AUTO_INCREMENT,
     `extension_id`            int unsigned DEFAULT '0',
@@ -399,7 +399,7 @@ CREATE TABLE `#__jed_reviews`
     CONSTRAINT `FKC_jed_reviews_supply_option` FOREIGN KEY (`supply_option_id`) REFERENCES `#__jed_extension_supply_options` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `#__jed_reviews_comments`
+CREATE TABLE IF NOT EXISTS `#__jed_reviews_comments`
 (
     `id`         int unsigned NOT NULL AUTO_INCREMENT,
     `review_id`  int unsigned DEFAULT '0',
@@ -416,7 +416,7 @@ CREATE TABLE `#__jed_reviews_comments`
     CONSTRAINT `FKC_jed_reviews_comments_user` FOREIGN KEY (`created_by`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `#__jed_extensions`
+CREATE TABLE IF NOT EXISTS `#__jed_extensions`
 (
     `id`                    int unsigned NOT NULL AUTO_INCREMENT,
     `joomla_versions`       varchar(255) DEFAULT '',
@@ -457,7 +457,7 @@ CREATE TABLE `#__jed_extensions`
     CONSTRAINT `FKC_jed_extensions_moduser` FOREIGN KEY (`modified_by`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `#__jed_extension_varied_data`
+CREATE TABLE IF NOT EXISTS `#__jed_extension_varied_data`
 (
     `id`                        int unsigned NOT NULL AUTO_INCREMENT,
     `extension_id`              int unsigned DEFAULT '0',
@@ -494,7 +494,7 @@ CREATE TABLE `#__jed_extension_varied_data`
     CONSTRAINT `FKC_jed_extension_varied_data_supply_option` FOREIGN KEY (`supply_option_id`) REFERENCES `#__jed_extension_supply_options` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `#__jed_extension_images`
+CREATE TABLE IF NOT EXISTS `#__jed_extension_images`
 (
     `id`               int unsigned NOT NULL AUTO_INCREMENT,
     `extension_id`     int unsigned DEFAULT '0',
@@ -515,7 +515,7 @@ CREATE TABLE `#__jed_extension_images`
     CONSTRAINT `FKC_jed_extension_images_moduser` FOREIGN KEY (`modified_by`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `#__jed_extension_scores`
+CREATE TABLE IF NOT EXISTS `#__jed_extension_scores`
 (
     `id`                    int unsigned NOT NULL AUTO_INCREMENT,
     `extension_id`          int unsigned DEFAULT '0',
@@ -540,12 +540,13 @@ CREATE TABLE `#__jed_extension_scores`
     CONSTRAINT `FKC_jed_extension_scores_data_supply_option` FOREIGN KEY (`supply_option_id`) REFERENCES `#__jed_extension_supply_options` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `#__jed_developers`
+CREATE TABLE IF NOT EXISTS `#__jed_developers`
 (
     `id`             int unsigned NOT NULL AUTO_INCREMENT,
     `user_id`        int          DEFAULT NULL,
     `developer_name` varchar(150) DEFAULT NULL,
-    `suspicious`     tinyint(1)   DEFAULT '0'
+    `suspicious`     tinyint(1)   DEFAULT '0',
+	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 SET FOREIGN_KEY_CHECKS = 1;
