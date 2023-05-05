@@ -5,8 +5,8 @@
     <!-- Exclude folders not containing production code -->
 
     <!-- Exclude 3rd party libraries and Framework code. -->
-    <exclude-pattern type="relative">^src/administrator/components/com_jed/vendor/*</exclude-pattern>
-    <exclude-pattern type="relative">^src/administrator/components/com_jed/layouts/*</exclude-pattern>
+    <exclude-pattern type="relative">^administrator/components/com_jed/vendor/*</exclude-pattern>
+    <exclude-pattern type="relative">^administrator/components/com_jed/layouts/*</exclude-pattern>
     <exclude-pattern type="relative">^libraries/*</exclude-pattern>
 	<exclude-pattern type="relative">RoboFile\.php</exclude-pattern>
 
