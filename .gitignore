@@ -1,5 +1,5 @@
 ### Composer vendor folder
-/vendor/
+/src/administrator/components/com_jed/vendor/
 /dist/
 ### Node.JS build dependencies
 /node_modules/

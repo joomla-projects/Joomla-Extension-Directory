@@ -10,20 +10,15 @@
     <version>4.0.0</version>
     <description>COM_JED_XML_DESCRIPTION</description>
     <namespace path="src">Jed\Component\Jed</namespace>
-    <scriptfile>installscript.php</scriptfile>
+    <scriptfile>script.php</scriptfile>
 
     <files folder="frontend">
         <folder>forms</folder>
+        <folder>language</folder>
         <folder>layouts</folder>
         <folder>src</folder>
         <folder>tmpl</folder>
-
-        <filename>index.html</filename>
     </files>
-
-    <languages folder="frontend/language/en-GB">
-        <language tag="en-GB">com_jed.ini</language>
-    </languages>
 
     <administration>
         <!-- Menu entries -->

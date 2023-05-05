@@ -5,9 +5,10 @@
     <!-- Exclude folders not containing production code -->
 
     <!-- Exclude 3rd party libraries and Framework code. -->
-    <exclude-pattern type="relative">^component/backend/vendor/*</exclude-pattern>
-	<exclude-pattern type="relative">^component/backend/layouts/*</exclude-pattern>
+    <exclude-pattern type="relative">^src/administrator/components/com_jed/vendor/*</exclude-pattern>
+    <exclude-pattern type="relative">^src/administrator/components/com_jed/layouts/*</exclude-pattern>
     <exclude-pattern type="relative">^libraries/*</exclude-pattern>
+	<exclude-pattern type="relative">RoboFile\.php</exclude-pattern>
 
     <rule ref="PSR12" />
 
@@ -19,42 +20,25 @@
         </properties>
     </rule>
 
-    <rule ref="PSR1.Files.SideEffects">
-        <exclude-pattern type="relative">build/lib/phpStormSourceHandling\.php</exclude-pattern>
-    </rule>
-
     <rule ref="PSR1.Classes.ClassDeclaration">
-        <exclude-pattern type="relative">build/lib/phpStormSourceHandling\.php</exclude-pattern>
-        <exclude-pattern type="relative">build/lib/ZipmeFileSet\.php</exclude-pattern>
-        <exclude-pattern type="relative">build/tasks/AutoversionTask\.php</exclude-pattern>
-        <exclude-pattern type="relative">build/tasks/PhpStormSources\.php</exclude-pattern>
-        <exclude-pattern type="relative">build/tasks/RelinkSiteTask\.php</exclude-pattern>
-        <exclude-pattern type="relative">build/tasks/XmlVersionTask\.php</exclude-pattern>
-        <exclude-pattern type="relative">build/tasks/ZipmeTask\.php</exclude-pattern>
-
-        <exclude-pattern type="relative">component/installscript\.php</exclude-pattern>
+        <exclude-pattern type="relative">src/administrator/components/com_jed/script\.php</exclude-pattern>
     </rule>
 
     <rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
-        <exclude-pattern type="relative">component/frontend/src/Model/CategoriesModel\.php</exclude-pattern>
-        <exclude-pattern type="relative">component/backend/src/Model/ExtensionModel\.php</exclude-pattern>
+        <exclude-pattern type="relative">src/components/com_jed/src/Model/CategoriesModel\.php</exclude-pattern>
+        <exclude-pattern type="relative">src/administrator/components/com_jed/src/Model/ExtensionModel\.php</exclude-pattern>
     </rule>
 
     <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
-        <exclude-pattern type="relative">build/linklib/LinkHelper\.php</exclude-pattern>
-        <exclude-pattern type="relative">component/frontend/src/Helper/JedHelper\.php</exclude-pattern>
-        <exclude-pattern type="relative">component/installscript\.php</exclude-pattern>
+        <exclude-pattern type="relative">src/components/com_jed/src/Helper/JedHelper\.php</exclude-pattern>
+        <exclude-pattern type="relative">src/administrator/components/com_jed/script\.php</exclude-pattern>
     </rule>
 
     <rule ref="PSR2.Methods.MethodDeclaration.Underscore">
-        <exclude-pattern type="relative">component/backend/src/Table/*\.php</exclude-pattern>
-    </rule>
-
-    <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
-        <exclude-pattern type="relative">build/tasks/ZipmeTask\.php</exclude-pattern>
+        <exclude-pattern type="relative">src/administrator/components/com_jed/src/Table/*\.php</exclude-pattern>
     </rule>
 
     <rule ref="Squiz.Classes.ValidClassName">
-        <exclude-pattern type="relative">component/installscript\.php</exclude-pattern>
+        <exclude-pattern type="relative">src/administrator/components/com_jed/script\.php</exclude-pattern>
     </rule>
 </ruleset>
