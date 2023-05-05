@@ -1,15 +1,9 @@
-### Exclude generated files
-# XML manifest in the backend folder
-/component/backend/jed.xml
-
 ### Composer vendor folder
-/component/backend/vendor/
-
+/src/administrator/components/com_jed/vendor/
+/vendor/
+/dist/
 ### Node.JS build dependencies
 /node_modules/
-
 ### Installation packages built through Phing
 /release/
-
-### PHPStorm Files
-.idea
+/.idea

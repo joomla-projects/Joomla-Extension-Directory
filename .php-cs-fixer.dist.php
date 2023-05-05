@@ -33,8 +33,7 @@
 $finder = PhpCsFixer\Finder::create()
     ->in(
         [
-            __DIR__ . '/build',
-            __DIR__ . '/component',
+            __DIR__ . '/src',
         ]
     )
     // Ignore template files as PHP CS fixer can't handle them properly
