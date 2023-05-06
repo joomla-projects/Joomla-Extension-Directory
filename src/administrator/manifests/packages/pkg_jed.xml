@@ -16,6 +16,7 @@
 	<files>
 		<!-- The id for each extension is the element stored in the DB -->
 		<file type="component" id="com_jed">com_jed.zip</file>
+		<file type="plugin" id="jed_sampledata" group="sampledata">plg_sampledata_jed.zip</file>
 		<!--<file type="module" id="mod_volunteers_latest" client="site">mod_volunteers_latest.zip</file>
 		<file type="module" id="mod_volunteers_story" client="site">mod_volunteers_story.zip</file>
 		<file type="plugin" id="joomlaidentityvolunteers" group="system">plg_system_joomlaidentityvolunteers.zip</file>
