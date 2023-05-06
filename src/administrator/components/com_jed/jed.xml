@@ -29,9 +29,7 @@
             </params>
         </menu>
         <submenu>
-            <menu>COM_JED_TITLE_HOME</menu>
-
-            <menu link="option=com_categories&amp;extension=com_jed">
+	        <menu link="option=com_categories&amp;extension=com_jed">
                 COM_JED_TITLE_CATEGORIES
                 <params>
                     <menu-quicktask>index.php?option=com_categories&amp;amp;view=category&amp;layout=edit&amp;extension=com_jed</menu-quicktask>
