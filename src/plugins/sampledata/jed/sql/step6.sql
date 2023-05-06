@@ -25,10 +25,3 @@ insert  into `#__jed_vel_report`(`id`,`reporter_fullname`,`reporter_email`,`repo
 
 insert  into `#__jed_vel_vulnerable_item`(`id`,`vulnerable_item_name`,`vulnerable_item_version`,`title`,`internal_description`,`status`,`report_id`,`jed`,`risk_level`,`start_version`,`vulnerable_version`,`patch_version`,`recommendation`,`update_notice`,`exploit_type`,`exploit_other_description`,`xml_manifest`,`manifest_location`,`install_data`,`discovered_by`,`discoverer_public`,`fixed_by`,`coordinated_by`,`jira`,`cve_id`,`cwe_id`,`cvssthirty_base`,`cvssthirty_base_score`,`cvssthirty_temp`,`cvssthirty_temp_score`,`cvssthirty_env`,`cvssthirty_env_score`,`public_description`,`alias`,`created_by`,`modified_by`,`created`,`modified`,`checked_out`,`checked_out_time`,`state`) values (1,'com_vel','0.9','com_vel, 0.9, Abandoned','',3,1,'','small','0.9','0.9','','','',5,'','','','','Dummy User','1','','','','','','',0.00,'',0.00,'',0.00,'<p>Name: com_vel</p>\r\n<p>Declared Abandoned</p>','',15,15,'0000-00-00 00:00:00','2023-04-22 11:26:33',0,'0000-00-00 00:00:00',0);
 insert  into `#__jed_vel_vulnerable_item`(`id`,`vulnerable_item_name`,`vulnerable_item_version`,`title`,`internal_description`,`status`,`report_id`,`jed`,`risk_level`,`start_version`,`vulnerable_version`,`patch_version`,`recommendation`,`update_notice`,`exploit_type`,`exploit_other_description`,`xml_manifest`,`manifest_location`,`install_data`,`discovered_by`,`discoverer_public`,`fixed_by`,`coordinated_by`,`jira`,`cve_id`,`cwe_id`,`cvssthirty_base`,`cvssthirty_base_score`,`cvssthirty_temp`,`cvssthirty_temp_score`,`cvssthirty_env`,`cvssthirty_env_score`,`public_description`,`alias`,`created_by`,`modified_by`,`created`,`modified`,`checked_out`,`checked_out_time`,`state`) values (2,'com_jed4','0.1','com_jed4, 0.1, Information Disclosure','',0,1,'','small','0.1','0.1','','','',2,'','','','','Dummy User','1','','','','','','',0.00,'',0.00,'',0.00,'<p>Name: com_jed4 Old: 0.1 / New:</p>\r\n<p>Update details:</p>\r\n<p>Update URL:</p>','',15,15,'2023-04-22 12:28:39','2023-04-22 11:29:08',0,'0000-00-00 00:00:00',0);
-
-
-SET FOREIGN_KEY_CHECKS = 0;
-
-
-
-SET FOREIGN_KEY_CHECKS = 1;
