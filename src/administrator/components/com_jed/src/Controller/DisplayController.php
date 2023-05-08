@@ -31,8 +31,7 @@ class DisplayController extends BaseController
      * @var    string
      * @since  4.0.0
      */
-    protected $default_view = 'home';
-
+    protected $default_view = 'jedtickets';
 
     /**
      * Method to display a view.
