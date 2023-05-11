@@ -68,13 +68,13 @@ class PlgSampledataJed extends CMSPlugin
         $data->title       = Text::_('PLG_SAMPLEDATA_JED_OVERVIEW_TITLE');
         $data->description = Text::_('PLG_SAMPLEDATA_JED_OVERVIEW_DESC');
         $data->icon        = 'money';
-        $data->steps       = 6;
+        $data->steps       = 7;
 
         return $data;
     }
 
     /**
-     * First step to enter the sampledata. Tags
+     * Make sure we don't overwrite current admin user, move them to user_id=5
      *
      * @return  array|void  Will be converted into the JSON response to the module.
      *
@@ -96,7 +96,7 @@ class PlgSampledataJed extends CMSPlugin
     }
 
     /**
-     * Second step to enter the sampledata. Banners
+     * First step to enter the sampledata. Tags
      *
      * @return  array|void  Will be converted into the JSON response to the module.
      *
@@ -118,7 +118,7 @@ class PlgSampledataJed extends CMSPlugin
     }
 
     /**
-     * Third step to enter the sampledata. Content 1/2
+     * Second step to enter the sampledata. Banners
      *
      * @return  array|void  Will be converted into the JSON response to the module.
      *
@@ -140,11 +140,11 @@ class PlgSampledataJed extends CMSPlugin
     }
 
     /**
-     * Fourth step to enter the sampledata. Content 2/2
+     * Third step to enter the sampledata. Content 1/2
      *
      * @return  array|void  Will be converted into the JSON response to the module.
      *
-     * @since  4.0.0
+     * @since  3.8.0
      */
     public function onAjaxSampledataApplyStep4()
     {
@@ -162,11 +162,11 @@ class PlgSampledataJed extends CMSPlugin
     }
 
     /**
-     * Fifth step to enter the sampledata. Contacts
+     * Fourth step to enter the sampledata. Content 2/2
      *
      * @return  array|void  Will be converted into the JSON response to the module.
      *
-     * @since  3.8.0
+     * @since  4.0.0
      */
     public function onAjaxSampledataApplyStep5()
     {
@@ -184,7 +184,7 @@ class PlgSampledataJed extends CMSPlugin
     }
 
     /**
-     * Sixth step to enter the sampledata. Newsfeed.
+     * Fifth step to enter the sampledata. Contacts
      *
      * @return  array|void  Will be converted into the JSON response to the module.
      *
@@ -201,6 +201,28 @@ class PlgSampledataJed extends CMSPlugin
         $response            = [];
         $response['success'] = true;
         $response['message'] = Text::_('PLG_SAMPLEDATA_JED_STEP6_SUCCESS');
+
+        return $response;
+    }
+
+    /**
+     * Sixth step to enter the sampledata. Newsfeed.
+     *
+     * @return  array|void  Will be converted into the JSON response to the module.
+     *
+     * @since  3.8.0
+     */
+    public function onAjaxSampledataApplyStep7()
+    {
+        if ($this->getApplication()->getInput()->get('type') !== $this->_name) {
+            return;
+        }
+
+        $this->importFile(__DIR__ . '/sql/step7.sql');
+
+        $response            = [];
+        $response['success'] = true;
+        $response['message'] = Text::_('PLG_SAMPLEDATA_JED_STEP7_SUCCESS');
 
         return $response;
     }

@@ -12,18 +12,9 @@
 	<authorUrl>www.joomla.org</authorUrl>
 	<version>1.0</version>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-	<description>PKG_JED_XML_DESCRIPTION</description>
+	<description>JED 4 Installation Packages</description>
 	<files>
-		<!-- The id for each extension is the element stored in the DB -->
 		<file type="component" id="com_jed">com_jed.zip</file>
 		<file type="plugin" id="jed_sampledata" group="sampledata">plg_sampledata_jed.zip</file>
-		<!--<file type="module" id="mod_volunteers_latest" client="site">mod_volunteers_latest.zip</file>
-		<file type="module" id="mod_volunteers_story" client="site">mod_volunteers_story.zip</file>
-		<file type="plugin" id="joomlaidentityvolunteers" group="system">plg_system_joomlaidentityvolunteers.zip</file>
-		<file type="plugin" id="volunteers" group="system">plg_system_volunteers.zip</file>
-		<file type="plugin" id="volunteer" group="user">plg_user_volunteer.zip</file>-->
 	</files>
-	<!--<languages folder="language">
-		<language tag="en-GB">en-GB/pkg_weblinks.sys.ini</language>
-	</languages>-->
 </extension>
