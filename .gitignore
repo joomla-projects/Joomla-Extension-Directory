@@ -2,8 +2,13 @@
 /src/administrator/components/com_jed/vendor/
 /vendor/
 /dist/
+/composer.lock
 ### Node.JS build dependencies
 /node_modules/
 ### Installation packages built through Phing
 /release/
 /.idea
+## Vendor files
+component/backend/vendor
+## JoRobo config file
+jorobo.ini
