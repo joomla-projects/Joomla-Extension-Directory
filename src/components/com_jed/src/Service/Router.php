@@ -92,7 +92,7 @@ class Router extends RouterView
         $extension = new RouterViewConfiguration('extension');
         $extension
             ->setKey('id')
-            ->setParent($extensions, 'primary_category_id')
+            ->setParent($categories, 'catid')
             ->addLayout('edit');
         $this->registerView($extension);
 
