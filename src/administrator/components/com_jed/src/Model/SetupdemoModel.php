@@ -66,7 +66,6 @@ class SetupdemoModel extends AdminModel
                 'load_data' => $loadData,
             ]
         );
-
     }
 
     /**
