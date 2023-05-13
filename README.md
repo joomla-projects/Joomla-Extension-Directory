@@ -41,4 +41,10 @@ Once you see 'Installation of the package was successful.'
 
 In Admin visit JED and view Tickets, Vulnerable Items, Categories and Extensions
 
-Instructions for Front end menus - coming soon.
+**Instructions for Front end menus.**
+
+In the backend:
+* Click on Components -> JED -> Tickets
+* At the top of the screen choose the Config menu and select 'Setup front end demo menu' and then Click the button GO (this will create a front end menu)
+* Go to System -> Site Modules and click to edit 'Main Menu'.
+* From the Select Menu dropdown choose 'Joomla Extension Directory Demo Menu'and hit save and close.

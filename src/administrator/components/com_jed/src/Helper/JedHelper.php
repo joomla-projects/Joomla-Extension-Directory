@@ -89,11 +89,18 @@ class JedHelper
             ->icon('fa fa-link')
             ->url('index.php?option=com_jed&view=extensionsupplyoptions');
 
-        $configChild->linkButton('copyjed3data')
+	    $configChild->linkButton('setupdemomenu')
+		    ->text('COM_JED_TITLE_SETUP_DEMO_MENU')
+		    ->icon('fa fa-link')
+		    ->url('index.php?option=com_jed&view=setupdemo');
+        /*
+         * Only for finally moving live to test
+         *
+         $configChild->linkButton('copyjed3data')
             ->text('COM_JED_TITLE_COPY_JED3_DATA')
             ->icon('fa fa-link')
             ->url('index.php?option=com_jed&view=copyjed3data');
-
+*/
         $bar->customHtml('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
 
         $debugGroup = $bar->dropdownButton('debug-group')
