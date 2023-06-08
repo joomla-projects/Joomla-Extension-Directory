@@ -30,9 +30,7 @@ class Com_JedInstallerScript
      * @var    string
      * @since  4.0.0
      */
-
     private string $minimumJoomlaVersion = '4.0';
-
 
     /**
      * Minimum PHP version to check
@@ -40,9 +38,7 @@ class Com_JedInstallerScript
      * @var    string
      * @since  4.0.0
      */
-
-    private string $minimumPHPVersion = JOOMLA_MINIMUM_PHP;
-
+    private string $minimumPHPVersion = '8.1.0';
 
     /**
      * Method to install the extension
@@ -53,7 +49,6 @@ class Com_JedInstallerScript
      *
      * @since  4.0.0
      */
-
     public function install(Joomla\CMS\Installer\InstallerAdapter $parent): bool
     {
         echo Text::_('COM_JED_INSTALLERSCRIPT_INSTALL');
@@ -73,14 +68,11 @@ class Com_JedInstallerScript
      *
 
      */
-
     public function postflight(
         string $type,
         Joomla\CMS\Installer\InstallerAdapter $parent
     ): bool {
-
         echo Text::_('COM_JED_INSTALLERSCRIPT_POSTFLIGHT');
-
 
         return true;
     }
@@ -97,15 +89,12 @@ class Com_JedInstallerScript
      *
      * @throws Exception
      */
-
     public function preflight(
         string $type,
         Joomla\CMS\Installer\InstallerAdapter $parent
     ): bool {
-
         if ($type !== 'uninstall') {
             // Check for the minimum PHP version before continuing
-
             if (!empty($this->minimumPHPVersion) && version_compare(PHP_VERSION, $this->minimumPHPVersion, '<')) {
                 Log::add(
                     Text::sprintf('JLIB_INSTALLER_MINIMUM_PHP', $this->minimumPHPVersion),
@@ -113,13 +102,10 @@ class Com_JedInstallerScript
                     'jerror'
                 );
 
-
                 return false;
             }
 
-
             // Check for the minimum Joomla version before continuing
-
             if (!empty($this->minimumJoomlaVersion) && version_compare(JVERSION, $this->minimumJoomlaVersion, '<')) {
                 Log::add(
                     Text::sprintf('JLIB_INSTALLER_MINIMUM_JOOMLA', $this->minimumJoomlaVersion),
@@ -127,14 +113,11 @@ class Com_JedInstallerScript
                     'jerror'
                 );
 
-
                 return false;
             }
         }
 
-
         echo Text::_('COM_JED_INSTALLERSCRIPT_PREFLIGHT');
-
 
         return true;
     }
@@ -148,13 +131,10 @@ class Com_JedInstallerScript
      *
      * @since  4.0.0
      */
-
     public function uninstall(
         Joomla\CMS\Installer\InstallerAdapter $parent
     ): bool {
-
         echo Text::_('COM_JED_INSTALLERSCRIPT_UNINSTALL');
-
 
         return true;
     }
@@ -168,15 +148,11 @@ class Com_JedInstallerScript
      *
      * @since  4.0.0
      *
-
      */
-
     public function update(
         Joomla\CMS\Installer\InstallerAdapter $parent
     ): bool {
-
         echo Text::_('COM_JED_INSTALLERSCRIPT_UPDATE');
-
 
         return true;
     }

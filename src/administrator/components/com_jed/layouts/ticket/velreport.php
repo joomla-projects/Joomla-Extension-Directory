@@ -15,7 +15,7 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 // phpcs:enable PSR1.Files.SideEffects
-/* @var $displayData array */
+/** @var array $displayData */
 ?>
 <div class="row">
     <div class="col">

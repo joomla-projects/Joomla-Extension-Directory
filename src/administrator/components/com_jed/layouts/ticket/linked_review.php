@@ -18,7 +18,7 @@ use Joomla\CMS\Language\Text;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 // phpcs:enable PSR1.Files.SideEffects
-/* @var $displayData array */
+/** @var array $displayData */
 $headerlabeloptions = ['hiddenLabel' => true, 'readonly' => true];
 $fieldhiddenoptions = ['hidden' => true];
 $linked_form        = $displayData["linked_form"];
