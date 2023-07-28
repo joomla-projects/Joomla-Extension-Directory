@@ -81,28 +81,19 @@ class CategoriesModel extends ListModel
      */
     public function getItems(int $limitStart = null, int $limit = null, bool $extended = true)
     {
-
-
         if (isset($this->_items)) {
             return $this->_items;
         }
-        $db    =  Factory::getContainer()->get('DatabaseDriver');
+        $db    = $this->getDatabase();
         $query = $db->getQuery(true);
 
-        $options               = [];
-        $options['extension']  = 'com_jed';
-        $options['table']      = '#__jed_extensions';
-        $options['countItems'] = 0;
-        $options['statefield'] = 'approved';
-        $options['access']     = false;
-        $options['field']      = 'primary_category_id';
-
         $recursive  = false;
+        $options = ['countItems' => 1];
         $categories = Categories::getInstance('Jed', $options);
 
         $this->_parent = $categories->get($this->getState('filter.parentId', 'root'));
 
-        if (is_object($this->_parent)) {
+        /**if (is_object($this->_parent)) {
             $this->_items = $this->_parent->getChildren($recursive);
         } else {
             $this->_items = [];
@@ -152,7 +143,8 @@ class CategoriesModel extends ListModel
         //echo "<pre>";print_r($list);echo "</pre>";exit();
         $this->_items = $list;
 
-        return $list;
+        return $list;**/
+    return $this->_parent->getChildren();
     }
 
     /**

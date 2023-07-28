@@ -16,23 +16,35 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
-/** @var \Jed\Component\Jed\Site\View\Categories\HtmlView $this */
+/** @var \Jed\Component\Jed\Site\View\Category\HtmlView $this */
 $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_jed.newjed')
     ->useScript('form.validate');
 HTMLHelper::_('bootstrap.tooltip');
+HTMLHelper::_('behavior.multiselect');
+HTMLHelper::_('formbehavior.chosen', 'select');
+
+$user       = \Jed\Component\Jed\Site\Helper\JedHelper::getUser();
+$userId     = $user->get('id');
+$listOrder  = $this->state->get('list.ordering');
+$listDirn   = $this->state->get('list.direction');
+$canCreate  = $user->authorise('core.create', 'com_jed');
+$canEdit    = $user->authorise('core.edit', 'com_jed');
+$canCheckin = $user->authorise('core.manage', 'com_jed');
+$canChange  = $user->authorise('core.edit.state', 'com_jed');
+$canDelete  = $user->authorise('core.delete', 'com_jed');
+
+// Import CSS
+
+$wa = \Joomla\CMS\Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa->useStyle('com_jed.jazstyle');
 ?>
 <div class="jed-home-categories">
-    <?php
-    if (count($this->items) == 0) {
-        echo "<h1>" . Text::_('COM_JED_CATEGORIES_NONE_LABEL') . "</h1>";
-    } else {
-        ?>
     <div class="container">
         <div class="row gx-5">
             <?php
-            foreach ($this->items as $c) {
-            ?>
+            foreach ($this->category->getChildren() as $c) {
+                ?>
                 <div class="col-lg-4 mb-3 card jed-home-category">
                     <div class="card-header jed-home-item-view">
                         <span class="jed-home-category-icon fa fa-camera rounded-circle bg-warning p-2 text-white d-inline-block"></span>
@@ -61,6 +73,31 @@ HTMLHelper::_('bootstrap.tooltip');
             <?php } ?>
         </div>
     </div>
-    <?php } ?>
 </div>
 
+<div class="jed-cards-wrapper margin-bottom-half">
+    <div class="jed-container">
+        <h2 class="heading heading--m"><?php echo $this->items[0]->category_title; ?> Extensions</h2>
+        <p class="font-size-s"><?php echo $this->items[0]->category_hierarchy; ?></p>
+        <ul class="jed-grid jed-grid--1-1-1">
+            <?php foreach ($this->items as $item) : ?>
+                <?php echo \Joomla\CMS\Layout\LayoutHelper::render('cards.extension', [
+                    'image'         => $item->logo,
+                    'title'         => $item->title,
+                    'developer'     => $item->developer,
+                    'score_string'  => $item->score_string,
+                    'score'         => $item->score,
+                    'reviews'       => $item->review_string,
+                    'compatibility' => $item->version,
+                    'description'   => $item->description,
+                    'type'          => $item->type,
+                    'category'      => $item->category_title,
+                    'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->primary_category_id, $item->id))
+                ]); ?>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>
+
+
+<?php echo $this->pagination->getPaginationLinks(); ?>

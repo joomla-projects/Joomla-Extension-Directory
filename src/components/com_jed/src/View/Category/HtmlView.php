@@ -7,7 +7,7 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace Jed\Component\Jed\Site\View\Extensionvarieddatum;
+namespace Jed\Component\Jed\Site\View\Category;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
@@ -15,25 +15,20 @@ namespace Jed\Component\Jed\Site\View\Extensionvarieddatum;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Site\Helper\JedHelper;
+use Joomla\CMS\MVC\View\CategoryView;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Pagination\Pagination;
 
 /**
- * View class for a list of Jed.
+ * View class for a list of Extensions.
  *
  * @since  4.0.0
  */
-class HtmlView extends BaseHtmlView
+class HtmlView extends CategoryView
 {
-    protected CMSObject $state;
-
-    protected mixed $item;
-
-    protected mixed $form;
-
     protected mixed $params;
 
     /**
@@ -43,38 +38,27 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @since 4.0.0
      * @throws Exception
+     *
+     * @since 4.0.0
      */
     public function display($tpl = null)
     {
-        $app  = Factory::getApplication();
-        $user = JedHelper::getUser();
+        parent::commonCategoryDisplay();
 
-        $this->state  = $this->get('State');
-        $this->item   = $this->get('Item');
-        $this->params = $app->getParams('com_jed');
+        $app = Factory::getApplication();
 
-        if (!empty($this->item)) {
-        }
-
+/**        $this->state      = $this->get('State');
+        $this->items      = $this->get('Items');
+        $this->pagination = $this->get('Pagination');
+        $this->params     = $app->getParams();
+**/
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {
             throw new Exception(implode("\n", $errors));
         }
 
-
-
-        if ($this->_layout == 'edit') {
-            $authorised = $user->authorise('core.create', 'com_jed');
-
-            if ($authorised !== true) {
-                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'));
-            }
-        }
-
         $this->prepareDocument();
-
         parent::display($tpl);
     }
 
@@ -83,8 +67,9 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @throws Exception
      * @since 4.0.0
+     *
+     * @throws Exception
      */
     protected function prepareDocument()
     {
@@ -92,7 +77,7 @@ class HtmlView extends BaseHtmlView
         $menus = $app->getMenu();
 
         // Because the application sets a default page title,
-        // We need to get it from the menu item itself
+        // we need to get it from the menu item itself
         $menu = $menus->getActive();
 
         if ($menu) {
@@ -128,10 +113,24 @@ class HtmlView extends BaseHtmlView
 
         // Add Breadcrumbs
         $pathway         = $app->getPathway();
-        $breadcrumbTitle = Text::_('COM_JED_TITLE_EXTENSIONVARIEDDATUM');
+        $breadcrumbTitle = Text::_('COM_JED_TITLE_EXTENSIONS');
 
         if (!in_array($breadcrumbTitle, $pathway->getPathwayNames())) {
             $pathway->addItem($breadcrumbTitle);
         }
+    }
+
+    /**
+     * Check if state is set
+     *
+     * @param   mixed  $state  State
+     *
+     * @return bool
+     *
+     * @since 4.0.0
+     */
+    public function getState(mixed $state): bool
+    {
+        return $this->state->{$state} ?? false;
     }
 }
