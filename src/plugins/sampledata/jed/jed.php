@@ -110,6 +110,21 @@ class PlgSampledataJed extends CMSPlugin
 
         $this->importFile(__DIR__ . '/sql/step2.sql');
 
+        $this->db->setQuery('SELECT id FROM #__assets WHERE name = \'com_jed\'');
+        $component_asset_id = $this->db->loadResult();
+
+        $this->db->setQuery('INSERT INTO `#__assets` (parent_id, LEVEL, NAME, title, rules) SELECT ' . $component_asset_id . ' AS parent_id, level + 1 AS LEVEL, CONCAT(\'com_jed.category.\', id) AS NAME, title, \'{}\' AS rules FROM `#__categories` WHERE extension = \'com_jed\'');
+        $this->db->execute();
+
+        $this->db->setQuery('SELECT id FROM #__assets WHERE name = \'com_jed.category.9\'');
+        $asset_id = $this->db->loadResult();
+
+        $this->db->setQuery('UPDATE #__categories SET asset_id = id + ' . ($asset_id - 8) . ' WHERE id > 8');
+        $this->db->execute();
+
+        $table = \Joomla\CMS\Table\Table::getInstance('Asset');
+        $table->rebuild();
+
         $response            = [];
         $response['success'] = true;
         $response['message'] = Text::_('PLG_SAMPLEDATA_JED_STEP2_SUCCESS');
