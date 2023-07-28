@@ -82,17 +82,17 @@ class Router extends RouterView
         $categories->setKey('id');
         $this->registerView($categories);
 
-        $extensions = new RouterViewConfiguration('extensions');
-        $extensions
+        $category = new RouterViewConfiguration('category');
+        $category
             ->setKey('id')
             ->setParent($categories, 'catid')
             ->setNestable();
-        $this->registerView($extensions);
+        $this->registerView($category);
 
         $extension = new RouterViewConfiguration('extension');
         $extension
             ->setKey('id')
-            ->setParent($categories, 'catid')
+            ->setParent($category, 'catid')
             ->addLayout('edit');
         $this->registerView($extension);
 
@@ -292,8 +292,8 @@ class Router extends RouterView
         $db        = $this->getDatabase();
         $query     = $db->getQuery(true);
         $query->select($db->quoteName('alias'))
-              ->from($db->quoteName('#__jed_extension_varied_data'))
-              ->where($db->quoteName('extension_id') . ' = :id')
+              ->from($db->quoteName('#__jed_extensions'))
+              ->where($db->quoteName('id') . ' = :id')
               ->bind(':id', $id, ParameterType::INTEGER);
         $db->setQuery($query);
 
