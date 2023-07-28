@@ -197,20 +197,6 @@ class ExtensionModel extends ItemModel
         // Load Category Hierarchy
         $this->item->category_hierarchy = $this->getCategoryHierarchy($this->item->primary_category_id);
 
-        // Load Varied Data
-        $this->item->varied_data = $this->getVariedData($this->item->id);
-
-        foreach ($this->item->varied_data as $v) {
-            if ($v->is_default_data !== 1) {
-                continue;
-            }
-            $this->item->title = $v->title;
-            $this->item->alias = $v->alias;
-
-            $this->item->intro_text   = $v->intro_text;
-            $this->item->support_link = $v->support_link;
-        }
-
         // Load Scores
         $this->item->scores            = $this->getScores($this->item->id);
         $this->item->number_of_reviews = 0;
@@ -387,9 +373,9 @@ class ExtensionModel extends ItemModel
         $query2->select([
             $db->quoteName('supply_option_id', 'supply_option_id'),
         ])
-            ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
+            ->from($db->quoteName('#__jed_extensions', 'a'))
             ->where([
-                $db->quoteName('extension_id') . ' = ' . (int)$extension_id,
+                $db->quoteName('id') . ' = ' . (int)$extension_id,
             ]);
 
         $query->where([$db->quoteName('supply_options.id') . ' IN (' . $query2 . ')']);

@@ -100,6 +100,27 @@ class ExtensionModel extends AdminModel
         return $fileDetails;
     }
 
+    public function getItem($pk = null)
+    {
+        $item = parent::getItem($pk);
+
+        // Load images
+        if ($item->id) {
+            $query = $this->getDatabase()->getQuery(true);
+            $query->select('*')
+                ->from('#__jed_extension_images')
+                ->where('extension_id = ' . $item->id)
+                ->order('ordering');
+            $this->getDatabase()->setQuery($query);
+            $item->images = $this->getDatabase()->loadObjectList();
+
+            $item->includes = json_decode($item->includes);
+            $item->joomla_versions = json_decode($item->joomla_versions);
+        }
+
+        return $item;
+    }
+
     /**
      * Method to get the record form.
      *
@@ -111,28 +132,16 @@ class ExtensionModel extends AdminModel
      * @since   4.0.0
      * @throws Exception
      */
-    public function getForm($data = [], $loadData = true, $formname = 'jform_extension'): Form|bool
+    public function getForm($data = [], $loadData = true): Form|bool
     {
         // Get the form.
-        $form = $this->loadForm('com_jed.extension', 'extension', ['control' => $formname, 'load_data' => $loadData]);
+        $form = $this->loadForm('com_jed.extension', 'extension', ['control' => 'jform', 'load_data' => $loadData]);
 
+        if (empty($form)) {
+            return false;
+        }
 
-        return $form ?? new Form('com_jed.extension');
-    }
-
-    /**
-     * Method to get a single record.
-     *
-     * @param   int  $pk  The id of the primary key.
-     *
-     * @return  stdClass    Object on success, false on failure.
-     *
-     * @since   4.0.0
-     * @throws Exception
-     */
-    public function getItem($pk = null): mixed
-    {
-        return $this->getvariedItem($pk, 0);
+        return $form;
     }
 
     /**
@@ -276,30 +285,6 @@ class ExtensionModel extends AdminModel
     }
 
     /**
-     * Method to get the varied data form.
-     *
-     * @param   array  $data      An optional array of data for the form to interogate.
-     * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
-     *
-     * @return  Form|bool  A Form object on success, false on failure
-     *
-     * @since   4.0.0
-     * @throws Exception
-     */
-    public function getVariedDataForm($data = [], $loadData = true, $formname = 'jform_extensionvarieddata'): Form
-    {
-        // Get the form.
-        $form = $this->loadForm(
-            'com_jed.extensionvarieddatum',
-            'extensionvarieddatum',
-            ['control' => $formname, 'load_data' => $loadData]
-        );
-
-
-        return $form ?? new Form('com_jed.extensionvarieddatum');
-    }
-
-    /**
      * Method to get a single record.
      *
      * @param   int|null  $pk                  The id of the primary key.
@@ -339,19 +324,6 @@ class ExtensionModel extends AdminModel
                 $this->item->category_hierarchy = $this->getCategoryHierarchy($this->item->primary_category_id);
             }
 
-            /* Load Varied Data */
-
-
-            $this->item->varied_data = $this->getVariedData($this->item->id, $supply_option_type);
-
-            foreach ($this->item->varied_data as $v) {
-                if ($v->is_default_data === 1) {
-                    $this->item->title        = $v->title;
-                    $this->item->alias        = $v->alias;
-                    $this->item->intro_text   = $v->intro_text;
-                    $this->item->support_link = $v->support_link;
-                }
-            }
             /* Load Scores */
             try {
                 $this->item->scores = $this->getScores($this->item->id);
@@ -468,50 +440,9 @@ class ExtensionModel extends AdminModel
 
         if (empty($data)) {
             $data = $this->getItem();
-
-
-            $this->item = $data;
-
-
-            // Support for multiple or not foreign key field: uses_updater
-            $array = [];
-
-            foreach ((array)$data->uses_updater as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->uses_updater = $array;
-            }
-
-            // Support for multiple or not foreign key field: primary_category_id
-            $array = [];
-
-            foreach ((array)$data->primary_category_id as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->primary_category_id = $array;
-            }
         }
 
         return $data;
-    }
-
-    /**
-     * Prepare and sanitise the table prior to saving.
-     *
-     * @param   Table  $table  Table Object
-     *
-     * @return  void
-     *
-     * @since   4.0.0
-     */
-    protected function prepareTable($table)
-    {
     }
 
     /**

@@ -129,7 +129,7 @@ $this->document->getWebAssetManager()
         </div>
     </div>
 
-    <?= HTMLHelper::_('uitab.startTabSet', 'supply_option_tabs') ?>
+    <?php echo HTMLHelper::_('uitab.startTabSet', 'supply_option_tabs') ?>
     <?php
     $varieddata = $this->item->varied_data;
     $tabid      = 0;

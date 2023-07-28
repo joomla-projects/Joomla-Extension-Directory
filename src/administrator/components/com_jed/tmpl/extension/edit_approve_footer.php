@@ -16,6 +16,6 @@ use Joomla\CMS\Language\Text;
 <button type="button" class="btn" data-bs-dismiss="modal">
     <?php echo Text::_('JCANCEL'); ?>
 </button>
-<button type="button" class="btn btn-success" onclick="jed.submitApprovedState(<?php echo $this->extension->id; ?>);">
+<button type="button" class="btn btn-success" onclick="jed.submitApprovedState(<?php echo $this->item->id; ?>);">
     <?php echo Text::_('JAPPLY'); ?>
 </button>

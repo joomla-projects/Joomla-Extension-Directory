@@ -403,7 +403,7 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                                 ?>
                             </td>
                             <td>
-                                
+
                                 <?php echo HTMLHelper::_('date', $item->created_on, Text::_('COM_JED_DATETIME_FORMAT')); ?>
                             </td>
                             <td>

@@ -19,6 +19,7 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\Model\ExtensionModel;
 use Jed\Component\Jed\Administrator\Model\ExtensionvarieddatumModel;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Object\CMSObject;
@@ -34,7 +35,7 @@ class HtmlView extends BaseHtmlView
     public mixed $extensionvarieddata;
     protected CMSObject $state;
     protected mixed $item;
-    protected mixed $form;
+    protected Form $form;
     protected mixed $forms;
     protected mixed $extension;
     protected mixed $extensionimages;
@@ -60,21 +61,11 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null)
     {
-        $extension_model  = new ExtensionModel();
         $this->state      = $this->get('State');
-        $this->extension  = $this->get('Item', 'Extension');
-        $this->form       = $extension_model->getForm($this->extension, false, 'extension_form');
-        $this->form->bind($this->extension);
-        $this->extension->extension_form = $this->form;
+        $this->item       = $this->get('Item');
+        $this->form       = $this->get('Form');
 
-        $extensionvarieddatum             = new ExtensionvarieddatumModel();
-        $this->extensionvarieddata        = $this->extension->varied_data;
-        $this->extensionvarieddatum_form  = $extensionvarieddatum->getForm($this->extensionvarieddata, false, 'extension_varieddata_form');
-        $this->extensionvarieddatum_form->bind($this->extensionvarieddata);
-        $this->extension->varied_form = $this->extensionvarieddatum_form;
-
-
-        //echo "<pre>";print_r($this->extension);echo "</pre>";exit();
+        //echo "<pre>";print_r($this->item);echo "</pre>";exit();
         /*    $this->extensionimages  = $this->get('Item', 'Extensionimages');
 
             $this->extensionscores            = $this->get('Item', 'Extensionscores');
@@ -120,10 +111,10 @@ class HtmlView extends BaseHtmlView
         Factory::getApplication()->input->set('hidemainmenu', true);
 
         $user  = JedHelper::getUser();
-        $isNew = ($this->extension->id == 0);
+        $isNew = ($this->item->id == 0);
 
-        if (isset($this->extension->checked_out)) {
-            $checkedOut = !($this->extension->checked_out == 0 || $this->extension->checked_out == $user->get('id'));
+        if (isset($this->item->checked_out)) {
+            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
         } else {
             $checkedOut = false;
         }
@@ -147,9 +138,7 @@ class HtmlView extends BaseHtmlView
             ToolbarHelper::custom('extension.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
         }
 
-
-
-        if (empty($this->extension->id)) {
+        if (empty($this->item->id)) {
             ToolbarHelper::cancel('extension.cancel', 'JTOOLBAR_CANCEL');
         } else {
             ToolbarHelper::cancel('extension.cancel', 'JTOOLBAR_CLOSE');
