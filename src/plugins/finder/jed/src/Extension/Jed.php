@@ -344,27 +344,7 @@ final class Jed extends Adapter
 
         // Check if we can use the supplied SQL query.
         $query = $query instanceof DatabaseQuery ? $query : $db->getQuery(true)
-            ->select('a.*');
-
-        // Handle the alias CASE WHEN portion of the query
-        $case_when_item_alias = ' CASE WHEN ';
-        $case_when_item_alias .= $query->charLength('a.alias', '!=', '0');
-        $case_when_item_alias .= ' THEN ';
-        $a_id = $query->castAsChar('a.id');
-        $case_when_item_alias .= $query->concatenate([$a_id, 'a.alias'], ':');
-        $case_when_item_alias .= ' ELSE ';
-        $case_when_item_alias .= $a_id . ' END as slug';
-        $query->select($case_when_item_alias);
-
-        $case_when_category_alias = ' CASE WHEN ';
-        $case_when_category_alias .= $query->charLength('c.alias', '!=', '0');
-        $case_when_category_alias .= ' THEN ';
-        $c_id = $query->castAsChar('c.id');
-        $case_when_category_alias .= $query->concatenate([$c_id, 'c.alias'], ':');
-        $case_when_category_alias .= ' ELSE ';
-        $case_when_category_alias .= $c_id . ' END as catslug';
-        $query->select($case_when_category_alias)
-
+            ->select('a.*')
             ->select('u.name AS author')
             ->from('#__jed_extensions AS a')
             ->join('LEFT', '#__categories AS c ON c.id = a.primary_category_id')
