@@ -237,10 +237,10 @@ class JedticketModel extends AdminModel
 
         // Select all fields
 
-        $query->select('a.*, `b`.`title`, `b`.`alias`');
+        $query->select('a.*'); // `b`.`title`, `b`.`alias`');
 
         $query->from($db->quoteName('#__jed_extensions', 'a'));
-        $query->join("inner", "`#__jed_extension_varied_data` as b", "`b`.`extension_id` = `a`.`id`");
+    //    $query->join("inner", "`#__jed_extension_varied_data` as b", "`b`.`extension_id` = `a`.`id`");
 
         $query->where('a.created_by = ' . $ticket_creator);
 

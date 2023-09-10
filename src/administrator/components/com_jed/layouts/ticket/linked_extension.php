@@ -16,6 +16,7 @@
 // phpcs:enable PSR1.Files.SideEffects
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -27,7 +28,7 @@ $fieldhiddenoptions = ['hidden' => true];
 
 $extension_form = $displayData->extension_form;
 $title          = $extension_form->getField('title') ? 'title' : ($extension_form->getField('name') ? 'name' : '');
-
+JedHelper::lockFormFields($extension_form, array(''));
 ?>
     <div class="row title-alias form-vertical mb-3">
         <div class="col-12 col-md-6">
@@ -51,6 +52,7 @@ echo HTMLHelper::_(
         <div class="span9">
             <div class="form-horizontal">
                 <?php echo $extension_form->renderFieldset('info'); ?>
+
             </div>
         </div>
         <div class="span3">
@@ -59,6 +61,26 @@ echo HTMLHelper::_(
             </div>
         </div>
     </div>
+<?php echo HTMLHelper::_('uitab.endTab');
+echo HTMLHelper::_(
+	'uitab.addTab',
+	'viewExtensionDescriptionTab',
+	'general',
+	Text::_('COM_JED_EXTENSIONS_DESCRIPTION_TAB')
+); ?>
+<div class="row-fluid form-horizontal-desktop">
+    <div class="span9">
+        <div class="form-horizontal">
+
+			<?php echo $extension_form->renderFieldset('description'); ?>
+        </div>
+    </div>
+    <div class="span3">
+        <div class="form-vertical">
+			<?php // echo $this->form->renderFieldset('publication');?>
+        </div>
+    </div>
+</div>
 <?php echo HTMLHelper::_('uitab.endTab');
 
 /*

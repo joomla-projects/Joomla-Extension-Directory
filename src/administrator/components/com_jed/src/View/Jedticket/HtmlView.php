@@ -20,7 +20,6 @@ namespace Jed\Component\Jed\Administrator\View\Jedticket;
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\Model\ExtensionModel;
-use Jed\Component\Jed\Administrator\Model\ExtensionvarieddatumModel;
 use Jed\Component\Jed\Administrator\Model\ReviewModel;
 use Jed\Component\Jed\Administrator\Model\VelabandonedreportModel;
 use Jed\Component\Jed\Administrator\Model\VeldeveloperupdateModel;
@@ -122,22 +121,6 @@ class HtmlView extends BaseHtmlView
      */
     protected mixed $linked_extension_data;
 
-    /**
-     * The linked extension varied data
-     *
-     * @var    mixed
-     *
-     * @since  4.0.0
-     */
-    protected mixed $linked_extension_varieddata;
-    /**
-     * The linked extension varied data  form
-     *
-     * @var    Form
-     *
-     * @since  4.0.0
-     */
-    protected mixed $linked_extension_varieddata_form;
     /**
      * Ticket Help
      *
@@ -269,7 +252,7 @@ class HtmlView extends BaseHtmlView
             $this->linked_extension_data->extension_form = $this->linked_extension_form;
 
 
-            $extensionvarieddatum                   = new ExtensionvarieddatumModel();
+        /*    $extensionvarieddatum                   = new ExtensionvarieddatumModel();
             $this->linked_extension_varieddata      = $this->linked_extension_data->varied_data[$this->linked_item_data[0]->supply_type];
             $this->linked_extension_varieddata_form = $extensionvarieddatum->getForm(
                 $this->linked_extension_varieddata,
@@ -278,7 +261,7 @@ class HtmlView extends BaseHtmlView
             );
 
             $this->linked_extension_varieddata_form->bind($this->linked_extension_varieddata);
-            $this->linked_extension_data->varied_form = $this->linked_extension_varieddata_form;
+            $this->linked_extension_data->varied_form = $this->linked_extension_varieddata_form;*/
         }
         if ($this->linked_item_type === 4) { // VEL Report
             $this->linked_item_Model = new VelreportModel();

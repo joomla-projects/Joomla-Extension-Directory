@@ -168,9 +168,9 @@ class ExtensionModel extends AdminModel
         $query->select('supply_options.id AS supply_id, supply_options.title AS supply_type')
             ->from($db->quoteName('#__jed_extension_supply_options', 'supply_options'))
             ->where($db->quoteName('id') . ' < 3');
-        $query2->select('supply_options.id AS supply_id, supply_options.title AS supply_type')
+        $query2->select('supply_option_id AS supply_id, supply_options.title AS supply_type')
             //  $query2->select('"3" AS supply_id, "Cloud/Service" AS supply_type')
-            ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
+            ->from($db->quoteName('#__jed_extension', 'a'))
             ->join(
                 'LEFT',
                 $db->quoteName(
