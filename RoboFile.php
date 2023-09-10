@@ -13,7 +13,7 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-use Joomla\Jorobo\Tasks\loadTasks as loadReleaseTasks;
+use Joomla\Jorobo\Tasks\Tasks as loadReleaseTasks;
 use Robo\Tasks;
 
 require_once 'vendor/autoload.php';
@@ -29,7 +29,7 @@ if (!defined('JPATH_BASE')) {
  *
  * @since    1.0
  */
-class RoboFile extends Tasks
+class RoboFile extends \Robo\Tasks
 {
     // Load tasks from composer, see composer.json
     use loadReleaseTasks;
