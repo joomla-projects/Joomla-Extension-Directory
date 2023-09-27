@@ -130,77 +130,68 @@ $this->document->getWebAssetManager()
     </div>
 
     <?php echo HTMLHelper::_('uitab.startTabSet', 'supply_option_tabs') ?>
-    <?php
-    $varieddata = $this->item->varied_data;
-    $tabid      = 0;
-    foreach ($varieddata as $vr) {
-        //  echo "<pre>";print_r($vr);echo "</pre>";
-        echo HTMLHelper::_('uitab.addTab', 'supply_option_tabs', 'supply_tab_' . $vr->supply_type, $vr->supply_type);
-        $subItemId  = md5(serialize($vr));
-        ?>
-        <div class="jed-wrapper jed-extension margin-bottom">
-            <div class="jed-extension__image">
-                <?php if ($vr->logo) : ?>
-                    <img src="<?= $this->item->logo ?>" alt="<?= $this->escape($this->item->title) ?>"
-                         class="rounded img-fluid mx-auto d-block" style="max-height: 525px">
-                <?php endif; ?>
+    <?php echo HTMLHelper::_('uitab.addTab', 'supply_option_tabs', 'supply_tab_' . $this->item->supply_type, $this->item->supply_type); ?>
+    <div class="jed-wrapper jed-extension margin-bottom">
+        <div class="jed-extension__image">
+            <?php if ($this->item->logo) : ?>
+                <img src="<?= $this->item->logo ?>" alt="<?= $this->escape($this->item->title) ?>"
+                     class="rounded img-fluid mx-auto d-block" style="max-height: 525px">
+            <?php endif; ?>
+        </div>
+        <div class="jed-grid jed-grid--2-1 margin-bottom">
+            <div class="jed-grid__item">
+                <div class="jed-subitem-intro mb-2">
+                    <?= $this->item->intro_text ?>
+                    <?php if (!empty(trim(strip_tags($this->item->description)))) : ?>
+                        <?php HTMLHelper::_('bootstrap.collapse') ?>
+                        <button type="button" class="btn btn-sm btn-outline-secondary my-2"
+                                data-bs-toggle="collapse" href="#description"
+                                aria-expanded="false" aria-controls="description"
+                        >
+                            Show/hide
+                        </button>
+                    <?php endif ?>
+                </div>
+
+                <div class="jed-subitem-description mb-2 collapse" id="description">
+                <?= $this->item->description ?>
+                </div>
+
+                <p class="button-group">
+                    <a href="<?= $this->item->homepage_link ?>" class="button button--grey">Website</a>
+                    <a href="<?= $this->item->demo_link ?>" class="button button--grey">Demo</a>
+                    <a href="<?= $this->item->documentation_link ?>" class="button button--grey">Documentation</a>
+                    <a href="<?= $this->item->support_link ?>" class="button button--grey">Support</a>
+                    <a href="<?= $this->item->license_link ?>" class="button button--grey">License</a>
+                </p>
             </div>
-            <div class="jed-grid jed-grid--2-1 margin-bottom">
-                <div class="jed-grid__item">
-                    <div class="jed-subitem-intro mb-2">
-                        <?= $vr->intro_text ?>
-                        <?php if (!empty(trim(strip_tags($vr->description)))) : ?>
-                            <?php HTMLHelper::_('bootstrap.collapse') ?>
-                            <button type="button" class="btn btn-sm btn-outline-secondary my-2"
-                                    data-bs-toggle="collapse" href="#description-<?= $subItemId ?>"
-                                    aria-expanded="false" aria-controls="description-<?= $subItemId ?>"
-                            >
-                                Show/hide
-                            </button>
-                        <?php endif ?>
-                    </div>
-
-                    <div class="jed-subitem-description mb-2 collapse" id="description-<?= $subItemId ?>">
-                    <?= $vr->description ?>
-                    </div>
-
-                    <p class="button-group">
-                        <a href="<?= $vr->homepage_link ?>" class="button button--grey">Website</a>
-                        <a href="<?= $vr->demo_link ?>" class="button button--grey">Demo</a>
-                        <a href="<?= $vr->documentation_link ?>" class="button button--grey">Documentation</a>
-                        <a href="<?= $vr->support_link ?>" class="button button--grey">Support</a>
-                        <a href="<?= $vr->license_link ?>" class="button button--grey">License</a>
-                    </p>
-                </div>
-                <div class="jed-grid__item">
-                    <p>
-                        <span class="button-group display-block align-right">
-                            <a href="#" class="button button--grey">Report</a>
-                            <a href="#" class="button button--grey">Share</a>
-                        </span>
-                    </p>
-                </div>
-            </div>
-
-            <div class="jed-grid jed-grid--1-2">
-                <div class="jed-grid__item">
-                    <h2 class="heading heading--m">Reviews for free version</h2>
-                    <strong>4.0</strong>
-                    <div class="stars">
-                        <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
-                        <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
-                        <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
-                        <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
-                        <div class="star"><span aria-hidden="true" class="icon-star-empty"></span></div>
-                    </div>
-                    <a href="#">132 reviews</a>
-                </div>
-
+            <div class="jed-grid__item">
+                <p>
+                    <span class="button-group display-block align-right">
+                        <a href="#" class="button button--grey">Report</a>
+                        <a href="#" class="button button--grey">Share</a>
+                    </span>
+                </p>
             </div>
         </div>
-        <?= HTMLHelper::_('uitab.endTab');
-    }
-    ?>
+
+        <div class="jed-grid jed-grid--1-2">
+            <div class="jed-grid__item">
+                <h2 class="heading heading--m">Reviews for free version</h2>
+                <strong>4.0</strong>
+                <div class="stars">
+                    <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
+                    <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
+                    <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
+                    <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
+                    <div class="star"><span aria-hidden="true" class="icon-star-empty"></span></div>
+                </div>
+                <a href="#">132 reviews</a>
+            </div>
+
+        </div>
+    </div>
+    <?= HTMLHelper::_('uitab.endTab'); ?>
 </article>
 </div>
 
