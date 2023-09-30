@@ -114,7 +114,7 @@ class ExtensionModel extends AdminModel
             $this->getDatabase()->setQuery($query);
             $item->images = $this->getDatabase()->loadObjectList();
 
-            $item->includes = json_decode($item->includes);
+            $item->includes        = json_decode($item->includes);
             $item->joomla_versions = json_decode($item->joomla_versions);
         }
 

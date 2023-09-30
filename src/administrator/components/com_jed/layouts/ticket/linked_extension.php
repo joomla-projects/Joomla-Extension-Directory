@@ -63,10 +63,10 @@ echo HTMLHelper::_(
     </div>
 <?php echo HTMLHelper::_('uitab.endTab');
 echo HTMLHelper::_(
-	'uitab.addTab',
-	'viewExtensionDescriptionTab',
-	'general',
-	Text::_('COM_JED_EXTENSIONS_DESCRIPTION_TAB')
+    'uitab.addTab',
+    'viewExtensionDescriptionTab',
+    'general',
+    Text::_('COM_JED_EXTENSIONS_DESCRIPTION_TAB')
 ); ?>
 <div class="row-fluid form-horizontal-desktop">
     <div class="span9">

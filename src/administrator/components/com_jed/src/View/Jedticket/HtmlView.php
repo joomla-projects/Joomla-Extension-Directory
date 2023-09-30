@@ -252,7 +252,8 @@ class HtmlView extends BaseHtmlView
             $this->linked_extension_data->extension_form = $this->linked_extension_form;
 
 
-        /*    $extensionvarieddatum                   = new ExtensionvarieddatumModel();
+            /*
+            $extensionvarieddatum                   = new ExtensionvarieddatumModel();
             $this->linked_extension_varieddata      = $this->linked_extension_data->varied_data[$this->linked_item_data[0]->supply_type];
             $this->linked_extension_varieddata_form = $extensionvarieddatum->getForm(
                 $this->linked_extension_varieddata,
@@ -261,7 +262,8 @@ class HtmlView extends BaseHtmlView
             );
 
             $this->linked_extension_varieddata_form->bind($this->linked_extension_varieddata);
-            $this->linked_extension_data->varied_form = $this->linked_extension_varieddata_form;*/
+            $this->linked_extension_data->varied_form = $this->linked_extension_varieddata_form;
+            */
         }
         if ($this->linked_item_type === 4) { // VEL Report
             $this->linked_item_Model = new VelreportModel();
