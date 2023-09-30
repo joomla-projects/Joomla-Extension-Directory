@@ -421,7 +421,7 @@ class CategoryModel extends ListModel
             if (isset($this->state->params)) {
                 $params                = $this->state->params;
                 $options               = [];
-                $options['countItems'] = $params->get('show_cat_num_articles', 1) || !$params->get('show_empty_categories_cat',0);
+                $options['countItems'] = $params->get('show_cat_num_articles', 1) || !$params->get('show_empty_categories_cat', 0);
                 $options['access']     = $params->get('check_access_rights', 1);
             } else {
                 $options['countItems'] = 0;
