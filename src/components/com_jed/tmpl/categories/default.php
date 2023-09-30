@@ -30,9 +30,7 @@ HTMLHelper::_('bootstrap.tooltip');
         ?>
     <div class="container">
         <div class="row gx-5">
-            <?php
-            foreach ($this->items as $c) {
-            ?>
+            <?php foreach ($this->items as $c) : ?>
                 <div class="col-lg-4 mb-3 card jed-home-category">
                     <div class="card-header jed-home-item-view">
                         <span class="jed-home-category-icon fa fa-camera rounded-circle bg-warning p-2 text-white d-inline-block"></span>
@@ -58,7 +56,7 @@ HTMLHelper::_('bootstrap.tooltip');
                         </ul>
                     </div>
                 </div>
-            <?php } ?>
+            <?php endforeach; ?>
         </div>
     </div>
     <?php } ?>
