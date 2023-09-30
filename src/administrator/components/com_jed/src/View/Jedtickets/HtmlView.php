@@ -22,11 +22,11 @@ use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
+use Joomla\Registry\Registry;
 
 /**
  * View class for a list of JED Tickets.
@@ -43,11 +43,11 @@ class HtmlView extends BaseHtmlView
     /**
      * The model state
      *
-     * @var  CMSObject
+     * @var  Registry
      *
      * @since 4.0.0
      */
-    protected CMSObject $state;
+    protected Registry $state;
 
     /**
      * Add the page title and toolbar.
