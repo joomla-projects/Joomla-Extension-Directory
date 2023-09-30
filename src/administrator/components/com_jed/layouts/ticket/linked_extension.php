@@ -28,7 +28,7 @@ $fieldhiddenoptions = ['hidden' => true];
 
 $extension_form = $displayData->extension_form;
 $title          = $extension_form->getField('title') ? 'title' : ($extension_form->getField('name') ? 'name' : '');
-JedHelper::lockFormFields($extension_form, array(''));
+JedHelper::lockFormFields($extension_form, ['']);
 ?>
     <div class="row title-alias form-vertical mb-3">
         <div class="col-12 col-md-6">
@@ -63,10 +63,10 @@ echo HTMLHelper::_(
     </div>
 <?php echo HTMLHelper::_('uitab.endTab');
 echo HTMLHelper::_(
-	'uitab.addTab',
-	'viewExtensionDescriptionTab',
-	'general',
-	Text::_('COM_JED_EXTENSIONS_DESCRIPTION_TAB')
+    'uitab.addTab',
+    'viewExtensionDescriptionTab',
+    'general',
+    Text::_('COM_JED_EXTENSIONS_DESCRIPTION_TAB')
 ); ?>
 <div class="row-fluid form-horizontal-desktop">
     <div class="span9">
@@ -89,35 +89,35 @@ echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'viewextension', Text::_(
 
 JedHelper::lockFormFields($extension_form, array(''));
 
-        //       echo $extension_form->renderField('title',null,null);
-            //   echo $extension_form->renderField('alias',null,null);
-                 echo $extension_form->renderField('published',null,null);
-                 echo $extension_form->renderField('created_by',null,null);
-                 echo $extension_form->renderField('modified_by',null,null);
-                 echo $extension_form->renderField('created_on',null,null);
-                 echo $extension_form->renderField('modified_on',null,null);
-            //   echo $extension_form->renderField('joomla_versions',null,null);
-                 echo $extension_form->renderField('popular',null,null);
-                 echo $extension_form->renderField('requires_registration',null,null);
-                 echo $extension_form->renderField('gpl_license_type',null,null);
-                 echo $extension_form->renderField('jed_internal_note',null,null);
-                 echo $extension_form->renderField('can_update',null,null);
-                 echo $extension_form->renderField('video',null,null);
-                 echo $extension_form->renderField('version',null,null);
-                 echo $extension_form->renderField('uses_updater',null,null);
-        //       echo $extension_form->renderField('includes',null,null);
-                 echo $extension_form->renderField('approved',null,null);
-                 echo $extension_form->renderField('approved_time',null,null);
-                 echo $extension_form->renderField('second_contact_email',null,null);
-                 echo $extension_form->renderField('jed_checked',null,null);
-                 echo $extension_form->renderField('uses_third_party',null,null);
-                 echo $extension_form->renderField('primary_category_id',null,null);
-                 echo $extension_form->renderField('logo',null,null);
-                 echo $extension_form->renderField('approved_notes',null,null);
-                 echo $extension_form->renderField('approved_reason',null,null);
-                 echo $extension_form->renderField('published_notes',null,null);
-                 echo $extension_form->renderField('published_reason',null,null);
-                 echo $extension_form->renderField('state',null,null);
+// echo $extension_form->renderField('title',null,null);
+// echo $extension_form->renderField('alias',null,null);
+echo $extension_form->renderField('published',null,null);
+echo $extension_form->renderField('created_by',null,null);
+echo $extension_form->renderField('modified_by',null,null);
+echo $extension_form->renderField('created_on',null,null);
+echo $extension_form->renderField('modified_on',null,null);
+// echo $extension_form->renderField('joomla_versions',null,null);
+echo $extension_form->renderField('popular',null,null);
+echo $extension_form->renderField('requires_registration',null,null);
+echo $extension_form->renderField('gpl_license_type',null,null);
+echo $extension_form->renderField('jed_internal_note',null,null);
+echo $extension_form->renderField('can_update',null,null);
+echo $extension_form->renderField('video',null,null);
+echo $extension_form->renderField('version',null,null);
+echo $extension_form->renderField('uses_updater',null,null);
+// echo $extension_form->renderField('includes',null,null);
+echo $extension_form->renderField('approved',null,null);
+echo $extension_form->renderField('approved_time',null,null);
+echo $extension_form->renderField('second_contact_email',null,null);
+echo $extension_form->renderField('jed_checked',null,null);
+echo $extension_form->renderField('uses_third_party',null,null);
+echo $extension_form->renderField('primary_category_id',null,null);
+echo $extension_form->renderField('logo',null,null);
+echo $extension_form->renderField('approved_notes',null,null);
+echo $extension_form->renderField('approved_reason',null,null);
+echo $extension_form->renderField('published_notes',null,null);
+echo $extension_form->renderField('published_reason',null,null);
+echo $extension_form->renderField('state',null,null);
 echo HTMLHelper::_('uitab.endTab'); */
 
 $varied_form = $displayData->varied_form;

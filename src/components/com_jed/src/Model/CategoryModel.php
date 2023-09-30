@@ -205,9 +205,7 @@ class CategoryModel extends ListModel
 
         // Set limit for query. If list, use parameter. If blog, add blog parameters for limit.
         if (($app->getInput()->get('layout') === 'blog') || $params->get('layout_type') === 'blog') {
-            $limit = $params->get('num_leading_articles') + $params->get('num_intro_articles') + $params->get(
-                    'num_links'
-                );
+            $limit = $params->get('num_leading_articles') + $params->get('num_intro_articles') + $params->get('num_links');
             $this->setState('list.links', $params->get('num_links'));
         } else {
             $limit = $app->getUserStateFromRequest(
@@ -294,7 +292,7 @@ class CategoryModel extends ListModel
         $query = $db->getQuery(true);
 
         $recursive  = false;
-        $options = ['countItems' => 1];
+        $options    = ['countItems' => 1];
         $categories = Categories::getInstance('Jed', $options);
 
         $this->_parent = $categories->get($this->getState('filter.parentId', 'root'));
@@ -423,10 +421,7 @@ class CategoryModel extends ListModel
             if (isset($this->state->params)) {
                 $params                = $this->state->params;
                 $options               = [];
-                $options['countItems'] = $params->get('show_cat_num_articles', 1) || !$params->get(
-                        'show_empty_categories_cat',
-                        0
-                    );
+                $options['countItems'] = $params->get('show_cat_num_articles', 1) || !$params->get('show_empty_categories_cat', 0);
                 $options['access']     = $params->get('check_access_rights', 1);
             } else {
                 $options['countItems'] = 0;

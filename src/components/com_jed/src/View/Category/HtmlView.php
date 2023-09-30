@@ -48,11 +48,13 @@ class HtmlView extends CategoryView
 
         $app = Factory::getApplication();
 
-/**        $this->state      = $this->get('State');
+        /*
+        $this->state   = $this->get('State');
         $this->items      = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->params     = $app->getParams();
-**/
+        */
+
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {
             throw new Exception(implode("\n", $errors));

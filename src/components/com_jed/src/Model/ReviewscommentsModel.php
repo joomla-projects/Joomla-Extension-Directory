@@ -56,11 +56,11 @@ class ReviewscommentsModel extends ListModel
     }
 
 
-       /**
-        * Checks whether or not a user is manager or super user
-        *
-        * @return bool
-        */
+    /**
+    * Checks whether or not a user is manager or super user
+    *
+    * @return bool
+    */
     public function isAdminOrSuperUser()
     {
         try {

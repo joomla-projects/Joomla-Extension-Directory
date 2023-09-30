@@ -88,7 +88,7 @@ class CategoriesModel extends ListModel
         $query = $db->getQuery(true);
 
         $recursive  = false;
-        $options = ['countItems' => 1];
+        $options    = ['countItems' => 1];
         $categories = Categories::getInstance('Jed', $options);
 
         $this->_parent = $categories->get($this->getState('filter.parentId', 'root'));
@@ -144,7 +144,7 @@ class CategoriesModel extends ListModel
         $this->_items = $list;
 
         return $list;**/
-    return $this->_parent->getChildren();
+        return $this->_parent->getChildren();
     }
 
     /**
@@ -172,8 +172,6 @@ class CategoriesModel extends ListModel
      */
     public function getTotal(): int
     {
-
-
         if (empty($this->_total)) {
             $this->_total = count($this->_items());
         }

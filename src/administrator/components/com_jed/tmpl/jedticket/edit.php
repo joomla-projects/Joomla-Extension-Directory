@@ -251,7 +251,7 @@ $userFactory = $container->get('user.factory');
         echo HTMLHelper::_('uitab.endTab');
     }
     if ($add_extension_tab == true) {
-        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension ('.$this->linked_extension_data->type.')');
+        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension (' . $this->linked_extension_data->type . ')');
 
         echo LayoutHelper::render('ticket.linked_extension', $this->linked_extension_data);
 

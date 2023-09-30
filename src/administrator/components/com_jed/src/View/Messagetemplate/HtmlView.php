@@ -21,7 +21,7 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
@@ -38,7 +38,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected CMSObject $state;
+    protected Registry $state;
 
     /**
      * The item object
