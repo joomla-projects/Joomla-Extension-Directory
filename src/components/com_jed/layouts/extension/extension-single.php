@@ -23,25 +23,10 @@ use Joomla\CMS\Layout\LayoutHelper;
 ?>
 
 <div class="jed-cards-wrapper margin-bottom-half">
-    <h2 class="heading heading--m">Other extensions by PWT Extensions (3)</h2>
+    <h2 class="heading heading--m">Other extensions by Dummy Company</h2>
     <div class="jed-container">
         <ul class="jed-grid jed-grid--1-1-1">
-            <?php for ($i = 0; $i < 3; $i++) : ?>
-                <?php echo LayoutHelper::render(
-                    'cards.extension',
-                    [
-                                    'image'         => '',
-                                    'title'         => 'Dummy Extension',
-                                    'developer'     => 'Dummy Company',
-                                    'rating'        => 5,
-                                    'reviews'       => 1061,
-                                    'compatibility' => ['3', '4 alpha'],
-                                    'description'   => 'Dummy Text',
-                                    'type'          => 'Free',
-                                    'link'          => '#'
-                                    ]
-                ) ?>
-            <?php endfor; ?>
+            <p>Data goes here</p>
         </ul>
     </div>
 </div>
@@ -50,23 +35,7 @@ use Joomla\CMS\Layout\LayoutHelper;
     <div class="jed-container">
         <h2 class="heading heading--m">You might also be interested in</h2>
         <ul class="jed-grid jed-grid--1-1-1">
-            <?php for ($i = 0; $i < 3; $i++) : ?>
-                <?php echo LayoutHelper::render(
-                    'cards.extension',
-                    'cards.extension',
-                    [
-                        'image'         => '',
-                        'title'         => 'Dummy Extension',
-                        'developer'     => 'Dummy Company',
-                        'rating'        => 5,
-                        'reviews'       => 1061,
-                        'compatibility' => ['3', '4 alpha'],
-                        'description'   => 'Dummy Text',
-                        'type'          => 'Free',
-                        'link'          => '#'
-                    ]
-                ) ?>
-            <?php endfor; ?>
+            <p>Data goes here</p>
         </ul>
     </div>
 </div>
