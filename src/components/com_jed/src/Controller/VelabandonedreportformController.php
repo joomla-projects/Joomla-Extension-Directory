@@ -119,7 +119,7 @@ class VelabandonedreportformController extends FormController
         $model = $this->getModel('Velabandonedreportform', 'Site');
 
         // Get the user data.
-        $data = $this->input->get('jform', array(), 'array');
+        $data = $this->input->get('jform', [], 'array');
 
         // Validate the posted data.
         $form = $model->getForm();
@@ -132,7 +132,7 @@ class VelabandonedreportformController extends FormController
         $objData = (object) $data;
         $this->app->triggerEvent(
             'onContentNormaliseRequestData',
-            array($this->option . '.' . $this->context, $objData, $form)
+            [$this->option . '.' . $this->context, $objData, $form]
         );
         $data = (array) $objData;
 
@@ -153,7 +153,7 @@ class VelabandonedreportformController extends FormController
                 }
             }
 
-            $jform = $this->input->get('jform', array(), 'ARRAY');
+            $jform = $this->input->get('jform', [], 'ARRAY');
 
             // Save the data in the session.
             $this->app->setUserState('com_jed.edit.velabandonedreport.data', $jform);
