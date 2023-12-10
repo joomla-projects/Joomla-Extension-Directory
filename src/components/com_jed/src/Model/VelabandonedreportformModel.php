@@ -62,7 +62,7 @@ class VelabandonedreportformModel extends FormModel
      * @param array $data     An optional array of data for the form to interogate.
      * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return Form    A Form object on success, false on failure
+     * @return mixed    A Form object on success, false on failure
      *
      * @since  4.0.0
      * @throws Exception
@@ -106,7 +106,7 @@ class VelabandonedreportformModel extends FormModel
             $properties = $table->getProperties();
             $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
-            if ($table !== false && $table->load($id) && !empty($table->id)) {
+            if ($table->load($id) && !empty($table->id)) {
                 $user = Factory::getApplication()->getIdentity();
                 $id   = $table->id;
                 if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
@@ -213,7 +213,7 @@ class VelabandonedreportformModel extends FormModel
      * @since  4.0.0
      * @throws Exception
      */
-    protected function loadFormData()
+    protected function loadFormData(): array
     {
         $data = Factory::getApplication()->getUserState('com_jed.edit.velabandonedreport.data', []);
 
@@ -273,7 +273,7 @@ class VelabandonedreportformModel extends FormModel
      *
      * @throws Exception
      */
-    protected function populateState()
+    protected function populateState(): void
     {
         $app = Factory::getApplication();
 

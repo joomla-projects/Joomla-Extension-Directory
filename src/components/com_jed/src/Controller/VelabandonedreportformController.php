@@ -44,7 +44,7 @@ class VelabandonedreportformController extends FormController
     public function cancel($key = null): void
     {
         // Get the current edit id.
-        $editId = (int) $app->getUserState('com_jed.edit.velabandonedreport.id');
+        $editId = (int) $this->app->getUserState('com_jed.edit.velabandonedreport.id');
 
         // Get the model.
         $model = $this->getModel('Velabandonedreportform', 'Site');
@@ -74,7 +74,6 @@ class VelabandonedreportformController extends FormController
      */
     public function edit($key = null, $urlVar = null): void
     {
-        $app = Factory::getApplication();
 
         // Get the previous edit id (if any) and the current edit id.
         $previousId = (int) $this->app->getUserState('com_jed.edit.velabandonedreport.id');
@@ -148,8 +147,6 @@ class VelabandonedreportformController extends FormController
             // Push up to three validation messages out to the user.
             for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++) {
                 if ($errors[$i] instanceof Exception) {
-                    $this->app->enqueueMessage($errors[$i]->getMessage(), 'warning');
-                } else {
                     $this->app->enqueueMessage($errors[$i]->getMessage(), 'warning');
                 } else {
                     $this->app->enqueueMessage($errors[$i], 'warning');
