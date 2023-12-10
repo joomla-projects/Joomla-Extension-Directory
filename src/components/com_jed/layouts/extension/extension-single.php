@@ -20,12 +20,6 @@ use Joomla\CMS\Layout\LayoutHelper;
  * @var array        $displayData
  */
 
-/**
-*
- *
- * @var array $displayData
-*/
-
 ?>
 
 <div class="jed-cards-wrapper margin-bottom-half">
@@ -36,17 +30,16 @@ use Joomla\CMS\Layout\LayoutHelper;
                 <?php echo LayoutHelper::render(
                     'cards.extension',
                     [
-                                                    'image'         => 'https://extensionscdn.joomla.org/cache/fab_image/596c962509d22_resizeDown400px175px16.jpg',
-                                                    'title'         => 'Akeeba Backup',
-                                                    'developer'     => 'Akeeba Ltd',
-                                                    'rating'        => 5,
-                                                    'reviews'       => 1061,
-                                                    'compatibility' => ['3', '4 alpha'],
-                                                    'description'   => 'Akeeba Backup Core is the most widely used open-source backup component for the Joomla! CMS. Its mission is simple: create a site backup that can be restored on any Joomla!-capable server.',
-                                                    'type'          => 'Free',
-                                                    'category'      => 'Site Security',
-                                                    'link'          => '#',
-                                                    ]
+                                    'image'         => '',
+                                    'title'         => 'Dummy Extension',
+                                    'developer'     => 'Dummy Company',
+                                    'rating'        => 5,
+                                    'reviews'       => 1061,
+                                    'compatibility' => ['3', '4 alpha'],
+                                    'description'   => 'Dummy Text',
+                                    'type'          => 'Free',
+                                    'link'          => '#',
+                                    ]
                 ) ?>
             <?php endfor; ?>
         </ul>
@@ -60,17 +53,17 @@ use Joomla\CMS\Layout\LayoutHelper;
             <?php for ($i = 0; $i < 3; $i++) : ?>
                 <?php echo LayoutHelper::render(
                     'cards.extension',
+                    'cards.extension',
                     [
-                    'image'         => 'https://extensionscdn.joomla.org/cache/fab_image/596c962509d22_resizeDown400px175px16.jpg',
-                    'title'         => 'Akeeba Backup',
-                    'developer'     => 'Akeeba Ltd',
-                    'rating'        => 5,
-                    'reviews'       => 1061,
-                    'compatibility' => ['3', '4 alpha'],
-                    'description'   => 'Akeeba Backup Core is the most widely used open-source backup component for the Joomla! CMS. Its mission is simple: create a site backup that can be restored on any Joomla!-capable server.',
-                    'type'          => 'Free',
-                    'category'      => 'Site Security',
-                    'link'          => '#',
+                        'image'         => '',
+                        'title'         => 'Dummy Extension',
+                        'developer'     => 'Dummy Company',
+                        'rating'        => 5,
+                        'reviews'       => 1061,
+                        'compatibility' => ['3', '4 alpha'],
+                        'description'   => 'Dummy Text',
+                        'type'          => 'Free',
+                        'link'          => '#',
                     ]
                 ) ?>
             <?php endfor; ?>
