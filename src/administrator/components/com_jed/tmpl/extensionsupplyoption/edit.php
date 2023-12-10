@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -15,7 +15,6 @@
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 $wa = $this->document->getWebAssetManager();
@@ -30,7 +29,7 @@ HTMLHelper::_('bootstrap.tooltip');
         class="form-validate form-horizontal">
 
 
-    <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'extensionsupplyoption')); ?>
+    <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'extensionsupplyoption']); ?>
     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'extensionsupplyoption', Text::_('COM_JED_EXTENSION_SUPPLY_OPTIONS_TAB', true)); ?>
     <div class="row-fluid">
         <div class="span10 form-horizontal">

@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package           JED
+ * @package JED
  *
- * @subpackage        Tickets
+ * @subpackage Tickets
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license           GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -42,8 +42,8 @@ if ($this->linked_item_type === 3) { //Review
 //->useScript('com_jed.responsive_bootstrap')
 HTMLHelper::_('bootstrap.tooltip');
 
-$headerlabeloptions = array('hiddenLabel' => true);
-$fieldhiddenoptions = array('hidden' => true);
+$headerlabeloptions = ['hiddenLabel' => true];
+$fieldhiddenoptions = ['hidden' => true];
 
 $container   = Factory::getContainer();
 $userFactory = $container->get('user.factory');
@@ -68,7 +68,7 @@ $userFactory = $container->get('user.factory');
 
     <br/>
 
-    <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'ticket')); ?>
+    <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'ticket']); ?>
 
     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'ticket', Text::_('COM_JED_TAB_TICKET', true)); ?>
     <!-- Ticket Summary Tab -->
@@ -82,8 +82,8 @@ $userFactory = $container->get('user.factory');
                     <div class="row">
                         <?php
 
-                        $slidesOptions = array("active" => 'ticket_messages_group' . '_slide' . count($this->ticket_messages) // It is the ID of the active tab.
-                        );
+                        $slidesOptions = ["active" => 'ticket_messages_group' . '_slide' . count($this->ticket_messages), // It is the ID of the active tab.
+                        ];
                         echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_messages_group', $slidesOptions);
 
                         $slideid = 0;
@@ -96,7 +96,7 @@ $userFactory = $container->get('user.factory');
 
                             echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' . $ticketMessage->subject . ' - ' . JedHelper::prettyDate($ticketMessage->created_on) . '</span>', 'ticket_messages_group' . '_slide' . ($slideid++));
                             echo  $ticketMessage->message ;
-                            echo JHtml::_('bootstrap.endSlide');
+                            echo HTMLHelper::_('bootstrap.endSlide');
                         }
                         echo HTMLHelper::_('bootstrap.endAccordion');
 
@@ -147,9 +147,9 @@ $userFactory = $container->get('user.factory');
                     <div class="row">
                         <div class="col"><?php echo $this->form->renderField('created_by', null, null, $headerlabeloptions); ?></div>
                         <div class="col"><?php
-                            echo 'on ';
+                        echo 'on ';
 
-                            echo JedHelper::prettyDate($this->item->created_on);
+                        echo JedHelper::prettyDate($this->item->created_on);
 
 
                         ?></div>
@@ -169,7 +169,7 @@ $userFactory = $container->get('user.factory');
                 <h1>Internal Notes</h1>
                 <div class="container">
                     <?php
-                    $slidesOptions = array();//"active" => "slide0" // It is the ID of the active tab.
+                    $slidesOptions = [];//"active" => "slide0" // It is the ID of the active tab.
 
                     echo HTMLHelper::_('bootstrap.startAccordion', 'internal_notes_group', $slidesOptions);
 
@@ -178,7 +178,7 @@ $userFactory = $container->get('user.factory');
                         $user = JedHelper::getUserById($internalNote->created_by);
                         echo HTMLHelper::_('bootstrap.addSlide', 'internal_notes_group', '' . $internalNote->summary . ' - ' . JedHelper::prettyDate($internalNote->created_on) . ' by ' . $user->name, 'internal_notes_group' . '_slide' . ($slideid++));
                         echo "<p>" . $internalNote->note . "</p>";
-                        echo JHtml::_('bootstrap.endSlide');
+                        echo HTMLHelper::_('bootstrap.endSlide');
                     }
                     echo HTMLHelper::_('bootstrap.endAccordion');
 
@@ -202,7 +202,7 @@ $userFactory = $container->get('user.factory');
 
     <?php
     $add_debug_tab     = false;
-    $add_extension_tab = false;
+    $add_extension_tab     = false;
 
     if ($this->linked_item_type === 1) { /* Unknown Type */
         echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedUnknown', 'Unknown');
@@ -221,9 +221,9 @@ $userFactory = $container->get('user.factory');
     if ($this->linked_item_type === 3) { /* Review */
         echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedReview', 'Linked Review');
 
-        $passdata = array("linked_form" => $this->linked_form,
-                          "linked_data" => $this->linked_item_data,
-                          "extension"   => $this->linked_extension_data);
+        $passdata = ["linked_form"      => $this->linked_form,
+                      "linked_data" => $this->linked_item_data,
+                      "extension"   => $this->linked_extension_data];
         echo LayoutHelper::render('ticket.linked_review', $passdata);
 
         echo HTMLHelper::_('uitab.endTab');
@@ -282,8 +282,8 @@ $userFactory = $container->get('user.factory');
                 <input type="hidden" name="jform[created_by_num]"
                        value="<?php echo $this->item->created_by; ?>"/>
                 <?php echo $this->form->renderField('id'); ?>
-                <?php echo $this->form->renderField('uploaded_files_preview'); //,null,null,$fieldhiddenoptions); ?>
-                <?php echo $this->form->renderField('uploaded_files_location'); //,null,null,$fieldhiddenoptions); ?>
+                <?php echo $this->form->renderField('uploaded_files_preview'); //,null,null,$fieldhiddenoptions);?>
+                <?php echo $this->form->renderField('uploaded_files_location'); //,null,null,$fieldhiddenoptions);?>
                 <?php echo $this->form->renderField('linked_item_type', null, null, $fieldhiddenoptions); ?>
                 <?php echo $this->form->renderField('linked_item_id', null, null, $fieldhiddenoptions); ?>
                 <?php echo $this->form->renderField('parent_id', null, null, $fieldhiddenoptions); ?>

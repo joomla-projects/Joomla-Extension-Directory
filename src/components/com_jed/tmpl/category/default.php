@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -12,11 +12,18 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Site\Helper\JedHelper;
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
-/** @var \Jed\Component\Jed\Site\View\Category\HtmlView $this */
+/**
+*
+ *
+ * @var \Jed\Component\Jed\Site\View\Category\HtmlView $this
+*/
 $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_jed.newjed')
     ->useScript('form.validate');
@@ -24,8 +31,8 @@ HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-$user       = \Jed\Component\Jed\Site\Helper\JedHelper::getUser();
-$userId     = $user->get('id');
+$user       = Factory::getApplication()->getIdentity();
+$userId     = $user->id;
 $listOrder  = $this->state->get('list.ordering');
 $listDirn   = $this->state->get('list.direction');
 $canCreate  = $user->authorise('core.create', 'com_jed');
@@ -36,7 +43,7 @@ $canDelete  = $user->authorise('core.delete', 'com_jed');
 
 // Import CSS
 
-$wa = \Joomla\CMS\Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.jazstyle');
 ?>
 <div class="jed-home-categories">
@@ -81,7 +88,9 @@ $wa->useStyle('com_jed.jazstyle');
         <p class="font-size-s"><?php echo $this->items[0]->category_hierarchy; ?></p>
         <ul class="jed-grid jed-grid--1-1-1">
             <?php foreach ($this->items as $item) : ?>
-                <?php echo \Joomla\CMS\Layout\LayoutHelper::render('cards.extension', [
+                <?php echo LayoutHelper::render(
+                    'cards.extension',
+                    [
                     'image'         => $item->logo,
                     'title'         => $item->title,
                     'developer'     => $item->developer,
@@ -92,8 +101,9 @@ $wa->useStyle('com_jed.jazstyle');
                     'description'   => $item->description,
                     'type'          => $item->type,
                     'category'      => $item->category_title,
-                    'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->primary_category_id, $item->id))
-                ]); ?>
+                    'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->primary_category_id, $item->id)),
+                    ]
+                ); ?>
             <?php endforeach; ?>
         </ul>
     </div>

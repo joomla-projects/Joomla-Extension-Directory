@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\View\Veldeveloperupdate;
@@ -19,6 +19,7 @@ namespace Jed\Component\Jed\Administrator\View\Veldeveloperupdate;
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
@@ -27,14 +28,14 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 /**
  * View class for a VEL Developer Update.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
     /**
      * The model state
      *
-     * @var  object
+     * @var Registry
      *
      * @since 4.0.0
      */
@@ -43,38 +44,37 @@ class HtmlView extends BaseHtmlView
     /**
      * The item object
      *
-     * @var    object
-     * @since  4.0.0
+     * @var   object
+     * @since 4.0.0
      */
     protected mixed $item;
 
     /**
      * The Form object
      *
-     * @var    Form
+     * @var Form
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
-    protected mixed $form;
+    protected Form $form;
 
     /**
      * Add the page title and toolbar.
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
-    protected function addToolbar()
+    protected function addToolbar(): void
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
-        $user  = JedHelper::getUser();
+        $user  = Factory::getApplication()->getIdentity();
         $isNew = ($this->item->id == 0);
 
         if (isset($this->item->checked_out)) {
-            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->id);
         } else {
             $checkedOut = false;
         }
@@ -109,15 +109,14 @@ class HtmlView extends BaseHtmlView
     /**
      * Display the view
      *
-     * @param   string  $tpl  Template name
+     * @param string $tpl Template name
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
         $this->state = $this->get('State');
         $this->item  = $this->get('Item');

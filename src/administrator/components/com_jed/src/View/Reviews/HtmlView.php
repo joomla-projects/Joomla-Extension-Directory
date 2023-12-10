@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\View\Reviews;
@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Administrator\View\Reviews;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
@@ -27,7 +28,7 @@ use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 /**
  * View class for a list of Reviews.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
@@ -40,13 +41,15 @@ class HtmlView extends BaseHtmlView
     /**
      * Display the view
      *
-     * @param   string  $tpl  Template name
+     * @param string $tpl Template name
      *
      * @return void
      *
      * @throws Exception
+     *
+     * @since 4.0.0
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
         $this->state         = $this->get('State');
         $this->items         = $this->get('Items');
@@ -68,20 +71,20 @@ class HtmlView extends BaseHtmlView
     /**
      * Add the page title and toolbar.
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      * @throws Exception
      */
-    protected function addToolbar()
+    protected function addToolbar(): void
     {
         $state = $this->get('State');
         $canDo = JedHelper::getActions();
 
         ToolbarHelper::title(Text::_('COM_JED_TITLE_REVIEWS'), "generic");
 
-        $toolbar = Toolbar::getInstance('toolbar');
+        $toolbar = Toolbar::getInstance(); //$toolbar = Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar('toolbar');
 
         // Check if the form exists before showing the add/edit buttons
         $formPath = JPATH_COMPONENT_ADMINISTRATOR . '/src/View/Reviews';
@@ -109,9 +112,9 @@ class HtmlView extends BaseHtmlView
             } elseif (isset($this->items[0])) {
                 // If this component does not use state then show a direct delete button as we can not trash
                 $toolbar->delete('reviews.delete')
-                ->text('JTOOLBAR_EMPTY_TRASH')
-                ->message('JGLOBAL_CONFIRM_DELETE')
-                ->listCheck(true);
+                    ->text('JTOOLBAR_EMPTY_TRASH')
+                    ->message('JGLOBAL_CONFIRM_DELETE')
+                    ->listCheck(true);
             }
 
             $childBar->standardButton('duplicate')
@@ -185,7 +188,7 @@ class HtmlView extends BaseHtmlView
     /**
      * Check if state is set
      *
-     * @param   mixed  $state  State
+     * @param mixed $state State
      *
      * @return bool
      */

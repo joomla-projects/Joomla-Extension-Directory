@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package        JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Model;
@@ -37,41 +37,41 @@ use function defined;
 /**
  * Extension model.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class ExtensionModel extends AdminModel
 {
     use ExtensionUtilities;
 
     /**
-     * @var    string  Alias to manage history control
+     * @var string  Alias to manage history control
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public $typeAlias = 'com_jed.extension';
 
     /**
-     * @var    string  The prefix to use with controller messages.
+     * @var string  The prefix to use with controller messages.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected $text_prefix = 'COM_JED';
 
     /**
-     * @var    stdClass  Item data
+     * @var stdClass  Item data
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected mixed $item;
 
     /**
      * Get the filename of the given extension ID.
      *
-     * @param   int  $extensionId  The extension ID to get the filename for
+     * @param int $extensionId The extension ID to get the filename for
      *
-     * @return  stdClass  The extension file information.
+     * @return stdClass  The extension file information.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getFilename(int $extensionId): stdClass
     {
@@ -124,15 +124,15 @@ class ExtensionModel extends AdminModel
     /**
      * Method to get the record form.
      *
-     * @param   array  $data      An optional array of data for the form to interogate.
-     * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
+     * @param array $data     An optional array of data for the form to interogate.
+     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return  Form|bool  A \JForm object on success, false on failure
+     * @return Form|bool  A \JForm object on success, false on failure
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
-    public function getForm($data = [], $loadData = true): Form|bool
+    public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
     {
         // Get the form.
         $form = $this->loadForm('com_jed.extension', 'extension', ['control' => 'jform', 'load_data' => $loadData]);
@@ -147,7 +147,7 @@ class ExtensionModel extends AdminModel
     /**
      * Get array of review scores for extension
      *
-     * @param   int  $extension_id
+     * @param int $extension_id
      *
      * @return array
      *
@@ -190,7 +190,7 @@ class ExtensionModel extends AdminModel
     /**
      * Gets array of all reviews for extension
      *
-     * @param   int  $extension_id
+     * @param int $extension_id
      *
      * @return array
      *
@@ -238,7 +238,7 @@ class ExtensionModel extends AdminModel
     /**
      * Get array of review scores for extension
      *
-     * @param   int  $extension_id
+     * @param int $extension_id
      *
      * @return array
      *
@@ -270,13 +270,13 @@ class ExtensionModel extends AdminModel
     /**
      * Returns a reference to the a Table object, always creating it.
      *
-     * @param   string  $name     The table type to instantiate
-     * @param   string  $prefix   A prefix for the table class name. Optional.
-     * @param   array   $options  Configuration array for model. Optional.
+     * @param string $name    The table type to instantiate
+     * @param string $prefix  A prefix for the table class name. Optional.
+     * @param array  $options Configuration array for model. Optional.
      *
-     * @return  Table    A database object
+     * @return Table    A database object
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Extension', $prefix = 'Administrator', $options = []): Table
@@ -287,12 +287,12 @@ class ExtensionModel extends AdminModel
     /**
      * Method to get a single record.
      *
-     * @param   int|null  $pk                  The id of the primary key.
-     * @param   int       $supply_option_type  The type of varied data to look for
+     * @param int|null $pk                 The id of the primary key.
+     * @param int      $supply_option_type The type of varied data to look for
      *
-     * @return  stdClass    Object on success, false on failure.
+     * @return stdClass    Object on success, false on failure.
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getvariedItem(int $pk = null, int $supply_option_type = 0)
@@ -428,9 +428,9 @@ class ExtensionModel extends AdminModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return  mixed  The data for the form.
+     * @return mixed  The data for the form.
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function loadFormData()
@@ -448,11 +448,11 @@ class ExtensionModel extends AdminModel
     /**
      * Remove approved reasons.
      *
-     * @param   int  $extensionId  The extension ID to remove the approved reasons for
+     * @param int $extensionId The extension ID to remove the approved reasons for
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     private function removeApprovedReason(int $extensionId): void
     {
@@ -467,11 +467,11 @@ class ExtensionModel extends AdminModel
     /**
      * Remove published reasons.
      *
-     * @param   int  $extensionId  The extension ID to remove the published reasons for
+     * @param int $extensionId The extension ID to remove the published reasons for
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     private function removePublishedReason(int $extensionId): void
     {
@@ -486,13 +486,13 @@ class ExtensionModel extends AdminModel
     /**
      * Method to save the form data.
      *
-     * @param   array  $data  The form data.
+     * @param array $data The form data.
      *
-     * @return  bool  True on success, False on error.
+     * @return bool  True on success, False on error.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
-     * @throws  Exception
+     * @throws Exception
      */
     public function save($data): bool
     {
@@ -525,7 +525,7 @@ class ExtensionModel extends AdminModel
             );
             $this->storeExtensionTypes($extensionId, $data['extensionTypes'] ?? []);
             $this->storeImages($extensionId, $data['images'] ?? []);
-    */
+        */
 
         return true;
     }
@@ -533,13 +533,13 @@ class ExtensionModel extends AdminModel
     /**
      * Method to save the approved state.
      *
-     * @param   array  $data  The form data.
+     * @param array $data The form data.
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
-     * @throws  Exception
+     * @throws Exception
      */
     public function saveApprove(array $data): void
     {
@@ -552,7 +552,11 @@ class ExtensionModel extends AdminModel
         $db          = Factory::getContainer()->get('DatabaseDriver');
         $extensionId = (int)$data['id'];
 
-        /** @var ExtensionTable $table */
+        /**
+*
+         *
+ * @var ExtensionTable $table
+*/
         $table = $this->getTable('Extension');
 
         $table->load($extensionId);
@@ -592,12 +596,12 @@ class ExtensionModel extends AdminModel
     /**
      * Method to save the published state.
      *
-     * @param   array  $data  The form data.
+     * @param array $data The form data.
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
-     * @throws  Exception
+     * @since  4.0.0
+     * @throws Exception
      */
     public function savePublish(array $data): void
     {
@@ -610,7 +614,11 @@ class ExtensionModel extends AdminModel
         $db          = Factory::getContainer()->get('DatabaseDriver');
         $extensionId = (int)$data['id'];
 
-        /** @var ExtensionTable $table */
+        /**
+*
+         *
+ * @var ExtensionTable $table
+*/
         $table = $this->getTable('Extension');
 
         $table->load($extensionId);
@@ -650,12 +658,12 @@ class ExtensionModel extends AdminModel
     /**
      * Store used extension types for an extension.
      *
-     * @param   int    $extensionId  The extension ID to save the types for
-     * @param   array  $types        The extension types to store
+     * @param int   $extensionId The extension ID to save the types for
+     * @param array $types       The extension types to store
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     private function storeExtensionTypes(int $extensionId, array $types): void
     {
@@ -696,12 +704,12 @@ class ExtensionModel extends AdminModel
     /**
      * Store the images for an extension.
      *
-     * @param   int    $extensionId  The extension ID to save the images for
-     * @param   array  $images       The extension types to store
+     * @param int   $extensionId The extension ID to save the images for
+     * @param array $images      The extension types to store
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     private function storeImages(int $extensionId, array $images): void
     {
@@ -748,14 +756,14 @@ class ExtensionModel extends AdminModel
     /**
      * Store an internal note.
      *
-     * @param   string  $body         The note content
-     * @param   int     $developerId  The developer to store the note for
-     * @param   int     $userId       The JED member storing the note
-     * @param   int     $extensionId  The extension ID the message is about
+     * @param string $body        The note content
+     * @param int    $developerId The developer to store the note for
+     * @param int    $userId      The JED member storing the note
+     * @param int    $extensionId The extension ID the message is about
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function storeNote(string $body, int $developerId, int $userId, int $extensionId): void
     {
@@ -788,12 +796,12 @@ class ExtensionModel extends AdminModel
     /**
      * Store related categories for an extension.
      *
-     * @param   int    $extensionId         The extension ID to save the categories for
-     * @param   array  $relatedCategoryIds  The related category IDs to store
+     * @param int   $extensionId        The extension ID to save the categories for
+     * @param array $relatedCategoryIds The related category IDs to store
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     private function storeRelatedCategories(
         int $extensionId,
@@ -839,13 +847,13 @@ class ExtensionModel extends AdminModel
     /**
      * Store supported versions for an extension.
      *
-     * @param   int     $extensionId  The extension ID to save the versions for
-     * @param   array   $versions     The versions to store
-     * @param   string  $type         THe type of versions to store
+     * @param int    $extensionId The extension ID to save the versions for
+     * @param array  $versions    The versions to store
+     * @param string $type        THe type of versions to store
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     private function storeVersions(
         int $extensionId,

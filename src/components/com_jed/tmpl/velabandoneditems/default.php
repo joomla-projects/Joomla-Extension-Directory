@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -19,7 +19,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
-
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
@@ -38,7 +37,7 @@ $listDirn  = $this->state->get('list.direction');
       name="adminForm" id="adminForm">
     <?php echo '<fieldset class="patcheditems"><legend>' . Text::_('COM_JED_VEL_ABANDONEDITEMS_LIST_HEADER') . '</legend>' . Text::_('COM_JED_VEL_ABANDONEDITEMS_LIST_BODY') . '</fieldset>'; ?>
     <?php if (!empty($this->filterForm)) {
-        echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
+        echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
     } ?>
     <div class="table-responsive">
         <table class="category table table-striped table-bordered table-hover" id="VelLiveItemsList"

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -12,19 +12,23 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * @param   string   $image          The url of the image location
- * @param   string   $title          The title of the extension
- * @param   string   $developer      The name of the developer
- * @param   integer  $score          The score of the extension
- * @param   integer  $reviews        The number of reviews for the extension
- * @param   array    $compatibility  The compatible Joomla versions for the extensions
- * @param   string   $description    A short description of the extension
- * @param   string   $type           The extension type (free/paid/cloud)
- * @param   bool     $category       The main category of the extension
- * @param   string   $link           The link to the extension
+ * @param string   $image          The url of the image location
+ * @param string   $title          The title of the extension
+ * @param string   $developer      The name of the developer
+ * @param int  $score          The score of the extension
+ * @param int  $reviews        The number of reviews for the extension
+ * @param array    $compatibility  The compatible Joomla versions for the extensions
+ * @param string   $description    A short description of the extension
+ * @param string   $type           The extension type (free/paid/cloud)
+ * @param bool     $category       The main category of the extension
+ * @param string   $link           The link to the extension
  */
 
-/** @var array $displayData */
+/**
+*
+ *
+ * @var array $displayData
+*/
 extract($displayData);
 
 ?>

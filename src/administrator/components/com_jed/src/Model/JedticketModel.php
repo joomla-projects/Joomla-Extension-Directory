@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package           JED
+ * @package JED
  *
- * @subpackage        Tickets
+ * @subpackage Tickets
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license           GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Model;
@@ -20,57 +20,57 @@ use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Model\AdminModel;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 
 /**
  * JED Ticket model.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class JedticketModel extends AdminModel
 {
     /**
-     * @var    string    Alias to manage history control
-     * @since   4.0.0
+     * @var   string    Alias to manage history control
+     * @since 4.0.0
      */
     public $typeAlias = 'com_jed.jedticket';
     /**
-     * @var      string    The prefix to use with controller messages.
-     * @since  4.0.0
+     * @var   string    The prefix to use with controller messages.
+     * @since 4.0.0
      */
     protected $text_prefix = 'COM_JED';
     /**
-     * @var null  Item data
-     * @since  4.0.0
+     * @var   null  Item data
+     * @since 4.0.0
      */
     protected $item = null;
 
     /**
-     * @var int  Linked Item Type
-     * @since  4.0.0
+     * @var   int  Linked Item Type
+     * @since 4.0.0
      */
     protected int $linked_item_type;
     /**
-     * @var int  Id of linked Item
-     * @since  4.0.0
+     * @var   int  Id of linked Item
+     * @since 4.0.0
      */
     protected int $linked_item_id;
     /**
-     * @var int  User Id of ticket creator
-     * @since  4.0.0
+     * @var   int  User Id of ticket creator
+     * @since 4.0.0
      */
     protected int $ticket_creator;
 
     /**
      * Method to get the record form.
      *
-     * @param   array    $data      An optional array of data for the form to interogate.
-     * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+     * @param array $data     An optional array of data for the form to interogate.
+     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return  Form|bool  A Form object on success, false on failure
+     * @return Form|bool  A Form object on success, false on failure
      *
-     * @since  4.0.0
+     * @since 4.0.0
      *
      * @throws
      */
@@ -96,14 +96,14 @@ class JedticketModel extends AdminModel
     /**
      * Method to get a single record.
      *
-     * @param   null  $pk  The id of the primary key.
+     * @param null $pk The id of the primary key.
      *
-     * @return CMSObject Object on success
+     * @return mixed Object on success
      *
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem($pk = null): CMSObject
+    public function getItem($pk = null): mixed
     {
 
         $pk   = (!empty($pk)) ? $pk : (int) $this->getState($this->getName() . '.id');
@@ -119,11 +119,11 @@ class JedticketModel extends AdminModel
     /**
      * Returns a reference to a Table object, always creating it.
      *
-     * @param   string  $name
-     * @param   string  $prefix  A prefix for the table class name. Optional.
-     * @param   array   $options
+     * @param string $name
+     * @param string $prefix  A prefix for the table class name. Optional.
+     * @param array  $options
      *
-     * @return    Table    A database object
+     * @return Table    A database object
      *
      * @since  4.0.0
      * @throws Exception
@@ -136,9 +136,9 @@ class JedticketModel extends AdminModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return   mixed  The data for the form.
+     * @return mixed  The data for the form.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      *
      * @throws
      */
@@ -159,10 +159,9 @@ class JedticketModel extends AdminModel
     }
 
     /**
-     *
      * Method to get VEL Report Item Data
      *
-     * @return  array|bool  An array on success, false on failure
+     * @return array|bool  An array on success, false on failure
      *
      * @since 4.0.0
      */
@@ -205,10 +204,9 @@ class JedticketModel extends AdminModel
     }
 
     /**
-     *
      * Method to get Ticket Help Data
      *
-     * @return  array|bool  An array on success, false on failure
+     * @return array|bool  An array on success, false on failure
      *
      * @since 4.0.0
      */
@@ -349,10 +347,9 @@ class JedticketModel extends AdminModel
     }
 
     /**
-     *
      * Method to get Ticket Internal Notes Data
      *
-     * @return  array  Object on success
+     * @return array  Object on success
      *
      * @since 4.0.0
      */
@@ -434,10 +431,9 @@ class JedticketModel extends AdminModel
     }
 
     /**
-     *
      * Method to get VEL Abandonware Data
      *
-     * @return  array|bool  An array on success, false on failure
+     * @return array|bool  An array on success, false on failure
      *
      * @since 4.0.0
      */
@@ -477,10 +473,9 @@ class JedticketModel extends AdminModel
     }
 
     /**
-     *
      * Method to get VEL Developer Update Data
      *
-     * @return  array|bool  An array on success, false on failure
+     * @return array|bool  An array on success, false on failure
      *
      * @since 4.0.0
      */
@@ -520,10 +515,9 @@ class JedticketModel extends AdminModel
     }
 
     /**
-     *
      * Method to get VEL Report Item Data
      *
-     * @return  array|bool  An array on success, false on failure
+     * @return array|bool  An array on success, false on failure
      *
      * @since 4.0.0
      */

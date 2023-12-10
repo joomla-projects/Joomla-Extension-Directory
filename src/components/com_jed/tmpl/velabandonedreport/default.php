@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -14,13 +14,14 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
-$canEdit = JedHelper::getUser()->authorise('core.edit', 'com_jed');
+$canEdit = Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed');
 
-if (!$canEdit && JedHelper::getUser()->authorise('core.edit.own', 'com_jed')) {
-    $canEdit = JedHelper::getUser()->id == $this->item->created_by;
+if (!$canEdit && Factory::getApplication()->getIdentity()->authorise('core.edit.own', 'com_jed')) {
+    $canEdit = Factory::getApplication()->getIdentity()->id == $this->item->created_by;
 }
 ?>
 

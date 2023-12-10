@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package        JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -24,7 +24,7 @@ use Jed\Component\Jed\Site\Helper\JedscoreHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ItemModel;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
@@ -33,7 +33,7 @@ use stdClass;
 /**
  * Jed model.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class ExtensionModel extends ItemModel
 {
@@ -48,7 +48,7 @@ class ExtensionModel extends ItemModel
     /**
      * Interval during which an extension is considered new: 2 weeks
      *
-     * @var string (DateInterval argument)
+     * @var   string (DateInterval argument)
      * @since 4.0.0
      */
     protected string $isNewInterval = 'P2W';
@@ -56,7 +56,7 @@ class ExtensionModel extends ItemModel
     /**
      * Interval during which an extension is considered old: 4 years
      *
-     * @var string (DateInterval argument)
+     * @var   string (DateInterval argument)
      * @since 4.0.0
      */
     protected string $isOldInterval = 'P4Y';
@@ -64,7 +64,7 @@ class ExtensionModel extends ItemModel
     /**
      * Interval during which an extension is considered updated: 1 year
      *
-     * @var string (DateInterval argument)
+     * @var   string (DateInterval argument)
      * @since 4.0.0
      */
     protected string $isRecentlyUpdatedInterval = 'P1Y';
@@ -79,13 +79,13 @@ class ExtensionModel extends ItemModel
     /**
      * Method to check in an item.
      *
-     * @param   int|null  $id  The id of the row to check out.
+     * @param int|null $id The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
-     * @throws  Exception
+     * @throws Exception
      */
     public function checkin(int $id = null): bool
     {
@@ -112,12 +112,12 @@ class ExtensionModel extends ItemModel
     /**
      * Method to check out an item for editing.
      *
-     * @param   int|null  $id  The id of the row to check out.
+     * @param int|null $id The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since   4.0.0
-     * @throws  Exception
+     * @since  4.0.0
+     * @throws Exception
      */
     public function checkout(int $id = null): bool
     {
@@ -132,10 +132,10 @@ class ExtensionModel extends ItemModel
             $table = $this->getTable();
 
             // Get the current user object.
-            $user = JedHelper::getUser();
+            $user = Factory::getApplication()->getIdentity();
 
             // Attempt to check the row out.
-            if (method_exists($table, 'checkout') && !$table->checkout($user->get('id'), $id)) {
+            if (method_exists($table, 'checkout') && !$table->checkout($user->id, $id)) {
                 return false;
             }
         }
@@ -146,15 +146,14 @@ class ExtensionModel extends ItemModel
     /**
      * Method to get an object.
      *
-     * @param   integer  $pk  The id of the object to get.
+     * @param int $pk The id of the object to get.
      *
-     * @return  object|bool    Object on success, false on failure.
+     * @return mixed    Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null): mixed
     {
         if ($this->item === null) {
             $this->item = false;
@@ -169,15 +168,15 @@ class ExtensionModel extends ItemModel
             // Attempt to load the row.
             if ($table && $table->load($pk)) { // Check published state.
                 if (
-                    ($published = $this->getState('filter.published')) && isset($table->state) &&
-                    $table->state != $published
+                    ($published = $this->getState('filter.published')) && isset($table->state)
+                    && $table->state != $published
                 ) {
                     throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 403);
                 }
 
                 // Convert the Table to a clean CMSObject.
                 $properties = $table->getProperties(1);
-                $this->item = ArrayHelper::toObject($properties, CMSObject::class);
+                $this->item = ArrayHelper::toObject($properties, stdClass::class);
             }
 
             if (empty($this->item)) {
@@ -249,11 +248,11 @@ class ExtensionModel extends ItemModel
     /**
      * Get the id of an item by alias
      *
-     * @param   string  $alias  Item alias
+     * @param string $alias Item alias
      *
-     * @return  mixed
-     * @since   4.0.0
-     * @throws  Exception
+     * @return mixed
+     * @since  4.0.0
+     * @throws Exception
      */
     public function getItemIdByAlias(string $alias)
     {
@@ -273,8 +272,8 @@ class ExtensionModel extends ItemModel
         }
 
         if (
-            empty($result) || JedHelper::isAdminOrSuperUser() ||
-            $table->get('created_by') == JedHelper::getUser()->id
+            empty($result) || JedHelper::isAdminOrSuperUser()
+            || $table->get('created_by') == Factory::getApplication()->getIdentity()->id
         ) {
             return $result;
         }
@@ -285,11 +284,11 @@ class ExtensionModel extends ItemModel
     /**
      * Gets array of all reviews for extension
      *
-     * @param   int  $extension_id
+     * @param int $extension_id
      *
-     * @return  array
+     * @return array
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getReviews(int $extension_id): array
     {
@@ -319,7 +318,7 @@ class ExtensionModel extends ItemModel
     /**
      * Get array of review scores for extension
      *
-     * @param   int  $extension_id
+     * @param int $extension_id
      *
      * @return array
      *
@@ -351,11 +350,11 @@ class ExtensionModel extends ItemModel
     /**
      * Get array of supply types for extension
      *
-     * @param   int  $extension_id
+     * @param int $extension_id
      *
-     * @return  array
+     * @return array
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getSupplyTypes(int $extension_id): array
     {
@@ -363,20 +362,26 @@ class ExtensionModel extends ItemModel
         $query  = $db->getQuery(true);
         $query2 = $db->getQuery(true);
 
-        $query->select([
+        $query->select(
+            [
             $db->quoteName('supply_options.id', 'supply_id'),
             $db->quoteName('supply_options.title', 'supply_type'),
-        ])
+            ]
+        )
             ->from($db->quoteName('#__jed_extension_supply_options', 'supply_options'));
 
 
-        $query2->select([
+        $query2->select(
+            [
             $db->quoteName('supply_option_id', 'supply_option_id'),
-        ])
+            ]
+        )
             ->from($db->quoteName('#__jed_extensions', 'a'))
-            ->where([
+            ->where(
+                [
                 $db->quoteName('id') . ' = ' . (int)$extension_id,
-            ]);
+                ]
+            );
 
         $query->where([$db->quoteName('supply_options.id') . ' IN (' . $query2 . ')']);
 
@@ -386,13 +391,13 @@ class ExtensionModel extends ItemModel
     /**
      * Get an instance of Table class
      *
-     * @param   string  $name     Name of the Table class to get an instance of.
-     * @param   string  $prefix   Prefix for the table class name. Optional.
-     * @param   array   $options  Array of configuration values for the Table object. Optional.
+     * @param string $name    Name of the Table class to get an instance of.
+     * @param string $prefix  Prefix for the table class name. Optional.
+     * @param array  $options Array of configuration values for the Table object. Optional.
      *
-     * @return  Table|bool Table if success, false on failure.
-     * @since   4.0.0
-     * @throws  Exception
+     * @return Table|bool Table if success, false on failure.
+     * @since  4.0.0
+     * @throws Exception
      */
     public function getTable($name = 'Extension', $prefix = 'Administrator', $options = [])
     {
@@ -403,7 +408,7 @@ class ExtensionModel extends ItemModel
      *
      * @return string
      *
-     * @since version
+     * @since  version
      * @throws Exception
      */
     public function getUpdateStatus(): string
@@ -456,14 +461,15 @@ class ExtensionModel extends ItemModel
      * correct unpublished message
      *
      * @return stdClass
-     * @since 4.0.0
+     * @since  4.0.0
      */
     public function noExtensionFoundMsg(): stdClass
     {
         $document = Factory::getApplication()->getDocument();
         $db       = $this->getDatabase();
         $query    = $db->getQuery(true)
-            ->select([
+            ->select(
+                [
                 $db->quoteName('e.id'),
                 $db->quoteName('state'),
                 $db->quoteName('title'),
@@ -471,7 +477,8 @@ class ExtensionModel extends ItemModel
                 $db->quoteName('code'),
                 $db->quoteName('created_time'),
                 $db->quoteName('s.message', 'message'),
-            ])
+                ]
+            )
             ->from('#__jed_extensions', 'e')
             ->leftJoin('#__jed_extensions_status AS s ON s.extension_id = e.id')
             ->leftJoin(
@@ -523,16 +530,16 @@ class ExtensionModel extends ItemModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */
     protected function populateState()
     {
         $app  = Factory::getApplication();
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         // Check published state
         if ((!$user->authorise('core.edit.state', 'com_jed')) && (!$user->authorise('core.edit', 'com_jed'))) {
@@ -564,13 +571,13 @@ class ExtensionModel extends ItemModel
     /**
      * Publish the element
      *
-     * @param   int  $id     Item id
-     * @param   int  $state  Publish state
+     * @param int $id    Item id
+     * @param int $state Publish state
      *
-     * @return  boolean
+     * @return bool
      *
-     * @since   4.0.0
-     * @throws  Exception
+     * @since  4.0.0
+     * @throws Exception
      */
     public function publish(int $id, int $state): bool
     {

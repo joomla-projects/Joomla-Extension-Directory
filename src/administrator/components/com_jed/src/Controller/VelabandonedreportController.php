@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Controller;
@@ -22,16 +22,16 @@ use Joomla\CMS\Router\Route;
 /**
  * VEL Abandoned Report Controller Class.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class VelabandonedreportController extends FormController
 {
     /**
      * A string showing the plural of the current object
      *
-     * @var    string
+     * @var string
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected $view_list = 'velabandonedreports';
 
@@ -41,7 +41,7 @@ class VelabandonedreportController extends FormController
      * It needs to take the data and create a new vulnerable item and then open that
      * report for editing
      *
-     * @since    4.0.0
+     * @since 4.0.0
      */
     public function copyReporttoVEL()
     {
@@ -59,8 +59,12 @@ class VelabandonedreportController extends FormController
 
             $queryInsert = $db->getQuery(true)
                 ->insert('#__jed_vel_vulnerable_item')
-                ->columns($db->qn(['id', 'title', 'internal_description', 'status', 'report_id', 'jed', 'risk_level', 'start_version', 'vulnerable_version', 'patch_version', 'recommendation',
-                    'update_notice', 'exploit_type', 'exploit_other_description', 'xml_manifest', 'manifest_location', 'install_data', 'discovered_by', 'public_description']))
+                ->columns(
+                    $db->qn(
+                        ['id', 'title', 'internal_description', 'status', 'report_id', 'jed', 'risk_level', 'start_version', 'vulnerable_version', 'patch_version', 'recommendation',
+                        'update_notice', 'exploit_type', 'exploit_other_description', 'xml_manifest', 'manifest_location', 'install_data', 'discovered_by', 'public_description']
+                    )
+                )
                 ->values($querySelect);
             // echo $queryInsert->__toString();exit();
             $db->setQuery($queryInsert);
@@ -70,8 +74,10 @@ class VelabandonedreportController extends FormController
 
             $queryUpdate = $db->getQuery(true)
                 ->update('#__jed_vel_abandoned_report')
-                ->set([$db->qn('passed_to_vel') . ' = 1',
-                    ($db->qn('vel_item_id') . ' = ' . $newVel)])
+                ->set(
+                    [$db->qn('passed_to_vel') . ' = 1',
+                    ($db->qn('vel_item_id') . ' = ' . $newVel)]
+                )
                 ->where($db->qn('id') . ' = ' . $reportId);
 
             $db->setQuery($queryUpdate);

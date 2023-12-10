@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -22,8 +22,8 @@ HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-$user       = JedHelper::getUser();
-$userId     = $user->get('id');
+$user       = Factory::getApplication()->getIdentity();
+$userId     = $user->id;
 $listOrder  = $this->state->get('list.ordering');
 $listDirn   = $this->state->get('list.direction');
 $canCreate  = $user->authorise('core.create', 'com_jed');
@@ -44,19 +44,22 @@ $wa->useStyle('com_jed.jazstyle');
         <p class="font-size-s"><?php echo $this->items[0]->category_hierarchy; ?></p>
         <ul class="jed-grid jed-grid--1-1-1">
             <?php foreach ($this->items as $item) : ?>
-                <?php echo LayoutHelper::render('cards.extension', [
-                    'image'         => $item->logo,
-                    'title'         => $item->title,
-                    'developer'     => $item->developer,
-                    'score_string'  => $item->score_string,
-                    'score'         => $item->score,
-                    'reviews'       => $item->review_string,
-                    'compatibility' => $item->version,
-                    'description'   => $item->description,
-                    'type'          => $item->type,
-                    'category'      => $item->category_title,
-                    'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->primary_category_id, $item->id))
-                ]); ?>
+                <?php echo LayoutHelper::render(
+                    'cards.extension',
+                    [
+                                    'image'         => $item->logo,
+                                    'title'         => $item->title,
+                                    'developer'     => $item->developer,
+                                    'score_string'  => $item->score_string,
+                                    'score'         => $item->score,
+                                    'reviews'       => $item->review_string,
+                                    'compatibility' => $item->version,
+                                    'description'   => $item->description,
+                                    'type'          => $item->type,
+                                    'category'      => $item->category_title,
+                                    'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->primary_category_id, $item->id)),
+                                    ]
+                ); ?>
             <?php endforeach; ?>
         </ul>
     </div>
@@ -157,7 +160,7 @@ $wa->useStyle('com_jed.jazstyle');
             <?php foreach ($this->items as $i => $item) : ?>
                 <?php $canEdit = $user->authorise('core.edit', 'com_jed'); ?>
                 <?php if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')): ?>
-                <?php $canEdit = JedHelper::getUser()->id == $item->created_by; ?>
+                <?php $canEdit = Factory::getApplication()->getIdentity()->id == $item->created_by; ?>
                 <?php endif; ?>
 
                 <tr class="row<?php echo $i % 2; ?>">
@@ -166,7 +169,7 @@ $wa->useStyle('com_jed.jazstyle');
                         <?php echo $item->id; ?>
                     </td>
                     <td>
-                        <?php $canCheckin = JedHelper::getUser()->authorise('core.manage', 'com_jed.' . $item->id) || $item->checked_out == JedHelper::getUser()->id; ?>
+                        <?php $canCheckin = Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jed.' . $item->id) || $item->checked_out == Factory::getApplication()->getIdentity()->id; ?>
                         <?php if($canCheckin && $item->checked_out > 0) : ?>
                             <a href="<?php echo Route::_('index.php?option=com_jed&task=extension.checkin&id=' . $item->id .'&'. Session::getFormToken() .'=1'); ?>">
                             <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'extension.', false); ?></a>
@@ -219,7 +222,7 @@ $wa->useStyle('com_jed.jazstyle');
                     </td>
                     <?php if ($canEdit || $canDelete): ?>
                         <td class="center">
-                            <?php $canCheckin = JedHelper::getUser()->authorise('core.manage', 'com_jed.' . $item->id) || $item->checked_out == JedHelper::getUser()->id; ?>
+                            <?php $canCheckin = Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jed.' . $item->id) || $item->checked_out == Factory::getApplication()->getIdentity()->id; ?>
 
                             <?php if($canEdit && $item->checked_out == 0): ?>
                                 <a href="<?php echo Route::_('index.php?option=com_jed&task=extension.edit&id=' . $item->id, false, 2); ?>" class="btn btn-mini" type="button"><i class="icon-edit" ></i></a>

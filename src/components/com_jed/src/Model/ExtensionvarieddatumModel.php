@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package        JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -20,25 +20,26 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ItemModel;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
+use stdClass;
 
 /**
  * Jed model.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class ExtensionvarieddatumModel extends ItemModel
 {
     /**
      * Method to check in an item.
      *
-     * @param   integer  $id  The id of the row to check out.
+     * @param int $id The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      * @throws Exception
      */
@@ -68,11 +69,11 @@ class ExtensionvarieddatumModel extends ItemModel
     /**
      * Method to check out an item for editing.
      *
-     * @param   integer  $id  The id of the row to check out.
+     * @param int $id The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      * @throws Exception
      */
@@ -87,11 +88,11 @@ class ExtensionvarieddatumModel extends ItemModel
                 $table = $this->getTable();
 
                 // Get the current user object.
-                $user = JedHelper::getUser();
+                $user = Factory::getApplication()->getIdentity();
 
                 // Attempt to check the row out.
                 if (method_exists($table, 'checkout')) {
-                    if (!$table->checkout($user->get('id'), $id)) {
+                    if (!$table->checkout($user->id, $id)) {
                         return false;
                     }
                 }
@@ -106,9 +107,9 @@ class ExtensionvarieddatumModel extends ItemModel
     /**
      * Method to delete an item
      *
-     * @param   int  $id  Element id
+     * @param int $id Element id
      *
-     * @return  bool
+     * @return bool
      * @throws Exception
      * @throws Exception
      */
@@ -116,7 +117,7 @@ class ExtensionvarieddatumModel extends ItemModel
     {
         $table = $this->getTable();
 
-        if (empty($result) || $this->isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+        if (empty($result) || $this->isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
             return $table->delete($id);
         } else {
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
@@ -126,9 +127,9 @@ class ExtensionvarieddatumModel extends ItemModel
     /**
      * Method to get an object.
      *
-     * @param   integer  $id  The id of the object to get.
+     * @param int $id The id of the object to get.
      *
-     * @return  mixed    Object on success, false on failure.
+     * @return mixed    Object on success, false on failure.
      *
      * @throws Exception
      * @throws Exception
@@ -148,7 +149,7 @@ class ExtensionvarieddatumModel extends ItemModel
 
             // Attempt to load the row.
             if ($table && $table->load($id)) {
-                if (empty($result) || $this->isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+                if (empty($result) || $this->isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
                     // Check published state.
                     if ($published = $this->getState('filter.published')) {
                         if (isset($table->state) && $table->state != $published) {
@@ -158,7 +159,7 @@ class ExtensionvarieddatumModel extends ItemModel
 
                     // Convert the Table to a clean CMSObject.
                     $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, CMSObject::class);
+                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
                 } else {
                     throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
                 }
@@ -247,9 +248,9 @@ class ExtensionvarieddatumModel extends ItemModel
     /**
      * Get the id of an item by alias
      *
-     * @param   string  $alias  Item alias
+     * @param string $alias Item alias
      *
-     * @return  mixed
+     * @return mixed
      * @throws Exception
      * @throws Exception
      */
@@ -270,7 +271,7 @@ class ExtensionvarieddatumModel extends ItemModel
             $table->load([$aliasKey => $alias]);
             $result = $table->id;
         }
-        if (empty($result) || $this->isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+        if (empty($result) || $this->isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
             return $result;
         } else {
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
@@ -280,11 +281,11 @@ class ExtensionvarieddatumModel extends ItemModel
     /**
      * Get an instance of Table class
      *
-     * @param   string  $type    Name of the Table class to get an instance of.
-     * @param   string  $prefix  Prefix for the table class name. Optional.
-     * @param   array   $config  Array of configuration values for the Table object. Optional.
+     * @param string $type   Name of the Table class to get an instance of.
+     * @param string $prefix Prefix for the table class name. Optional.
+     * @param array  $config Array of configuration values for the Table object. Optional.
      *
-     * @return  Table|bool Table if success, false on failure.
+     * @return Table|bool Table if success, false on failure.
      * @throws Exception
      * @throws Exception
      */
@@ -301,7 +302,7 @@ class ExtensionvarieddatumModel extends ItemModel
     public function isAdminOrSuperUser()
     {
         try {
-            $user = JedHelper::getUser();
+            $user = Factory::getApplication()->getIdentity();
 
             return in_array("8", $user->groups) || in_array("7", $user->groups);
         } catch (Exception $exc) {
@@ -314,9 +315,9 @@ class ExtensionvarieddatumModel extends ItemModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      * @throws Exception
@@ -326,7 +327,7 @@ class ExtensionvarieddatumModel extends ItemModel
     protected function populateState()
     {
         $app  = Factory::getApplication('com_jed');
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         // Check published state
         if ((!$user->authorise('core.edit.state', 'com_jed')) && (!$user->authorise('core.edit', 'com_jed'))) {
@@ -358,10 +359,10 @@ class ExtensionvarieddatumModel extends ItemModel
     /**
      * Publish the element
      *
-     * @param   int  $id     Item id
-     * @param   int  $state  Publish state
+     * @param int $id    Item id
+     * @param int $state Publish state
      *
-     * @return  boolean
+     * @return bool
      * @throws Exception
      * @throws Exception
      */
@@ -381,15 +382,14 @@ class ExtensionvarieddatumModel extends ItemModel
     /**
      * This method revises if the $id of the item belongs to the current user
      *
-     * @param   integer  $id  The id of the item
+     * @param int $id The id of the item
      *
-     * @return  boolean             true if the user is the owner of the row, false if not.
-     *
+     * @return bool             true if the user is the owner of the row, false if not.
      */
     public function userIDItem($id)
     {
         try {
-            $user = JedHelper::getUser();
+            $user = Factory::getApplication()->getIdentity();
             $db   = Factory::getDbo();
 
             $query = $db->getQuery(true);

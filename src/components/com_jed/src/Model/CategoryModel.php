@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -19,6 +19,7 @@ use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Categories\CategoryNode;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Pagination\Pagination;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\Factory;
 use stdClass;
@@ -28,74 +29,91 @@ use function defined;
 /**
  * Methods supporting a list of Category records.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class CategoryModel extends ListModel
 {
     /**
      * Category items data
      *
-     * @var  array
+     * @var array
+     *
+     * @since 4.0.0
      */
     protected $_item = null;
 
     /**
-     * Array of articles in the category
+     * Array of extensions in the category
      *
      * @var \stdClass[]
+     *
+     * @since 4.0.0
      */
     protected $_articles = null;
 
     /**
      * Category left and right of this one
      *
-     * @var  CategoryNode[]|null
+     * @var CategoryNode[]|null
+     *
+     * @since 4.0.0
      */
     protected $_siblings = null;
 
     /**
      * Array of child-categories
      *
-     * @var  CategoryNode[]|null
+     * @var CategoryNode[]|null
+     *
+     * @since 4.0.0
      */
     protected $_children = null;
 
     /**
      * Parent category of the current one
      *
-     * @var  CategoryNode|null
+     * @var CategoryNode|null
+     *
+     * @since 4.0.0
      */
     protected $_parent = null;
 
     /**
      * Model context string.
      *
-     * @var  string
+     * @var string
+     *
+     * @since 4.0.0
      */
     protected $_context = 'com_content.category';
 
     /**
      * The category that applies.
      *
-     * @var  object
+     * @var object
+     *
+     * @since 4.0.0
      */
     protected $_category = null;
 
     /**
      * The list of categories.
      *
-     * @var  array
+     * @var
+     *
+     * @since 4.0.0
      */
     protected $_categories = null;
 
     /**
      * Constructor.
      *
-     * @param   array  $config  An optional associative array of configuration settings.
+     * @param array $config An optional associative array of configuration settings.
      *
-     * @see        JController
+     * @see JController
      *
-     * @since      4.0.0
+     * @since 4.0.0
+     *
      * @throws Exception
      */
     public function __construct($config = [])
@@ -115,14 +133,14 @@ class CategoryModel extends ListModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @param   string  $ordering   The field to order on.
-     * @param   string  $direction  The direction to order on.
+     * @param string $ordering  The field to order on.
+     * @param string $direction The direction to order on.
      *
-     * @return  void
+     * @return void
      *
-     * @since   1.6
+     * @since 1.6
      */
-    protected function populateState($ordering = null, $direction = null)
+    protected function populateState($ordering = null, $direction = null): void
     {
         $app = Factory::getApplication();
 
@@ -237,9 +255,9 @@ class CategoryModel extends ListModel
     /**
      * Build query and where for protected _getList function and return a list
      *
-     * @param   int|null  $limitStart  Where to start looking up records
-     * @param   int|null  $limit       Number of records to return, set to -1 to return all records
-     * @param   bool      $extended    Extend the data with links etc, default true
+     * @param int|null $limitStart Where to start looking up records
+     * @param int|null $limit      Number of records to return, set to -1 to return all records
+     * @param bool     $extended   Extend the data with links etc, default true
      *
      * @return array An array of results.
      *
@@ -297,7 +315,9 @@ class CategoryModel extends ListModel
 
         $this->_parent = $categories->get($this->getState('filter.parentId', 'root'));
 
-        /**if (is_object($this->_parent)) {
+        /**
+*
+* if (is_object($this->_parent)) {
         $this->_items = $this->_parent->getChildren($recursive);
         } else {
         $this->_items = [];
@@ -347,15 +367,16 @@ class CategoryModel extends ListModel
         //echo "<pre>";print_r($list);echo "</pre>";exit();
         $this->_items = $list;
 
-        return $list;**/
+        return $list;
+**/
         return $this->_parent->getChildren();
     }
     /**
      * Build the orderby for the query
      *
-     * @return  string  $orderby portion of query
+     * @return string  $orderby portion of query
      *
-     * @since   1.5
+     * @since 1.5
      */
     protected function _buildContentOrderBy()
     {
@@ -395,9 +416,9 @@ class CategoryModel extends ListModel
     /**
      * Method to get a JPagination object for the data set.
      *
-     * @return  \Joomla\CMS\Pagination\Pagination  A JPagination object for the data set.
+     * @return Pagination  A JPagination object for the data set.
      *
-     * @since   3.0.1
+     * @since 3.0.1
      */
     public function getPagination()
     {
@@ -411,9 +432,9 @@ class CategoryModel extends ListModel
     /**
      * Method to get category data for the current category
      *
-     * @return  object
+     * @return object
      *
-     * @since   1.5
+     * @since 1.5
      */
     public function getCategory()
     {
@@ -462,9 +483,9 @@ class CategoryModel extends ListModel
     /**
      * Get the parent category.
      *
-     * @return  mixed  An array of categories or false if an error occurs.
+     * @return mixed  An array of categories or false if an error occurs.
      *
-     * @since   1.6
+     * @since 1.6
      */
     public function getParent()
     {
@@ -478,9 +499,9 @@ class CategoryModel extends ListModel
     /**
      * Get the left sibling (adjacent) categories.
      *
-     * @return  mixed  An array of categories or false if an error occurs.
+     * @return mixed  An array of categories or false if an error occurs.
      *
-     * @since   1.6
+     * @since 1.6
      */
     public function &getLeftSibling()
     {
@@ -494,9 +515,9 @@ class CategoryModel extends ListModel
     /**
      * Get the right sibling (adjacent) categories.
      *
-     * @return  mixed  An array of categories or false if an error occurs.
+     * @return mixed  An array of categories or false if an error occurs.
      *
-     * @since   1.6
+     * @since 1.6
      */
     public function &getRightSibling()
     {
@@ -510,9 +531,9 @@ class CategoryModel extends ListModel
     /**
      * Get the child categories.
      *
-     * @return  mixed  An array of categories or false if an error occurs.
+     * @return mixed  An array of categories or false if an error occurs.
      *
-     * @since   1.6
+     * @since 1.6
      */
     public function &getChildren()
     {

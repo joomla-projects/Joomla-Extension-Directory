@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package        JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 use Jed\Component\Jed\Administrator\Helper\JedmigrateHelper;
@@ -57,9 +57,9 @@ HTMLHelper::_('bootstrap.tooltip');
                     foreach ($task->instruction as $instruction) {
                         echo '<div class="taskdescription">' . date("H:i:s") . " - " . $instruction->description . '</div>';
                         $instruction->sql = htmlspecialchars_decode($instruction->sql);
-                        $sqlrows = explode(";", $instruction->sql);
+                        $sqlrows          = explode(";", $instruction->sql);
                         foreach ($sqlrows as $sql) {
-                          //  echo '<div class="taskdescription">'.date().' - Q - '.$sql . '<br/><br/></div>';
+                            //  echo '<div class="taskdescription">'.date().' - Q - '.$sql . '<br/><br/></div>';
                             JedmigrateHelper::doSql($this->params, $sql);
                         }
                     }

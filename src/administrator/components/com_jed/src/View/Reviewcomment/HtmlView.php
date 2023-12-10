@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\View\Reviewcomment;
@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Administrator\View\Reviewcomment;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -24,7 +25,7 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 /**
  * View class for a single Reviewcomment.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
@@ -37,13 +38,15 @@ class HtmlView extends BaseHtmlView
     /**
      * Display the view
      *
-     * @param   string  $tpl  Template name
+     * @param string $tpl Template name
      *
      * @return void
      *
      * @throws Exception
+     *
+     * @since 4.0.0
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
         $this->state = $this->get('State');
         $this->item  = $this->get('Item');
@@ -65,15 +68,15 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      */
-    protected function addToolbar()
+    protected function addToolbar(): void
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
-        $user  = JedHelper::getUser();
+        $user  = Factory::getApplication()->getIdentity();
         $isNew = ($this->item->id == 0);
 
         if (isset($this->item->checked_out)) {
-            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->id);
         } else {
             $checkedOut = false;
         }

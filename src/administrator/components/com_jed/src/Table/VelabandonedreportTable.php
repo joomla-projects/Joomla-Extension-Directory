@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Table;
@@ -21,21 +21,20 @@ use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table as Table;
 use Joomla\Database\DatabaseDriver;
-use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
 /**
  * Velabandonedreport table
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class VelabandonedreportTable extends Table
 {
     /**
      * Constructor
      *
-     * @param   DatabaseDriver  $db  A database connector object
+     * @param DatabaseDriver $db A database connector object
      *
-     * @since    4.0.0
+     * @since 4.0.0
      */
     public function __construct(DatabaseDriver $db)
     {
@@ -47,10 +46,10 @@ class VelabandonedreportTable extends Table
     /**
      * This function convert an array of Access objects into an rules array.
      *
-     * @param   array  $jaccessrules  An array of Access objects.
+     * @param array $jaccessrules An array of Access objects.
      *
-     * @return  array
-     * @since 4.0.0
+     * @return array
+     * @since  4.0.0
      */
     private function JAccessRulestoArray(array $jaccessrules): array
     {
@@ -76,9 +75,8 @@ class VelabandonedreportTable extends Table
      *
      * @return string The asset name
      *
-     * @see      Table::_getAssetName
-     * @since    4.0.0
-     *
+     * @see   Table::_getAssetName
+     * @since 4.0.0
      */
     protected function _getAssetName(): string
     {
@@ -90,13 +88,13 @@ class VelabandonedreportTable extends Table
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param   array  $src     Named array
-     * @param   mixed  $ignore  Optional array or list of parameters to ignore
+     * @param array $src    Named array
+     * @param mixed $ignore Optional array or list of parameters to ignore
      *
-     * @return  null|string  null is operation was satisfactory, otherwise returns an error
+     * @return null|string  null is operation was satisfactory, otherwise returns an error
      *
-     * @see     Table:bind
-     * @since   4.0.0
+     * @see    Table:bind
+     * @since  4.0.0
      * @throws Exception
      */
     public function bind($src, $ignore = ''): ?string
@@ -108,7 +106,7 @@ class VelabandonedreportTable extends Table
         if (isset($src['consent_to_process'])) {
             if (is_array($src['consent_to_process'])) {
                 $src['consent_to_process'] = implode(',', $src['consent_to_process']);
-            } elseif (strpos($src['consent_to_process'], ',') != false) {
+            } elseif (strpos($src['consent_to_process'], ',')) {
                 $src['consent_to_process'] = explode(',', $src['consent_to_process']);
             } elseif (strlen($src['consent_to_process']) == 0) {
                 $src['consent_to_process'] = '';
@@ -121,7 +119,7 @@ class VelabandonedreportTable extends Table
         if (isset($src['passed_to_vel'])) {
             if (is_array($src['passed_to_vel'])) {
                 $src['passed_to_vel'] = implode(',', $src['passed_to_vel']);
-            } elseif (strpos($src['passed_to_vel'], ',') != false) {
+            } elseif (strpos($src['passed_to_vel'], ',')) {
                 $src['passed_to_vel'] = explode(',', $src['passed_to_vel']);
             } elseif (strlen($src['passed_to_vel']) == 0) {
                 $src['passed_to_vel'] = '';
@@ -134,7 +132,7 @@ class VelabandonedreportTable extends Table
         if (isset($src['data_source'])) {
             if (is_array($src['data_source'])) {
                 $src['data_source'] = implode(',', $src['data_source']);
-            } elseif (strpos($src['data_source'], ',') != false) {
+            } elseif (strpos($src['data_source'], ',')) {
                 $src['data_source'] = explode(',', $src['data_source']);
             } elseif (strlen($src['data_source']) == 0) {
                 $src['data_source'] = '';
@@ -149,16 +147,16 @@ class VelabandonedreportTable extends Table
         }
 
         if ($src['id'] == 0 && empty($src['created_by'])) {
-            $src['created_by'] = JedHelper::getUser()->id;
+            $src['created_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         if ($src['id'] == 0 && empty($src['modified_by'])) {
-            $src['modified_by'] = JedHelper::getUser()->id;
+            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
         }
         $input = Factory::getApplication()->input;
         $task  = $input->getString('task', '');
         if ($task == 'apply' || $task == 'save') {
-            $src['modified_by'] = JedHelper::getUser()->id;
+            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         if ($src['id'] == 0) {
@@ -170,7 +168,7 @@ class VelabandonedreportTable extends Table
         }
 
 
-        if (!JedHelper::getUser()->authorise('core.admin', 'com_jed.velabandonedreport.' . $src['id'])) {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jed.velabandonedreport.' . $src['id'])) {
             $actions         = Access::getActionsFromFile(
                 JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
                 "/access/section[@name='velabandonedreport']/"
@@ -198,11 +196,11 @@ class VelabandonedreportTable extends Table
     /**
      * Delete a record by id
      *
-     * @param   mixed  $pk  Primary key value to delete. Optional
+     * @param mixed $pk Primary key value to delete. Optional
      *
      * @return bool
      *
-     * @since    4.0.0
+     * @since 4.0.0
      */
     public function delete($pk = null): bool
     {
@@ -214,12 +212,54 @@ class VelabandonedreportTable extends Table
     /**
      * Get the type alias for the history table
      *
-     * @return  string  The alias as described above
+     * @return string  The alias as described above
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getTypeAlias(): string
     {
         return $this->typeAlias;
+    }
+
+    /**
+     * Get the Properties of the table
+     *
+     * * @param   boolean  $public  If true, returns only the public properties.
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    public function getTableProperties(bool $public = true): array
+    {
+        $vars = get_object_vars($this);
+
+        if ($public) {
+            foreach ($vars as $key => $value) {
+                if (str_starts_with($key, '_')) {
+                    unset($vars[$key]);
+                }
+            }
+
+            // Collect all none public properties of the current class and it's parents
+            $nonePublicProperties = [];
+            $reflection           = new \ReflectionObject($this);
+            do {
+                $nonePublicProperties = array_merge(
+                    $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED),
+                    $nonePublicProperties
+                );
+            } while ($reflection = $reflection->getParentClass());
+
+            // Unset all none public properties, this is needed as get_object_vars returns now all vars
+            // from the current object and not only the CMSObject and the public ones from the inheriting classes
+            foreach ($nonePublicProperties as $prop) {
+                if (\array_key_exists($prop->getName(), $vars)) {
+                    unset($vars[$prop->getName()]);
+                }
+            }
+        }
+
+        return $vars;
     }
 }

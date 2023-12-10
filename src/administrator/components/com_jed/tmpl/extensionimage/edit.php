@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -16,7 +16,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
-
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 $wa = $this->document->getWebAssetManager();
@@ -30,7 +29,7 @@ HTMLHelper::_('bootstrap.tooltip');
     method="post" enctype="multipart/form-data" name="adminForm" id="extensionimage-form" class="form-validate form-horizontal">
 
     
-    <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'extensionimage')); ?>
+    <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'extensionimage']); ?>
     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'extensionimage', Text::_('COM_JED_TAB_EXTENSIONIMAGE', true)); ?>
     <div class="row-fluid">
         <div class="span10 form-horizontal">
@@ -39,7 +38,7 @@ HTMLHelper::_('bootstrap.tooltip');
                 <?php echo $this->form->renderField('extension_id'); ?>
                 <?php echo $this->form->renderField('filename'); ?>
                 <?php if (!empty($this->item->filename)) : ?>
-                    <?php $filenameFiles = array(); ?>
+                    <?php $filenameFiles = []; ?>
                     <?php foreach ((array)$this->item->filename as $fileSingle) : ?>
                         <?php if (!is_array($fileSingle)) : ?>
                             <a href="<?php echo Route::_(Uri::root() . '/tmp' . DIRECTORY_SEPARATOR . $fileSingle, false);?>"><?php echo $fileSingle; ?></a> | 

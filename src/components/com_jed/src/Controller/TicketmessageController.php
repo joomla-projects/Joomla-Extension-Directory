@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    TICKETS
+ * @subpackage TICKETS
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -24,7 +24,7 @@ use Joomla\CMS\Router\Route;
 /**
  * Ticketmessage class.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class TicketmessageController extends BaseController
 {
@@ -33,11 +33,11 @@ class TicketmessageController extends BaseController
      *
      * @return void
      *
-     * @since    4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */
-    public function edit()
+    public function edit(): void
     {
         $app = Factory::getApplication();
 
@@ -68,18 +68,18 @@ class TicketmessageController extends BaseController
     /**
      * Method to save data
      *
-     * @return    void
+     * @return void
      *
-     * @since    4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
-    public function publish()
+    public function publish(): void
     {
         // Initialise variables.
         $app = Factory::getApplication();
 
         // Checking if the user can remove object
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         if ($user->authorise('core.edit', 'com_jed') || $user->authorise('core.edit.state', 'com_jed')) {
             $model = $this->getModel('Ticketmessage', 'Site');
@@ -123,12 +123,11 @@ class TicketmessageController extends BaseController
      *
      * No messages should be removed via the front-end so this code is commented out. Keeping it in case it's decided to be needed.
      *
-     *
      * @return void
      *
-     * @since    4.0.0
+     * @since 4.0.0
      *
-     * @since    4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     /*  public function remove()
@@ -137,7 +136,7 @@ class TicketmessageController extends BaseController
         $app = Factory::getApplication();
 
         // Checking if the user can remove object
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         if ($user->authorise('core.delete', 'com_jed'))
         {

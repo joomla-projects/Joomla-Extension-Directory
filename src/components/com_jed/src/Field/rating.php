@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Field;
@@ -13,14 +13,10 @@ namespace Jed\Component\Jed\Site\Field;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Field\ListField;
-
-use function is_array;
-use function is_int;
-use function is_object;
-use function is_string;
 
 /**
 // https://www.cssscript.com/star-rating-component-javascript-rater/
@@ -48,17 +44,16 @@ myRating.dispose();
 
 // gets the element
 myRating.element();
-
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
-class RatingField extends ListField
+class oldRatingField extends ListField
 {
     /**
      * The form field type.
      *
-     * @var    string
-     * @since  4.0.0
+     * @var   string
+     * @since 4.0.0
      */
     protected string $type = 'rating';
 
@@ -67,8 +62,8 @@ class RatingField extends ListField
     /**
      * The translate.
      *
-     * @var    boolean
-     * @since  4.0.0
+     * @var   bool
+     * @since 4.0.0
      */
     protected $translate = true;
 
@@ -91,9 +86,9 @@ class RatingField extends ListField
     /**
      * Method to get the field input markup.
      *
-     * @return  string  The field input markup.
+     * @return string  The field input markup.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     protected function processQuery()
     {
@@ -192,9 +187,9 @@ class RatingField extends ListField
     /**
      * Method to get the field input for a foreignkey field.
      *
-     * @return  string  The field input.
+     * @return string  The field input.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     protected function getInput()
     {
@@ -210,7 +205,7 @@ class RatingField extends ListField
                 $this->value = explode(',', $this->value);
             }
 
-            // Integer is given
+            // int is given
             if (is_int($this->value)) {
                 $this->value = [$this->value];
             }
@@ -226,9 +221,9 @@ class RatingField extends ListField
     /**
      * Method to get the field options.
      *
-     * @return  array  The field option objects.
+     * @return array  The field option objects.
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      * @throws Exception
      */
@@ -271,10 +266,12 @@ class RatingField extends ListField
     /**
      * Wrapper method for getting attributes from the form element
      *
-     * @param   string  $attr_name  Attribute name
-     * @param   mixed   $default    Optional value to return if attribute not found
+     * @param string $attr_name Attribute name
+     * @param mixed  $default   Optional value to return if attribute not found
      *
      * @return mixed The value of the attribute if it exists, null otherwise
+     *
+     * @since 4.0.0
      */
     public function getAttribute($attr_name, $default = null)
     {

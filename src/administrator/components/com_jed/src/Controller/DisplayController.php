@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Controller;
@@ -21,27 +21,27 @@ use function defined;
 /**
  * Jed master display controller.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class DisplayController extends BaseController
 {
     /**
      * The default view.
      *
-     * @var    string
-     * @since  4.0.0
+     * @var   string
+     * @since 4.0.0
      */
     protected $default_view = 'jedtickets';
 
     /**
      * Method to display a view.
      *
-     * @param   boolean  $cachable   If true, the view output will be cached
-     * @param   array    $urlparams  An array of safe URL parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
+     * @param bool  $cachable  If true, the view output will be cached
+     * @param array $urlparams An array of safe URL parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
      *
-     * @return  DisplayController
+     * @return DisplayController
      *
-     * @since   3.9.0
+     * @since  3.9.0
      * @throws Exception
      */
     public function display($cachable = false, $urlparams = []): DisplayController

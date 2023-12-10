@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    Tickets
+ * @subpackage Tickets
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Model;
@@ -25,18 +25,18 @@ use Joomla\Database\QueryInterface;
 /**
  * Methods supporting a list of JED Tickets
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class JedticketsModel extends ListModel
 {
     /**
      * Constructor.
      *
-     * @param   array  $config  An optional associative array of configuration settings.
+     * @param array $config An optional associative array of configuration settings.
      *
-     * @see           ListModel
-     * @since         4.0.0
-     * @throws  Exception
+     * @see    ListModel
+     * @since  4.0.0
+     * @throws Exception
      */
     public function __construct($config = [])
     {
@@ -75,7 +75,7 @@ class JedticketsModel extends ListModel
      *
      * @since 4.0.0
      */
-    public function getItems()
+    public function getItems(): mixed
     {
         $items = parent::getItems();
 
@@ -171,9 +171,9 @@ class JedticketsModel extends ListModel
     /**
      * Build an SQL query to load the list data.
      *
-     * @return   QueryInterface
+     * @return QueryInterface
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected function getListQuery(): QueryInterface
     {
@@ -272,11 +272,11 @@ class JedticketsModel extends ListModel
      * different modules that might need different sets of data or different
      * ordering requirements.
      *
-     * @param   string  $id  A prefix for the store id.
+     * @param string $id A prefix for the store id.
      *
-     * @return   string A store id.
+     * @return string A store id.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected function getStoreId($id = ''): string
     {
@@ -293,16 +293,15 @@ class JedticketsModel extends ListModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @param   string  $ordering   Elements order
-     * @param   string  $direction  Order direction
+     * @param string $ordering  Elements order
+     * @param string $direction Order direction
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
-    protected function populateState($ordering = null, $direction = null)
+    protected function populateState($ordering = null, $direction = null): void
     {
         // List state information.
         parent::populateState('allocated_group', 'DESC');

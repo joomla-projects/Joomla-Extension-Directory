@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -17,16 +17,18 @@ namespace Jed\Component\Jed\Site\Model;
 use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\MVC\Model\FormModel;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
+use stdClass;
 
 /**
  * Jed model.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class ExtensionformModel extends FormModel
 {
@@ -41,7 +43,7 @@ class ExtensionformModel extends FormModel
     public function isAdminOrSuperUser()
     {
         try {
-            $user = JedHelper::getUser();
+            $user = Factory::getApplication()->getIdentity();
             return in_array("8", $user->groups) || in_array("7", $user->groups);
         } catch (Exception $exc) {
             return false;
@@ -51,21 +53,21 @@ class ExtensionformModel extends FormModel
 
     /**
      * This method revises if the $id of the item belongs to the current user
-     * @param   integer     $id     The id of the item
-     * @return  boolean             true if the user is the owner of the row, false if not.
      *
+     * @param  int $id The id of the item
+     * @return bool             true if the user is the owner of the row, false if not.
      */
     public function userIDItem($id)
     {
         try {
-            $user  = JedHelper::getUser();
+            $user  = Factory::getApplication()->getIdentity();
             $db    = Factory::getDbo();
 
             $query = $db->getQuery(true);
             $query->select("id")
-                  ->from($db->quoteName('#__jed_extensions'))
-                  ->where("id = " . $db->escape($id))
-                  ->where("created_by = " . $user->id);
+                ->from($db->quoteName('#__jed_extensions'))
+                ->where("id = " . $db->escape($id))
+                ->where("created_by = " . $user->id);
 
             $db->setQuery($query);
 
@@ -85,11 +87,11 @@ class ExtensionformModel extends FormModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
-     * @throws  Exception
+     * @throws Exception
      * @throws Exception
      * @throws Exception
      * @throws Exception
@@ -122,13 +124,15 @@ class ExtensionformModel extends FormModel
     /**
      * Method to get an ojbect.
      *
-     * @param   integer $id The id of the object to get.
+     * @param int $id The id of the object to get.
      *
-     * @return  Object|boolean Object on success, false on failure.
+     * @return mixed Object on success, false on failure.
      *
-     * @throws  Exception
+     * @throws Exception
+     *
+     * @since 4.0.0
      */
-    public function getItem($id = null)
+    public function getItem($id = null): mixed
     {
         if ($this->item === null) {
             $this->item = false;
@@ -140,12 +144,12 @@ class ExtensionformModel extends FormModel
             // Get a level row instance.
             $table      = $this->getTable();
             $properties = $table->getProperties();
-            $this->item = ArrayHelper::toObject($properties, CMSObject::class);
+            $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
             if ($table !== false && $table->load($id) && !empty($table->id)) {
-                $user = JedHelper::getUser();
+                $user = Factory::getApplication()->getIdentity();
                 $id   = $table->id;
-                if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+                if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 
                     if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
@@ -165,7 +169,7 @@ class ExtensionformModel extends FormModel
 
                     // Convert the Table to a clean CMSObject.
                     $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, CMSObject::class);
+                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
                     if (isset($this->item->primary_category_id) && is_object($this->item->primary_category_id)) {
                         $this->item->primary_category_id = ArrayHelper::fromObject($this->item->primary_category_id);
@@ -182,11 +186,11 @@ class ExtensionformModel extends FormModel
     /**
      * Method to get the table
      *
-     * @param   string  $type    Name of the Table class
-     * @param   string  $prefix  Optional prefix for the table class name
-     * @param   array   $config  Optional configuration array for Table object
+     * @param string $type   Name of the Table class
+     * @param string $prefix Optional prefix for the table class name
+     * @param array  $config Optional configuration array for Table object
      *
-     * @return  Table|boolean Table if found, boolean false on failure
+     * @return Table|bool Table if found, bool false on failure
      * @throws Exception
      * @throws Exception
      */
@@ -198,7 +202,7 @@ class ExtensionformModel extends FormModel
     /**
      * Get an item by alias
      *
-     * @param   string $alias Alias string
+     * @param string $alias Alias string
      *
      * @return int Element id
      */
@@ -214,7 +218,7 @@ class ExtensionformModel extends FormModel
         $table->load(['alias' => $alias]);
         $id = $table->id;
 
-        if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+        if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
             return $id;
         } else {
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
@@ -224,11 +228,11 @@ class ExtensionformModel extends FormModel
     /**
      * Method to check in an item.
      *
-     * @param   integer  $pk  The id of the row to check out.
+     * @param int $pk The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function checkin($pk = null)
     {
@@ -256,11 +260,11 @@ class ExtensionformModel extends FormModel
     /**
      * Method to check out an item for editing.
      *
-     * @param   integer  $pk  The id of the row to check out.
+     * @param int $pk The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function checkout($pk = null)
     {
@@ -272,11 +276,11 @@ class ExtensionformModel extends FormModel
                 $table = $this->getTable();
 
                 // Get the current user object.
-                $user = JedHelper::getUser();
+                $user = Factory::getApplication()->getIdentity();
 
                 // Attempt to check the row out.
                 if (method_exists($table, 'checkout')) {
-                    if (!$table->checkout($user->get('id'), $pk)) {
+                    if (!$table->checkout($user->id, $pk)) {
                         return false;
                     }
                 }
@@ -293,13 +297,12 @@ class ExtensionformModel extends FormModel
      *
      * The base form is loaded from XML
      *
-     * @param   array    $data      An optional array of data for the form to interogate.
-     * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+     * @param array $data     An optional array of data for the form to interogate.
+     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return  Form    A Form object on success, false on failure
+     * @return Form    A Form object on success, false on failure
      *
-     * @since   4.0.0
-     * @throws Exception
+     * @since  4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform')
@@ -324,8 +327,8 @@ class ExtensionformModel extends FormModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return  array  The default data is an empty array.
-     * @since   4.0.0
+     * @return array  The default data is an empty array.
+     * @since  4.0.0
      * @throws Exception
      * @throws Exception
      */
@@ -359,18 +362,18 @@ class ExtensionformModel extends FormModel
     /**
      * Method to save the form data.
      *
-     * @param   array $data The form data
+     * @param array $data The form data
      *
-     * @return  bool
+     * @return bool
      *
-     * @throws  Exception
-     * @since   4.0.0
+     * @throws Exception
+     * @since  4.0.0
      */
     public function save($data)
     {
         $id    = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('extension.id');
         $state = (!empty($data['state'])) ? 1 : 0;
-        $user  = JedHelper::getUser();
+        $user  = Factory::getApplication()->getIdentity();
 
         if (!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($id) {
@@ -402,17 +405,17 @@ class ExtensionformModel extends FormModel
     /**
      * Method to delete data
      *
-     * @param   int $pk Item primary key
+     * @param int $pk Item primary key
      *
-     * @return  int  The id of the deleted item
+     * @return int  The id of the deleted item
      *
-     * @throws  Exception
+     * @throws Exception
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function delete($id)
     {
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         if (!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if (empty($id)) {
@@ -443,6 +446,9 @@ class ExtensionformModel extends FormModel
      * Check if data can be saved
      *
      * @return bool
+     *
+     * @since  4.0.0
+     * @throws Exception
      */
     public function getCanSave()
     {

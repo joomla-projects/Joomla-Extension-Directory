@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Model;
@@ -20,43 +20,42 @@ use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Model\AdminModel;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
 
 /**
  * VEL Vulnerable Item model.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class VelvulnerableitemModel extends AdminModel
 {
     /**
-     * @var    string    Alias to manage history control
+     * @var string    Alias to manage history control
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public $typeAlias = 'com_jed.velvulnerableitem';
     /**
-     * @var      string    The prefix to use with controller messages.
+     * @var string    The prefix to use with controller messages.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected $text_prefix = 'COM_JED';
     /**
-     * @var    mixed  Item data
+     * @var mixed  Item data
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected mixed $item = null;
 
     /**
-     * @var int ID Of VEL Report
+     * @var   int ID Of VEL Report
      * @since 4.0.0
      */
     protected int $idVelReport = -1;
 
     /**
-     * @var int ID Of VEL linked item (report, abandoned report or developer update
+     * @var   int ID Of VEL linked item (report, abandoned report or developer update
      * @since 4.0.0
      */
     protected int $linked_item_id = -1;
@@ -64,12 +63,12 @@ class VelvulnerableitemModel extends AdminModel
     /**
      * Method to get the record form.
      *
-     * @param   array    $data      An optional array of data for the form to interogate.
-     * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+     * @param array $data     An optional array of data for the form to interogate.
+     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return  Form|bool  A Form object on success, false on failure
+     * @return Form|bool  A Form object on success, false on failure
      *
-     * @since  4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */
@@ -96,27 +95,26 @@ class VelvulnerableitemModel extends AdminModel
     /**
      * Method to get a single record.
      *
-     * @param   integer  $pk  The id of the primary key.
+     * @param int $pk The id of the primary key.
      *
-     * @return  object|bool    Object on success, false on failure.
+     * @return mixed    Object on success, false on failure.
      *
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem($pk = null): CMSObject|bool
+    public function getItem($pk = null): mixed
     {
-
         return parent::getItem($pk);
     }
 
     /**
      * Returns a reference to the Table object, always creating it.
      *
-     * @param   string  $name     The table type to instantiate
-     * @param   string  $prefix   A prefix for the table class name. Optional.
-     * @param   array   $options  Configuration array for model. Optional.
+     * @param string $name    The table type to instantiate
+     * @param string $prefix  A prefix for the table class name. Optional.
+     * @param array  $options Configuration array for model. Optional.
      *
-     * @return    Table    A database object
+     * @return Table    A database object
      *
      * @since  4.0.0
      * @throws Exception
@@ -128,9 +126,10 @@ class VelvulnerableitemModel extends AdminModel
 
     /**
      * Gets VEL Linked Reports
+     *
      * @return array
      *
-     * @since version
+     * @since  version
      * @throws Exception
      */
     public function getVELLinkedReports(): array
@@ -181,7 +180,7 @@ class VelvulnerableitemModel extends AdminModel
     /**
      * Get VEL Abandoned Report Data
      *
-     * @param   int  $vel_item_id
+     * @param int $vel_item_id
      *
      * @return array
      *
@@ -216,13 +215,13 @@ class VelvulnerableitemModel extends AdminModel
     /**
      * getVelDeveloperUpdateData - gets the entry for a specific developer update
      *
-     * @param   int  $vel_item_id
+     * @param int $vel_item_id
      *
-     * @return array
+     * @return mixed
      *
      * @since version
      */
-    public function getVelDeveloperUpdateData(int $vel_item_id)
+    public function getVelDeveloperUpdateData(int $vel_item_id): mixed
     {
         // Create a new query object.
         $db = $this->getDatabase();
@@ -252,7 +251,7 @@ class VelvulnerableitemModel extends AdminModel
     /**
      * getVelReportData - gets the entry for a specific vulnerable item report
      *
-     * @param   int  $vel_item_id
+     * @param int $vel_item_id
      *
      * @return array
      *
@@ -288,9 +287,9 @@ class VelvulnerableitemModel extends AdminModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return   mixed  The data for the form.
+     * @return mixed  The data for the form.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */

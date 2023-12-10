@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    TICKETS
+ * @subpackage TICKETS
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -23,13 +23,12 @@ use Joomla\CMS\Session\Session;
 use Joomla\CMS\Uri\Uri;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
-
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-$user       = JedHelper::getUser();
-$userId     = $user->get('id');
+$user       = Factory::getApplication()->getIdentity();
+$userId     = $user->id;
 $listOrder  = $this->state->get('list.ordering');
 $listDirn   = $this->state->get('list.direction');
 $canCreate  = $user->authorise('core.create', 'com_jed');
@@ -49,7 +48,7 @@ $wa->useStyle('com_jed.list');
 <form action="<?php echo htmlspecialchars(Uri::getInstance()->toString()); ?>" method="post" name="adminForm" id="adminForm">
 
     <?php if (!empty($this->filterForm)) {
-        echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
+        echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
     } ?>
     <div class="table-responsive">
         <table class="table table-striped" id="ticketmessageList">
@@ -92,7 +91,7 @@ $wa->useStyle('com_jed.list');
                     <?php $canEdit = $user->authorise('core.edit', 'com_jed'); ?>
 
                     <?php if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) : ?>
-                        <?php $canEdit = JedHelper::getUser()->id == $item->created_by; ?>
+                        <?php $canEdit = Factory::getApplication()->getIdentity()->id == $item->created_by; ?>
                     <?php endif; ?>
 
                     <tr class="row<?php echo $i % 2; ?>">
@@ -116,7 +115,7 @@ $wa->useStyle('com_jed.list');
                             <?php echo $item->id; ?>
                         </td>
                         <td>
-                            <?php $canCheckin = JedHelper::getUser()->authorise('core.manage', 'com_jed.' . $item->id) || $item->checked_out == JedHelper::getUser()->id; ?>
+                            <?php $canCheckin = Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jed.' . $item->id) || $item->checked_out == Factory::getApplication()->getIdentity()->id; ?>
                             <?php if ($canCheckin && $item->checked_out > 0) : ?>
                                 <a href="<?php echo Route::_('index.php?option=com_jed&task=ticketmessage.checkin&id=' . $item->id . '&' . Session::getFormToken() . '=1'); ?>"> <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'ticketmessage.', false); ?></a>
                             <?php endif; ?>
@@ -131,7 +130,7 @@ $wa->useStyle('com_jed.list');
 
                         <?php if ($canEdit || $canDelete) : ?>
                             <td class="center">
-                                <?php $canCheckin = JedHelper::getUser()->authorise('core.manage', 'com_jed.' . $item->id) || $this->item->checked_out == JedHelper::getUser()->id; ?>
+                                <?php $canCheckin = Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jed.' . $item->id) || $this->item->checked_out == Factory::getApplication()->getIdentity()->id; ?>
                             <?php if ($canEdit && $item->checked_out == 0) :
                                 ?>                            <a
                                     href="<?php echo Route::_('index.php?option=com_jed&task=ticketmessage.edit&id=' . $item->id, false, 2); ?>"

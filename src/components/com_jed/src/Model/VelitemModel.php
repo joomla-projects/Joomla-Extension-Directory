@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -17,7 +17,6 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\CMS\Uri\Uri;
@@ -34,23 +33,22 @@ class VelitemModel extends ItemModel
     /**
      * The item object
      *
-     * @var    object
-     * @since  4.0.0
+     * @var   object
+     * @since 4.0.0
      */
-    public $item;
+    public mixed $item;
 
     /**
      * Method to get a single Vulnerable Item.
      *
-     * @param   null  $pk  The id of the object to get.
+     * @param null $pk The id of the object to get.
      *
      * @return object|bool Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null): object|bool
     {
 
         if ($this->item === null) {
@@ -67,10 +65,12 @@ class VelitemModel extends ItemModel
                 $query = $db->getQuery(true);
 
                 // Get from #__jed_vel_vulnerable_item as a
-                $query->select($db->quoteName(
-                    ['a.id', 'a.title', 'a.public_description', 'a.alias', 'a.state'],
-                    ['id', 'title', 'public_description', 'alias', 'state']
-                ));
+                $query->select(
+                    $db->quoteName(
+                        ['a.id', 'a.title', 'a.public_description', 'a.alias', 'a.state'],
+                        ['id', 'title', 'public_description', 'alias', 'state']
+                    )
+                );
                 $query->from($db->quoteName('#__jed_vel_vulnerable_item', 'a'));
                 $query->where('a.state=1 and a.id = ' . (int) $pk);
 
@@ -119,7 +119,7 @@ class VelitemModel extends ItemModel
     protected function populateState()
     {
         $app  = Factory::getApplication();
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         // Check published state
         if ((!$user->authorise('core.edit.state', 'com_jed')) && (!$user->authorise('core.edit', 'com_jed'))) {

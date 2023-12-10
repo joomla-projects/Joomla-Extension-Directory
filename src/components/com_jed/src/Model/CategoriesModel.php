@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -27,7 +27,7 @@ use function defined;
 /**
  * Methods supporting a list of Category records.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class CategoriesModel extends ListModel
 {
@@ -39,7 +39,7 @@ class CategoriesModel extends ListModel
     /**
      * Parent category of the current one
      *
-     * @var    CategoryNode|null
+     * @var CategoryNode
      *
      * @since 3.0
      */
@@ -49,11 +49,11 @@ class CategoriesModel extends ListModel
     /**
      * Constructor.
      *
-     * @param   array  $config  An optional associative array of configuration settings.
+     * @param array $config An optional associative array of configuration settings.
      *
-     * @see        JController
+     * @see JController
      *
-     * @since      4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function __construct($config = [])
@@ -71,9 +71,9 @@ class CategoriesModel extends ListModel
     /**
      * Build query and where for protected _getList function and return a list
      *
-     * @param   int|null  $limitStart  Where to start looking up records
-     * @param   int|null  $limit       Number of records to return, set to -1 to return all records
-     * @param   bool      $extended    Extend the data with links etc, default true
+     * @param int|null $limitStart Where to start looking up records
+     * @param int|null $limit      Number of records to return, set to -1 to return all records
+     * @param bool     $extended   Extend the data with links etc, default true
      *
      * @return array An array of results.
      *
@@ -93,7 +93,9 @@ class CategoriesModel extends ListModel
 
         $this->_parent = $categories->get($this->getState('filter.parentId', 'root'));
 
-        /**if (is_object($this->_parent)) {
+        /**
+*
+* if (is_object($this->_parent)) {
             $this->_items = $this->_parent->getChildren($recursive);
         } else {
             $this->_items = [];
@@ -143,16 +145,17 @@ class CategoriesModel extends ListModel
         //echo "<pre>";print_r($list);echo "</pre>";exit();
         $this->_items = $list;
 
-        return $list;**/
+        return $list;
+**/
         return $this->_parent->getChildren();
     }
 
     /**
      * Get the parent.
      *
-     * @return  object  An array of data items on success, false on failure.
+     * @return object  An array of data items on success, false on failure.
      *
-     * @since   3.0
+     * @since 3.0
      */
     public function getParent()
     {
@@ -166,7 +169,7 @@ class CategoriesModel extends ListModel
     /**
      * Get total number of rows for pagination
      *
-     * @return  int  Total number of records
+     * @return int  Total number of records
      *
      * @since 3.0
      */
@@ -182,7 +185,7 @@ class CategoriesModel extends ListModel
     /**
      * Convert an node to an object
      *
-     * @param   object  $item  XML node
+     * @param object $item XML node
      *
      * @return stdClass
      *
@@ -207,16 +210,15 @@ class CategoriesModel extends ListModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @param   string  $ordering   Elements order
-     * @param   string  $direction  Order direction
+     * @param string $ordering  Elements order
+     * @param string $direction Order direction
      *
      * @return void
      *
-     * @since    1.6
+     * @since  1.6
      * @throws Exception
-     *
      */
-    protected function populateState($ordering = null, $direction = null)
+    protected function populateState($ordering = null, $direction = null): void
     {
         if ($ordering === null) {
             $ordering = 'categories.ordering';

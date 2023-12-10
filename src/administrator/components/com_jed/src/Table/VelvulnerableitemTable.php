@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Table;
@@ -14,92 +14,73 @@ namespace Jed\Component\Jed\Administrator\Table;
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table as Table;
-use Joomla\CMS\Versioning\VersionableTableInterface;
 use Joomla\Database\DatabaseDriver;
+use Joomla\Filesystem\File;
 
 /**
  * Velvulnerableitem table
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
-class VelvulnerableitemTable extends Table implements VersionableTableInterface
+class VelvulnerableitemTable extends Table
 {
     /**
-     * Constructor
      *
-     * @param   DatabaseDriver  $db  A database connector object
+     * fields
      *
-     * @since    4.0.0
-     */
-    public function __construct(DatabaseDriver $db)
-    {
-        $this->typeAlias = 'com_jed.velvulnerableitem';
-        parent::__construct('#__jed_vel_vulnerable_item', 'id', $db);
-        $this->setColumnAlias('published', 'state');
-    }
-
-    /**
-     * This function convert an array of Access objects into an rules array.
-     *
-     * @param   array  $jaccessrules  An array of Access objects.
-     *
-     * @return  array
      * @since 4.0.0
      */
-    private function JAccessRulestoArray(array $jaccessrules): array
-    {
-        $rules = [];
 
-        foreach ($jaccessrules as $action => $jaccess) {
-            $actions = [];
+    //  public int $id;
+    //public string $jed;
+    //public int $exploit_type;
+    //public string $exploit_other_description;
+    //public mixed $xml_manifest;
+    //public string $public_description;
+    //public string $alias;
+    //public int $created_by;
+    //public int $modified_by;
+    //public date $created;
+    //public date $modified;
+    //public int $checked_out;
+    //public date $checked_out_time;
+    //public int $state;
 
-            if ($jaccess) {
-                foreach ($jaccess->getData() as $group => $allow) {
-                    $actions[$group] = ((bool) $allow);
-                }
-            }
-
-            $rules[$action] = $actions;
-        }
-
-        return $rules;
-    }
 
     /**
      * Define a namespaced asset name for inclusion in the #__assets table
      *
      * @return string The asset name
      *
-     * @see      Table::_getAssetName
-     * @since    4.0.0
-     *
+     * @see   Table::_getAssetName
+     * @since 4.0.0
      */
     protected function _getAssetName(): string
     {
         $k = $this->_tbl_key;
 
-        return $this->typeAlias . '.' . (int) $this->$k;
+        return $this->typeAlias . '.' . (int)$this->$k;
     }
 
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param   array  $src     Named array
-     * @param   mixed  $ignore  Optional array or list of parameters to ignore
+     * @param array $src    Named array
+     * @param mixed $ignore Optional array or list of parameters to ignore
      *
-     * @return  null|string  null is operation was satisfactory, otherwise returns an error
+     * @return null|string  null is operation was satisfactory, otherwise returns an error
      *
-     * @see     Table:bind
-     * @since   4.0.0
+     * @see    Table:bind
+     * @since  4.0.0
      * @throws Exception
      */
     public function bind($src, $ignore = ''): ?string
@@ -112,7 +93,7 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
         if (isset($src['status'])) {
             if (is_array($src['status'])) {
                 $src['status'] = implode(',', $src['status']);
-            } elseif (strpos($src['status'], ',') != false) {
+            } elseif (strpos($src['status'], ',')) {
                 $src['status'] = explode(',', $src['status']);
             } elseif (strlen($src['status']) == 0) {
                 $src['status'] = '';
@@ -125,7 +106,7 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
         if (!empty($src['report_id'])) {
             if (is_array($src['report_id'])) {
                 $src['report_id'] = implode(',', $src['report_id']);
-            } elseif (strrpos($src['report_id'], ',') != false) {
+            } elseif (strrpos($src['report_id'], ',')) {
                 $src['report_id'] = explode(',', $src['report_id']);
             }
         } else {
@@ -136,7 +117,7 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
         if (isset($src['risk_level'])) {
             if (is_array($src['risk_level'])) {
                 $src['risk_level'] = implode(',', $src['risk_level']);
-            } elseif (strpos($src['risk_level'], ',') != false) {
+            } elseif (strpos($src['risk_level'], ',')) {
                 $src['risk_level'] = explode(',', $src['risk_level']);
             } elseif (strlen($src['risk_level']) == 0) {
                 $src['risk_level'] = '';
@@ -149,7 +130,7 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
         if (isset($src['exploit_type'])) {
             if (is_array($src['exploit_type'])) {
                 $src['exploit_type'] = implode(',', $src['exploit_type']);
-            } elseif (strpos($src['exploit_type'], ',') != false) {
+            } elseif (strpos($src['exploit_type'], ',')) {
                 $src['exploit_type'] = explode(',', $src['exploit_type']);
             } elseif (strlen($src['exploit_type']) == 0) {
                 $src['exploit_type'] = '';
@@ -161,7 +142,7 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
         if (!empty($src['xml_manifest'])) {
             if (is_array($src['xml_manifest'])) {
                 $src['xml_manifest'] = implode(',', $src['xml_manifest']);
-            } elseif (strpos($src['xml_manifest'], ',') != false) {
+            } elseif (strpos($src['xml_manifest'], ',')) {
                 $src['xml_manifest'] = explode(',', $src['xml_manifest']);
             }
         } else {
@@ -173,7 +154,7 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
         if (isset($src['discoverer_public'])) {
             if (is_array($src['discoverer_public'])) {
                 $src['discoverer_public'] = implode(',', $src['discoverer_public']);
-            } elseif (strpos($src['discoverer_public'], ',') != false) {
+            } elseif (strpos($src['discoverer_public'], ',')) {
                 $src['discoverer_public'] = explode(',', $src['discoverer_public']);
             } elseif (strlen($src['discoverer_public']) == 0) {
                 $src['discoverer_public'] = '';
@@ -183,15 +164,15 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
         }
 
         if ($src['id'] == 0 && empty($src['created_by'])) {
-            $src['created_by'] = JedHelper::getUser()->id;
+            $src['created_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         if ($src['id'] == 0 && empty($src['modified_by'])) {
-            $src['modified_by'] = JedHelper::getUser()->id;
+            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         if ($task == 'apply' || $task == 'save') {
-            $src['modified_by'] = JedHelper::getUser()->id;
+            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         if ($src['id'] == 0) {
@@ -203,7 +184,7 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
         }
 
 
-        if (!JedHelper::getUser()->authorise('core.admin', 'com_jed.velvulnerableitem.' . $src['id'])) {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jed.velvulnerableitem.' . $src['id'])) {
             $actions         = Access::getActionsFromFile(
                 JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
                 "/access/section[@name='velvulnerableitem']/"
@@ -233,7 +214,7 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
      *
      * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function check(): bool
@@ -255,11 +236,9 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
                 }
             }
 
-            $this->set('xml_manifest', "");
+            $this->xml_manifest = "";
 
             foreach ($files['xml_manifest'] as $singleFile) {
-                jimport('joomla.filesystem.file');
-
                 // Check if the server found any error.
                 $fileError = $singleFile['error'];
                 $message   = '';
@@ -284,7 +263,7 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
                     }
                 } elseif ($fileError == 4) {
                     if (isset($array['xml_manifest'])) {
-                        $this->set('xml_manifest', $array['xml_manifest']);
+                        $this->xml_manifest = $array['xml_manifest'];
                     }
                 } else {
                     // Check for filesize
@@ -305,22 +284,22 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
                     $uploadPath = JPATH_ROOT . '//tmp/' . $filename;
                     $fileTemp   = $singleFile['tmp_name'];
 
-                    if (!File::exists($uploadPath)) {
+                    if (!file_exists($uploadPath)) {
                         if (!File::upload($fileTemp, $uploadPath)) {
                             $app->enqueueMessage('Error moving file', 'warning');
 
                             return false;
                         }
                     }
-                    $xml_man = $this->get('xml_manifest');
-                    $this->set('xml_manifest', $xml_man .= (!empty($xml_man)) ? "," : "");
-                    $xml_man = $this->get('xml_manifest');
-                    $this->set('xml_manifest', $xml_man .= $filename);
+                    $xml_man            = $this->xml_manifest;
+                    $this->xml_manifest = $xml_man .= (!empty($xml_man)) ? "," : "";
+                    $xml_man            = $this->xml_manifest;
+                    $this->xml_manifest = $xml_man .= $filename;
                 }
             }
         } else {
-            $xml_man = $this->get('xml_manifest');
-            $this->set('xml_manifest', $xml_man .= $array['xml_manifest_hidden']);
+            $xml_man            = $this->xml_manifest;
+            $this->xml_manifest = $xml_man .= $array['xml_manifest_hidden'];
         }
 
         return parent::check();
@@ -329,11 +308,11 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
     /**
      * Delete a record by id
      *
-     * @param   mixed  $pk  Primary key value to delete. Optional
+     * @param mixed $pk Primary key value to delete. Optional
      *
      * @return bool
      *
-     * @since    4.0.0
+     * @since 4.0.0
      */
     public function delete($pk = null): bool
     {
@@ -341,7 +320,7 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
         $result = parent::delete($pk);
 
         if ($result) {
-            $checkImageVariableType = gettype($this->get('xml_manifest'));
+            $checkImageVariableType = gettype($this->xml_manifest);
 
             switch ($checkImageVariableType) {
                 case 'string':
@@ -358,11 +337,97 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
     }
 
     /**
+     * Method to store a row in the database from the Table instance properties.
+     *
+     * If a primary key value is set the row with that primary key value will be updated with the instance property values.
+     * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
+     *
+     * @param bool $updateNulls True to update fields even if they are null.
+     *
+     * @return bool  True on success.
+     *
+     * @since 4.0.0
+     */
+    public function store($updateNulls = true): bool
+    {
+        return parent::store($updateNulls);
+    }
+
+    /**
+     * This function convert an array of Access objects into an rules array.
+     *
+     * @param array $jaccessrules An array of Access objects.
+     *
+     * @return array
+     * @since  4.0.0
+     */
+    private function JAccessRulestoArray(array $jaccessrules): array
+    {
+        $rules = [];
+
+        foreach ($jaccessrules as $action => $jaccess) {
+            $actions = [];
+
+            if ($jaccess) {
+                foreach ($jaccess->getData() as $group => $allow) {
+                    $actions[$group] = ((bool)$allow);
+                }
+            }
+
+            $rules[$action] = $actions;
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Get the Properties of the table
+     *
+     * * @param   boolean  $public  If true, returns only the public properties.
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    public function getTableProperties(bool $public = true): array
+    {
+        $vars = get_object_vars($this);
+
+        if ($public) {
+            foreach ($vars as $key => $value) {
+                if (str_starts_with($key, '_')) {
+                    unset($vars[$key]);
+                }
+            }
+
+            // Collect all none public properties of the current class and it's parents
+            $nonePublicProperties = [];
+            $reflection           = new \ReflectionObject($this);
+            do {
+                $nonePublicProperties = array_merge(
+                    $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED),
+                    $nonePublicProperties
+                );
+            } while ($reflection = $reflection->getParentClass());
+
+            // Unset all none public properties, this is needed as get_object_vars returns now all vars
+            // from the current object and not only the CMSObject and the public ones from the inheriting classes
+            foreach ($nonePublicProperties as $prop) {
+                if (\array_key_exists($prop->getName(), $vars)) {
+                    unset($vars[$prop->getName()]);
+                }
+            }
+        }
+
+        return $vars;
+    }
+
+    /**
      * Get the type alias for the history table
      *
-     * @return  string  The alias as described above
+     * @return string  The alias as described above
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getTypeAlias(): string
     {
@@ -370,19 +435,16 @@ class VelvulnerableitemTable extends Table implements VersionableTableInterface
     }
 
     /**
-     * Method to store a row in the database from the Table instance properties.
+     * Constructor
      *
-     * If a primary key value is set the row with that primary key value will be updated with the instance property values.
-     * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
+     * @param DatabaseDriver $db A database connector object
      *
-     * @param   boolean  $updateNulls  True to update fields even if they are null.
-     *
-     * @return  boolean  True on success.
-     *
-     * @since   4.0.0
+     * @since 4.0.0
      */
-    public function store($updateNulls = true): bool
+    public function __construct(DatabaseDriver $db)
     {
-        return parent::store($updateNulls);
+        $this->typeAlias = 'com_jed.velvulnerableitem';
+        parent::__construct('#__jed_vel_vulnerable_item', 'id', $db);
+        $this->setColumnAlias('published', 'state');
     }
 }

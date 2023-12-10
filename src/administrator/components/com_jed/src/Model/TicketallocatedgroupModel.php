@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    Tickets
+ * @subpackage Tickets
  *
- * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Model;
@@ -25,24 +25,23 @@ use Joomla\CMS\Table\Table;
 /**
  * Ticket Allocated Group model.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class TicketallocatedgroupModel extends AdminModel
 {
     /**
-     * @var    string    Alias to manage history control
-     * @since   4.0.0
-     *
+     * @var   string    Alias to manage history control
+     * @since 4.0.0
      */
     public $typeAlias = 'com_jed.ticketallocatedgroup';
 
     /**
-     * @var      string    The prefix to use with controller messages.
-     * @since  4.0.0
+     * @var   string    The prefix to use with controller messages.
+     * @since 4.0.0
      */
     protected $text_prefix = 'COM_JED';
     /**
-     * @var null  Item data
+     * @var   null  Item data
      * @since 4.0.0
      */
     protected $item = null;
@@ -50,12 +49,12 @@ class TicketallocatedgroupModel extends AdminModel
     /**
      * Method to get the record form.
      *
-     * @param   array    $data      An optional array of data for the form to interogate.
-     * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+     * @param array $data     An optional array of data for the form to interogate.
+     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return  Form|bool  A Form object on success, false on failure
+     * @return Form|bool  A Form object on success, false on failure
      *
-     * @since  4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */
@@ -81,9 +80,9 @@ class TicketallocatedgroupModel extends AdminModel
     /**
      * Method to get a single record.
      *
-     * @param   integer  $pk  The id of the primary key.
+     * @param int $pk The id of the primary key.
      *
-     * @return  Object|bool    Object on success, false on failure.
+     * @return Object|bool    Object on success, false on failure.
      *
      * @since  4.0.0
      * @throws Exception
@@ -96,11 +95,11 @@ class TicketallocatedgroupModel extends AdminModel
     /**
      * Returns a reference to the Table object, always creating it.
      *
-     * @param   string  $name     The table type to instantiate
-     * @param   string  $prefix   A prefix for the table class name. Optional.
-     * @param   array   $options  Configuration array for model. Optional.
+     * @param string $name    The table type to instantiate
+     * @param string $prefix  A prefix for the table class name. Optional.
+     * @param array  $options Configuration array for model. Optional.
      *
-     * @return    Table    A database object
+     * @return Table    A database object
      *
      * @since  4.0.0
      * @throws Exception
@@ -113,9 +112,9 @@ class TicketallocatedgroupModel extends AdminModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return   mixed  The data for the form.
+     * @return mixed  The data for the form.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */

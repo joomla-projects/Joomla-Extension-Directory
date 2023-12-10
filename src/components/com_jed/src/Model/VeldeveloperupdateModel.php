@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package           JED
+ * @package JED
  *
- * @subpackage        VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license           GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -35,12 +35,15 @@ class VeldeveloperupdateModel extends ItemModel
     /**
      * The item object
      *
-     * @var    object
-     * @since  4.0.0
+     * @var   object
+     * @since 4.0.0
      */
     public $item;
 
-    /** Data Table
+    /**
+     *
+     * Data Table
+     *
      * @since 4.0.0
      **/
     private string $dbtable = "#__jed_vel_developer_update";
@@ -48,11 +51,11 @@ class VeldeveloperupdateModel extends ItemModel
     /**
      * Method to check in an item.
      *
-     * @param   int|null  $id  The id of the row to check out.
+     * @param int|null $id The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkin(int $id = null): bool
@@ -81,9 +84,9 @@ class VeldeveloperupdateModel extends ItemModel
     /**
      * Method to check out an item for editing.
      *
-     * @param   int|null  $id  The id of the row to check out.
+     * @param int|null $id The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
      * @since 4.0.0
      *
@@ -100,11 +103,11 @@ class VeldeveloperupdateModel extends ItemModel
                 $table = $this->getTable();
 
                 // Get the current user object.
-                $user = JedHelper::getUser();
+                $user = Factory::getApplication()->getIdentity();
 
                 // Attempt to check the row out.
                 if (method_exists($table, 'checkout')) {
-                    if (!$table->checkout($user->get('id'), $id)) {
+                    if (!$table->checkout($user->id, $id)) {
                         return false;
                     }
                 }
@@ -119,13 +122,12 @@ class VeldeveloperupdateModel extends ItemModel
     /**
      * Method to get an object.
      *
-     * @param   integer  $pk  The id of the object to get.
+     * @param int $pk The id of the object to get.
      *
-     * @return  false|object|null    Object on success, false on failure.
+     * @return false|object|null    Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
     public function getItem($pk = null)
     {
@@ -141,7 +143,7 @@ class VeldeveloperupdateModel extends ItemModel
             $table = $this->getTable();
 
             // Attempt to load the row.
-            $keys = ["id" => $pk, "created_by" => JedHelper::getUser()->id];
+            $keys = ["id" => $pk, "created_by" => Factory::getApplication()->getIdentity()->id];
 
             if ($table->load($keys)) {
                 if (empty($result) || JedHelper::isAdminOrSuperUser()) {
@@ -199,12 +201,12 @@ class VeldeveloperupdateModel extends ItemModel
     /**
      * Get an instance of Table class
      *
-     * @param   string  $name     Name of the JTable class to get an instance of.
-     * @param   string  $prefix   Prefix for the table class name. Optional.
-     * @param   array   $options  Array of configuration values for the JTable object. Optional.
+     * @param string $name    Name of the JTable class to get an instance of.
+     * @param string $prefix  Prefix for the table class name. Optional.
+     * @param array  $options Array of configuration values for the JTable object. Optional.
      *
      * @return Table Table if success, false on failure.
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Veldeveloperupdate', $prefix = 'Administrator', $options = []): Table
@@ -226,7 +228,7 @@ class VeldeveloperupdateModel extends ItemModel
     protected function populateState()
     {
         $app  = Factory::getApplication();
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         // Check published state
         if ((!$user->authorise('core.edit.state', 'com_jed')) && (!$user->authorise('core.edit', 'com_jed'))) {
@@ -258,12 +260,12 @@ class VeldeveloperupdateModel extends ItemModel
     /**
      * Publish the element
      *
-     * @param   int  $id     Item id
-     * @param   int  $state  Publish state
+     * @param int $id    Item id
+     * @param int $state Publish state
      *
-     * @return  boolean
+     * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function publish(int $id, int $state): bool
@@ -285,18 +287,18 @@ class VeldeveloperupdateModel extends ItemModel
      *
      * No deletion of data in front end.
      *
-     * @param   int  $id  Element id
+     * @param int  $id  Element id
      *
-     * @return  bool
+     * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     /*public function delete($id) : bool
     {
         $table = $this->getTable();
 
-                if(empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id){
+                if(empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id){
                     return $table->delete($id);
                 } else {
                                                 throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);

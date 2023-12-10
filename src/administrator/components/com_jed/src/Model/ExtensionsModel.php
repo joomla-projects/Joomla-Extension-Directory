@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package        JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Model;
@@ -22,18 +22,18 @@ use Joomla\Database\QueryInterface;
 /**
  * Methods supporting a list of Extensions records.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class ExtensionsModel extends ListModel
 {
     /**
      * Constructor.
      *
-     * @param   array  $config  An optional associative array of configuration settings.
+     * @param array $config An optional associative array of configuration settings.
      *
-     * @see           ListModel
-     * @since         4.0.0
-     * @throws  Exception
+     * @see    ListModel
+     * @since  4.0.0
+     * @throws Exception
      */
     public function __construct($config = [])
     {
@@ -108,9 +108,9 @@ class ExtensionsModel extends ListModel
     /**
      * Build an SQL query to load the list data.
      *
-     * @return   QueryInterface
+     * @return QueryInterface
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     protected function getListQuery(): QueryInterface
     {
@@ -122,9 +122,9 @@ class ExtensionsModel extends ListModel
         // Select the required fields from the table.
             // $query->select('varied.description as description, varied.title as title, varied.alias as alias');
         //        $query->join('INNER', '#__jed_extension_varied_data AS varied ON varied.extension_id = a.id and varied.is_default_data=1');
-        ->select(
-            $db->quoteName(
-                [
+            ->select(
+                $db->quoteName(
+                    [
                     'a.id',
                     'a.title',
                     'a.alias',
@@ -138,8 +138,8 @@ class ExtensionsModel extends ListModel
                     'categories.title',
                     'users.name',
                     'staff.name',
-                ],
-                [
+                    ],
+                    [
                     'id',
                     'title',
                     'alias',
@@ -153,18 +153,18 @@ class ExtensionsModel extends ListModel
                     'category',
                     'developer',
                     'editor',
-                ]
+                    ]
+                )
             )
-        )
-          ->from($db->quoteName('#__jed_extensions', 'a'))
-        ->leftJoin(
-            $db->quoteName('#__categories', 'categories')
+            ->from($db->quoteName('#__jed_extensions', 'a'))
+            ->leftJoin(
+                $db->quoteName('#__categories', 'categories')
                 . ' ON ' . $db->quoteName('categories.id') . ' = ' . $db->quoteName('a.primary_category_id')
-        )
-        ->leftJoin(
-            $db->quoteName('#__users', 'users')
+            )
+            ->leftJoin(
+                $db->quoteName('#__users', 'users')
                 . ' ON ' . $db->quoteName('users.id') . ' = ' . $db->quoteName('a.created_by')
-        )
+            )
             ->leftJoin(
                 $db->quoteName('#__users', 'staff')
                 . ' ON ' . $db->quoteName('staff.id') . ' = ' . $db->quoteName('a.checked_out')
@@ -249,11 +249,11 @@ class ExtensionsModel extends ListModel
      * different modules that might need different sets of data or different
      * ordering requirements.
      *
-     * @param   string  $id  A prefix for the store id.
+     * @param string $id A prefix for the store id.
      *
-     * @return  string A store id.
+     * @return string A store id.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     protected function getStoreId($id = ''): string
     {
@@ -270,16 +270,15 @@ class ExtensionsModel extends ListModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @param   string  $ordering   Elements order
-     * @param   string  $direction  Order direction
+     * @param string $ordering  Elements order
+     * @param string $direction Order direction
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
-    protected function populateState($ordering = null, $direction = null)
+    protected function populateState($ordering = null, $direction = null): void
     {
         // List state information.
         parent::populateState('id', 'ASC');

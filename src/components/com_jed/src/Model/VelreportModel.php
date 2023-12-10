@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -29,11 +29,14 @@ use function defined;
 /**
  * VEL Report Model Class.
  *
- * @since  4.0
+ * @since 4.0
  */
 class VelreportModel extends ItemModel
 {
-    /** Data Table
+    /**
+     *
+     * Data Table
+     *
      * @since 4.0.0
      **/
     private string $dbtable = "#__jed_vel_report";
@@ -41,9 +44,9 @@ class VelreportModel extends ItemModel
     /**
      * Method to check in an item.
      *
-     * @param   int|null  $id  The id of the row to check out.
+     * @param int|null $id The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
      * @since 4.0.0
      *
@@ -75,11 +78,11 @@ class VelreportModel extends ItemModel
     /**
      * Method to get a single record.
      *
-     * @param   int|null  $pk  The id of the object to get.
+     * @param int|null $pk The id of the object to get.
      *
-     * @return  object    Object on success, false on failure.
+     * @return object    Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getItem($pk = null)
@@ -96,7 +99,7 @@ class VelreportModel extends ItemModel
             $table = $this->getTable();
 
             // Attempt to load the row.
-            $keys = ["id" => $pk, "created_by" => JedHelper::getUser()->id];
+            $keys = ["id" => $pk, "created_by" => Factory::getApplication()->getIdentity()->id];
 
             if ($table->load($keys)) {
                 if (empty($result) || JedHelper::isAdminOrSuperUser()) {
@@ -179,12 +182,12 @@ class VelreportModel extends ItemModel
     /**
      * Get an instance of Table class
      *
-     * @param   string  $name
-     * @param   string  $prefix  Prefix for the table class name. Optional.
-     * @param   array   $options
+     * @param string $name
+     * @param string $prefix  Prefix for the table class name. Optional.
+     * @param array  $options
      *
-     * @return  Table Table if success, throws exception on failure.
-     * @since 4.0.0
+     * @return Table Table if success, throws exception on failure.
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Velreport', $prefix = 'Administrator', $options = []): Table
@@ -206,7 +209,7 @@ class VelreportModel extends ItemModel
     protected function populateState()
     {
         $app  = Factory::getApplication();
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         // Check published state
         if ((!$user->authorise('core.edit.state', 'com_jed')) && (!$user->authorise('core.edit', 'com_jed'))) {

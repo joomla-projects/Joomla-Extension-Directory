@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -13,6 +13,7 @@ namespace Jed\Component\Jed\Site\Controller;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
@@ -23,21 +24,20 @@ use function defined;
 /**
  * Review class.
  *
- * @since  1.6.0
+ * @since 1.6.0
  */
 class ReviewController extends BaseController
 {
     /**
      * Method to check out an item for editing and redirect to the edit form.
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
-     * @throws  Exception
      * @throws Exception
      */
-    public function edit()
+    public function edit(): void
     {
         $app = Factory::getApplication();
 
@@ -68,14 +68,14 @@ class ReviewController extends BaseController
     /**
      * Method to save data
      *
-     * @return    void
+     * @return void
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
-     * @throws  Exception
+     * @throws Exception
      * @throws Exception
      */
-    public function publish()
+    public function publish(): void
     {
         // Initialise variables.
         $app = Factory::getApplication();
@@ -123,16 +123,16 @@ class ReviewController extends BaseController
     /**
      * Check in record
      *
-     * @return  boolean  True on success
+     * @return bool  True on success
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function checkin()
     {
         // Check for request forgeries.
         $this->checkToken('GET');
 
-        $id        = $this->input->post->get('id', int, 0);
+        $id        = $this->input->post->get('id', 0, 'int');
         $model     = $this->getModel();
         $item      = $model->getItem($id);
 

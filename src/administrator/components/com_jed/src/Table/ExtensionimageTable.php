@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package        JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Table;
@@ -34,7 +34,7 @@ class ExtensionimageTable extends Table
     /**
      * Constructor
      *
-     * @param   DatabaseDriver  $db  A database connector object
+     * @param DatabaseDriver $db A database connector object
      *
      * @since 4.0.0
      */
@@ -48,9 +48,9 @@ class ExtensionimageTable extends Table
     /**
      * This function convert an array of Access objects into an rules array.
      *
-     * @param   array  $jaccessrules  An array of Access objects.
+     * @param array $jaccessrules An array of Access objects.
      *
-     * @return  array
+     * @return array
      *
      * @since 4.0.0
      */
@@ -78,7 +78,7 @@ class ExtensionimageTable extends Table
      *
      * @return string The asset name
      *
-     * @see   Table::_getAssetName
+     * @see Table::_getAssetName
      *
      * @since 4.0.0
      */
@@ -92,14 +92,14 @@ class ExtensionimageTable extends Table
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param   array  $src     Named array
-     * @param   mixed  $ignore  Optional array or list of parameters to ignore
+     * @param array $src    Named array
+     * @param mixed $ignore Optional array or list of parameters to ignore
      *
-     * @return  null|string  null is operation was satisfactory, otherwise returns an error
+     * @return null|string  null is operation was satisfactory, otherwise returns an error
      *
-     * @see     Table:bind
+     * @see    Table:bind
      * @throws Exception
-     * @since   4.0.0
+     * @since  4.0.0
      */
     public function bind($src, $ignore = ''): ?string
     {
@@ -109,15 +109,15 @@ class ExtensionimageTable extends Table
         $task  = $input->getString('task', '');
 
         if ($src['id'] == 0 && empty($src['created_by'])) {
-            $src['created_by'] = JedHelper::getUser()->id;
+            $src['created_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         if ($src['id'] == 0 && empty($src['modified_by'])) {
-            $src['modified_by'] = JedHelper::getUser()->id;
+            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         if ($task == 'apply' || $task == 'save') {
-            $src['modified_by'] = JedHelper::getUser()->id;
+            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         // Support for multiple or not foreign key field: extension_id
@@ -154,7 +154,7 @@ class ExtensionimageTable extends Table
             $src['metadata'] = (string) $registry;
         }
 
-        if (!JedHelper::getUser()->authorise('core.admin', 'com_jed.extensionimage.' . $src['id'])) {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jed.extensionimage.' . $src['id'])) {
             $actions         = Access::getActionsFromFile(
                 JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
                 "/access/section[@name='extensionimage']/"
@@ -184,7 +184,7 @@ class ExtensionimageTable extends Table
      *
      * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      * @throws Exception
      */
@@ -275,7 +275,7 @@ class ExtensionimageTable extends Table
     /**
      * Delete a record by id
      *
-     * @param   mixed  $pk  Primary key value to delete. Optional
+     * @param mixed $pk Primary key value to delete. Optional
      *
      * @return bool
      *
@@ -306,9 +306,9 @@ class ExtensionimageTable extends Table
     /**
      * Get the type alias for the history table
      *
-     * @return  string  The alias as described above
+     * @return string  The alias as described above
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getTypeAlias(): string
     {
@@ -321,11 +321,11 @@ class ExtensionimageTable extends Table
      * If a primary key value is set the row with that primary key value will be updated with the instance property values.
      * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
      *
-     * @param   boolean  $updateNulls  True to update fields even if they are null.
+     * @param bool $updateNulls True to update fields even if they are null.
      *
-     * @return  boolean  True on success.
+     * @return bool  True on success.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function store($updateNulls = true): bool
     {

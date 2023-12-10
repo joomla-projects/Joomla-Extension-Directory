@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package           JED
+ * @package JED
  *
- * @subpackage        TICKETS
+ * @subpackage TICKETS
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license           GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -22,26 +22,30 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ItemModel;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
+use stdClass;
 
 /**
  * Jed model.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class TicketmessageModel extends ItemModel
 {
     /**
      * The item object
      *
-     * @var    object
-     * @since  4.0.0
+     * @var   object
+     * @since 4.0.0
      */
     public $item;
 
-    /** Data Table
+    /**
+     *
+     * Data Table
+     *
      * @since 4.0.0
      **/
     private string $dbtable = "#__jed_ticket_messages";
@@ -49,11 +53,11 @@ class TicketmessageModel extends ItemModel
     /**
      * Method to check out an item for editing.
      *
-     * @param   int|null  $id  The id of the row to check out.
+     * @param int|null $id The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since    4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkout(int $id = null): bool
@@ -67,11 +71,11 @@ class TicketmessageModel extends ItemModel
                 $table = $this->getTable();
 
                 // Get the current user object.
-                $user = JedHelper::getUser();
+                $user = Factory::getApplication()->getIdentity();
 
                 // Attempt to check the row out.
                 if (method_exists($table, 'checkout')) {
-                    if (!$table->checkout($user->get('id'), $id)) {
+                    if (!$table->checkout($user->id, $id)) {
                         return false;
                     }
                 }
@@ -86,13 +90,12 @@ class TicketmessageModel extends ItemModel
     /**
      * Method to get an object.
      *
-     * @param   integer  $pk  The id of the object to get.
+     * @param int $pk The id of the object to get.
      *
-     * @return  object    Object on success, false on failure.
+     * @return object    Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
     public function getItem($pk = null)
     {
@@ -109,8 +112,8 @@ class TicketmessageModel extends ItemModel
             // Attempt to load the row.
             if ($table->load($pk)) {
                 if (
-                    empty($result) || JedHelper::isAdminOrSuperUser() ||
-                    $table->created_by == JedHelper::getUser()->id
+                    empty($result) || JedHelper::isAdminOrSuperUser()
+                    || $table->created_by == Factory::getApplication()->getIdentity()->id
                 ) {
                     // Check published state.
                     if ($published = $this->getState('filter.published')) {
@@ -121,7 +124,7 @@ class TicketmessageModel extends ItemModel
 
                     // Convert the Table to a clean CMSObject.
                     $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, CMSObject::class);
+                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
                 } else {
                     throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
                 }
@@ -179,10 +182,10 @@ class TicketmessageModel extends ItemModel
     /**
      * Get the id of an item by alias
      *
-     * @param   string  $alias  Item alias
+     * @param string $alias Item alias
      *
-     * @return  mixed
-     * @since 4.0.0
+     * @return mixed
+     * @since  4.0.0
      * @throws Exception
      */
     public function getItemIdByAlias(string $alias)
@@ -202,7 +205,7 @@ class TicketmessageModel extends ItemModel
             $table->load([$aliasKey => $alias]);
             $result = $table->id;
         }
-        if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+        if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
             return $result;
         } else {
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
@@ -212,13 +215,13 @@ class TicketmessageModel extends ItemModel
     /**
      * Get an instance of Table class
      *
-     * @param   string  $name
-     * @param   string  $prefix  Prefix for the table class name. Optional.
-     * @param   array   $options
+     * @param string $name
+     * @param string $prefix  Prefix for the table class name. Optional.
+     * @param array  $options
      *
-     * @return  Table|bool Table if success, false on failure.
+     * @return Table|bool Table if success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Ticketmessage', $prefix = 'Administrator', $options = [])
@@ -233,14 +236,14 @@ class TicketmessageModel extends ItemModel
      *
      * @return void
      *
-     * @since    4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */
     protected function populateState()
     {
         $app  = Factory::getApplication();
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         // Check published state
         if ((!$user->authorise('core.edit.state', 'com_jed')) && (!$user->authorise('core.edit', 'com_jed'))) {
@@ -272,16 +275,16 @@ class TicketmessageModel extends ItemModel
     /**
      * Method to delete an item
      *
-     * @param   int  $id  Element id
+     * @param int  $id  Element id
      *
-     * @return  bool
-     * @since 4.0.0
+     * @return bool
+     * @since  4.0.0
      */
     /*public function delete($id)
     {
         $table = $this->getTable();
 
-        if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id)
+        if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id)
         {
             return $table->delete($id);
         }
@@ -294,11 +297,11 @@ class TicketmessageModel extends ItemModel
     /**
      * Publish the element
      *
-     * @param   int  $id     Item id
-     * @param   int  $state  Publish state
+     * @param int $id    Item id
+     * @param int $state Publish state
      *
-     * @return  boolean
-     * @since 4.0.0
+     * @return bool
+     * @since  4.0.0
      * @throws Exception
      */
     public function publish(int $id, int $state): bool

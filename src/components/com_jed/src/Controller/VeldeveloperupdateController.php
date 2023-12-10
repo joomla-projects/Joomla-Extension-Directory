@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -16,6 +16,7 @@ namespace Jed\Component\Jed\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
@@ -39,7 +40,7 @@ class VeldeveloperupdateController extends BaseController
      *
      * @throws Exception
      */
-    public function edit()
+    public function edit(): void
     {
         $app = Factory::getApplication();
 
@@ -70,18 +71,18 @@ class VeldeveloperupdateController extends BaseController
     /**
      * Method to save data
      *
-     * @return    void
+     * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
-    public function publish()
+    public function publish(): void
     {
         // Initialise variables.
         $app = Factory::getApplication();
 
         // Checking if the user can remove object
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         if ($user->authorise('core.edit', 'com_jed') || $user->authorise('core.edit.state', 'com_jed')) {
             $model = $this->getModel('Veldeveloperupdate', 'Site');
@@ -137,7 +138,7 @@ class VeldeveloperupdateController extends BaseController
         /*$app = Factory::getApplication();
 
         // Checking if the user can remove object
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         if ($user->authorise('core.delete', 'com_jed'))
         {

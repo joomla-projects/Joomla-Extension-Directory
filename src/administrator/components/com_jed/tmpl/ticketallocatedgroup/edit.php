@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    Tickets
+ * @subpackage Tickets
  *
- * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -17,7 +17,6 @@
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 $wa = $this->document->getWebAssetManager();
@@ -32,7 +31,7 @@ HTMLHelper::_('bootstrap.tooltip');
         class="form-validate form-horizontal">
 
 
-    <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'department')); ?>
+    <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'department']); ?>
     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'department', Text::_('COM_JED_TICKET_ALLOCATED_GROUP_TAB_DEPARTMENT', true)); ?>
     <div class="row-fluid">
         <div class="span10 form-horizontal">

@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package               JED
+ * @package JED
  *
- * @subpackage            Tickets
+ * @subpackage Tickets
  *
- * @copyright         (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license               GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Controller;
@@ -28,22 +28,22 @@ use Joomla\CMS\Router\Route;
 /**
  * JED Ticket Controller class
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class JedticketController extends FormController
 {
     /**
      * A string showing the plural of the current object
      *
-     * @var    string
+     * @var string
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected $view_list = 'jedtickets';
 
 
     /**
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function assignDeveloperUpdatetoVEL()
@@ -97,7 +97,8 @@ class JedticketController extends FormController
             $queryInsert = $db->getQuery(true)
                 ->insert('#__jed_vel_vulnerable_item')
                 ->columns(
-                    $db->qn([
+                    $db->qn(
+                        [
                         'id',
                         'vulnerable_item_name',
                         'vulnerable_item_version',
@@ -119,7 +120,8 @@ class JedticketController extends FormController
                         'install_data',
                         'discovered_by',
                         'public_description',
-                    ])
+                        ]
+                    )
                 )
                 ->values($querySelect);
             //echo $queryInsert->__toString();exit();
@@ -130,10 +132,12 @@ class JedticketController extends FormController
 
             $queryUpdate = $db->getQuery(true)
                 ->update('#__jed_vel_abandoned_report')
-                ->set([
+                ->set(
+                    [
                     $db->qn('passed_to_vel') . ' = 1',
                     ($db->qn('vel_item_id') . ' = ' . $newVel),
-                ])
+                    ]
+                )
                 ->where($db->qn('id') . ' = ' . $reportId);
 
             $db->setQuery($queryUpdate);
@@ -158,7 +162,7 @@ class JedticketController extends FormController
      * It needs to take the data and create a new vulnerable item and then open that
      * report for editing
      *
-     * @since    4.0.0
+     * @since 4.0.0
      */
     public function copyReporttoVEL()
     {
@@ -192,7 +196,8 @@ class JedticketController extends FormController
             $queryInsert = $db->getQuery(true)
                 ->insert('#__jed_vel_vulnerable_item')
                 ->columns(
-                    $db->qn([
+                    $db->qn(
+                        [
                         'id',
                         'vulnerable_item_name',
                         'vulnerable_item_version',
@@ -215,7 +220,8 @@ class JedticketController extends FormController
                         'discovered_by',
                         'public_description',
                         'created',
-                    ])
+                        ]
+                    )
                 )
                 ->values($querySelect);
 
@@ -226,10 +232,12 @@ class JedticketController extends FormController
 
             $queryUpdate = $db->getQuery(true)
                 ->update('#__jed_vel_report')
-                ->set([
+                ->set(
+                    [
                     $db->qn('passed_to_vel') . ' = 1',
                     ($db->qn('vel_item_id') . ' = ' . $newVel),
-                ])
+                    ]
+                )
                 ->where($db->qn('id') . ' = ' . $reportId);
 
             $db->setQuery($queryUpdate);
@@ -254,7 +262,7 @@ class JedticketController extends FormController
      *
      * function for ajax getting specific template
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
 
@@ -280,7 +288,7 @@ class JedticketController extends FormController
      * Function to respond to gotoVEL button on viewing a ticket.
      * It checks in the current ticket and performs a redirect
      *
-     * @since    4.0.0
+     * @since 4.0.0
      */
     public function gotoVEL()
     {
@@ -308,7 +316,7 @@ class JedticketController extends FormController
      * Function to link a submitted developer update to Vulnerable item.
      * It checks in the current ticket and performs a redirect
      *
-     * @since    4.0.0
+     * @since 4.0.0
      */
     public function linkDeveloperUpdatetoVEL()
     {
@@ -343,7 +351,8 @@ class JedticketController extends FormController
 
     /**
      * Ticket Send and Store Message
-     * @since 4.0.0
+     *
+     * @since  4.0.0
      * @throws \PHPMailer\PHPMailer\Exception
      */
     public function sendMessage()
@@ -372,7 +381,8 @@ class JedticketController extends FormController
 
     /**
      * Stores a tickets internal note back to table
-     * @since 4.0.0
+     *
+     * @since  4.0.0
      * @throws Exception
      */
     public function storeInternalNote()
@@ -407,16 +417,15 @@ class JedticketController extends FormController
     /**
      * Store Ticket Message back to database
      *
-     * @param   int  $ticket_id
-     * @param        $subject
-     * @param        $message
-     *
+     * @param int $ticket_id
+     * @param $subject
+     * @param $message
      *
      * @since 4.0.0
      */
     public function storeMessage(int $ticket_id, $subject, $message)
     {
-        $user                                = JedHelper::getUser();
+        $user                                = Factory::getApplication()->getIdentity();
         $ticket_message_model                = $this->getModel('Ticketmessage', 'Administrator');
 
         $ticket_message['id']                = 0;

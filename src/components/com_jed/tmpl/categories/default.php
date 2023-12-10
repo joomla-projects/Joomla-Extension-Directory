@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -16,7 +16,11 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
-/** @var \Jed\Component\Jed\Site\View\Categories\HtmlView $this */
+/**
+*
+ *
+ * @var \Jed\Component\Jed\Site\View\Categories\HtmlView $this
+*/
 $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_jed.newjed')
     ->useScript('form.validate');
@@ -35,7 +39,7 @@ HTMLHelper::_('bootstrap.tooltip');
                     <div class="card-header jed-home-item-view">
                         <span class="jed-home-category-icon fa fa-camera rounded-circle bg-warning p-2 text-white d-inline-block"></span>
                         <h4 class="jed-home-category-title d-inline-block">
-                            <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $c->id); ?>">
+                            <a href="<?php echo Route::_('index.php?option=com_jed&view=extensions&id=' . $c->id); ?>">
                                 <?php echo $c->title; ?>
                             </a>
                         </h4>
@@ -46,7 +50,7 @@ HTMLHelper::_('bootstrap.tooltip');
                             <?php foreach ($c->getChildren() as $sc) {
                                 if ($sc->getNumItems(true) > 0) { ?>
                                     <li class="list-group-item">
-                                        <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $sc->id); ?>">
+                                        <a href="<?php echo Route::_('index.php?option=com_jed&view=extensions&id=' . $sc->id); ?>">
                                             <?php echo $sc->title; ?>
                                         </a>
                                         <span class="badge rounded-pill float-end badge-info-cat">  <?php echo $sc->getNumItems(true); ?></span>

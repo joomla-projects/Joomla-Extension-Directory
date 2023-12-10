@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Helper;
@@ -17,35 +17,36 @@ namespace Jed\Component\Jed\Site\Helper;
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Mail\Mail;
+use Joomla\CMS\Mail\MailerFactoryInterface;
 use Joomla\CMS\User\User;
 
 /**
  * JED Email Helper
  *
- * @package   JED
- * @since     4.0.0
+ * @package JED
+ * @since   4.0.0
  */
 class JedemailHelper
 {
     /**
      * The mail engine
      *
-     * @var    Mail
-     * @since  4.0.0
+     * @var   Mail
+     * @since 4.0.0
      */
 
 
     /**
      * Send an email to the user.
      *
-     * @param   string  $subject    The message subject
-     * @param   string  $body       The message body
-     * @param   User    $recipient  The user recipient
-     * @param   string  $sender     The current JED administrator user
+     * @param string $subject   The message subject
+     * @param string $body      The message body
+     * @param User   $recipient The user recipient
+     * @param string $sender    The current JED administrator user
      *
-     * @return  string
+     * @return string
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws \PHPMailer\PHPMailer\Exception
      */
     public static function sendEmail(string $subject, string $body, User $recipient, string $sender): string
@@ -56,7 +57,7 @@ class JedemailHelper
 
 
         // Prepare the email
-        $mailer = Factory::getMailer();
+        $mailer = Factory::getContainer()->get(MailerFactoryInterface::class)->createMailer();
 
         $mailer->isHtml()
             ->addReplyTo('noreply@extensions.joomla.org', $sender)

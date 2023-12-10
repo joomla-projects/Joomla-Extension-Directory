@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Extension;
@@ -35,7 +35,7 @@ use function defined;
 /**
  * Component class for com_jed
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class JedComponent extends MVCComponent implements
     BootableExtensionInterface,
@@ -57,13 +57,13 @@ class JedComponent extends MVCComponent implements
      * If required, some initial set up can be done from services of the container, e.g.
      * registering HTML services.
      *
-     * @param   ContainerInterface  $container  The container
+     * @param ContainerInterface $container The container
      *
-     * @return  void
+     * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
-    public function boot(ContainerInterface $container)
+    public function boot(ContainerInterface $container): void
     {
         $this->getRegistry()->register('jed', new Jed());
     }
@@ -71,13 +71,13 @@ class JedComponent extends MVCComponent implements
     /**
      * Returns the table for the count items functions for the given section.
      *
-     * @param   string|null  $section  The section
+     * @param string|null $section The section
      *
-     * @return  string|null
+     * @return string|null
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
-    protected function getTableNameForSection(string $section = null): string
+    protected function getTableNameForSection(string $section = null): string|null
     {
         return 'jed_extensions';
     }
@@ -86,15 +86,15 @@ class JedComponent extends MVCComponent implements
     /**
      * Adds Count Items for Category Manager.
      *
-     * @param   stdClass[]  $items    The category objects
-     * @param   string       $section  The section
+     * @param stdClass[] $items   The category objects
+     * @param string     $section The section
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
-     * @throws  Exception
+     * @since  4.0.0
+     * @throws Exception
      */
-    public function countItems(array $items, string $section)
+    public function countItems(array $items, string $section): void
     {
         $config = (object) [
             'related_tbl'   => $this->getTableNameForSection($section),
@@ -109,16 +109,16 @@ class JedComponent extends MVCComponent implements
     /**
      * Returns the dispatcher for the given application.
      *
-     * @param   CMSApplicationInterface  $application  The application
+     * @param CMSApplicationInterface $application The application
      *
-     * @return  DispatcherInterface
+     * @return DispatcherInterface
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getDispatcher(CMSApplicationInterface $application): DispatcherInterface
     {
         // Load our custom Composer dependencies before dispatching the component
-        require_once __DIR__ . '/../../vendor/autoload.php';
+        include_once __DIR__ . '/../../vendor/autoload.php';
 
         return parent::getDispatcher($application);
     }

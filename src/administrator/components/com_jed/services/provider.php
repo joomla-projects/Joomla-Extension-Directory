@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -28,19 +28,19 @@ use Joomla\DI\ServiceProviderInterface;
 /**
  * The JED service provider.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 return new class () implements ServiceProviderInterface {
     /**
      * Registers the service provider with a DI container.
      *
-     * @param   Container  $container  The DI container.
+     * @param Container $container The DI container.
      *
-     * @return  void
+     * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
-    public function register(Container $container)
+    public function register(Container $container): void
     {
         $container->registerServiceProvider(new CategoryFactory('\\Jed\\Component\\Jed'));
         $container->registerServiceProvider(new MVCFactory('\\Jed\\Component\\Jed'));

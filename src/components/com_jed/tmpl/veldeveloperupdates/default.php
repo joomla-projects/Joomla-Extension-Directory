@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -26,8 +26,8 @@ HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-$user        = JedHelper::getUser();
-$userId      = $user->get('id');
+$user        = Factory::getApplication()->getIdentity();
+$userId      = $user->id;
 $listOrder   = $this->state->get('list.ordering');
 $listDirn    = $this->state->get('list.direction');
 $canCreate   = $user->authorise('core.create', 'com_jed');
@@ -56,7 +56,7 @@ if (!$isLoggedIn) {
     <form action="<?php echo htmlspecialchars(Uri::getInstance()->toString()); ?>" method="post"
           name="adminForm" id="adminForm">
         <?php echo '<fieldset class="veldeveloperupdates"><legend>' . Text::_('COM_JED_VEL_MYDEVELOPERUPDATES_LIST_TITLE') . '</legend>' . Text::_('COM_JED_VEL_MYDEVELOPERUPDATES_LIST_DESCR') . '</fieldset>'; ?>
-        <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+        <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
         <div class="table-responsive">
             <table class="table table-striped" id="veldeveloperupdateList">
                 <thead>
@@ -99,7 +99,7 @@ if (!$isLoggedIn) {
                     <?php $canEdit = $user->authorise('core.edit', 'com_jed'); ?>
 
                     <?php if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) : ?>
-                        <?php $canEdit = JedHelper::getUser()->id == $item->created_by; ?>
+                        <?php $canEdit = Factory::getApplication()->getIdentity()->id == $item->created_by; ?>
                     <?php endif; ?>
 
                     <tr class="row<?php echo $i % 2; ?>">

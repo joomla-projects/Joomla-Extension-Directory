@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -29,9 +29,9 @@ class VelitemController extends BaseController
     /**
      * Proxy for getModel.
      *
-     * @param   string  $name    The model name. Optional.
-     * @param   string  $prefix  The class prefix. Optional
-     * @param   array   $config  Configuration array for model. Optionals
+     * @param string $name   The model name. Optional.
+     * @param string $prefix The class prefix. Optional
+     * @param array  $config Configuration array for model. Optionals
      *
      * @return object    The model
      *

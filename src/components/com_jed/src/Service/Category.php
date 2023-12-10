@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Service;
@@ -19,26 +19,29 @@ use Joomla\CMS\Categories\Categories;
 /**
  * Content Component Category Tree
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class Category extends Categories
 {
     /**
      * Class constructor
      *
-     * @param   array  $options  Array of options
+     * @param array $options Array of options
      *
-     * @since   11.1
+     * @since 11.1
      */
     public function __construct($options = [])
     {
-        $options = array_merge($options, [
+        $options = array_merge(
+            $options,
+            [
             'extension'  => 'com_jed',
             'table'      => '#__jed_extensions',
             'field'      => 'primary_category_id',
             'key'        => 'id',
             'statefield' => 'published',
-        ]);
+            ]
+        );
 
         parent::__construct($options);
     }

@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -27,13 +27,13 @@ $wa->useScript('keepalive')
 HTMLHelper::_('bootstrap.tooltip');
 
 // Load admin language file
-$lang = Factory::getLanguage();
+$lang = Factory::getApplication()->getLanguage();
 $lang->load('com_jed', JPATH_SITE);
 // Import CSS
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.form');
 
-$user    = JedHelper::getUser();
+$user    = Factory::getApplication()->getIdentity();
 $canEdit = JedHelper::canUserEdit($this->item);
 
 $isLoggedIn  = JedHelper::IsLoggedIn();
@@ -61,41 +61,41 @@ if (!$isLoggedIn) {
                   method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
                 <?php
                 $fieldsets['overview']['title']       = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_OVERVIEW_TITLE');
-                $fieldsets['overview']['description'] = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_OVERVIEW_DESCR');
-                $fieldsets['overview']['fields'] = array();
+                $fieldsets['overview']['description']     = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_OVERVIEW_DESCR');
+                $fieldsets['overview']['fields']          = [];
 
                 $fieldsets['aboutyou']['title']       = Text::_('COM_JED_VEL_GENERAL_FIELD_ABOUT_YOU_LABEL');
                 $fieldsets['aboutyou']['description'] = "";
-                $fieldsets['aboutyou']['fields']      = array(
-                    'contact_fullname',
-                    'contact_organisation',
-                    'contact_email');
+                $fieldsets['aboutyou']['fields']      = [
+                'contact_fullname',
+                'contact_organisation',
+                'contact_email'];
 
                 $fieldsets['vulnerabilitydetails']['title']       = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_VULNERABILITY_DETAILS_TITLE');
                 $fieldsets['vulnerabilitydetails']['description'] = "";
-                $fieldsets['vulnerabilitydetails']['fields']      = array(
-                    'vulnerable_item_name',
-                    'vulnerable_item_version',
-                    'extension_update',
-                    'new_version_number');
+                $fieldsets['vulnerabilitydetails']['fields']      = [
+                'vulnerable_item_name',
+                'vulnerable_item_version',
+                'extension_update',
+                'new_version_number'];
 
                 $fieldsets['vulnerabilitydetails2']['title']       = "";
                 $fieldsets['vulnerabilitydetails2']['description'] = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_VULNERABILITY_DETAILS_2_DESCR');
-                $fieldsets['vulnerabilitydetails2']['fields']      = array(
-                    'update_notice_url',
-                    'changelog_url');
+                $fieldsets['vulnerabilitydetails2']['fields']      = [
+                'update_notice_url',
+                'changelog_url'];
 
                 $fieldsets['vulnerabilitydetails3']['title']       = "";
                 $fieldsets['vulnerabilitydetails3']['description'] = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_VULNERABILITY_DETAILS_3_DESCR');
-                $fieldsets['vulnerabilitydetails3']['fields']      = array(
-                    'download_url',
-                    'consent_to_process');
+                $fieldsets['vulnerabilitydetails3']['fields']      = [
+                'download_url',
+                'consent_to_process'];
 
 
                 $fieldsets['final']['title']       = "";
                 $fieldsets['final']['description'] = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FINAL_DESCRIPTION');
 
-                $fieldsets['final']['fields'] = array('captcha');
+                $fieldsets['final']['fields'] = ['captcha'];
                 $fscount                      = 0;
 
 
@@ -117,15 +117,15 @@ if (!$isLoggedIn) {
 
 
                     foreach ($fields as $field) {
-                        echo $this->form->renderField($field, null, null, array('class' => 'control-wrapper-' . $field));
+                        echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
                     }
                 }
 
-                $hiddenfields = array('vel_item_id',
-                    'update_data_source',
-                    'update_date_submitted',
-                    'data_source',
-                    'update_user_ip');
+                $hiddenfields = ['vel_item_id',
+                'update_data_source',
+                'update_date_submitted',
+                'data_source',
+                'update_user_ip'];
 
 
                 foreach ($hiddenfields as $field) {

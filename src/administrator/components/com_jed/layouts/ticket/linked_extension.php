@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package           JED
+ * @package JED
  *
- * @subpackage        Tickets
+ * @subpackage Tickets
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license           GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access to file
@@ -21,7 +21,11 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
-/** @var array $displayData */
+/**
+*
+ *
+ * @var array $displayData
+*/
 
 $headerlabeloptions = ['hiddenLabel' => true];
 $fieldhiddenoptions = ['hidden' => true];
@@ -72,12 +76,12 @@ echo HTMLHelper::_(
     <div class="span9">
         <div class="form-horizontal">
 
-			<?php echo $extension_form->renderFieldset('description'); ?>
+            <?php echo $extension_form->renderFieldset('description'); ?>
         </div>
     </div>
     <div class="span3">
         <div class="form-vertical">
-			<?php // echo $this->form->renderFieldset('publication');?>
+            <?php // echo $this->form->renderFieldset('publication');?>
         </div>
     </div>
 </div>

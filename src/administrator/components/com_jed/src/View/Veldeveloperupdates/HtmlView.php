@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\View\Veldeveloperupdates;
@@ -18,28 +18,30 @@ namespace Jed\Component\Jed\Administrator\View\Veldeveloperupdates;
 
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
-use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 /**
  * View class for a list of JED VEL Developer Updates.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
     /**
      * The form filter
      *
-     * @var    Form|null
-     * @since  4.0.0
+     * @var   Form|null
+     * @since 4.0.0
      */
     public ?Form $filterForm;
 
@@ -47,29 +49,29 @@ class HtmlView extends BaseHtmlView
     /**
      * The active filters
      *
-     * @var    array
-     * @var    array
-     * @since  4.0.0
+     * @var   array
+     * @var   array
+     * @since 4.0.0
      */
     public array $activeFilters = [];
     /**
      * List of items
      *
-     * @var    array
-     * @since  4.0.0
+     * @var   array
+     * @since 4.0.0
      */
     protected array $items = [];
     /**
      * The pagination object
      *
-     * @var    Pagination
-     * @since  4.0.0
+     * @var   Pagination
+     * @since 4.0.0
      */
     protected Pagination $pagination;
     /**
      * The model state
      *
-     * @var  object
+     * @var Registry
      *
      * @since 4.0.0
      */
@@ -83,23 +85,14 @@ class HtmlView extends BaseHtmlView
      * @since  4.0.0
      * @throws Exception
      */
-    protected function addToolbar()
+    protected function addToolbar(): void
     {
         $this->state = $this->get('State');
         $canDo       = JedHelper::getActions();
 
         ToolbarHelper::title(Text::_('COM_JED_TITLE_VEL_DEVELOPERUPDATES'), 'generic');
 
-        $toolbar = Toolbar::getInstance('toolbar');
-
-        // Check if the form exists before showing the add/edit buttons
-        $formPath = JPATH_COMPONENT_ADMINISTRATOR . '/src/View/Veldeveloperupdates';
-
-        if (file_exists($formPath)) {
-            if ($canDo->get('core.create')) {
-                $toolbar->addNew('veldeveloperupdate.add');
-            }
-        }
+        $toolbar = Toolbar::getInstance(); //$toolbar = Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar('toolbar');
 
         if ($canDo->get('core.edit.state')) {
             $dropdown = $toolbar->dropdownButton('status-group')
@@ -155,15 +148,14 @@ class HtmlView extends BaseHtmlView
     /**
      * Display the view
      *
-     * @param   string  $tpl  Template name
+     * @param string $tpl Template name
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
         $this->state         = $this->get('State');
         $this->items         = $this->get('Items');
@@ -185,13 +177,13 @@ class HtmlView extends BaseHtmlView
     /**
      * Check if state is set
      *
-     * @param   mixed  $state  State
+     * @param mixed $state State
      *
      * @return bool
      *
      * @since 4.0.0
      */
-    public function getState($state): bool
+    public function getState(mixed $state): bool
     {
         return $this->state->{$state} ?? false;
     }

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -26,8 +26,8 @@ HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-$user       = JedHelper::getUser();
-$userId     = $user->get('id');
+$user       = Factory::getApplication()->getIdentity();
+$userId     = $user->id;
 $listOrder  = $this->state->get('list.ordering');
 $listDirn   = $this->state->get('list.direction');
 $canCreate  = $user->authorise('core.create', 'com_jed');
@@ -47,7 +47,7 @@ $wa->useStyle('com_jed.list');
 <form action="<?php echo htmlspecialchars(Uri::getInstance()->toString()); ?>" method="post"
       name="adminForm" id="adminForm">
     <?php if (!empty($this->filterForm)) {
-        echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
+        echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
     } ?>
     <div class="table-responsive">
         <table class="table table-striped" id="reviewList">
@@ -265,7 +265,8 @@ $wa->useStyle('com_jed.list');
 
 <?php
 if ($canDelete) {
-    $wa->addInlineScript("
+    $wa->addInlineScript(
+        "
 			jQuery(document).ready(function () {
 				jQuery('.delete-button').click(deleteItem);
 			});
@@ -276,6 +277,10 @@ if ($canDelete) {
 					return false;
 				}
 			}
-		", [], [], ["jquery"]);
+		",
+        [],
+        [],
+        ["jquery"]
+    );
 }
 ?>

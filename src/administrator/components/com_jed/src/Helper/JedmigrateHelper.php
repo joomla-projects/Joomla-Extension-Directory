@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Helper;
@@ -22,15 +22,14 @@ use function defined;
 /**
  * JED Helper
  *
- * @package   JED
- * @since     4.0.0
+ * @package JED
+ * @since   4.0.0
  */
 class JedmigrateHelper
 {
     /**
-     * @param           $params
-     * @param   string  $sql
-     *
+     * @param $params
+     * @param string $sql
      *
      * @since 4.0.0
      */

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -12,10 +12,14 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * @param   integer  $rating  The rounded average rating for an extension
+ * @param int  $rating  The rounded average rating for an extension
  */
 
-/** @var array $displayData */
+/**
+*
+ *
+ * @var array $displayData
+*/
 extract($displayData);
 
 // @TODO improve this later on to fill half stars as well

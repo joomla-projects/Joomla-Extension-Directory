@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    jed Portal
+ * @package jed Portal
  *
- * @copyright  (C) 2023 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2023 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\View\Setupdemo;
@@ -18,58 +18,57 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
-use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use SimpleXMLElement;
 
 /**
  * View class for a single Copyjed3data.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
     /**
      * The item object
      *
-     * @var    object
-     * @since  4.0.0
+     * @var   object
+     * @since 4.0.0
      */
     protected mixed $item;
     /**
-         * The model state
-         *
-         * @var    Registry
-         * @since  4.0.0
-         */
+     * The model state
+     *
+     * @var   Registry
+     * @since 4.0.0
+     */
     protected Registry $state;
     /**
-         * Component Parameters
-         *
-         * @var    Registry
-         * @since  4.0.0
-         */
-    protected $params = null;
+     * Component Parameters
+     *
+     * @var   Registry
+     * @since 4.0.0
+     */
+    protected Registry $params;
     /**
-         * Migration SQL
-         *
-         * @var    SimpleXMLElement
-         * @since  4.0.0
-         */
+     * Migration SQL
+     *
+     * @var   SimpleXMLElement
+     * @since 4.0.0
+     */
     protected SimpleXMLElement $migrate_xml;
     /**
-         * Action Task
-         *
-         * @var    string
-         * @since  4.0.0
-         */
+     * Action Task
+     *
+     * @var   string
+     * @since 4.0.0
+     */
     protected string $task;
     /**
-         * Add the page title and toolbar.
-         *
-         * @since  4.0.0
-         * @throws Exception
-         */
+     * Add the page title and toolbar.
+     *
+     * @since  4.0.0
+     * @throws Exception
+     */
     private function addToolbar(): void
     {
         ToolBarHelper::title('Setup Demo Menu');
@@ -82,9 +81,6 @@ class HtmlView extends BaseHtmlView
                 'com_jed'
             )
         ) {
-            $bar = Toolbar::getInstance();
-
-
             ToolbarHelper::preferences('com_jed');
         }
     }
@@ -92,12 +88,12 @@ class HtmlView extends BaseHtmlView
     /**
      * Execute and display a template script.
      *
-     * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+     * @param string $tpl The name of the template file to parse; automatically searches through the template paths.
      *
-     * @return  void
+     * @return void
      *
      * @since  4.0.0
-     * @throws  Exception
+     * @throws Exception
      */
     public function display($tpl = null): void
     {

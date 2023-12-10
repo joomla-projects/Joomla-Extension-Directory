@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -24,21 +24,21 @@ $wa->useScript('keepalive')
 HTMLHelper::_('bootstrap.tooltip');
 
 // Load admin language file
-$lang = Factory::getLanguage();
+$lang = Factory::getApplication()->getLanguage();
 $lang->load('com_jed', JPATH_SITE);
 
-$user    = JedHelper::getUser();
+$user    = Factory::getApplication()->getIdentity();
 $canEdit = JedHelper::canUserEdit($this->item, $user);
 
 
 if ($this->item->state == 1) {
     $state_string = 'Publish';
-    $state_value = 1;
+    $state_value  = 1;
 } else {
     $state_string = 'Unpublish';
-    $state_value = 0;
+    $state_value  = 0;
 }
-$canState = JedHelper::getUser()->authorise('core.edit.state', 'com_jed');
+$canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state', 'com_jed');
 ?>
 
 <div class="extension-edit front-end-edit">
@@ -57,7 +57,7 @@ $canState = JedHelper::getUser()->authorise('core.edit.state', 'com_jed');
               action="<?php echo Route::_('index.php?option=com_jed&task=extensionform.save'); ?>"
               method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
 
-        <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'extension')); ?>
+        <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'extension']); ?>
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'extension', Text::_('COM_JED_TAB_EXTENSION', true)); ?>
         <?php echo $this->form->renderField('id'); ?>
 

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\View\Extensionscores;
@@ -16,20 +16,22 @@ namespace Jed\Component\Jed\Administrator\View\Extensionscores;
 
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
-use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 /**
  * View class for a list of Extensionscores.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
@@ -42,19 +44,19 @@ class HtmlView extends BaseHtmlView
     /**
      * Add the page title and toolbar.
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      * @throws Exception
      */
-    protected function addToolbar()
+    protected function addToolbar(): void
     {
         $canDo = JedHelper::getActions();
 
         ToolbarHelper::title(Text::_('COM_JED_TITLE_EXTENSIONSCORES'), "generic");
 
-        $toolbar = Toolbar::getInstance('toolbar');
+        $toolbar = Toolbar::getInstance(); //$toolbar = Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar('toolbar');
 
 
         $toolbar->addNew('extensionscore.add');
@@ -77,9 +79,9 @@ class HtmlView extends BaseHtmlView
             } elseif (isset($this->items[0])) {
                 // If this component does not use state then show a direct delete button as we can not trash
                 $toolbar->delete('extensionscores.delete')
-                ->text('JTOOLBAR_EMPTY_TRASH')
-                ->message('JGLOBAL_CONFIRM_DELETE')
-                ->listCheck(true);
+                    ->text('JTOOLBAR_EMPTY_TRASH')
+                    ->message('JGLOBAL_CONFIRM_DELETE')
+                    ->listCheck(true);
             }
 
             $childBar->standardButton('duplicate')
@@ -120,9 +122,11 @@ class HtmlView extends BaseHtmlView
     /**
      * Method to order fields
      *
-     * @return void
+     * @return array
+     *
+     * @since 4.0.0
      */
-    protected function getSortFields()
+    protected function getSortFields(): array
     {
         return [
             'a.`id`'                    => Text::_('JGRID_HEADING_ID'),
@@ -142,9 +146,11 @@ class HtmlView extends BaseHtmlView
     /**
      * Check if state is set
      *
-     * @param   mixed  $state  State
+     * @param mixed $state State
      *
      * @return bool
+     *
+     * @since 4.0.0
      */
     public function getState(mixed $state): bool
     {

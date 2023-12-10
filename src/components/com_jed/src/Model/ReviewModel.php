@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package        JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -20,14 +20,15 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ItemModel;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
+use stdClass;
 
 /**
  * Jed model.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class ReviewModel extends ItemModel
 {
@@ -42,6 +43,7 @@ class ReviewModel extends ItemModel
     public array $log = [];
     /**
      * Admin test mode - outputs the log
+     *
      * @var bool
      *
      * @since 4.0.0
@@ -101,8 +103,11 @@ class ReviewModel extends ItemModel
     protected int $defaultLimit = 10;
 
     // 30 Minutes of Processing Window
-    /** Data Table
-     * @var string
+    /**
+     *
+     * Data Table
+     *
+     * @var   string
      * @since 4.0.0
      **/
     private string $dbtable = "#__jed_reviews";
@@ -110,11 +115,11 @@ class ReviewModel extends ItemModel
     /**
      * Method to check in an item.
      *
-     * @param   integer  $id  The id of the row to check out.
+     * @param int $id The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkin($id = null): bool
@@ -143,11 +148,11 @@ class ReviewModel extends ItemModel
     /**
      * Method to check out an item for editing.
      *
-     * @param   integer  $id  The id of the row to check out.
+     * @param int $id The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkout($id = null): bool
@@ -161,11 +166,11 @@ class ReviewModel extends ItemModel
                 $table = $this->getTable();
 
                 // Get the current user object.
-                $user = JedHelper::getUser();
+                $user = Factory::getApplication()->getIdentity();
 
                 // Attempt to check the row out.
                 if (method_exists($table, 'checkout')) {
-                    if (!$table->checkout($user->get('id'), $id)) {
+                    if (!$table->checkout($user->id, $id)) {
                         return false;
                     }
                 }
@@ -180,18 +185,17 @@ class ReviewModel extends ItemModel
     /**
      * Method to delete an item
      *
-     * @param   int  $id  Element id
+     * @param int $id Element id
      *
-     * @return  bool
-     * @since 4.0.0
+     * @return bool
+     * @since  4.0.0
      * @throws Exception
-     *
      */
     public function delete(int $id): bool
     {
         $table = $this->getTable();
 
-        if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+        if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
             return $table->delete($id);
         } else {
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
@@ -201,13 +205,12 @@ class ReviewModel extends ItemModel
     /**
      * Method to get an object.
      *
-     * @param   integer  $pk  The id of the object to get.
+     * @param int $pk The id of the object to get.
      *
-     * @return  mixed    Object on success, false on failure.
+     * @return mixed    Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
     public function getItem($pk = null)
     {
@@ -233,7 +236,7 @@ class ReviewModel extends ItemModel
 
                     // Convert the Table to a clean CMSObject.
                     $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, CMSObject::class);
+                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
                 } else {
                     throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
                 }
@@ -322,11 +325,11 @@ class ReviewModel extends ItemModel
     /**
      * Get the id of an item by alias
      *
-     * @param   string  $alias  Item alias
+     * @param string $alias Item alias
      *
-     * @return  mixed
+     * @return mixed
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getItemIdByAlias(string $alias)
@@ -346,7 +349,7 @@ class ReviewModel extends ItemModel
             $table->load([$aliasKey => $alias]);
             $result = $table->id;
         }
-        if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+        if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
             return $result;
         } else {
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
@@ -356,13 +359,13 @@ class ReviewModel extends ItemModel
     /**
      * Get an instance of Table class
      *
-     * @param   string  $name     Name of the Table class to get an instance of.
-     * @param   string  $prefix   Prefix for the table class name. Optional.
-     * @param   array   $options  Array of configuration values for the Table object. Optional.
+     * @param string $name    Name of the Table class to get an instance of.
+     * @param string $prefix  Prefix for the table class name. Optional.
+     * @param array  $options Array of configuration values for the Table object. Optional.
      *
-     * @return  Table|bool Table if success, false on failure.
+     * @return Table|bool Table if success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Review', $prefix = 'Administrator', $options = [])
@@ -375,16 +378,16 @@ class ReviewModel extends ItemModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */
     protected function populateState()
     {
         $app  = Factory::getApplication('com_jed');
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         // Check published state
         if ((!$user->authorise('core.edit.state', 'com_jed')) && (!$user->authorise('core.edit', 'com_jed'))) {
@@ -416,12 +419,12 @@ class ReviewModel extends ItemModel
     /**
      * Publish the element
      *
-     * @param   int  $id     Item id
-     * @param   int  $state  Publish state
+     * @param int $id    Item id
+     * @param int $state Publish state
      *
-     * @return  boolean
+     * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function publish($id, $state)
@@ -440,10 +443,10 @@ class ReviewModel extends ItemModel
     /**
      * Constructor
      *
-     * @param   array  $config  An array of configuration options (name, state, dbo, table_path, ignore_request).
+     * @param array $config An array of configuration options (name, state, dbo, table_path, ignore_request).
      *
-     * @since   3.0
-     * @throws  Exception
+     * @since  3.0
+     * @throws Exception
      */
     public function __construct($config = [])
     {

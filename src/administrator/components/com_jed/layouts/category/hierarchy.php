@@ -1,14 +1,12 @@
 <?php
 
 /**
- * @package     Jed\Component\Jed\Administrator\Traits
+ * @package    Jed\Component\Jed\Administrator\Traits
  * @subpackage
  *
- * @copyright   A copyright
- * @license     A "Slug" license name e.g. GPL2
+ * @copyright A copyright
+ * @license   A "Slug" license name e.g. GPL2
  */
-
-
 
 // phpcs:disable PSR1.Files.SideEffects
 // phpcs:disable PSR1.Files.SideEffects
@@ -27,8 +25,8 @@ $i = 0;
     <span aria-hidden="true" class="icon-tag"></span>
     <?php foreach ($displayData['categories'] as $cat) : ?>
         <?php $i++ ?>
-        <a href="<?= Route::_(sprintf('index.php?option=com_jed&view=extensions&id=%d&catid=%d', $cat->id, $cat->parent_id)) ?>">
-            <?= htmlentities($cat->title) ?>
+        <a href="<?php echo Route::_(sprintf('index.php?option=com_jed&view=extensions&id=%d&catid=%d', $cat->id, $cat->parent_id)) ?>">
+            <?php echo htmlentities($cat->title) ?>
         </a>
         <?php if ($i != count($displayData['categories'])) : ?>
             <span class="text-muted">&bull;</span>

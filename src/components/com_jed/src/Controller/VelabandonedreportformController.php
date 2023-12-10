@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -33,7 +33,7 @@ class VelabandonedreportformController extends FormController
     /**
      * Method to abort current operation
      *
-     * @param   null  $key
+     * @param null $key
      *
      * @return void
      *
@@ -41,10 +41,8 @@ class VelabandonedreportformController extends FormController
      *
      * @throws Exception
      */
-    public function cancel($key = null)
+    public function cancel($key = null): void
     {
-        $app = Factory::getApplication();
-
         // Get the current edit id.
         $editId = (int) $app->getUserState('com_jed.edit.velabandonedreport.id');
 
@@ -65,8 +63,8 @@ class VelabandonedreportformController extends FormController
     /**
      * Method to check out an item for editing and redirect to the edit form.
      *
-     * @param   null  $key
-     * @param   null  $urlVar
+     * @param null $key
+     * @param null $urlVar
      *
      * @return void
      *
@@ -74,16 +72,16 @@ class VelabandonedreportformController extends FormController
      *
      * @throws Exception
      */
-    public function edit($key = null, $urlVar = null)
+    public function edit($key = null, $urlVar = null): void
     {
         $app = Factory::getApplication();
 
         // Get the previous edit id (if any) and the current edit id.
-        $previousId = (int) $app->getUserState('com_jed.edit.velabandonedreport.id');
-        $editId     = $app->input->getInt('id', 0);
+        $previousId = (int) $this->app->getUserState('com_jed.edit.velabandonedreport.id');
+        $editId     = $this->input->getInt('id', 0);
 
         // Set the user id for the user to edit in the session.
-        $app->setUserState('com_jed.edit.velabandonedreport.id', $editId);
+        $this->app->setUserState('com_jed.edit.velabandonedreport.id', $editId);
 
         // Get the model.
         $model = $this->getModel('Velabandonedreportform', 'Site');
@@ -105,25 +103,24 @@ class VelabandonedreportformController extends FormController
     /**
      * Method to save data.
      *
-     * @param   null  $key
-     * @param   null  $urlVar
+     * @param null $key
+     * @param null $urlVar
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
-    public function save($key = null, $urlVar = null)
+    public function save($key = null, $urlVar = null): void
     {
         // Check for request forgeries.
         $this->checkToken();
 
         // Initialise variables.
-        $app   = Factory::getApplication();
         $model = $this->getModel('Velabandonedreportform', 'Site');
 
         // Get the user data.
-        $data = Factory::getApplication()->input->get('jform', [], 'array');
+        $data = $this->input->get('jform', array(), 'array');
 
         // Validate the posted data.
         $form = $model->getForm();
@@ -131,6 +128,14 @@ class VelabandonedreportformController extends FormController
         if (!$form) {
             throw new Exception($model->getError(), 500);
         }
+
+        // Send an object which can be modified through the plugin event
+        $objData = (object) $data;
+        $this->app->triggerEvent(
+            'onContentNormaliseRequestData',
+            array($this->option . '.' . $this->context, $objData, $form)
+        );
+        $data = (array) $objData;
 
         // Validate the posted data.
         $data = $model->validate($form, $data);
@@ -143,20 +148,21 @@ class VelabandonedreportformController extends FormController
             // Push up to three validation messages out to the user.
             for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++) {
                 if ($errors[$i] instanceof Exception) {
-                    $app->enqueueMessage($errors[$i]->getMessage(), 'warning');
+                    $this->app->enqueueMessage($errors[$i]->getMessage(), 'warning');
                 } else {
-                    $app->enqueueMessage($errors[$i], 'warning');
+                    $this->app->enqueueMessage($errors[$i]->getMessage(), 'warning');
+                } else {
+                    $this->app->enqueueMessage($errors[$i], 'warning');
                 }
             }
 
-            $input = $app->input;
-            $jform = $input->get('jform', [], 'ARRAY');
+            $jform = $this->input->get('jform', array(), 'ARRAY');
 
             // Save the data in the session.
-            $app->setUserState('com_jed.edit.velabandonedreport.data', $jform);
+            $this->app->setUserState('com_jed.edit.velabandonedreport.data', $jform);
 
             // Redirect back to the edit screen.
-            $id = (int) $app->getUserState('com_jed.edit.velabandonedreport.id');
+            $id = (int) $this->app->getUserState('com_jed.edit.velabandonedreport.id');
             $this->setRedirect(Route::_('index.php?option=com_jed&view=velabandonedreportform&layout=edit&id=' . $id, false));
 
             $this->redirect();
@@ -168,12 +174,13 @@ class VelabandonedreportformController extends FormController
         // Check for errors.
         if ($return === false) {
             // Save the data in the session.
-            $app->setUserState('com_jed.edit.velabandonedreport.data', $data);
+            $this->app->setUserState('com_jed.edit.velabandonedreport.data', $data);
 
             // Redirect back to the edit screen.
-            $id = (int) $app->getUserState('com_jed.edit.velabandonedreport.id');
+            $id = (int) $this->app->getUserState('com_jed.edit.velabandonedreport.id');
             $this->setMessage(Text::sprintf('Save failed', $model->getError()), 'warning');
             $this->setRedirect(Route::_('index.php?option=com_jed&view=velabandonedreportform&layout=edit&id=' . $id, false));
+            $this->redirect();
         }
 
         // Check in the profile.
@@ -182,15 +189,20 @@ class VelabandonedreportformController extends FormController
         }
 
         // Clear the profile id from the session.
-        $app->setUserState('com_jed.edit.velabandonedreport.id', null);
+        $this->app->setUserState('com_jed.edit.velabandonedreport.id', null);
 
-        // Redirect to the list of Tickets screen.
-        $this->setMessage(Text::_('COM_JED_VEL_GENERAL_SAVED_SUCCESSFULLY'));
+        // Redirect to the list screen.
+        if (!empty($return)) {
+            $this->setMessage(Text::_('COM_JED_VEL_GENERAL_SAVED_SUCCESSFULLY'));
+        }
         $url = 'index.php?option=com_jed&view=jedtickets';
         $this->setRedirect(Route::_($url, false));
 
         // Flush the data from the session.
-        $app->setUserState('com_jed.edit.velabandonedreport.data', null);
+        $this->app->setUserState('com_jed.edit.velabandonedreport.data', null);
+
+        // Invoke the postSave method to allow for the child class to access the model.
+        $this->postSaveHook($model, $data);
     }
 
     /**
@@ -200,23 +212,22 @@ class VelabandonedreportformController extends FormController
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
     /*  public function remove()
         {
             $app   = Factory::getApplication();
             $model = $this->getModel('Velabandonedreportform', 'Site');
-            $pk    = $app->input->getInt('id');
+        $pk    = $this->input->getInt('id');
 
             // Attempt to save the data
             try
             {
-                $return = $model->delete($pk);
-
-                // Check in the profile
-                $model->checkin($return);
+            // Check in before delete
+            $return = $model->checkin($return);
+            // Clear id from the session.
+            $this->app->setUserState('com_jed.edit.velabandonedreport.id', null);
 
                 // Clear the profile id from the session.
                 $app->setUserState('com_jed.edit.velabandonedreport.id', null);

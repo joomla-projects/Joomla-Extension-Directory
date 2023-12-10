@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package        JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Field;
@@ -16,37 +16,35 @@ namespace Jed\Component\Jed\Site\Field;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
-use Joomla\CMS\Language\Text;
-use Joomla\Database\Exception\ExecutionFailureException;
 
 /**
  * Supports a value from an external table
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class ForeignKeyField extends ListField
 {
     /**
      * The ForeignKey field type.
      *
-     * @var    string
-     * @since  4.0.0
+     * @var   string
+     * @since 4.0.0
      */
     protected $type = 'foreignkey';
 
     /**
      * The sublayout to use when rendering the results.
      *
-     * @var    string
-     * @since  2.5
+     * @var   string
+     * @since 2.5
      */
     protected $layout = 'joomla.form.field.list-fancy-select';
 
     /**
      * The translate.
      *
-     * @var    boolean
-     * @since  4.0.0
+     * @var   bool
+     * @since 4.0.0
      */
     protected bool $translate = true;
 
@@ -69,9 +67,9 @@ class ForeignKeyField extends ListField
     /**
      * Method to get the field input markup.
      *
-     * @return  string  The field input markup.
+     * @return string  The field input markup.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     protected function processQuery(): string
     {

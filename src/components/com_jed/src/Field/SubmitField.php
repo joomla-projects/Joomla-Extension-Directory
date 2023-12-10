@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Field;
@@ -22,7 +22,7 @@ use Joomla\CMS\Form\FormField;
 /**
  * Class SubmitField
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class SubmitField extends FormField
 {
@@ -30,14 +30,16 @@ class SubmitField extends FormField
 
     protected $value;
 
-    protected $for;
+    protected string $for;
 
     /**
      * Get a form field markup for the input
      *
      * @return string
+     *
+     * @since 4.0.0
      */
-    public function getInput()
+    public function getInput(): string
     {
         $this->value = $this->getAttribute('value');
 

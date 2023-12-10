@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package        JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -21,7 +21,11 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Actionlogs\Administrator\Helper\ActionlogsHelper;
 
-/** @var HtmlView $this */
+/**
+*
+ *
+ * @var HtmlView $this
+*/
 
 HTMLHelper::_('script', 'com_jed/jed.js', ['version' => 'auto', 'relative' => true]);
 
@@ -50,6 +54,7 @@ Factory::getDocument()
     ->addScriptOptions('joomla.userId', Factory::getUser()->id, false);
 
 ?>
+
 <form action="index.php?option=com_jed&view=extension&layout=edit&id=<?php echo (int)$this->item->id; ?>" method="post" name="adminForm" id="extension-form" class="form-validate">
     <?php echo LayoutHelper::render('joomla.edit.title_alias', $this); ?>
 
@@ -79,48 +84,48 @@ Factory::getDocument()
                 <div class="span12">
                     <div class="form-horizontal">
                         <?php
-                        echo $this->form->renderField('downloadIntegrationType'); ?>
+                                    echo $this->form->renderField('downloadIntegrationType'); ?>
                         <?php
-                        echo $this->form->renderField('requiresRegistration'); ?>
+                                    echo $this->form->renderField('requiresRegistration'); ?>
                         <?php
-                        echo $this->form->renderField('downloadIntegrationUrl'); ?>
+                                    echo $this->form->renderField('downloadIntegrationUrl'); ?>
                         <h3><?php
-                            echo Text::_('COM_JED_EXTENSIONS_DOWNLOAD_ALTERNATIVE_DOWNLOAD'); ?></h3>
+                                        echo Text::_('COM_JED_EXTENSIONS_DOWNLOAD_ALTERNATIVE_DOWNLOAD'); ?></h3>
                         <?php
-                        echo $this->form->renderField('downloadIntegrationType1'); ?>
+                                    echo $this->form->renderField('downloadIntegrationType1'); ?>
                         <?php
-                        echo $this->form->renderField('downloadIntegrationType2'); ?>
+                                    echo $this->form->renderField('downloadIntegrationType2'); ?>
                         <?php
-                        echo $this->form->renderField('downloadIntegrationType3'); ?>
+                                    echo $this->form->renderField('downloadIntegrationType3'); ?>
                         <?php
-                        echo $this->form->renderField('downloadIntegrationType4'); ?>
+                                    echo $this->form->renderField('downloadIntegrationType4'); ?>
                     </div>
                 </div>
             </div>
             <?php
-            echo HTMLHelper::_('uitab.endTab'); ?>
+                        echo HTMLHelper::_('uitab.endTab'); ?>
 
             <?php
-            echo HTMLHelper::_(
-                'uitab.addTab',
-                'extensionTab',
-                'reviews',
-                Text::_('COM_JED_EXTENSIONS_REVIEWS_TAB')
-            ); ?>
+                        echo HTMLHelper::_(
+                            'uitab.addTab',
+                            'extensionTab',
+                            'reviews',
+                            Text::_('COM_JED_EXTENSIONS_REVIEWS_TAB')
+                        ); ?>
             <div class="row-fluid">
                 <div class="span12">
                     <div class="form-horizontal">
                         <?php
-                        echo $this->form->renderFieldset('reviews'); ?>
+                                    echo $this->form->renderFieldset('reviews'); ?>
                     </div>
                     <?php
-                    echo HTMLHelper::_(
-                        'link',
-                        'index.php?option=com_jed&view=reviews&filter[extension]=' . $this->item->id,
-                        Text::_('COM_JED_EXTENSIONS_REVIEW_LINK') . ' <span class="icon-new-tab"></span>',
-                        'target="_blank"'
-                    );
-                    ?>
+                                echo HTMLHelper::_(
+                                    'link',
+                                    'index.php?option=com_jed&view=reviews&filter[extension]=' . $this->item->id,
+                                    Text::_('COM_JED_EXTENSIONS_REVIEW_LINK') . ' <span class="icon-new-tab"></span>',
+                                    'target="_blank"'
+                                );
+                                ?>
                 </div>
             </div>
             <?php
@@ -194,7 +199,7 @@ Factory::getDocument()
                                 echo HTMLHelper::_('date', $history->logDate, Text::_('COM_JED_DATETIME_FORMAT')); ?></td><?php
 ?>
                                 <td><?php
-                                echo Text::_('COM_JED_EXTENSION_HISTORY_LOG_' . $history->type); ?></td><?php
+                                                                echo Text::_('COM_JED_EXTENSION_HISTORY_LOG_' . $history->type); ?></td><?php
 
 if ($history->type === 'mail') {
     ?>
@@ -209,8 +214,8 @@ if ($history->type === 'mail') {
                                     echo $history->memberName; ?></td><?php
 ?>
                                     <td><?php
-                                    echo HTMLHelper::_('link', 'index.php?option=com_users&task=user.edit&id=' . $history->developerId, $history->developerName); ?> &lt;<?php
-    echo $history->developerEmail; ?>&gt;</td><?php
+                                        echo HTMLHelper::_('link', 'index.php?option=com_users&task=user.edit&id=' . $history->developerId, $history->developerName); ?> &lt;<?php
+        echo $history->developerEmail; ?>&gt;</td><?php
 }
 if ($history->type === 'note') {
     ?>
@@ -223,14 +228,14 @@ if ($history->type === 'note') {
                                     echo $history->memberName; ?></td><?php
 ?>
                                     <td><?php
-                                    echo HTMLHelper::_('link', 'index.php?option=com_users&task=user.edit&id=' . $history->developerId, $history->developerName); ?></td><?php
+                                        echo HTMLHelper::_('link', 'index.php?option=com_users&task=user.edit&id=' . $history->developerId, $history->developerName); ?></td><?php
 } elseif ($history->type === 'actionLog') {
     ?>
                                     <td><?php
                                     echo ActionlogsHelper::getHumanReadableLogMessage($history); ?></td><?php
 ?>
                                     <td><?php
-                                    echo $history->name; ?></td><?php
+                                        echo $history->name; ?></td><?php
 ?>
                                     <td></td><?php
 }

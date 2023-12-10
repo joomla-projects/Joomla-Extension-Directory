@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    TICKETS
+ * @subpackage TICKETS
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -26,8 +26,8 @@ HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-$user        = JedHelper::getUser();
-$userId      = $user->get('id');
+$user        = Factory::getApplication()->getIdentity();
+$userId      = $user->id;
 $listOrder   = $this->state->get('list.ordering');
 $listDirn    = $this->state->get('list.direction');
 $isLoggedIn  = JedHelper::IsLoggedIn();
@@ -56,7 +56,7 @@ if (!$isLoggedIn) {
           name="adminForm" id="adminForm">
         <?php echo '<fieldset class="mytickets"><legend>' . Text::_('COM_JED_JEDTICKETS_LIST_HEADER') . '</legend>' . Text::_('COM_JED_JEDTICKETS_LIST_DESCR') . '</fieldset>'; ?>
         <?php if (!empty($this->filterForm)) {
-            echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
+            echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
         } ?>
         <div class="table-responsive">
             <table class="table table-striped" id="jedticketList">
@@ -99,7 +99,7 @@ if (!$isLoggedIn) {
                 </tfoot>
                 <tbody>
                 <?php foreach ($this->items as $i => $item) : ?>
-                    <?php $canEdit = JedHelper::getUser()->id == $item->created_by; ?>
+                    <?php $canEdit = Factory::getApplication()->getIdentity()->id == $item->created_by; ?>
 
                     <tr class="row<?php echo $i % 2; ?>">
 
@@ -157,12 +157,7 @@ if (!$isLoggedIn) {
                 </tbody>
             </table>
         </div>
-        <?php if ($canCreate) : ?>
-            <a href="<?php echo Route::_('index.php?option=com_jed&task=jedticketform.edit&id=0', false, 0); ?>"
-               class="btn btn-success btn-small"><i
-                        class="icon-plus"></i>
-                <?php echo Text::_('COM_JED_GENERAL_ADD_ITEM_LABEL'); ?></a>
-        <?php endif; ?>
+
 
         <input type="hidden" name="task" value=""/>
         <input type="hidden" name="boxchecked" value="0"/>
