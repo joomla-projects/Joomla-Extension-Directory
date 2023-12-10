@@ -38,7 +38,7 @@ use Joomla\CMS\Layout\LayoutHelper;
                                     'compatibility' => ['3', '4 alpha'],
                                     'description'   => 'Dummy Text',
                                     'type'          => 'Free',
-                                    'link'          => '#',
+                                    'link'          => '#'
                                     ]
                 ) ?>
             <?php endfor; ?>
@@ -63,7 +63,7 @@ use Joomla\CMS\Layout\LayoutHelper;
                         'compatibility' => ['3', '4 alpha'],
                         'description'   => 'Dummy Text',
                         'type'          => 'Free',
-                        'link'          => '#',
+                        'link'          => '#'
                     ]
                 ) ?>
             <?php endfor; ?>
