@@ -15,7 +15,6 @@ namespace Jed\Component\Jed\Site\View\Categories;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\Categories\CategoryNode;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
@@ -32,7 +31,7 @@ class HtmlView extends BaseHtmlView
     /**
      * An array of items
      *
-     * @var CategoryNode[]
+     * @var array
      *
      * @since 4.0.0
      */

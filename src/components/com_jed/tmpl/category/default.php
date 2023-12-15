@@ -45,17 +45,19 @@ $canDelete  = $user->authorise('core.delete', 'com_jed');
 
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.jazstyle');
+
 ?>
 <div class="jed-home-categories">
     <div class="container">
         <div class="row gx-5">
             <?php
-            foreach ($this->category->getChildren() as $c) {
+
+            foreach ($this->items->children as $c) {
                 ?>
                 <div class="col-lg-4 mb-3 card jed-home-category">
                     <div class="card-header jed-home-item-view">
                         <span class="jed-home-category-icon fa fa-camera rounded-circle bg-warning p-2 text-white d-inline-block"></span>
-                        <h4 class="jed-home-category-title d-inline-block">
+                        <h4 class="jed-home-category-title d-inline-block">ABC
                             <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $c->id); ?>">
                                 <?php echo $c->title; ?>
                             </a>
@@ -111,3 +113,11 @@ $wa->useStyle('com_jed.jazstyle');
 
 
 <?php echo $this->pagination->getPaginationLinks(); ?>
+<?php
+echo LayoutHelper::render(
+    'category.children',
+    [
+        'children' => $this->children,
+    ]
+);
+?>

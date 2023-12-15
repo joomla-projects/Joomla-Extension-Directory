@@ -16,6 +16,7 @@ namespace Jed\Component\Jed\Site\Model;
 
 use Exception;
 use Joomla\CMS\Categories\Categories;
+use Joomla\CMS\Categories\CategoryInterface;
 use Joomla\CMS\Categories\CategoryNode;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Utilities\ArrayHelper;
@@ -93,23 +94,23 @@ class CategoriesModel extends ListModel
 
         $this->_parent = $categories->get($this->getState('filter.parentId', 'root'));
 
-        /**
-*
-* if (is_object($this->_parent)) {
-            $this->_items = $this->_parent->getChildren($recursive);
+/* The next bit must be in to allow sorting by number of entries descending to display in category lists. */
+
+        if (is_object($this->_parent)) {
+            $this->_items = $this->_parent->getChildren();
         } else {
             $this->_items = [];
         }
-
+//var_dump($this->_items);
         // Get counts
-        $query->select('primary_category_id, COUNT(id) AS c')
+     /*   $query->select('primary_category_id, COUNT(id) AS c')
             ->from('#__jed_extensions AS e')
             ->where('e.approved = 1 and e.published=1')
             ->group('e.primary_category_id');
         $db->setQuery($query);
 
         $counts = $db->loadObjectList('primary_category_id');
-
+*/
         $null    = new stdClass();
         $null->c = 0;
         $list    = [];
@@ -118,36 +119,36 @@ class CategoriesModel extends ListModel
 
         foreach ($this->_items as $item) {
             $row           = $this->nodeToObject($item);
-            $row->numitems = ArrayHelper::getValue($counts, $row->id, $null)->c;
+
+            $row->numitems = $item->numitems;
             $children      = $item->getChildren();
-            $parentCount   = 0;
+        //    $parentCount   = 0;
 
             foreach ($children as $child) {
+                //var_dump($child);exit();
                 $i                        = $this->nodeToObject($child);
-                $i->numitems              = ArrayHelper::getValue($counts, $i->id, $null)->c;
+                $i->numitems              = $child->numitems;
                 $row->children[$i->title] = $i;
-                $parentCount += $i->numitems;
-                $this->_total += $i->numitems;
+                //$parentCount += $i->numitems;
+                //$this->_total += $i->numitems;
             }
+            $key_values = array_column($row->children, 'numitems');
 
-            ksort($row->children);
+            array_multisort($key_values, SORT_DESC, $row->children);
+         //   echo "<pre>";print_r($row);echo "</pre>";exit();
 
-            $row->numitems     = $row->numitems + $parentCount;
+
             $list[$row->title] = $row;
         }
-
-        ksort($list, SORT_NATURAL | SORT_FLAG_CASE);
-        $list = array_values($list);
-
-
-        $list = array_values($list);
-        array_multisort(array_column($list, "numitems"), SORT_DESC, $list);
+        $key_values = array_column($list, 'numitems');
+        array_multisort($key_values, SORT_DESC, $list);
         //echo "<pre>";print_r($list);echo "</pre>";exit();
         $this->_items = $list;
 
         return $list;
-**/
-        return $this->_parent->getChildren();
+
+       // echo "<pre>";var_dump($this->_parent->getChildren());echo "</pre>";exit();
+     //   return $this->_parent->getChildren();
     }
 
     /**

@@ -16,7 +16,6 @@ namespace Jed\Component\Jed\Site\View\Category;
 
 use Exception;
 use Joomla\CMS\MVC\View\CategoryView;
-use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
@@ -51,9 +50,15 @@ class HtmlView extends CategoryView
 
         $this->state      = $this->get('State');
         $this->items      = $this->get('Items');
+
+        $this->children = $this->get('Children');
+
         $this->pagination = $this->get('Pagination');
         $this->params     = $app->getParams();
-        //   parent::commonCategoryDisplay();
+        //This following line was added I think as a copy - it does nothing for the
+        // JED display of extensions and crashes when
+        // attempting to run so I've commented it out.
+        //parent::commonCategoryDisplay();
 
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {

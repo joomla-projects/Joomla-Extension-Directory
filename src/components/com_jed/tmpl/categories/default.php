@@ -14,6 +14,7 @@
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
 /**
@@ -39,21 +40,21 @@ HTMLHelper::_('bootstrap.tooltip');
                     <div class="card-header jed-home-item-view">
                         <span class="jed-home-category-icon fa fa-camera rounded-circle bg-warning p-2 text-white d-inline-block"></span>
                         <h4 class="jed-home-category-title d-inline-block">
-                            <a href="<?php echo Route::_('index.php?option=com_jed&view=extensions&id=' . $c->id); ?>">
+                            <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $c->id); ?>">
                                 <?php echo $c->title; ?>
                             </a>
                         </h4>
-                        <span class="badge rounded-pill float-end"><?php echo $c->getNumItems(true); ?></span>
+                        <span class="badge rounded-pill float-end"><?php echo $c->numitems; ?></span>
                     </div>
                     <div class="card-body">
                         <ul class="list-group list-group-flush">
-                            <?php foreach ($c->getChildren() as $sc) {
-                                if ($sc->getNumItems(true) > 0) { ?>
+                            <?php foreach ($c->children as $sc) {
+                                if ($sc->numitems > 0) { ?>
                                     <li class="list-group-item">
-                                        <a href="<?php echo Route::_('index.php?option=com_jed&view=extensions&id=' . $sc->id); ?>">
+                                        <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $sc->id); ?>">
                                             <?php echo $sc->title; ?>
                                         </a>
-                                        <span class="badge rounded-pill float-end badge-info-cat">  <?php echo $sc->getNumItems(true); ?></span>
+                                        <span class="badge rounded-pill float-end badge-info-cat">  <?php echo $sc->numitems; ?></span>
                                     </li>
                                 <?php }
                             } ?>
@@ -65,4 +66,5 @@ HTMLHelper::_('bootstrap.tooltip');
     </div>
     <?php } ?>
 </div>
+
 
