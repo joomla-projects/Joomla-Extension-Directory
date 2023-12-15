@@ -795,8 +795,8 @@ class CategoryModel extends ListModel
         if (!\is_object($this->local_category_item)) {
             $this->getCategory();
         }
-        $id                     = Factory::getApplication()->getInput()->getInt('id', -1);
-        $category_parent_id     = $this->local_category_item[$id]->parent_id;
+        $id                          = Factory::getApplication()->getInput()->getInt('id', -1);
+        $category_parent_id          = $this->local_category_item[$id]->parent_id;
         $this->local_category_parent = $this->local_category_item[$category_parent_id];
         return $this->local_category_parent;
     }
