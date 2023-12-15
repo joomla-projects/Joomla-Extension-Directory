@@ -94,22 +94,22 @@ class CategoriesModel extends ListModel
 
         $this->_parent = $categories->get($this->getState('filter.parentId', 'root'));
 
-/* The next bit must be in to allow sorting by number of entries descending to display in category lists. */
+        /* The next bit must be in to allow sorting by number of entries descending to display in category lists. */
 
         if (is_object($this->_parent)) {
             $this->_items = $this->_parent->getChildren();
         } else {
             $this->_items = [];
         }
-//var_dump($this->_items);
+        //var_dump($this->_items);
         // Get counts
-     /*   $query->select('primary_category_id, COUNT(id) AS c')
-            ->from('#__jed_extensions AS e')
-            ->where('e.approved = 1 and e.published=1')
-            ->group('e.primary_category_id');
-        $db->setQuery($query);
+        /*   $query->select('primary_category_id, COUNT(id) AS c')
+               ->from('#__jed_extensions AS e')
+               ->where('e.approved = 1 and e.published=1')
+               ->group('e.primary_category_id');
+           $db->setQuery($query);
 
-        $counts = $db->loadObjectList('primary_category_id');
+           $counts = $db->loadObjectList('primary_category_id');
 */
         $null    = new stdClass();
         $null->c = 0;
@@ -122,7 +122,7 @@ class CategoriesModel extends ListModel
 
             $row->numitems = $item->numitems;
             $children      = $item->getChildren();
-        //    $parentCount   = 0;
+            //    $parentCount   = 0;
 
             foreach ($children as $child) {
                 //var_dump($child);exit();
@@ -135,7 +135,7 @@ class CategoriesModel extends ListModel
             $key_values = array_column($row->children, 'numitems');
 
             array_multisort($key_values, SORT_DESC, $row->children);
-         //   echo "<pre>";print_r($row);echo "</pre>";exit();
+            //   echo "<pre>";print_r($row);echo "</pre>";exit();
 
 
             $list[$row->title] = $row;
@@ -147,8 +147,8 @@ class CategoriesModel extends ListModel
 
         return $list;
 
-       // echo "<pre>";var_dump($this->_parent->getChildren());echo "</pre>";exit();
-     //   return $this->_parent->getChildren();
+        // echo "<pre>";var_dump($this->_parent->getChildren());echo "</pre>";exit();
+        //   return $this->_parent->getChildren();
     }
 
     /**

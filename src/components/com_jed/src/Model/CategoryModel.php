@@ -553,7 +553,7 @@ class CategoryModel extends ListModel
         return $db->loadColumn();
     }
 
-/* Below code modified from com_content_category_model */
+    /* Below code modified from com_content_category_model */
     /**
      * Method to get category data for the current category
      *
@@ -570,8 +570,8 @@ class CategoryModel extends ListModel
             @trigger_error(sprintf('Database must be set, this will not be caught anymore in 5.0.'), E_USER_DEPRECATED);
             $db = Factory::getContainer()->get(DatabaseInterface::class);
         }
-        $id  = Factory::getApplication()->getInput()->getInt('id', -1);
-        $extension = 'com_jed';
+        $id         = Factory::getApplication()->getInput()->getInt('id', -1);
+        $extension  = 'com_jed';
         $categories = [];
 
         if ($id <> -1) {
@@ -625,7 +625,7 @@ class CategoryModel extends ListModel
             $query->select($case_when)->where('(' . $db->quoteName('c.extension') . ' = :extension OR ' . $db->quoteName('c.extension') . ' = ' . $db->quote('system') . ')')->bind(':extension', $extension);
 
 
-                $query->where($db->quoteName('c.published') . ' = 1');
+            $query->where($db->quoteName('c.published') . ' = 1');
 
 
             $query->order($db->quoteName('c.lft'));
@@ -636,11 +636,11 @@ class CategoryModel extends ListModel
                 $query->from($db->quoteName('#__categories', 's'))->where($db->quoteName('s.id') . ' = :id')->bind(':id', $id, ParameterType::INTEGER);
 
 
-                    $query->join(
-                        'INNER',
-                        $db->quoteName('#__categories', 'c'),
-                        '(' . $db->quoteName('s.lft') . ' <= ' . $db->quoteName('c.lft') . ' AND ' . $db->quoteName('c.lft') . ' < ' . $db->quoteName('s.rgt') . ')' . ' OR (' . $db->quoteName('c.lft') . ' < ' . $db->quoteName('s.lft') . ' AND ' . $db->quoteName('s.rgt') . ' < ' . $db->quoteName('c.rgt') . ')'
-                    );
+                $query->join(
+                    'INNER',
+                    $db->quoteName('#__categories', 'c'),
+                    '(' . $db->quoteName('s.lft') . ' <= ' . $db->quoteName('c.lft') . ' AND ' . $db->quoteName('c.lft') . ' < ' . $db->quoteName('s.rgt') . ')' . ' OR (' . $db->quoteName('c.lft') . ' < ' . $db->quoteName('s.lft') . ' AND ' . $db->quoteName('s.rgt') . ' < ' . $db->quoteName('c.rgt') . ')'
+                );
             } else {
                 $query->from($db->quoteName('#__categories', 'c'));
             }
@@ -650,7 +650,7 @@ class CategoryModel extends ListModel
             $subQuery = $db->getQuery(true)->select('COUNT(' . $db->quoteName($db->escape('i.id')) . ')')->from($db->quoteName($db->escape('#__jed_extensions'), 'i'))->where($db->quoteName($db->escape('i.primary_category_id')) . ' = ' . $db->quoteName('c.id'));
 
 
-                $subQuery->where($db->quoteName($db->escape('i.state')) . ' = 1');
+            $subQuery->where($db->quoteName($db->escape('i.state')) . ' = 1');
 
 
 
@@ -687,10 +687,10 @@ class CategoryModel extends ListModel
 
                         // If the node's parent id is not in the _nodes list and the node is not root (doesn't have parent_id == 0),
                         // then remove the node from the list
-                      //  if (!(isset($categories[$result->parent_id]) || $result->parent_id == 0)) {
-                       //     unset($categories[$result->id]);
-                       //     continue;
-                     //   }
+                        //  if (!(isset($categories[$result->parent_id]) || $result->parent_id == 0)) {
+                        //     unset($categories[$result->id]);
+                        //     continue;
+                        //   }
 
                         if ($result->id == $id || $childrenLoaded) {
                             $categories[$result->id]->setAllLoaded();
@@ -707,10 +707,10 @@ class CategoryModel extends ListModel
 
                         // If the node's parent id is not in the _nodes list and the node is not root (doesn't have parent_id == 0),
                         // then remove the node from the list
-                    //    if (!(isset($categories[$result->parent_id]) || $result->parent_id == 0)) {
-                    //        unset($categories[$result->id]);
-                     //       continue;
-                     //   }
+                        //    if (!(isset($categories[$result->parent_id]) || $result->parent_id == 0)) {
+                        //        unset($categories[$result->id]);
+                        //       continue;
+                        //   }
 
                         if ($result->id == $id || $childrenLoaded) {
                             $categories[$result->id]->setAllLoaded();
@@ -740,7 +740,7 @@ class CategoryModel extends ListModel
         if (!\is_object($this->_category_item)) {
             $this->getCategory();
         }
-        $id  = Factory::getApplication()->getInput()->getInt('id', -1);
+        $id                          = Factory::getApplication()->getInput()->getInt('id', -1);
         $this->_category_leftsibling = $this->_category_item[$id]->lft;
         return $this->_category_leftsibling;
     }
@@ -758,7 +758,7 @@ class CategoryModel extends ListModel
         if (!\is_object($this->_category_item)) {
             $this->getCategory();
         }
-        $id  = Factory::getApplication()->getInput()->getInt('id', -1);
+        $id                           = Factory::getApplication()->getInput()->getInt('id', -1);
         $this->_category_rightsibling = $this->_category_item[$id]->rgt;
         return $this->_category_rightsibling ;
     }
@@ -776,7 +776,7 @@ class CategoryModel extends ListModel
         if (!\is_object($this->_category_item)) {
             $this->getCategory();
         }
-        $id  = Factory::getApplication()->getInput()->getInt('id', -1);
+        $id                       = Factory::getApplication()->getInput()->getInt('id', -1);
         $this->_category_children = $this->_category_item[$id]->getChildren();
 
         return $this->_category_children;
@@ -795,8 +795,8 @@ class CategoryModel extends ListModel
         if (!\is_object($this->_category_item)) {
             $this->getCategory();
         }
-        $id  = Factory::getApplication()->getInput()->getInt('id', -1);
-        $category_parent_id = $this->_category_item[$id]->parent_id;
+        $id                     = Factory::getApplication()->getInput()->getInt('id', -1);
+        $category_parent_id     = $this->_category_item[$id]->parent_id;
         $this->_category_parent = $this->_category_item[$category_parent_id];
         return $this->_category_parent;
     }
