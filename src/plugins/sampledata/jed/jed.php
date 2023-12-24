@@ -67,7 +67,7 @@ class PlgSampledataJed extends CMSPlugin
         $data->name        = $this->_name;
         $data->title       = Text::_('PLG_SAMPLEDATA_JED_OVERVIEW_TITLE');
         $data->description = Text::_('PLG_SAMPLEDATA_JED_OVERVIEW_DESC');
-        $data->icon        = 'money';
+        $data->icon        = 'joomla';
         $data->steps       = 7;
 
         return $data;
