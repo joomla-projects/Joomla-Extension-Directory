@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    TICKETS
+ * @subpackage TICKETS
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -27,17 +27,17 @@ use stdClass;
 /**
  * Methods supporting a list of Jed records.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class TicketmessagesModel extends ListModel
 {
     /**
      * Constructor.
      *
-     * @param   array  $config  An optional associative array of configuration settings.
+     * @param array $config An optional associative array of configuration settings.
      *
-     * @see              ListModel
-     * @since            4.0.0
+     * @see    ListModel
+     * @since  4.0.0
      * @throws Exception
      */
     public function __construct($config = [])
@@ -61,11 +61,11 @@ class TicketmessagesModel extends ListModel
     /**
      * Method to get an array of data items
      *
-     * @return  mixed An array of data on success, false on failure.
+     * @return mixed An array of data on success, false on failure.
      *
      * @since 4.0.0
      */
-    public function getItems()
+    public function getItems(): mixed
     {
         $items = parent::getItems();
 
@@ -100,9 +100,9 @@ class TicketmessagesModel extends ListModel
     /**
      * Build an SQL query to load the list data.
      *
-     * @return  object  A \JDatabaseQuery object to retrieve the data set.
+     * @return object  A \JDatabaseQuery object to retrieve the data set.
      *
-     * @since    4.0.0
+     * @since 4.0.0
      */
     protected function getListQuery(): object
     {
@@ -133,10 +133,10 @@ class TicketmessagesModel extends ListModel
         $query->select('`jt`.`ticket_subject` AS jt_ticket_subject');
         $query->join('LEFT', '#__jed_jedtickets AS jt ON jt.`id` = a.`ticket_id`');
         if (JedHelper::isAdminOrSuperUser()) {
-            $query->where("a.created_by = " . JedHelper::getUser()->get("id"));
+            $query->where("a.created_by = " . Factory::getApplication()->getIdentity()->id);
         }
 
-        if (!JedHelper::getUser()->authorise('core.edit', 'com_jed')) {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed')) {
             $query->where('a.state = 1');
         } else {
             $query->where('(a.state IN (0, 1))');
@@ -179,7 +179,7 @@ class TicketmessagesModel extends ListModel
      * "_dateformat" suffix, and erases the field if it's not correct.
      *
      * @return stdClass
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function loadFormData(): stdClass
@@ -208,16 +208,15 @@ class TicketmessagesModel extends ListModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @param   string  $ordering   Elements order
-     * @param   string  $direction  Order direction
+     * @param string $ordering  Elements order
+     * @param string $direction Order direction
      *
      * @return void
      *
-     * @since    4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
-    protected function populateState($ordering = null, $direction = null)
+    protected function populateState($ordering = null, $direction = null): void
     {
         $app = Factory::getApplication();
 

@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    Tickets
+ * @subpackage Tickets
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\View\Jedtickets;
@@ -22,16 +22,17 @@ use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Toolbar\Toolbar;
+
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
+use Joomla\Registry\Registry;
 
 /**
  * View class for a list of JED Tickets.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
@@ -43,11 +44,11 @@ class HtmlView extends BaseHtmlView
     /**
      * The model state
      *
-     * @var  CMSObject
+     * @var Registry
      *
      * @since 4.0.0
      */
-    protected CMSObject $state;
+    protected Registry $state;
 
     /**
      * Add the page title and toolbar.
@@ -57,14 +58,15 @@ class HtmlView extends BaseHtmlView
      * @since  4.0.0
      * @throws Exception
      */
-    protected function addToolbar()
+    protected function addToolbar(): void
     {
         $this->state = $this->get('State');
         $canDo       = JedHelper::getActions();
 
         ToolbarHelper::title(Text::_('COM_JED_TITLE_JEDTICKETS'), "generic");
 
-        $toolbar = Toolbar::getInstance();
+        $toolbar = Toolbar::getInstance(); //Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar();
+
 
 
         if ($canDo->get('core.edit.state')) {
@@ -126,15 +128,14 @@ class HtmlView extends BaseHtmlView
     /**
      * Display the view
      *
-     * @param   string  $tpl  Template name
+     * @param string $tpl Template name
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
         $this->state = $this->get('State');
         $this->items = $this->get('Items');
@@ -186,7 +187,7 @@ class HtmlView extends BaseHtmlView
     /**
      * Check if state is set
      *
-     * @param   mixed  $state  State
+     * @param mixed $state State
      *
      * @return bool
      *

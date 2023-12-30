@@ -1,11 +1,10 @@
 <?php
 
 /**
- * @package     Jed\Component\Jed\Administrator\Traits
- * @subpackage
+ * @package JED
  *
- * @copyright   A copyright
- * @license     A "Slug" license name e.g. GPL2
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 use Joomla\CMS\Router\Route;
@@ -23,8 +22,8 @@ $i = 0;
     <span aria-hidden="true" class="icon-tag"></span>
     <?php foreach ($displayData['categories'] as $cat) : ?>
         <?php $i++ ?>
-        <a href="<?= Route::_(sprintf('index.php?option=com_jed&view=extensions&id=%d&catid=%d', $cat->id, $cat->parent_id)) ?>">
-            <?= htmlentities($cat->title) ?>
+        <a href="<?php echo Route::_(sprintf('index.php?option=com_jed&view=category&id=%d', $cat->id)) ?>">
+            <?php echo htmlentities($cat->title) ?>
         </a>
         <?php if ($i != count($displayData['categories'])) : ?>
         <span class="text-muted">&bull;</span>

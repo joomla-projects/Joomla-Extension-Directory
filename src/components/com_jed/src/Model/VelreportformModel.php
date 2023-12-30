@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -23,11 +23,9 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\FormModel;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
-
-use function defined;
+use stdClass;
 
 /**
  * VEL Report Form Model Class.
@@ -39,41 +37,30 @@ class VelreportformModel extends FormModel
     /**
      * The item object
      *
-     * @var    mixed
-     * @since  4.0.0
+     * @var   mixed
+     * @since 4.0.0
      */
     private mixed $item = null;
 
-    /** Data Table
+    /**
+     *
+     * Data Table
+     *
      * @since 4.0.0
      **/
-    private string $dbtable = "#__jed_vel_report";
-
-    /**
-     * Check if data can be saved
-     *
-     * @return bool
-     * @since 4.0.0
-     * @throws Exception
-     */
-    public function getCanSave(): bool
-    {
-        $table = $this->getTable();
-
-        return $table !== false;
-    }
+    //private string $dbtable = "#__jed_vel_report";
 
     /**
      * Method to get the profile form.
      *
      * The base form is loaded from XML
      *
-     * @param   array    $data      An optional array of data for the form to interogate.
-     * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+     * @param array $data     An optional array of data for the form to interogate.
+     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
      * @return Form A JForm object on success, false on failure
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
@@ -98,10 +85,10 @@ class VelreportformModel extends FormModel
     /**
      * Method to get an object.
      *
-     * @param   int|null  $id  id of the object to get.
+     * @param int|null $id id of the object to get.
      *
      * @return object|bool
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getItem(int $id = null): mixed
@@ -118,13 +105,13 @@ class VelreportformModel extends FormModel
             $table = $this->getTable();
 
             if ($table !== false && $table->load($id) && !empty($table->id)) {
-                $user = JedHelper::getUser();
-                $id   = $table->id;
-                if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+                $user = Factory::getApplication()->getIdentity();
+
+                if (JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 
                     if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
-                        $canEdit = $user->id == $table->get('created_by');
+                        $canEdit = $user->id == $table->created_by;
                     }
 
                     if (!$canEdit) {
@@ -138,9 +125,10 @@ class VelreportformModel extends FormModel
                         }
                     }
 
-                    // Convert the Table to a clean CMSObject.
-                    $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, CMSObject::class);
+                    // Convert the Table to a clean stdClass.
+                    $properties = $table->getTableProperties(1);
+
+                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
                         $this->item->category_id = ArrayHelper::fromObject($this->item->category_id);
@@ -157,13 +145,13 @@ class VelreportformModel extends FormModel
     /**
      * Method to get the table
      *
-     * @param   string  $name     Name of the JTable class
-     * @param   string  $prefix   Optional prefix for the table class name
-     * @param   array   $options  Optional configuration array for JTable object
+     * @param string $name    Name of the JTable class
+     * @param string $prefix  Optional prefix for the table class name
+     * @param array  $options Optional configuration array for JTable object
      *
-     * @return  Table|boolean Table if found, boolean false on failure
+     * @return Table|bool Table if found, bool false on failure
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Velreport', $prefix = 'Administrator', $options = []): Table|bool
@@ -176,11 +164,11 @@ class VelreportformModel extends FormModel
     /**
      * Method to check in an item.
      *
-     * @param   int|null  $pk  The id of the row to check out.
+     * @param int|null  $pk  The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     /*public function checkin($pk = null): bool
@@ -216,11 +204,11 @@ class VelreportformModel extends FormModel
     /**
      * Method to check out an item for editing.
      *
-     * @param   int|null  $pk  The id of the row to check out.
+     * @param int|null  $pk  The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     /*public function checkout($pk = null): bool
@@ -235,12 +223,12 @@ class VelreportformModel extends FormModel
                 $table = $this->getTable();
 
                 // Get the current user object.
-                $user = JedHelper::getUser();
+                $user = Factory::getApplication()->getIdentity();
 
                 // Attempt to check the row out.
                 if (method_exists($table, 'checkout'))
                 {
-                    if (!$table->checkout($user->get('id'), $pk))
+                    if (!$table->checkout($user->id, $pk))
                     {
                         return false;
                     }
@@ -258,8 +246,8 @@ class VelreportformModel extends FormModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return    array  The default data is an empty array.
-     * @since 4.0.0
+     * @return array  The default data is an empty array.
+     * @since  4.0.0
      * @throws Exception
      */
     protected function loadFormData(): array
@@ -382,17 +370,16 @@ class VelreportformModel extends FormModel
      *
      * Commented out as Reports should not be deleted from front-end
      *
-     * @param   int  $pk  Item primary key
+     * @param int  $pk  Item primary key
      *
-     * @return  int  The id of the deleted item
+     * @return int  The id of the deleted item
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
     /*public function delete(int $pk): int
     {
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         if (!$pk || JedHelper::userIDItem($pk,$this->dbtable) || JedHelper::isAdminOrSuperUser())
         {
@@ -437,7 +424,7 @@ class VelreportformModel extends FormModel
      *
      * @throws Exception
      */
-    protected function populateState()
+    protected function populateState(): void
     {
         $app = Factory::getApplication();
 
@@ -465,11 +452,11 @@ class VelreportformModel extends FormModel
     /**
      * Method to save the form data.
      *
-     * @param   array  $data  The form data
+     * @param array $data The form data
      *
      * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function save(array $data): bool
@@ -478,7 +465,7 @@ class VelreportformModel extends FormModel
         $id              = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('velreport.id');
         $data['user_ip'] = $_SERVER['REMOTE_ADDR'];
         $isLoggedIn      = JedHelper::IsLoggedIn();
-        $user            = JedHelper::getUser();
+        $user            = Factory::getApplication()->getIdentity();
 
         if ((!$id || JedHelper::isAdminOrSuperUser()) && $isLoggedIn) {
             /* Any logged in user can report a vulnerable Item */
@@ -512,12 +499,12 @@ class VelreportformModel extends FormModel
                 if (isset($message_out->subject)) {
                     JedemailHelper::sendEmail($message_out->subject, $message_out->template, $user, 'dummy@dummy.com');
 
-                    $ticket_message['id']                = 0;
-                    $ticket_message['subject']           = $message_out->subject;
-                    $ticket_message['message']           = $message_out->template;
-                    $ticket_message['message_direction'] = 0; /* 1 for coming in, 0 for going out */
-                    $ticket['created_by']                = -1;
-                    $ticket['modified_by']               = -1;
+                    $ticket_message['id']                        = 0;
+                    $ticket_message['subject']                   = $message_out->subject;
+                    $ticket_message['message']                   = $message_out->template;
+                    $ticket_message['message_direction']         = 0; /* 1 for coming in, 0 for going out */
+                    $ticket_message['created_by']                = -1;
+                    $ticket_message['modified_by']               = -1;
                     $ticket_message_model->save($ticket_message);
                 }
 
@@ -528,5 +515,20 @@ class VelreportformModel extends FormModel
         } else {
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
         }
+    }
+
+    /**
+     * Check if data can be saved
+     *
+     * @return bool
+     *
+     * @since  4.0.0
+     * @throws Exception
+     */
+    public function getCanSave(): bool
+    {
+        $table = $this->getTable();
+
+        return $table !== false;
     }
 }

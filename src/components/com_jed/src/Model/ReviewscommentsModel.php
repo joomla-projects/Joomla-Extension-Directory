@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -19,18 +19,19 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
+use Joomla\Database\DatabaseQuery;
 
 /**
  * Methods supporting a list of Jed records.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class ReviewscommentsModel extends ListModel
 {
     /**
      * Constructor.
      *
-     * @param   array  $config  An optional associative array of configuration settings.
+     * @param array $config An optional associative array of configuration settings.
      *
      * @see    JController
      * @since  4.0.0
@@ -56,15 +57,15 @@ class ReviewscommentsModel extends ListModel
     }
 
 
-       /**
-        * Checks whether or not a user is manager or super user
-        *
-        * @return bool
-        */
+    /**
+     * Checks whether or not a user is manager or super user
+     *
+     * @return bool
+     */
     public function isAdminOrSuperUser()
     {
         try {
-            $user = JedHelper::getUser();
+            $user = Factory::getApplication()->getIdentity();
             return in_array("8", $user->groups) || in_array("7", $user->groups);
         } catch (Exception $exc) {
             return false;
@@ -76,18 +77,18 @@ class ReviewscommentsModel extends ListModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @param   string  $ordering   Elements order
-     * @param   string  $direction  Order direction
+     * @param string $ordering  Elements order
+     * @param string $direction Order direction
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      *
-     * @throws  Exception
+     * @throws Exception
      * @throws Exception
      */
-    protected function populateState($ordering = null, $direction = null)
+    protected function populateState($ordering = null, $direction = null): void
     {
         // List state information.
         parent::populateState('a.id', 'ASC');
@@ -129,14 +130,14 @@ class ReviewscommentsModel extends ListModel
     /**
      * Build an SQL query to load the list data.
      *
-     * @return  DatabaseQuery
+     * @return DatabaseQuery
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
-    protected function getListQuery()
+    protected function getListQuery(): DatabaseQuery
     {
         // Create a new query object.
-        $db    = $this->getDbo();
+        $db    = $this->getDatabase();
         $query = $db->getQuery(true);
 
         // Select the required fields from the table.
@@ -153,10 +154,10 @@ class ReviewscommentsModel extends ListModel
         // Join over the created by field 'created_by'
         $query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
         if (!$this->isAdminOrSuperUser()) {
-            $query->where("a.created_by = " . JedHelper::getUser()->get("id"));
+            $query->where("a.created_by = " . Factory::getApplication()->getIdentity()->id);
         }
 
-        if (!JedHelper::getUser()->authorise('core.edit', 'com_jed')) {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed')) {
             $query->where('a.state = 1');
         } else {
             $query->where('(a.state IN (0, 1))');
@@ -190,9 +191,9 @@ class ReviewscommentsModel extends ListModel
     /**
      * Method to get an array of data items
      *
-     * @return  mixed An array of data on success, false on failure.
+     * @return mixed An array of data on success, false on failure.
      */
-    public function getItems()
+    public function getItems(): mixed
     {
         $items = parent::getItems();
 
@@ -232,7 +233,7 @@ class ReviewscommentsModel extends ListModel
     /**
      * Checks if a given date is valid and in a specified format (YYYY-MM-DD)
      *
-     * @param   string  $date  Date to be checked
+     * @param string $date Date to be checked
      *
      * @return bool
      */

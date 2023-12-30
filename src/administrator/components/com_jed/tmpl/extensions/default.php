@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -30,8 +30,8 @@ $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 //$wa->useStyle('com_jed.admin')
   //  ->useScript('com_jed.admin');
 
-$user      = JedHelper::getUser();
-$userId    = $user->get('id');
+$user      = Factory::getApplication()->getIdentity();
+$userId    = $user->id;
 $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
 $canOrder  = $user->authorise('core.edit.state', 'com_jed');
@@ -230,9 +230,17 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-/** @var HtmlView $this */
+/**
+*
+ *
+ * @var HtmlView $this
+*/
 
-/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+/**
+*
+ *
+ * @var Joomla\CMS\WebAsset\WebAssetManager $wa
+*/
 try {
     $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 } catch (Exception $e) {
@@ -240,15 +248,16 @@ try {
 $wa->getRegistry()
     ->addExtensionRegistryFile('com_jed');
 $wa->usePreset('com_jed.autoComplete')
-    ->addInlineScript(<<<JS
+    ->addInlineScript(
+        <<<JS
     window.addEventListener('DOMContentLoaded', () => {
         jed.filterDeveloperAutocomplete();
     });
 JS
     );
 
-$user      = JedHelper::getUser();
-$userId    = $user->get('id');
+$user      = Factory::getApplication()->getIdentity();
+$userId    = $user->id;
 $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn  = $this->escape($this->state->get('list.direction'));
 ?>
@@ -308,9 +317,9 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                     </thead>
                     <tbody>
                     <?php foreach ($this->items as $i => $item) :
-                        $ordering = ($listOrder === 'extension.id');
-                        $canCreate = $user->authorise('core.create', 'com_jed.extension.' . $item->id);
-                        $canEdit = $user->authorise('core.edit', 'com_jed.extension.' . $item->id);
+                        $ordering   = ($listOrder === 'extension.id');
+                        $canCreate  = $user->authorise('core.create', 'com_jed.extension.' . $item->id);
+                        $canEdit    = $user->authorise('core.edit', 'com_jed.extension.' . $item->id);
                         $canCheckin = $user->authorise(
                             'core.manage',
                             'com_checkin'
@@ -332,15 +341,15 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                                     case '-1':
                                         $icon = 'unpublish';
                                         break;
-                                    // Approved
+                                        // Approved
                                     case '1':
                                         $icon = 'publish';
                                         break;
-                                    // Awaiting response
+                                        // Awaiting response
                                     case '2':
                                         $icon = 'expired';
                                         break;
-                                    // Pending
+                                        // Pending
                                     case '0':
                                     default:
                                         $icon = 'pending';
@@ -356,15 +365,15 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                                     case '-1':
                                         $icon = 'unpublish';
                                         break;
-                                    // Approved
+                                        // Approved
                                     case '1':
                                         $icon = 'publish';
                                         break;
-                                    // Awaiting response
+                                        // Awaiting response
                                     case '2':
                                         $icon = 'expired';
                                         break;
-                                    // Pending
+                                        // Pending
                                     case '0':
                                     default:
                                         $icon = 'pending';

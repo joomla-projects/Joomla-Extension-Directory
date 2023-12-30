@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    TICKETS
+ * @subpackage TICKETS
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -22,25 +22,29 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\FormModel;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
+use stdClass;
 
 /**
  * Jed model.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class TicketmessageformModel extends FormModel
 {
     /**
      * The item object
      *
-     * @var    object
-     * @since  4.0.0
+     * @var   object
+     * @since 4.0.0
      */
     private $item = null;
-    /** Data Table
+    /**
+     *
+     * Data Table
+     *
      * @since 4.0.0
      **/
     private string $dbtable = "#__jed_ticket_messages";
@@ -48,11 +52,11 @@ class TicketmessageformModel extends FormModel
     /**
      * Method to check in an item.
      *
-     * @param   int|null  $pk  The id of the row to check out.
+     * @param int|null $pk The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since    4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkin($pk = null): bool
@@ -81,11 +85,11 @@ class TicketmessageformModel extends FormModel
     /**
      * Method to check out an item for editing.
      *
-     * @param   int|null  $pk  The id of the row to check out.
+     * @param int|null $pk The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since    4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkout($pk = null): bool
@@ -98,11 +102,11 @@ class TicketmessageformModel extends FormModel
                 $table = $this->getTable();
 
                 // Get the current user object.
-                $user = JedHelper::getUser();
+                $user = Factory::getApplication()->getIdentity();
 
                 // Attempt to check the row out.
                 if (method_exists($table, 'checkout')) {
-                    if (!$table->checkout($user->get('id'), $pk)) {
+                    if (!$table->checkout($user->id, $pk)) {
                         return false;
                     }
                 }
@@ -119,7 +123,7 @@ class TicketmessageformModel extends FormModel
      *
      * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getCanSave(): bool
@@ -134,12 +138,12 @@ class TicketmessageformModel extends FormModel
      *
      * The base form is loaded from XML
      *
-     * @param   array    $data      An optional array of data for the form to interogate.
-     * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+     * @param array $data     An optional array of data for the form to interogate.
+     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return    Form    A Form object on success, false on failure
+     * @return Form    A Form object on success, false on failure
      *
-     * @since    4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
@@ -164,11 +168,11 @@ class TicketmessageformModel extends FormModel
     /**
      * Method to get an ojbect.
      *
-     * @param   int|null  $id  The id of the object to get.
+     * @param int|null $id The id of the object to get.
      *
-     * @return Object|boolean Object on success, false on failure.
+     * @return Object|bool Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getItem(int $id = null)
@@ -184,9 +188,9 @@ class TicketmessageformModel extends FormModel
             $table = $this->getTable();
 
             if ($table !== false && $table->load($id) && !empty($table->id)) {
-                $user = JedHelper::getUser();
+                $user = Factory::getApplication()->getIdentity();
                 $id   = $table->id;
-                if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+                if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 
                     if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
@@ -206,7 +210,7 @@ class TicketmessageformModel extends FormModel
 
                     // Convert the Table to a clean CMSObject.
                     $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, CMSObject::class);
+                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
                         $this->item->category_id = ArrayHelper::fromObject($this->item->category_id);
@@ -223,17 +227,16 @@ class TicketmessageformModel extends FormModel
     /**
      * Method to delete data
      *
-     * @param   int  $pk  Item primary key
+     * @param int  $pk  Item primary key
      *
-     * @return  int  The id of the deleted item
+     * @return int  The id of the deleted item
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
     /*  public function delete($pk) : bool
         {
-            $user = JedHelper::getUser();
+            $user = Factory::getApplication()->getIdentity();
 
             if (!$pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser())
             {
@@ -270,13 +273,13 @@ class TicketmessageformModel extends FormModel
     /**
      * Method to get the table
      *
-     * @param   string  $name
-     * @param   string  $prefix  Optional prefix for the table class name
-     * @param   array   $options
+     * @param string $name
+     * @param string $prefix  Optional prefix for the table class name
+     * @param array  $options
      *
-     * @return  Table|boolean Table if found, boolean false on failure
+     * @return Table|bool Table if found, bool false on failure
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Ticketmessage', $prefix = 'Administrator', $options = [])
@@ -288,8 +291,8 @@ class TicketmessageformModel extends FormModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return    array  The default data is an empty array.
-     * @since    4.0.0
+     * @return array  The default data is an empty array.
+     * @since  4.0.0
      * @throws Exception
      */
     protected function loadFormData()
@@ -314,7 +317,7 @@ class TicketmessageformModel extends FormModel
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */
@@ -346,11 +349,11 @@ class TicketmessageformModel extends FormModel
     /**
      * Method to save the form data.
      *
-     * @param   array  $data  The form data
+     * @param array $data The form data
      *
      * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function save(array $data): bool

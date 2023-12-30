@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\View\Extension;
@@ -22,18 +22,18 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\Registry\Registry;
 
 /**
  * View class for a single Extension.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
     public mixed $extensionvarieddata;
-    protected CMSObject $state;
+    protected Registry $state;
     protected mixed $item;
     protected Form $form;
     protected mixed $forms;
@@ -51,7 +51,7 @@ class HtmlView extends BaseHtmlView
     /**
      * Display the view
      *
-     * @param   string  $tpl  Template name
+     * @param string $tpl Template name
      *
      * @return void
      *
@@ -59,7 +59,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
         $this->state      = $this->get('State');
         $this->item       = $this->get('Item');
@@ -106,15 +106,15 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected function addToolbar()
+    protected function addToolbar(): void
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
-        $user  = JedHelper::getUser();
+        $user  = Factory::getApplication()->getIdentity();
         $isNew = ($this->item->id == 0);
 
         if (isset($this->item->checked_out)) {
-            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->id);
         } else {
             $checkedOut = false;
         }

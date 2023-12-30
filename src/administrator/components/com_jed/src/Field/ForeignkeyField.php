@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package           JED
+ * @package JED
  *
- * @subpackage        Tickets
+ * @subpackage Tickets
  *
- * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license           GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Field;
@@ -31,31 +31,31 @@ use function is_string;
 /**
  * Supports a value from an external table
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class ForeignKeyField extends ListField
 {
     /**
      * The ForeignKey field type.
      *
-     * @var    string
-     * @since  4.0.0
+     * @var   string
+     * @since 4.0.0
      */
     protected $type = 'foreignkey';
 
     /**
      * The sublayout to use when rendering the results.
      *
-     * @var    string
-     * @since  2.5
+     * @var   string
+     * @since 2.5
      */
     protected $layout = 'joomla.form.field.list-fancy-select';
 
     /**
      * The translate.
      *
-     * @var    boolean
-     * @since   4.0.0
+     * @var   bool
+     * @since 4.0.0
      */
     protected bool $translate = true;
 
@@ -80,8 +80,8 @@ class ForeignKeyField extends ListField
     /**
      * Wrapper method for getting attributes from the form element
      *
-     * @param   string  $name     Attribute name
-     * @param   mixed   $default  Optional value to return if attribute not found
+     * @param string $name    Attribute name
+     * @param mixed  $default Optional value to return if attribute not found
      *
      * @return mixed The value of the attribute if it exists, null otherwise
      *
@@ -99,9 +99,9 @@ class ForeignKeyField extends ListField
     /**
      * Method to get the field input for a foreignkey field.
      *
-     * @return  string  The field input.
+     * @return string  The field input.
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function getInput(): string
@@ -118,7 +118,7 @@ class ForeignKeyField extends ListField
                 $this->value = explode(',', $this->value);
             }
 
-            // Integer is given
+            // int is given
             if (is_int($this->value)) {
                 $this->value = [$this->value];
             }
@@ -134,9 +134,9 @@ class ForeignKeyField extends ListField
     /**
      * Method to get the field options.
      *
-     * @return  array  The field option objects.
+     * @return array  The field option objects.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function getOptions(): array
@@ -178,9 +178,9 @@ class ForeignKeyField extends ListField
     /**
      * Method to get the field input markup.
      *
-     * @return   string  The field input markup.
+     * @return string  The field input markup.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected function processQuery(): string
     {
@@ -289,7 +289,7 @@ class ForeignKeyField extends ListField
         }
 
         // Only join on data that the user has created
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
         // If the user is not an admin, then restrict the options to only be own
         if (!empty($user->id) && !in_array("8", $user->getAuthorisedGroups()) && !in_array("7", $user->getAuthorisedGroups())) {
             $query->where("created_by = " . (int)$user->id);

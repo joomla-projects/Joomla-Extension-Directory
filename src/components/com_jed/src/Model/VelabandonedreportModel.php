@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package           JED
+ * @package JED
  *
- * @subpackage        VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license           GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -22,26 +22,30 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ItemModel;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
+use stdClass;
 
 /**
  * VEL Abandoned Report Model Class.
  *
- * @since  4.0
+ * @since 4.0
  */
 class VelabandonedreportModel extends ItemModel
 {
     /**
      * The item object
      *
-     * @var    object
-     * @since  4.0.0
+     * @var   object
+     * @since 4.0.0
      */
     public $item;
 
-    /** Data Table
+    /**
+     *
+     * Data Table
+     *
      * @since 4.0.0
      **/
     private string $dbtable = "#__jed_vel_abandoned_report";
@@ -49,9 +53,9 @@ class VelabandonedreportModel extends ItemModel
     /**
      * Method to check in an item.
      *
-     * @param   int|null  $id  The id of the row to check out.
+     * @param int|null $id The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
      * @since 4.0.0
      *
@@ -83,9 +87,9 @@ class VelabandonedreportModel extends ItemModel
     /**
      * Method to check out an item for editing.
      *
-     * @param   int|null  $id  The id of the row to check out.
+     * @param int|null $id The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
      * @since 4.0.0
      *
@@ -102,11 +106,11 @@ class VelabandonedreportModel extends ItemModel
                 $table = $this->getTable();
 
                 // Get the current user object.
-                $user = JedHelper::getUser();
+                $user = Factory::getApplication()->getIdentity();
 
                 // Attempt to check the row out.
                 if (method_exists($table, 'checkout')) {
-                    if (!$table->checkout($user->get('id'), $id)) {
+                    if (!$table->checkout($user->id, $id)) {
                         return false;
                     }
                 }
@@ -121,11 +125,11 @@ class VelabandonedreportModel extends ItemModel
     /**
      * Method to get a single record.
      *
-     * @param   int|null  $pk  The id of the object to get.
+     * @param int|null $pk The id of the object to get.
      *
-     * @return  object    Object on success, false on failure.
+     * @return object    Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getItem($pk = null)
@@ -153,7 +157,7 @@ class VelabandonedreportModel extends ItemModel
 
                     // Convert the Table to a clean CMSObject.
                     $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, CMSObject::class);
+                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
                 } else {
                     $app->enqueueMessage("Sorry you did not create that report item", "message");
 
@@ -202,12 +206,12 @@ class VelabandonedreportModel extends ItemModel
     /**
      * Get an instance of Table class
      *
-     * @param   string  $name
-     * @param   string  $prefix  Prefix for the table class name. Optional.
-     * @param   array   $options
+     * @param string $name
+     * @param string $prefix  Prefix for the table class name. Optional.
+     * @param array  $options
      *
-     * @return  Table|bool Table if success, false on failure.
-     * @since 4.0.0
+     * @return Table|bool Table if success, false on failure.
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Velabandonedreport', $prefix = 'Administrator', $options = []): Table
@@ -229,7 +233,7 @@ class VelabandonedreportModel extends ItemModel
     protected function populateState()
     {
         $app  = Factory::getApplication();
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         // Check published state
         if ((!$user->authorise('core.edit.state', 'com_jed')) && (!$user->authorise('core.edit', 'com_jed'))) {

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Helper;
@@ -18,10 +18,10 @@ use Joomla\CMS\Language\Text;
 /**
  * JED Extension Trophy Helper
  *
- * trophy icons (e.g popular, or version numbers, or module/component
+ * trophy icons (e.g. popular, or version numbers, or module/component
  *
- * @package   JED
- * @since     4.0.0
+ * @package JED
+ * @since   4.0.0
  */
 class JedtrophyHelper
 {
@@ -43,7 +43,7 @@ class JedtrophyHelper
         $trophies = explode(',', $l_version);
 
         $output = ''; //<div class="trophies versions">';
-
+        $txt    = '';
         foreach ($trophies as $v) {
             $title = Text::_('COM_JED_VERSION_' . $v);
             switch ($v) {
@@ -73,8 +73,6 @@ class JedtrophyHelper
      */
     public static function getTrophyIncludesString($includestr): string
     {
-
-        $output    = '';
         $l_include = str_replace('[', '', $includestr);
 
         $l_include = str_replace(']', '', $l_include);

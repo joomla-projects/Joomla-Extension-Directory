@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package           JED
+ * @package JED
  *
- * @subpackage        Tickets
+ * @subpackage Tickets
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license           GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\View\Jedticket;
@@ -20,7 +20,6 @@ namespace Jed\Component\Jed\Administrator\View\Jedticket;
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\Model\ExtensionModel;
-use Jed\Component\Jed\Administrator\Model\ExtensionvarieddatumModel;
 use Jed\Component\Jed\Administrator\Model\ReviewModel;
 use Jed\Component\Jed\Administrator\Model\VelabandonedreportModel;
 use Jed\Component\Jed\Administrator\Model\VeldeveloperupdateModel;
@@ -29,121 +28,105 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View class for a display of JED Ticket.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
-    protected CMSObject $state;
+    protected Registry $state;
     protected mixed $item;
     protected mixed $form;
 
     /**
      * What type of object is linked to the ticket
      *
-     * @var    int
+     * @var int
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected int $linked_item_type;
 
     /**
      * The model of the linked item
      *
-     * @var    mixed
+     * @var mixed
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected mixed $linked_item_Model;
 
     /**
      * A list of messages sent / received for this ticket
      *
-     * @var    mixed
+     * @var mixed
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected mixed $ticket_messages;
 
     /**
      * A list of internal notes for this ticket
      *
-     * @var    mixed
+     * @var mixed
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected mixed $internal_notes;
 
     /**
      * A string containing html linking ticket to remote object
      *
-     * @var    string
+     * @var string
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected string $related_object_string;
 
     /**
      * The linked Form object
      *
-     * @var    ?Form
+     * @var ?Form
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected mixed $linked_form;
 
     /**
      * The linked Form data
      *
-     * @var    mixed
+     * @var mixed
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected mixed $linked_item_data;
     /**
      * The linked extension form
      *
-     * @var    Form
+     * @var Form
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected mixed $linked_extension_form;
     /**
      * The linked extension
      *
-     * @var    mixed
+     * @var mixed
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected mixed $linked_extension_data;
 
     /**
-     * The linked extension varied data
-     *
-     * @var    mixed
-     *
-     * @since  4.0.0
-     */
-    protected mixed $linked_extension_varieddata;
-    /**
-     * The linked extension varied data  form
-     *
-     * @var    Form
-     *
-     * @since  4.0.0
-     */
-    protected mixed $linked_extension_varieddata_form;
-    /**
      * Ticket Help
      *
-     * @var    mixed
+     * @var mixed
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected mixed $ticket_help;
 
@@ -153,19 +136,18 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
-    protected function addToolbar()
+    protected function addToolbar(): void
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
-        $user  = JedHelper::getUser();
+        $user  = Factory::getApplication()->getIdentity();
         $isNew = ($this->item->id == 0);
 
         if (isset($this->item->checked_out)) {
-            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->id);
         } else {
             $checkedOut = false;
         }
@@ -211,15 +193,14 @@ class HtmlView extends BaseHtmlView
     /**
      * Display the view
      *
-     * @param   string  $tpl  Template name
+     * @param string $tpl Template name
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
         $this->state            = $this->get('State');
         $this->item             = $this->get('Item');
@@ -269,6 +250,7 @@ class HtmlView extends BaseHtmlView
             $this->linked_extension_data->extension_form = $this->linked_extension_form;
 
 
+            /*
             $extensionvarieddatum                   = new ExtensionvarieddatumModel();
             $this->linked_extension_varieddata      = $this->linked_extension_data->varied_data[$this->linked_item_data[0]->supply_type];
             $this->linked_extension_varieddata_form = $extensionvarieddatum->getForm(
@@ -279,6 +261,7 @@ class HtmlView extends BaseHtmlView
 
             $this->linked_extension_varieddata_form->bind($this->linked_extension_varieddata);
             $this->linked_extension_data->varied_form = $this->linked_extension_varieddata_form;
+            */
         }
         if ($this->linked_item_type === 4) { // VEL Report
             $this->linked_item_Model = new VelreportModel();
@@ -338,7 +321,7 @@ class HtmlView extends BaseHtmlView
     /**
      * getArray
      *
-     * @param   string  $st
+     * @param string $st
      *
      * @return array
      *

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package        JED
+ * @package JED
  *
- * @copyright  (C) 2023 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2023 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 use Joomla\CMS\Factory;
@@ -44,7 +44,7 @@ HTMLHelper::_('bootstrap.tooltip');
                 try {
                     $db    = Factory::getContainer()->get('DatabaseDriver');
                     $query = $db->getQuery(true)->select('extension_id')
-                                                ->from($db->quoteName('#__extensions'))->where('name = "com_jed"');
+                        ->from($db->quoteName('#__extensions'))->where('name = "com_jed"');
                     $db->setQuery($query);
                     $extension_id = $db->loadResult();
                     echo "Extension com_jed found - " . $extension_id . '<br/>';
@@ -109,7 +109,7 @@ HTMLHelper::_('bootstrap.tooltip');
                             . '"page_heading":"",'
                             . '"pageclass_sfx":"",'
                             . '"menu-meta_description":"",'
-                            . '"robots":""}'
+                            . '"robots":""}',
                     ];
                     $menuitems[] = [
                         'title'  => 'JED Homepage',
@@ -127,7 +127,7 @@ HTMLHelper::_('bootstrap.tooltip');
                             . '"page_heading":"",'
                             . '"pageclass_sfx":"",'
                             . '"menu-meta_description":"",'
-                            . '"robots":""}'
+                            . '"robots":""}',
                     ];
                     $menuitems[] = [
                         'title'  => 'Live VEL Items',
@@ -145,7 +145,7 @@ HTMLHelper::_('bootstrap.tooltip');
                             . '"page_heading":"",'
                             . '"pageclass_sfx":"",'
                             . '"menu-meta_description":"",'
-                            . '"robots":""}'
+                            . '"robots":""}',
                     ];
                     $menuitems[] = [
                         'title'  => 'Patched VEL Items List',
@@ -163,7 +163,7 @@ HTMLHelper::_('bootstrap.tooltip');
                             . '"page_heading":"",'
                             . '"pageclass_sfx":"",'
                             . '"menu-meta_description":"",'
-                            . '"robots":""}'
+                            . '"robots":""}',
                     ];
                     $menuitems[] = [
                         'title'  => 'Report a Vulnerable Item',
@@ -181,7 +181,7 @@ HTMLHelper::_('bootstrap.tooltip');
                             . '"page_heading":"",'
                             . '"pageclass_sfx":"",'
                             . '"menu-meta_description":"",'
-                            . '"robots":""}'
+                            . '"robots":""}',
                     ];
                     $menuitems[] = [
                         'title'  => 'Show VEL Developer Update Form',
@@ -199,7 +199,7 @@ HTMLHelper::_('bootstrap.tooltip');
                             . '"page_heading":"",'
                             . '"pageclass_sfx":"",'
                             . '"menu-meta_description":"",'
-                            . '"robots":""}'
+                            . '"robots":""}',
                     ];
                     $menuitems[] = [
                         'title'  => 'Report an Abandoned Item',
@@ -217,7 +217,7 @@ HTMLHelper::_('bootstrap.tooltip');
                             . '"page_heading":"",'
                             . '"pageclass_sfx":"",'
                             . '"menu-meta_description":"",'
-                            . '"robots":""}'
+                            . '"robots":""}',
                     ];
                     $menuitems[] = [
                         'title'  => 'Abandoned Items ',
@@ -235,7 +235,7 @@ HTMLHelper::_('bootstrap.tooltip');
                             . '"page_heading":"",'
                             . '"pageclass_sfx":"",'
                             . '"menu-meta_description":"",'
-                            . '"robots":""}'
+                            . '"robots":""}',
                     ];
                     $menuitems[] = [
                         'title'  => 'My Reported Vulnerable Items',
@@ -253,7 +253,7 @@ HTMLHelper::_('bootstrap.tooltip');
                             . '"page_heading":"",'
                             . '"pageclass_sfx":"",'
                             . '"menu-meta_description":"",'
-                            . '"robots":""}'
+                            . '"robots":""}',
                     ];
                     $menuitems[] = [
                         'title'  => 'My Developer Updates',
@@ -271,7 +271,7 @@ HTMLHelper::_('bootstrap.tooltip');
                             . '"page_heading":"",'
                             . '"pageclass_sfx":"",'
                             . '"menu-meta_description":"",'
-                            . '"robots":""}'
+                            . '"robots":""}',
                     ];
                     $menuitems[] = [
                         'title'  => 'My Reported Abandoned Items',
@@ -289,7 +289,7 @@ HTMLHelper::_('bootstrap.tooltip');
                             . '"page_heading":"",'
                             . '"pageclass_sfx":"",'
                             . '"menu-meta_description":"",'
-                            . '"robots":""}'
+                            . '"robots":""}',
                     ];
                     $menuitems[] = [
                         'title'  => 'My Tickets',
@@ -307,7 +307,7 @@ HTMLHelper::_('bootstrap.tooltip');
                             . '"page_heading":"",'
                             . '"pageclass_sfx":"",'
                             . '"menu-meta_description":"",'
-                            . '"robots":""}'
+                            . '"robots":""}',
                     ];
                     $menuitems[] = [
                         'title'  => 'Show Extension Categories',
@@ -382,7 +382,7 @@ HTMLHelper::_('bootstrap.tooltip');
                             . '"page_heading":"",'
                             . '"pageclass_sfx":"",'
                             . '"menu-meta_description":"",'
-                            . '"robots":""}'
+                            . '"robots":""}',
                     ];
 
                     foreach ($menuitems as $m) {

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Field;
@@ -13,7 +13,11 @@ namespace Jed\Component\Jed\Site\Field;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Exception;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 
 /**
 // https://www.cssscript.com/star-rating-component-javascript-rater/
@@ -41,29 +45,28 @@ myRating.dispose();
 
 // gets the element
 myRating.element();
-
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class RatingField extends ListField
 {
     /**
      * The form field type.
      *
-     * @var    string
-     * @since  4.0.0
+     * @var   string
+     * @since 4.0.0
      */
-    protected string $type = 'rating';
+    protected $type = 'rating';
 
-    protected string $layout = 'joomla.form.field.list-fancy-select';
+    protected $layout = 'joomla.form.field.list-fancy-select';
 
 
     /**
      * Method to get the field input markup.
      *
-     * @return  string  The field input markup.
+     * @return string  The field input markup.
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function getInput($options = []): string

@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Controller;
@@ -20,16 +20,16 @@ use Joomla\CMS\MVC\Controller\FormController;
 /**
  * Content article class.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class VeldeveloperupdateController extends FormController
 {
     /**
      * A string showing the plural of the current object
      *
-     * @var    string
+     * @var string
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected $view_list = 'Veldeveloperupdates';
 }

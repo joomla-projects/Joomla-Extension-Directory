@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -24,20 +24,20 @@ use function defined;
 /**
  * Extension class.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class ExtensionformController extends FormController
 {
     /**
      * Method to check out an item for editing and redirect to the edit form.
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
-     * @throws  Exception
+     * @throws Exception
      */
-    public function edit($key = null, $urlVar = null)
+    public function edit($key = null, $urlVar = null): void
     {
         $app = Factory::getApplication();
 
@@ -68,12 +68,12 @@ class ExtensionformController extends FormController
     /**
      * Method to save data.
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
-    public function save($key = null, $urlVar = null)
+    public function save($key = null, $urlVar = null): void
     {
         // Check for request forgeries.
         $this->checkToken();
@@ -160,10 +160,10 @@ class ExtensionformController extends FormController
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
-    public function cancel($key = null)
+    public function cancel($key = null): void
     {
         $app = Factory::getApplication();
 
@@ -187,9 +187,9 @@ class ExtensionformController extends FormController
     /**
      * Method to remove data
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function remove()

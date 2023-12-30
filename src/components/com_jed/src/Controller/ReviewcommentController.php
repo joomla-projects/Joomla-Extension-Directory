@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -24,20 +24,20 @@ use function defined;
 /**
  * Reviewcomment class.
  *
- * @since  1.6.0
+ * @since 1.6.0
  */
 class ReviewcommentController extends BaseController
 {
     /**
      * Method to check out an item for editing and redirect to the edit form.
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
-     * @throws  Exception
+     * @throws Exception
      */
-    public function edit()
+    public function edit(): void
     {
         $app = Factory::getApplication();
 
@@ -68,18 +68,18 @@ class ReviewcommentController extends BaseController
     /**
      * Method to save data
      *
-     * @return    void
+     * @return void
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
-    public function publish()
+    public function publish(): void
     {
         // Initialise variables.
         $app = Factory::getApplication();
 
         // Checking if the user can remove object
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         if ($user->authorise('core.edit', 'com_jed') || $user->authorise('core.edit.state', 'com_jed')) {
             $model = $this->getModel('Reviewcomment', 'Site');
@@ -121,9 +121,9 @@ class ReviewcommentController extends BaseController
     /**
      * Check in record
      *
-     * @return  boolean  True on success
+     * @return bool  True on success
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkin()
@@ -136,9 +136,9 @@ class ReviewcommentController extends BaseController
         $item      = $model->getItem($id);
 
         // Checking if the user can remove object
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
-        if ($user->authorise('core.manage', 'com_jed') || $item->checked_out == JedHelper::getUser()->id) {
+        if ($user->authorise('core.manage', 'com_jed') || $item->checked_out == Factory::getApplication()->getIdentity()->id) {
             $return = $model->checkin($id);
 
             if ($return === false) {
@@ -163,6 +163,8 @@ class ReviewcommentController extends BaseController
      * @return void
      *
      * @throws Exception
+     *
+     * @since 4.0.0
      */
     public function remove()
     {
@@ -170,7 +172,7 @@ class ReviewcommentController extends BaseController
         $app = Factory::getApplication();
 
         // Checking if the user can remove object
-        $user = JedHelper::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         if ($user->authorise('core.delete', 'com_jed')) {
             $model = $this->getModel('Reviewcomment', 'Site');

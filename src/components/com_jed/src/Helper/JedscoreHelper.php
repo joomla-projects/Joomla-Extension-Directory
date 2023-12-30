@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Helper;
@@ -16,19 +16,19 @@ namespace Jed\Component\Jed\Site\Helper;
 /**
  * JED Extension Score Helper
  *
- * @package   JED
- * @since     4.0.0
+ * @package JED
+ * @since   4.0.0
  */
 class JedscoreHelper
 {
     /**
-     * @param $score
+     * @param float $score
      *
      * @return string
      *
      * @since version
      */
-    public static function getStars($score = 0): string
+    public static function getStars(float $score = 0): string
     {
         if ($score == 0) {
             return 'Not Rated';
@@ -49,21 +49,18 @@ class JedscoreHelper
         $html .= str_repeat('<span class="star star-empty fa fa-star-empty"></span>', $empty);
         // $html .= '<span class="tooltiptext">Score of '.$star_score.'</span>';
         $html .= '</div>';
-        if ($star_score == 3.5) {
-            //  echo "<pre>";print_r($html);echo "</pre>";exit();
-        }
-        //echo "<pre>";print_r($html);echo "</pre>";exit();
+
         return $html;
     }
 
     /**
-     * @param $score
+     * @param float $score
      *
      * @return string
      *
      * @since version
      */
-    public static function getStarsShort($score = 0): string
+    public static function getStarsShort(float $score = 0): string
     {
         $star_score = self::getStarScore($score);
 
@@ -86,7 +83,7 @@ class JedscoreHelper
      *
      * @since version
      */
-    public static function getStarScore($score)
+    public static function getStarScore($score): false|float|int
     {
         if (!$score) {
             return false;

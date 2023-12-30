@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    TICKETS
+ * @subpackage TICKETS
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -21,10 +21,10 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
-$canEdit = JedHelper::getUser()->authorise('core.edit', 'com_jed');
+$canEdit = Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed');
 
-if (!$canEdit && JedHelper::getUser()->authorise('core.edit.own', 'com_jed')) {
-    $canEdit = JedHelper::getUser()->id == $this->item->created_by;
+if (!$canEdit && Factory::getApplication()->getIdentity()->authorise('core.edit.own', 'com_jed')) {
+    $canEdit = Factory::getApplication()->getIdentity()->id == $this->item->created_by;
 }
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
@@ -138,7 +138,7 @@ HTMLHelper::_('bootstrap.tooltip');
 
 </div>
 
-<?php $canCheckin = JedHelper::getUser()->authorise('core.manage', 'com_jed.' . $this->item->id) || $this->item->checked_out == JedHelper::getUser()->id; ?>
+<?php $canCheckin = Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jed.' . $this->item->id) || $this->item->checked_out == Factory::getApplication()->getIdentity()->id; ?>
 <?php if ($canEdit && $this->item->checked_out == 0) : ?>
     <a class="btn btn-outline-primary"
        href="<?php echo Route::_('index.php?option=com_jed&task=jedticket.edit&id=' . $this->item->id); ?>"><?php echo Text::_("JGLOBAL_EDIT"); ?></a>

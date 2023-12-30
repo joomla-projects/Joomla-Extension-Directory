@@ -115,6 +115,10 @@
             <option value="40">4.0</option>
             <option value="41">4.1</option>
             <option value="42">4.2</option>
+			<option value="42">4.3</option>
+			<option value="42">4.4</option>
+			<option value="50">5.0</option>
+			<option value="60">6.0</option>
         </field>
 
         <field
@@ -207,9 +211,7 @@
 
     </fieldset>
 	<fieldset name="description" label="Description">
-		<field name="title" filter="safehtml" type="text" label="JGLOBAL_TITLE"
-		       hint="COM_JED_FORM_LBL_EXTENSION_TITLE"/>
-		<field name="alias" type="text" class="inputbox" generator="title" label="JFIELD_ALIAS_LABEL" hint="JALIAS"/>
+
 		<field name="intro_text" editor="tinymce" buttons="false" filter="JComponentHelper::filterText"
 		       type="editor" label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_INTRO_TEXT"
 		       hint="COM_JED_FORM_LBL_EX TENSIONVARIEDDATUM_INTRO_TEXT"/>

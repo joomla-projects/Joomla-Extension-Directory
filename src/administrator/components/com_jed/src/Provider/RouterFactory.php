@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Provider;
@@ -17,27 +17,27 @@ use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 
 /**
- * @package     Jed\Component\Jed\Administrator\Provider
+ * @package Jed\Component\Jed\Administrator\Provider
  *
- * @since       4.0.0
+ * @since 4.0.0
  */
 class RouterFactory implements ServiceProviderInterface
 {
     /**
      * The component's namespace
      *
-     * @var     string
+     * @var string
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
-    private $namespace;
+    private string $namespace;
 
     /**
      * Router factory constructor.
      *
-     * @param   string  $namespace  The namespace
+     * @param string $namespace The namespace
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function __construct(string $namespace)
     {
@@ -49,7 +49,7 @@ class RouterFactory implements ServiceProviderInterface
      *
      * @since 4.0.0
      */
-    public function register(Container $container)
+    public function register(Container $container): void
     {
         $container->set(
             RouterFactoryInterface::class,

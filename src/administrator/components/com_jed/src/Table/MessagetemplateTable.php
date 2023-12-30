@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package     JED
+ * @package JED
  *
- * @subpackage  Tickets
+ * @subpackage Tickets
  *
- * @copyright   (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Table;
@@ -26,14 +26,14 @@ use Joomla\Database\DatabaseDriver;
 /**
  * Messagetemplate table
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class MessagetemplateTable extends Table
 {
     /**
      * Constructor
      *
-     * @param   DatabaseDriver  $db  A database connector object
+     * @param DatabaseDriver $db A database connector object
      *
      * @since 4.0.0
      */
@@ -47,10 +47,10 @@ class MessagetemplateTable extends Table
     /**
      * This function converts an array of Access objects into a rules array.
      *
-     * @param   array  $jaccessrules  An array of Access objects.
+     * @param array $jaccessrules An array of Access objects.
      *
-     * @return  array
-     * @since 4.0.0
+     * @return array
+     * @since  4.0.0
      */
     private function JAccessRulestoArray(array $jaccessrules): array
     {
@@ -76,7 +76,7 @@ class MessagetemplateTable extends Table
      *
      * @return string The asset name
      *
-     * @see   Table::_getAssetName
+     * @see Table::_getAssetName
      *
      * @since 4.0.0
      */
@@ -90,13 +90,13 @@ class MessagetemplateTable extends Table
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param   array  $src     Named array
-     * @param   mixed  $ignore  Optional array or list of parameters to ignore
+     * @param array $src    Named array
+     * @param mixed $ignore Optional array or list of parameters to ignore
      *
-     * @return  null|string  null is operation was satisfactory, otherwise returns an error
+     * @return null|string  null is operation was satisfactory, otherwise returns an error
      *
-     * @see     Table:bind
-     * @since   4.0.0
+     * @see    Table:bind
+     * @since  4.0.0
      * @throws Exception
      */
     public function bind($src, $ignore = ''): ?string
@@ -119,15 +119,15 @@ class MessagetemplateTable extends Table
         }
 
         if ($src['id'] == 0 && empty($src['created_by'])) {
-            $src['created_by'] = JedHelper::getUser()->id;
+            $src['created_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         if ($src['id'] == 0 && empty($src['modified_by'])) {
-            $src['modified_by'] = JedHelper::getUser()->id;
+            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         if ($task == 'apply' || $task == 'save') {
-            $src['modified_by'] = JedHelper::getUser()->id;
+            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         if ($src['id'] == 0) {
@@ -138,7 +138,7 @@ class MessagetemplateTable extends Table
             $src['modified'] = $date->toSql();
         }
 
-        if (!JedHelper::getUser()->authorise('core.admin', 'com_jed.emailtemplate.' . $src['id'])) {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jed.emailtemplate.' . $src['id'])) {
             $actions         = Access::getActionsFromFile(
                 JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
                 "/access/section[@name='messagetemplate']/"
@@ -184,7 +184,7 @@ class MessagetemplateTable extends Table
     /**
      * Delete a record by id
      *
-     * @param   mixed  $pk  Primary key value to delete. Optional
+     * @param mixed $pk Primary key value to delete. Optional
      *
      * @return bool
      *
@@ -200,9 +200,9 @@ class MessagetemplateTable extends Table
     /**
      * Get the type alias for the history table
      *
-     * @return  string  The alias as described above
+     * @return string  The alias as described above
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getTypeAlias(): string
     {

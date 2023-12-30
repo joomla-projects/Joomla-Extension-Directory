@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -28,12 +28,12 @@ $wa->useScript('keepalive')
 HTMLHelper::_('bootstrap.tooltip');
 
 // Load admin language file
-$lang = Factory::getLanguage();
+$lang = Factory::getApplication()->getLanguage();
 $lang->load('com_jed', JPATH_SITE);
 $doc = Factory::getDocument();
 $doc->addScript(Uri::base() . '/media/com_jed/js/form.js');
 
-$user    = JedHelper::getUser();
+$user    = Factory::getApplication()->getIdentity();
 $canEdit = JedHelper::canUserEdit($this->item);
 
 $isLoggedIn  = JedHelper::IsLoggedIn();
@@ -64,26 +64,26 @@ if (!$isLoggedIn) {
                 <?php
 
                 $fieldsets['overview']['title']       = Text::_('COM_JED_VEL_ABANDONEDREPORTS_OVERVIEW_TITLE');
-                $fieldsets['overview']['description'] = Text::_('COM_JED_VEL_ABANDONEDREPORTS_OVERVIEW_DESCRIPTION');
-                $fieldsets['overview']['fields']      = array();
+                $fieldsets['overview']['description']     = Text::_('COM_JED_VEL_ABANDONEDREPORTS_OVERVIEW_DESCRIPTION');
+                $fieldsets['overview']['fields']          = [];
 
 
                 $fieldsets['aboutyou']['title']       = Text::_('COM_JED_VEL_GENERAL_FIELD_ABOUT_YOU_LABEL');
                 $fieldsets['aboutyou']['description'] = "";
-                $fieldsets['aboutyou']['fields']      = array(
-                    'reporter_fullname',
-                    'reporter_email',
-                    'reporter_organisation');
+                $fieldsets['aboutyou']['fields']      = [
+                'reporter_fullname',
+                'reporter_email',
+                'reporter_organisation'];
 
                 $fieldsets['extensiondetails']['title']       = Text::_('COM_JED_VEL_ABANDONEDREPORTS_EXTENSION_TITLE');
                 $fieldsets['extensiondetails']['description'] = "";
-                $fieldsets['extensiondetails']['fields']      = array(
-                    'extension_name',
-                    'developer_name',
-                    'extension_version',
-                    'extension_url',
-                    'abandoned_reason',
-                    'consent_to_process');
+                $fieldsets['extensiondetails']['fields']      = [
+                'extension_name',
+                'developer_name',
+                'extension_version',
+                'extension_url',
+                'abandoned_reason',
+                'consent_to_process'];
                 $fscount                                      = 0;
 
 
@@ -100,13 +100,13 @@ if (!$isLoggedIn) {
                         echo $fs['description'];
                     }
                     $fields       = $fs['fields'];
-                    $hiddenFields = array('user_ip');
+                    $hiddenFields = ['user_ip'];
                     foreach ($fields as $field) {
                         if (in_array($field, $hiddenFields)) {
                             $this->form->setFieldAttribute($field, 'type', 'hidden');
                         }
 
-                        echo $this->form->renderField($field, null, null, array('class' => 'control-wrapper-' . $field));
+                        echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
                     }
                 }
 

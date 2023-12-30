@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -20,34 +20,34 @@ use Joomla\CMS\Log\Log;
 /**
  * Script file of JED Component
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class Com_JedInstallerScript
 {
     /**
      * Minimum Joomla version to check
      *
-     * @var    string
-     * @since  4.0.0
+     * @var   string
+     * @since 4.0.0
      */
     private string $minimumJoomlaVersion = '4.0';
 
     /**
      * Minimum PHP version to check
      *
-     * @var    string
-     * @since  4.0.0
+     * @var   string
+     * @since 4.0.0
      */
     private string $minimumPHPVersion = '8.1.0';
 
     /**
      * Method to install the extension
      *
-     * @param   InstallerAdapter  $parent  The class calling this method
+     * @param InstallerAdapter $parent The class calling this method
      *
-     * @return  boolean  True on success
+     * @return bool  True on success
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function install(Joomla\CMS\Installer\InstallerAdapter $parent): bool
     {
@@ -59,14 +59,12 @@ class Com_JedInstallerScript
     /**
      * Function called after extension installation/update/removal procedure commences
      *
-     * @param   string            $type    The type of change (install, update or discover_install, not uninstall)
-     * @param   InstallerAdapter  $parent  The class calling this method
+     * @param string           $type   The type of change (install, update or discover_install, not uninstall)
+     * @param InstallerAdapter $parent The class calling this method
      *
-     * @return  boolean  True on success
+     * @return bool  True on success
      *
-     * @since  4.0.0
-     *
-
+     * @since 4.0.0
      */
     public function postflight(
         string $type,
@@ -80,12 +78,12 @@ class Com_JedInstallerScript
     /**
      * Function called before extension installation/update/removal procedure commences
      *
-     * @param   string            $type    The type of change (install, update or discover_install, not uninstall)
-     * @param   InstallerAdapter  $parent  The class calling this method
+     * @param string           $type   The type of change (install, update or discover_install, not uninstall)
+     * @param InstallerAdapter $parent The class calling this method
      *
-     * @return  boolean  True on success
+     * @return bool  True on success
      *
-     * @since  4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */
@@ -125,11 +123,11 @@ class Com_JedInstallerScript
     /**
      * Method to uninstall the extension
      *
-     * @param   InstallerAdapter  $parent  The class calling this method
+     * @param InstallerAdapter $parent The class calling this method
      *
-     * @return  boolean  True on success
+     * @return bool  True on success
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function uninstall(
         Joomla\CMS\Installer\InstallerAdapter $parent
@@ -142,12 +140,11 @@ class Com_JedInstallerScript
     /**
      * Method to update the extension
      *
-     * @param   InstallerAdapter  $parent  The class calling this method
+     * @param InstallerAdapter $parent The class calling this method
      *
-     * @return  boolean  True on success
+     * @return bool  True on success
      *
-     * @since  4.0.0
-     *
+     * @since 4.0.0
      */
     public function update(
         Joomla\CMS\Installer\InstallerAdapter $parent

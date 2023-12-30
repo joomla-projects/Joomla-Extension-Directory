@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package        JED
+ * @package JED
  *
- * @copyright  (C) 2023 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2023 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Helper;
@@ -31,8 +31,8 @@ use Joomla\Registry\Registry;
 /**
  * JED Helper
  *
- * @package   JED
- * @since     4.0.0
+ * @package JED
+ * @since   4.0.0
  */
 class JedHelper
 {
@@ -157,7 +157,7 @@ class JedHelper
      *
      * @return registry
      *
-     * @since    4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function getActions(): registry
@@ -193,7 +193,7 @@ class JedHelper
      *
      * @return registry
      *
-     * @since    4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function getApprovedIcon(int $state): string
@@ -222,14 +222,15 @@ class JedHelper
     /**
      * Gets the files attached to an item
      *
-     * @param   int     $pk     The item's id
+     * @param int    $pk    The item's id
      *
-     * @param   string  $table  The table's name
+     * @param string $table The table's name
      *
-     * @param   string  $field  The field's name
+     * @param string $field The field's name
      *
-     * @return  array  The files
+     * @return array  The files
      *
+     * @since 4.0.0
      */
     public static function getFiles(int $pk, string $table, string $field): array
     {
@@ -251,7 +252,7 @@ class JedHelper
      *
      * @return registry
      *
-     * @since    4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function getPublishedIcon(int $state): string
@@ -282,7 +283,7 @@ class JedHelper
      *
      * @return User\User
      *
-     * @since    4.0.0
+     * @since 4.0.0
      */
     public static function getUser(): User\User
     {
@@ -302,7 +303,7 @@ class JedHelper
      *
      * @return User\User
      *
-     * @since    4.0.0
+     * @since 4.0.0
      */
     public static function getUserById($userId): User\User
     {
@@ -365,7 +366,7 @@ class JedHelper
     /**
      * Prettyfy a Data
      *
-     * @param   string  $datestr  A String Date
+     * @param string $datestr A String Date
      *
      * @since 4.0.0
      **/
@@ -383,12 +384,12 @@ class JedHelper
     /**
      * Function to format JED Extension Images
      *
-     * @param   string  $filename  The image filename
-     * @param   string  $size      Size of image, small|large
+     * @param string $filename The image filename
+     * @param string $size     Size of image, small|large
      *
-     * @return  string  Full image url
+     * @return string  Full image url
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public static function formatImage(string $filename, ImageSize $size = ImageSize::SMALL): string
     {

@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -37,10 +37,10 @@ class VelreportsModel extends ListModel
     /**
      * Constructor.
      *
-     * @param   array  $config  An optional associative array of configuration settings.
+     * @param array $config An optional associative array of configuration settings.
      *
-     * @see              ListModel
-     * @since            4.0.0
+     * @see    ListModel
+     * @since  4.0.0
      * @throws Exception
      */
     public function __construct($config = [])
@@ -91,11 +91,11 @@ class VelreportsModel extends ListModel
     /**
      * Method to get an array of data items
      *
-     * @return  mixed An array of data on success, false on failure.
+     * @return mixed An array of data on success, false on failure.
      *
      * @since 4.0.0
      */
-    public function getItems()
+    public function getItems(): mixed
     {
         $items = parent::getItems();
 
@@ -142,9 +142,11 @@ class VelreportsModel extends ListModel
     /**
      * Method to get a QueryInterface object for retrieving the data set from a database.
      *
-     * @return  QueryInterface
+     * @return QueryInterface
      *
-     * @since   4.0.0
+     * @since 4.0.0
+     *
+     * @throws Exception
      */
     protected function getListQuery(): QueryInterface
     {
@@ -171,7 +173,7 @@ class VelreportsModel extends ListModel
         // Join over the created by field 'modified_by'
         $query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
         if (!JedHelper::isAdminOrSuperUser()) {
-            $query->where("a.created_by = " . JedHelper::getUser()->get("id"));
+            $query->where("a.created_by = " . Factory::getApplication()->getIdentity()->id);
         }
 
 
@@ -202,11 +204,11 @@ class VelreportsModel extends ListModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return  mixed  The data for the form.
+     * @return mixed  The data for the form.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
-     * @throws  Exception
+     * @throws Exception
      */
     protected function loadFormData(): stdClass
     {
@@ -234,16 +236,15 @@ class VelreportsModel extends ListModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @param   string  $ordering   Elements order
-     * @param   string  $direction  Order direction
+     * @param string $ordering  Elements order
+     * @param string $direction Order direction
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
-    protected function populateState($ordering = null, $direction = null)
+    protected function populateState($ordering = null, $direction = null): void
     {
         // List state information.
 

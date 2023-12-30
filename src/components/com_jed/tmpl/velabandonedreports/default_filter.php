@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -20,7 +20,7 @@ use Joomla\CMS\Language\Text;
 $data = $displayData;
 
 // Receive overridable options
-$data['options'] = !empty($data['options']) ? $data['options'] : array();
+$data['options'] = !empty($data['options']) ? $data['options'] : [];
 
 // Check if any filter field has been filled
 $filters       = false;
@@ -58,12 +58,12 @@ $options = $data['options'];
 
 // Set some basic options
 try {
-    $customOptions = array(
+    $customOptions = [
         'filtersHidden'       => $options['filtersHidden'] ?? empty($data['view']->activeFilters) && !$filtered,
         'defaultLimit'        => $options['defaultLimit'] ?? Factory::getApplication()->get('list_limit', 20),
         'searchFieldSelector' => '#filter_search',
-        'orderFieldSelector'  => '#list_fullordering'
-    );
+        'orderFieldSelector'  => '#list_fullordering',
+    ];
 } catch (Exception $e) {
 }
 
@@ -105,12 +105,12 @@ HTMLHelper::_('searchtools.form', $formSelector, $data['options']);
     </div>
     <!-- Filters div -->
     <div class="js-stools-container-filters hidden-phone clearfix" style="">
-        <?php // Load the form filters ?>
+        <?php // Load the form filters?>
         <?php if ($filters) : ?>
             <?php foreach ($filters as $fieldName => $field) : ?>
                 <?php if ($fieldName != 'filter_search') : ?>
                     <div class="js-stools-field-filter">
-                        <?php echo $field->renderField(array('hiddenLabel' => true)); ?>
+                        <?php echo $field->renderField(['hiddenLabel' => true]); ?>
                     </div>
                 <?php endif; ?>
             <?php endforeach; ?>

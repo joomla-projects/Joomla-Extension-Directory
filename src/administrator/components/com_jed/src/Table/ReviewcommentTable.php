@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package        JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Table;
@@ -32,7 +32,7 @@ class ReviewcommentTable extends Table
     /**
      * Constructor
      *
-     * @param   DatabaseDriver  $db  A database connector object
+     * @param DatabaseDriver $db A database connector object
      *
      * @since 4.0.0
      */
@@ -62,8 +62,8 @@ class ReviewcommentTable extends Table
     /**
      * Returns the parent asset's id. If you have a tree structure, retrieve the parent's id using the external key field
      *
-     * @param   Table|null    $table  Table name
-     * @param   integer|null  $id     Id
+     * @param Table|null   $table Table name
+     * @param integer|null $id    Id
      *
      * @return mixed The id on success, false on failure.
      *
@@ -93,14 +93,14 @@ class ReviewcommentTable extends Table
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param   array  $src     Named array
-     * @param   mixed  $ignore  Optional array or list of parameters to ignore
+     * @param array $src    Named array
+     * @param mixed $ignore Optional array or list of parameters to ignore
      *
-     * @return  null|string  null is operation was satisfactory, otherwise returns an error
+     * @return null|string  null is operation was satisfactory, otherwise returns an error
      *
-     * @see     Table:bind
+     * @see    Table:bind
      * @throws Exception
-     * @since   4.0.0
+     * @since  4.0.0
      */
     public function bind($src, $ignore = ''): ?string
     {
@@ -108,7 +108,7 @@ class ReviewcommentTable extends Table
 
 
         if ($src['id'] == 0 && empty($src['created_by'])) {
-            $src['created_by'] = JedHelper::getUser()->id;
+            $src['created_by'] = Factory::getApplication()->getIdentity()->id;
         }
         $input = Factory::getApplication()->input;
         $task  = $input->getString('task', '');
@@ -125,7 +125,7 @@ class ReviewcommentTable extends Table
             $src['metadata'] = (string) $registry;
         }
 
-        if (!JedHelper::getUser()->authorise('core.admin', 'com_jed.reviewcomment.' . $src['id'])) {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jed.reviewcomment.' . $src['id'])) {
             $actions         = Access::getActionsFromFile(
                 JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
                 "/access/section[@name='reviewcomment']/"
@@ -171,7 +171,7 @@ class ReviewcommentTable extends Table
     /**
      * Delete a record by id
      *
-     * @param   mixed  $pk  Primary key value to delete. Optional
+     * @param mixed $pk Primary key value to delete. Optional
      *
      * @return bool
      *
@@ -185,9 +185,9 @@ class ReviewcommentTable extends Table
     /**
      * Get the type alias for the history table
      *
-     * @return  string  The alias as described above
+     * @return string  The alias as described above
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getTypeAlias(): string
     {
@@ -200,11 +200,11 @@ class ReviewcommentTable extends Table
      * If a primary key value is set the row with that primary key value will be updated with the instance property values.
      * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
      *
-     * @param   boolean  $updateNulls  True to update fields even if they are null.
+     * @param bool $updateNulls True to update fields even if they are null.
      *
-     * @return  boolean  True on success.
+     * @return bool  True on success.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function store($updateNulls = true): bool
     {
@@ -214,9 +214,9 @@ class ReviewcommentTable extends Table
     /**
      * This function convert an array of Access objects into an rules array.
      *
-     * @param   array  $jaccessrules  An array of Access objects.
+     * @param array $jaccessrules An array of Access objects.
      *
-     * @return  array
+     * @return array
      *
      * @since 4.0.0
      */

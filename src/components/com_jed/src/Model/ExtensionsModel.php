@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -29,7 +29,7 @@ use Joomla\Database\QueryInterface;
 /**
  * Methods supporting a list of Jed records.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class ExtensionsModel extends ListModel
 {
@@ -38,7 +38,7 @@ class ExtensionsModel extends ListModel
     /**
      * Constructor.
      *
-     * @param   array  $config  An optional associative array of configuration settings.
+     * @param array $config An optional associative array of configuration settings.
      *
      * @see    JController
      * @since  4.0.0
@@ -92,16 +92,16 @@ class ExtensionsModel extends ListModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @param   string  $ordering   Elements order
-     * @param   string  $direction  Order direction
+     * @param string $ordering  Elements order
+     * @param string $direction Order direction
      *
-     * @return  void
+     * @return void
      *
-     * @throws  Exception
+     * @throws Exception
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
-    protected function populateState($ordering = null, $direction = null)
+    protected function populateState($ordering = null, $direction = null): void
     {
         // List state information.
         parent::populateState('a.id', 'ASC');
@@ -143,9 +143,9 @@ class ExtensionsModel extends ListModel
     /**
      * Build an SQL query to load the list data.
      *
-     * @return  QueryInterface
+     * @return QueryInterface
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     protected function getListQuery(): QueryInterface
     {
@@ -177,7 +177,7 @@ class ExtensionsModel extends ListModel
         $query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
 
 
-        if (!JedHelper::getUser()->authorise('core.edit', 'com_jed')) {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed')) {
             $query->where('a.state = 1');
         } else {
             $query->where('(a.state IN (0, 1))'); //Published 0=unpublished, 1=published, 2=unpublished by author
@@ -215,7 +215,7 @@ class ExtensionsModel extends ListModel
     /**
      * Get array of review scores for extension
      *
-     * @param   int  $extension_id
+     * @param int $extension_id
      *
      * @return array
      *
@@ -236,11 +236,11 @@ class ExtensionsModel extends ListModel
     /**
      * Method to get an array of data items
      *
-     * @return  mixed An array of data on success, false on failure.
+     * @return mixed An array of data on success, false on failure.
      *
      * @since 4.0.0
      */
-    public function getItems()
+    public function getItems(): mixed
     {
         $items = parent::getItems();
         foreach ($items as $item) {
@@ -310,7 +310,7 @@ class ExtensionsModel extends ListModel
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function loadFormData()
@@ -338,11 +338,11 @@ class ExtensionsModel extends ListModel
     /**
      * Retrieve a list of developers matching a search query.
      *
-     * @param   string  $search  The string to filter on
+     * @param string $search The string to filter on
      *
-     * @return  array List of developers.
+     * @return array List of developers.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getDevelopers(string $search): array
     {
@@ -372,11 +372,11 @@ class ExtensionsModel extends ListModel
     /**
      * Get the used extension types.
      *
-     * @param   int  $extensionId  The extension ID to get the types for
+     * @param int $extensionId The extension ID to get the types for
      *
-     * @return  array  List of used extension types.
+     * @return array  List of used extension types.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getExtensionTypes(int $extensionId): array
     {
@@ -393,11 +393,11 @@ class ExtensionsModel extends ListModel
     /**
      * Get the images.
      *
-     * @param   int  $extensionId  The extension ID to get the images for
+     * @param int $extensionId The extension ID to get the images for
      *
-     * @return  array  List of used images.
+     * @return array  List of used images.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getImages(int $extensionId): array
     {
@@ -426,11 +426,11 @@ class ExtensionsModel extends ListModel
     /**
      * Get the related categories.
      *
-     * @param   int  $extensionId  The extension ID to get the categories for
+     * @param int $extensionId The extension ID to get the categories for
      *
-     * @return  array  List of related categories.
+     * @return array  List of related categories.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getRelatedCategories(int $extensionId): array
     {
@@ -447,12 +447,12 @@ class ExtensionsModel extends ListModel
     /**
      * Get the supported PHP versions.
      *
-     * @param   int     $extensionId  The extension ID to get the PHP versions for
-     * @param   string  $type         The type of version to get
+     * @param int    $extensionId The extension ID to get the PHP versions for
+     * @param string $type        The type of version to get
      *
-     * @return  array  List of supported PHP versions.
+     * @return array  List of supported PHP versions.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getVersions(int $extensionId, string $type): array
     {

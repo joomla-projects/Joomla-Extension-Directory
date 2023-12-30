@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    Tickets
+ * @subpackage Tickets
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -31,8 +31,8 @@ HTMLHelper::_('behavior.multiselect');
 $wa->useStyle('com_jed.admin')
     ->useScript('com_jed.admin');
 */
-$user      = JedHelper::getUser();
-$userId    = $user->get('id');
+$user      = Factory::getApplication()->getIdentity();
+$userId    = $user->id;
 $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
 $canOrder  = $user->authorise('core.edit.state', 'com_jed');
@@ -51,7 +51,7 @@ if ($saveOrder) {
     <div class="row">
         <div class="col-md-12">
             <div id="j-main-container" class="j-main-container">
-                <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+                <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
 
                 <div class="clearfix"></div>
                 <table class="table table-striped" id="jedticketList">
@@ -103,11 +103,11 @@ if ($saveOrder) {
                         ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
                            endif; ?>>
                     <?php foreach ($this->items as $i => $item) :
-                        $ordering = ($listOrder == 'a.ordering');
-                        $canCreate = $user->authorise('core.create', 'com_jed');
-                        $canEdit = $user->authorise('core.edit', 'com_jed');
+                        $ordering   = ($listOrder == 'a.ordering');
+                        $canCreate  = $user->authorise('core.create', 'com_jed');
+                        $canEdit    = $user->authorise('core.edit', 'com_jed');
                         $canCheckin = $user->authorise('core.manage', 'com_jed');
-                        $canChange = $user->authorise('core.edit.state', 'com_jed');
+                        $canChange  = $user->authorise('core.edit.state', 'com_jed');
                         ?>
                         <tr class="row<?php echo $i % 2; ?>">
 

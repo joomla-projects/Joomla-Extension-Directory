@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    TICKETS
+ * @subpackage TICKETS
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -26,10 +26,10 @@ $wa->useScript('keepalive')
 HTMLHelper::_('bootstrap.tooltip');
 
 // Load admin language file
-$lang = Factory::getLanguage();
+$lang = Factory::getApplication()->getLanguage();
 $lang->load('com_jed', JPATH_SITE);
 
-$user    = JedHelper::getUser();
+$user    = Factory::getApplication()->getIdentity();
 $canEdit = JedHelper::canUserEdit($this->item);
 
 
@@ -67,7 +67,7 @@ $canEdit = JedHelper::canUserEdit($this->item);
 
             <?php echo $this->form->getInput('created_by'); ?>
             <?php echo $this->form->getInput('modified_by'); ?>
-            <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'message')); ?>
+            <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'message']); ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'message', Text::_('COM_JED_TAB_MESSAGE', true)); ?>
             <?php echo $this->form->renderField('subject'); ?>
 

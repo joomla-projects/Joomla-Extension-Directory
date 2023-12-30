@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Table;
@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Administrator\Table;
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
@@ -21,82 +22,39 @@ use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table as Table;
 use Joomla\Database\DatabaseDriver;
-use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
 /**
  * Velreport table
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class VelreportTable extends Table
 {
-    /**
-     * Constructor
-     *
-     * @param   DatabaseDriver  $db  A database connector object
-     *
-     * @since    4.0.0
-     */
-    public function __construct(DatabaseDriver $db)
-    {
-        $this->typeAlias = 'com_jed.velreport';
-        parent::__construct('#__jed_vel_report', 'id', $db);
-    }
-
-    /**
-     * This function convert an array of Access objects into an rules array.
-     *
-     * @param   array  $jaccessrules  An array of Access objects.
-     *
-     * @return  array
-     *
-     * @since   4.0.0
-     */
-    private function JAccessRulestoArray(array $jaccessrules): array
-    {
-        $rules = [];
-
-        foreach ($jaccessrules as $action => $jaccess) {
-            $actions = [];
-
-            if ($jaccess) {
-                foreach ($jaccess->getData() as $group => $allow) {
-                    $actions[$group] = ((bool) $allow);
-                }
-            }
-
-            $rules[$action] = $actions;
-        }
-
-        return $rules;
-    }
-
     /**
      * Define a namespaced asset name for inclusion in the #__assets table
      *
      * @return string The asset name
      *
-     * @see      Table::_getAssetName
-     * @since    4.0.0
-     *
+     * @see   Table::_getAssetName
+     * @since 4.0.0
      */
     protected function _getAssetName(): string
     {
         $k = $this->_tbl_key;
 
-        return $this->typeAlias . '.' . (int) $this->$k;
+        return $this->typeAlias . '.' . (int)$this->$k;
     }
 
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param   array  $src     Named array
-     * @param   mixed  $ignore  Optional array or list of parameters to ignore
+     * @param array $src    Named array
+     * @param mixed $ignore Optional array or list of parameters to ignore
      *
-     * @return  null|string  null is operation was satisfactory, otherwise returns an error
+     * @return null|string  null is operation was satisfactory, otherwise returns an error
      *
-     * @see     Table:bind
-     * @since   4.0.0
+     * @see    Table:bind
+     * @since  4.0.0
      * @throws Exception
      */
     public function bind($src, $ignore = ''): ?string
@@ -109,7 +67,7 @@ class VelreportTable extends Table
         if (isset($src['pass_details_ok'])) {
             if (is_array($src['pass_details_ok'])) {
                 $src['pass_details_ok'] = implode(',', $src['pass_details_ok']);
-            } elseif (strpos($src['pass_details_ok'], ',') != false) {
+            } elseif (strpos($src['pass_details_ok'], ',')) {
                 $src['pass_details_ok'] = explode(',', $src['pass_details_ok']);
             } elseif (strlen($src['pass_details_ok']) == 0) {
                 $src['pass_details_ok'] = '';
@@ -122,7 +80,7 @@ class VelreportTable extends Table
         if (isset($src['vulnerability_type'])) {
             if (is_array($src['vulnerability_type'])) {
                 $src['vulnerability_type'] = implode(',', $src['vulnerability_type']);
-            } elseif (strpos($src['vulnerability_type'], ',') != false) {
+            } elseif (strpos($src['vulnerability_type'], ',')) {
                 $src['vulnerability_type'] = explode(',', $src['vulnerability_type']);
             } elseif (strlen($src['vulnerability_type']) == 0) {
                 $src['vulnerability_type'] = '';
@@ -135,7 +93,7 @@ class VelreportTable extends Table
         if (isset($src['exploit_type'])) {
             if (is_array($src['exploit_type'])) {
                 $src['exploit_type'] = implode(',', $src['exploit_type']);
-            } elseif (strpos($src['exploit_type'], ',') != false) {
+            } elseif (strpos($src['exploit_type'], ',')) {
                 $src['exploit_type'] = explode(',', $src['exploit_type']);
             } elseif (strlen($src['exploit_type']) == 0) {
                 $src['exploit_type'] = '';
@@ -148,7 +106,7 @@ class VelreportTable extends Table
         if (isset($src['vulnerability_actively_exploited'])) {
             if (is_array($src['vulnerability_actively_exploited'])) {
                 $src['vulnerability_actively_exploited'] = implode(',', $src['vulnerability_actively_exploited']);
-            } elseif (strpos($src['vulnerability_actively_exploited'], ',') != false) {
+            } elseif (strpos($src['vulnerability_actively_exploited'], ',')) {
                 $src['vulnerability_actively_exploited'] = explode(',', $src['vulnerability_actively_exploited']);
             } elseif (strlen($src['vulnerability_actively_exploited']) == 0) {
                 $src['vulnerability_actively_exploited'] = '';
@@ -161,7 +119,7 @@ class VelreportTable extends Table
         if (isset($src['vulnerability_publicly_available'])) {
             if (is_array($src['vulnerability_publicly_available'])) {
                 $src['vulnerability_publicly_available'] = implode(',', $src['vulnerability_publicly_available']);
-            } elseif (strpos($src['vulnerability_publicly_available'], ',') != false) {
+            } elseif (strpos($src['vulnerability_publicly_available'], ',')) {
                 $src['vulnerability_publicly_available'] = explode(',', $src['vulnerability_publicly_available']);
             } elseif (strlen($src['vulnerability_publicly_available']) == 0) {
                 $src['vulnerability_publicly_available'] = '';
@@ -174,7 +132,7 @@ class VelreportTable extends Table
         if (isset($src['developer_communication_type'])) {
             if (is_array($src['developer_communication_type'])) {
                 $src['developer_communication_type'] = implode(',', $src['developer_communication_type']);
-            } elseif (strpos($src['developer_communication_type'], ',') != false) {
+            } elseif (strpos($src['developer_communication_type'], ',')) {
                 $src['developer_communication_type'] = explode(',', $src['developer_communication_type']);
             } elseif (strlen($src['developer_communication_type']) == 0) {
                 $src['developer_communication_type'] = '';
@@ -187,7 +145,7 @@ class VelreportTable extends Table
         if (isset($src['consent_to_process'])) {
             if (is_array($src['consent_to_process'])) {
                 $src['consent_to_process'] = implode(',', $src['consent_to_process']);
-            } elseif (strpos($src['consent_to_process'], ',') != false) {
+            } elseif (strpos($src['consent_to_process'], ',')) {
                 $src['consent_to_process'] = explode(',', $src['consent_to_process']);
             } elseif (strlen($src['consent_to_process']) == 0) {
                 $src['consent_to_process'] = '';
@@ -200,7 +158,7 @@ class VelreportTable extends Table
         if (isset($src['passed_to_vel'])) {
             if (is_array($src['passed_to_vel'])) {
                 $src['passed_to_vel'] = implode(',', $src['passed_to_vel']);
-            } elseif (strpos($src['passed_to_vel'], ',') != false) {
+            } elseif (strpos($src['passed_to_vel'], ',')) {
                 $src['passed_to_vel'] = explode(',', $src['passed_to_vel']);
             } elseif (strlen($src['passed_to_vel']) == 0) {
                 $src['passed_to_vel'] = '';
@@ -213,7 +171,7 @@ class VelreportTable extends Table
         if (isset($src['data_source'])) {
             if (is_array($src['data_source'])) {
                 $src['data_source'] = implode(',', $src['data_source']);
-            } elseif (strpos($src['data_source'], ',') != false) {
+            } elseif (strpos($src['data_source'], ',')) {
                 $src['data_source'] = explode(',', $src['data_source']);
             } elseif (strlen($src['data_source']) == 0) {
                 $src['data_source'] = '';
@@ -228,15 +186,15 @@ class VelreportTable extends Table
         }
 
         if ($src['id'] == 0 && empty($src['created_by'])) {
-            $src['created_by'] = JedHelper::getUser()->id;
+            $src['created_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         if ($src['id'] == 0 && empty($src['modified_by'])) {
-            $src['modified_by'] = JedHelper::getUser()->id;
+            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         if ($task == 'apply' || $task == 'save') {
-            $src['modified_by'] = JedHelper::getUser()->id;
+            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         if ($src['id'] == 0) {
@@ -248,7 +206,7 @@ class VelreportTable extends Table
         }
 
 
-        if (!JedHelper::getUser()->authorise('core.admin', 'com_jed.velreport.' . $src['id'])) {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jed.velreport.' . $src['id'])) {
             $actions         = Access::getActionsFromFile(
                 JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
                 "/access/section[@name='velreport']/"
@@ -276,11 +234,11 @@ class VelreportTable extends Table
     /**
      * Delete a record by id
      *
-     * @param   mixed  $pk  Primary key value to delete. Optional
+     * @param mixed $pk Primary key value to delete. Optional
      *
      * @return bool
      *
-     * @since    4.0.0
+     * @since 4.0.0
      */
     public function delete($pk = null): bool
     {
@@ -290,14 +248,97 @@ class VelreportTable extends Table
     }
 
     /**
+     * This function convert an array of Access objects into an rules array.
+     *
+     * @param array $jaccessrules An array of Access objects.
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    private function JAccessRulestoArray(array $jaccessrules): array
+    {
+        $rules = [];
+
+        foreach ($jaccessrules as $action => $jaccess) {
+            $actions = [];
+
+            if ($jaccess) {
+                foreach ($jaccess->getData() as $group => $allow) {
+                    $actions[$group] = ((bool)$allow);
+                }
+            }
+
+            $rules[$action] = $actions;
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Get the Properties of the table
+     *
+     * * @param   boolean  $public  If true, returns only the public properties.
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    public function getTableProperties(bool $public = true): array
+    {
+        $vars = get_object_vars($this);
+
+        if ($public) {
+            foreach ($vars as $key => $value) {
+                if (str_starts_with($key, '_')) {
+                    unset($vars[$key]);
+                }
+            }
+
+            // Collect all none public properties of the current class and it's parents
+            $nonePublicProperties = [];
+            $reflection           = new \ReflectionObject($this);
+            do {
+                $nonePublicProperties = array_merge(
+                    $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED),
+                    $nonePublicProperties
+                );
+            } while ($reflection = $reflection->getParentClass());
+
+            // Unset all none public properties, this is needed as get_object_vars returns now all vars
+            // from the current object and not only the CMSObject and the public ones from the inheriting classes
+            foreach ($nonePublicProperties as $prop) {
+                if (\array_key_exists($prop->getName(), $vars)) {
+                    unset($vars[$prop->getName()]);
+                }
+            }
+        }
+
+        return $vars;
+    }
+
+    /**
      * Get the type alias for the history table
      *
-     * @return  string  The alias as described above
+     * @return string  The alias as described above
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getTypeAlias(): string
     {
         return $this->typeAlias;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param DatabaseDriver $db A database connector object
+     *
+     * @since 4.0.0
+     */
+    public function __construct(DatabaseDriver $db)
+    {
+        $this->typeAlias = 'com_jed.velreport';
+        parent::__construct('#__jed_vel_report', 'id', $db);
     }
 }

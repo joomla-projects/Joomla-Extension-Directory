@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    TICKETS
+ * @subpackage TICKETS
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -26,10 +26,10 @@ $wa->useScript('keepalive')
 HTMLHelper::_('bootstrap.tooltip');
 
 // Load admin language file
-$lang = Factory::getLanguage();
+$lang = Factory::getApplication()->getLanguage();
 $lang->load('com_jed', JPATH_SITE);
 
-$user    = JedHelper::getUser();
+$user    = Factory::getApplication()->getIdentity();
 $canEdit = JedHelper::canUserEdit($this->item);
 
 
@@ -40,7 +40,7 @@ if ($this->item->state == 1) {
     $state_string = 'Unpublish';
     $state_value  = 0;
 }
-$canState = JedHelper::getUser()->authorise('core.edit.state', 'com_jed');
+$canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state', 'com_jed');
 ?>
 
 <div class="jedticket-edit front-end-edit">
@@ -59,7 +59,7 @@ $canState = JedHelper::getUser()->authorise('core.edit.state', 'com_jed');
               action="<?php echo Route::_('index.php?option=com_jed&task=jedticketform.save'); ?>"
               method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
 
-            <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'ticket')); ?>
+            <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'ticket']); ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'ticket', Text::_('COM_JED_TAB_TICKET', true)); ?>
             <?php echo $this->form->renderField('id'); ?>
 

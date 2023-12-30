@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -22,21 +22,23 @@ use function defined;
 /**
  * Display Component Controller
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class DisplayController extends BaseController
 {
     /**
      * Constructor.
      *
-     * @param   array                     $config   An optional associative array of configuration settings.
-     *                                              Recognized key values include 'name', 'default_task', 'model_path', and
-     *                                              'view_path' (this list is not meant to be comprehensive).
-     * @param   MVCFactoryInterface|null  $factory  The factory.
-     * @param   null                      $app      The JApplication for the dispatcher
-     * @param   null                      $input    Input
+     * @param array                    $config  An optional associative array of configuration settings.
+     *                                          Recognized key values include 'name', 'default_task',
+     *                                          'model_path', and 'view_path' (this list is not meant to
+     *                                          be comprehensive).be comprehensive).
      *
-     * @since  4.0.0
+     * @param MVCFactoryInterface|null $factory The factory.
+     * @param null                     $app     The JApplication for the dispatcher
+     * @param null                     $input   Input
+     *
+     * @since 4.0.0
      */
     public function __construct($config = [], MVCFactoryInterface $factory = null, $app = null, $input = null)
     {
@@ -46,10 +48,10 @@ class DisplayController extends BaseController
     /**
      * Method to display a view.
      *
-     * @param   boolean  $cachable   If true, the view output will be cached.
-     * @param   boolean  $urlparams  An array of safe URL parameters and their variable types, for valid values see {@link InputFilter::clean()}.
+     * @param bool $cachable  If true, the view output will be cached.
+     * @param bool $urlparams An array of safe URL parameters and their variable types, for valid values see {@link InputFilter::clean()}.
      *
-     * @return  BaseController  This object to support chaining.
+     * @return BaseController  This object to support chaining.
      *
      * @since  4.0.0
      * @throws Exception

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -15,17 +15,20 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\MVC\Model\FormModel;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
+use stdClass;
 
 /**
  * Jed model.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class ReviewcommentformModel extends FormModel
 {
@@ -36,11 +39,13 @@ class ReviewcommentformModel extends FormModel
      * Checks whether or not a user is manager or super user
      *
      * @return bool
+     *
+     * @since 4.0.0
      */
     public function isAdminOrSuperUser()
     {
         try {
-            $user = JedHelper::getUser();
+            $user = Factory::getApplication()->getIdentity();
             return in_array("8", $user->groups) || in_array("7", $user->groups);
         } catch (Exception $exc) {
             return false;
@@ -50,21 +55,23 @@ class ReviewcommentformModel extends FormModel
 
     /**
      * This method revises if the $id of the item belongs to the current user
-     * @param   integer     $id     The id of the item
-     * @return  boolean             true if the user is the owner of the row, false if not.
      *
+     * @param  int $id The id of the item
+     * @return bool             true if the user is the owner of the row, false if not.
+     *
+     * @since 4.0.0
      */
     public function userIDItem($id)
     {
         try {
-            $user  = JedHelper::getUser();
+            $user  = Factory::getApplication()->getIdentity();
             $db    = Factory::getDbo();
 
             $query = $db->getQuery(true);
             $query->select("id")
-                  ->from($db->quoteName('#__jed_reviews_comments'))
-                  ->where("id = " . $db->escape($id))
-                  ->where("created_by = " . $user->id);
+                ->from($db->quoteName('#__jed_reviews_comments'))
+                ->where("id = " . $db->escape($id))
+                ->where("created_by = " . $user->id);
 
             $db->setQuery($query);
 
@@ -84,13 +91,10 @@ class ReviewcommentformModel extends FormModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
-     * @throws  Exception
-     * @throws Exception
-     * @throws Exception
      * @throws Exception
      */
     protected function populateState()
@@ -121,13 +125,13 @@ class ReviewcommentformModel extends FormModel
     /**
      * Method to get an ojbect.
      *
-     * @param   integer  $id  The id of the object to get.
+     * @param int $id The id of the object to get.
      *
-     * @return  Object|boolean Object on success, false on failure.
+     * @return Object|bool Object on success, false on failure.
      *
-     * @throws  Exception
      * @throws Exception
-     * @throws Exception
+     *
+     * @since 4.0.0
      */
     public function getItem($id = null)
     {
@@ -141,12 +145,12 @@ class ReviewcommentformModel extends FormModel
             // Get a level row instance.
             $table      = $this->getTable();
             $properties = $table->getProperties();
-            $this->item = ArrayHelper::toObject($properties, CMSObject::class);
+            $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
             if ($table !== false && $table->load($id) && !empty($table->id)) {
-                $user = JedHelper::getUser();
+                $user = Factory::getApplication()->getIdentity();
                 $id   = $table->id;
-                if (empty($id) || $this->isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+                if (empty($id) || $this->isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 
                     if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
@@ -166,7 +170,7 @@ class ReviewcommentformModel extends FormModel
 
                     // Convert the Table to a clean CMSObject.
                     $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, CMSObject::class);
+                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
                     if (isset($this->item->primary_category_id) && is_object($this->item->primary_category_id)) {
                         $this->item->primary_category_id = ArrayHelper::fromObject($this->item->primary_category_id);
@@ -183,13 +187,13 @@ class ReviewcommentformModel extends FormModel
     /**
      * Method to get the table
      *
-     * @param   string  $type    Name of the Table class
-     * @param   string  $prefix  Optional prefix for the table class name
-     * @param   array   $config  Optional configuration array for Table object
+     * @param string $type   Name of the Table class
+     * @param string $prefix Optional prefix for the table class name
+     * @param array  $config Optional configuration array for Table object
      *
-     * @return  Table|boolean Table if found, boolean false on failure
+     * @return Table|bool Table if found, bool false on failure
      * @throws Exception
-     * @throws Exception
+     * @since  4.0.0
      */
     public function getTable($type = 'Reviewcomment', $prefix = 'Administrator', $config = [])
     {
@@ -199,11 +203,11 @@ class ReviewcommentformModel extends FormModel
     /**
      * Get an item by alias
      *
-     * @param   string  $alias  Alias string
+     * @param string $alias Alias string
      *
      * @return int Element id
      * @throws Exception
-     * @throws Exception
+     * @since  4.0.0
      */
     public function getItemIdByAlias($alias)
     {
@@ -217,7 +221,7 @@ class ReviewcommentformModel extends FormModel
         $table->load(['alias' => $alias]);
         $id = $table->id;
 
-        if (empty($id) || $this->isAdminOrSuperUser() || $table->created_by == JedHelper::getUser()->id) {
+        if (empty($id) || $this->isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
             return $id;
         } else {
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
@@ -227,12 +231,11 @@ class ReviewcommentformModel extends FormModel
     /**
      * Method to check in an item.
      *
-     * @param   integer  $id  The id of the row to check out.
+     * @param int $id The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since   4.0.0
-     * @throws Exception
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkin($id = null)
@@ -261,12 +264,11 @@ class ReviewcommentformModel extends FormModel
     /**
      * Method to check out an item for editing.
      *
-     * @param   integer  $id  The id of the row to check out.
+     * @param int $id The id of the row to check out.
      *
-     * @return  boolean True on success, false on failure.
+     * @return bool True on success, false on failure.
      *
-     * @since   4.0.0
-     * @throws Exception
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkout($id = null)
@@ -279,11 +281,11 @@ class ReviewcommentformModel extends FormModel
                 $table = $this->getTable();
 
                 // Get the current user object.
-                $user = JedHelper::getUser();
+                $user = Factory::getApplication()->getIdentity();
 
                 // Attempt to check the row out.
                 if (method_exists($table, 'checkout')) {
-                    if (!$table->checkout($user->get('id'), $id)) {
+                    if (!$table->checkout($user->id, $id)) {
                         return false;
                     }
                 }
@@ -300,13 +302,12 @@ class ReviewcommentformModel extends FormModel
      *
      * The base form is loaded from XML
      *
-     * @param   array    $data      An optional array of data for the form to interogate.
-     * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+     * @param array $data     An optional array of data for the form to interogate.
+     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return  Form    A Form object on success, false on failure
+     * @return Form    A Form object on success, false on failure
      *
-     * @since   4.0.0
-     * @throws Exception
+     * @since  4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform')
@@ -331,9 +332,8 @@ class ReviewcommentformModel extends FormModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return  array  The default data is an empty array.
-     * @since   4.0.0
-     * @throws Exception
+     * @return array  The default data is an empty array.
+     * @since  4.0.0
      * @throws Exception
      */
     protected function loadFormData()
@@ -354,13 +354,11 @@ class ReviewcommentformModel extends FormModel
     /**
      * Method to save the form data.
      *
-     * @param   array  $data  The form data
+     * @param array $data The form data
      *
-     * @return  bool
+     * @return bool
      *
-     * @since   4.0.0
-     * @throws Exception
-     * @throws  Exception
+     * @since  4.0.0
      * @throws Exception
      */
     public function save($data)
@@ -399,15 +397,11 @@ class ReviewcommentformModel extends FormModel
     /**
      * Method to delete data
      *
-     * @param   int  $pk  Item primary key
+     * @param int $pk Item primary key
      *
-     * @return  int  The id of the deleted item
+     * @return int  The id of the deleted item
      *
-     * @since   4.0.0
-     * @throws Exception
-     *
-     * @throws  Exception
-     * @throws Exception
+     * @since  4.0.0
      * @throws Exception
      */
     public function delete($id)
@@ -443,6 +437,8 @@ class ReviewcommentformModel extends FormModel
      * Check if data can be saved
      *
      * @return bool
+     *
+     * @since 4.0.0
      */
     public function getCanSave()
     {

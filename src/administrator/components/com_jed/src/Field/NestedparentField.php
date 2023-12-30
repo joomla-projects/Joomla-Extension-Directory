@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Field;
@@ -21,24 +21,24 @@ use RuntimeException;
 /**
  * Supports an HTML select list of categories
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class NestedparentField extends ListField
 {
     /**
      * The form field type.
      *
-     * @var    string
-     * @since  4.0.0
+     * @var   string
+     * @since 4.0.0
      */
     protected $type = 'nestedparent';
 
     /**
      * Method to get the field options.
      *
-     * @return  array  The field option objects.
+     * @return array  The field option objects.
      *
-     * @since   4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function getOptions(): array

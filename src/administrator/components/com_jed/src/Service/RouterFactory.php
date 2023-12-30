@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Service;
@@ -26,15 +26,15 @@ class RouterFactory implements RouterFactoryInterface
      * @var   CategoryFactoryInterface
      * @since 4.0.0
      */
-    private $categoryFactory;
+    private CategoryFactoryInterface $categoryFactory;
 
     /**
      * The database factory object
      *
-     * @var   DatabaseInterface|null
+     * @var   DatabaseInterface
      * @since 4.0.0
      */
-    private $db;
+    private DatabaseInterface $db;
 
     /**
      * THe MVC factory object
@@ -42,7 +42,7 @@ class RouterFactory implements RouterFactoryInterface
      * @var   MVCFactoryInterface
      * @since 4.0.0
      */
-    private $factory;
+    private MVCFactoryInterface $factory;
 
     /**
      * The extension's namespace
@@ -50,7 +50,7 @@ class RouterFactory implements RouterFactoryInterface
      * @var   string
      * @since 4.0.0
      */
-    private $namespace;
+    private string $namespace;
 
     public function __construct(string $namespace, DatabaseInterface $db = null, MVCFactoryInterface $factory, CategoryFactoryInterface $categoryFactory)
     {
@@ -60,7 +60,10 @@ class RouterFactory implements RouterFactoryInterface
         $this->categoryFactory = $categoryFactory;
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @since      4.0.0
+     */
     public function createRouter(CMSApplicationInterface $application, AbstractMenu $menu): RouterInterface
     {
         $className = trim($this->namespace, '\\') . '\\' . ucfirst($application->getName()) . '\\Service\\Router';

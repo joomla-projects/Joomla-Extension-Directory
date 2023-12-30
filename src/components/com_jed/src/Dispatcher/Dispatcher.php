@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Dispatcher;
@@ -18,18 +18,18 @@ use Joomla\CMS\Dispatcher\ComponentDispatcher;
 /**
  * ComponentDispatcher class for Com_Jed
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class Dispatcher extends ComponentDispatcher
 {
     /**
      * Dispatch a controller task. Redirecting the user if appropriate.
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
-    public function dispatch()
+    public function dispatch(): void
     {
         parent::dispatch();
     }

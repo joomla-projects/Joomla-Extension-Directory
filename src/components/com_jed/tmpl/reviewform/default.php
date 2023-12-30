@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package        JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -28,10 +28,10 @@ $wa->useScript('keepalive')
 HTMLHelper::_('bootstrap.tooltip');
 
 // Load admin language file
-$lang = Factory::getLanguage();
+$lang = Factory::getApplication()->getLanguage();
 $lang->load('com_jed', JPATH_SITE);
 
-$user    = JedHelper::getUser();
+$user    = Factory::getApplication()->getIdentity();
 $canEdit = JedHelper::canUserEdit($this->item);
 
 $isLoggedIn  = JedHelper::IsLoggedIn();
@@ -60,21 +60,23 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
             $this->form->bind($default_values);
             $fieldsets['overview']['title']       = Text::_('COM_JED_REVIEW_OVERVIEW_TITLE') . $this->extension_details->title;
             $fieldsets['overview']['description'] = Text::_('COM_JED_REVIEW_OVERVIEW_DESCR');
-            $fieldsets['overview']['fields']      = array('id',
+            $fieldsets['overview']['fields']      = ['id',
                 'supply_option_id', 'version',
-                'extension_id', 'used_for');
-            $fieldsets['overview']['hidden']      = array('id', 'extension_id');
+                'extension_id', 'used_for'];
+            $fieldsets['overview']['hidden']      = ['id', 'extension_id'];
 
             /* Display Radios of Supply Options */
             $optionstr = '';
-            $default = 0;
+            $default   = 0;
             foreach ($this->supplytypes as $s) {
                 $optionstr .= ' <option value="' . $s->supply_id . '">' . $s->supply_type . '</option> ';
                 $default = (int)$s->supply_id;
             }
             try {
-                $xml = new SimpleXMLElement('<field name="supply_option_id" type="radio"         label="COM_JED_REVIEWS_FIELD_SUPPLY_OPTION_ID_LABEL"           description="COM_JED_REVIEWS_FIELD_SUPPLY_OPTION_ID_DESCR"
-               default="' . $default . '" class="btn-group">      ' . $optionstr . '  </field>');
+                $xml = new SimpleXMLElement(
+                    '<field name="supply_option_id" type="radio"         label="COM_JED_REVIEWS_FIELD_SUPPLY_OPTION_ID_LABEL"           description="COM_JED_REVIEWS_FIELD_SUPPLY_OPTION_ID_DESCR"
+               default="' . $default . '" class="btn-group">      ' . $optionstr . '  </field>'
+                );
             } catch (Exception $e) {
             }
 
@@ -83,14 +85,14 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
 
             $fieldsets['details']['title']       = Text::_('COM_JED_REVIEW_DETAILS_TITLE');
             $fieldsets['details']['description'] = Text::_('COM_JED_REVIEW_DETAILS_DESCR');
-            $fieldsets['details']['fields']      = array('title',
+            $fieldsets['details']['fields']      = ['title',
                 'alias',
-                'body');
-            $fieldsets['details']['hidden']      = array('alias');
+                'body'];
+            $fieldsets['details']['hidden']      = ['alias'];
 
             $fieldsets['scores']['title']       = Text::_('COM_JED_REVIEW_SCORES_TITLE');
             $fieldsets['scores']['description'] = Text::_('COM_JED_REVIEW_SCORES_DESCR');
-            $fieldsets['scores']['fields']      = array(
+            $fieldsets['scores']['fields']      = [
                 'func_num',
                 'ease_num',
                 'support_num',
@@ -101,32 +103,32 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
                 'support',
                 'documentation',
                 'value_for_money',
-                'overall_score');
-            $fieldsets['scores']['hidden'] = array('overall_score',
+                'overall_score'];
+            $fieldsets['scores']['hidden'] = ['overall_score',
                 'func_num',
                 'ease_num',
                 'support_num',
                 'doc_num',
-                'value_num');
+                'value_num'];
 
 
 
 
             $fieldsets['comments']['title']       = Text::_('COM_JED_REVIEW_COMMENTS_TITLE');
             $fieldsets['comments']['description'] = Text::_('COM_JED_REVIEW_COMMENTS_DESCR');
-            $fieldsets['comments']['fields']      = array('functionality_comment',
+            $fieldsets['comments']['fields']      = ['functionality_comment',
                 'ease_of_use_comment',
                 'support_comment',
                 'documentation_comment',
-                'value_for_money_comment');
-            $fieldsets['comments']['hidden']      = array();
+                'value_for_money_comment'];
+            $fieldsets['comments']['hidden']      = [];
 
             $fieldsets['hidden']['title']       = '';
             $fieldsets['hidden']['description'] = '';
-            $fieldsets['hidden']['fields']      = array('flagged',
+            $fieldsets['hidden']['fields']      = ['flagged',
                 'ip_address',
                 'published',
-                'created_on');
+                'created_on'];
             $fieldsets['hidden']['hidden']      = $fieldsets['hidden']['fields']
 
 
@@ -163,7 +165,7 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
                                     $this->form->setFieldAttribute($field, 'type', 'hidden');
                                 }
 
-                                echo $this->form->renderField($field, null, null, array('class' => 'control-wrapper-' . $field));
+                                echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
                             }
                         }
 
@@ -192,7 +194,7 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
                                     <span class="fas fa-times" aria-hidden="true"></span>
                                     TEST
                                 </button>
-*/?>
+                                */?>
                             </div>
                         </div>
 

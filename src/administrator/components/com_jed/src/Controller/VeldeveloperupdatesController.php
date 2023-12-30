@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Controller;
@@ -23,18 +23,18 @@ use Joomla\Utilities\ArrayHelper;
 /**
  * Veldeveloperupdates class.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class VeldeveloperupdatesController extends AdminController
 {
     /**
      * Proxy for getModel.
      *
-     * @param   string  $name    Optional. Model name
-     * @param   string  $prefix  Optional. Class prefix
-     * @param   array   $config  Optional. Configuration array for model
+     * @param string $name   Optional. Model name
+     * @param string $prefix Optional. Class prefix
+     * @param array  $config Optional. Configuration array for model
      *
-     * @return  object    The Model
+     * @return object    The Model
      *
      * @since 4.0.0
      */
@@ -46,13 +46,13 @@ class VeldeveloperupdatesController extends AdminController
     /**
      * Method to save the submitted ordering values for records via AJAX.
      *
-     * @return  void
+     * @return void
      *
      * @since 4.0.0
      *
      * @throws Exception
      */
-    public function saveOrderAjax()
+    public function saveOrderAjax(): void
     {
         // Get the input
         $input = Factory::getApplication()->input;

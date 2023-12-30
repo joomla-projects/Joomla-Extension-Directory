@@ -1,11 +1,11 @@
 <?php
 
 /**
- * @package     Jed\Component\Jed\Administrator\Traits
+ * @package    Jed\Component\Jed\Administrator\Traits
  * @subpackage
  *
- * @copyright   A copyright
- * @license     A "Slug" license name e.g. GPL2
+ * @copyright A copyright
+ * @license   A "Slug" license name e.g. GPL2
  */
 
 namespace Jed\Component\Jed\Administrator\Traits;
@@ -22,14 +22,14 @@ use SimpleXMLElement;
 /**
  * Utilities for working with extensions and extension categories
  *
- * @since   4.0.0
+ * @since 4.0.0
  */
 trait ExtensionUtilities
 {
     /**
      * Gets first paragraph of description as intro text
      *
-     * @param   string  $d
+     * @param string $d
      *
      * @return array
      *
@@ -76,7 +76,7 @@ trait ExtensionUtilities
     /**
      * Gets current extension category and hierarchy of parents as string
      *
-     * @param   int  $category_id
+     * @param int $category_id
      *
      * @return string
      *
@@ -84,19 +84,22 @@ trait ExtensionUtilities
      */
     public function getCategoryHierarchy(int $category_id): string
     {
-        return LayoutHelper::render('category.hierarchy', [
+        return LayoutHelper::render(
+            'category.hierarchy',
+            [
             'categories' => $this->getCategoryHierarchyStack($category_id),
-        ]);
+            ]
+        );
     }
 
     /**
      * Get a stack of Category tables with the hierarchy leading to the target category (ordered root towards leaf node)
      *
-     * @param   int  $catId  The category ID to search for
+     * @param int $catId The category ID to search for
      *
-     * @return  array
+     * @return array
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getCategoryHierarchyStack(int $catId): array
     {
@@ -122,16 +125,15 @@ trait ExtensionUtilities
      * Get Developer Name from jed_developers table
      *
      * @since 4.0.0
-     *
      */
     public function getDeveloperName(int $uid): string
     {
         $db    = $this->getDatabase();
         $query = $db->getQuery(true)
-                    ->select('a.developer_name')
-                    ->from($db->quoteName('#__jed_developers', 'a'))
-                    ->where('a.user_id = :uid')
-                    ->bind(':uid', $uid, ParameterType::INTEGER);
+            ->select('a.developer_name')
+            ->from($db->quoteName('#__jed_developers', 'a'))
+            ->where('a.user_id = :uid')
+            ->bind(':uid', $uid, ParameterType::INTEGER);
 
         return $db->setQuery($query)->loadResult();
     }

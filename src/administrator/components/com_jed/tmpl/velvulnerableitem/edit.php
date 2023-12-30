@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -21,7 +21,6 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
-
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 $wa = $this->document->getWebAssetManager();
 $wa->getRegistry()->addExtensionRegistryFile('com_jed');
@@ -33,8 +32,8 @@ $wa->useScript('keepalive')
     ->useScript('com_jed.vulnerableItemhideshowOtherbox');
 HTMLHelper::_('bootstrap.tooltip');
 
-$headerlabeloptions = array('hiddenLabel' => true);
-$fieldhiddenoptions = array('hidden' => true);
+$headerlabeloptions = ['hiddenLabel' => true];
+$fieldhiddenoptions = ['hidden' => true];
 ?>
 
 <form
@@ -53,7 +52,7 @@ $fieldhiddenoptions = array('hidden' => true);
     </div> <!-- end div class  com_jed_vel -->
 
 
-    <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', array('active' => 'Details')); ?>
+    <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'Details']); ?>
     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Details', Text::_('COM_JED_GENERAL_TAB_DETAILS', true)); ?>
     <div class="row-fluid">
         <div class="span10 form-horizontal">
@@ -75,7 +74,7 @@ $fieldhiddenoptions = array('hidden' => true);
 
                 <?php echo $this->form->renderField('xml_manifest'); ?>
                 <?php if (!empty($this->item->xml_manifest)) : ?>
-                    <?php $xml_manifestFiles = array(); ?>
+                    <?php $xml_manifestFiles = []; ?>
                     <?php foreach ((array) $this->item->xml_manifest as $fileSingle) : ?>
                         <?php if (!is_array($fileSingle)) : ?>
                             <a href="<?php echo Route::_(Uri::root() . '/tmp' . DIRECTORY_SEPARATOR . $fileSingle, false); ?>"><?php echo $fileSingle; ?></a> |
@@ -114,38 +113,38 @@ $fieldhiddenoptions = array('hidden' => true);
     foreach ($this->VELLinkedReports['velreport']['data'] as $velreport) {
         $velcounter++;
 
-        echo JHtml::_('uitab.addTab', 'myTab', 'report' . $velcounter, 'Report:' . JedHelper::prettyDate($velreport->created)); ?>
+        echo HTMLHelper::_('uitab.addTab', 'myTab', 'report' . $velcounter, 'Report:' . JedHelper::prettyDate($velreport->created)); ?>
         <div class="row-fluid form-horizontal-desktop">
             <div class="span10 form-horizontal">
-                <?php echo LayoutHelper::render('vulnerableitem.linked_velreport', $this->VELLinkedReports['velreport']['form']); ?>
+                    <?php echo LayoutHelper::render('vulnerableitem.linked_velreport', $this->VELLinkedReports['velreport']['form']); ?>
 
             </div>
         </div>
-        <?php echo JHtml::_('uitab.endTab');
+            <?php echo HTMLHelper::_('uitab.endTab');
     }
     $velcounter = 0;
     foreach ($this->VELLinkedReports['veldeveloperupdate']['data'] as $veldeveloperupdate) {
         $velcounter++;
-        echo JHtml::_('uitab.addTab', 'myTab', 'devupdate' . $velcounter, 'Developer Update:' . JedHelper::prettyDate($veldeveloperupdate->created)); ?>
+        echo HTMLHelper::_('uitab.addTab', 'myTab', 'devupdate' . $velcounter, 'Developer Update:' . JedHelper::prettyDate($veldeveloperupdate->created)); ?>
         <div class="row-fluid form-horizontal-desktop">
             <div class="span10 form-horizontal">
-                <?php echo LayoutHelper::render('vulnerableitem.linked_veldeveloperupdate', $this->VELLinkedReports['veldeveloperupdate']['form']); ?>
+                    <?php echo LayoutHelper::render('vulnerableitem.linked_veldeveloperupdate', $this->VELLinkedReports['veldeveloperupdate']['form']); ?>
 
             </div>
         </div>
-        <?php echo JHtml::_('uitab.endTab');
+            <?php echo HTMLHelper::_('uitab.endTab');
     }
     $velcounter = 0;
     foreach ($this->VELLinkedReports['velabandonware']['data'] as $velabandonware) {
         $velcounter++;
-        echo JHtml::_('uitab.addTab', 'myTab', 'abandonware' . $velcounter, 'Abandoned Report:' . JedHelper::prettyDate($velabandonware->created)); ?>
+        echo HTMLHelper::_('uitab.addTab', 'myTab', 'abandonware' . $velcounter, 'Abandoned Report:' . JedHelper::prettyDate($velabandonware->created)); ?>
         <div class="row-fluid form-horizontal-desktop">
             <div class="span10 form-horizontal">
-                <?php echo LayoutHelper::render('vulnerableitem.linked_velabandonware', $this->VELLinkedReports['velabandonware']['form']); ?>
+                    <?php echo LayoutHelper::render('vulnerableitem.linked_velabandonware', $this->VELLinkedReports['velabandonware']['form']); ?>
 
             </div>
         </div>
-        <?php echo JHtml::_('uitab.endTab');
+            <?php echo HTMLHelper::_('uitab.endTab');
     }
     ?>
 

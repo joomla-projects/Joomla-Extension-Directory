@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    VEL
+ * @subpackage VEL
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -198,7 +198,7 @@ if (!is_null($this->item)) {
                 <th><?php echo Text::_('JGLOBAL_MODIFIED'); ?></th>
                 <td><?php echo $this->item->modified; ?></td>
             </tr>
-*/ ?>
+            */ ?>
         </table>
 
     </div>

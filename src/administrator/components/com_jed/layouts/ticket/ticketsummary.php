@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    Tickets
+ * @subpackage Tickets
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access to $displayData file
@@ -19,7 +19,11 @@
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 
-/** @var array $displayData */
+/**
+*
+ *
+ * @var array $displayData
+*/
 $headerlabeloptions = ['hiddenLabel' => true];
 $fieldhiddenoptions = ['hidden' => true];
 $rawData            = $displayData->getData();
@@ -39,7 +43,10 @@ $rawData            = $displayData->getData();
             <div class="container">
                 <div class="row">
                     <?php
-                    $slidesOptions = [/**"active" => "slide0" // It is the ID of the active tab.**/];
+                    $slidesOptions = [/**
+*
+* "active" => "slide0" // It is the ID of the active tab.
+**/];
 echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_messages_group', $slidesOptions);
 
 $slideid = 0;
@@ -52,7 +59,7 @@ foreach ($this->ticket_messages as $ticketMessage) {
 
     echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' . $ticketMessage->subject . ' - ' . JedHelper::prettyDate($ticketMessage->created_on), 'slide' . ($slideid++));
     echo "<p>" . $ticketMessage->message . "</p>";
-    echo JHtml::_('bootstrap.endSlide');
+    echo HTMLHelper::_('bootstrap.endSlide');
 }
 echo HTMLHelper::_('bootstrap.endAccordion');
 ?>

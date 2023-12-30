@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -165,15 +165,15 @@ if (!$canEdit && Factory::getUser()->authorise('core.edit.own', 'com_jed')) {
     <?php echo HTMLHelper::_(
         'bootstrap.renderModal',
         'deleteModal',
-        array(
-                                        'title'  => Text::_('JACTION_DELETE'),
-                                        'height' => '50%',
-                                        'width'  => '20%',
+        [
+                                            'title'  => Text::_('JACTION_DELETE'),
+                                            'height' => '50%',
+                                            'width'  => '20%',
 
-                                        'modalWidth'  => '50',
-                                        'bodyHeight'  => '100',
-                                        'footer' => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_jed&task=review.remove&id=' . $this->item->id, false, 2) . '" class="btn btn-danger">' . Text::_('JACTION_DELETE') . '</a>'
-                                    ),
+                                            'modalWidth' => '50',
+                                            'bodyHeight' => '100',
+                                            'footer'     => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_jed&task=review.remove&id=' . $this->item->id, false, 2) . '" class="btn btn-danger">' . Text::_('JACTION_DELETE') . '</a>',
+                                        ],
         Text::sprintf('COM_JED_DELETE_CONFIRM', $this->item->id)
     ); ?>
 

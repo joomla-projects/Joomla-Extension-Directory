@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Category;
@@ -16,16 +16,15 @@ namespace Jed\Component\Jed\Site\View\Category;
 
 use Exception;
 use Joomla\CMS\MVC\View\CategoryView;
-use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
 
 /**
  * View class for a list of Extensions.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class HtmlView extends CategoryView
 {
@@ -34,7 +33,7 @@ class HtmlView extends CategoryView
     /**
      * Display the view
      *
-     * @param   string  $tpl  Template name
+     * @param string $tpl Template name
      *
      * @return void
      *
@@ -42,17 +41,25 @@ class HtmlView extends CategoryView
      *
      * @since 4.0.0
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
-        parent::commonCategoryDisplay();
+
 
         $app = Factory::getApplication();
 
-/**        $this->state      = $this->get('State');
+
+        $this->state      = $this->get('State');
         $this->items      = $this->get('Items');
+
+        $this->children = $this->get('Children');
+
         $this->pagination = $this->get('Pagination');
         $this->params     = $app->getParams();
-**/
+        //This following line was added I think as a copy - it does nothing for the
+        // JED display of extensions and crashes when
+        // attempting to run so I've commented it out.
+        //parent::commonCategoryDisplay();
+
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {
             throw new Exception(implode("\n", $errors));
@@ -71,7 +78,7 @@ class HtmlView extends CategoryView
      *
      * @throws Exception
      */
-    protected function prepareDocument()
+    protected function prepareDocument(): void
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
@@ -96,18 +103,18 @@ class HtmlView extends CategoryView
             $title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
         }
 
-        $this->document->setTitle($title);
+        $this->getDocument()->setTitle($title);
 
         if ($this->params->get('menu-meta_description')) {
-            $this->document->setDescription($this->params->get('menu-meta_description'));
+            $this->getDocument()->setDescription($this->params->get('menu-meta_description'));
         }
 
         if ($this->params->get('menu-meta_keywords')) {
-            $this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
+            $this->getDocument()->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
         }
 
         if ($this->params->get('robots')) {
-            $this->document->setMetadata('robots', $this->params->get('robots'));
+            $this->getDocument()->setMetadata('robots', $this->params->get('robots'));
         }
 
 
@@ -123,7 +130,7 @@ class HtmlView extends CategoryView
     /**
      * Check if state is set
      *
-     * @param   mixed  $state  State
+     * @param mixed $state State
      *
      * @return bool
      *

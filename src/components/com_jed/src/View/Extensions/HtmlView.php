@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Extensions;
@@ -18,13 +18,13 @@ use Exception;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
 
 /**
  * View class for a list of Extensions.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
@@ -32,14 +32,14 @@ class HtmlView extends BaseHtmlView
 
     protected Pagination $pagination;
 
-    protected CMSObject $state;
+    protected Registry $state;
 
     protected mixed $params;
 
     /**
      * Display the view
      *
-     * @param   string  $tpl  Template name
+     * @param string $tpl Template name
      *
      * @return void
      *
@@ -47,7 +47,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
         $app = Factory::getApplication();
 
@@ -74,7 +74,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      */
-    protected function prepareDocument()
+    protected function prepareDocument(): void
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
@@ -99,18 +99,18 @@ class HtmlView extends BaseHtmlView
             $title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
         }
 
-        $this->document->setTitle($title);
+        $this->getDocument()->setTitle($title);
 
         if ($this->params->get('menu-meta_description')) {
-            $this->document->setDescription($this->params->get('menu-meta_description'));
+            $this->getDocument()->setDescription($this->params->get('menu-meta_description'));
         }
 
         if ($this->params->get('menu-meta_keywords')) {
-            $this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
+            $this->getDocument()->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
         }
 
         if ($this->params->get('robots')) {
-            $this->document->setMetadata('robots', $this->params->get('robots'));
+            $this->getDocument()->setMetadata('robots', $this->params->get('robots'));
         }
 
 
@@ -126,7 +126,7 @@ class HtmlView extends BaseHtmlView
     /**
      * Check if state is set
      *
-     * @param   mixed  $state  State
+     * @param mixed $state State
      *
      * @return bool
      *

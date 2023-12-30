@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package           JED
+ * @package JED
  *
- * @subpackage        Tickets
+ * @subpackage Tickets
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license           GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access to file
@@ -21,7 +21,11 @@ use Joomla\CMS\Language\Text;
 // phpcs:enable PSR1.Files.SideEffects
 // phpcs:enable PSR1.Files.SideEffects
 
-/** @var array $displayData */
+/**
+*
+ *
+ * @var array $displayData
+*/
 $headerlabeloptions = ['hiddenLabel' => true];
 $fieldhiddenoptions = ['hidden' => true];
 
@@ -109,7 +113,7 @@ echo HTMLHelper::_('uitab.addTab', 'viewHelpTab', 'viewhelpextension', Text::_('
         <div class="container">
             <div class="row">
                 <?php
-        //echo "<pre>";print_r($ticket_help_extensions);echo "</pre>";exit();
+    //echo "<pre>";print_r($ticket_help_extensions);echo "</pre>";exit();
             $slidesOptions = [//"active" => "slide0" // It is the ID of the active tab.
             ];
 echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_help_extensions_group', $slidesOptions);
@@ -129,8 +133,13 @@ foreach ($ticket_help_extensions as $ext) {
     } catch (Exception $e) {
     }
 
-    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_help_extensions_group', $ext->id . ' - ' . $ext->title . ' (' .
-        $ext->version . ') ' . JedHelper::prettyDate($ext->created_on) . '&nbsp;&nbsp;' . $ico . '</span>', 'ticket_help_extensions_group' . '_slide' . ($slideid++));
+    echo HTMLHelper::_(
+        'bootstrap.addSlide',
+        'ticket_help_extensions_group',
+        $ext->id . ' - ' . $ext->title . ' (' .
+        $ext->version . ') ' . JedHelper::prettyDate($ext->created_on) . '&nbsp;&nbsp;' . $ico . '</span>',
+        'ticket_help_extensions_group' . '_slide' . ($slideid++)
+    );
 
     $linked_extension_form->bind($ext);
     echo $linked_extension_form->renderField('title');
@@ -163,7 +172,7 @@ foreach ($ticket_help_extensions as $ext) {
     echo $linked_extension_form->renderField('published_reason');
     echo $linked_extension_form->renderField('state');
     echo "<p>Extension Summary here</p>";
-    echo JHtml::_('bootstrap.endSlide');
+    echo HTMLHelper::_('bootstrap.endSlide');
 }
 
 echo HTMLHelper::_('bootstrap.endAccordion');
@@ -195,10 +204,15 @@ foreach ($displayData['reviews'] as $review) {
         $ico = '';
     }
 
-    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_help_reviews_group', $review->id . ' - ' . $review->title . '&nbsp;' .
-        JedHelper::prettyDate($review->created_on) . '&nbsp;', 'ticket_help_reviews_group' . '_slide' . ($slideid++));
+    echo HTMLHelper::_(
+        'bootstrap.addSlide',
+        'ticket_help_reviews_group',
+        $review->id . ' - ' . $review->title . '&nbsp;' .
+        JedHelper::prettyDate($review->created_on) . '&nbsp;',
+        'ticket_help_reviews_group' . '_slide' . ($slideid++)
+    );
     echo "<p>Review Summary here</p>";
-    echo JHtml::_('bootstrap.endSlide');
+    echo HTMLHelper::_('bootstrap.endSlide');
 }
 echo HTMLHelper::_('bootstrap.endAccordion');
 
@@ -222,11 +236,16 @@ echo HTMLHelper::_('uitab.addTab', 'viewHelpTab', 'viewhelpoldtickets', Text::_(
 
 $slideid = 0;
 foreach ($displayData['oldtickets'] as $oldticket) {
-    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_help_oldtickets_group', $oldticket->id . ' - ' . $oldticket->subject . '&nbsp;' .
-        JedHelper::prettyDate($oldticket->date) . '&nbsp;', 'ticket_help_oldtickets_group' . '_slide' . ($slideid++));
+    echo HTMLHelper::_(
+        'bootstrap.addSlide',
+        'ticket_help_oldtickets_group',
+        $oldticket->id . ' - ' . $oldticket->subject . '&nbsp;' .
+        JedHelper::prettyDate($oldticket->date) . '&nbsp;',
+        'ticket_help_oldtickets_group' . '_slide' . ($slideid++)
+    );
 
     echo "<p>" . strip_tags($oldticket->messages->message) . "</p>";
-    echo JHtml::_('bootstrap.endSlide');
+    echo HTMLHelper::_('bootstrap.endSlide');
 }
 echo HTMLHelper::_('bootstrap.endAccordion');
 

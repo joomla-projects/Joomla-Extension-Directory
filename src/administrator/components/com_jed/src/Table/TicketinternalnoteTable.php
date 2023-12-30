@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    Tickets
+ * @subpackage Tickets
  *
- * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Table;
@@ -21,19 +21,18 @@ use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table as Table;
 use Joomla\Database\DatabaseDriver;
-use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
 /**
  * Ticketinternalnote table
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class TicketinternalnoteTable extends Table
 {
     /**
      * Constructor
      *
-     * @param   DatabaseDriver  $db  A database connector object
+     * @param DatabaseDriver $db A database connector object
      *
      * @since 4.0.0
      */
@@ -47,10 +46,10 @@ class TicketinternalnoteTable extends Table
     /**
      * This function convert an array of Access objects into an rules array.
      *
-     * @param   array  $jaccessrules  An array of Access objects.
+     * @param array $jaccessrules An array of Access objects.
      *
-     * @return  array
-     * @since 4.0.0
+     * @return array
+     * @since  4.0.0
      */
     private function JAccessRulestoArray(array $jaccessrules): array
     {
@@ -89,14 +88,14 @@ class TicketinternalnoteTable extends Table
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param   array  $src     Named array
-     * @param   mixed  $ignore  Optional array or list of parameters to ignore
+     * @param array $src    Named array
+     * @param mixed $ignore Optional array or list of parameters to ignore
      *
-     * @return  null|string  null is operation was satisfactory, otherwise returns an error
+     * @return null|string  null is operation was satisfactory, otherwise returns an error
      *
-     * @see     Table:bind
-     * @since   4.0.0
-     * @throws  Exception
+     * @see    Table:bind
+     * @since  4.0.0
+     * @throws Exception
      */
     public function bind($src, $ignore = ''): ?string
     {
@@ -106,22 +105,22 @@ class TicketinternalnoteTable extends Table
         $task  = $input->getString('task', '');
 
         if ($src['id'] == 0 && empty($src['created_by'])) {
-            $src['created_by'] = JedHelper::getUser()->id;
+            $src['created_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         if ($src['id'] == 0 && empty($src['modified_by'])) {
-            $src['modified_by'] = JedHelper::getUser()->id;
+            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         if ($task == 'apply' || $task == 'save') {
-            $src['modified_by'] = JedHelper::getUser()->id;
+            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
         // Support for multiple or not foreign key field: ticket_id
         if (!empty($src['ticket_id'])) {
             if (is_array($src['ticket_id'])) {
                 $src['ticket_id'] = implode(',', $src['ticket_id']);
-            } elseif (strrpos($src['ticket_id'], ',') != false) {
+            } elseif (strrpos($src['ticket_id'], ',')) {
                 $src['ticket_id'] = explode(',', $src['ticket_id']);
             }
         } else {
@@ -131,7 +130,7 @@ class TicketinternalnoteTable extends Table
         if ($src['id'] == 0) {
             $src['created_on'] = $date->toSql();
         }
-        if (!JedHelper::getUser()->authorise('core.admin', 'com_jed.ticketinternalnote.' . $src['id'])) {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jed.ticketinternalnote.' . $src['id'])) {
             $actions         = Access::getActionsFromFile(
                 JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
                 "/access/section[@name='ticketinternalnote']/"
@@ -159,7 +158,7 @@ class TicketinternalnoteTable extends Table
     /**
      * Delete a record by id
      *
-     * @param   mixed  $pk  Primary key value to delete. Optional
+     * @param mixed $pk Primary key value to delete. Optional
      *
      * @return bool
      *
@@ -175,12 +174,54 @@ class TicketinternalnoteTable extends Table
     /**
      * Get the type alias for the history table
      *
-     * @return  string  The alias as described above
+     * @return string  The alias as described above
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getTypeAlias(): string
     {
         return $this->typeAlias;
+    }
+
+    /**
+     * Get the Properties of the table
+     *
+     * * @param   boolean  $public  If true, returns only the public properties.
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    public function getTableProperties(bool $public = true): array
+    {
+        $vars = get_object_vars($this);
+
+        if ($public) {
+            foreach ($vars as $key => $value) {
+                if (str_starts_with($key, '_')) {
+                    unset($vars[$key]);
+                }
+            }
+
+            // Collect all none public properties of the current class and it's parents
+            $nonePublicProperties = [];
+            $reflection           = new \ReflectionObject($this);
+            do {
+                $nonePublicProperties = array_merge(
+                    $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED),
+                    $nonePublicProperties
+                );
+            } while ($reflection = $reflection->getParentClass());
+
+            // Unset all none public properties, this is needed as get_object_vars returns now all vars
+            // from the current object and not only the CMSObject and the public ones from the inheriting classes
+            foreach ($nonePublicProperties as $prop) {
+                if (\array_key_exists($prop->getName(), $vars)) {
+                    unset($vars[$prop->getName()]);
+                }
+            }
+        }
+
+        return $vars;
     }
 }
