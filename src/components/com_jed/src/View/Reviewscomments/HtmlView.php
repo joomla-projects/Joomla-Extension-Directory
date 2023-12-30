@@ -48,7 +48,6 @@ class HtmlView extends BaseHtmlView
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
-        $title = null;
 
         // Because the application sets a default page title,
         // we need to get it from the menu item itself
@@ -131,7 +130,7 @@ class HtmlView extends BaseHtmlView
      *
      * @return bool
      */
-    public function getState($state)
+    public function getState(mixed $state): bool
     {
         return $this->state->{$state} ?? false;
     }

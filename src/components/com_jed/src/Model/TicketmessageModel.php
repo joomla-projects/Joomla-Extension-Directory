@@ -14,7 +14,6 @@ namespace Jed\Component\Jed\Site\Model;
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
-
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
@@ -28,7 +27,7 @@ use Joomla\Utilities\ArrayHelper;
 use stdClass;
 
 /**
- * Jed model.
+ * Ticket Message model.
  *
  * @since 4.0.0
  */
@@ -37,10 +36,10 @@ class TicketmessageModel extends ItemModel
     /**
      * The item object
      *
-     * @var   object
+     * @var   mixed
      * @since 4.0.0
      */
-    public $item;
+    private mixed $item = null;
 
     /**
      *
@@ -57,7 +56,8 @@ class TicketmessageModel extends ItemModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
+     *
      * @throws Exception
      */
     public function checkout(int $id = null): bool
@@ -88,17 +88,18 @@ class TicketmessageModel extends ItemModel
     }
 
     /**
-     * Method to get an object.
+     * Method to get a single record.
      *
-     * @param int $pk The id of the object to get.
+     * @param int|null $pk The id of the object to get.
      *
-     * @return object    Object on success, false on failure.
+     * @return mixed    Object on success, false on failure.
      *
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null): mixed
     {
+        $app = Factory::getApplication();
         if ($this->item === null) {
             $this->item = false;
 
@@ -111,8 +112,7 @@ class TicketmessageModel extends ItemModel
 
             // Attempt to load the row.
             if ($table->load($pk)) {
-                if (
-                    empty($result) || JedHelper::isAdminOrSuperUser()
+                if (empty($result) || JedHelper::isAdminOrSuperUser()
                     || $table->created_by == Factory::getApplication()->getIdentity()->id
                 ) {
                     // Check published state.
@@ -230,7 +230,7 @@ class TicketmessageModel extends ItemModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
@@ -240,7 +240,7 @@ class TicketmessageModel extends ItemModel
      *
      * @throws Exception
      */
-    protected function populateState()
+    protected function populateState(): void
     {
         $app  = Factory::getApplication();
         $user = Factory::getApplication()->getIdentity();

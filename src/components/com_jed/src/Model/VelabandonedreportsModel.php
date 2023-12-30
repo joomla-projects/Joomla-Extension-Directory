@@ -24,8 +24,6 @@ use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use stdClass;
 
-use function defined;
-
 /**
  * VEL Abandoned Reports Model Class.
  *
@@ -102,8 +100,9 @@ class VelabandonedreportsModel extends ListModel
     /**
      * Build an SQL query to load the list data.
      *
-     * @return object  A \JDatabaseQuery object to retrieve the data set.
+     * @return object  A \DatabaseQuery object to retrieve the data set.
      *
+     * @throws Exception
      * @since 4.0.0
      */
     protected function getListQuery(): object
@@ -188,7 +187,7 @@ class VelabandonedreportsModel extends ListModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *

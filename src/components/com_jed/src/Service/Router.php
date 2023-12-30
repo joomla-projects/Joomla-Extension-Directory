@@ -13,7 +13,6 @@ namespace Jed\Component\Jed\Site\Service;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Categories\CategoryFactoryInterface;
 use Joomla\CMS\Categories\CategoryInterface;
@@ -28,8 +27,6 @@ use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
-
-use function defined;
 
 /**
  * JED Router.
@@ -58,15 +55,19 @@ class Router extends RouterView
      */
     private CategoryFactoryInterface $categoryFactory;
 
+
     /**
      * Class constructor.
      *
-     * @param CMSApplication $app  Application-object that the router should use
-     * @param AbstractMenu   $menu Menu-object that the router should use
+     * @param   SiteApplication           $app   Application-object that the router should use
+     * @param   AbstractMenu              $menu  Menu-object that the router should use
+     * @param   DatabaseInterface         $db
+     * @param   MVCFactory                $factory
+     * @param   CategoryFactoryInterface  $categoryFactory
      *
      * @since 3.4
      */
-    public function __construct(SiteApplication $app = null, AbstractMenu $menu, DatabaseInterface $db, MVCFactory $factory, CategoryFactoryInterface $categoryFactory)
+    public function __construct(SiteApplication $app, AbstractMenu $menu, DatabaseInterface $db, MVCFactory $factory, CategoryFactoryInterface $categoryFactory)
     {
         parent::__construct($app, $menu);
 
@@ -183,10 +184,10 @@ class Router extends RouterView
      * @param string $segment Segment to retrieve the ID for
      * @param array  $query   The request that is parsed right now
      *
-     * @return mixed   The id of this item or false
+     * @return int|bool   The id of this item or false
      * @since  4.0.0
      */
-    public function getCategoriesId(string $segment, array $query): int|bool|null
+    public function getCategoriesId(string $segment, array $query): int|bool
     {
         return $this->getCategoryId($segment, $query);
     }
@@ -211,10 +212,10 @@ class Router extends RouterView
      * @param string $segment Segment to retrieve the ID for
      * @param array  $query   The request that is parsed right now
      *
-     * @return mixed   The id of this item or false
+     * @return int|bool   The id of this item or false
      * @since  4.0.0
      */
-    public function getCategoryId(string $segment, array $query): int|bool|null
+    public function getCategoryId(string $segment, array $query): int|bool
     {
         $id = $query['id'] ?? 'root';
 

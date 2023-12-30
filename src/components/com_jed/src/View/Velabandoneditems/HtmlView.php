@@ -24,8 +24,6 @@ use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
 
-use function defined;
-
 /**
  * View class for a list of PATCHED Vulnerable Items.
  *
@@ -61,12 +59,7 @@ class HtmlView extends BaseHtmlView
      * @since 4.0.0
      */
     protected Pagination $pagination;
-    /**
-     * The model state
-     *
-     * @var   Registry
-     * @since 4.0.0
-     */
+
     /**
      * The model state
      *
@@ -147,6 +140,7 @@ class HtmlView extends BaseHtmlView
 
         $this->state      = $this->get('State');
         $this->items      = $this->get('Items');
+
         $this->pagination = $this->get('Pagination');
         $this->params     = $app->getParams('com_jed');
         $this->filterForm = $this->get('FilterForm');

@@ -88,7 +88,7 @@ class ExtensionsModel extends ListModel
 
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
@@ -146,6 +146,7 @@ class ExtensionsModel extends ListModel
      * @return QueryInterface
      *
      * @since 4.0.0
+     * @throws Exception
      */
     protected function getListQuery(): QueryInterface
     {
@@ -308,12 +309,12 @@ class ExtensionsModel extends ListModel
      * Overrides the default function to check Date fields format, identified by
      * "_dateformat" suffix, and erases the field if it's not correct.
      *
-     * @return void
+     * @return mixed
      *
      * @since  4.0.0
      * @throws Exception
      */
-    protected function loadFormData()
+    protected function loadFormData(): mixed
     {
         $app              = Factory::getApplication();
         $filters          = $app->getUserState($this->context . '.filter', []);

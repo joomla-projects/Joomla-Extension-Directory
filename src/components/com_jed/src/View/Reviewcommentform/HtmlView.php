@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Site\View\Reviewcommentform;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -51,12 +52,11 @@ class HtmlView extends BaseHtmlView
     public function display($tpl = null): void
     {
         $app  = Factory::getApplication();
-        $user = Factory::getUser();
 
         $this->state      = $this->get('State');
         $this->item       = $this->get('Item');
         $this->params     = $app->getParams('com_jed');
-        $this->canSave    = $this->get('CanSave');
+        $this->canSave    = JedHelper::canSave();
         $this->form       = $this->get('Form');
 
         // Check for errors.
@@ -76,13 +76,14 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
+     * @since 4.0.0
+     *
      * @throws Exception
      */
     protected function prepareDocument(): void
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
-        $title = null;
 
         // Because the application sets a default page title,
         // we need to get it from the menu item itself

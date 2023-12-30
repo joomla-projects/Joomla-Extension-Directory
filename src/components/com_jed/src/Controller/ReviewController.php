@@ -19,8 +19,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Router\Route;
 
-use function defined;
-
 /**
  * Review class.
  *

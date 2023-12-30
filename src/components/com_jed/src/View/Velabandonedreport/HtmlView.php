@@ -22,11 +22,8 @@ use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
-use Jed\Component\Jed\Site\Helper\JedHelper;
 
 use stdClass;
-
-use function defined;
 
 /**
  * View class for a single VEL Abandoned Report.

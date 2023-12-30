@@ -24,6 +24,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
+use stdClass;
 
 /**
  * VEL Developer Update Model Class.
@@ -35,10 +36,10 @@ class VeldeveloperupdateModel extends ItemModel
     /**
      * The item object
      *
-     * @var   object
+     * @var   mixed
      * @since 4.0.0
      */
-    public $item;
+    private mixed $item = null;
 
     /**
      *
@@ -129,7 +130,7 @@ class VeldeveloperupdateModel extends ItemModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null): object|bool|null
     {
         $app = Factory::getApplication();
         if ($this->item === null) {
@@ -157,8 +158,8 @@ class VeldeveloperupdateModel extends ItemModel
                     }
 
                     // Convert the JTable to a clean JObject.
-                    $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, 'JObject');
+                    $properties = $table->getTableProperties(1);
+                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
                 } else {
                     $app->enqueueMessage("Sorry you did not create that report item", "message");
 
@@ -215,7 +216,7 @@ class VeldeveloperupdateModel extends ItemModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
@@ -225,7 +226,7 @@ class VeldeveloperupdateModel extends ItemModel
      *
      * @throws Exception
      */
-    protected function populateState()
+    protected function populateState(): void
     {
         $app  = Factory::getApplication();
         $user = Factory::getApplication()->getIdentity();

@@ -24,8 +24,6 @@ use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
 
-use function defined;
-
 /**
  * View class for a list of VEL Reports.
  *

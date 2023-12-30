@@ -130,7 +130,7 @@ class ReviewformModel extends FormModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
@@ -140,7 +140,7 @@ class ReviewformModel extends FormModel
      *
      * @throws Exception
      */
-    protected function populateState()
+    protected function populateState(): void
     {
         $app = Factory::getApplication();
 
@@ -256,20 +256,6 @@ class ReviewformModel extends FormModel
         }
     }*/
 
-    /**
-     * Check if data can be saved
-     *
-     * @return bool
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function getCanSave(): bool
-    {
-        $table = $this->getTable();
-
-        return $table !== false;
-    }
 
     /**
      * Returns Review ID
@@ -302,7 +288,7 @@ class ReviewformModel extends FormModel
         $user               = Factory::getApplication()->getIdentity();
 
         if (!$id && $isLoggedIn) {
-            /* Any logged in user can make a new review */
+            /* Any logged-in user can make a new review */
 
             $table = $this->getTable();
 

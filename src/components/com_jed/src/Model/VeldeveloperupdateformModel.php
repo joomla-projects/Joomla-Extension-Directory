@@ -25,8 +25,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\FormModel;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
-
-use function defined;
+use stdClass;
 
 /**
  * VEL Developer Update Form Model Class.
@@ -127,20 +126,6 @@ class VeldeveloperupdateformModel extends FormModel
     }
 
     /**
-     * Check if data can be saved
-     *
-     * @return bool
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function getCanSave(): bool
-    {
-        $table = $this->getTable();
-
-        return $table !== false;
-    }
-
-    /**
      * Method to get the profile form.
      *
      * The base form is loaded from XML
@@ -148,7 +133,7 @@ class VeldeveloperupdateformModel extends FormModel
      * @param array $data     An optional array of data for the form to interogate.
      * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return Form    A JForm object on success, false on failure
+     * @return mixed    A Form object on success, false on failure
      *
      * @since  4.0.0
      * @throws Exception
@@ -193,14 +178,16 @@ class VeldeveloperupdateformModel extends FormModel
             // Get a level row instance.
             $table = $this->getTable();
 
-            if ($table !== false && $table->load($id) && !empty($table->id)) {
+            if (isset($table) !== false && $table->load($id) && !empty($table->id)) {
+                $properties = $table->getTableProperties();
+                $table_data = ArrayHelper::toObject($properties, stdClass::class);
                 $user = Factory::getApplication()->getIdentity();
                 $id   = $table->id;
-                if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
+                if (empty($id) || JedHelper::isAdminOrSuperUser() || $table_data->created_by == Factory::getApplication()->getIdentity()->id) {
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 
                     if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
-                        $canEdit = $user->id == $table->get('created_by');
+                        $canEdit = $user->id == $table_data->created_by;
                     }
 
                     if (!$canEdit) {
@@ -215,8 +202,8 @@ class VeldeveloperupdateformModel extends FormModel
                     }
 
                     // Convert the JTable to a clean JObject.
-                    $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, 'JObject');
+                    $properties = $table->getTableProperties(1);
+                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
                         $this->item->category_id = ArrayHelper::fromObject($this->item->category_id);
@@ -294,7 +281,7 @@ class VeldeveloperupdateformModel extends FormModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
@@ -304,7 +291,7 @@ class VeldeveloperupdateformModel extends FormModel
      *
      * @throws Exception
      */
-    protected function populateState()
+    protected function populateState(): void
     {
         $app = Factory::getApplication();
 
@@ -396,7 +383,7 @@ class VeldeveloperupdateformModel extends FormModel
         $user            = Factory::getApplication()->getIdentity();
 
         if ((!$id || JedHelper::isAdminOrSuperUser()) && $isLoggedIn) {
-            /* Any logged in user can report a vulnerable Item */
+            /* Any logged-in user can report a vulnerable Item */
 
             $table = $this->getTable();
 
@@ -429,8 +416,8 @@ class VeldeveloperupdateformModel extends FormModel
                     $ticket_message['subject']           = $message_out->subject;
                     $ticket_message['message']           = $message_out->template;
                     $ticket_message['message_direction'] = 0; /* 1 for coming in, 0 for going out */
-                    $ticket['created_by']                = -1;
-                    $ticket['modified_by']               = -1;
+                    $ticket_message['created_by']                = -1;
+                    $ticket_message['modified_by']               = -1;
                     $ticket_message_model->save($ticket_message);
                 }
 

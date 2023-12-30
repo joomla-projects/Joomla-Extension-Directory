@@ -15,8 +15,6 @@ namespace Jed\Component\Jed\Site\Controller;
 
 use Joomla\CMS\MVC\Controller\FormController;
 
-use function defined;
-
 /**
  * Reviews class.
  *

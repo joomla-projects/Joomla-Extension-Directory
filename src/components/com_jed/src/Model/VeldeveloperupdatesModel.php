@@ -25,8 +25,6 @@ use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\Database\QueryInterface;
 use stdClass;
 
-use function defined;
-
 /**
  * VEL Developer Updates Model Class.
  *
@@ -101,6 +99,7 @@ class VeldeveloperupdatesModel extends ListModel
      *
      * @return QueryInterface
      *
+     * @throws Exception
      * @since 4.0.0
      */
     protected function getListQuery(): QueryInterface
@@ -184,7 +183,7 @@ class VeldeveloperupdatesModel extends ListModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *

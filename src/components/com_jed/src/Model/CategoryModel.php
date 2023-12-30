@@ -45,7 +45,7 @@ class CategoryModel extends ListModel
      * @var  array
      * @since 4.0.0
      */
-    protected array $local_category_item = [];
+    protected array $_category_item = [];
 
     /**
      * Array of child-categories
@@ -53,7 +53,7 @@ class CategoryModel extends ListModel
      * @var  CategoryNode[]|null|bool
      * @since 4.0.0
      */
-    protected ?array $local_category_children = null;
+    protected ?array $_category_children = null;
 
     /**
      * Parent category of the current one
@@ -61,21 +61,21 @@ class CategoryModel extends ListModel
      * @var  bool|CategoryNode|null
      * @since 4.0.0
      */
-    protected CategoryNode|bool|null $local_category_parent = null;
+    protected CategoryNode|bool|null $_category_parent = null;
     /**
      * Parent category of the current one
      *
      * @var  bool|CategoryNode|null
      * @since 4.0.0
      */
-    protected CategoryNode|bool|null $local_category_leftsibling = null;
+    protected CategoryNode|bool|null $_category_leftsibling = null;
     /**
      * Parent category of the current one
      *
      * @var  CategoryNode|null
      * @since 4.0.0
      */
-    protected ?CategoryNode $local_category_rightsibling = null;
+    protected ?CategoryNode $_category_rightsibling = null;
 
     /**
      * Array of checked categories -- used to save values when _nodes are null
@@ -83,7 +83,7 @@ class CategoryModel extends ListModel
      * @var    boolean[]
      * @since  1.6
      */
-    protected array $local_checkedCategories;
+    protected array $_checkedCategories;
 
     /**
      * Constructor.
@@ -166,7 +166,7 @@ class CategoryModel extends ListModel
 
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
@@ -567,11 +567,11 @@ class CategoryModel extends ListModel
         try {
             $db = $this->getDatabase();
         } catch (DatabaseNotFoundException $e) {
-            @trigger_error(sprintf('Database must be set, this will not be caught anymore in 5.0.'), E_USER_DEPRECATED);
+            @trigger_error('Database must be set, this will not be caught anymore in 5.0. - '.$e->getMessage(), E_USER_DEPRECATED);
             $db = Factory::getContainer()->get(DatabaseInterface::class);
         }
-        $id         = Factory::getApplication()->getInput()->getInt('id', -1);
-        $extension  = 'com_jed';
+        $id  = Factory::getApplication()->getInput()->getInt('id', -1);
+        $extension = 'com_jed';
         $categories = [];
 
         if ($id <> -1) {
@@ -580,7 +580,7 @@ class CategoryModel extends ListModel
             }
 
             // Record that has this $id has been checked
-            $this->local_checkedCategories[$id] = true;
+            $this->_checkedCategories[$id] = true;
 
             $query = $db->getQuery(true)->select(
                 [
@@ -722,7 +722,7 @@ class CategoryModel extends ListModel
                 $categories[$id] = null;
             }
         }
-        $this->local_category_item = $categories;
+        $this->_category_item = $categories;
 
         return $categories;
     }
@@ -737,12 +737,12 @@ class CategoryModel extends ListModel
      */
     public function &getLeftSibling(): CategoryNode|bool|null
     {
-        if (!\is_object($this->local_category_item)) {
+        if (!\is_object($this->_category_item)) {
             $this->getCategory();
         }
-        $id                               = Factory::getApplication()->getInput()->getInt('id', -1);
-        $this->local_category_leftsibling = $this->local_category_item[$id]->lft;
-        return $this->local_category_leftsibling;
+        $id  = Factory::getApplication()->getInput()->getInt('id', -1);
+        $this->_category_leftsibling = $this->_category_item[$id]->lft;
+        return $this->_category_leftsibling;
     }
 
     /**
@@ -755,12 +755,12 @@ class CategoryModel extends ListModel
      */
     public function &getRightSibling(): CategoryNode|bool|null
     {
-        if (!\is_object($this->local_category_item)) {
+        if (!\is_object($this->_category_item)) {
             $this->getCategory();
         }
-        $id                                = Factory::getApplication()->getInput()->getInt('id', -1);
-        $this->local_category_rightsibling = $this->local_category_item[$id]->rgt;
-        return $this->local_category_rightsibling ;
+        $id  = Factory::getApplication()->getInput()->getInt('id', -1);
+        $this->_category_rightsibling = $this->_category_item[$id]->rgt;
+        return $this->_category_rightsibling ;
     }
 
     /**
@@ -773,13 +773,13 @@ class CategoryModel extends ListModel
      */
     public function &getChildren(): array
     {
-        if (!\is_object($this->local_category_item)) {
+        if (!\is_object($this->_category_item)) {
             $this->getCategory();
         }
-        $id                            = Factory::getApplication()->getInput()->getInt('id', -1);
-        $this->local_category_children = $this->local_category_item[$id]->getChildren();
+        $id  = Factory::getApplication()->getInput()->getInt('id', -1);
+        $this->_category_children = $this->_category_item[$id]->getChildren();
 
-        return $this->local_category_children;
+        return $this->_category_children;
     }
 
     /**
@@ -792,12 +792,12 @@ class CategoryModel extends ListModel
      */
     public function getParent(): CategoryNode
     {
-        if (!\is_object($this->local_category_item)) {
+        if (!\is_object($this->_category_item)) {
             $this->getCategory();
         }
-        $id                          = Factory::getApplication()->getInput()->getInt('id', -1);
-        $category_parent_id          = $this->local_category_item[$id]->parent_id;
-        $this->local_category_parent = $this->local_category_item[$category_parent_id];
-        return $this->local_category_parent;
+        $id  = Factory::getApplication()->getInput()->getInt('id', -1);
+        $category_parent_id = $this->_category_item[$id]->parent_id;
+        $this->_category_parent = $this->_category_item[$category_parent_id];
+        return $this->_category_parent;
     }
 }

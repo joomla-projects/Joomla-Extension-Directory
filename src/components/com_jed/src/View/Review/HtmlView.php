@@ -49,7 +49,7 @@ class HtmlView extends BaseHtmlView
     public function display($tpl = null): void
     {
         $app  = Factory::getApplication();
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         $this->state  = $this->get('State');
         $this->item   = $this->get('Item');
@@ -90,7 +90,6 @@ class HtmlView extends BaseHtmlView
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
-        $title = null;
 
         // Because the application sets a default page title,
         // We need to get it from the menu item itself

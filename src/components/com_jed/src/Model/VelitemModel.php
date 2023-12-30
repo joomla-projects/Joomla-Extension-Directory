@@ -21,8 +21,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\CMS\Uri\Uri;
 
-use function defined;
-
 /**
  * VEL Vulnerable Item Model Class.
  *
@@ -51,7 +49,7 @@ class VelitemModel extends ItemModel
     public function getItem($pk = null): object|bool
     {
 
-        if ($this->item === null) {
+        if (!isset($this->item)) {
             $this->item = false;
 
             if (empty($pk)) {
@@ -91,13 +89,8 @@ class VelitemModel extends ItemModel
                 // set data object to item.
                 $this->item = $data;
             } catch (Exception $e) {
-                if ($e->getCode() == 404) {
-                    // Need to go through the error handler to allow Redirect to work.
-                    throw $e;
-                } else {
-                    $this->setError($e);
-                    $this->item = false;
-                }
+                $this->item = false;
+                throw $e;
             }
         }
 
@@ -105,7 +98,7 @@ class VelitemModel extends ItemModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      * Note. Function not needed as model is only displayed
@@ -116,7 +109,7 @@ class VelitemModel extends ItemModel
      *
      * @throws Exception
      */
-    protected function populateState()
+    protected function populateState(): void
     {
         $app  = Factory::getApplication();
         $user = Factory::getApplication()->getIdentity();

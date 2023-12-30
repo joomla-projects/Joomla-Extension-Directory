@@ -37,6 +37,7 @@ class CreatedbyField extends FormField
      *
      * @return string  The field input markup.
      *
+     * @throws \Exception
      * @since 4.0.0
      */
     protected function getInput(): string
@@ -48,7 +49,7 @@ class CreatedbyField extends FormField
         $user_id = $this->value;
 
         if ($user_id) {
-            $user = JedHelper::getUser($user_id);
+            $user = JedHelper::getUserById($user_id);
         } else {
             $user   = Factory::getApplication()->getIdentity();
             $html[] = '<input type="hidden" name="' . $this->name . '" value="' . $user->id . '" />';

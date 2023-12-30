@@ -25,8 +25,6 @@ use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\Database\QueryInterface;
 use stdClass;
 
-use function defined;
-
 /**
  * VEL Reports Model Class.
  *
@@ -232,7 +230,7 @@ class VelreportsModel extends ListModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *

@@ -9,8 +9,6 @@
 
 namespace Jed\Component\Jed\Site\View\Homepage;
 
-use function defined;
-
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects

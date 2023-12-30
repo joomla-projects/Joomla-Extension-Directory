@@ -155,7 +155,7 @@ class ExtensionsupplyoptionsModel extends ListModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *

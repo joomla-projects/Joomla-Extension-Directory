@@ -127,20 +127,6 @@ class JedticketformModel extends FormModel
     }
 
     /**
-     * Check if data can be saved
-     *
-     * @return bool
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function getCanSave(): bool
-    {
-        $table = $this->getTable();
-
-        return $table !== false;
-    }
-
-    /**
      * Method to get the profile form.
      *
      * The base form is loaded from XML
@@ -335,7 +321,7 @@ class JedticketformModel extends FormModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
@@ -345,7 +331,7 @@ class JedticketformModel extends FormModel
      *
      * @throws Exception
      */
-    protected function populateState()
+    protected function populateState(): void
     {
         $app = Factory::getApplication();
 
@@ -387,7 +373,7 @@ class JedticketformModel extends FormModel
 
 
         if (!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser() && $isLoggedIn) {
-            /* Any logged in user can make a new ticket */
+            /* Any logged-in user can make a new ticket */
 
             $table = $this->getTable();
 

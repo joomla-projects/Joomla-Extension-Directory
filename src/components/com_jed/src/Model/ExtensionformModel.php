@@ -83,7 +83,7 @@ class ExtensionformModel extends FormModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
@@ -96,7 +96,7 @@ class ExtensionformModel extends FormModel
      * @throws Exception
      * @throws Exception
      */
-    protected function populateState()
+    protected function populateState(): void
     {
         $app = Factory::getApplication('com_jed');
 
@@ -442,18 +442,4 @@ class ExtensionformModel extends FormModel
         }
     }
 
-    /**
-     * Check if data can be saved
-     *
-     * @return bool
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function getCanSave()
-    {
-        $table = $this->getTable();
-
-        return $table !== false;
-    }
 }

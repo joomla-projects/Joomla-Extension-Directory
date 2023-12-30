@@ -17,6 +17,7 @@ namespace Jed\Component\Jed\Site\View\Jedticketform;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
@@ -135,7 +136,7 @@ class HtmlView extends BaseHtmlView
         $this->state   = $this->get('State');
         $this->item    = $this->get('Item');
         $this->params  = $app->getParams('com_jed');
-        $this->canSave = $this->get('CanSave');
+        $this->canSave = JedHelper::canSave();
         $this->form    = $this->get('Form');
 
         // Check for errors.
