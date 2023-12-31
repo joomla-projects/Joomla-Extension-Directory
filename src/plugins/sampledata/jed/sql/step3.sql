@@ -1004,7 +1004,7 @@ INSERT INTO `#__user_usergroup_map` (`user_id`, `group_id`) VALUES
 	(1099, 2);
 
 INSERT INTO `#__users` (`id`, `name`, `username`, `email`, `password`, `block`, `sendEmail`, `registerDate`, `lastvisitDate`, `activation`, `params`, `lastResetTime`, `resetCount`, `otpKey`, `otep`, `requireReset`, `authProvider`) VALUES
-	(16, 'Test User', 'testuserj4final', 'whocares@dummy.org', '$2y$10$OmxBnhh1/XtxlDiS8eEkaO.bIuT7G8vPPLq0KW8hg.3ULYwg/Z9Zq', 0, 0, '2022-01-29 15:08:21', '2023-01-01 10:30:33', '', '{}', NULL, 0, '', '', 0, ''),
+	(16, 'Test User', 'testuserj5final', 'whocares@dummy.org', '$2y$10$OmxBnhh1/XtxlDiS8eEkaO.bIuT7G8vPPLq0KW8hg.3ULYwg/Z9Zq', 0, 0, '2022-01-29 15:08:21', '2023-01-01 10:30:33', '', '{}', NULL, 0, '', '', 0, ''),
 	(101, 'Rachel Price', 'testuser101', 'testuser101@dummy.org', '$2y$10$JuCalnNAteeHHCV62yO13.IYY.XlsJ3utSxw5cc1hUbnWyCLE9VSi', 0, 0, '2023-04-19 10:59:18', '2023-01-01 10:30:33', '', '{}', NULL, 0, '', '', 0, ''),
 	(102, 'Patricia Chan', 'testuser102', 'testuser102@dummy.org', '$2y$10$JuCalnNAteeHHCV62yO13.IYY.XlsJ3utSxw5cc1hUbnWyCLE9VSi', 0, 0, '2023-04-19 10:59:18', '2023-01-01 10:30:33', '', '{}', NULL, 0, '', '', 0, ''),
 	(103, 'Melanie Peters', 'testuser103', 'testuser103@dummy.org', '$2y$10$JuCalnNAteeHHCV62yO13.IYY.XlsJ3utSxw5cc1hUbnWyCLE9VSi', 0, 0, '2023-04-19 10:59:18', '2023-01-01 10:30:33', '', '{}', NULL, 0, '', '', 0, ''),
