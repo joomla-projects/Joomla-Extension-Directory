@@ -739,7 +739,7 @@ class CategoryModel extends ListModel
         if (!\is_object($this->ll_category_item)) {
             $this->getCategory();
         }
-        $id                          = Factory::getApplication()->getInput()->getInt('id', -1);
+        $id                           = Factory::getApplication()->getInput()->getInt('id', -1);
         $this->l_category_leftsibling = $this->ll_category_item[$id]->lft;
         return $this->l_category_leftsibling;
     }
@@ -757,7 +757,7 @@ class CategoryModel extends ListModel
         if (!\is_object($this->l_category_item)) {
             $this->getCategory();
         }
-        $id                           = Factory::getApplication()->getInput()->getInt('id', -1);
+        $id                            = Factory::getApplication()->getInput()->getInt('id', -1);
         $this->l_category_rightsibling = $this->l_category_item[$id]->rgt;
         return $this->l_category_rightsibling ;
     }
@@ -775,7 +775,7 @@ class CategoryModel extends ListModel
         if (!\is_object($this->l_category_item)) {
             $this->getCategory();
         }
-        $id                       = Factory::getApplication()->getInput()->getInt('id', -1);
+        $id                        = Factory::getApplication()->getInput()->getInt('id', -1);
         $this->l_category_children = $this->l_category_item[$id]->getChildren();
 
         return $this->l_category_children;
@@ -794,8 +794,8 @@ class CategoryModel extends ListModel
         if (!\is_object($this->l_category_item)) {
             $this->getCategory();
         }
-        $id                     = Factory::getApplication()->getInput()->getInt('id', -1);
-        $category_parent_id     = $this->l_category_item[$id]->parent_id;
+        $id                      = Factory::getApplication()->getInput()->getInt('id', -1);
+        $category_parent_id      = $this->l_category_item[$id]->parent_id;
         $this->l_category_parent = $this->l_category_item[$category_parent_id];
         return $this->l_category_parent;
     }
