@@ -295,7 +295,7 @@ class ExtensionModel extends ItemModel
         $ret = [
             'Free'  => [],
             'Paid'  => [],
-            'Cloud' => []
+            'Cloud' => [],
         ];
 
         $db = $this->getDatabase();
