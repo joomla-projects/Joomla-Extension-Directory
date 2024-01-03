@@ -42,7 +42,6 @@ class TicketmessageModel extends ItemModel
     private mixed $item = null;
 
     /**
-     *
      * Data Table
      *
      * @since 4.0.0

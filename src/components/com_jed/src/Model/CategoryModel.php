@@ -42,7 +42,7 @@ class CategoryModel extends ListModel
     /**
      * Category items data
      *
-     * @var  array
+     * @var   array
      * @since 4.0.0
      */
     protected array $_category_item = [];
@@ -50,7 +50,7 @@ class CategoryModel extends ListModel
     /**
      * Array of child-categories
      *
-     * @var  CategoryNode[]|null|bool
+     * @var   CategoryNode[]|null|bool
      * @since 4.0.0
      */
     protected ?array $_category_children = null;
@@ -58,21 +58,21 @@ class CategoryModel extends ListModel
     /**
      * Parent category of the current one
      *
-     * @var  bool|CategoryNode|null
+     * @var   bool|CategoryNode|null
      * @since 4.0.0
      */
     protected CategoryNode|bool|null $_category_parent = null;
     /**
      * Parent category of the current one
      *
-     * @var  bool|CategoryNode|null
+     * @var   bool|CategoryNode|null
      * @since 4.0.0
      */
     protected CategoryNode|bool|null $_category_leftsibling = null;
     /**
      * Parent category of the current one
      *
-     * @var  CategoryNode|null
+     * @var   CategoryNode|null
      * @since 4.0.0
      */
     protected ?CategoryNode $_category_rightsibling = null;
@@ -80,15 +80,15 @@ class CategoryModel extends ListModel
     /**
      * Array of checked categories -- used to save values when _nodes are null
      *
-     * @var    boolean[]
-     * @since  1.6
+     * @var   boolean[]
+     * @since 1.6
      */
     protected array $_checkedCategories;
 
     /**
      * Constructor.
      *
-     * @param   array  $config  An optional associative array of configuration settings.
+     * @param array $config An optional associative array of configuration settings.
      *
      * @see    JController
      * @since  4.0.0
@@ -170,14 +170,13 @@ class CategoryModel extends ListModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @param   string  $ordering   Elements order
-     * @param   string  $direction  Order direction
+     * @param string $ordering  Elements order
+     * @param string $direction Order direction
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
     protected function populateState($ordering = null, $direction = null): void
     {
@@ -270,7 +269,7 @@ class CategoryModel extends ListModel
      *
      * @return QueryInterface
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function getListQuery(): QueryInterface
@@ -341,7 +340,7 @@ class CategoryModel extends ListModel
     /**
      * Get array of review scores for extension
      *
-     * @param   int  $extension_id
+     * @param int $extension_id
      *
      * @return array
      *
@@ -464,7 +463,7 @@ class CategoryModel extends ListModel
     /**
      * Retrieve a list of developers matching a search query.
      *
-     * @param   string  $search  The string to filter on
+     * @param string $search The string to filter on
      *
      * @return array List of developers.
      *
@@ -491,7 +490,7 @@ class CategoryModel extends ListModel
     /**
      * Get the used extension types.
      *
-     * @param   int  $extensionId  The extension ID to get the types for
+     * @param int $extensionId The extension ID to get the types for
      *
      * @return array  List of used extension types.
      *
@@ -509,7 +508,7 @@ class CategoryModel extends ListModel
     /**
      * Get the images.
      *
-     * @param   int  $extensionId  The extension ID to get the images for
+     * @param int $extensionId The extension ID to get the images for
      *
      * @return array  List of used images.
      *
@@ -538,7 +537,7 @@ class CategoryModel extends ListModel
     /**
      * Get the related categories.
      *
-     * @param   int  $extensionId  The extension ID to get the categories for
+     * @param int $extensionId The extension ID to get the categories for
      *
      * @return array  List of related categories.
      *
@@ -557,9 +556,9 @@ class CategoryModel extends ListModel
     /**
      * Method to get category data for the current category
      *
-     * @return  array
+     * @return array
      *
-     * @since   1.5
+     * @since  1.5
      * @throws Exception
      */
     public function getCategory(): array
@@ -730,9 +729,9 @@ class CategoryModel extends ListModel
     /**
      * Get the left sibling (adjacent) categories.
      *
-     * @return  CategoryNode|bool|null  An array of categories or false if an error occurs.
+     * @return CategoryNode|bool|null  An array of categories or false if an error occurs.
      *
-     * @since   1.6
+     * @since  1.6
      * @throws Exception
      */
     public function &getLeftSibling(): CategoryNode|bool|null
@@ -748,9 +747,9 @@ class CategoryModel extends ListModel
     /**
      * Get the right sibling (adjacent) categories.
      *
-     * @return  CategoryNode|bool|null  An array of categories or false if an error occurs.
+     * @return CategoryNode|bool|null  An array of categories or false if an error occurs.
      *
-     * @since   1.6
+     * @since  1.6
      * @throws Exception
      */
     public function &getRightSibling(): CategoryNode|bool|null
@@ -766,9 +765,9 @@ class CategoryModel extends ListModel
     /**
      * Get the child categories.
      *
-     * @return  array  An array of categories or false if an error occurs.
+     * @return array  An array of categories or false if an error occurs.
      *
-     * @since   1.6
+     * @since  1.6
      * @throws Exception
      */
     public function &getChildren(): array
@@ -785,9 +784,9 @@ class CategoryModel extends ListModel
     /**
      * Get the parent category.
      *
-     * @return   CategoryNode An array of categories or false if an error occurs.
+     * @return CategoryNode An array of categories or false if an error occurs.
      *
-     * @since   1.6
+     * @since  1.6
      * @throws Exception
      */
     public function getParent(): CategoryNode
