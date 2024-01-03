@@ -151,5 +151,4 @@ class HtmlView extends BaseHtmlView
 
         parent::display($tpl);
     }
-
 }

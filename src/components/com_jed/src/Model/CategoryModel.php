@@ -566,7 +566,7 @@ class CategoryModel extends ListModel
         try {
             $db = $this->getDatabase();
         } catch (DatabaseNotFoundException $e) {
-            @trigger_error('Database must be set, this will not be caught anymore in 5.0. - '.$e->getMessage(), E_USER_DEPRECATED);
+            @trigger_error('Database must be set, this will not be caught anymore in 5.0. - ' . $e->getMessage(), E_USER_DEPRECATED);
             $db = Factory::getContainer()->get(DatabaseInterface::class);
         }
         $id         = Factory::getApplication()->getInput()->getInt('id', -1);

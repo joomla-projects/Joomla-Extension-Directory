@@ -601,7 +601,7 @@ class JedHelper
     {
         try {
             $user = Factory::getApplication()->getIdentity();
-            if($user->id <> null) {
+            if ($user->id <> null) {
                 //user must be logged in
                 return true;
             }
@@ -610,5 +610,4 @@ class JedHelper
         }
         return false;
     }
-
 }

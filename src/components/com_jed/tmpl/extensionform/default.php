@@ -46,23 +46,23 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
 <div class="extension-edit front-end-edit">
 
     <?php
-        if (!$isLoggedIn) {
-            try {
-                $app = JFactory::getApplication();
-            } catch (Exception $e) {
-            }
-
-            $app->enqueueMessage(Text::_('COM_JED_EXTENSIONS_NO_ACCESS'), 'success');
-            $app->redirect($redirectURL);
-        } else {
-            $fieldsets['overview']['title']       = Text::_('COM_JED_REVIEW_OVERVIEW_TITLE') . $this->extension_details->title;
-            $fieldsets['overview']['description'] = Text::_('COM_JED_REVIEW_OVERVIEW_DESCR');
-            $fieldsets['overview']['fields']      = ['id',
-                'supply_option_id', 'version',
-                'extension_id', 'used_for'];
-            $fieldsets['overview']['hidden']      = ['id', 'extension_id'];
+    if (!$isLoggedIn) {
+        try {
+            $app = JFactory::getApplication();
+        } catch (Exception $e) {
         }
-?>
+
+        $app->enqueueMessage(Text::_('COM_JED_EXTENSIONS_NO_ACCESS'), 'success');
+        $app->redirect($redirectURL);
+    } else {
+        $fieldsets['overview']['title']       = Text::_('COM_JED_REVIEW_OVERVIEW_TITLE') . $this->extension_details->title;
+        $fieldsets['overview']['description'] = Text::_('COM_JED_REVIEW_OVERVIEW_DESCR');
+        $fieldsets['overview']['fields']      = ['id',
+            'supply_option_id', 'version',
+            'extension_id', 'used_for'];
+        $fieldsets['overview']['hidden']      = ['id', 'extension_id'];
+    }
+    ?>
     <?php if (!$canEdit) : ?>
         <h3>
             <?php throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403); ?>

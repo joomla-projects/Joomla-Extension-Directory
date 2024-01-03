@@ -111,7 +111,8 @@ class TicketmessageModel extends ItemModel
 
             // Attempt to load the row.
             if ($table->load($pk)) {
-                if (empty($result) || JedHelper::isAdminOrSuperUser()
+                if (
+                    empty($result) || JedHelper::isAdminOrSuperUser()
                     || $table->created_by == Factory::getApplication()->getIdentity()->id
                 ) {
                     // Check published state.

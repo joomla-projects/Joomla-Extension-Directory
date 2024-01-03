@@ -519,5 +519,4 @@ class VelreportformModel extends FormModel
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
         }
     }
-
 }
