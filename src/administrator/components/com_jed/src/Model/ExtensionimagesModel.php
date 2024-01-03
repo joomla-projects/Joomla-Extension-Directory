@@ -40,7 +40,7 @@ class ExtensionimagesModel extends ListModel
     public function __construct($config = [])
     {
         if (empty($config['filter_fields'])) {
-            $config['filter_fields'] = ['id', 'a.id', 'state', 'a.state', 'ordering', 'a.ordering', 'created_by', 'a.created_by', 'modified_by', 'a.modified_by', 'extension_id', 'a.extension_id', 'filename', 'a.filename',];
+            $config['filter_fields'] = ['id', 'a.id', 'state', 'a.state', 'ordering', 'a.ordering', 'created_by', 'a.created_by', 'modified_by', 'a.modified_by', 'extension_id', 'a.extension_id', 'filename', 'a.filename'];
         }
 
         parent::__construct($config);

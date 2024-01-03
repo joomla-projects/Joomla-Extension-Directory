@@ -208,7 +208,7 @@ class ExtensionModel extends ItemModel
             $supplytype    = match ($s->supply_option_id) {
                 1 => 'Free',
                 2 => 'Paid',
-                3 => 'Cloud',
+                3 => 'Cloud'
             };
             $score         = $score + $s->functionality_score;
             $score         = $score + $s->ease_of_use_score;
@@ -295,12 +295,12 @@ class ExtensionModel extends ItemModel
         $ret = [
             'Free'  => [],
             'Paid'  => [],
-            'Cloud' => [],
+            'Cloud' => []
         ];
 
         $db = $this->getDatabase();
 
-        foreach (['Free' => 1, 'Paid' => 2, 'Cloud' => 3,] as $key => $supplyId) {
+        foreach (['Free' => 1, 'Paid' => 2, 'Cloud' => 3] as $key => $supplyId) {
             $query = $db->getQuery(true)
                 ->select('*')
                 ->from($db->quoteName('#__jed_reviews'))
