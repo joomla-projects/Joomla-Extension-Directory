@@ -45,7 +45,7 @@ class CategoryModel extends ListModel
      * @var   array
      * @since 4.0.0
      */
-    protected array $_category_item = [];
+    protected array $l_category_item = [];
 
     /**
      * Array of child-categories
@@ -53,7 +53,7 @@ class CategoryModel extends ListModel
      * @var   CategoryNode[]|null|bool
      * @since 4.0.0
      */
-    protected ?array $_category_children = null;
+    protected ?array $l_category_children = null;
 
     /**
      * Parent category of the current one
@@ -61,21 +61,21 @@ class CategoryModel extends ListModel
      * @var   bool|CategoryNode|null
      * @since 4.0.0
      */
-    protected CategoryNode|bool|null $_category_parent = null;
+    protected CategoryNode|bool|null $l_category_parent = null;
     /**
      * Parent category of the current one
      *
      * @var   bool|CategoryNode|null
      * @since 4.0.0
      */
-    protected CategoryNode|bool|null $_category_leftsibling = null;
+    protected CategoryNode|bool|null $l_category_leftsibling = null;
     /**
      * Parent category of the current one
      *
      * @var   CategoryNode|null
      * @since 4.0.0
      */
-    protected ?CategoryNode $_category_rightsibling = null;
+    protected ?CategoryNode $l_category_rightsibling = null;
 
     /**
      * Array of checked categories -- used to save values when _nodes are null
@@ -83,7 +83,7 @@ class CategoryModel extends ListModel
      * @var   boolean[]
      * @since 1.6
      */
-    protected array $_checkedCategories;
+    protected array $l_checkedCategories;
 
     /**
      * Constructor.
@@ -579,7 +579,7 @@ class CategoryModel extends ListModel
             }
 
             // Record that has this $id has been checked
-            $this->_checkedCategories[$id] = true;
+            $this->l_checkedCategories[$id] = true;
 
             $query = $db->getQuery(true)->select(
                 [
@@ -721,7 +721,7 @@ class CategoryModel extends ListModel
                 $categories[$id] = null;
             }
         }
-        $this->_category_item = $categories;
+        $this->ll_category_item = $categories;
 
         return $categories;
     }
@@ -736,12 +736,12 @@ class CategoryModel extends ListModel
      */
     public function &getLeftSibling(): CategoryNode|bool|null
     {
-        if (!\is_object($this->_category_item)) {
+        if (!\is_object($this->ll_category_item)) {
             $this->getCategory();
         }
         $id                          = Factory::getApplication()->getInput()->getInt('id', -1);
-        $this->_category_leftsibling = $this->_category_item[$id]->lft;
-        return $this->_category_leftsibling;
+        $this->l_category_leftsibling = $this->ll_category_item[$id]->lft;
+        return $this->l_category_leftsibling;
     }
 
     /**
@@ -754,12 +754,12 @@ class CategoryModel extends ListModel
      */
     public function &getRightSibling(): CategoryNode|bool|null
     {
-        if (!\is_object($this->_category_item)) {
+        if (!\is_object($this->l_category_item)) {
             $this->getCategory();
         }
         $id                           = Factory::getApplication()->getInput()->getInt('id', -1);
-        $this->_category_rightsibling = $this->_category_item[$id]->rgt;
-        return $this->_category_rightsibling ;
+        $this->l_category_rightsibling = $this->l_category_item[$id]->rgt;
+        return $this->l_category_rightsibling ;
     }
 
     /**
@@ -772,13 +772,13 @@ class CategoryModel extends ListModel
      */
     public function &getChildren(): array
     {
-        if (!\is_object($this->_category_item)) {
+        if (!\is_object($this->l_category_item)) {
             $this->getCategory();
         }
         $id                       = Factory::getApplication()->getInput()->getInt('id', -1);
-        $this->_category_children = $this->_category_item[$id]->getChildren();
+        $this->l_category_children = $this->l_category_item[$id]->getChildren();
 
-        return $this->_category_children;
+        return $this->l_category_children;
     }
 
     /**
@@ -791,12 +791,12 @@ class CategoryModel extends ListModel
      */
     public function getParent(): CategoryNode
     {
-        if (!\is_object($this->_category_item)) {
+        if (!\is_object($this->l_category_item)) {
             $this->getCategory();
         }
         $id                     = Factory::getApplication()->getInput()->getInt('id', -1);
-        $category_parent_id     = $this->_category_item[$id]->parent_id;
-        $this->_category_parent = $this->_category_item[$category_parent_id];
-        return $this->_category_parent;
+        $category_parent_id     = $this->l_category_item[$id]->parent_id;
+        $this->l_category_parent = $this->l_category_item[$category_parent_id];
+        return $this->l_category_parent;
     }
 }
