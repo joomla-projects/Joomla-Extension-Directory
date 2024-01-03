@@ -31,7 +31,7 @@ class CategoriesModel extends ListModel
     public string $_context = 'com_jed.categories';
     public array $_items;
     protected string $_extension = 'com_jed';
-    protected int $_total = 0;
+    protected int $_total        = 0;
 
     /**
      * Parent category of the current one

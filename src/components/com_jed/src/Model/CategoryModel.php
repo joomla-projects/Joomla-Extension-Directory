@@ -570,8 +570,8 @@ class CategoryModel extends ListModel
             @trigger_error('Database must be set, this will not be caught anymore in 5.0. - '.$e->getMessage(), E_USER_DEPRECATED);
             $db = Factory::getContainer()->get(DatabaseInterface::class);
         }
-        $id  = Factory::getApplication()->getInput()->getInt('id', -1);
-        $extension = 'com_jed';
+        $id         = Factory::getApplication()->getInput()->getInt('id', -1);
+        $extension  = 'com_jed';
         $categories = [];
 
         if ($id <> -1) {
@@ -740,7 +740,7 @@ class CategoryModel extends ListModel
         if (!\is_object($this->_category_item)) {
             $this->getCategory();
         }
-        $id  = Factory::getApplication()->getInput()->getInt('id', -1);
+        $id                          = Factory::getApplication()->getInput()->getInt('id', -1);
         $this->_category_leftsibling = $this->_category_item[$id]->lft;
         return $this->_category_leftsibling;
     }
@@ -758,7 +758,7 @@ class CategoryModel extends ListModel
         if (!\is_object($this->_category_item)) {
             $this->getCategory();
         }
-        $id  = Factory::getApplication()->getInput()->getInt('id', -1);
+        $id                           = Factory::getApplication()->getInput()->getInt('id', -1);
         $this->_category_rightsibling = $this->_category_item[$id]->rgt;
         return $this->_category_rightsibling ;
     }
@@ -776,7 +776,7 @@ class CategoryModel extends ListModel
         if (!\is_object($this->_category_item)) {
             $this->getCategory();
         }
-        $id  = Factory::getApplication()->getInput()->getInt('id', -1);
+        $id                       = Factory::getApplication()->getInput()->getInt('id', -1);
         $this->_category_children = $this->_category_item[$id]->getChildren();
 
         return $this->_category_children;
@@ -795,8 +795,8 @@ class CategoryModel extends ListModel
         if (!\is_object($this->_category_item)) {
             $this->getCategory();
         }
-        $id  = Factory::getApplication()->getInput()->getInt('id', -1);
-        $category_parent_id = $this->_category_item[$id]->parent_id;
+        $id                     = Factory::getApplication()->getInput()->getInt('id', -1);
+        $category_parent_id     = $this->_category_item[$id]->parent_id;
         $this->_category_parent = $this->_category_item[$category_parent_id];
         return $this->_category_parent;
     }

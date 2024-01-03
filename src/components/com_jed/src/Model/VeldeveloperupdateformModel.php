@@ -181,8 +181,8 @@ class VeldeveloperupdateformModel extends FormModel
             if (isset($table) !== false && $table->load($id) && !empty($table->id)) {
                 $properties = $table->getTableProperties();
                 $table_data = ArrayHelper::toObject($properties, stdClass::class);
-                $user = Factory::getApplication()->getIdentity();
-                $id   = $table->id;
+                $user       = Factory::getApplication()->getIdentity();
+                $id         = $table->id;
                 if (empty($id) || JedHelper::isAdminOrSuperUser() || $table_data->created_by == Factory::getApplication()->getIdentity()->id) {
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 
@@ -412,10 +412,10 @@ class VeldeveloperupdateformModel extends FormModel
                 if (isset($message_out->subject)) {
                     JedemailHelper::sendEmail($message_out->subject, $message_out->template, $user, 'dummy@dummy.com');
 
-                    $ticket_message['id']                = 0;
-                    $ticket_message['subject']           = $message_out->subject;
-                    $ticket_message['message']           = $message_out->template;
-                    $ticket_message['message_direction'] = 0; /* 1 for coming in, 0 for going out */
+                    $ticket_message['id']                        = 0;
+                    $ticket_message['subject']                   = $message_out->subject;
+                    $ticket_message['message']                   = $message_out->template;
+                    $ticket_message['message_direction']         = 0; /* 1 for coming in, 0 for going out */
                     $ticket_message['created_by']                = -1;
                     $ticket_message['modified_by']               = -1;
                     $ticket_message_model->save($ticket_message);
