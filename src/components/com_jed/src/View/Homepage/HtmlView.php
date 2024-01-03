@@ -15,8 +15,6 @@ namespace Jed\Component\Jed\Site\View\Homepage;
 
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
-use function defined;
-
 /**
  * Homepage view.
  *

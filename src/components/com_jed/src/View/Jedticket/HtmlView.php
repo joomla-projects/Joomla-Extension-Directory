@@ -17,7 +17,6 @@ namespace Jed\Component\Jed\Site\View\Jedticket;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;

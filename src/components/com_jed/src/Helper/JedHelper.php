@@ -17,11 +17,8 @@ use Exception;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\User;
-
-use function defined;
 
 /**
  * JED Helper
@@ -36,15 +33,16 @@ class JedHelper
      *
      * @return User\User
      *
+     * @throws Exception
      * @since 4.0.0
      */
     public static function getUser(): User\User
     {
-        //$user   = Factory::getUser();
         $app = null;
         try {
             $app = Factory::getApplication();
         } catch (Exception $e) {
+            throw new Exception($e->getMessage(), $e->getCode());
         }
         return $app->getSession()->get('user');
     }
@@ -67,7 +65,7 @@ class JedHelper
             $userFactory = $container->get('user.factory');
 
             return $userFactory->loadUserById($userId);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return new User\User();
         }
     }
@@ -170,11 +168,10 @@ class JedHelper
 
 
         foreach ($ticket as $k => $v) {
-            $columns[] = $k;
             if (str_ends_with($k, "_on")) {
-                $values[] = $v;
+                $ticket[$k] = $v;
             } else {
-                $values[] = $db->quote($v);
+                $ticket[$k] = $db->quote($v);
             }
         }
 
@@ -289,16 +286,6 @@ class JedHelper
         $ticket['allocated_to']            = 0;
         $ticket['parent_id']               = -1;
 
-
-        foreach ($ticket as $k => $v) {
-            $columns[] = $k;
-            if (str_ends_with($k, "_on")) {
-                $values[] = $v;
-            } else {
-                $values[] = $db->quote($v);
-            }
-        }
-
         return $ticket;
     }
 
@@ -307,6 +294,7 @@ class JedHelper
      *
      * @return array
      *
+     * @throws Exception
      * @since 4.0.0
      */
     public static function CreateEmptyTicketMessage(): array
@@ -351,10 +339,11 @@ class JedHelper
     /**
      * IsLoggedIn
      *
-     * Returns if user is logged in
+     * Returns if user is logged-in
      *
      * @return bool
      *
+     * @throws Exception
      * @since 4.0.0
      */
     public static function IsLoggedIn(): bool
@@ -371,28 +360,23 @@ class JedHelper
     /**
      * Gets the edit permission for a user
      *
-     * @param mixed $item The item
+     * @param   mixed  $item  The item
      *
      * @return bool
      *
+     * @throws Exception
      * @since 4.0.0
      */
-    public static function canUserEdit($item): bool
+    public static function canUserEdit(mixed $item): bool
     {
 
-        $permission = false;
+        $permission = true;
         $user       = Factory::getApplication()->getIdentity();
 
         if ($user->authorise('core.edit', 'com_jed')) {
             $permission = true;
-        } else {
-            if (isset($item->created_by)) {
-                if ($item->created_by == $user->id) {
-                    $permission = true;
-                }
-            } else {
-                $permission = true;
-            }
+        } elseif (isset($item->created_by)) {
+            $permission = true;
         }
 
         return $permission;
@@ -433,7 +417,7 @@ class JedHelper
         // TODO Check if the resized file exists; if not resize it
 
         // TODO If the file cannot be resized AND I am configured to use a CDN, fall back to the legacy CDN URLs
-        if (false && $params->get('use_cdn', 0)) {
+        if ($params->get('use_cdn', 0)) {
             $bestFilename = match ($size) {
                 ImageSize::ORIGINAL => $filename,
                 ImageSize::SMALL    => $partialName . '_resizeDown400px175px16' . $extension,
@@ -449,19 +433,19 @@ class JedHelper
         }
 
         // No CDN (e.g. local development). Where should I get my image from?
-        if (File::exists(JPATH_ROOT . '/' . ltrim($bestFilename, '/\\'))) {
+        if (file_exists(JPATH_ROOT . '/' . ltrim($bestFilename, '/\\'))) {
             return Uri::root() . ltrim($bestFilename, '/\\');
         }
 
-        if (File::exists(JPATH_ROOT . '/' . ltrim($filename, '/\\'))) {
+        if (file_exists(JPATH_ROOT . '/' . ltrim($filename, '/\\'))) {
             return Uri::root() . ltrim($filename, '/\\');
         }
 
-        if (File::exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($bestFilename, '/\\'))) {
+        if (file_exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($bestFilename, '/\\'))) {
             return Uri::root() . 'media/com_jed/' . ltrim($bestFilename, '/\\');
         }
 
-        if (File::exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($filename, '/\\'))) {
+        if (file_exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($filename, '/\\'))) {
             return Uri::root() . 'media/com_jed/' . ltrim($filename, '/\\');
         }
 
@@ -484,10 +468,11 @@ class JedHelper
     }
 
     /**
-     * Checks whether or not a user is manager or superuser
+     * Checks whether a user is manager or superuser
      *
      * @return bool
      *
+     * @throws Exception
      * @since 4.0.0
      */
     public static function isAdminOrSuperUser(): bool
@@ -497,7 +482,7 @@ class JedHelper
 
             return in_array("8", $user->groups) || in_array("7", $user->groups);
         } catch (Exception $exc) {
-            return false;
+            throw new Exception($exc->getMessage(), $exc->getCode());
         }
     }
 
@@ -557,10 +542,11 @@ class JedHelper
     /**
      * This method advises if the $id of the item belongs to the current user
      *
-     * @param int    $id    The id of the item
-     * @param string $table The name of the table
+     * @param   int     $id     The id of the item
+     * @param   string  $table  The name of the table
      *
      * @return bool             true if the user is the owner of the row, false if not.
+     * @throws Exception
      * @since  4.0.0
      */
     public static function userIDItem(int $id, string $table): bool
@@ -584,7 +570,7 @@ class JedHelper
                 return false;
             }
         } catch (Exception $exc) {
-            return false;
+            throw new Exception($exc->getMessage(), $exc->getCode());
         }
     }
 
@@ -599,9 +585,29 @@ class JedHelper
     public static function getAliasFieldNameByView(string $view): string
     {
         return match ($view) {
-            'extension', 'extensionform' => 'alias',
-            'review', 'reviewform' => 'alias',
+            'extension', 'extensionform', 'review', 'reviewform' => 'alias',
             default => "",
         };
+    }
+
+    /**
+     * if User is logged in then can save data
+     *
+     * @since 4.0.0
+     *
+     * @throws Exception
+     */
+    public static function canSave(): bool
+    {
+        try {
+            $user = Factory::getApplication()->getIdentity();
+            if ($user->id <> null) {
+                //user must be logged in
+                return true;
+            }
+        } catch (Exception $exc) {
+            throw new Exception($exc->getMessage(), $exc->getCode());
+        }
+        return false;
     }
 }

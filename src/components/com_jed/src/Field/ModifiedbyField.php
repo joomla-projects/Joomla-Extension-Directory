@@ -13,7 +13,6 @@ namespace Jed\Component\Jed\Site\Field;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
 
@@ -37,6 +36,7 @@ class ModifiedbyField extends FormField
      *
      * @return string  The field input markup.
      *
+     * @throws \Exception
      * @since 4.0.0
      */
     protected function getInput(): string

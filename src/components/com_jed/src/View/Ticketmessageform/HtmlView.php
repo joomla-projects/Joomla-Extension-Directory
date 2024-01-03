@@ -82,7 +82,6 @@ class HtmlView extends BaseHtmlView
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
-        $title = null;
 
         // Because the application sets a default page title,
         // we need to get it from the menu item itself
@@ -133,12 +132,11 @@ class HtmlView extends BaseHtmlView
     public function display($tpl = null): void
     {
         $app  = Factory::getApplication();
-        $user = Factory::getApplication()->getIdentity();
 
         $this->state   = $this->get('State');
         $this->item    = $this->get('Item');
         $this->params  = $app->getParams('com_jed');
-        $this->canSave = $this->get('CanSave');
+        $this->canSave = JedHelper::canSave();
         $this->form    = $this->get('Form');
 
         // Check for errors.

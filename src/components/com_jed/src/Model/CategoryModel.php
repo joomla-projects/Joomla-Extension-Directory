@@ -42,53 +42,53 @@ class CategoryModel extends ListModel
     /**
      * Category items data
      *
-     * @var  array
+     * @var   array
      * @since 4.0.0
      */
-    protected array $local_category_item = [];
+    protected array $l_category_item = [];
 
     /**
      * Array of child-categories
      *
-     * @var  CategoryNode[]|null|bool
+     * @var   CategoryNode[]|null|bool
      * @since 4.0.0
      */
-    protected ?array $local_category_children = null;
+    protected ?array $l_category_children = null;
 
     /**
      * Parent category of the current one
      *
-     * @var  bool|CategoryNode|null
+     * @var   bool|CategoryNode|null
      * @since 4.0.0
      */
-    protected CategoryNode|bool|null $local_category_parent = null;
+    protected CategoryNode|bool|null $l_category_parent = null;
     /**
      * Parent category of the current one
      *
-     * @var  bool|CategoryNode|null
+     * @var   bool|CategoryNode|null
      * @since 4.0.0
      */
-    protected CategoryNode|bool|null $local_category_leftsibling = null;
+    protected CategoryNode|bool|null $l_category_leftsibling = null;
     /**
      * Parent category of the current one
      *
-     * @var  CategoryNode|null
+     * @var   CategoryNode|null
      * @since 4.0.0
      */
-    protected ?CategoryNode $local_category_rightsibling = null;
+    protected ?CategoryNode $l_category_rightsibling = null;
 
     /**
      * Array of checked categories -- used to save values when _nodes are null
      *
-     * @var    boolean[]
-     * @since  1.6
+     * @var   boolean[]
+     * @since 1.6
      */
-    protected array $local_checkedCategories;
+    protected array $l_checkedCategories;
 
     /**
      * Constructor.
      *
-     * @param   array  $config  An optional associative array of configuration settings.
+     * @param array $config An optional associative array of configuration settings.
      *
      * @see    JController
      * @since  4.0.0
@@ -166,18 +166,17 @@ class CategoryModel extends ListModel
 
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @param   string  $ordering   Elements order
-     * @param   string  $direction  Order direction
+     * @param string $ordering  Elements order
+     * @param string $direction Order direction
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
     protected function populateState($ordering = null, $direction = null): void
     {
@@ -270,7 +269,7 @@ class CategoryModel extends ListModel
      *
      * @return QueryInterface
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function getListQuery(): QueryInterface
@@ -341,7 +340,7 @@ class CategoryModel extends ListModel
     /**
      * Get array of review scores for extension
      *
-     * @param   int  $extension_id
+     * @param int $extension_id
      *
      * @return array
      *
@@ -464,7 +463,7 @@ class CategoryModel extends ListModel
     /**
      * Retrieve a list of developers matching a search query.
      *
-     * @param   string  $search  The string to filter on
+     * @param string $search The string to filter on
      *
      * @return array List of developers.
      *
@@ -491,7 +490,7 @@ class CategoryModel extends ListModel
     /**
      * Get the used extension types.
      *
-     * @param   int  $extensionId  The extension ID to get the types for
+     * @param int $extensionId The extension ID to get the types for
      *
      * @return array  List of used extension types.
      *
@@ -509,7 +508,7 @@ class CategoryModel extends ListModel
     /**
      * Get the images.
      *
-     * @param   int  $extensionId  The extension ID to get the images for
+     * @param int $extensionId The extension ID to get the images for
      *
      * @return array  List of used images.
      *
@@ -538,7 +537,7 @@ class CategoryModel extends ListModel
     /**
      * Get the related categories.
      *
-     * @param   int  $extensionId  The extension ID to get the categories for
+     * @param int $extensionId The extension ID to get the categories for
      *
      * @return array  List of related categories.
      *
@@ -557,9 +556,9 @@ class CategoryModel extends ListModel
     /**
      * Method to get category data for the current category
      *
-     * @return  array
+     * @return array
      *
-     * @since   1.5
+     * @since  1.5
      * @throws Exception
      */
     public function getCategory(): array
@@ -567,7 +566,7 @@ class CategoryModel extends ListModel
         try {
             $db = $this->getDatabase();
         } catch (DatabaseNotFoundException $e) {
-            @trigger_error(sprintf('Database must be set, this will not be caught anymore in 5.0.'), E_USER_DEPRECATED);
+            @trigger_error('Database must be set, this will not be caught anymore in 5.0. - ' . $e->getMessage(), E_USER_DEPRECATED);
             $db = Factory::getContainer()->get(DatabaseInterface::class);
         }
         $id         = Factory::getApplication()->getInput()->getInt('id', -1);
@@ -580,7 +579,7 @@ class CategoryModel extends ListModel
             }
 
             // Record that has this $id has been checked
-            $this->local_checkedCategories[$id] = true;
+            $this->l_checkedCategories[$id] = true;
 
             $query = $db->getQuery(true)->select(
                 [
@@ -722,7 +721,7 @@ class CategoryModel extends ListModel
                 $categories[$id] = null;
             }
         }
-        $this->local_category_item = $categories;
+        $this->ll_category_item = $categories;
 
         return $categories;
     }
@@ -730,74 +729,74 @@ class CategoryModel extends ListModel
     /**
      * Get the left sibling (adjacent) categories.
      *
-     * @return  CategoryNode|bool|null  An array of categories or false if an error occurs.
+     * @return CategoryNode|bool|null  An array of categories or false if an error occurs.
      *
-     * @since   1.6
+     * @since  1.6
      * @throws Exception
      */
     public function &getLeftSibling(): CategoryNode|bool|null
     {
-        if (!\is_object($this->local_category_item)) {
+        if (!\is_object($this->ll_category_item)) {
             $this->getCategory();
         }
-        $id                               = Factory::getApplication()->getInput()->getInt('id', -1);
-        $this->local_category_leftsibling = $this->local_category_item[$id]->lft;
-        return $this->local_category_leftsibling;
+        $id                           = Factory::getApplication()->getInput()->getInt('id', -1);
+        $this->l_category_leftsibling = $this->ll_category_item[$id]->lft;
+        return $this->l_category_leftsibling;
     }
 
     /**
      * Get the right sibling (adjacent) categories.
      *
-     * @return  CategoryNode|bool|null  An array of categories or false if an error occurs.
+     * @return CategoryNode|bool|null  An array of categories or false if an error occurs.
      *
-     * @since   1.6
+     * @since  1.6
      * @throws Exception
      */
     public function &getRightSibling(): CategoryNode|bool|null
     {
-        if (!\is_object($this->local_category_item)) {
+        if (!\is_object($this->l_category_item)) {
             $this->getCategory();
         }
-        $id                                = Factory::getApplication()->getInput()->getInt('id', -1);
-        $this->local_category_rightsibling = $this->local_category_item[$id]->rgt;
-        return $this->local_category_rightsibling ;
+        $id                            = Factory::getApplication()->getInput()->getInt('id', -1);
+        $this->l_category_rightsibling = $this->l_category_item[$id]->rgt;
+        return $this->l_category_rightsibling ;
     }
 
     /**
      * Get the child categories.
      *
-     * @return  array  An array of categories or false if an error occurs.
+     * @return array  An array of categories or false if an error occurs.
      *
-     * @since   1.6
+     * @since  1.6
      * @throws Exception
      */
     public function &getChildren(): array
     {
-        if (!\is_object($this->local_category_item)) {
+        if (!\is_object($this->l_category_item)) {
             $this->getCategory();
         }
-        $id                            = Factory::getApplication()->getInput()->getInt('id', -1);
-        $this->local_category_children = $this->local_category_item[$id]->getChildren();
+        $id                        = Factory::getApplication()->getInput()->getInt('id', -1);
+        $this->l_category_children = $this->l_category_item[$id]->getChildren();
 
-        return $this->local_category_children;
+        return $this->l_category_children;
     }
 
     /**
      * Get the parent category.
      *
-     * @return   CategoryNode An array of categories or false if an error occurs.
+     * @return CategoryNode An array of categories or false if an error occurs.
      *
-     * @since   1.6
+     * @since  1.6
      * @throws Exception
      */
     public function getParent(): CategoryNode
     {
-        if (!\is_object($this->local_category_item)) {
+        if (!\is_object($this->l_category_item)) {
             $this->getCategory();
         }
-        $id                          = Factory::getApplication()->getInput()->getInt('id', -1);
-        $category_parent_id          = $this->local_category_item[$id]->parent_id;
-        $this->local_category_parent = $this->local_category_item[$category_parent_id];
-        return $this->local_category_parent;
+        $id                      = Factory::getApplication()->getInput()->getInt('id', -1);
+        $category_parent_id      = $this->l_category_item[$id]->parent_id;
+        $this->l_category_parent = $this->l_category_item[$category_parent_id];
+        return $this->l_category_parent;
     }
 }

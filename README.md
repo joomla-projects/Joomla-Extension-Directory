@@ -49,4 +49,11 @@ In the backend:
 * Click on Components -> JED -> Tickets
 * At the top of the screen choose the Config menu and select 'Setup front end demo menu' and then Click the button GO (this will create a front end menu)
 * Go to System -> Site Modules and click to edit 'Main Menu'.
-* From the Select Menu dropdown choose 'Joomla Extension Directory Demo Menu'and hit save and close.
+* From the Select Menu dropdown choose 'Joomla Extension Directory Demo Menu' and hit save and close.
+
+**Instructions for Front end testing.**
+
+As part of the Sample Data installation a new user is created -
+**testuserj5final** - with a password of - **Who0CaresF0rPasswords**
+
+All of the sample front end data, is tied to this account so you can view previous tickets, previous VEL entries etc.

@@ -28,8 +28,6 @@ use Joomla\Utilities\ArrayHelper;
 
 use stdClass;
 
-use function defined;
-
 /**
  * VEL Abandoned Report Form Model Class.
  *
@@ -40,7 +38,7 @@ class VelabandonedreportformModel extends FormModel
     /**
      * The item object
      *
-     * @var   object
+     * @var   mixed
      * @since 4.0.0
      */
     private mixed $item = null;
@@ -50,7 +48,7 @@ class VelabandonedreportformModel extends FormModel
      *
      * @since 4.0.0
      **/
-    private string $dbtable = "#__jed_vel_abandoned_report";
+    // private string $dbtable = "#__jed_vel_abandoned_report";
 
 
 
@@ -71,12 +69,12 @@ class VelabandonedreportformModel extends FormModel
     {
         // Get the form.
         $form = $this->loadForm('com_jed.velabandonedreport', 'velabandonedreportform', [
-                'control'   => 'jform',
+                'control'   => $formname,
                 'load_data' => $loadData,
             ]);
 
-        if (empty($form)) {
-            return false;
+        if (!is_object($form)) {
+            throw new Exception(Text::_('JERROR_LOADFILE_FAILED'), 500);
         }
 
         return $form;
@@ -103,17 +101,18 @@ class VelabandonedreportformModel extends FormModel
 
             // Get a level row instance.
             $table      = $this->getTable();
-            $properties = $table->getProperties();
-            $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
             if ($table->load($id) && !empty($table->id)) {
+                $properties = $table->getTableProperties();
+                $table_data = ArrayHelper::toObject($properties, stdClass::class);
+
                 $user = Factory::getApplication()->getIdentity();
                 $id   = $table->id;
-                if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
+                if (empty($id) || JedHelper::isAdminOrSuperUser() || $table_data->created_by == $user->id) {
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 
                     if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
-                        $canEdit = $user->id == $table->created_by;
+                        $canEdit = $user->id == $table_data->created_by;
                     }
 
                     if (!$canEdit) {
@@ -128,7 +127,7 @@ class VelabandonedreportformModel extends FormModel
                     }
 
                     // Convert the Table to a clean CMSObject.
-                    $properties = $table->getProperties(1);
+                    $properties = $table->getTableProperties(1);
                     $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
@@ -263,7 +262,7 @@ class VelabandonedreportformModel extends FormModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
@@ -321,7 +320,7 @@ class VelabandonedreportformModel extends FormModel
         $user       = Factory::getApplication()->getIdentity();
 
         if ((!$id || JedHelper::isAdminOrSuperUser()) && $isLoggedIn) {
-            /* Any logged in user can report an abandoned Item */
+            /* Any logged-in user can report an abandoned Item */
 
             $table = $this->getTable();
 
@@ -367,19 +366,5 @@ class VelabandonedreportformModel extends FormModel
         } else {
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
         }
-    }
-
-    /**
-     * Check if data can be saved
-     *
-     * @return bool
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function getCanSave(): bool
-    {
-        $table = $this->getTable();
-
-        return $table !== false;
     }
 }

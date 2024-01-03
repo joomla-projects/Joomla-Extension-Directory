@@ -119,21 +119,6 @@ class TicketmessageformModel extends FormModel
     }
 
     /**
-     * Check if data can be saved
-     *
-     * @return bool
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function getCanSave(): bool
-    {
-        $table = $this->getTable();
-
-        return $table !== false;
-    }
-
-    /**
      * Method to get the profile form.
      *
      * The base form is loaded from XML
@@ -311,7 +296,7 @@ class TicketmessageformModel extends FormModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
@@ -321,7 +306,7 @@ class TicketmessageformModel extends FormModel
      *
      * @throws Exception
      */
-    protected function populateState()
+    protected function populateState(): void
     {
         $app = Factory::getApplication();
 

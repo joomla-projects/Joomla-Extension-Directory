@@ -13,6 +13,7 @@ namespace Jed\Component\Jed\Site\Field;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
 use RuntimeException;
@@ -37,6 +38,7 @@ class NestedparentField extends ListField
      *
      * @return array  The field option objects.
      *
+     * @throws Exception
      * @since 4.0.0
      */
     protected function getOptions(): array
@@ -44,7 +46,7 @@ class NestedparentField extends ListField
         $options = [];
         $table   = $this->getAttribute('table');
 
-        $db    = Factory::getDatabase();
+        $db    = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
             ->select('DISTINCT(a.id) AS value, a.title AS text, a.level, a.lft')
             ->from($table . ' AS a');
@@ -64,7 +66,7 @@ class NestedparentField extends ListField
         try {
             $options = $db->loadObjectList();
         } catch (RuntimeException $e) {
-            JError::raiseWarning(500, $e->getMessage());
+            throw new Exception($e->getMessage(), 500);
         }
 
         // Pad the option text with spaces using depth level as a multiplier.
@@ -73,8 +75,6 @@ class NestedparentField extends ListField
         }
 
         // Merge any additional options in the XML definition.
-        $options = array_merge(parent::getOptions(), $options);
-
-        return $options;
+        return array_merge(parent::getOptions(), $options);
     }
 }

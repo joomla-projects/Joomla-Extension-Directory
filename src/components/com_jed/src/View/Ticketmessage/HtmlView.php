@@ -17,7 +17,6 @@ namespace Jed\Component\Jed\Site\View\Ticketmessage;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
@@ -75,7 +74,6 @@ class HtmlView extends BaseHtmlView
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
-        $title = null;
 
         // Because the application sets a default page title,
         // We need to get it from the menu item itself

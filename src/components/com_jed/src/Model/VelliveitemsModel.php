@@ -23,8 +23,6 @@ use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\Database\QueryInterface;
 
-use function defined;
-
 /**
  * VEL Live Items Model Class.
  *
@@ -43,7 +41,6 @@ class VelliveitemsModel extends ListModel
      */
     public function __construct($config = [])
     {
-
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = [
                 'title', 'a.title',
@@ -64,9 +61,8 @@ class VelliveitemsModel extends ListModel
     public function getItems(): mixed
     {
         $items = parent::getItems();
+
         foreach ($items as $item) {
-            // Always create a slug for sef URL's
-            //  $item->slug = (isset($item->alias) && isset($item->id)) ? $item->id.':'.$item->alias : $item->id;
             $item->title              = JedHelper::reformatTitle($item->title);
             $item->public_description = JedHelper::reformatTitle($item->public_description);
             // Always create a slug for sef URL's
@@ -111,12 +107,11 @@ class VelliveitemsModel extends ListModel
             $db->escape($this->getState('list.direction', 'DESC'))
         );
 
-
         return $query;
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *

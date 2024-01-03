@@ -242,7 +242,7 @@ class ReviewcommentModel extends ItemModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
@@ -255,7 +255,7 @@ class ReviewcommentModel extends ItemModel
      * @throws Exception
      * @throws Exception
      */
-    protected function populateState()
+    protected function populateState(): void
     {
         $app  = Factory::getApplication('com_jed');
         $user = Factory::getApplication()->getIdentity();

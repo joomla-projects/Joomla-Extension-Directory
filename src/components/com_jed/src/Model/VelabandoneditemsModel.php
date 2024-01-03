@@ -23,8 +23,6 @@ use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\Database\QueryInterface;
 
-use function defined;
-
 /**
  * VEL Abandoned Items Model Class.
  *
@@ -110,12 +108,11 @@ class VelabandoneditemsModel extends ListModel
             $db->escape($this->getState('list.direction', 'DESC'))
         );
 
-
         return $query;
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *

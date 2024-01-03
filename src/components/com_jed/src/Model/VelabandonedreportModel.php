@@ -220,7 +220,7 @@ class VelabandonedreportModel extends ItemModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
@@ -230,7 +230,7 @@ class VelabandonedreportModel extends ItemModel
      *
      * @throws Exception
      */
-    protected function populateState()
+    protected function populateState(): void
     {
         $app  = Factory::getApplication();
         $user = Factory::getApplication()->getIdentity();

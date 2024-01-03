@@ -17,8 +17,6 @@ namespace Jed\Component\Jed\Site\Controller;
 
 use Joomla\CMS\MVC\Controller\BaseController;
 
-use function defined;
-
 /**
  * VEL Vulnerable Item Controller Class.
  *

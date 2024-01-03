@@ -105,13 +105,16 @@ class VelreportformModel extends FormModel
             $table = $this->getTable();
 
             if ($table !== false && $table->load($id) && !empty($table->id)) {
+                $properties = $table->getTableProperties();
+                $table_data = ArrayHelper::toObject($properties, stdClass::class);
+
                 $user = Factory::getApplication()->getIdentity();
 
-                if (JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
+                if (JedHelper::isAdminOrSuperUser() || $table_data->created_by == Factory::getApplication()->getIdentity()->id) {
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 
                     if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
-                        $canEdit = $user->id == $table->created_by;
+                        $canEdit = $user->id == $table_data->created_by;
                     }
 
                     if (!$canEdit) {
@@ -414,7 +417,7 @@ class VelreportformModel extends FormModel
     } */
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
@@ -468,7 +471,7 @@ class VelreportformModel extends FormModel
         $user            = Factory::getApplication()->getIdentity();
 
         if ((!$id || JedHelper::isAdminOrSuperUser()) && $isLoggedIn) {
-            /* Any logged in user can report a vulnerable Item */
+            /* Any logged-in user can report a vulnerable Item */
 
             $table = $this->getTable();
 
@@ -480,12 +483,12 @@ class VelreportformModel extends FormModel
                 $ticket_message['message']           = $ticket['ticket_text'];
                 $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
 
-
                 //$ticket_model = BaseDatabaseModel::getInstance('Jedticketform', 'JedModel', ['ignore_request' => true]);
                 $ticket_model = new JedticketformModel();
                 $ticket_model->save($ticket);
 
                 $ticket_id = $ticket_model->getId();
+
                 /* We need to store the incoming ticket message */
                 $ticket_message['ticket_id'] = $ticket_id;
 
@@ -515,20 +518,5 @@ class VelreportformModel extends FormModel
         } else {
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
         }
-    }
-
-    /**
-     * Check if data can be saved
-     *
-     * @return bool
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function getCanSave(): bool
-    {
-        $table = $this->getTable();
-
-        return $table !== false;
     }
 }

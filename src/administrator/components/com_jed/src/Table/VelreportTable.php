@@ -248,7 +248,7 @@ class VelreportTable extends Table
     }
 
     /**
-     * This function convert an array of Access objects into an rules array.
+     * This function convert an array of Access objects into a rules array.
      *
      * @param array $jaccessrules An array of Access objects.
      *
@@ -278,7 +278,7 @@ class VelreportTable extends Table
     /**
      * Get the Properties of the table
      *
-     * * @param   boolean  $public  If true, returns only the public properties.
+     * * @param   bool  $public  If true, returns only the public properties.
      *
      * @return array
      *

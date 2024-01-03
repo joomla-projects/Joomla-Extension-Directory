@@ -18,8 +18,6 @@ use Exception;
 use Joomla\CMS\MVC\View\CategoryView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\Registry\Registry;
-use Joomla\CMS\Pagination\Pagination;
 
 /**
  * View class for a list of Extensions.

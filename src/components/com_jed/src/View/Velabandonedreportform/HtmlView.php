@@ -17,6 +17,7 @@ namespace Jed\Component\Jed\Site\View\Velabandonedreportform;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\Registry;
@@ -24,8 +25,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 
 use stdClass;
-
-use function defined;
 
 /**
  * View class for a VEL Abandoned Form
@@ -37,10 +36,10 @@ class HtmlView extends BaseHtmlView
     /**
      * The model state
      *
-     * @var   Registry
+     * @var   mixed
      * @since 4.0.0
      */
-    protected $state;
+    protected mixed $state;
 
     /**
      * The item to be viewed
@@ -48,7 +47,7 @@ class HtmlView extends BaseHtmlView
      * @var   stdClass
      * @since 4.0.0
      */
-    protected stdClass $item;
+    protected mixed $item;
 
     /**
      * Form with settings
@@ -139,7 +138,7 @@ class HtmlView extends BaseHtmlView
         $this->state   = $this->get('State');
         $this->item    = $this->get('Item');
         $this->params  = $app->getParams('com_jed');
-        $this->canSave = $this->get('CanSave');
+        $this->canSave = JedHelper::canSave();
         $this->form    = $this->get('Form');
 
         // Check for errors.

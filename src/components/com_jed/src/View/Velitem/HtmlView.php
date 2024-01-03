@@ -24,8 +24,6 @@ use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 use stdClass;
 
-use function defined;
-
 /**
  * View class for a Single Vulnerable Item.
  *
