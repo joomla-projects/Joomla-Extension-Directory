@@ -483,12 +483,12 @@ class VelreportformModel extends FormModel
                 $ticket_message['message']           = $ticket['ticket_text'];
                 $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
 
-
                 //$ticket_model = BaseDatabaseModel::getInstance('Jedticketform', 'JedModel', ['ignore_request' => true]);
                 $ticket_model = new JedticketformModel();
                 $ticket_model->save($ticket);
 
                 $ticket_id = $ticket_model->getId();
+
                 /* We need to store the incoming ticket message */
                 $ticket_message['ticket_id'] = $ticket_id;
 

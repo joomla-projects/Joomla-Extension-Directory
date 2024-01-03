@@ -368,13 +368,10 @@ class JedticketformModel extends FormModel
      */
     public function save(array $data): bool
     {
-        $id         = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('jedticket.id');
         $isLoggedIn = JedHelper::IsLoggedIn();
 
-
-        if (!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser() && $isLoggedIn) {
+        if ($isLoggedIn) {
             /* Any logged-in user can make a new ticket */
-
             $table = $this->getTable();
 
             if ($table->save($data) === true) {

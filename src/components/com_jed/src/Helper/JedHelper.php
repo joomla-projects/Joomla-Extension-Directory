@@ -286,16 +286,6 @@ class JedHelper
         $ticket['allocated_to']            = 0;
         $ticket['parent_id']               = -1;
 
-
-        foreach ($ticket as $k => $v) {
-
-            if (str_ends_with($k, "_on")) {
-                $ticket[$k] = $v;
-            } else {
-                $ticket[$k] = $db->quote($v);
-            }
-        }
-
         return $ticket;
     }
 
