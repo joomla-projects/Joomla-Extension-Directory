@@ -16,5 +16,6 @@
 	<files>
 		<file type="component" id="com_jed">com_jed.zip</file>
 		<file type="plugin" id="jed_sampledata" group="sampledata">plg_sampledata_jed.zip</file>
+		<file type="plugin" id="jed_finder" group="finder">plg_finder_jed.zip</file>
 	</files>
 </extension>
