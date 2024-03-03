@@ -21,9 +21,9 @@
     "ext-dom": "*"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "^3.16",
+    "friendsofphp/php-cs-fixer": "^3.51",
     "joomla-projects/jorobo": "dev-develop",
-    "squizlabs/php_codesniffer": "^3.7",
+    "squizlabs/php_codesniffer": "^3.9",
     "phpstan/phpstan": "^1.10",
     "phpstan/phpstan-deprecation-rules": "^1.1"
   },
