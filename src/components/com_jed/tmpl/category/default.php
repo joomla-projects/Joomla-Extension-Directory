@@ -52,7 +52,7 @@ $wa->useStyle('com_jed.jazstyle');
         <div class="row gx-5">
             <?php
 
-            foreach ($this->items->children as $c) {
+            foreach ($this->children as $c) {
                 ?>
                 <div class="col-lg-4 mb-3 card jed-home-category">
                     <div class="card-header jed-home-item-view">
