@@ -33,8 +33,8 @@ HTMLHelper::_('formbehavior.chosen', 'select');
 
 $user       = Factory::getApplication()->getIdentity();
 $userId     = $user->id;
-$listOrder  = $this->state->get('list.ordering');
-$listDirn   = $this->state->get('list.direction');
+$listOrder  = $this->getState('list.ordering');
+$listDirn   = $this->getState('list.direction');
 $canCreate  = $user->authorise('core.create', 'com_jed');
 $canEdit    = $user->authorise('core.edit', 'com_jed');
 $canCheckin = $user->authorise('core.manage', 'com_jed');
@@ -50,10 +50,10 @@ $wa->useStyle('com_jed.jazstyle');
 
 <div class="jed-cards-wrapper margin-bottom-half">
     <div class="jed-container">
-        <h2 class="heading heading--m"><?php echo $this->items[0]->category_title; ?> Extensions</h2>
-        <p class="font-size-s"><?php echo $this->items[0]->category_hierarchy; ?></p>
+        <h2 class="heading heading--m"><?php echo $this->get("items")[0]->category_title; ?> Extensions</h2>
+        <p class="font-size-s"><?php echo $this->get("items")[0]->category_hierarchy; ?></p>
         <ul class="jed-grid jed-grid--1-1-1">
-            <?php foreach ($this->items as $item) : ?>
+            <?php foreach ($this->get("items") as $item) : ?>
                 <?php echo LayoutHelper::render(
                     'cards.extension',
                     [
@@ -76,12 +76,12 @@ $wa->useStyle('com_jed.jazstyle');
 </div>
 
 
-<?php echo $this->pagination->getPaginationLinks(); ?>
+<?php echo $this->get("pagination")->getPaginationLinks(); ?>
 <?php
 echo LayoutHelper::render(
     'category.children',
     [
-        'children' => $this->children,
+        'children' => $this->get("children"),
     ]
 );
 ?>
