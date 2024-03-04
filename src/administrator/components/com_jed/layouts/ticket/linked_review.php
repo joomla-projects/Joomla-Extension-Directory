@@ -14,9 +14,7 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Language\Text;
 
 // phpcs:disable PSR1.Files.SideEffects
-// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
-// phpcs:enable PSR1.Files.SideEffects
 // phpcs:enable PSR1.Files.SideEffects
 /**
 *

@@ -11,9 +11,7 @@
 
 // No direct access to file
 // phpcs:disable PSR1.Files.SideEffects
-// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
-// phpcs:enable PSR1.Files.SideEffects
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Administrator\Helper\JedHelper;

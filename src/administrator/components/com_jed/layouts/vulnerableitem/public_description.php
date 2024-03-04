@@ -11,9 +11,7 @@
 
 // No direct access to $displayData file
 // phpcs:disable PSR1.Files.SideEffects
-// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
-// phpcs:enable PSR1.Files.SideEffects
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -45,5 +43,5 @@ $fieldhiddenoptions = ['hidden' => true];
         <?php echo $displayData->renderField('alias', null, null, $headerlabeloptions); ?>
     </div>
 </div>
-   
+
 
