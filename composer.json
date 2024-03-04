@@ -29,10 +29,7 @@
   },
   "scripts": {
     "post-install-cmd": [
-      "composer -d src/administrator/components/com_jed install"
-    ],
-    "post-update-cmd": [
-      "composer -d src/administrator/components/com_jed update"
+      "cd src/administrator/components/com_jed && composer install"
     ]
   }
 }
