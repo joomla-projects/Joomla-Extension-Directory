@@ -92,19 +92,17 @@ class ExtensionimageTable extends Table
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param array $src    Named array
-     * @param mixed $ignore Optional array or list of parameters to ignore
+     * @param   array|object  $src     An associative array or object to bind to the Table instance.
+     * @param   array|string  $ignore  An optional array or space separated list of properties to ignore while binding.
      *
-     * @return null|string  null is operation was satisfactory, otherwise returns an error
+     * @return  boolean  True on success.
      *
      * @see    Table:bind
      * @throws Exception
      * @since  4.0.0
      */
-    public function bind($src, $ignore = ''): ?string
+    public function bind($src, $ignore = '')
     {
-        $task = Factory::getApplication()->input->get('task');
-
         $input = Factory::getApplication()->input;
         $task  = $input->getString('task', '');
 

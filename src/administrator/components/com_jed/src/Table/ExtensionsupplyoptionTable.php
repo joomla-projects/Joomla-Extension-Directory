@@ -61,16 +61,16 @@ class ExtensionsupplyoptionTable extends Table
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param array $src    Named array
-     * @param mixed $ignore Optional array or list of parameters to ignore
+     * @param   array|object  $src     An associative array or object to bind to the Table instance.
+     * @param   array|string  $ignore  An optional array or space separated list of properties to ignore while binding.
      *
-     * @return null|string  null is operation was satisfactory, otherwise returns an error
+     * @return  boolean  True on success.
      *
      * @see    Table:bind
      * @throws Exception
      * @since  4.0.0
      */
-    public function bind($src, $ignore = ''): ?string
+    public function bind($src, $ignore = '')
     {
         $task = Factory::getApplication()->input->get('task');
 
@@ -127,41 +127,7 @@ class ExtensionsupplyoptionTable extends Table
             $this->ordering = self::getNextOrder();
         }
 
-
         return parent::check();
-    }
-
-    /**
-     * Delete a record by id
-     *
-     * @param mixed $pk Primary key value to delete. Optional
-     *
-     * @return bool
-     *
-     * @since 4.0.0
-     */
-    public function delete($pk = null): bool
-    {
-        $this->load($pk);
-
-        return parent::delete($pk);
-    }
-
-    /**
-     * Method to store a row in the database from the Table instance properties.
-     *
-     * If a primary key value is set the row with that primary key value will be updated with the instance property values.
-     * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
-     *
-     * @param bool $updateNulls True to update fields even if they are null.
-     *
-     * @return bool  True on success.
-     *
-     * @since 4.0.0
-     */
-    public function store($updateNulls = true): bool
-    {
-        return parent::store($updateNulls);
     }
 
     /**

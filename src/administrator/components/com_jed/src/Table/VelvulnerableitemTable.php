@@ -22,7 +22,7 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Table\Table as Table;
+use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Filesystem\File;
 
@@ -74,16 +74,16 @@ class VelvulnerableitemTable extends Table
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param array $src    Named array
-     * @param mixed $ignore Optional array or list of parameters to ignore
+     * @param   array|object  $src     An associative array or object to bind to the Table instance.
+     * @param   array|string  $ignore  An optional array or space separated list of properties to ignore while binding.
      *
-     * @return null|string  null is operation was satisfactory, otherwise returns an error
+     * @return  boolean  True on success.
      *
      * @see    Table:bind
      * @since  4.0.0
      * @throws Exception
      */
-    public function bind($src, $ignore = ''): ?string
+    public function bind($src, $ignore = '')
     {
         $date = Factory::getDate();
         $task = Factory::getApplication()->input->get('task');
@@ -337,23 +337,6 @@ class VelvulnerableitemTable extends Table
     }
 
     /**
-     * Method to store a row in the database from the Table instance properties.
-     *
-     * If a primary key value is set the row with that primary key value will be updated with the instance property values.
-     * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
-     *
-     * @param bool $updateNulls True to update fields even if they are null.
-     *
-     * @return bool  True on success.
-     *
-     * @since 4.0.0
-     */
-    public function store($updateNulls = true): bool
-    {
-        return parent::store($updateNulls);
-    }
-
-    /**
      * This function convert an array of Access objects into an rules array.
      *
      * @param array $jaccessrules An array of Access objects.
@@ -378,48 +361,6 @@ class VelvulnerableitemTable extends Table
         }
 
         return $rules;
-    }
-
-    /**
-     * Get the Properties of the table
-     *
-     * * @param   boolean  $public  If true, returns only the public properties.
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    public function getTableProperties(bool $public = true): array
-    {
-        $vars = get_object_vars($this);
-
-        if ($public) {
-            foreach ($vars as $key => $value) {
-                if (str_starts_with($key, '_')) {
-                    unset($vars[$key]);
-                }
-            }
-
-            // Collect all none public properties of the current class and it's parents
-            $nonePublicProperties = [];
-            $reflection           = new \ReflectionObject($this);
-            do {
-                $nonePublicProperties = array_merge(
-                    $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED),
-                    $nonePublicProperties
-                );
-            } while ($reflection = $reflection->getParentClass());
-
-            // Unset all none public properties, this is needed as get_object_vars returns now all vars
-            // from the current object and not only the CMSObject and the public ones from the inheriting classes
-            foreach ($nonePublicProperties as $prop) {
-                if (\array_key_exists($prop->getName(), $vars)) {
-                    unset($vars[$prop->getName()]);
-                }
-            }
-        }
-
-        return $vars;
     }
 
     /**
