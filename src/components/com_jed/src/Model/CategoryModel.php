@@ -632,13 +632,13 @@ class CategoryModel extends ListModel
             // Note: s for selected id
             if ($id !== 'root') {
                 // Get the selected category
-                $query->from($db->quoteName('#__categories', 's'))->where($db->quoteName('s.id') . ' = :id')->bind(':id', $id, ParameterType::INTEGER);
+                $query->from($db->quoteName('#__categories', 's'))->where($db->quoteName('s.id') . ' = :id OR ' . $db->quoteName('c.id') . ' = :id2')->bind([':id',':id2'], $id, ParameterType::INTEGER);
 
 
                 $query->join(
                     'INNER',
                     $db->quoteName('#__categories', 'c'),
-                    '(' . $db->quoteName('s.lft') . ' <= ' . $db->quoteName('c.lft') . ' AND ' . $db->quoteName('c.lft') . ' < ' . $db->quoteName('s.rgt') . ')' . ' OR (' . $db->quoteName('c.lft') . ' < ' . $db->quoteName('s.lft') . ' AND ' . $db->quoteName('s.rgt') . ' < ' . $db->quoteName('c.rgt') . ')'
+                    '(' . $db->quoteName('s.lft') . ' <= ' . $db->quoteName('c.lft') . ' AND ' . $db->quoteName('c.rgt') . ' < ' . $db->quoteName('s.rgt') . ')' . ' OR (' . $db->quoteName('c.lft') . ' < ' . $db->quoteName('s.lft') . ' AND ' . $db->quoteName('s.rgt') . ' < ' . $db->quoteName('c.rgt') . ')'
                 );
             } else {
                 $query->from($db->quoteName('#__categories', 'c'));
@@ -721,7 +721,7 @@ class CategoryModel extends ListModel
                 $categories[$id] = null;
             }
         }
-        $this->ll_category_item = $categories;
+        $this->l_category_item = $categories;
 
         return $categories;
     }
