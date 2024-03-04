@@ -632,7 +632,7 @@ class CategoryModel extends ListModel
             // Note: s for selected id
             if ($id !== 'root') {
                 // Get the selected category
-                $query->from($db->quoteName('#__categories', 's'))->where($db->quoteName('s.id') . ' = :id OR' . $db->quoteName('c.id') . ' = :id2')->bind([':id',':id2'], $id, ParameterType::INTEGER);
+                $query->from($db->quoteName('#__categories', 's'))->where($db->quoteName('s.id') . ' = :id OR ' . $db->quoteName('c.id') . ' = :id2')->bind([':id',':id2'], $id, ParameterType::INTEGER);
 
 
                 $query->join(
