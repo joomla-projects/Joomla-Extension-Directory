@@ -16,11 +16,8 @@
 
 use Joomla\CMS\Language\Text;
 
-/**
-*
- *
- * @var array $displayData
-*/
+/** @var \Joomla\CMS\Form\Form $displayData */
+
 $headerlabeloptions = ['hiddenLabel' => true];
 $fieldhiddenoptions = ['hidden' => true];
 //var_dump($displayData);exit();

@@ -96,7 +96,7 @@ class HtmlView extends BaseHtmlView
             $toolbar = Toolbar::getInstance(); //Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar();
 
 
-            JedHelper::addConfigToolbar($bar);
+            JedHelper::addConfigToolbar($toolbar);
 
 
             ToolbarHelper::preferences('com_jed');

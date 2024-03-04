@@ -17,11 +17,8 @@
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 
-/**
-*
- *
- * @var array $displayData
-*/
+/** @var \Joomla\CMS\Form\Form $displayData */
+
 $headerlabeloptions = ['hiddenLabel' => true];
 $fieldhiddenoptions = ['hidden' => true];
 $rawData            = $displayData->getData();

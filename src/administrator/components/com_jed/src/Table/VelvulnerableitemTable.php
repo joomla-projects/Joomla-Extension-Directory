@@ -34,29 +34,6 @@ use Joomla\Filesystem\File;
 class VelvulnerableitemTable extends Table
 {
     /**
-     *
-     * fields
-     *
-     * @since 4.0.0
-     */
-
-    //  public int $id;
-    //public string $jed;
-    //public int $exploit_type;
-    //public string $exploit_other_description;
-    //public mixed $xml_manifest;
-    //public string $public_description;
-    //public string $alias;
-    //public int $created_by;
-    //public int $modified_by;
-    //public date $created;
-    //public date $modified;
-    //public int $checked_out;
-    //public date $checked_out_time;
-    //public int $state;
-
-
-    /**
      * Define a namespaced asset name for inclusion in the #__assets table
      *
      * @return string The asset name
