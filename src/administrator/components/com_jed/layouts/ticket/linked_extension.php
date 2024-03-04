@@ -19,11 +19,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
-/**
-*
- *
- * @var array $displayData
-*/
+/** @var \Joomla\CMS\Form\Form $displayData */
 
 $headerlabeloptions = ['hiddenLabel' => true];
 $fieldhiddenoptions = ['hidden' => true];

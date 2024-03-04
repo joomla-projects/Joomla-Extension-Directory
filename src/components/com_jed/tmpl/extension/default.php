@@ -23,7 +23,7 @@ use Joomla\CMS\Session\Session;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
 /**
- * @var HtmlView $this
+ * @var \Jed\Component\Jed\Site\View\Extension\HtmlView $this
  */
 
 HTMLHelper::_('bootstrap.tooltip');

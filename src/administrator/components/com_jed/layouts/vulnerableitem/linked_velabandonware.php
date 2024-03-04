@@ -14,11 +14,7 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-/**
-*
- *
- * @var $displayData array
-*/
+/** @var \Joomla\CMS\Form\Form $displayData */
 
 use Joomla\CMS\Language\Text;
 

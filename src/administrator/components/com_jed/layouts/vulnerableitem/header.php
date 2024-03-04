@@ -13,11 +13,7 @@
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
-/**
-*
- *
- * @var $displayData array
-*/
+/** @var \Joomla\CMS\Form\Form $displayData */
 $headerlabeloptions = ['hiddenLabel' => true];
 $fieldhiddenoptions = ['hidden' => true];
 ?>

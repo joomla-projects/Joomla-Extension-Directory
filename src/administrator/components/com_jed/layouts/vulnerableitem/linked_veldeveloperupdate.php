@@ -9,20 +9,15 @@
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// No direct access to file
-// phpcs:disable PSR1.Files.SideEffects
-// phpcs:disable PSR1.Files.SideEffects
 use Joomla\CMS\Language\Text;
 
+// No direct access to file
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
-// phpcs:enable PSR1.Files.SideEffects
 
-/**
-*
- *
- * @var $displayData array
-*/
+/** @var \Joomla\CMS\Form\Form $displayData */
+
 $headerlabeloptions = ['hiddenLabel' => true];
 $fieldhiddenoptions = ['hidden' => true];
 $rawData            = $displayData->getData();
