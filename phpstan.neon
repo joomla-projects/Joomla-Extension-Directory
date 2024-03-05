@@ -5,6 +5,5 @@ parameters:
   paths:
     - src
   scanDirectories:
-    - libraries
   ignoreErrors:
   reportUnmatchedIgnoredErrors: false
