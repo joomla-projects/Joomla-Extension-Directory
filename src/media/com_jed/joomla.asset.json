@@ -91,6 +91,13 @@
       "version": "4.0.0"
     },
     {
+      "name": "com_jed.submitextension",
+      "type": "style",
+      "uri": "media/com_jed/css/submit-extension.css",
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
       "name": "com_jed.jazstyle",
       "type": "style",
       "uri": "media/com_jed/css/jazstyle.css",
@@ -213,7 +220,7 @@
       "attributes": {
         "defer": true
       },
-      "package": "rucourses",
+      "package": "jed",
       "version": "4.0.0"
     },
     {
@@ -223,7 +230,7 @@
       "attributes": {
         "defer": true
       },
-      "package": "rucourses",
+      "package": "jed",
       "version": "4.0.0"
     },
     {
@@ -233,7 +240,7 @@
       "attributes": {
         "defer": true
       },
-      "package": "rucourses",
+      "package": "jed",
       "version": "4.0.0"
     },
     {
@@ -243,7 +250,7 @@
       "attributes": {
         "defer": true
       },
-      "package": "rucourses",
+      "package": "jed",
       "version": "4.0.0"
     },
     {
@@ -253,7 +260,7 @@
       "attributes": {
         "defer": true
       },
-      "package": "rucourses",
+      "package": "jed",
       "version": "4.0.0"
     },
     {
@@ -272,6 +279,101 @@
       "uri": "media/com_jed/js/ticketPublishUnPublishReview.js",
       "attributes": {
         "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.kartikv_fileinput_style",
+      "type": "style",
+      "uri": "media/com_jed/bootstrap-fileinput/css/fileinput.css"
+    },
+    {
+      "name": "com_jed.kartikv_fileinput_buffer_js",
+      "type": "script",
+      "uri": "media/com_jed/bootstrap-fileinput/js/plugins/buffer.min.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.kartikv_fileinput_filetype_js",
+      "type": "script",
+      "uri": "media/com_jed/bootstrap-fileinput/js/plugins/filetype.min.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.kartikv_fileinput_piexif_js",
+      "type": "script",
+      "uri": "media/com_jed/bootstrap-fileinput/js/plugins/piexif.min.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.kartikv_fileinput_sortable_js",
+      "type": "script",
+      "uri": "media/com_jed/bootstrap-fileinput/js/plugins/sortable.min.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.kartikv_fileinput_fileinput_js",
+      "type": "script",
+      "uri": "media/com_jed/bootstrap-fileinput/js/fileinput.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.kartikv_fileinput_bs5_js",
+      "type": "script",
+      "uri": "media/com_jed/bootstrap-fileinput/themes/bs5/theme.min.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.extensionTestUpload",
+      "type": "script",
+      "uri": "media/com_jed/js/extensionTestUpload.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.extensionform",
+      "type": "script",
+      "uri": "media/com_jed/js/extensionform.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.form_validate",
+      "type": "script",
+      "uri": "media/com_jed/js/form_validate.js",
+      "attributes": {
+        "type": "module"
       },
       "package": "jed",
       "version": "4.0.0"
