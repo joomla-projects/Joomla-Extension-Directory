@@ -32,6 +32,11 @@ DROP TABLE IF EXISTS `#__jed_extension_varied_data`;
 DROP TABLE IF EXISTS `#__jed_extension_images`;
 DROP TABLE IF EXISTS `#__jed_extension_scores`;
 DROP TABLE IF EXISTS `#__jed_developers`;
+DROP TABLE IF EXISTS `#__jed_extension_supply_options`;
+DROP TABLE IF EXISTS `#__jed_extensions`;
+DROP TABLE IF EXISTS `#__jed_extensions_history`;
+DROP TABLE IF EXISTS `#__jed_joomla_versions`;
+DROP TABLE IF EXISTS `#__jed_extensions_history`;
 
 DROP TABLE IF EXISTS old_rsform5;
 DROP TABLE IF EXISTS old_rsform7;
