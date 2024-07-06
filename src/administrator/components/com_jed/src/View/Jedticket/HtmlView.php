@@ -20,6 +20,7 @@ namespace Jed\Component\Jed\Administrator\View\Jedticket;
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\Model\ExtensionModel;
+use Jed\Component\Jed\Administrator\Model\ExtensionvarieddatumModel;
 use Jed\Component\Jed\Administrator\Model\ReviewModel;
 use Jed\Component\Jed\Administrator\Model\VelabandonedreportModel;
 use Jed\Component\Jed\Administrator\Model\VeldeveloperupdateModel;
@@ -220,9 +221,10 @@ class HtmlView extends BaseHtmlView
         }
         if ($this->linked_item_type === 3) { //Review
             $this->linked_item_Model     = new ReviewModel();
-            $this->related_object_string = "Sorry but reviews as related object are not currently coded.";
+            $this->related_object_string = "Review is displayed in 'Linked Review' tab.";
 
             $this->linked_item_data = $this->get('ReviewData');
+
             $this->linked_form      = $this->linked_item_Model->getForm(
                 $this->linked_item_data,
                 false,
@@ -230,7 +232,6 @@ class HtmlView extends BaseHtmlView
             );
 
             $this->linked_form->bind($this->linked_item_data);
-
             //$this->linked_extension_data holds actual data plus extension_form
 
             $extension_model = new ExtensionModel();
@@ -250,7 +251,7 @@ class HtmlView extends BaseHtmlView
             $this->linked_extension_data->extension_form = $this->linked_extension_form;
 
 
-            /*
+
             $extensionvarieddatum                   = new ExtensionvarieddatumModel();
             $this->linked_extension_varieddata      = $this->linked_extension_data->varied_data[$this->linked_item_data[0]->supply_type];
             $this->linked_extension_varieddata_form = $extensionvarieddatum->getForm(
@@ -261,7 +262,7 @@ class HtmlView extends BaseHtmlView
 
             $this->linked_extension_varieddata_form->bind($this->linked_extension_varieddata);
             $this->linked_extension_data->varied_form = $this->linked_extension_varieddata_form;
-            */
+
         }
         if ($this->linked_item_type === 4) { // VEL Report
             $this->linked_item_Model = new VelreportModel();

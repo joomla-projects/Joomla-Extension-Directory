@@ -18,6 +18,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Filter\OutputFilter;
+
 
 /**
  * Extension class.
@@ -75,20 +77,55 @@ class ExtensionformController extends FormController
     {
         // Check for request forgeries.
         $this->checkToken();
+        $isLoggedIn         = JedHelper::IsLoggedIn();
 
+        if($isLoggedIn) {
         // Initialise variables.
         $app   = Factory::getApplication();
         $model = $this->getModel('Extensionform', 'Site');
 
         // Get the user data.
-        $data = Factory::getApplication()->input->get('jform', [], 'array');
+            $data = $app->input->get('jform', [], 'array');
+            $file = $_FILES;
 
+            //Translate/Fill out default values
+            $data['joomla_versions'] = json_encode($data['joomla_versions']);
+            $data['includes'] = json_encode($data['includes']);
+            if($data['download_integration_type'] == 2) {
+                $data['requires_registration'] = 1;
+            } else {
+                $data['requires_registration'] = 0;
+            }
+            $data['can_update'] = $data['uses_updater'];
+            $data['popular'] = 0;
+            $data['approved'] = 0;
+            $data['jed_checked'] = 0;
+            $data['alias'] = OutputFilter::stringUrlSafe($data['title']);
+            $data['intro_text'] = '????'; // look this up in JED3
+
+
+            echo "<pre>";
+            print_r($data);
+            echo "<br/><br/><br/>";
+            print_r($file);
+            echo "</pre>";
+            exit();
         // Validate the posted data.
         $form = $model->getForm();
 
         if (!$form) {
             throw new Exception($model->getError(), 500);
         }
+
+
+        } else {
+            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+        }
+
+
+
+
+
 
         // Validate the posted data.
         $data = $model->validate($form, $data);

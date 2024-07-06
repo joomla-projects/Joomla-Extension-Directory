@@ -40,8 +40,8 @@ class ExtensionsModel extends ListModel
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = [
                 'id', 'a.id',
-                'title', 'a.title',
-                'alias', 'a.alias',
+                'title', 'varied.title',
+                'alias', 'varied.alias',
                 'published', 'a.published',
                 'created_by', 'a.created_by',
                 'modified_by', 'a.modified_by',
@@ -90,19 +90,19 @@ class ExtensionsModel extends ListModel
         $query = $db->getQuery(true)
             ->select('COUNT(' . $db->quoteName('id') . ')')
             ->from($db->quoteName('#__jed_reviews'));
-
-        array_walk(
-            $items,
-            static function ($item) use ($db, $query) {
-                $query->clear('where')
-                    ->where($db->quoteName('extension_id') . ' = ' . (int) $item->id)
-                    ->where($db->quoteName('published') . ' = 1');
-                $db->setQuery($query);
-                $item->reviewCount = $db->loadResult();
-            }
-        );
-
-        return $items;
+        if ($items) {
+            array_walk(
+                $items,
+                static function ($item) use ($db, $query) {
+                    $query->clear('where')->where($db->quoteName('extension_id') . ' = ' . (int) $item->id)->where($db->quoteName('published') . ' = 1');
+                    $db->setQuery($query);
+                    $item->reviewCount = $db->loadResult();
+                }
+            );
+            return $items;
+        } else {
+            return [];
+        }
     }
 
     /**
@@ -126,8 +126,8 @@ class ExtensionsModel extends ListModel
                 $db->quoteName(
                     [
                     'a.id',
-                    'a.title',
-                    'a.alias',
+                        'varied.title',
+                        'varied.alias',
                     'a.created_by',
                     'a.modified_on',
                     'a.created_on',
@@ -170,12 +170,16 @@ class ExtensionsModel extends ListModel
                 . ' ON ' . $db->quoteName('staff.id') . ' = ' . $db->quoteName('a.checked_out')
             )
             ->leftJoin(
+                $db->quoteName('#__jed_extension_varied_data', 'varied')
+                . ' ON ' . $db->quoteName('varied.extension_id') . ' = ' . $db->quoteName('a.id')
+            )
+            ->leftJoin(
                 $db->quoteName('#__jed_extension_supply_options', 'supply_type')
-                . ' ON ' . $db->quoteName('supply_type.id') . ' = ' . $db->quoteName('a.supply_option_id')
+                . ' ON ' . $db->quoteName('supply_type.id') . ' = ' . $db->quoteName('varied.supply_option_id')
             )
             ->select('GROUP_CONCAT(`supply_type`.`title`) as type');
 
-        $query->where('a.is_default_data=1');
+        $query->where('varied.is_default_data=1');
 
         // Filter by published state
         $published = $this->getState('filter.state');
@@ -194,7 +198,7 @@ class ExtensionsModel extends ListModel
                 $query->where('a.id = ' . (int) substr($search, 3));
             } else {
                 $search = $db->quote('%' . $db->escape($search, true) . '%');
-                $query->where($db->quoteName('a.title') . ' LIKE ' . $search);
+                $query->where($db->quoteName('varied.title') . ' LIKE ' . $search);
             }
         }
 
@@ -225,9 +229,25 @@ class ExtensionsModel extends ListModel
         $includes = $this->getState('filter.includes');
 
         if ($includes && $includes[0] !== '') {
-            $query->where($db->quoteName('types.type') . ' IN (' . implode(',', $db->quote($includes, false)) . ')');
+            $st = "(";
+            $o  = "";
+            foreach ($includes as $i) {
+                $o  = $o . $st . $db->quoteName('a.includes') . ' LIKE "%' . $i . '%"';
+                $st = " OR ";
+            }
+            $o = $o . ")";
+            $query->where($o);
         }
 
+        $download_type = $this->getState('filter.download_type');
+        if ($download_type && $download_type !== '') {
+            $query->where($db->quoteName('supply_type.id') . ' = ' . $download_type);
+        }
+
+        $developer = $this->getState('filter.developer');
+        if ($developer !== '') {
+            $query->where($db->quoteName('users.name') . ' LIKE "%' . trim($developer) . '%"');
+        }
         $query->group($db->quoteName('a.id'));
 
         $query->order(
@@ -266,7 +286,7 @@ class ExtensionsModel extends ListModel
     }
 
     /**
-     * Method to autopopulate the model state.
+     * Method to auto-populate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
@@ -281,7 +301,7 @@ class ExtensionsModel extends ListModel
     protected function populateState($ordering = null, $direction = null): void
     {
         // List state information.
-        parent::populateState('id', 'ASC');
+        parent::populateState('a.id', 'asc');
 
         $context = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
         $this->setState('filter.search', $context);

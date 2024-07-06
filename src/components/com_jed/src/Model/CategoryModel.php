@@ -301,6 +301,10 @@ class CategoryModel extends ListModel
         // Join over the created by field 'modified_by'
         $query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
 
+        //Join to Varied Data to get Default descriptive text
+        $query->select('varied.description as description, varied.title as title, varied.alias as alias');
+        $query->join('INNER', '#__jed_extension_varied_data AS varied ON varied.extension_id = a.id and varied.is_default_data=1');
+
 
         if (!Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed')) {
             $query->where('a.state = 1');
@@ -373,7 +377,9 @@ class CategoryModel extends ListModel
             $item->category_hierarchy = $this->getCategoryHierarchy($item->primary_category_id);
 
             if (!empty($item->logo)) {
-                $item->logo = JedHelper::formatImage($item->logo, ImageSize::SMALL);
+                //$item->logo = JedHelper::formatImage($item->logo, ImageSize::SMALL);
+                $item->logo = 'https://extensions.joomla.org/cache/fab_image/' . str_replace('.png', '', $item->logo) . '_resizeDown400px175px16.png';
+
             }
 
             $item->scores            = $this->getScores($item->id);
@@ -566,7 +572,7 @@ class CategoryModel extends ListModel
         try {
             $db = $this->getDatabase();
         } catch (DatabaseNotFoundException $e) {
-            @trigger_error('Database must be set, this will not be caught anymore in 5.0. - ' . $e->getMessage(), E_USER_DEPRECATED);
+            @trigger_error(sprintf('Database must be set, this will not be caught anymore in 5.0.'), E_USER_DEPRECATED);
             $db = Factory::getContainer()->get(DatabaseInterface::class);
         }
         $id         = Factory::getApplication()->getInput()->getInt('id', -1);
@@ -632,13 +638,13 @@ class CategoryModel extends ListModel
             // Note: s for selected id
             if ($id !== 'root') {
                 // Get the selected category
-                $query->from($db->quoteName('#__categories', 's'))->where($db->quoteName('s.id') . ' = :id OR ' . $db->quoteName('c.id') . ' = :id2')->bind([':id',':id2'], $id, ParameterType::INTEGER);
+                $query->from($db->quoteName('#__categories', 's'))->where($db->quoteName('s.id') . ' = :id')->bind(':id', $id, ParameterType::INTEGER);
 
 
                 $query->join(
                     'INNER',
                     $db->quoteName('#__categories', 'c'),
-                    '(' . $db->quoteName('s.lft') . ' <= ' . $db->quoteName('c.lft') . ' AND ' . $db->quoteName('c.rgt') . ' < ' . $db->quoteName('s.rgt') . ')' . ' OR (' . $db->quoteName('c.lft') . ' < ' . $db->quoteName('s.lft') . ' AND ' . $db->quoteName('s.rgt') . ' < ' . $db->quoteName('c.rgt') . ')'
+                    '(' . $db->quoteName('s.lft') . ' <= ' . $db->quoteName('c.lft') . ' AND ' . $db->quoteName('c.lft') . ' < ' . $db->quoteName('s.rgt') . ')' . ' OR (' . $db->quoteName('c.lft') . ' < ' . $db->quoteName('s.lft') . ' AND ' . $db->quoteName('s.rgt') . ' < ' . $db->quoteName('c.rgt') . ')'
                 );
             } else {
                 $query->from($db->quoteName('#__categories', 'c'));
@@ -736,11 +742,11 @@ class CategoryModel extends ListModel
      */
     public function &getLeftSibling(): CategoryNode|bool|null
     {
-        if (!\is_object($this->ll_category_item)) {
+        if (!\is_object($this->l_category_item)) {
             $this->getCategory();
         }
         $id                           = Factory::getApplication()->getInput()->getInt('id', -1);
-        $this->l_category_leftsibling = $this->ll_category_item[$id]->lft;
+        $this->l_category_leftsibling = $this->l_category_item[$id]->lft;
         return $this->l_category_leftsibling;
     }
 

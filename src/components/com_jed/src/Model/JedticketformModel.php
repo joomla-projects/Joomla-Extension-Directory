@@ -127,6 +127,20 @@ class JedticketformModel extends FormModel
     }
 
     /**
+     * Check if data can be saved
+     *
+     * @return bool
+     * @since  4.0.0
+     * @throws Exception
+     */
+    public function getCanSave(): bool
+    {
+        $table = $this->getTable();
+
+        return $table !== false;
+    }
+
+    /**
      * Method to get the profile form.
      *
      * The base form is loaded from XML
@@ -197,7 +211,7 @@ class JedticketformModel extends FormModel
                 $id   = $table->id;
                 if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
                     // Convert the Table to a clean CMSObject.
-                    $properties = $table->getProperties(1);
+                    $properties = $table->getTableProperties(1);
                     $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
@@ -379,6 +393,7 @@ class JedticketformModel extends FormModel
 
                 return $table->id;
             } else {
+                echo "can't save";
                 return false;
             }
         } else {

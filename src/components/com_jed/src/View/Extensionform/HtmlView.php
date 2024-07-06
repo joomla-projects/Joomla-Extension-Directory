@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Site\View\Extensionform;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Site\Model\ExtensionvarieddatumModel;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
@@ -38,6 +39,11 @@ class HtmlView extends BaseHtmlView
 
     protected bool $canSave;
 
+    protected array $supply_types;
+
+    protected mixed $supply_forms;
+
+
     /**
      * Display the view
      *
@@ -54,10 +60,27 @@ class HtmlView extends BaseHtmlView
         $app  = Factory::getApplication();
 
         $this->state      = $this->get('State');
-        $this->item       = $this->get('Item');
+        $this->item       = $this->get('variedItem');
         $this->params     = $app->getParams('com_jed');
         $this->canSave    = JedHelper::canSave();
         $this->form       = $this->get('Form');
+        $this->supply_types = $this->get('SupplyTypes');
+
+        $extensionvarieddatum                   = new ExtensionvarieddatumModel();
+
+
+        //echo "<pre>";print_r($this->item);echo "</pre>";exit();
+        foreach($this->supply_types as $st) {
+            $this->supply_forms[$st->supply_id] = $extensionvarieddatum->getForm(
+                $this->item->varied[$st->supply_id],
+                false,
+                'jf_varieddata_form_'.$st->supply_id
+            );
+            $this->supply_forms[$st->supply_id]->bind($this->item->varied[$st->supply_id]);
+        }
+
+
+
 
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {

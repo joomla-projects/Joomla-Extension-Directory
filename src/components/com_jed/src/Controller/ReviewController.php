@@ -79,7 +79,7 @@ class ReviewController extends BaseController
         $app = Factory::getApplication();
 
         // Checking if the user can remove object
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         if ($user->authorise('core.edit', 'com_jed') || $user->authorise('core.edit.state', 'com_jed')) {
             $model = $this->getModel('Review', 'Site');
@@ -124,8 +124,9 @@ class ReviewController extends BaseController
      * @return bool  True on success
      *
      * @since 4.0.0
+     * @throws Exception
      */
-    public function checkin()
+    public function checkin(): bool
     {
         // Check for request forgeries.
         $this->checkToken('GET');
@@ -135,7 +136,7 @@ class ReviewController extends BaseController
         $item      = $model->getItem($id);
 
         // Checking if the user can remove object
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         if ($user->authorise('core.manage', 'com_jed') || $item->checked_out == Factory::getUser()->id) {
             $return = $model->checkin($id);
@@ -156,52 +157,5 @@ class ReviewController extends BaseController
         }
     }
 
-    /**
-     * Remove data
-     *
-     * @return void
-     *
-     * @throws Exception
-     */
-    public function remove()
-    {
-        // Initialise variables.
-        $app = Factory::getApplication();
 
-        // Checking if the user can remove object
-        $user = Factory::getUser();
-
-        if ($user->authorise('core.delete', 'com_jed')) {
-            $model = $this->getModel('Review', 'Site');
-
-            // Get the user data.
-            $id = $app->input->getInt('id', 0);
-
-            // Attempt to save the data.
-            $return = $model->delete($id);
-
-            // Check for errors.
-            if ($return === false) {
-                $this->setMessage(Text::sprintf('Delete failed', $model->getError()), 'warning');
-            } else {
-                // Check in the profile.
-                if ($return) {
-                    $model->checkin($return);
-                }
-
-                $app->setUserState('com_jed.edit.review.id', null);
-                $app->setUserState('com_jed.edit.review.data', null);
-
-                $app->enqueueMessage(Text::_('COM_JED_ITEM_DELETED_SUCCESSFULLY'), 'success');
-                $app->redirect(Route::_('index.php?option=com_jed&view=reviews', false));
-            }
-
-            // Redirect to the list screen.
-            $menu = Factory::getApplication()->getMenu();
-            $item = $menu->getActive();
-            $this->setRedirect(Route::_($item->link, false));
-        } else {
-            throw new Exception(500);
-        }
-    }
 }

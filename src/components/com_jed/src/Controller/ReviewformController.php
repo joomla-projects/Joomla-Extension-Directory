@@ -66,10 +66,13 @@ class ReviewformController extends FormController
     /**
      * Method to save data.
      *
+     * @param   null  $key
+     * @param   null  $urlVar
+     *
      * @return void
      *
-     * @throws Exception
      * @since  4.0.0
+     * @throws Exception
      */
     public function save($key = null, $urlVar = null): void
     {
@@ -84,7 +87,7 @@ class ReviewformController extends FormController
 
         // Get the user data.
 
-        $data                    = Factory::getApplication()->input->get('jform', [], 'array');
+        $data                    = $app->input->get('jform', [], 'array');
         $data['functionality']   = $data['func_num'];
         $data['ease_of_use']     = $data['ease_num'];
         $data['support']         = $data['support_num'];
@@ -127,7 +130,7 @@ class ReviewformController extends FormController
 
             $this->redirect();
         }
-        echo "Data OK";
+        //echo "Data OK";
         // Attempt to save the data.
         $return = $model->save($data);
 
@@ -164,8 +167,11 @@ class ReviewformController extends FormController
     /**
      * Method to abort current operation
      *
+     * @param   null  $key
+     *
      * @return void
      *
+     * @since 4.0.0
      * @throws Exception
      */
     public function cancel($key = null): void
@@ -198,7 +204,7 @@ class ReviewformController extends FormController
      *
      * @since 4.0.0
      */
-    public function remove()
+    public function remove(): void
     {
         $app   = Factory::getApplication();
         $model = $this->getModel('Reviewform', 'Site');

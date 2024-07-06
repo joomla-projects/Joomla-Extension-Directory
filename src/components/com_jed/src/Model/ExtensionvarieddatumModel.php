@@ -12,402 +12,227 @@ namespace Jed\Component\Jed\Site\Model;
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
-
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\Model\ItemModel;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\MVC\Model\FormModel;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
 use stdClass;
 
 /**
- * Jed model.
+ * Extensionvarieddatum model.
  *
- * @since 4.0.0
+ * @since  4.0.0
  */
-class ExtensionvarieddatumModel extends ItemModel
+class ExtensionvarieddatumModel extends FormModel
 {
     /**
-     * Method to check in an item.
-     *
-     * @param int $id The id of the row to check out.
-     *
-     * @return bool True on success, false on failure.
+     * @var    string  Alias to manage history control
      *
      * @since  4.0.0
-     * @throws Exception
-     * @throws Exception
      */
-    public function checkin($id = null)
-    {
-        // Get the id.
-        $id = (!empty($id)) ? $id : (int)$this->getState('extensionvarieddatum.id');
-        if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-            if ($id) {
-                // Initialise the table
-                $table = $this->getTable();
-
-                // Attempt to check the row in.
-                if (method_exists($table, 'checkin')) {
-                    if (!$table->checkin($id)) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-        }
-    }
-
+    public $typeAlias = 'com_jed.extensionvarieddatum';
     /**
-     * Method to check out an item for editing.
-     *
-     * @param int $id The id of the row to check out.
-     *
-     * @return bool True on success, false on failure.
+     * @var    string  The prefix to use with controller messages.
      *
      * @since  4.0.0
-     * @throws Exception
-     * @throws Exception
      */
-    public function checkout($id = null)
+    protected $text_prefix = 'COM_JED';
+    /**
+     * @var    mixed  Item data
+     *
+     * @since  4.0.0
+     */
+    protected mixed $item = null;
+
+
+    /**
+     * Method to get the record form.
+     *
+     * @param   array    $data      An optional array of data for the form to interogate.
+     * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+     *
+     * @return  Form|bool  A Form object on success, false on failure
+     *
+     * @throws Exception
+     * @since   4.0.0
+     *
+     */
+    public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
     {
-        // Get the user id.
-        $id = (!empty($id)) ? $id : (int)$this->getState('extensionvarieddatum.id');
+        // Get the form.
+        $form = $this->loadForm(
+            'com_jed.extensionvarieddatum',
+            'extensionvarieddatum',
+            [
+                'control'   => $formname,
+                'load_data' => $loadData,
+            ]
+        );
 
-        if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-            if ($id) {
-                // Initialise the table
-                $table = $this->getTable();
 
-                // Get the current user object.
-                $user = Factory::getApplication()->getIdentity();
-
-                // Attempt to check the row out.
-                if (method_exists($table, 'checkout')) {
-                    if (!$table->checkout($user->id, $id)) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+        if (empty($form)) {
+            return false;
         }
+
+        return $form;
     }
 
     /**
-     * Method to delete an item
+     * Method to get the empty record form.
      *
-     * @param int $id Element id
-     *
-     * @return bool
-     * @throws Exception
-     * @throws Exception
-     */
-    public function delete($id)
-    {
-        $table = $this->getTable();
 
-        if (empty($result) || $this->isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
-            return $table->delete($id);
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+     *
+     * @return  Form|bool  A Form object on success, false on failure
+     *
+     * @throws Exception
+     * @since   4.0.0
+     *
+     */
+    public function getFormTemplate(): Form|bool
+    {
+        // Get the form.
+        $form = $this->loadForm(
+            'com_jed.extensionvarieddatum',
+            'extensionvarieddatum',
+            [
+                'control'   => 'jform_extensionvarieddatum',
+                'load_data' => false,
+            ]
+        );
+
+
+        if (empty($form)) {
+            return false;
         }
+
+        return $form;
     }
 
     /**
-     * Method to get an object.
+     * Method to get a single record.
      *
-     * @param int $id The id of the object to get.
+     * @param   null  $pk  The id of the primary key.
      *
-     * @return mixed    Object on success, false on failure.
+     * @return stdClass Object on success
      *
      * @throws Exception
-     * @throws Exception
-     * @throws Exception
+     * @since   4.0.0
+     *
      */
-    public function getItem($id = null)
+    public function getItem($pk = null): stdClass
     {
         if ($this->item === null) {
             $this->item = false;
 
-            if (empty($id)) {
-                $id = $this->getState('extensionvarieddatum.id');
+            if (empty($pk)) {
+                $pk = $this->getState('extensionvarieddatum.id');
             }
 
             // Get a level row instance.
             $table = $this->getTable();
+            $properties = $table->getTableProperties();
+            $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
-            // Attempt to load the row.
-            if ($table && $table->load($id)) {
-                if (empty($result) || $this->isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
+            if ($table !== false && $table->load($pk) && !empty($table->id)) {
+                $user = Factory::getApplication()->getIdentity();
+                $pk   = $table->id;
+                if(empty($pk) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getUser()->id) {
+
+                    $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
+
+                    if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
+                        $canEdit = $user->id == $table->created_by;
+                    }
+
+                    if (!$canEdit) {
+                        throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+                    }
+
                     // Check published state.
                     if ($published = $this->getState('filter.published')) {
                         if (isset($table->state) && $table->state != $published) {
-                            throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 403);
+                            return $this->item;
                         }
                     }
 
                     // Convert the Table to a clean CMSObject.
-                    $properties = $table->getProperties(1);
+                    $properties = $table->getTableProperties(1);
                     $this->item = ArrayHelper::toObject($properties, stdClass::class);
+
+                    if (isset($this->item->catid) && is_object($this->item->catid)) {
+                        $this->item->catid = ArrayHelper::fromObject($this->item->catid);
+                    }
+
                 } else {
-                    throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+                    throw new \Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
                 }
             }
-
-            if (empty($this->item)) {
-                throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 404);
-            }
-        }
-
-
-        if (isset($this->item->extension_id) && $this->item->extension_id != '') {
-            if (is_object($this->item->extension_id)) {
-                $this->item->extension_id = ArrayHelper::fromObject($this->item->extension_id);
-            }
-
-            $values = (is_array($this->item->extension_id)) ? $this->item->extension_id : explode(
-                ',',
-                $this->item->extension_id
-            );
-
-            $textValue = [];
-
-            foreach ($values as $value) {
-                $db    = Factory::getDbo();
-                $query = $db->getQuery(true);
-
-                $query
-                    ->select('`#__jed_extensions_3727155`.`id`')
-                    ->from($db->quoteName('#__jed_extensions', '#__jed_extensions_3727155'))
-                    ->where($db->quoteName('id') . ' = ' . $db->quote($value));
-
-                $db->setQuery($query);
-                $results = $db->loadObject();
-
-                if ($results) {
-                    $textValue[] = $results->id;
-                }
-            }
-
-            $this->item->extension_id = !empty($textValue) ? implode(', ', $textValue) : $this->item->extension_id;
-        }
-
-        if (isset($this->item->supply_option_id) && $this->item->supply_option_id != '') {
-            if (is_object($this->item->supply_option_id)) {
-                $this->item->supply_option_id = ArrayHelper::fromObject($this->item->supply_option_id);
-            }
-
-            $values = (is_array($this->item->supply_option_id)) ? $this->item->supply_option_id : explode(
-                ',',
-                $this->item->supply_option_id
-            );
-
-            $textValue = [];
-
-            foreach ($values as $value) {
-                $db    = Factory::getDbo();
-                $query = $db->getQuery(true);
-
-                $query
-                    ->select('`#__jed_extension_supply_options_3727156`.`title`')
-                    ->from($db->quoteName('#__jed_extension_supply_options', '#__jed_extension_supply_options_3727156'))
-                    ->where($db->quoteName('id') . ' = ' . $db->quote($value));
-
-                $db->setQuery($query);
-                $results = $db->loadObject();
-
-                if ($results) {
-                    $textValue[] = $results->title;
-                }
-            }
-
-            $this->item->supply_option_id = !empty($textValue) ? implode(
-                ', ',
-                $textValue
-            ) : $this->item->supply_option_id;
-        }
-
-        if (isset($this->item->created_by)) {
-            $this->item->created_by_name = JedHelper::getUser($this->item->created_by)->name;
         }
 
         return $this->item;
+
     }
 
     /**
-     * Get the id of an item by alias
+     * Returns a reference to the a Table object, always creating it.
      *
-     * @param string $alias Item alias
+     * @param   string  $name     The table type to instantiate
+     * @param   string  $prefix  A prefix for the table class name. Optional.
+     * @param   array   $options  Configuration array for model. Optional.
      *
-     * @return mixed
+     * @return  Table    A database object
+     *
      * @throws Exception
-     * @throws Exception
+     * @since   4.0.0
+     *
      */
-    public function getItemIdByAlias($alias)
+    public function getTable($name = 'Extensionvarieddatum', $prefix = 'Administrator', $options = []): Table
     {
-        $table      = $this->getTable();
-        $properties = $table->getProperties();
-        $result     = null;
-        $aliasKey   = null;
-
-        $aliasKey = JedHelper::getAliasFieldNameByView('extensionvarieddatum');
-
-
-        if (key_exists('alias', $properties)) {
-            $table->load(['alias' => $alias]);
-            $result = $table->id;
-        } elseif (isset($aliasKey) && key_exists($aliasKey, $properties)) {
-            $table->load([$aliasKey => $alias]);
-            $result = $table->id;
-        }
-        if (empty($result) || $this->isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
-            return $result;
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-        }
+        return parent::getTable($name, $prefix, $options);
     }
 
     /**
-     * Get an instance of Table class
+     * Method to get the data that should be injected in the form.
      *
-     * @param string $type   Name of the Table class to get an instance of.
-     * @param string $prefix Prefix for the table class name. Optional.
-     * @param array  $config Array of configuration values for the Table object. Optional.
+     * @return  mixed  The data for the form.
      *
-     * @return Table|bool Table if success, false on failure.
      * @throws Exception
-     * @throws Exception
+     * @since   4.0.0
+     *
      */
-    public function getTable($type = 'Extensionvarieddatum', $prefix = 'Administrator', $config = [])
+    protected function loadFormData(): mixed
     {
-        return parent::getTable($type, $prefix, $config);
-    }
+        // Check the session for previously entered form data.
+        $data = Factory::getApplication()->getUserState('com_jed.edit.extensionvarieddatum.data', []);
 
-    /**
-     * Checks whether or not a user is manager or super user
-     *
-     * @return bool
-     */
-    public function isAdminOrSuperUser()
-    {
-        try {
-            $user = Factory::getApplication()->getIdentity();
-
-            return in_array("8", $user->groups) || in_array("7", $user->groups);
-        } catch (Exception $exc) {
-            return false;
-        }
-    }
-
-    /**
-     * Method to autopopulate the model state.
-     *
-     * Note. Calling getState in this method will result in recursion.
-     *
-     * @return void
-     *
-     * @since 4.0.0
-     *
-     * @throws Exception
-     * @throws Exception
-     * @throws Exception
-     * @throws Exception
-     */
-    protected function populateState(): void
-    {
-        $app  = Factory::getApplication('com_jed');
-        $user = Factory::getApplication()->getIdentity();
-
-        // Check published state
-        if ((!$user->authorise('core.edit.state', 'com_jed')) && (!$user->authorise('core.edit', 'com_jed'))) {
-            $this->setState('filter.published', 1);
-            $this->setState('filter.archived', 2);
-        }
-
-        // Load state from the request userState on edit or from the passed variable on default
-        if (Factory::getApplication()->input->get('layout') == 'edit') {
-            $id = Factory::getApplication()->getUserState('com_jed.edit.extensionvarieddatum.id');
-        } else {
-            $id = Factory::getApplication()->input->get('id');
-            Factory::getApplication()->setUserState('com_jed.edit.extensionvarieddatum.id', $id);
-        }
-
-        $this->setState('extensionvarieddatum.id', $id);
-
-        // Load the parameters.
-        $params       = $app->getParams();
-        $params_array = $params->toArray();
-
-        if (isset($params_array['item_id'])) {
-            $this->setState('extensionvarieddatum.id', $params_array['item_id']);
-        }
-
-        $this->setState('params', $params);
-    }
-
-    /**
-     * Publish the element
-     *
-     * @param int $id    Item id
-     * @param int $state Publish state
-     *
-     * @return bool
-     * @throws Exception
-     * @throws Exception
-     */
-    public function publish($id, $state)
-    {
-        $table = $this->getTable();
-        if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-            $table->load($id);
-            $table->state = $state;
-
-            return $table->store();
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-        }
-    }
-
-    /**
-     * This method revises if the $id of the item belongs to the current user
-     *
-     * @param int $id The id of the item
-     *
-     * @return bool             true if the user is the owner of the row, false if not.
-     */
-    public function userIDItem($id)
-    {
-        try {
-            $user = Factory::getApplication()->getIdentity();
-            $db   = Factory::getDbo();
-
-            $query = $db->getQuery(true);
-            $query->select("id")
-                ->from($db->quoteName('#__jed_extension_supply_options'))
-                ->where("id = " . $db->escape($id))
-                ->where("created_by = " . $user->id);
-
-            $db->setQuery($query);
-
-            $results = $db->loadObject();
-            if ($results) {
-                return true;
-            } else {
-                return false;
+        if (empty($data)) {
+            if ($this->item === null) {
+                $this->item = $this->getItem();
             }
-        } catch (Exception $exc) {
-            return false;
+
+            $data = $this->item;
         }
+
+        return $data;
+    }
+
+    /**
+     * Prepare and sanitise the table prior to saving.
+     *
+     * @param   Table  $table  Table Object
+     *
+     * @return  void
+     *
+     * @since   4.0.0
+     */
+    protected function prepareTable($table)
+    {
     }
 }

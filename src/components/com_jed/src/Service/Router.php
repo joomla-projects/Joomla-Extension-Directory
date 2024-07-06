@@ -293,8 +293,8 @@ class Router extends RouterView
         $db        = $this->getDatabase();
         $query     = $db->getQuery(true);
         $query->select($db->quoteName('alias'))
-            ->from($db->quoteName('#__jed_extensions'))
-            ->where($db->quoteName('id') . ' = :id')
+              ->from($db->quoteName('#__jed_extension_varied_data'))
+              ->where($db->quoteName('extension_id') . ' = :id')
             ->bind(':id', $id, ParameterType::INTEGER);
         $db->setQuery($query);
 

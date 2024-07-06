@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package JED
+ * @package       JED
  *
  * @copyright (C) 2023 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @license       GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Helper;
@@ -23,6 +23,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\User;
@@ -43,113 +44,122 @@ class JedHelper
      */
     public static function addConfigToolbar(Toolbar $bar)
     {
-        $bar->linkButton('tickets')
-            ->text(Text::_('COM_JED_TITLE_TICKETS'))
-            ->url('index.php?option=com_jed&view=jedtickets')
-            ->icon('fa fa-ticket-alt');
-        $bar->linkButton('vulnerable')
-            ->text('Vulnerable Items')
-            ->url('index.php?option=com_jed&view=velvulnerableitems')
-            ->icon('fa fa-bug');
+        $bar->linkButton('tickets')->text(Text::_('COM_JED_TITLE_TICKETS'))->url('index.php?option=com_jed&view=jedtickets')->icon('fa fa-ticket-alt');
+        $bar->linkButton('vulnerable')->text('Vulnerable Items')->url('index.php?option=com_jed&view=velvulnerableitems')->icon('fa fa-bug');
 
         $bar->customHtml('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
 
 
-        $configGroup = $bar->dropdownButton('config-group')
-            ->text(Text::_('COM_JED_GENERAL_CONFIG_LABEL'))
-            ->toggleSplit(false)
-            ->icon('fa fa-cog')
-            ->buttonClass('btn btn-action')
-            ->listCheck(false);
+        $configGroup = $bar->dropdownButton('config-group')->text(Text::_('COM_JED_GENERAL_CONFIG_LABEL'))->toggleSplit(false)->icon('fa fa-cog')->buttonClass('btn btn-action')->listCheck(false);
 
         $configChild = $configGroup->getChildToolbar();
 
-        $configChild->linkButton('emailtemplates')
-            ->text('COM_JED_TITLE_MESSAGETEMPLATES')
-            ->icon('fa fa-envelope')
-            ->url('index.php?option=com_jed&view=messagetemplates');
+        $configChild->linkButton('emailtemplates')->text('COM_JED_TITLE_MESSAGETEMPLATES')->icon('fa fa-envelope')->url('index.php?option=com_jed&view=messagetemplates');
 
-        $configChild->linkButton('ticketcategories')
-            ->text('COM_JED_TITLE_TICKET_CATEGORIES')
-            ->icon('fa fa-folder')
-            ->url('index.php?option=com_jed&view=ticketcategories');
+        $configChild->linkButton('ticketcategories')->text('COM_JED_TITLE_TICKET_CATEGORIES')->icon('fa fa-folder')->url('index.php?option=com_jed&view=ticketcategories');
 
-        $configChild->linkButton('ticketgroups')
-            ->text('COM_JED_TITLE_ALLOCATEDGROUPS')
-            ->icon('fa fa-user-friends')
-            ->url('index.php?option=com_jed&view=ticketallocatedgroups');
+        $configChild->linkButton('ticketgroups')->text('COM_JED_TITLE_ALLOCATEDGROUPS')->icon('fa fa-user-friends')->url('index.php?option=com_jed&view=ticketallocatedgroups');
 
-        $configChild->linkButton('ticketlinkeditemtypes')
-            ->text('COM_JED_TITLE_LINKED_ITEM_TYPES')
-            ->icon('fa fa-link')
-            ->url('index.php?option=com_jed&view=ticketlinkeditemtypes');
+        $configChild->linkButton('ticketlinkeditemtypes')->text('COM_JED_TITLE_LINKED_ITEM_TYPES')->icon('fa fa-link')->url('index.php?option=com_jed&view=ticketlinkeditemtypes');
 
-        $configChild->linkButton('extensionsupplyoptions')
-            ->text('COM_JED_TITLE_EXTENSION_SUPPLY_OPTIONS')
-            ->icon('fa fa-link')
-            ->url('index.php?option=com_jed&view=extensionsupplyoptions');
+        $configChild->linkButton('extensionsupplyoptions')->text('COM_JED_TITLE_EXTENSION_SUPPLY_OPTIONS')->icon('fa fa-link')->url('index.php?option=com_jed&view=extensionsupplyoptions');
 
-        $configChild->linkButton('setupdemomenu')
-            ->text('COM_JED_TITLE_SETUP_DEMO_MENU')
-            ->icon('fa fa-link')
-            ->url('index.php?option=com_jed&view=setupdemo');
+        $configChild->linkButton('setupdemomenu')->text('COM_JED_TITLE_SETUP_DEMO_MENU')->icon('fa fa-link')->url('index.php?option=com_jed&view=setupdemo');
 
         /*
          * Only for finally moving live to test
-         *
-         $configChild->linkButton('copyjed3data')
-            ->text('COM_JED_TITLE_COPY_JED3_DATA')
-            ->icon('fa fa-link')
-            ->url('index.php?option=com_jed&view=copyjed3data');
-        */
+         */
+        $configChild->linkButton('copyjed3data')->text('COM_JED_TITLE_COPY_JED3_DATA')->icon('fa fa-link')->url('index.php?option=com_jed&view=copyjed3data');
+
         $bar->customHtml('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
 
-        $debugGroup = $bar->dropdownButton('debug-group')
-            ->text('Debug')
-            ->toggleSplit(false)
-            ->icon('fa fa-cog')
-            ->buttonClass('btn btn-action')
-            ->listCheck(false);
+        $debugGroup = $bar->dropdownButton('debug-group')->text('Debug')->toggleSplit(false)->icon('fa fa-cog')->buttonClass('btn btn-action')->listCheck(false);
 
         $debugChild = $debugGroup->getChildToolbar();
 
-        $debugChild->linkButton('velabandonedreports')
-            ->text('VEL Abandoned Reports')
-            ->icon('fa fa-link')
-            ->url('index.php?option=com_jed&view=velabandonedreports');
+        $debugChild->linkButton('velabandonedreports')->text('VEL Abandoned Reports')->icon('fa fa-link')->url('index.php?option=com_jed&view=velabandonedreports');
 
-        $debugChild->linkButton('velreports')
-            ->text('VEL Reports')
-            ->icon('fa fa-link')
-            ->url('index.php?option=com_jed&view=velreports');
+        $debugChild->linkButton('velreports')->text('VEL Reports')->icon('fa fa-link')->url('index.php?option=com_jed&view=velreports');
 
-        $debugChild->linkButton('veldeveloperupdates')
-            ->text('VEL Developer Updates')
-            ->icon('fa fa-link')
-            ->url('index.php?option=com_jed&view=veldeveloperupdates');
+        $debugChild->linkButton('veldeveloperupdates')->text('VEL Developer Updates')->icon('fa fa-link')->url('index.php?option=com_jed&view=veldeveloperupdates');
 
-        $debugChild->linkButton('velvulnerableitems')
-            ->text('VEL Vulnerable Items')
-            ->icon('fa fa-link')
-            ->url('index.php?option=com_jed&view=velvulnerableitems');
-        $debugChild->linkButton('ticketmessages')
-            ->text('Ticket Messages')
-            ->icon('fa fa-link')
-            ->url('index.php?option=com_jed&view=ticketmessages');
+        $debugChild->linkButton('velvulnerableitems')->text('VEL Vulnerable Items')->icon('fa fa-link')->url('index.php?option=com_jed&view=velvulnerableitems');
+        $debugChild->linkButton('ticketmessages')->text('Ticket Messages')->icon('fa fa-link')->url('index.php?option=com_jed&view=ticketmessages');
 
-        $debugChild->linkButton('ticketinternalnotes')
-            ->text('Ticket Internal Notes')
-            ->icon('fa fa-link')
-            ->url('index.php?option=com_jed&view=ticketinternalnotes');
+        $debugChild->linkButton('ticketinternalnotes')->text('Ticket Internal Notes')->icon('fa fa-link')->url('index.php?option=com_jed&view=ticketinternalnotes');
 
-        $debugChild->linkButton('jedtickets')
-            ->text('JED Tickets')
-            ->icon('fa fa-link')
-            ->url('index.php?option=com_jed&view=jedtickets');
-        $debugChild->linkButton('extensions')
-            ->text('Extensions')
-            ->icon('fa fa-link')
-            ->url('index.php?option=com_jed&view=extensions');
+        $debugChild->linkButton('jedtickets')->text('JED Tickets')->icon('fa fa-link')->url('index.php?option=com_jed&view=jedtickets');
+        $debugChild->linkButton('extensions')->text('Extensions')->icon('fa fa-link')->url('index.php?option=com_jed&view=extensions');
+    }
+
+    /**
+     * Function to format JED Extension Images
+     *
+     * @param   string  $filename  The image filename
+     * @param   string  $size      Size of image, small|large
+     *
+     * @return string  Full image url
+     *
+     * @since 4.0.0
+     */
+    public static function formatImage(string $filename, ImageSize $size = ImageSize::SMALL): string
+    {
+        if (!$filename) {
+            return '';
+        }
+
+        if (str_starts_with($filename, 'http://') || str_starts_with($filename, 'https://')) {
+            return $filename;
+        }
+
+        $params = ComponentHelper::getParams('com_jed');
+        $cdnUrl = rtrim($params->get('cdn_url', 'https://extensionscdn.joomla.org'), '/');
+
+        $lastDot      = strrpos($filename, '.');
+        $partialName  = substr($filename, 0, $lastDot - 1);
+        $extension    = substr($filename, $lastDot);
+        $bestFilename = match ($size) {
+            ImageSize::ORIGINAL => $filename,
+            ImageSize::SMALL => $partialName . '_small' . $extension,
+            ImageSize::LARGE => $partialName . '_large' . $extension,
+        };
+
+        // TODO Check if the resized file exists; if not resize it
+
+        // TODO If the file cannot be resized AND I am configured to use a CDN, fall back to the legacy CDN URLs
+        if (false && $params->get('use_cdn', 0)) {
+            $bestFilename = match ($size) {
+                ImageSize::ORIGINAL => $filename,
+                ImageSize::SMALL => $partialName . '_resizeDown400px175px16' . $extension,
+                ImageSize::LARGE => $partialName . '_resizeDown1200px525px16' . $extension,
+            };
+
+            return $cdnUrl . '/cache/fab_image/' . $bestFilename;
+        }
+
+        // If I am configured to use a CDN, use the https://extensionscdn.joomla.org CDN
+        if ($params->get('use_cdn', 0)) {
+            return $cdnUrl . '/cache/' . $bestFilename;
+        }
+
+        // No CDN (e.g. local development). Where should I get my image from?
+        if (File::exists(JPATH_ROOT . '/' . ltrim($bestFilename, '/\\'))) {
+            return Uri::root() . ltrim($bestFilename, '/\\');
+        }
+
+        if (File::exists(JPATH_ROOT . '/' . ltrim($filename, '/\\'))) {
+            return Uri::root() . ltrim($filename, '/\\');
+        }
+
+        if (File::exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($bestFilename, '/\\'))) {
+            return Uri::root() . 'media/com_jed/' . ltrim($bestFilename, '/\\');
+        }
+
+        if (File::exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($filename, '/\\'))) {
+            return Uri::root() . 'media/com_jed/' . ltrim($filename, '/\\');
+        }
+
+        return '';
     }
 
     /**
@@ -222,11 +232,11 @@ class JedHelper
     /**
      * Gets the files attached to an item
      *
-     * @param int    $pk    The item's id
+     * @param   int     $pk     The item's id
      *
-     * @param string $table The table's name
+     * @param   string  $table  The table's name
      *
-     * @param string $field The field's name
+     * @param   string  $field  The field's name
      *
      * @return array  The files
      *
@@ -237,10 +247,7 @@ class JedHelper
         $db    = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
 
-        $query
-            ->select($field)
-            ->from($table)
-            ->where('id = ' . $pk);
+        $query->select($field)->from($table)->where('id = ' . $pk);
 
         $db->setQuery($query);
 
@@ -276,24 +283,6 @@ class JedHelper
         }
 
         return '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
-    }
-
-    /**
-     * Gets the current User .
-     *
-     * @return User\User
-     *
-     * @since 4.0.0
-     */
-    public static function getUser(): User\User
-    {
-        try {
-            $app = Factory::getApplication();
-
-            return $app->getSession()->get('user');
-        } catch (Exception $e) {
-            return new User\User();
-        }
     }
 
     /**
@@ -336,6 +325,24 @@ class JedHelper
     }
 
     /**
+     * Gets the current User .
+     *
+     * @return User\User
+     *
+     * @since 4.0.0
+     */
+    public static function getUser(): User\User
+    {
+        try {
+            $app = Factory::getApplication();
+
+            return $app->getSession()->get('user');
+        } catch (Exception $e) {
+            return new User\User();
+        }
+    }
+
+    /**
      * Lock form fields
      *
      * This takes a form and marks all fields as readonly/disabled
@@ -366,12 +373,13 @@ class JedHelper
     /**
      * Prettyfy a Data
      *
-     * @param string $datestr A String Date
+     * @param   string  $datestr  A String Date
      *
      * @since 4.0.0
      **/
-    public static function prettyDate(string $datestr): string
+    public static function prettyDate(mixed $datestr): string
     {
+
         try {
             $d = new DateTime($datestr);
 
@@ -381,73 +389,54 @@ class JedHelper
         }
     }
 
-    /**
-     * Function to format JED Extension Images
-     *
-     * @param string $filename The image filename
-     * @param string $size     Size of image, small|large
-     *
-     * @return string  Full image url
-     *
-     * @since 4.0.0
-     */
-    public static function formatImage(string $filename, ImageSize $size = ImageSize::SMALL): string
+    public static function OutputFieldsets(array $fieldsets, Form $form): bool
     {
-        if (!$filename) {
-            return '';
+        $fscount = 0;
+        foreach ($fieldsets as $fscat => $fs) {
+            Log::add($fscat);
+            $fscount = $fscount + 1;
+
+            if ($fs['title'] <> '') {
+                if ($fscount > 1) {
+                    echo '</fieldset>';
+                }
+                if(key_exists('supply_type', $fs)) {
+                    $st = '_'.$fs['supply_type'];
+                } else {
+                    $st = '';
+                };
+
+                echo '<fieldset class="extensionform'.$st.'"><legend>' . $fs['title'] . '</legend>';
+            }
+            if ($fs['description'] <> '') {
+                echo $fs['description'];
+            }
+            $fields       = $fs['fields'];
+            $hiddenFields = $fs['hidden'];
+            foreach ($fields as $field) {
+                if (is_array($field)) {
+                    // Split into two columns
+                    echo '<div class="row"><div class="col-md-6">';
+                    if (in_array($field[0], $hiddenFields)) {
+                        $form->setFieldAttribute($field[0], 'type', 'hidden');
+                    }
+                    echo $form->renderField($field[0], null, null, ['class' => 'control-wrapper-' . $field[0]]);
+                    echo '</div>';
+                    echo '<div class="col-md-6">';
+                    if (in_array($field[1], $hiddenFields)) {
+                        $form->setFieldAttribute($field[1], 'type', 'hidden');
+                    }
+                    echo $form->renderField($field[1], null, null, ['class' => 'control-wrapper-' . $field[1]]);
+                    echo '</div></div>';
+                }
+                if (in_array($field, $hiddenFields)) {
+                    $form->setFieldAttribute($field, 'type', 'hidden');
+                }
+
+                echo $form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+            }
         }
-
-        if (str_starts_with($filename, 'http://') || str_starts_with($filename, 'https://')) {
-            return $filename;
-        }
-
-        $params = ComponentHelper::getParams('com_jed');
-        $cdnUrl = rtrim($params->get('cdn_url', 'https://extensionscdn.joomla.org'), '/');
-
-        $lastDot      = strrpos($filename, '.');
-        $partialName  = substr($filename, 0, $lastDot - 1);
-        $extension    = substr($filename, $lastDot);
-        $bestFilename = match ($size) {
-            ImageSize::ORIGINAL => $filename,
-            ImageSize::SMALL    => $partialName . '_small' . $extension,
-            ImageSize::LARGE    => $partialName . '_large' . $extension,
-        };
-
-        // TODO Check if the resized file exists; if not resize it
-
-        // TODO If the file cannot be resized AND I am configured to use a CDN, fall back to the legacy CDN URLs
-        if (false && $params->get('use_cdn', 0)) {
-            $bestFilename = match ($size) {
-                ImageSize::ORIGINAL => $filename,
-                ImageSize::SMALL    => $partialName . '_resizeDown400px175px16' . $extension,
-                ImageSize::LARGE    => $partialName . '_resizeDown1200px525px16' . $extension,
-            };
-
-            return $cdnUrl . '/cache/fab_image/' . $bestFilename;
-        }
-
-        // If I am configured to use a CDN, use the https://extensionscdn.joomla.org CDN
-        if ($params->get('use_cdn', 0)) {
-            return $cdnUrl . '/cache/' . $bestFilename;
-        }
-
-        // No CDN (e.g. local development). Where should I get my image from?
-        if (File::exists(JPATH_ROOT . '/' . ltrim($bestFilename, '/\\'))) {
-            return Uri::root() . ltrim($bestFilename, '/\\');
-        }
-
-        if (File::exists(JPATH_ROOT . '/' . ltrim($filename, '/\\'))) {
-            return Uri::root() . ltrim($filename, '/\\');
-        }
-
-        if (File::exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($bestFilename, '/\\'))) {
-            return Uri::root() . 'media/com_jed/' . ltrim($bestFilename, '/\\');
-        }
-
-        if (File::exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($filename, '/\\'))) {
-            return Uri::root() . 'media/com_jed/' . ltrim($filename, '/\\');
-        }
-
-        return '';
+        echo '</fieldset>';
+        return true;
     }
 }

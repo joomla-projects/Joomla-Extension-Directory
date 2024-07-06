@@ -181,6 +181,22 @@ class MessagetemplateTable extends Table
     }
 
     /**
+     * Delete a record by id
+     *
+     * @param mixed $pk Primary key value to delete. Optional
+     *
+     * @return bool
+     *
+     * @since 4.0.0
+     */
+    public function delete($pk = null): bool
+    {
+        $this->load($pk);
+
+        return parent::delete($pk);
+    }
+
+    /**
      * Get the type alias for the history table
      *
      * @return string  The alias as described above

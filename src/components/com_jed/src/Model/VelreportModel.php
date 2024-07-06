@@ -120,7 +120,7 @@ class VelreportModel extends ItemModel
                     }
 
                     // Convert the JTable to a clean JObject.
-                    $properties = $table->getProperties(1);
+                    $properties = $table->getTableProperties(1);
 
                     $this->item = ArrayHelper::toObject($properties, stdClass::class);
                 } else {

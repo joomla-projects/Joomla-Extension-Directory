@@ -57,9 +57,9 @@ class ForeignKeyField extends ListField
      * @var   bool
      * @since 4.0.0
      */
-    protected bool $translate = true;
+    protected bool $translate;
 
-    protected bool $header = false;
+    //	protected bool $header;
 
     private $input_type;
 

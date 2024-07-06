@@ -177,6 +177,9 @@ class ExtensionsModel extends ListModel
         // Join over the created by field 'modified_by'
         $query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
 
+        //Join to Varied Data to get Default descriptive text
+        $query->select('varied.description as description, varied.title as title, varied.alias as alias');
+        $query->join('INNER', '#__jed_extension_varied_data AS varied ON varied.extension_id = a.id and varied.is_default_data=1');
 
         if (!Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed')) {
             $query->where('a.state = 1');

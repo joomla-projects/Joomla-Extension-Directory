@@ -12,7 +12,6 @@ namespace Jed\Component\Jed\Site\Model;
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
-
 // phpcs:enable PSR1.Files.SideEffects
 
 use DateInterval;
@@ -28,6 +27,7 @@ use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
+use Michelf\Markdown;
 use stdClass;
 
 /**
@@ -175,7 +175,7 @@ class ExtensionModel extends ItemModel
                 }
 
                 // Convert the Table to a clean CMSObject.
-                $properties = $table->getProperties(1);
+                $properties = $table->getTableProperties(1);
                 $this->item = ArrayHelper::toObject($properties, stdClass::class);
             }
 
@@ -196,6 +196,20 @@ class ExtensionModel extends ItemModel
         // Load Category Hierarchy
         $this->item->category_hierarchy = $this->getCategoryHierarchy($this->item->primary_category_id);
 
+        // Load Varied Data
+        $this->item->varied_data = $this->getVariedData($this->item->id);
+
+        foreach ($this->item->varied_data as $v) {
+            if ($v->is_default_data !== 1) {
+                continue;
+            }
+            $this->item->title = $v->title;
+            $this->item->alias = $v->alias;
+
+            $this->item->intro_text   = $v->intro_text;
+            $this->item->support_link = $v->support_link;
+        }
+
         // Load Scores
         $this->item->scores            = $this->getScores($this->item->id);
         $this->item->number_of_reviews = 0;
@@ -208,7 +222,7 @@ class ExtensionModel extends ItemModel
             $supplytype    = match ($s->supply_option_id) {
                 1 => 'Free',
                 2 => 'Paid',
-                3 => 'Cloud'
+                3 => 'Cloud',
             };
             $score         = $score + $s->functionality_score;
             $score         = $score + $s->ease_of_use_score;
@@ -376,15 +390,15 @@ class ExtensionModel extends ItemModel
             $db->quoteName('supply_option_id', 'supply_option_id'),
             ]
         )
-            ->from($db->quoteName('#__jed_extensions', 'a'))
+            ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
             ->where(
                 [
-                $db->quoteName('id') . ' = ' . (int)$extension_id,
+                $db->quoteName('extension_id') . ' = ' . (int)$extension_id,
                 ]
             );
 
-        $query->where([$db->quoteName('supply_options.id') . ' IN (' . $query2 . ')']);
-
+        $query->where($db->quoteName('supply_options.id') . ' IN (' . $query2 . ')');
+        $query->where($db->quoteName('state') . ' = 1');
         return $db->setQuery($query)->loadObjectList();
     }
 
@@ -399,7 +413,7 @@ class ExtensionModel extends ItemModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getTable($name = 'Extension', $prefix = 'Administrator', $options = [])
+    public function getTable($name = "Extension", $prefix = "Administrator", $options = [])
     {
         return parent::getTable($name, $prefix, $options);
     }
@@ -526,7 +540,7 @@ class ExtensionModel extends ItemModel
     }
 
     /**
-     * Method to autopopulate the model state.
+     * Method to auto-populate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
      *
@@ -591,5 +605,62 @@ class ExtensionModel extends ItemModel
         $table->state = $state;
 
         return $table->store();
+    }
+
+    /**
+     * Get varied data for extension, i.e. fields for free, fields for paid
+     *
+     * @param int      $extension_id
+     * @param int|null $supply_option_type
+     *
+     * @return array
+     *
+     * @throws Exception
+     * @since  4.0.0
+     */
+    public function getVariedData(int $extension_id, int $supply_option_type = null): array
+    {
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+                    ->select('supply_options.title AS supply_type, a.*')
+                    ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
+                    ->leftJoin(
+                        $db->quoteName('#__jed_extension_supply_options', 'supply_options')
+                        . ' ON ' . $db->quoteName('supply_options.id') . ' = ' . $db->quoteName('a.supply_option_id')
+                    )
+                    ->where($db->quoteName('extension_id') . ' = :extension_id')
+                    ->bind(':extension_id', $extension_id, ParameterType::INTEGER);
+
+        if (($supply_option_type ?? 0) > 0) {
+            $query
+                ->where($db->quoteName('supply_option_id') . ' = :supply_option_type')
+                ->bind(':supply_option_type', $supply_option_type, ParameterType::INTEGER);
+        }
+
+        $result = $db->setQuery($query)->loadObjectList();
+
+        foreach ($result as $variedDatum) {
+            $supply = $variedDatum->supply_type;
+
+            if (!empty($variedDatum->logo)) {
+                $variedDatum->logo = \Jed\Component\Jed\Site\Helper\JedHelper::formatImage($variedDatum->logo, ImageSize::LARGE);
+            }
+
+            if ($variedDatum->is_default_data == 1 && empty($variedDatum->intro_text)) {
+                $split_data = $this->splitDescription($variedDatum->description);
+
+                if (!is_null($split_data)) {
+                    $variedDatum->intro_text  = $split_data['intro'];
+                    $variedDatum->description = $split_data['body'] . Markdown::defaultTransform($variedDatum->description);
+                }
+            } else {
+                $variedDatum->intro_text  = Markdown::defaultTransform($variedDatum->intro_text);
+                $variedDatum->description = Markdown::defaultTransform($variedDatum->description);
+            }
+
+            $retval[$supply] = $variedDatum;
+        }
+
+        return $retval;
     }
 }

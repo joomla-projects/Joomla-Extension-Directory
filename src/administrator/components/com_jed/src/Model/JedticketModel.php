@@ -161,11 +161,11 @@ class JedticketModel extends AdminModel
     /**
      * Method to get VEL Report Item Data
      *
-     * @return array|bool  An array on success, false on failure
+     * @return mixed  An array on success, false on failure
      *
      * @since 4.0.0
      */
-    public function getReviewData(): array
+    public function getReviewData(): mixed
     {
         // Create a new query object.
         $db = $this->getDatabase();
@@ -194,6 +194,7 @@ class JedticketModel extends AdminModel
         $query->join("LEFT", "#__jed_extension_supply_options AS supply_options ON supply_options.id=a.supply_option_id");
 
         // Load the items
+
         $db->setQuery($query);
         $db->execute();
         if ($db->getNumRows()) {
@@ -222,7 +223,7 @@ class JedticketModel extends AdminModel
 
         $user                     = $userFactory->loadUserById($this->ticket_creator);
         $output['ticket_creator'] = $user;
-        $ticket_creator           = 1069;
+        $ticket_creator           = 547648;
         $user                     = $userFactory->loadUserById($ticket_creator); //CMSOvject user
         $output['sample_creator'] = $user;
 
@@ -235,10 +236,10 @@ class JedticketModel extends AdminModel
 
         // Select all fields
 
-        $query->select('a.*'); // `b`.`title`, `b`.`alias`');
+        $query->select('a.*, `b`.`title`, `b`.`alias`');
 
         $query->from($db->quoteName('#__jed_extensions', 'a'));
-        // $query->join("inner", "`#__jed_extension_varied_data` as b", "`b`.`extension_id` = `a`.`id`");
+        $query->join("inner", "`#__jed_extension_varied_data` as b", "`b`.`extension_id` = `a`.`id`");
 
         $query->where('a.created_by = ' . $ticket_creator);
 

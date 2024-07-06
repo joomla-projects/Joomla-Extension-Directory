@@ -13,7 +13,9 @@
 
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Administrator\Model\ReviewModel;
 use Jed\Component\Jed\Administrator\View\Extension\HtmlView;
+use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -21,6 +23,8 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Actionlogs\Administrator\Helper\ActionlogsHelper;
 
+$headerlabeloptions = ['hiddenLabel' => true, 'readonly' => true];
+$fieldhiddenoptions = ['hidden' => true];
 /**
 *
  *
@@ -34,7 +38,9 @@ try {
         ->useScript('form.validate')
         ->useScript('keepalive')
         ->usePreset('choicesjs')
-        ->useScript('webcomponent.field-fancy-select');
+        ->useScript('webcomponent.field-fancy-select')
+        ->useStyle('com_jed.jedTickets')
+        ->useStyle('com_jed.jquery_dataTables');
 } catch (Exception $e) {
 }
 
@@ -47,30 +53,226 @@ Text::script('COM_JED_EXTENSIONS_EXTENSION_APPROVED_REASON_REQUIRED', true);
 Text::script('COM_JED_EXTENSIONS_ERROR_SAVING_PUBLISH', true);
 Text::script('COM_JED_EXTENSIONS_EXTENSION_PUBLISHED_REASON_REQUIRED', true);
 
-$extensionUrl = Uri::root() . 'extension/' . $this->item->alias;
-$downloadUrl  = 'index.php?option=com_jed&task=extension.download&id=' . $this->item->id;
+$extensionUrl = Uri::root() . 'extension/' . $this->extension->alias;
+$downloadUrl  = 'index.php?option=com_jed&task=extension.download&id=' . $this->extension->id;
 
 Factory::getDocument()
     ->addScriptOptions('joomla.userId', Factory::getUser()->id, false);
 
 ?>
 
-<form action="index.php?option=com_jed&view=extension&layout=edit&id=<?php echo (int)$this->item->id; ?>" method="post" name="adminForm" id="extension-form" class="form-validate">
+<form action="index.php?option=com_jed&view=extension&layout=edit&id=<?php echo (int)$this->extension->id; ?>" method="post" name="adminForm" id="extension-form" class="form-validate">
+
     <?php echo LayoutHelper::render('joomla.edit.title_alias', $this); ?>
 
     <div class="main-card">
-        <?php echo HTMLHelper::_('uitab.startTabSet', 'extensionTab', ['active' => 'general', 'recall' => true, 'breakpoint' => 768]); ?>
+        <?php
+        echo HTMLHelper::_('uitab.startTabSet', 'extensionTab', ['active' => 'general', 'recall' => true, 'breakpoint' => 768]);
 
-        <?php foreach ($this->form->getFieldsets() as $fieldset) : ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'extensionTab', $fieldset->name, Text::_($fieldset->label)); ?>
+foreach ($this->form->getFieldsets() as $fieldset) :
+    echo HTMLHelper::_('uitab.addTab', 'extensionTab', $fieldset->name, Text::_($fieldset->label));
+    ?>
                 <div class="row">
                     <div class="col-12 col-lg-6">
-                        <?php echo $this->form->renderFieldset($fieldset->name); ?>
+                        <?php  echo $this->form->renderFieldset($fieldset->name); ?>
                     </div>
                 </div>
-            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php
+        echo HTMLHelper::_('uitab.endTab'); ?>
         <?php endforeach; ?>
+<?php
+foreach ($this->extension->varied as $st) {
+    echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'varied-'.$st->supply_option_id, Text::_($st->supply_option_type));
+    $varied_form                          = $this->extension->varied_form;
+    $varied_form->bind($st);
+    $fieldsets                            = [];
+    $fieldsets['overview']['supply_type'] = $st->supply_type;
+    $fieldsets['overview']['title']       =  '';
+    $fieldsets['overview']['description'] = '';
+    $fieldsets['overview']['fields']   = ['id', 'supply_option_id', ['title', 'is_default_data'],  'description'];
+    $fieldsets['overview']['hidden']   = ['id', 'supply_option_id'];
 
+
+    $fieldsets['links']['supply_type'] = $st->supply_type;
+    $fieldsets['links']['title']       = Text::_('COM_JED_EXTENSION_FORM_LINKS_TITLE');
+    $fieldsets['links']['description'] = '';
+    $fieldsets['links']['fields']      = [['homepage_link', 'download_link'], ['demo_link', 'support_link'], ['documentation_link', 'license_link'], ['translation_link', '']];
+    $fieldsets['links']['hidden']      = [];
+
+    $fieldsets['integration']['supply_type'] = $st->supply_type;
+    $fieldsets['integration']['title']       = Text::_('COM_JED_EXTENSION_FORM_INTEGRATION_TITLE');
+    $fieldsets['integration']['description'] = Text::_('COM_JED_EXTENSION_FORM_INTEGRATION_DESCR');
+    $fieldsets['integration']['fields']      = [['download_integration_type', 'download_integration_url']];
+    $fieldsets['integration']['hidden']      = [];
+
+    JedHelper::OutputFieldsets($fieldsets, $varied_form);
+    $fieldsets = [];
+
+    echo HTMLHelper::_('uitab.endTab');
+}
+echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'viewextensionreviews', Text::_('Reviews', true));
+?>
+
+            <div class="container">
+                <div class="row">
+				    <?php
+
+                    echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_help_reviews_group', $slidesOptions);
+
+$slideid = 0;
+foreach ($this->extension->reviews as $rtype) {
+    foreach($rtype as $review) {
+        $review = (object)$review;
+        if ($review->published === 1) {
+            $ico = '<span class="fas fa-bolt"></span>';
+        } else {
+            $ico = '';
+        }
+        echo HTMLHelper::_(
+            'bootstrap.addSlide',
+            'extension_'.$type.'_reviews_group',
+            $type.' '.$review->id . ' - ' . $review->title . '&nbsp;' .
+            JedHelper::prettyDate($review->created_on) . '&nbsp;',
+            'extension_'.$type.'_reviews_group' . '_slide' . ($slideid++)
+        );
+        $review_model = new ReviewModel();
+        $linked_form = $review_model->getForm($review, false, 'review');
+        $linked_form->bind($review);
+        ?>
+	                        <div class="col-md-4 ticket-header">
+        <h1>Status - <?php echo $linked_form->renderField('published', null, null, $headerlabeloptions); ?>
+                    &nbsp;&nbsp;<button id="btn_save_published" type="button" class="">
+                        <span class="icon-save"></span>
+                    </button>
+                    </h1>
+                    <p id="jform_review_status_updated" style="display:none">Status Updated</p>
+
+                </div>
+                <div class="row ticket-header-row">
+                   
+                    <div class="col-md-4  ticket-header">
+
+                        <h1>Version - <?php echo $review->version; ?></h1>
+
+                    </div>
+                    <div class="col-md-4  ticket-header">
+
+                        <h1>Type - <?php echo $review->supply_type; ?></h1>
+
+                    </div>
+                    <div class="col-md-4  ticket-header">
+
+                        <h1>Reviewer - <?php echo $review->created_by_name; ?></h1>
+
+                    </div>
+
+                </div>
+                <P>&nbsp;</P>
+                <div class="row ticket-header-row">
+                    <div class="col-md-6   ticket-header">
+			            <?php echo $linked_form->renderField('title', null, null); ?>
+                    </div>
+                    <div class="col-md-6   ticket-header">
+
+			            <?php echo $linked_form->renderField('alias', null, null); ?>
+                    </div>
+
+                </div>
+                <div class="row ticket-header-row">
+                    <div class="col-md-12   ticket-header">
+			            <?php echo $linked_form->renderField('body', null, null); ?>
+                    </div>
+                    <div class="col-md-12   ticket-header">
+			            <?php echo $linked_form->renderField('used_for', null, null); ?>
+                    </div>
+                </div>
+                <div class="row ticket-header-row">
+                    <div class="col-md-2   ticket-header">
+                        <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_FUNCTIONALITY_LABEL') . ' - ' . $review->functionality; ?></h1>
+                    </div>
+                    <div class="col-md-10   ticket-header">
+			            <?php echo $linked_form->renderField('functionality_comment', null, null, $headerlabeloptions); ?>
+                    </div>
+                </div>
+                <div class="row ticket-header-row">
+                    <div class="col-md-2   ticket-header">
+                        <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_EASE_OF_USE_LABEL') . ' - ' . $review->ease_of_use; ?></h1>
+                    </div>
+                    <div class="col-md-10   ticket-header">
+			            <?php echo $linked_form->renderField('ease_of_use_comment', null, null, $headerlabeloptions); ?>
+                    </div>
+                </div>
+                <div class="row ticket-header-row">
+                    <div class="col-md-2   ticket-header">
+                        <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_SUPPORT_LABEL') . ' - ' . $review->support; ?></h1>
+                    </div>
+                    <div class="col-md-10   ticket-header">
+			            <?php echo $linked_form->renderField('support_comment', null, null, $headerlabeloptions); ?>
+                    </div>
+                </div>
+                <div class="row ticket-header-row">
+                    <div class="col-md-2   ticket-header">
+                        <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_DOCUMENTATION_LABEL') . ' - ' . $review->documentation; ?></h1>
+                    </div>
+                    <div class="col-md-10   ticket-header">
+			            <?php echo $linked_form->renderField('documentation_comment', null, null, $headerlabeloptions); ?>
+                    </div>
+                </div>
+                <div class="row ticket-header-row">
+                    <div class="col-md-2   ticket-header">
+                        <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_VALUE_FOR_MONEY_LABEL') . ' - ' . $review->value_for_money; ?></h1>
+                    </div>
+                    <div class="col-md-10   ticket-header">
+			            <?php echo $linked_form->renderField('value_for_money_comment', null, null, $headerlabeloptions); ?>
+                    </div>
+                </div>
+                <div class="row ticket-header-row">
+                    <div class="col-md-2   ticket-header">
+                        <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_OVERALL_SCORE_LABEL') . ' - ' . $review->overall_score; ?></h1>
+                    </div>
+                    <div class="col-md-10   ticket-header">
+                        <h1>Created on - <?php echo $review->created_on; ?>&nbsp;&nbsp;IP Address
+                            - <?php echo $review->ip_address; ?></h1>
+                    </div>
+                </div>
+<?php
+                echo HTMLHelper::_('bootstrap.endSlide');
+    }
+
+
+
+
+
+
+}
+echo HTMLHelper::_('bootstrap.endAccordion');
+
+?>
+
+
+                </div>
+
+
+	    <?php
+        echo HTMLHelper::_('uitab.endTab');
+/*for ($this->item->varied)
+            echo HTMLHelper::_('uitab.endTab');
+
+            foreach ($this->extension->varied_data as $vr) {
+                $varied_form = $this->extensionvarieddatum_form;
+
+                $varied_form->bind($vr);
+                echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'viewextensionsupply_tab_' . $vr->supply_type, Text::_($vr->supply_type, true) . '&nbsp;' . Text::_('COM_JED_EXTENSIONS_VERSION', true));
+                echo $varied_form->renderFieldset('info');
+
+                echo $varied_form->renderField('tags');
+                echo $varied_form->renderField('state');
+                echo $varied_form->renderField('created_by');
+
+                echo HTMLHelper::_('uitab.endTab');
+            }
+            //      echo "<pre>";print_r($this->extension);echo "</pre>";exit();
+            ?>
 <!-- Legacy stuff from here on -->
 
             <?php
@@ -121,7 +323,7 @@ Factory::getDocument()
                     <?php
                                 echo HTMLHelper::_(
                                     'link',
-                                    'index.php?option=com_jed&view=reviews&filter[extension]=' . $this->item->id,
+                                    'index.php?option=com_jed&view=reviews&filter[extension]=' . $this->extension->id,
                                     Text::_('COM_JED_EXTENSIONS_REVIEW_LINK') . ' <span class="icon-new-tab"></span>',
                                     'target="_blank"'
                                 );
@@ -190,8 +392,8 @@ Factory::getDocument()
                         </thead>
                         <tbody>
                         <?php
-                        if (isset($this->item->history)) :
-                            foreach ($this->item->history as $history) :
+                        if (isset($this->extension->history)) :
+                            foreach ($this->extension->history as $history) :
                                 ?>
                                 <tr><?php
                                 ?>
@@ -248,7 +450,7 @@ if ($history->type === 'note') {
                 </div>
             </div>
             <?php
-            echo HTMLHelper::_('uitab.endTab'); ?>
+            echo HTMLHelper::_('uitab.endTab'); */?>
 
 
         <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
