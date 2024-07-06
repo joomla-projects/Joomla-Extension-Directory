@@ -126,7 +126,7 @@ class ForeignKeyField extends ListField
             // Get the fields for multiple value
             $value_fields    = (string)$this->getAttribute('value_field_multiple');
             $value_fields    = explode(',', $value_fields);
-            $separator = (string)$this->getAttribute('separator');
+            $separator       = (string)$this->getAttribute('separator');
 
             $fk_value = ' CONCAT(';
 
@@ -202,7 +202,7 @@ class ForeignKeyField extends ListField
 
             // Integer is given
             if (\is_int($this->value)) {
-                $this->value = array($this->value);
+                $this->value = [$this->value];
             }
 
             $data['value'] = $this->value;
@@ -224,7 +224,7 @@ class ForeignKeyField extends ListField
      */
     protected function getOptions(): array
     {
-        $options = array();
+        $options = [];
         $db      = Factory::getContainer()->get('DatabaseDriver');
         try {
             $db->setQuery($this->processQuery());
@@ -246,8 +246,8 @@ class ForeignKeyField extends ListField
         if (!empty($results)) {
             foreach ($results as $item) {
                 $options[] = (object) [
-                    "value"     => $item->{$this->key_field},
-                    "text"      => $this->translate ? Text::_($item->{$this->value_field}) : $item->{$this->value_field}
+                    "value" => $item->{$this->key_field},
+                    "text"  => $this->translate ? Text::_($item->{$this->value_field}) : $item->{$this->value_field},
                 ];
             }
         }

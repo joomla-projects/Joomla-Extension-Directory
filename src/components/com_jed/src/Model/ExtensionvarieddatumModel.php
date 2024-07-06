@@ -136,7 +136,7 @@ class ExtensionvarieddatumModel extends FormModel
             }
 
             // Get a level row instance.
-            $table = $this->getTable();
+            $table      = $this->getTable();
             $properties = $table->getTableProperties();
             $this->item = ArrayHelper::toObject($properties, stdClass::class);
 

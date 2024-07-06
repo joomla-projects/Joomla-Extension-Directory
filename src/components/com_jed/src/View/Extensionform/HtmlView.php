@@ -59,11 +59,11 @@ class HtmlView extends BaseHtmlView
     {
         $app  = Factory::getApplication();
 
-        $this->state      = $this->get('State');
-        $this->item       = $this->get('variedItem');
-        $this->params     = $app->getParams('com_jed');
-        $this->canSave    = JedHelper::canSave();
-        $this->form       = $this->get('Form');
+        $this->state        = $this->get('State');
+        $this->item         = $this->get('variedItem');
+        $this->params       = $app->getParams('com_jed');
+        $this->canSave      = JedHelper::canSave();
+        $this->form         = $this->get('Form');
         $this->supply_types = $this->get('SupplyTypes');
 
         $extensionvarieddatum                   = new ExtensionvarieddatumModel();
