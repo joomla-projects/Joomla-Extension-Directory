@@ -267,7 +267,7 @@ class VelreportformModel extends FormModel
             return (array)$data;
         }
 
-       return [];
+        return [];
     }
 
     /**

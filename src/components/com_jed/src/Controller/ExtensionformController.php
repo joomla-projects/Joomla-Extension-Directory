@@ -91,18 +91,18 @@ class ExtensionformController extends FormController
 
             //Translate/Fill out default values
             $data['joomla_versions'] = json_encode($data['joomla_versions']);
-            $data['includes'] = json_encode($data['includes']);
+            $data['includes']        = json_encode($data['includes']);
             if($data['download_integration_type'] == 2) {
                 $data['requires_registration'] = 1;
             } else {
                 $data['requires_registration'] = 0;
             }
-            $data['can_update'] = $data['uses_updater'];
-            $data['popular'] = 0;
-            $data['approved'] = 0;
+            $data['can_update']  = $data['uses_updater'];
+            $data['popular']     = 0;
+            $data['approved']    = 0;
             $data['jed_checked'] = 0;
-            $data['alias'] = OutputFilter::stringUrlSafe($data['title']);
-            $data['intro_text'] = '????'; // look this up in JED3
+            $data['alias']       = OutputFilter::stringUrlSafe($data['title']);
+            $data['intro_text']  = '????'; // look this up in JED3
 
 
             echo "<pre>";

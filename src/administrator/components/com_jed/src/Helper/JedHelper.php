@@ -120,8 +120,8 @@ class JedHelper
         $extension    = substr($filename, $lastDot);
         $bestFilename = match ($size) {
             ImageSize::ORIGINAL => $filename,
-            ImageSize::SMALL => $partialName . '_small' . $extension,
-            ImageSize::LARGE => $partialName . '_large' . $extension,
+            ImageSize::SMALL    => $partialName . '_small' . $extension,
+            ImageSize::LARGE    => $partialName . '_large' . $extension,
         };
 
         // TODO Check if the resized file exists; if not resize it
@@ -130,8 +130,8 @@ class JedHelper
         if (false && $params->get('use_cdn', 0)) {
             $bestFilename = match ($size) {
                 ImageSize::ORIGINAL => $filename,
-                ImageSize::SMALL => $partialName . '_resizeDown400px175px16' . $extension,
-                ImageSize::LARGE => $partialName . '_resizeDown1200px525px16' . $extension,
+                ImageSize::SMALL    => $partialName . '_resizeDown400px175px16' . $extension,
+                ImageSize::LARGE    => $partialName . '_resizeDown1200px525px16' . $extension,
             };
 
             return $cdnUrl . '/cache/fab_image/' . $bestFilename;

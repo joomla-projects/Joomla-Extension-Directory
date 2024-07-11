@@ -244,41 +244,41 @@ class VelreportModel extends ItemModel
         $this->setState('params', $params);
     }
 
-	/**
-	 * Method to check out an item for editing.
-	 *
-	 * @param int|null $id The id of the row to check out.
-	 *
-	 * @return bool True on success, false on failure.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @throws Exception
-	 */
-	public function checkout(int $id = null): bool
-	{
-		// Get the user id.
-		$id = (!empty($id)) ? $id : (int)$this->getState('velreport.id');
+    /**
+     * Method to check out an item for editing.
+     *
+     * @param int|null $id The id of the row to check out.
+     *
+     * @return bool True on success, false on failure.
+     *
+     * @since 4.0.0
+     *
+     * @throws Exception
+     */
+    public function checkout(int $id = null): bool
+    {
+        // Get the user id.
+        $id = (!empty($id)) ? $id : (int)$this->getState('velreport.id');
 
-		if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-			if ($id) {
-				// Initialise the table
-				$table = $this->getTable();
+        if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
+            if ($id) {
+                // Initialise the table
+                $table = $this->getTable();
 
-				// Get the current user object.
-				$user = Factory::getApplication()->getIdentity();
+                // Get the current user object.
+                $user = Factory::getApplication()->getIdentity();
 
-				// Attempt to check the row out.
-				if (method_exists($table, 'checkout')) {
-					if (!$table->checkout($user->id, $id)) {
-						return false;
-					}
-				}
-			}
+                // Attempt to check the row out.
+                if (method_exists($table, 'checkout')) {
+                    if (!$table->checkout($user->id, $id)) {
+                        return false;
+                    }
+                }
+            }
 
-			return true;
-		} else {
-			throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-		}
-	}
+            return true;
+        } else {
+            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+        }
+    }
 }

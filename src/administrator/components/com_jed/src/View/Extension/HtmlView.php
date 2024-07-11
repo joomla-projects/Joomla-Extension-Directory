@@ -63,7 +63,7 @@ class HtmlView extends BaseHtmlView
     {
         $extension_model  = new ExtensionModel();
         $this->state      = $this->get('State');
-        $everything = $this->get('Everything', 'Extension');
+        $everything       = $this->get('Everything', 'Extension');
 
         $this->extension  = $everything;
         $this->form       = $extension_model->getForm($this->extension, false, 'extension_form');
