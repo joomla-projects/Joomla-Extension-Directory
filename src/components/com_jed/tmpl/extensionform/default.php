@@ -119,7 +119,7 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
 
     if (!$isLoggedIn) {
         try {
-            $app = JFactory::getApplication();
+            $app = Factory::getApplication();
         } catch (Exception $e) {
         }
 
