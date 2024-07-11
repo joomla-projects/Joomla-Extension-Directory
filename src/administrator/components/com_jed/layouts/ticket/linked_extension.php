@@ -40,7 +40,7 @@ JedHelper::lockFormFields($extension_form, ['']);
 echo HTMLHelper::_('uitab.startTabSet', 'viewExtensionTab', ['active' => 'viewextension']);
 
 
-echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'general', Text::_('COM_JED_EXTENSIONS_INFO_TAB')); ?>
+echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'general', Text::_('COM_JED_EXTENSION_INFO_TAB')); ?>
     <div class="row-fluid form-horizontal-desktop">
         <div class="span9">
             <div class="form-horizontal">
@@ -60,7 +60,7 @@ echo HTMLHelper::_(
     'uitab.addTab',
     'viewExtensionDescriptionTab',
     'general',
-    Text::_('COM_JED_EXTENSIONS_GENERAL_TAB')
+    Text::_('COM_JED_EXTENSION_GENERAL_TAB')
 ); ?>
 <div class="row-fluid form-horizontal-desktop">
     <div class="span9">
@@ -118,7 +118,7 @@ $varied_form = $displayData->varied_form;
 //echo "<pre>";print_r($displayData->varied_data);echo "</pre>";exit();
 foreach ($displayData->varied_data as $vr) {
     $varied_form->bind($vr);
-    echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'viewextensionsupply_tab_' . $vr->supply_type, Text::_($vr->supply_type, true) . '&nbsp;' . Text::_('COM_JED_EXTENSIONS_VERSION', true));
+    echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'viewextensionsupply_tab_' . $vr->supply_type, Text::_($vr->supply_type, true) . '&nbsp;' . Text::_('COM_JED_GENERAL_VERSION_LABEL', true));
     echo $varied_form->renderFieldset('info');
 
     echo $varied_form->renderField('tags');

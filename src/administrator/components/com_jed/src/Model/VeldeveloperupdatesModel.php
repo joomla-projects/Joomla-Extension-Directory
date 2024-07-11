@@ -80,7 +80,7 @@ class VeldeveloperupdatesModel extends ListModel
         $items = parent::getItems();
 
         foreach ($items as $oneItem) {
-            $oneItem->update_data_source = Text::_('COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_' . strtoupper($oneItem->update_data_source));
+            $oneItem->update_data_source = Text::_('COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_' . strtoupper($oneItem->update_data_source));
         }
 
         return $items;

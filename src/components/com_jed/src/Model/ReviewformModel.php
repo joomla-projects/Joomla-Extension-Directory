@@ -27,7 +27,7 @@ use Joomla\Utilities\ArrayHelper;
 use stdClass;
 
 /**
- * Reviewform model.
+ * Review Form model.
  *
  * @since 4.0.0
  */

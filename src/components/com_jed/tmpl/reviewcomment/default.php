@@ -30,22 +30,22 @@ if (!$canEdit && Factory::getUser()->authorise('core.edit.own', 'com_jed')) {
 
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWCOMMENTS_FIELD_ID_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_ID_LABEL'); ?></th>
             <td><?php echo $this->item->id; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWCOMMENTS_FIELD_REVIEW_ID_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_REVIEWCOMMENTS_REVIEW_ID_LABEL'); ?></th>
             <td><?php echo $this->item->review_id; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWCOMMENTS_FIELD_IP_ADDRESS_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_IPADDRESS_LABEL'); ?></th>
             <td><?php echo $this->item->ip_address; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_GENERAL_FIELD_CREATED_ON_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_CREATED_ON_LABEL'); ?></th>
             <td><?php echo $this->item->created_on; ?></td>
         </tr>
 
@@ -55,13 +55,13 @@ if (!$canEdit && Factory::getUser()->authorise('core.edit.own', 'com_jed')) {
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWCOMMENTS_FIELD_STATE_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_STATE_LABEL'); ?></th>
             <td>
             <i class="icon-<?php echo ($this->item->state == 1) ? 'publish' : 'unpublish'; ?>"></i></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWCOMMENTS_FIELD_COMMENTS_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_REVIEWCOMMENTS_COMMENTS_LABEL'); ?></th>
             <td><?php echo nl2br($this->item->comments); ?></td>
         </tr>
 
@@ -83,15 +83,15 @@ if (!$canEdit && Factory::getUser()->authorise('core.edit.own', 'com_jed')) {
         'bootstrap.renderModal',
         'deleteModal',
         [
-                                            'title'  => Text::_('JACTION_DELETE'),
-                                            'height' => '50%',
-                                            'width'  => '20%',
+                                                'title'  => Text::_('JACTION_DELETE'),
+                                                'height' => '50%',
+                                                'width'  => '20%',
 
-                                            'modalWidth' => '50',
-                                            'bodyHeight' => '100',
-                                            'footer'     => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_jed&task=reviewcomment.remove&id=' . $this->item->id, false, 2) . '" class="btn btn-danger">' . Text::_('JACTION_DELETE') . '</a>',
-                                        ],
-        Text::sprintf('COM_JED_DELETE_CONFIRM', $this->item->id)
+                                                'modalWidth' => '50',
+                                                'bodyHeight' => '100',
+                                                'footer'     => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_jed&task=reviewcomment.remove&id=' . $this->item->id, false, 2) . '" class="btn btn-danger">' . Text::_('JACTION_DELETE') . '</a>',
+                                            ],
+        Text::sprintf('COM_JED_GENERAL_DELETE_CONFIRM_LABEL', $this->item->id)
     ); ?>
 
 <?php endif; ?>

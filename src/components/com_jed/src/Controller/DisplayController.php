@@ -17,6 +17,8 @@ use Exception;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 
+use function defined;
+
 /**
  * Display Component Controller
  *

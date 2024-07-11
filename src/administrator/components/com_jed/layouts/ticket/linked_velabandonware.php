@@ -26,7 +26,7 @@ $rawData = $displayData->getData();
 
 /* Set up Data fieldsets */
 
-$fieldsets['aboutyou']['title'] = Text::_('COM_JED_VEL_REPORT_ABOUT_YOU_TITLE');
+$fieldsets['aboutyou']['title'] = Text::_('COM_JED_VEL_GENERAL_ABOUT_YOU_LABEL');
 
 $fieldsets['aboutyou']['fields'] = [
     'reporter_fullname',

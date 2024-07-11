@@ -182,13 +182,13 @@ class VelabandonedreportModel extends ItemModel
 
         if (!empty($this->item->passed_to_vel) || $this->item->passed_to_vel == 0) {
             $this->item->passed_to_vel = Text::_(
-                'COM_JED_VEL_GENERAL_FIELD_PASSED_TO_VEL_OPTION_' . $this->item->passed_to_vel
+                'COM_JED_VEL_GENERAL_PASSED_TO_VEL_OPTION_' . $this->item->passed_to_vel
             );
         }
 
         if (!empty($this->item->data_source) || $this->item->data_source == 0) {
             $this->item->data_source = Text::_(
-                'COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_' . $this->item->data_source
+                'COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_' . $this->item->data_source
             );
         }
 

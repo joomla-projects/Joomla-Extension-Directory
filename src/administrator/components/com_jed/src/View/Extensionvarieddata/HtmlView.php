@@ -52,7 +52,7 @@ class HtmlView extends BaseHtmlView
     {
         $canDo = JedHelper::getActions();
 
-        ToolbarHelper::title(Text::_('COM_JED_TITLE_EXTENSIONVARIEDDATA'), "generic");
+        ToolbarHelper::title(Text::_('COM_JED_EXTENSIONVARIEDDATA'), "generic");
 
         $toolbar = Toolbar::getInstance('toolbar');
 
@@ -128,25 +128,25 @@ class HtmlView extends BaseHtmlView
     {
         return [
             'a.`id`'                        => Text::_('JGRID_HEADING_ID'),
-            'a.`extension_id`'              => Text::_('COM_JED_EXTENSIONVARIEDDATA_EXTENSION_ID'),
-            'a.`supply_option_id`'          => Text::_('COM_JED_EXTENSIONVARIEDDATA_SUPPLY_OPTION_ID'),
-            'a.`intro_text`'                => Text::_('COM_JED_EXTENSIONVARIEDDATA_INTRO_TEXT'),
-            'a.`description`'               => Text::_('COM_JED_EXTENSIONVARIEDDATA_DESCRIPTION'),
-            'a.`homepage_link`'             => Text::_('COM_JED_EXTENSIONVARIEDDATA_HOMEPAGE_LINK'),
-            'a.`download_link`'             => Text::_('COM_JED_EXTENSIONVARIEDDATA_DOWNLOAD_LINK'),
-            'a.`demo_link`'                 => Text::_('COM_JED_EXTENSIONVARIEDDATA_DEMO_LINK'),
-            'a.`support_link`'              => Text::_('COM_JED_EXTENSIONVARIEDDATA_SUPPORT_LINK'),
-            'a.`documentation_link`'        => Text::_('COM_JED_EXTENSIONVARIEDDATA_DOCUMENTATION_LINK'),
-            'a.`license_link`'              => Text::_('COM_JED_EXTENSIONVARIEDDATA_LICENSE_LINK'),
-            'a.`tags`'                      => Text::_('COM_JED_EXTENSIONVARIEDDATA_TAGS'),
+            'a.`extension_id`'              => Text::_('COM_JED_EXTENSION'),
+            'a.`supply_option_id`'          => Text::_('COM_JED_EXTENSION_SUPPLY_OPTION_LABEL'),
+            'a.`intro_text`'                => Text::_('COM_JED_EXTENSION_INTRO_TEXT_LABEL'),
+            'a.`description`'               => Text::_('COM_JED_EXTENSION_DESCRIPTION_LABEL'),
+            'a.`homepage_link`'             => Text::_('COM_JED_EXTENSION_HOMEPAGE_LINK_LABEL'),
+            'a.`download_link`'             => Text::_('COM_JED_EXTENSION_DOWNLOAD_LINK_LABEL'),
+            'a.`demo_link`'                 => Text::_('COM_JED_EXTENSION_DEMO_LINK_LABEL'),
+            'a.`support_link`'              => Text::_('COM_JED_EXTENSION_SUPPORT_LINK_LABEL'),
+            'a.`documentation_link`'        => Text::_('COM_JED_EXTENSION_DOCUMENTATION_LINK_LABEL'),
+            'a.`license_link`'              => Text::_('COM_JED_EXTENSION_LICENSE_LINK_LABEL'),
+            'a.`tags`'                      => Text::_('COM_JED_EXTENSION_TAGS_LABEL'),
             'a.`ordering`'                  => Text::_('JGRID_HEADING_ORDERING'),
             'a.`state`'                     => Text::_('JSTATUS'),
-            'a.`created_by`'                => Text::_('COM_JED_GENERAL_FIELD_CREATED_BY_LABEL '),
-            'a.`update_url`'                => Text::_('COM_JED_EXTENSIONVARIEDDATA_UPDATE_URL'),
-            'a.`update_url_ok`'             => Text::_('COM_JED_EXTENSIONVARIEDDATA_UPDATE_URL_OK'),
-            'a.`download_integration_type`' => Text::_('COM_JED_EXTENSIONVARIEDDATA_DOWNLOAD_INTEGRATION_TYPE'),
-            'a.`is_default_data`'           => Text::_('COM_JED_EXTENSIONVARIEDDATA_IS_DEFAULT_DATA'),
-            'a.`translation_link`'          => Text::_('COM_JED_EXTENSIONVARIEDDATA_TRANSLATION_LINK'),
+            'a.`created_by`'                => Text::_('COM_JED_GENERAL_CREATED_BY_LABEL '),
+            'a.`update_url`'                => Text::_('COM_JED_EXTENSION_UPDATE_URL_LABEL'),
+            'a.`update_url_ok`'             => Text::_('COM_JED_EXTENSION_UPDATE_URL_LABEL_OK'),
+            'a.`download_integration_type`' => Text::_('COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_LABEL'),
+            'a.`is_default_data`'           => Text::_('COM_JED_EXTENSION_IS_DEFAULT_DATA_LABEL'),
+            'a.`translation_link`'          => Text::_('COM_JED_EXTENSION_TRANSLATION_LINK_LABEL'),
         ];
     }
 

@@ -47,7 +47,7 @@
             </menu>
 
 			<menu view="extensions">
-				COM_JED_TITLE_EXTENSIONS
+				COM_JED_EXTENSIONS
 			</menu>
         </submenu>
 

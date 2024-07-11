@@ -44,57 +44,57 @@ HTMLHelper::_('bootstrap.tooltip');
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_JEDTICKETS_FIELD_TICKET_ORIGIN_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_TICKETS_TICKET_ORIGIN_LABEL'); ?></th>
             <td><?php echo $this->item->ticket_origin; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_JEDTICKETS_FIELD_TICKET_CATEGORY_TYPE_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_TYPE_LABEL'); ?></th>
             <td><?php echo $this->item->ticket_category_type; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_JEDTICKETS_FIELD_TICKET_SUBJECT_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_SUBJECT_LABEL'); ?></th>
             <td><?php echo $this->item->ticket_subject; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_JEDTICKETS_FIELD_TICKET_TEXT_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_TICKETS_TICKET_TEXT_LABEL'); ?></th>
             <td><?php echo nl2br($this->item->ticket_text); ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_JEDTICKETS_FIELD_INTERNAL_NOTES_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_TICKETS_INTERNAL_NOTES_LABEL'); ?></th>
             <td><?php echo nl2br($this->item->internal_notes); ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_JEDTICKETS_FIELD_UPLOADED_FILES_PREVIEW_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_TICKETS_UPLOADED_FILES_PREVIEW_LABEL'); ?></th>
             <td><?php echo $this->item->uploaded_files_preview; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_JEDTICKETS_FIELD_UPLOADED_FILES_LOCATION_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_TICKETS_UPLOADED_FILES_LOCATION_LABEL'); ?></th>
             <td><?php echo $this->item->uploaded_files_location; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_JEDTICKETS_FIELD_ALLOCATED_GROUP_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_TICKETS_ALLOCATED_GROUP_LABEL'); ?></th>
             <td><?php echo $this->item->allocated_group; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_JEDTICKETS_FIELD_ALLOCATED_TO_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_TICKETS_ALLOCATED_TO_LABEL'); ?></th>
             <td><?php echo $this->item->allocated_to_name; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_JEDTICKETS_FIELD_LINKED_ITEM_TYPE_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_TICKETS_LINKED_ITEM_TYPE_LABEL'); ?></th>
             <td><?php echo $this->item->linked_item_type; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_JEDTICKETS_FIELD_LINKED_ITEM_ID_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_TICKETS_LINKED_ITEM_ID_LABEL'); ?></th>
             <td><?php echo $this->item->linked_item_id; ?></td>
         </tr>
 
@@ -104,12 +104,12 @@ HTMLHelper::_('bootstrap.tooltip');
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_JEDTICKETS_FIELD_PARENT_ID_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_TICKETS_PARENT_ID_LABEL'); ?></th>
             <td><?php echo $this->item->parent_id; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_JEDTICKETS_FIELD_STATE_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_STATE_LABEL'); ?></th>
             <td>
                 <i class="icon-<?php echo ($this->item->state == 1) ? 'publish' : 'unpublish'; ?>"></i></td>
         </tr>
@@ -120,7 +120,7 @@ HTMLHelper::_('bootstrap.tooltip');
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_GENERAL_FIELD_CREATED_ON_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_CREATED_ON_LABEL'); ?></th>
             <td><?php echo $this->item->created_on; ?></td>
         </tr>
 
@@ -130,7 +130,7 @@ HTMLHelper::_('bootstrap.tooltip');
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_GENERAL_FIELD_MODIFIED_ON_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_MODIFIED_ON_LABEL'); ?></th>
             <td><?php echo $this->item->modified_on; ?></td>
         </tr>
 

@@ -2,19 +2,19 @@
 <form addfieldprefix="Jed\Component\Jed\Administrator\Field">
     <fieldset>
         <field name="id" type="text" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"/>
-        <field name="title" filter="safehtml" type="text" label="COM_JED_MESSAGETEMPLATES_FIELD_TITLE_LABEL"
+        <field name="title" filter="safehtml" type="text" label="COM_JED_GENERAL_TITLE_LABEL"
                description="COM_JED_MESSAGETEMPLATES_FIELD_TITLE_DESCR"
-               hint="COM_JED_MESSAGETEMPLATES_FIELD_TITLE_LABEL"/>
+               hint="COM_JED_GENERAL_TITLE_LABEL"/>
         <field name="subject" filter="safehtml" type="text" label="COM_JED_MESSAGETEMPLATES_FIELD_SUBJECT_LABEL"
                description="COM_JED_MESSAGETEMPLATES_FIELD_SUBJECT_DESCR"
                hint="COM_JED_MESSAGETEMPLATES_FIELD_SUBJECT_LABEL"/>
         <field name="template" editor="tinymce" buttons="false" filter="JComponentHelper::filterText" type="editor"
-               label="COM_JED_MESSAGETEMPLATES_FIELD_TEMPLATE_LABEL"
+               label="COM_JED_GENERAL_TEMPLATE_LABEL"
                description="COM_JED_MESSAGETEMPLATES_FIELD_TEMPLATE_DESCR"
-               hint="COM_JED_MESSAGETEMPLATES_FIELD_TEMPLATE_LABEL"/>
-        <field name="email_type" default="1" type="list" label="COM_JED_MESSAGETEMPLATES_FIELD_EMAIL_TYPE_LABEL"
+               hint="COM_JED_GENERAL_TEMPLATE_LABEL"/>
+        <field name="email_type" default="1" type="list" label="COM_JED_GENERAL_TYPE_LABEL"
                description="COM_JED_MESSAGETEMPLATES_FIELD_EMAIL_TYPE_DESCR"
-               hint="COM_JED_MESSAGETEMPLATES_FIELD_EMAIL_TYPE_LABEL">
+               hint="COM_JED_GENERAL_TYPE_LABEL">
             <option value="0">COM_JED_MESSAGETEMPLATES_FIELD_EMAIL_TYPE_OPTION_0</option>
             <option value="1">COM_JED_MESSAGETEMPLATES_FIELD_EMAIL_TYPE_OPTION_1</option>
             <option value="2">COM_JED_MESSAGETEMPLATES_FIELD_EMAIL_TYPE_OPTION_2</option>
@@ -22,14 +22,14 @@
             <option value="4">COM_JED_MESSAGETEMPLATES_FIELD_EMAIL_TYPE_OPTION_4</option>
         </field>
         <field name="ticket_status" default="0" type="list" label="JSTATUS"
-               description="COM_JED_JEDTICKETS_FIELD_TICKET_STATUS_DESCR"
+               description="COM_JED_TICKETS_TICKET_STATUS_DESCR"
                hint="JSTATUS">
-            <option value="0">COM_JED_JEDTICKETS_FIELD_TICKET_STATUS_OPTION_0</option>
-            <option value="1">COM_JED_JEDTICKETS_FIELD_TICKET_STATUS_OPTION_1</option>
-            <option value="2">COM_JED_JEDTICKETS_FIELD_TICKET_STATUS_OPTION_2</option>
-            <option value="3">COM_JED_JEDTICKETS_FIELD_TICKET_STATUS_OPTION_3</option>
-            <option value="4">COM_JED_JEDTICKETS_FIELD_TICKET_STATUS_OPTION_4</option>
-            <option value="5">COM_JED_JEDTICKETS_FIELD_TICKET_STATUS_OPTION_5</option>
+            <option value="0">COM_JED_TICKETS_TICKET_STATUS_OPTION_0</option>
+            <option value="1">COM_JED_TICKETS_TICKET_STATUS_OPTION_1</option>
+            <option value="2">COM_JED_TICKETS_TICKET_STATUS_OPTION_2</option>
+            <option value="3">COM_JED_TICKETS_TICKET_STATUS_OPTION_3</option>
+            <option value="4">COM_JED_TICKETS_TICKET_STATUS_OPTION_4</option>
+            <option value="5">COM_JED_TICKETS_TICKET_STATUS_OPTION_5</option>
         </field>
         <field name="created_by" type="createdby" default="0" label="JGLOBAL_FIELD_CREATED_BY_LABEL"
                description="JGLOBAL_FIELD_CREATED_BY_DESC" hint="JGLOBAL_FIELD_CREATED_BY_LABEL"/>

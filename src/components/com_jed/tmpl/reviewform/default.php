@@ -74,7 +74,7 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
             }
             try {
                 $xml = new SimpleXMLElement(
-                    '<field name="supply_option_id" type="radio"         label="COM_JED_REVIEWS_FIELD_SUPPLY_OPTION_ID_LABEL"           description="COM_JED_REVIEWS_FIELD_SUPPLY_OPTION_ID_DESCR"
+                    '<field name="supply_option_id" type="radio"         label="COM_JED_EXTENSION_SUPPLY_OPTION_ID_LABEL"           description="COM_JED_REVIEWS_SUPPLY_OPTION_ID_DESCR"
                default="' . $default . '" class="btn-group">      ' . $optionstr . '  </field>'
                 );
             } catch (Exception $e) {
@@ -146,30 +146,30 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
 
                         <?php
                         $fscount = 0;
-                        foreach ($fieldsets as $fs) {
-                            $fscount = $fscount + 1;
-                            if ($fs['title'] <> '') {
-                                if ($fscount > 1) {
-                                    echo '</fieldset>';
-                                }
+                    foreach ($fieldsets as $fs) {
+                        $fscount = $fscount + 1;
+                        if ($fs['title'] <> '') {
+                            if ($fscount > 1) {
+                                echo '</fieldset>';
+                            }
 
-                                echo '<fieldset class="reviewform"><legend>' . $fs['title'] . '</legend>';
-                            }
-                            if ($fs['description'] <> '') {
-                                echo $fs['description'];
-                            }
-                            $fields       = $fs['fields'];
-                            $hiddenFields = $fs['hidden'];
-                            foreach ($fields as $field) {
-                                if (in_array($field, $hiddenFields)) {
-                                    $this->form->setFieldAttribute($field, 'type', 'hidden');
-                                }
-
-                                echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
-                            }
+                            echo '<fieldset class="reviewform"><legend>' . $fs['title'] . '</legend>';
                         }
+                        if ($fs['description'] <> '') {
+                            echo $fs['description'];
+                        }
+                        $fields       = $fs['fields'];
+                        $hiddenFields = $fs['hidden'];
+                        foreach ($fields as $field) {
+                            if (in_array($field, $hiddenFields)) {
+                                $this->form->setFieldAttribute($field, 'type', 'hidden');
+                            }
 
-                        ?>
+                            echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+                        }
+                    }
+
+                    ?>
 
 
                         <div class="control-group">
@@ -207,7 +207,7 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
             </div>
             <?php
         }
-        ?>
+?>
     </div>
 
 <?php

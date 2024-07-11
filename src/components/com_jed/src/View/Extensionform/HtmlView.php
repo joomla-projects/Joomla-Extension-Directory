@@ -145,7 +145,7 @@ class HtmlView extends BaseHtmlView
 
         // Add Breadcrumbs
         $pathway        = $app->getPathway();
-        $breadcrumbList = Text::_('COM_JED_TITLE_EXTENSIONS');
+        $breadcrumbList = Text::_('COM_JED_EXTENSIONS');
         if (!in_array($breadcrumbList, $pathway->getPathwayNames())) {
             $pathway->addItem($breadcrumbList, "index.php?option=com_jed&view=extensions");
         }

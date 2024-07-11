@@ -88,7 +88,7 @@ class HtmlView extends BaseHtmlView
     {
         $canDo = JedHelper::getActions();
 
-        ToolbarHelper::title(Text::_('COM_JED_TITLE_LINKED_ITEM_TYPES'), "generic");
+        ToolbarHelper::title(Text::_('COM_JED_TICKETS_LINKED_ITEM_TYPE_LABELS'), "generic");
 
         $toolbar = Toolbar::getInstance(); //$toolbar = Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar('toolbar');
 
@@ -193,7 +193,7 @@ class HtmlView extends BaseHtmlView
     {
         return [
             'a.`id`'    => Text::_('JGRID_HEADING_ID'), 'a.`state`' => Text::_('JSTATUS'),
-            'a.`title`' => Text::_('COM_JED_MESSAGETEMPLATES_FIELD_TITLE_LABEL'),
+            'a.`title`' => Text::_('COM_JED_GENERAL_TITLE_LABEL'),
             'a.`model`' => Text::_('COM_JED_TICKET_LINKED_ITEM_FIELD_MODEL_LABEL'),
         ];
     }

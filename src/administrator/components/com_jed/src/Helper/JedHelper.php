@@ -60,9 +60,9 @@ class JedHelper
 
         $configChild->linkButton('ticketgroups')->text('COM_JED_TITLE_ALLOCATEDGROUPS')->icon('fa fa-user-friends')->url('index.php?option=com_jed&view=ticketallocatedgroups');
 
-        $configChild->linkButton('ticketlinkeditemtypes')->text('COM_JED_TITLE_LINKED_ITEM_TYPES')->icon('fa fa-link')->url('index.php?option=com_jed&view=ticketlinkeditemtypes');
+        $configChild->linkButton('ticketlinkeditemtypes')->text('COM_JED_TICKETS_LINKED_ITEM_TYPE_LABELS')->icon('fa fa-link')->url('index.php?option=com_jed&view=ticketlinkeditemtypes');
 
-        $configChild->linkButton('extensionsupplyoptions')->text('COM_JED_TITLE_EXTENSION_SUPPLY_OPTIONS')->icon('fa fa-link')->url('index.php?option=com_jed&view=extensionsupplyoptions');
+        $configChild->linkButton('extensionsupplyoptions')->text('COM_JED_EXTENSION_SUPPLY_OPTIONS')->icon('fa fa-link')->url('index.php?option=com_jed&view=extensionsupplyoptions');
 
         $configChild->linkButton('setupdemomenu')->text('COM_JED_TITLE_SETUP_DEMO_MENU')->icon('fa fa-link')->url('index.php?option=com_jed&view=setupdemo');
 
@@ -120,8 +120,8 @@ class JedHelper
         $extension    = substr($filename, $lastDot);
         $bestFilename = match ($size) {
             ImageSize::ORIGINAL => $filename,
-            ImageSize::SMALL    => $partialName . '_small' . $extension,
-            ImageSize::LARGE    => $partialName . '_large' . $extension,
+            ImageSize::SMALL => $partialName . '_small' . $extension,
+            ImageSize::LARGE => $partialName . '_large' . $extension,
         };
 
         // TODO Check if the resized file exists; if not resize it
@@ -130,8 +130,8 @@ class JedHelper
         if (false && $params->get('use_cdn', 0)) {
             $bestFilename = match ($size) {
                 ImageSize::ORIGINAL => $filename,
-                ImageSize::SMALL    => $partialName . '_resizeDown400px175px16' . $extension,
-                ImageSize::LARGE    => $partialName . '_resizeDown1200px525px16' . $extension,
+                ImageSize::SMALL => $partialName . '_resizeDown400px175px16' . $extension,
+                ImageSize::LARGE => $partialName . '_resizeDown1200px525px16' . $extension,
             };
 
             return $cdnUrl . '/cache/fab_image/' . $bestFilename;

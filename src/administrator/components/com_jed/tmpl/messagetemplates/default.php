@@ -71,13 +71,13 @@ if ($saveOrder) {
 
 
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_MESSAGETEMPLATES_FIELD_TITLE_LABEL', 'a.`title`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_TITLE_LABEL', 'a.`title`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
                             <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_MESSAGETEMPLATES_FIELD_SUBJECT_LABEL', 'a.`subject`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_MESSAGETEMPLATES_FIELD_EMAIL_TYPE_LABEL', 'a.`email_type`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_TYPE_LABEL', 'a.`email_type`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
                             <?php echo HTMLHelper::_('searchtools.sort', 'JSTATUS', 'a.`ticket_status`', $listDirn, $listOrder); ?>
@@ -89,10 +89,10 @@ if ($saveOrder) {
                             <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_FIELD_MODIFIED_BY_LABEL', 'a.`modified_by`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_FIELD_CREATED_ON_LABEL', 'a.`created`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_CREATED_ON_LABEL', 'a.`created`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_FIELD_MODIFIED_ON_LABEL', 'a.`modified`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_MODIFIED_ON_LABEL', 'a.`modified`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
                             <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_FIELD_ID_LABEL', 'a.`id`', $listDirn, $listOrder); ?>
@@ -109,7 +109,7 @@ if ($saveOrder) {
                     </tfoot>
                     <tbody <?php if ($saveOrder) :
                         ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
-                           endif; ?>>
+                    endif; ?>>
                     <?php foreach ($this->items as $i => $item) :
                         $ordering   = ($listOrder == 'a.ordering');
                         $canCreate  = $user->authorise('core.create', 'com_jed');

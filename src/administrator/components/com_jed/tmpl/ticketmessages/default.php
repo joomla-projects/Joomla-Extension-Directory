@@ -77,10 +77,10 @@ if ($saveOrder) {
                             <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_FIELD_ID_LABEL', 'a.`id`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_TICKETMESSAGE_FIELD_SUBJECT_LABEL', 'a.`subject`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_SUBJECT_LABEL', 'a.`subject`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_TICKETMESSAGE_FIELD_TICKET_ID_LABEL', 'a.`ticket_id`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_TICKETMESSAGE_TICKET_ID_LABEL', 'a.`ticket_id`', $listDirn, $listOrder); ?>
                         </th>
 
 
@@ -95,7 +95,7 @@ if ($saveOrder) {
                     </tfoot>
                     <tbody <?php if ($saveOrder) :
                         ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
-                           endif; ?>>
+                    endif; ?>>
                     <?php foreach ($this->items as $i => $item) :
                         $ordering   = ($listOrder == 'a.ordering');
                         $canCreate  = $user->authorise('core.create', 'com_jed');

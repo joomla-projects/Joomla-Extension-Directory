@@ -79,7 +79,7 @@ class HtmlView extends BaseHtmlView
 
         $canDo = JedHelper::getActions();
 
-        ToolbarHelper::title(Text::_('COM_JED_TITLE_EXTENSION_SUPPLY_OPTION'), "generic");
+        ToolbarHelper::title(Text::_('COM_JED_EXTENSION_SUPPLY_OPTION'), "generic");
 
         // If not checked out, can save the item.
         if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create')))) {

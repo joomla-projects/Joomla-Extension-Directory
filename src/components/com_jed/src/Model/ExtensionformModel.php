@@ -522,14 +522,14 @@ class ExtensionformModel extends FormModel
 
             //	$this->item->varied_data = $this->getVariedData($this->item->id, $supply_option_type);
             $supply_types = $this->getSupplyTypes();
-            $vi           = new ExtensionvarieddatumModel();
+            $vi = new ExtensionvarieddatumModel();
 
             foreach($supply_types as $st) {
 
-                $keys['extension_id']     = $this->item->id;
+                $keys['extension_id'] = $this->item->id;
                 $keys['supply_option_id'] = $st->supply_id;
-                $vi                       = new ExtensionvarieddatumModel();
-                $vitem                    = $vi->getItem($keys);
+                $vi = new ExtensionvarieddatumModel();
+                $vitem = $vi->getItem($keys);
                 //echo "<pre>";print_r($vitem);echo "</pre>";exit();
                 //if($st->supply_type==='Free') {
 

@@ -274,7 +274,7 @@ class VeldeveloperupdateformModel extends FormModel
                 $data->update_data_source = $array;
             }
 
-            return $data;
+            return (array)$data;
         }
 
         return [];

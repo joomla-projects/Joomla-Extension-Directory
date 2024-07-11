@@ -85,12 +85,12 @@ HTMLHelper::_('searchtools.form', $formSelector, $data['options']);
     <div class="clearfix">
         <div class="js-stools-container-bar">
             <label for="filter_search" class="element-invisible"
-                   aria-invalid="false"><?php echo Text::_('COM_JED_VEL_GENERAL_FILTER_SUBMIT'); ?></label>
+                   aria-invalid="false"><?php echo Text::_('COM_JED_GENERAL_SUBMIT_LABEL'); ?></label>
             <div class="input-group mb-3">
                 <?php echo $search_filter->input; ?>
                 <div class="input-group-append">
                     <button class="btn btn-outline-success hasTooltip" title=""
-                            data-original-title="<?php echo Text::_('COM_JED_VEL_GENERAL_FILTER_SUBMIT'); ?>">
+                            data-original-title="<?php echo Text::_('COM_JED_GENERAL_SUBMIT_LABEL'); ?>">
                         <i class="icon-search"></i>
                     </button>
                     <?php if ($filters) : ?>

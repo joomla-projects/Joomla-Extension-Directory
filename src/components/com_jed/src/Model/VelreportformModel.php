@@ -262,110 +262,12 @@ class VelreportformModel extends FormModel
         }
 
         if ($data) {
-            // Support for multiple or not foreign key field: pass_details_ok
-            $array = [];
 
-            foreach ((array) $data->pass_details_ok as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->pass_details_ok = $array;
-            }
-            // Support for multiple or not foreign key field: vulnerability_type
-            $array = [];
 
-            foreach ((array) $data->vulnerability_type as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->vulnerability_type = $array;
-            }
-            // Support for multiple or not foreign key field: exploit_type
-            $array = [];
-
-            foreach ((array) $data->exploit_type as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->exploit_type = $array;
-            }
-            // Support for multiple or not foreign key field: vulnerability_actively_exploited
-            $array = [];
-
-            foreach ((array) $data->vulnerability_actively_exploited as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->vulnerability_actively_exploited = $array;
-            }
-            // Support for multiple or not foreign key field: vulnerability_publicly_available
-            $array = [];
-
-            foreach ((array) $data->vulnerability_publicly_available as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->vulnerability_publicly_available = $array;
-            }
-            // Support for multiple or not foreign key field: developer_communication_type
-            $array = [];
-
-            foreach ((array) $data->developer_communication_type as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->developer_communication_type = $array;
-            }
-            // Support for multiple or not foreign key field: consent_to_process
-            $array = [];
-
-            foreach ((array) $data->consent_to_process as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->consent_to_process = $array;
-            }
-            // Support for multiple or not foreign key field: passed_to_vel
-            $array = [];
-
-            foreach ((array) $data->passed_to_vel as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->passed_to_vel = $array;
-            }
-            // Support for multiple or not foreign key field: data_source
-            $array = [];
-
-            foreach ((array) $data->data_source as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->data_source = $array;
-            }
-
-            return $data;
+            return (array)$data;
         }
 
-        return [];
+       return [];
     }
 
     /**

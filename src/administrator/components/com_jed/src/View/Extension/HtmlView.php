@@ -63,7 +63,7 @@ class HtmlView extends BaseHtmlView
     {
         $extension_model  = new ExtensionModel();
         $this->state      = $this->get('State');
-        $everything       = $this->get('Everything', 'Extension');
+        $everything = $this->get('Everything', 'Extension');
 
         $this->extension  = $everything;
         $this->form       = $extension_model->getForm($this->extension, false, 'extension_form');
@@ -111,7 +111,7 @@ class HtmlView extends BaseHtmlView
 
         $canDo = JedHelper::getActions();
 
-        ToolbarHelper::title(Text::_('COM_JED_TITLE_EXTENSION'), "generic");
+        ToolbarHelper::title(Text::_('COM_JED_EXTENSION'), "generic");
 
         // If not checked out, can save the item.
         if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create')))) {

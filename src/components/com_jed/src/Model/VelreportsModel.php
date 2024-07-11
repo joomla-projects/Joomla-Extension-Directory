@@ -99,26 +99,26 @@ class VelreportsModel extends ListModel
 
         foreach ($items as $item) {
             if (!JedHelper::is_blank($item->pass_details_ok)) {
-                $item->pass_details_ok = Text::_('COM_JED_VEL_REPORTS_FIELD_PASS_DETAILS_OK_OPTION_' . strtoupper($item->pass_details_ok));
+                $item->pass_details_ok = Text::_('COM_JED_VEL_REPORTS_PASS_DETAILS_OK_OPTION_' . strtoupper($item->pass_details_ok));
             }
             if (!JedHelper::is_blank($item->vulnerability_type)) {
-                $item->vulnerability_type = Text::_('COM_JED_VEL_GENERAL_FIELD_VULNERABILITY_TYPE_OPTION_' . strtoupper($item->vulnerability_type));
+                $item->vulnerability_type = Text::_('COM_JED_VEL_GENERAL_VULNERABILITY_TYPE_OPTION_' . strtoupper($item->vulnerability_type));
             }
 
             if (!JedHelper::is_blank($item->exploit_type)) {
-                $item->exploit_type = Text::_('COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_OPTION_' . strtoupper($item->exploit_type));
+                $item->exploit_type = Text::_('COM_JED_VEL_GENERAL_EXPLOIT_TYPE_OPTION_' . strtoupper($item->exploit_type));
             }
 
             if (!JedHelper::is_blank($item->vulnerability_actively_exploited)) {
-                $item->vulnerability_actively_exploited = Text::_('COM_JED_VEL_REPORTS_FIELD_VULNERABILITY_ACTIVELY_EXPLOITED_OPTION_' . strtoupper($item->vulnerability_actively_exploited));
+                $item->vulnerability_actively_exploited = Text::_('COM_JED_VEL_REPORTS_VULNERABILITY_ACTIVELY_EXPLOITED_OPTION_' . strtoupper($item->vulnerability_actively_exploited));
             }
 
             if (!JedHelper::is_blank($item->vulnerability_publicly_available)) {
-                $item->vulnerability_publicly_available = Text::_('COM_JED_VEL_REPORTS_FIELD_VULNERABILITY_PUBLICLY_AVAILABLE_OPTION_' . strtoupper($item->vulnerability_publicly_available));
+                $item->vulnerability_publicly_available = Text::_('COM_JED_VEL_REPORTS_VULNERABILITY_PUBLICLY_AVAILABLE_OPTION_' . strtoupper($item->vulnerability_publicly_available));
             }
 
             if (!JedHelper::is_blank($item->developer_communication_type)) {
-                $item->developer_communication_type = Text::_('COM_JED_VEL_GENERAL_FIELD_DEVELOPER_COMMUNICATION_TYPE_OPTION_' . strtoupper($item->developer_communication_type));
+                $item->developer_communication_type = Text::_('COM_JED_VEL_GENERAL_DEVELOPER_COMMUNICATION_TYPE_OPTION_' . strtoupper($item->developer_communication_type));
             }
 
             if (!JedHelper::is_blank($item->consent_to_process)) {
@@ -126,11 +126,11 @@ class VelreportsModel extends ListModel
             }
 
             if (!JedHelper::is_blank($item->passed_to_vel)) {
-                $item->passed_to_vel = Text::_('COM_JED_VEL_GENERAL_FIELD_PASSED_TO_VEL_OPTION_' . strtoupper($item->passed_to_vel));
+                $item->passed_to_vel = Text::_('COM_JED_VEL_GENERAL_PASSED_TO_VEL_OPTION_' . strtoupper($item->passed_to_vel));
             }
 
             if (!JedHelper::is_blank($item->data_source)) {
-                $item->data_source = Text::_('COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_' . strtoupper($item->data_source));
+                $item->data_source = Text::_('COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_' . strtoupper($item->data_source));
             }
         }
 

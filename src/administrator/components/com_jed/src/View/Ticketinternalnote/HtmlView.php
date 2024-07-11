@@ -81,7 +81,7 @@ class HtmlView extends BaseHtmlView
 
         $canDo = JedHelper::getActions();
 
-        ToolbarHelper::title(Text::_('COM_JED_TITLE_TICKETINTERNALNOTE'), "generic");
+        ToolbarHelper::title(Text::_('COM_JED_TICKETS_INTERNAL_NOTE_LABEL'), "generic");
 
         // If not checked out, can save the item.
         if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create')))) {

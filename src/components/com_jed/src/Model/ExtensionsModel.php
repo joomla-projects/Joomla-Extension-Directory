@@ -298,7 +298,7 @@ class ExtensionsModel extends ListModel
             // https://extensions.joomla.org/cache/fab_image/27824_resizeDown400px175px16.png
 
             if (!empty($item->uses_updater)) {
-                $item->uses_updater = Text::_('COM_JED_EXTENSIONS_USES_UPDATER_OPTION_' . strtoupper($item->uses_updater));
+                $item->uses_updater = Text::_('COM_JED_EXTENSION_USES_UPDATER_OPTION_' . strtoupper($item->uses_updater));
             }
             $item->version = JedtrophyHelper::getTrophyVersionsString($item->joomla_versions);
         }

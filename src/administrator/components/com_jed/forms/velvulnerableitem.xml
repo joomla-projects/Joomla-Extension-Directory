@@ -4,12 +4,12 @@
         <field name="id" type="text" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"/>
         <field name="vulnerable_item_name" filter="safehtml" type="text" required="true"
                message="COM_JED_GENERAL_RESPONSE_INVALID_INPUT"
-               label="COM_JED_VEL_GENERAL_FIELD_VULNERABLE_ITEM_NAME_LABEL"
+               label="COM_JED_VEL_GENERAL_VULNERABLE_ITEM_NAME_LABEL"
                description="COM_JED_VEL_GENERAL_FIELD_VULNERABLE_ITEM_NAME_DESCR"
                hint=""/>
         <field name="vulnerable_item_version" filter="safehtml" type="text" required="true"
                message="COM_JED_GENERAL_RESPONSE_INVALID_INPUT"
-               label="COM_JED_VEL_GENERAL_FIELD_VULNERABLE_ITEM_VERSION_LABEL"
+               label="COM_JED_VEL_GENERAL_VULNERABLE_ITEM_VERSION_LABEL"
                description="COM_JED_VEL_GENERAL_FIELD_VULNERABLE_ITEM_VERSION_DESCR"
                hint=""/>
         <field name="title" filter="safehtml" type="text" required="true"
@@ -29,7 +29,7 @@
         <field name="report_id" type="foreignkey" label="COM_JED_VEL_GENERAL_FIELD_REPORT_ID_LABEL"
                description="COM_JED_VEL_GENERAL_FIELD_REPORT_ID_DESCR" class="inputbox" input_type="list"
                table="#__jed_vel_report" key_field="id" value_field="vulnerable_item_name" default="0"/>
-        <field name="jed" validate="url" type="url" label="COM_JED_GENERAL_FIELD_JED_URL_LABEL"
+        <field name="jed" validate="url" type="url" label="COM_JED_GENERAL_JED_URL_LABEL"
                description="COM_JED_VEL_GENERAL_FIELD_JED_DESCR" hint=""/>
         <field name="risk_level" type="list" required="true" message="Please make a selection"
                label="COM_JED_VEL_GENERAL_FIELD_RISK_LEVEL_LABEL"
@@ -52,20 +52,20 @@
                label="COM_JED_VEL_GENERAL_FIELD_RECOMMENDATION_LABEL"
                description="COM_JED_VEL_GENERAL_FIELD_RECOMMENDATION_DESCR" hint=""/>
         <field name="update_notice" validate="url" type="url"
-               label="COM_JED_VEL_GENERAL_FIELD_UPDATE_NOTICE_URL_LABEL"
+               label="COM_JED_VEL_GENERAL_UPDATE_NOTICE_URL_LABEL"
                description="COM_JED_VEL_GENERAL_FIELD_UPDATE_NOTICE_DESCR" hint=""/>
         <field name="exploit_type" default="0" type="list" required="true" message="Please make a selection"
-               label="COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_LABEL"
-               description="COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_DESCR" hint="">
-            <option value="1">COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_OPTION_1</option>
-            <option value="2">COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_OPTION_2</option>
-            <option value="3">COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_OPTION_3</option>
-            <option value="4">COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_OPTION_4</option>
-            <option value="5">COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_OPTION_5</option>
-            <option value="9">COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_OPTION_9</option>
+               label="COM_JED_VEL_GENERAL_EXPLOIT_TYPE_LABEL"
+               description="COM_JED_VEL_GENERAL_EXPLOIT_TYPE_DESCR" hint="">
+            <option value="1">COM_JED_VEL_GENERAL_EXPLOIT_TYPE_OPTION_1</option>
+            <option value="2">COM_JED_VEL_GENERAL_EXPLOIT_TYPE_OPTION_2</option>
+            <option value="3">COM_JED_VEL_GENERAL_EXPLOIT_TYPE_OPTION_3</option>
+            <option value="4">COM_JED_VEL_GENERAL_EXPLOIT_TYPE_OPTION_4</option>
+            <option value="5">COM_JED_VEL_GENERAL_EXPLOIT_TYPE_OPTION_5</option>
+            <option value="9">COM_JED_VEL_GENERAL_EXPLOIT_TYPE_OPTION_9</option>
         </field>
         <field name="exploit_other_description" filter="safehtml" type="textarea" showon="exploit_type:9"
-               label="COM_JED_VEL_GENERAL_FIELD_EXPLOIT_OTHER_DESCRIPTION_LABEL"
+               label="COM_JED_VEL_GENERAL_EXPLOIT_OTHER_DESCRIPTION_LABEL"
                description="COM_JED_VEL_GENERAL_FIELD_EXPLOIT_OTHER_DESCRIPTION_DESCR" hint=""/>
         <field name="xml_manifest" type="FileMultiple" label="COM_JED_VEL_GENERAL_FIELD_XML_MANIFEST_LABEL"
                description="COM_JED_VEL_GENERAL_FIELD_XML_MANIFEST_DESCR" hint=""/>
@@ -113,7 +113,7 @@
         <field name="public_description" editor="tinymce" buttons="false" filter="JComponentHelper::filterText"
                type="editor" label="COM_JED_VEL_GENERAL_FIELD_PUBLIC_DESCRIPTION_LABEL"
                description="COM_JED_VEL_GENERAL_FIELD_PUBLIC_DESCRIPTION_DESCR" hint=""/>
-        <field name="alias" type="text" label="COM_JED_VEL_GENERAL_FIELD_ALIAS_LABEL"
+        <field name="alias" type="text" label="COM_JED_GENERAL_ALIAS_LABEL"
                description="COM_JED_VEL_GENERAL_FIELD_ALIAS_DESCR" hint=""/>
         <field name="created_by" type="createdby" default="0" label="JGLOBAL_FIELD_CREATED_BY_LABEL"
                description="" hint=""/>

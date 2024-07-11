@@ -54,7 +54,7 @@ class HtmlView extends BaseHtmlView
     {
         $canDo = JedHelper::getActions();
 
-        ToolbarHelper::title(Text::_('COM_JED_TITLE_EXTENSIONSCORES'), "generic");
+        ToolbarHelper::title(Text::_('COM_JED_EXTENSIONSCORES'), "generic");
 
         $toolbar = Toolbar::getInstance(); //$toolbar = Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar('toolbar');
 
@@ -132,14 +132,14 @@ class HtmlView extends BaseHtmlView
             'a.`id`'                    => Text::_('JGRID_HEADING_ID'),
             'a.`state`'                 => Text::_('JSTATUS'),
             'a.`ordering`'              => Text::_('JGRID_HEADING_ORDERING'),
-            'a.`extension_id`'          => Text::_('COM_JED_EXTENSIONSCORES_EXTENSION_ID'),
-            'a.`supply_option_id`'      => Text::_('COM_JED_EXTENSIONSCORES_SUPPLY_OPTION_ID'),
-            'a.`functionality_score`'   => Text::_('COM_JED_EXTENSIONSCORES_FUNCTIONALITY_SCORE'),
-            'a.`ease_of_use_score`'     => Text::_('COM_JED_EXTENSIONSCORES_EASE_OF_USE_SCORE'),
-            'a.`support_score`'         => Text::_('COM_JED_EXTENSIONSCORES_SUPPORT_SCORE'),
-            'a.`value_for_money_score`' => Text::_('COM_JED_EXTENSIONSCORES_VALUE_FOR_MONEY_SCORE'),
-            'a.`documentation_score`'   => Text::_('COM_JED_EXTENSIONSCORES_DOCUMENTATION_SCORE'),
-            'a.`number_of_reviews`'     => Text::_('COM_JED_EXTENSIONSCORES_NUMBER_OF_REVIEWS'),
+            'a.`extension_id`'          => Text::_('COM_JED_EXTENSION_EXTENSION_ID_LABEL'),
+            'a.`supply_option_id`'      => Text::_('COM_JED_EXTENSION_SUPPLY_OPTION_ID_LABEL'),
+            'a.`functionality_score`'   => Text::_('COM_JED_EXTENSION_FUNCTIONALITY_SCORE_LABEL'),
+            'a.`ease_of_use_score`'     => Text::_('COM_JED_EXTENSION_EASE_OF_USE_SCORE_LABEL'),
+            'a.`support_score`'         => Text::_('COM_JED_EXTENSION_SUPPORT_SCORE_LABEL'),
+            'a.`value_for_money_score`' => Text::_('COM_JED_REVIEWS_VALUE_FOR_MONEY_SCORE_LABEL'),
+            'a.`documentation_score`'   => Text::_('COM_JED_EXTENSION_DOCUMENTATION_SCORE_LABEL'),
+            'a.`number_of_reviews`'     => Text::_('COM_JED_EXTENSION_NUMBER_OF_REVIEWS_LABEL'),
         ];
     }
 

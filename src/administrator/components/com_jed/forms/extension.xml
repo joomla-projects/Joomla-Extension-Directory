@@ -3,7 +3,7 @@
     <fieldset>
         <field name="id" type="text" readonly="true" class="readonly" default="0"/>
         <field name="title" filter="safehtml" type="text" label="JGLOBAL_TITLE"
-               hint="COM_JED_FORM_LBL_EXTENSION_TITLE"/>
+               hint="COM_JED_GENERAL_TITLE_LABEL"/>
         <field name="alias" type="text" class="inputbox" generator="title" label="JFIELD_ALIAS_LABEL" hint="JALIAS"/>
 
     </fieldset>
@@ -13,27 +13,27 @@
         <field
                 name="version"
                 type="text"
-                label="COM_JED_FORM_LBL_EXTENSION_VERSION"
+                label="COM_JED_GENERAL_VERSION_LABEL"
                 class="input-mini"
         />
 		<field name="primary_category_id" extension="com_jed" type="jedcategory" published="1" multiple="false"
-			   label="COM_JED_FORM_LBL_EXTENSION_PRIMARY_CATEGORY_ID"
-			   hint="COM_JED_FORM_LBL_EXTENSION_PRIMARY_CATEGORY_ID"/>
+			   label="COM_JED_GENERAL_CATEGORY_ID_LABEL"
+			   hint="COM_JED_GENERAL_CATEGORY_ID_LABEL"/>
 
         <field
                 name="includes"
                 type="checkboxes"
-                label="COM_JED_EXTENSIONS_EXTENSION_TYPES"
+                label="COM_JED_EXTENSION_EXTENSION_TYPE_LABEL"
         >
-            <option value="com">COM_JED_EXTENSIONS_COMPONENT</option>
-            <option value="mod">COM_JED_EXTENSIONS_MODULE</option>
-            <option value="plugin">COM_JED_EXTENSIONS_PLUGIN</option>
-            <option value="specific">COM_JED_EXTENSIONS_SPECIFIC</option>
+            <option value="com">COM_JED_EXTENSION_COMPONENT_LABEL</option>
+            <option value="mod">COM_JED_EXTENSION_MODULE_LABEL</option>
+            <option value="plugin">COM_JED_EXTENSION_PLUGIN_LABEL</option>
+            <option value="specific">COM_JED_EXTENSION_SPECIFIC_LABEL</option>
         </field>
         <field
                 name="joomla_versions"
                 type="checkboxes"
-                label="COM_JED_FORM_LBL_EXTENSION_JOOMLA_VERSIONS"
+                label="COM_JED_EXTENSION_JOOMLA_VERSIONS_LABEL"
         >
             <option value="30">3.0</option>
             <option value="40">4.0</option>
@@ -48,7 +48,7 @@
         <field
                 name="uses_updater"
                 type="radio"
-                label="COM_JED_FORM_LBL_EXTENSION_USES_UPDATER"
+                label="COM_JED_EXTENSION_USES_UPDATER_LABEL"
                 class="btn-group btn-group-yesno"
                 default="0"
                 filter="integer"
@@ -60,7 +60,7 @@
                type="list"
                default=""
                class="input-xlarge"
-               label="COM_JED_FORM_LBL_EXTENSION_GPL_LICENSE_TYPE">
+               label="COM_JED_EXTENSION_GPL_LICENSE_TYPE_LABEL">
             <option value="GPLv2 or later">COM_JED_EXTENSION_GPL_LICENSE_TYPE_OPTION_GPL2</option>
             <option value="AGPL">COM_JED_EXTENSION_GPL_LICENSE_TYPE_OPTION_AGPL</option>
             <option value="LGPL">COM_JED_EXTENSION_GPL_LICENSE_TYPE_OPTION_LGPL</option>
@@ -73,7 +73,7 @@
         <field
                 name="nonGplCssJs"
                 type="radio"
-                label="COM_JED_EXTENSIONS_USES_NON_GPL"
+                label="COM_JED_EXTENSION_USES_NON_GPL_LABEL"
                 class="btn-group btn-group-yesno"
                 default="0"
                 filter="integer"
@@ -85,7 +85,7 @@
         <field
                 name="uses_third_party"
                 type="radio"
-                label="COM_JED_FORM_LBL_EXTENSION_USES_THIRD_PARTY"
+                label="COM_JED_EXTENSION_USES_THIRD_PARTY_LABEL"
                 class="btn-group btn-group-yesno"
                 default="0"
                 filter="integer"
@@ -96,7 +96,7 @@
         <field
                 name="requires_registration"
                 type="radio"
-                label="COM_JED_FORM_LBL_EXTENSION_REQUIRES_REGISTRATION"
+                label="COM_JED_EXTENSION_REQUIRES_REGISTRATION_LABEL"
                 class="btn-group btn-group-yesno"
                 default="0"
                 filter="integer"
@@ -107,7 +107,7 @@
         <field
                 name="logo"
                 type="media"
-                label="COM_JED_EXTENSIONS_LOGO"
+                label="COM_JED_EXTENSION_LOGO_LABEL"
                 class="input-xxlarge"
                 preview="true"
                 directory=""
@@ -115,11 +115,11 @@
         <field name="video"
                type="text"
                class="span12"
-               label="COM_JED_FORM_LBL_EXTENSION_VIDEO" />
+               label="COM_JED_EXTENSION_VIDEO_LABEL" />
         <field
                 name="developer_company"
                 type="text"
-                label="COM_JED_VEL_GENERAL_FIELD_DEVELOPER_NAME_LABEL"
+                label="COM_JED_VEL_GENERAL_DEVELOPER_NAME_LABEL"
                 class="input-mini"
         />
         <field

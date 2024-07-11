@@ -55,7 +55,7 @@ class VelreportController extends FormController
         if ($this->task == "velreport.copyReporttoVEL") {
             $reportId = $_POST["jform"]['linked_item_id'];
 
-            $exploit_string = Text::_('COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_OPTION_' . $_POST["jform"]['exploit_type']);
+            $exploit_string = Text::_('COM_JED_VEL_GENERAL_EXPLOIT_TYPE_OPTION_' . $_POST["jform"]['exploit_type']);
 
             //  var_dump($_POST);
             $querySelect = $db->getQuery(true)

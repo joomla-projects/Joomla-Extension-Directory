@@ -125,7 +125,7 @@ class ExtensionvarieddataModel extends ListModel
 
                 $oneItem->supply_option_id = !empty($textValue) ? implode(', ', $textValue) : $oneItem->supply_option_id;
             }
-            $oneItem->download_integration_type = !empty($oneItem->download_integration_type) ? Text::_('COM_JED_EXTENSIONVARIEDDATA_DOWNLOAD_INTEGRATION_TYPE_OPTION_' . strtoupper($oneItem->download_integration_type)) : '';
+            $oneItem->download_integration_type = !empty($oneItem->download_integration_type) ? Text::_('COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_OPTION_' . strtoupper($oneItem->download_integration_type)) : '';
         }
 
         return $items;

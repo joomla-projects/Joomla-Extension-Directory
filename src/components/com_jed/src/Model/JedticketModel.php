@@ -164,7 +164,7 @@ class JedticketModel extends ItemModel
 
         if (!empty($this->item->ticket_origin) || $this->item->ticket_origin == 0) {
             $this->item->ticket_origin = Text::_(
-                'COM_JED_JEDTICKETS_FIELD_TICKET_ORIGIN_LABEL_OPTION_' . $this->item->ticket_origin
+                'COM_JED_TICKETS_TICKET_ORIGIN_LABEL_OPTION_' . $this->item->ticket_origin
             );
         }
 

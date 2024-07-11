@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
     <fields name="filter">
-        <field name="search" type="text" hint="COM_JED_VEL_GENERAL_FILTER_SUBMIT"
+        <field name="search" type="text" hint="COM_JED_GENERAL_SUBMIT_LABEL"
                label="COM_USERS_FILTER_SEARCH_DESC"
                class="js-stools-search-string"/>
 

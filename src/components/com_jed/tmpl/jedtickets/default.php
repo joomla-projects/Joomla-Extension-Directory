@@ -64,27 +64,27 @@ if (!$isLoggedIn) {
                 <tr>
 
                     <th class='left'>
-                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_JEDTICKETS_FIELD_TICKET_CATEGORY_TYPE_LABEL', 'a.`ticket_category_type`', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_TYPE_LABEL', 'a.`ticket_category_type`', $listDirn, $listOrder); ?>
                     </th>
                     <th class='left'>
-                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_JEDTICKETS_FIELD_TICKET_SUBJECT_LABEL', 'a.`ticket_subject`', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_SUBJECT_LABEL', 'a.`ticket_subject`', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class='left'>
-                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_FIELD_CREATED_ON_LABEL', 'a.`created_on`', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_CREATED_ON_LABEL', 'a.`created_on`', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class='left'>
                         <?php echo HTMLHelper::_('searchtools.sort', 'JSTATUS', 'a.`ticket_status`', $listDirn, $listOrder); ?>
                     </th>
                     <th class='left'>
-                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_JEDTICKETS_FIELD_ALLOCATED_GROUP_LABEL', 'a.`allocated_group`', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_TICKETS_ALLOCATED_GROUP_LABEL', 'a.`allocated_group`', $listDirn, $listOrder); ?>
                     </th>
 
 
                     <?php if ($canEdit) : ?>
                         <th class="center">
-                            <?php echo Text::_('COM_JED_JEDTICKETS_ACTIONS'); ?>
+                            <?php echo Text::_('COM_JED_GENERAL_ACTIONS_LABEL'); ?>
                         </th>
                     <?php endif; ?>
 
@@ -126,7 +126,7 @@ if (!$isLoggedIn) {
                                 echo $d->format("d M y H:i");
                             } catch (Exception $e) {
                             }
-                            ?>
+                    ?>
                         </td>
 
 

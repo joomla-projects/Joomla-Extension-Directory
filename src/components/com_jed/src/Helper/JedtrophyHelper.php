@@ -81,7 +81,7 @@ class JedtrophyHelper
 
         $output = '<div class="trophies includes">';
         foreach ($trophies as $v) {
-            $title = Text::_('COM_JED_EXTENSIONS_FIELD_INCLUDES_' . strtoupper($v));
+            $title = Text::_('COM_JED_EXTENSION_INCLUDES__LABEL' . strtoupper($v));
             $output .= '<span class="hasTooltip" data-toggle="tooltip" title="' . $title . '">	<span  class="badge badge-' . $v . '">' . strtoupper(substr($v, 0, 1)) . '</span>	</span>';
         }
 

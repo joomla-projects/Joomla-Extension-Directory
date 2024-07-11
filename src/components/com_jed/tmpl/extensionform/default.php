@@ -123,7 +123,7 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
         } catch (Exception $e) {
         }
 
-        $app->enqueueMessage(Text::_('COM_JED_EXTENSIONS_NO_ACCESS'), 'success');
+        $app->enqueueMessage(Text::_('COM_JED_EXTENSION_NO_ACCESS_LABEL'), 'success');
         $app->redirect($redirectURL);
     } else {
 
@@ -147,8 +147,8 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
               method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
 
 			<?php
-                $fieldsets['overview']['title']       = Text::_('COM_JED_EXTENSION_FORM_TITLE');
-            $fieldsets['overview']['description'] = Text::_('COM_JED_EXTENSION_FORM_TITLE_DESCR') . '</br>' . '</br>';
+                $fieldsets['overview']['title']       = Text::_('COM_JED_EXTENSION_ADD_EXTENSION_LABEL');
+            $fieldsets['overview']['description'] = Text::_('COM_JED_EXTENSION_ADD_EXTENSION_LABEL_DESCR') . '</br>' . '</br>';
             $fieldsets['overview']['fields']      = [['title','alias'],'version',['primary_category_id', 'tags']];
             $fieldsets['overview']['hidden']      = [];
 
@@ -163,25 +163,25 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
                 $varied_form                          = $this->supply_forms[$st->supply_id];
                 $fieldsets                            = [];
                 $fieldsets['overview']['supply_type'] = $st->supply_type;
-                $fieldsets['overview']['title']       =  Text::sprintf('COM_JED_EXTENSION_FORM_VARIED_TITLE', $st->supply_type);
-                $fieldsets['overview']['description'] = Text::_('COM_JED_EXTENSION_FORM_VARIED_TITLE_DESCR');
+                $fieldsets['overview']['title']       =  Text::sprintf('COM_JED_EXTENSION_VARIED_TITLE_LABEL', $st->supply_type);
+                $fieldsets['overview']['description'] = Text::_('COM_JED_EXTENSION_VARIED_TITLE_LABEL_DESCR');
                 $fieldsets['overview']['fields']   = ['id', 'supply_option_id', ['title', 'is_default_data'],  'description'];
                 $fieldsets['overview']['hidden']   = ['id', 'supply_option_id'];
 
                 $fieldsets['extensionfile']['supply_type'] = $st->supply_type;
                 $fieldsets['extensionfile']['title']       = '';
-                $fieldsets['extensionfile']['description'] = Text::_('COM_JED_EXTENSION_FIELD_EXTENSIONFILE_LABEL').'<br/>'.Text::_('COM_JED_EXTENSION_FIELD_EXTENSIONFILE_EXTRA');
+                $fieldsets['extensionfile']['description'] = Text::_('COM_JED_EXTENSION_EXTENSIONFILE_LABEL').'<br/>'.Text::_('COM_JED_EXTENSION_EXTENSIONFILE_EXTRA');
                 $fieldsets['extensionfile']['fields']      = ['file'];
                 $fieldsets['extensionfile']['hidden']      = [];
                 $fieldsets['links']['supply_type'] = $st->supply_type;
-                $fieldsets['links']['title']       = Text::_('COM_JED_EXTENSION_FORM_LINKS_TITLE');
-                $fieldsets['links']['description'] = Text::_('COM_JED_EXTENSION_FORM_LINKS_DESCR');
+                $fieldsets['links']['title']       = Text::_('COM_JED_EXTENSION_LINKS_TITLE');
+                $fieldsets['links']['description'] = Text::_('COM_JED_EXTENSION_LINKS_DESCR');
                 $fieldsets['links']['fields']      = [['homepage_link', 'download_link'], ['demo_link', 'support_link'], ['documentation_link', 'license_link'], ['translation_link', '']];
                 $fieldsets['links']['hidden']      = [];
 
                 $fieldsets['integration']['supply_type'] = $st->supply_type;
-                $fieldsets['integration']['title']       = Text::_('COM_JED_EXTENSION_FORM_INTEGRATION_TITLE');
-                $fieldsets['integration']['description'] = Text::_('COM_JED_EXTENSION_FORM_INTEGRATION_DESCR');
+                $fieldsets['integration']['title']       = Text::_('COM_JED_EXTENSION_INTEGRATION_TITLE');
+                $fieldsets['integration']['description'] = Text::_('COM_JED_EXTENSION_INTEGRATION_DESCR');
                 $fieldsets['integration']['fields']      = [['download_integration_type', 'download_integration_url']];
                 $fieldsets['integration']['hidden']      = [];
 
@@ -196,8 +196,8 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
             $fieldsets['integration2']['fields']      = [['gpl_license_type','joomla_versions'],['includes','uses_third_party']];
             $fieldsets['integration2']['hidden']      = [];
 
-            $fieldsets['media']['title']       = Text::_('COM_JED_EXTENSION_FORM_MEDIA_TITLE');
-            $fieldsets['media']['description'] = Text::_('COM_JED_EXTENSION_FORM_MEDIA_DESCR');
+            $fieldsets['media']['title']       = Text::_('COM_JED_EXTENSION_MEDIA_TITLE');
+            $fieldsets['media']['description'] = Text::_('COM_JED_EXTENSION_MEDIA_DESCR');
             $fieldsets['media']['fields']      = ['video', 'logo', 'images'];
             $fieldsets['media']['hidden']      = [];
 

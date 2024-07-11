@@ -184,7 +184,7 @@ class VeldeveloperupdateModel extends ItemModel
 
         if (!empty($this->item->update_data_source)) {
             $this->item->update_data_source = Text::_(
-                'COM_JED_VEL_DEVELOPERUPDATES_FIELD_UPDATE_DATA_SOURCE_OPTION_' . $this->item->update_data_source
+                'COM_JED_VEL_DEVELOPERUPDATES_UPDATE_DATA_SOURCE_OPTION_' . $this->item->update_data_source
             );
         }
 

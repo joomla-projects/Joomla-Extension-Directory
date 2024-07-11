@@ -530,7 +530,7 @@ class ExtensionModel extends ItemModel
             $level = 'warning';
         } else {
             $level = 'info';
-            $msg[] = Text::_('COM_JED_NOTICE_NO_EXTENSIONS_FOUND');
+            $msg[] = Text::_('COM_JED_EXTENSION_XTENSIONS_FOUND_LABEL');
         }
 
         return (object)[

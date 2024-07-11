@@ -20,6 +20,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Router\Route;
 
+use function defined;
+
 /**
  * Extensionvarieddatum class.
  *
@@ -106,7 +108,7 @@ class ExtensionvarieddatumController extends BaseController
             $app->setUserState('com_jed.edit.extensionvarieddatum.data', null);
 
             // Redirect to the list screen.
-            $this->setMessage(Text::_('COM_JED_ITEM_SAVED_SUCCESSFULLY'));
+            $this->setMessage(Text::_('COM_JED_GENERAL_ITEM_SAVED_SUCCESSFULLY_LABEL'));
             $menu = Factory::getApplication()->getMenu();
             $item = $menu->getActive();
 

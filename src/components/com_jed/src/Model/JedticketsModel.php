@@ -82,10 +82,10 @@ class JedticketsModel extends ListModel
         $items = parent::getItems();
 
         foreach ($items as $oneItem) {
-            $oneItem->ticket_origin = Text::_('COM_JED_JEDTICKETS_FIELD_TICKET_ORIGIN_OPTION_' . strtoupper($oneItem->ticket_origin));
+            $oneItem->ticket_origin = Text::_('COM_JED_TICKETS_TICKET_ORIGIN_OPTION_' . strtoupper($oneItem->ticket_origin));
 
 
-            $oneItem->ticket_status = Text::_('COM_JED_JEDTICKETS_FIELD_TICKET_STATUS_OPTION_' . strtoupper($oneItem->ticket_status));
+            $oneItem->ticket_status = Text::_('COM_JED_TICKETS_TICKET_STATUS_OPTION_' . strtoupper($oneItem->ticket_status));
         }
 
         return $items;

@@ -118,7 +118,7 @@ class HtmlView extends CategoryView
 
         // Add Breadcrumbs
         $pathway         = $app->getPathway();
-        $breadcrumbTitle = Text::_('COM_JED_TITLE_EXTENSIONS');
+        $breadcrumbTitle = Text::_('COM_JED_EXTENSIONS');
 
         if (!in_array($breadcrumbTitle, $pathway->getPathwayNames())) {
             $pathway->addItem($breadcrumbTitle);

@@ -188,7 +188,7 @@ class VelabandonedreportformController extends FormController
 
         // Redirect to the list screen.
         if (!empty($return)) {
-            $this->setMessage(Text::_('COM_JED_VEL_GENERAL_SAVED_SUCCESSFULLY'));
+            $this->setMessage(Text::_('COM_JED_GENERAL_ITEM_SAVED_SUCCESSFULLY_LABEL'));
         }
         $url = 'index.php?option=com_jed&view=jedtickets';
         $this->setRedirect(Route::_($url, false));

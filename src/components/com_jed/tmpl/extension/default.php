@@ -337,7 +337,7 @@ if (Factory::getApplication()->getIdentity()->authorise('core.delete', 'com_jed.
         'bodyHeight' => '100',
         'footer'     => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_jed&task=extension.remove&id=' . $this->item->id, false, 2) . '" class="btn btn-danger">' . Text::_('JACTION_DELETE') . '</a>',
         ],
-        Text::sprintf('COM_JED_DELETE_CONFIRM', $this->item->id)
+        Text::sprintf('COM_JED_GENERAL_DELETE_CONFIRM_LABEL', $this->item->id)
     ) ?>
 
 <?php

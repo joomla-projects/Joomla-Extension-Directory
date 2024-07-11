@@ -2,7 +2,7 @@
 <form addfieldprefix="Jed\Component\Jed\Administrator\Field">
     <fieldset>
         <field name="id" type="text" readonly="true" class="readonly" default="0"/>
-        <field name="extension_id" type="foreignkey" label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_EXTENSION_ID"
+        <field name="extension_id" type="foreignkey" label="COM_JED_EXTENSION_ONVARIEDDATUM_EXTENSION_ID_LABEL"
                default="0" input_type="list" table="#__jed_extensions" key_field="id" translate="true"
                value_field="id"/>
         <field name="supply_option_id" type="foreignkey" label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_SUPPLY_OPTION_ID"
@@ -21,28 +21,28 @@
         <field name="checked_out" type="hidden" filter="unset"/>
         <field name="checked_out_time" default="0000-00-00 00:00:00" type="hidden" filter="unset"/>
         <field name="created_by" type="createdby" label="JGLOBAL_FIELD_CREATED_BY_LABEL"
-               hint="COM_JED_GENERAL_FIELD_CREATED_BY_LABEL "/>
+               hint="COM_JED_GENERAL_CREATED_BY_LABEL "/>
 
     </fieldset>
 
     <fieldset name="info">
         <field name="title" filter="safehtml" type="text" label="JGLOBAL_TITLE"
-               hint="COM_JED_FORM_LBL_EXTENSION_TITLE"/>
+               hint="COM_JED_GENERAL_TITLE_LABEL"/>
         <field name="alias" type="text" class="inputbox" generator="title" label="JFIELD_ALIAS_LABEL" hint="JALIAS"/>
         <field name="intro_text" editor="tinymce" buttons="false" filter="JComponentHelper::filterText"
-               type="editor" label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_INTRO_TEXT"
+               type="editor" label="COM_JED_EXTENSION_INTRO_TEXT_LABEL"
                hint="COM_JED_FORM_LBL_EX TENSIONVARIEDDATUM_INTRO_TEXT"/>
         <field name="description" editor="tinymce" buttons="false" filter="JComponentHelper::filterText"
-               type="editor" label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_DESCRIPTION"
-               hint="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_DESCRIPTION"/>
+               type="editor" label="COM_JED_EXTENSION_DESCRIPTION_LABEL"
+               hint="COM_JED_EXTENSION_DESCRIPTION_LABEL"/>
         <field name="homepage_link" validate="url" type="url"
-               label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_HOMEPAGE_LINK"
-               hint="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_HOMEPAGE_LINK"/>
+               label="COM_JED_EXTENSION_HOMEPAGE_LINK_LABEL"
+               hint="COM_JED_EXTENSION_HOMEPAGE_LINK_LABEL"/>
         <field name="download_link" validate="url" type="url"
-               label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_DOWNLOAD_LINK"
-               hint="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_DOWNLOAD_LINK"/>
-        <field name="demo_link" validate="url" type="url" label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_DEMO_LINK"
-               hint="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_DEMO_LINK"/>
+               label="COM_JED_EXTENSION_DOWNLOAD_LINK_LABEL"
+               hint="COM_JED_EXTENSION_DOWNLOAD_LINK_LABEL"/>
+        <field name="demo_link" validate="url" type="url" label="COM_JED_EXTENSION_DEMO_LINK_LABEL"
+               hint="COM_JED_EXTENSION_DEMO_LINK_LABEL"/>
         <field name="support_link" validate="url" type="url" label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_SUPPORT_LINK"
                hint="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_SUPPORT_LINK"/>
         <field name="documentation_link" validate="url" type="url"
@@ -56,7 +56,7 @@
         <field
                 name="logo"
                 type="media"
-                label="COM_JED_EXTENSIONS_LOGO"
+                label="COM_JED_EXTENSION_LOGO_LABEL"
                 class="input-xxlarge"
                 preview="true"
                 directory=""
@@ -77,28 +77,28 @@
         </field>
 
         <field name="download_integration_type" type="list"
-               label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_DOWNLOAD_INTEGRATION_TYPE"
-               hint="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_DOWNLOAD_INTEGRATION_TYPE">
-            <option value="None">COM_JED_EXTENSIONVARIEDDATA_DOWNLOAD_INTEGRATION_TYPE_OPTION_0</option>
-            <option value="Free Direct Download link:">COM_JED_EXTENSIONVARIEDDATA_DOWNLOAD_INTEGRATION_TYPE_OPTION_1
+               label="COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_LABEL"
+               hint="COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_LABEL">
+            <option value="None">COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_OPTION_0</option>
+            <option value="Free Direct Download link:">COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_OPTION_1
             </option>
             <option value="Paid purchase required at link:">
-                COM_JED_EXTENSIONVARIEDDATA_DOWNLOAD_INTEGRATION_TYPE_OPTION_2
+                COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_OPTION_2
             </option>
             <option value="Free but Registration required at link:">
-                COM_JED_EXTENSIONVARIEDDATA_DOWNLOAD_INTEGRATION_TYPE_OPTION_3
+                COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_OPTION_3
             </option>
-            <option value="4">COM_JED_EXTENSIONVARIEDDATA_DOWNLOAD_INTEGRATION_TYPE_OPTION_4</option>
+            <option value="4">COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_OPTION_4</option>
         </field>
         <field name="download_integration_url" filter="safehtml" type="text"
-               label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_DOWNLOAD_INTEGRATION_URL"
-               hint="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_DOWNLOAD_INTEGRATION_URL"
+               label="COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_URL_LABEL"
+               hint="COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_URL_LABEL"
         />
 
         <field
                 name="is_default_data"
                 type="radio"
-                label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_IS_DEFAULT_DATA"
+                label="COM_JED_EXTENSION_IS_DEFAULT_DATA_LABEL"
                 class="btn-group btn-group-yesno"
                 default="0"
                 filter="integer"

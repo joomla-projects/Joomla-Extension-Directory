@@ -166,21 +166,21 @@ class HtmlView extends BaseHtmlView
     {
         return [
             'a.`id`'                   => Text::_('JGRID_HEADING_ID'),
-            'a.`ticket_origin`'        => Text::_('COM_JED_JEDTICKETS_FIELD_TICKET_ORIGIN_LABEL'),
-            'a.`ticket_category_type`' => Text::_('COM_JED_JEDTICKETS_FIELD_TICKET_CATEGORY_TYPE_LABEL'),
-            'a.`ticket_subject`'       => Text::_('COM_JED_JEDTICKETS_FIELD_TICKET_SUBJECT_LABEL'),
-            'a.`allocated_group`'      => Text::_('COM_JED_JEDTICKETS_FIELD_ALLOCATED_GROUP_LABEL'),
-            'a.`allocated_to`'         => Text::_('COM_JED_JEDTICKETS_FIELD_ALLOCATED_TO_LABEL'),
-            'a.`linked_item_type`'     => Text::_('COM_JED_JEDTICKETS_FIELD_LINKED_ITEM_TYPE_LABEL'),
-            'a.`linked_item_id`'       => Text::_('COM_JED_JEDTICKETS_FIELD_LINKED_ITEM_ID_LABEL'),
+            'a.`ticket_origin`'        => Text::_('COM_JED_TICKETS_TICKET_ORIGIN_LABEL'),
+            'a.`ticket_category_type`' => Text::_('COM_JED_GENERAL_TYPE_LABEL'),
+            'a.`ticket_subject`'       => Text::_('COM_JED_GENERAL_SUBJECT_LABEL'),
+            'a.`allocated_group`'      => Text::_('COM_JED_TICKETS_ALLOCATED_GROUP_LABEL'),
+            'a.`allocated_to`'         => Text::_('COM_JED_TICKETS_ALLOCATED_TO_LABEL'),
+            'a.`linked_item_type`'     => Text::_('COM_JED_TICKETS_LINKED_ITEM_TYPE_LABEL'),
+            'a.`linked_item_id`'       => Text::_('COM_JED_TICKETS_LINKED_ITEM_ID_LABEL'),
             'a.`ticket_status`'        => Text::_('JSTATUS'),
-            'a.`parent_id`'            => Text::_('COM_JED_JEDTICKETS_FIELD_PARENT_ID_LABEL'),
+            'a.`parent_id`'            => Text::_('COM_JED_TICKETS_PARENT_ID_LABEL'),
             'a.`state`'                => Text::_('JSTATUS'),
             'a.`ordering`'             => Text::_('JGRID_HEADING_ORDERING'),
             'a.`created_by`'           => Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'),
-            'a.`created_on`'           => Text::_('COM_JED_GENERAL_FIELD_CREATED_ON_LABEL'),
+            'a.`created_on`'           => Text::_('COM_JED_GENERAL_CREATED_ON_LABEL'),
             'a.`modified_by`'          => Text::_('JGLOBAL_FIELD_MODIFIED_BY_LABEL'),
-            'a.`modified_on`'          => Text::_('COM_JED_JEDTICKETS_FIELD_MODIFIED_ON_LABEL'),
+            'a.`modified_on`'          => Text::_('COM_JED_GENERAL_MODIFIED_ON_LABEL'),
         ];
     }
 

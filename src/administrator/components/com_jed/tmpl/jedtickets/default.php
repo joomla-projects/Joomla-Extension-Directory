@@ -59,14 +59,14 @@ if ($saveOrder) {
                     <tr>
 
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_JEDTICKETS_FIELD_TICKET_CATEGORY_TYPE_LABEL', 'a.`ticket_category_type`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_TYPE_LABEL', 'a.`ticket_category_type`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_JEDTICKETS_FIELD_TICKET_SUBJECT_LABEL', 'a.`ticket_subject`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_SUBJECT_LABEL', 'a.`ticket_subject`', $listDirn, $listOrder); ?>
                         </th>
 
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_FIELD_CREATED_ON_LABEL', 'a.`created_on`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_CREATED_ON_LABEL', 'a.`created_on`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
                             <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_FIELD_CREATED_BY_LABEL', 'a.`created_by`', $listDirn, $listOrder); ?>
@@ -76,13 +76,13 @@ if ($saveOrder) {
                             <?php echo HTMLHelper::_('searchtools.sort', 'JSTATUS', 'a.`ticket_status`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_JEDTICKETS_FIELD_ALLOCATED_GROUP_LABEL', 'a.`allocated_group`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_TICKETS_ALLOCATED_GROUP_LABEL', 'a.`allocated_group`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_JEDTICKETS_FIELD_ALLOCATED_TO_LABEL', 'a.`allocated_to`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_TICKETS_ALLOCATED_TO_LABEL', 'a.`allocated_to`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_JEDTICKETS_FIELD_LINKED_ITEM_TYPE_LABEL', 'a.`linked_item_type`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_TICKETS_LINKED_ITEM_TYPE_LABEL', 'a.`linked_item_type`', $listDirn, $listOrder); ?>
                         </th>
 
 
@@ -101,7 +101,7 @@ if ($saveOrder) {
                     </tfoot>
                     <tbody <?php if ($saveOrder) :
                         ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
-                           endif; ?>>
+                    endif; ?>>
                     <?php foreach ($this->items as $i => $item) :
                         $ordering   = ($listOrder == 'a.ordering');
                         $canCreate  = $user->authorise('core.create', 'com_jed');
@@ -135,7 +135,7 @@ if ($saveOrder) {
                                     $d = new DateTime($item->created_on);
                                 } catch (Exception $e) {
                                 }
-                                echo $d->format("d M y H:i"); ?>
+                        echo $d->format("d M y H:i"); ?>
                             </td>
 
                             <td>

@@ -44,14 +44,14 @@ try {
 } catch (Exception $e) {
 }
 
-Text::script('COM_JED_EXTENSIONS_ERROR_DURING_SEND_EMAIL', true);
-Text::script('COM_JED_EXTENSIONS_MISSING_MESSAGE_ID', true);
-Text::script('COM_JED_EXTENSIONS_MISSING_DEVELOPER_ID', true);
-Text::script('COM_JED_EXTENSIONS_MISSING_EXTENSION_ID', true);
-Text::script('COM_JED_EXTENSIONS_ERROR_SAVING_APPROVE', true);
-Text::script('COM_JED_EXTENSIONS_EXTENSION_APPROVED_REASON_REQUIRED', true);
-Text::script('COM_JED_EXTENSIONS_ERROR_SAVING_PUBLISH', true);
-Text::script('COM_JED_EXTENSIONS_EXTENSION_PUBLISHED_REASON_REQUIRED', true);
+Text::script('COM_JED_EXTENSION_ERROR_DURING_SEND_EMAIL_LABEL', true);
+Text::script('COM_JED_EXTENSION_MISSING_MESSAGE_ID_LABEL', true);
+Text::script('COM_JED_EXTENSION_MISSING_DEVELOPER_ID', true);
+Text::script('COM_JED_EXTENSION_MISSING_EXTENSION_ID_LABEL', true);
+Text::script('COM_JED_EXTENSION_ERROR_SAVING_APPROVE_LABEL', true);
+Text::script('COM_JED_EXTENSION_EXTENSION_APPROVED_REASON_REQUIRED_LABEL', true);
+Text::script('COM_JED_EXTENSION_ERROR_SAVING_PUBLISH_LABEL', true);
+Text::script('COM_JED_EXTENSION_EXTENSION_PUBLISHED_REASON_REQUIRED_LABEL', true);
 
 $extensionUrl = Uri::root() . 'extension/' . $this->extension->alias;
 $downloadUrl  = 'index.php?option=com_jed&task=extension.download&id=' . $this->extension->id;
@@ -94,14 +94,14 @@ foreach ($this->extension->varied as $st) {
 
 
     $fieldsets['links']['supply_type'] = $st->supply_type;
-    $fieldsets['links']['title']       = Text::_('COM_JED_EXTENSION_FORM_LINKS_TITLE');
+    $fieldsets['links']['title']       = Text::_('COM_JED_EXTENSION_LINKS_TITLE');
     $fieldsets['links']['description'] = '';
     $fieldsets['links']['fields']      = [['homepage_link', 'download_link'], ['demo_link', 'support_link'], ['documentation_link', 'license_link'], ['translation_link', '']];
     $fieldsets['links']['hidden']      = [];
 
     $fieldsets['integration']['supply_type'] = $st->supply_type;
-    $fieldsets['integration']['title']       = Text::_('COM_JED_EXTENSION_FORM_INTEGRATION_TITLE');
-    $fieldsets['integration']['description'] = Text::_('COM_JED_EXTENSION_FORM_INTEGRATION_DESCR');
+    $fieldsets['integration']['title']       = Text::_('COM_JED_EXTENSION_INTEGRATION_TITLE');
+    $fieldsets['integration']['description'] = Text::_('COM_JED_EXTENSION_INTEGRATION_DESCR');
     $fieldsets['integration']['fields']      = [['download_integration_type', 'download_integration_url']];
     $fieldsets['integration']['hidden']      = [];
 
@@ -188,7 +188,7 @@ foreach ($this->extension->reviews as $rtype) {
                 </div>
                 <div class="row ticket-header-row">
                     <div class="col-md-2   ticket-header">
-                        <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_FUNCTIONALITY_LABEL') . ' - ' . $review->functionality; ?></h1>
+                        <h1><?php echo Text::_('COM_JED_REVIEWS_FUNCTIONALITY_LABEL') . ' - ' . $review->functionality; ?></h1>
                     </div>
                     <div class="col-md-10   ticket-header">
 			            <?php echo $linked_form->renderField('functionality_comment', null, null, $headerlabeloptions); ?>
@@ -196,7 +196,7 @@ foreach ($this->extension->reviews as $rtype) {
                 </div>
                 <div class="row ticket-header-row">
                     <div class="col-md-2   ticket-header">
-                        <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_EASE_OF_USE_LABEL') . ' - ' . $review->ease_of_use; ?></h1>
+                        <h1><?php echo Text::_('COM_JED_REVIEWS_EASE_OF_USE_LABEL') . ' - ' . $review->ease_of_use; ?></h1>
                     </div>
                     <div class="col-md-10   ticket-header">
 			            <?php echo $linked_form->renderField('ease_of_use_comment', null, null, $headerlabeloptions); ?>
@@ -204,7 +204,7 @@ foreach ($this->extension->reviews as $rtype) {
                 </div>
                 <div class="row ticket-header-row">
                     <div class="col-md-2   ticket-header">
-                        <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_SUPPORT_LABEL') . ' - ' . $review->support; ?></h1>
+                        <h1><?php echo Text::_('COM_JED_GENERAL_SUPPORT_LABEL') . ' - ' . $review->support; ?></h1>
                     </div>
                     <div class="col-md-10   ticket-header">
 			            <?php echo $linked_form->renderField('support_comment', null, null, $headerlabeloptions); ?>
@@ -212,7 +212,7 @@ foreach ($this->extension->reviews as $rtype) {
                 </div>
                 <div class="row ticket-header-row">
                     <div class="col-md-2   ticket-header">
-                        <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_DOCUMENTATION_LABEL') . ' - ' . $review->documentation; ?></h1>
+                        <h1><?php echo Text::_('COM_JED_EXTENSION_DOCUMENTATION_LABEL') . ' - ' . $review->documentation; ?></h1>
                     </div>
                     <div class="col-md-10   ticket-header">
 			            <?php echo $linked_form->renderField('documentation_comment', null, null, $headerlabeloptions); ?>
@@ -220,7 +220,7 @@ foreach ($this->extension->reviews as $rtype) {
                 </div>
                 <div class="row ticket-header-row">
                     <div class="col-md-2   ticket-header">
-                        <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_VALUE_FOR_MONEY_LABEL') . ' - ' . $review->value_for_money; ?></h1>
+                        <h1><?php echo Text::_('COM_JED_REVIEWS_VALUE_FOR_MONEY_LABEL') . ' - ' . $review->value_for_money; ?></h1>
                     </div>
                     <div class="col-md-10   ticket-header">
 			            <?php echo $linked_form->renderField('value_for_money_comment', null, null, $headerlabeloptions); ?>
@@ -228,7 +228,7 @@ foreach ($this->extension->reviews as $rtype) {
                 </div>
                 <div class="row ticket-header-row">
                     <div class="col-md-2   ticket-header">
-                        <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_OVERALL_SCORE_LABEL') . ' - ' . $review->overall_score; ?></h1>
+                        <h1><?php echo Text::_('COM_JED_REVIEWS_OVERALL_SCORE_LABEL') . ' - ' . $review->overall_score; ?></h1>
                     </div>
                     <div class="col-md-10   ticket-header">
                         <h1>Created on - <?php echo $review->created_on; ?>&nbsp;&nbsp;IP Address
@@ -262,7 +262,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
                 $varied_form = $this->extensionvarieddatum_form;
 
                 $varied_form->bind($vr);
-                echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'viewextensionsupply_tab_' . $vr->supply_type, Text::_($vr->supply_type, true) . '&nbsp;' . Text::_('COM_JED_EXTENSIONS_VERSION', true));
+                echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'viewextensionsupply_tab_' . $vr->supply_type, Text::_($vr->supply_type, true) . '&nbsp;' . Text::_('COM_JED_GENERAL_VERSION_LABEL', true));
                 echo $varied_form->renderFieldset('info');
 
                 echo $varied_form->renderField('tags');
@@ -280,7 +280,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
                 'uitab.addTab',
                 'extensionTab',
                 'downloads',
-                Text::_('COM_JED_EXTENSIONS_DOWNLOADS_TAB')
+                Text::_('COM_JED_EXTENSION_DOWNLOADS_TAB_LABEL')
             ); ?>
             <div class="row-fluid">
                 <div class="span12">
@@ -292,7 +292,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
                         <?php
                                     echo $this->form->renderField('downloadIntegrationUrl'); ?>
                         <h3><?php
-                                        echo Text::_('COM_JED_EXTENSIONS_DOWNLOAD_ALTERNATIVE_DOWNLOAD'); ?></h3>
+                                        echo Text::_('COM_JED_EXTENSION_DOWNLOAD_ALTERNATIVE_DOWNLOAD_LABEL'); ?></h3>
                         <?php
                                     echo $this->form->renderField('downloadIntegrationType1'); ?>
                         <?php
@@ -312,7 +312,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
                             'uitab.addTab',
                             'extensionTab',
                             'reviews',
-                            Text::_('COM_JED_EXTENSIONS_REVIEWS_TAB')
+                            Text::_('COM_JED_TITLE_REVIEWS')
                         ); ?>
             <div class="row-fluid">
                 <div class="span12">
@@ -324,7 +324,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
                                 echo HTMLHelper::_(
                                     'link',
                                     'index.php?option=com_jed&view=reviews&filter[extension]=' . $this->extension->id,
-                                    Text::_('COM_JED_EXTENSIONS_REVIEW_LINK') . ' <span class="icon-new-tab"></span>',
+                                    Text::_('COM_JED_EXTENSION_REVIEW_LINK_LABEL') . ' <span class="icon-new-tab"></span>',
                                     'target="_blank"'
                                 );
                                 ?>
@@ -338,7 +338,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
                 'uitab.addTab',
                 'extensionTab',
                 'communication',
-                Text::_('COM_JED_EXTENSIONS_COMMUNICATION_TAB')
+                Text::_('COM_JED_EXTENSION_COMMUNICATION_TAB')
             ); ?>
             <div class="row-fluid">
                 <div class="span12">
@@ -371,7 +371,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
                 'uitab.addTab',
                 'extensionTab',
                 'history',
-                Text::_('COM_JED_EXTENSIONS_HISTORY_TAB')
+                Text::_('COM_JED_EXTENSION_HISTORY_TAB')
             ); ?>
             <div class="row-fluid">
                 <div class="span12">
@@ -379,11 +379,11 @@ echo HTMLHelper::_('bootstrap.endAccordion');
                         <thead>
                         <tr>
                             <td><?php
-                                echo Text::_('COM_JED_EXTENSION_HISTORY_DATE'); ?></td>
+                                echo Text::_('COM_JED_EXTENSION_HISTORY_DATE_LABEL'); ?></td>
                             <td><?php
-                                echo Text::_('COM_JED_EXTENSION_HISTORY_TYPE'); ?></td>
+                                echo Text::_('COM_JED_GENERAL_TYPE_LABEL'); ?></td>
                             <td><?php
-                                echo Text::_('COM_JED_EXTENSION_HISTORY_TEXT'); ?></td>
+                                echo Text::_('COM_JED_EXTENSION_MESSAGE_LABEL'); ?></td>
                             <td><?php
                                 echo Text::_('COM_JED_EXTENSION_HISTORY_MEMBER'); ?></td>
                             <td><?php
@@ -398,7 +398,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
                                 <tr><?php
                                 ?>
                                 <td><?php
-                                echo HTMLHelper::_('date', $history->logDate, Text::_('COM_JED_DATETIME_FORMAT')); ?></td><?php
+                                echo HTMLHelper::_('date', $history->logDate, Text::_('COM_JED_GENERAL_DATETIME_FORMAT')); ?></td><?php
 ?>
                                 <td><?php
                                                                 echo Text::_('COM_JED_EXTENSION_HISTORY_LOG_' . $history->type); ?></td><?php

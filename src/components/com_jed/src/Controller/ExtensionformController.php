@@ -20,6 +20,8 @@ use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Filter\OutputFilter;
 
+use function defined;
+
 /**
  * Extension class.
  *
@@ -89,18 +91,18 @@ class ExtensionformController extends FormController
 
             //Translate/Fill out default values
             $data['joomla_versions'] = json_encode($data['joomla_versions']);
-            $data['includes']        = json_encode($data['includes']);
+            $data['includes'] = json_encode($data['includes']);
             if($data['download_integration_type'] == 2) {
                 $data['requires_registration'] = 1;
             } else {
                 $data['requires_registration'] = 0;
             }
-            $data['can_update']  = $data['uses_updater'];
-            $data['popular']     = 0;
-            $data['approved']    = 0;
+            $data['can_update'] = $data['uses_updater'];
+            $data['popular'] = 0;
+            $data['approved'] = 0;
             $data['jed_checked'] = 0;
-            $data['alias']       = OutputFilter::stringUrlSafe($data['title']);
-            $data['intro_text']  = '????'; // look this up in JED3
+            $data['alias'] = OutputFilter::stringUrlSafe($data['title']);
+            $data['intro_text'] = '????'; // look this up in JED3
 
 
             echo "<pre>";
@@ -179,7 +181,7 @@ class ExtensionformController extends FormController
         $app->setUserState('com_jed.edit.extension.id', null);
 
         // Redirect to the list screen.
-        $this->setMessage(Text::_('COM_JED_ITEM_SAVED_SUCCESSFULLY'));
+        $this->setMessage(Text::_('COM_JED_GENERAL_ITEM_SAVED_SUCCESSFULLY_LABEL'));
         $menu = Factory::getApplication()->getMenu();
         $item = $menu->getActive();
         $url  = (empty($item->link) ? 'index.php?option=com_jed&view=extensions' : $item->link);

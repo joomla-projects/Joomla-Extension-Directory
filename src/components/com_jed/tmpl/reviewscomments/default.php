@@ -51,19 +51,19 @@ $wa->useStyle('com_jed.list');
             <tr>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_REVIEWCOMMENTS_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_REVIEWCOMMENTS_FIELD_REVIEW_ID_LABEL', 'a.review_id', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_REVIEWCOMMENTS_REVIEW_ID_LABEL', 'a.review_id', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_REVIEWCOMMENTS_FIELD_IP_ADDRESS_LABEL', 'a.ip_address', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_IPADDRESS_LABEL', 'a.ip_address', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_FIELD_CREATED_ON_LABEL', 'a.created_on', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_CREATED_ON_LABEL', 'a.created_on', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
@@ -76,7 +76,7 @@ $wa->useStyle('com_jed.list');
 
                         <?php if ($canEdit || $canDelete) : ?>
                     <th class="center">
-                            <?php echo Text::_('COM_JED_REVIEWCOMMENTS_FIELD_ACTIONS_LABEL'); ?>
+                            <?php echo Text::_('COM_JED_GENERAL_ACTIONS_LABEL'); ?>
                     </th>
                         <?php endif; ?>
 

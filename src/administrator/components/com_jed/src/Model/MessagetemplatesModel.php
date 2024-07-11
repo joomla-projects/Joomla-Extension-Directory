@@ -72,7 +72,7 @@ class MessagetemplatesModel extends ListModel
 
         foreach ($items as $oneItem) {
             $oneItem->email_type    = Text::_('COM_JED_MESSAGETEMPLATES_FIELD_EMAIL_TYPE_OPTION_' . strtoupper($oneItem->email_type));
-            $oneItem->ticket_status = Text::_('COM_JED_JEDTICKETS_FIELD_TICKET_STATUS_OPTION_' . strtoupper($oneItem->ticket_status));
+            $oneItem->ticket_status = Text::_('COM_JED_TICKETS_TICKET_STATUS_OPTION_' . strtoupper($oneItem->ticket_status));
         }
 
         return $items;

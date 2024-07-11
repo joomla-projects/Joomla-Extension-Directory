@@ -86,11 +86,11 @@ class VelabandonedreportsModel extends ListModel
             }
 
             if (!JedHelper::is_blank($item->passed_to_vel)) {
-                $item->passed_to_vel = Text::_('COM_JED_VEL_GENERAL_FIELD_PASSED_TO_VEL_OPTION_' . strtoupper($item->passed_to_vel));
+                $item->passed_to_vel = Text::_('COM_JED_VEL_GENERAL_PASSED_TO_VEL_OPTION_' . strtoupper($item->passed_to_vel));
             }
 
             if (!JedHelper::is_blank($item->data_source)) {
-                $item->data_source = Text::_('COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_' . strtoupper($item->data_source));
+                $item->data_source = Text::_('COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_' . strtoupper($item->data_source));
             }
         }
 

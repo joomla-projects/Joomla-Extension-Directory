@@ -2,15 +2,15 @@
 <form addfieldprefix="Jed\Component\Jed\Administrator\Field">
     <fieldset>
         <field name="id" type="text" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"/>
-        <field name="review_id" label="COM_JED_REVIEWCOMMENTS_FIELD_REVIEW_ID_LABEL"
-               description="COM_JED_FORM_DESC_REVIEWCOMMENT_REVIEW_ID"
-               hint="COM_JED_REVIEWCOMMENTS_FIELD_REVIEW_ID_LABEL"/>
-        <field name="ip_address" filter="safehtml" type="text" label="COM_JED_REVIEWCOMMENTS_FIELD_IP_ADDRESS_LABEL"
-               description="COM_JED_FORM_DESC_REVIEWCOMMENT_IP_ADDRESS"
-               hint="COM_JED_REVIEWCOMMENTS_FIELD_IP_ADDRESS_LABEL"/>
+        <field name="review_id" label="COM_JED_REVIEWCOMMENTS_REVIEW_ID_LABEL"
+               description="COM_JED_REVIEWCOMMENT_REVIEW_ID_DESCR"
+               hint="COM_JED_REVIEWCOMMENTS_REVIEW_ID_LABEL"/>
+        <field name="ip_address" filter="safehtml" type="text" label="COM_JED_GENERAL_IPADDRESS_LABEL"
+               description="COM_JED_REVIEWCOMMENT_IP_ADDRESS_DESCR"
+               hint="COM_JED_GENERAL_IPADDRESS_LABEL"/>
         <field name="created_on" type="calendar" class="inputbox" format="%Y-%m-%d %H:%M:%S" showtime="true"
-               translateformat="true" label="COM_JED_GENERAL_FIELD_CREATED_ON_LABEL"
-               description="COM_JED_FORM_DESC_REVIEWCOMMENT_CREATED_ON" hint="COM_JED_GENERAL_FIELD_CREATED_ON_LABEL"/>
+               translateformat="true" label="COM_JED_GENERAL_CREATED_ON_LABEL"
+               description="COM_JED_REVIEWCOMMENT_CREATED_ON_DESCR" hint="COM_JED_GENERAL_CREATED_ON_LABEL"/>
         <field name="created_by" type="createdby" label="JGLOBAL_FIELD_CREATED_BY_LABEL"
                description="JGLOBAL_FIELD_CREATED_BY_DESC" hint="JGLOBAL_FIELD_CREATED_BY_LABEL"/>
         <field name="ordering"/>
@@ -22,9 +22,9 @@
             <option value="-2">JTRASHED</option>
         </field>
         <field name="comments" editor="|" buttons="false" filter="JComponentHelper::filterText" type="editor"
-               label="COM_JED_REVIEWCOMMENTS_FIELD_COMMENTS_LABEL"
-               description="COM_JED_FORM_DESC_REVIEWCOMMENT_COMMENTS"
-               hint="COM_JED_REVIEWCOMMENTS_FIELD_COMMENTS_LABEL"/>
+               label="COM_JED_REVIEWCOMMENTS_COMMENTS_LABEL"
+               description="COM_JED_REVIEWCOMMENT_COMMENTS_DESCR"
+               hint="COM_JED_REVIEWCOMMENTS_COMMENTS_LABEL"/>
         <field name="version_note" type="text" label="JGLOBAL_FIELD_VERSION_NOTE_LABEL"
                description="JGLOBAL_FIELD_VERSION_NOTE_DESC" class="inputbox" size="45" labelclass="control-label"/>
     </fieldset>
