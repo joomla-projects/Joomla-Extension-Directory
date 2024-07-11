@@ -45,7 +45,7 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
         <?php
         if (!$isLoggedIn) {
             try {
-                $app = JFactory::getApplication();
+                $app = Factory::getApplication();
             } catch (Exception $e) {
             }
 

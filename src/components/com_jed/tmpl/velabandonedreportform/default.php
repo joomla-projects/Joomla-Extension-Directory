@@ -41,7 +41,7 @@ $redirectURL = JedHelper::getLoginlink();
 
 if (!$isLoggedIn) {
     try {
-        $app = JFactory::getApplication();
+        $app = Factory::getApplication();
     } catch (Exception $e) {
     }
 
