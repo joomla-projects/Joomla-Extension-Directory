@@ -44,7 +44,7 @@ class JedHelper
      */
     public static function addConfigToolbar(Toolbar $bar)
     {
-        $bar->linkButton('tickets')->text(Text::_('COM_JED_TITLE_TICKETS'))->url('index.php?option=com_jed&view=jedtickets')->icon('fa fa-ticket-alt');
+        $bar->linkButton('tickets')->text(Text::_('COM_JED_TITLE_TICKETS'))->url('index.php?option=com_jed&view=tickets')->icon('fa fa-ticket-alt');
         $bar->linkButton('vulnerable')->text('Vulnerable Items')->url('index.php?option=com_jed&view=velvulnerableitems')->icon('fa fa-bug');
 
         $bar->customHtml('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
@@ -88,7 +88,7 @@ class JedHelper
 
         $debugChild->linkButton('ticketinternalnotes')->text('Ticket Internal Notes')->icon('fa fa-link')->url('index.php?option=com_jed&view=ticketinternalnotes');
 
-        $debugChild->linkButton('jedtickets')->text('JED Tickets')->icon('fa fa-link')->url('index.php?option=com_jed&view=jedtickets');
+        $debugChild->linkButton('tickets')->text('JED Tickets')->icon('fa fa-link')->url('index.php?option=com_jed&view=tickets');
         $debugChild->linkButton('extensions')->text('Extensions')->icon('fa fa-link')->url('index.php?option=com_jed&view=extensions');
     }
 

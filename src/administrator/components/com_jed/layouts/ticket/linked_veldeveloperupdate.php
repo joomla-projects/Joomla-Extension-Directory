@@ -105,7 +105,7 @@ $fscount                      = 0;
                     } else {
                         ?>
                         <button type="button" class="btn btn-primary"
-                                onclick="Joomla.submitbutton('jedticket.assignDeveloperUpdatetoVEL')">
+                                onclick="Joomla.submitbutton('ticket.assignDeveloperUpdatetoVEL')">
                             <?php echo Text::_('COM_JED_VEL_DEVELOPERUPDATES_BUTTON_ASSIGN_TO_VEL'); ?>
                         </button>
                         <?php

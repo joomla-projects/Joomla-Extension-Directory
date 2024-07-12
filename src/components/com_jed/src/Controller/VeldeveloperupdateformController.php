@@ -232,7 +232,7 @@ class VeldeveloperupdateformController extends FormController
 
         // Redirect to the list screen.
         $this->setMessage(Text::_('COM_JED_VEL_DEVELOPERUPDATES_UPDATE_SAVED_SUCCESSFULLY_REPLY'));
-        $url = 'index.php?option=com_jed&view=jedtickets';
+        $url = 'index.php?option=com_jed&view=tickets';
         $this->setRedirect(Route::_($url, false));
 
 

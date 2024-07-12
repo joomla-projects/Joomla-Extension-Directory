@@ -184,7 +184,7 @@ class VelreportformController extends FormController
 
         // Redirect to the list of Tickets screen.
         $this->setMessage(Text::_('COM_JED_GENERAL_ITEM_SAVED_SUCCESSFULLY_LABEL'));
-        $url = 'index.php?option=com_jed&view=jedtickets';
+        $url = 'index.php?option=com_jed&view=tickets';
         $this->setRedirect(Route::_($url, false));
 
         // Flush the data from the session.

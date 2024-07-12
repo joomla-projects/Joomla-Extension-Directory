@@ -310,8 +310,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_internal_notes`
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 /* JED Tickets */
-DROP TABLE IF EXISTS `#__jed_jedtickets`;
-CREATE TABLE IF NOT EXISTS `#__jed_jedtickets`
+DROP TABLE IF EXISTS `#__jed_tickets`;
+CREATE TABLE IF NOT EXISTS `#__jed_tickets`
 (
     `id`                      INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `ticket_origin`           VARCHAR(255)     NULL DEFAULT '0',

@@ -15,7 +15,7 @@
         </field>
 
         <field name="ticket_id" type="sql" label="COM_JED_TICKETMESSAGE_TICKET_ID_LABEL"
-               query="SELECT `id` AS `id`, `ticket_subject` AS val FROM `#__jed_jedtickets`"
+               query="SELECT `id` AS `id`, `ticket_subject` AS val FROM `#__jed_tickets`"
                header="COM_JED_TICKETMESSAGE_TICKET_ID_FILTER_LABEL" key_field="id" value_field="val"
                class="inputbox"
                onchange="this.form.submit()" translate="true"/>

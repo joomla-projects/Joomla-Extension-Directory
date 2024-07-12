@@ -38,7 +38,7 @@
                 </params>
             </menu>
 
-            <menu view="jedtickets">
+            <menu view="tickets">
                 COM_JED_TITLE_TICKETS
             </menu>
 

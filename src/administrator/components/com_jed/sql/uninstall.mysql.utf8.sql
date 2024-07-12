@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS `#__jed_vel_abandoned_report`;
 DROP TABLE IF EXISTS `#__jed_vel_vulnerable_item`;
 DROP TABLE IF EXISTS `#__jed_ticket_messages`;
 DROP TABLE IF EXISTS `#__jed_ticket_internal_notes`;
-DROP TABLE IF EXISTS `#__jed_jedtickets`;
+DROP TABLE IF EXISTS `#__jed_tickets`;
 DROP TABLE IF EXISTS `#__jed_extensions_approved_reasons`;
 DROP TABLE IF EXISTS `#__jed_extensions_categories`;
 DROP TABLE IF EXISTS `#__jed_extensions_logos`;

@@ -47,9 +47,9 @@
       "version": "4.0.0"
     },
     {
-      "name": "com_jed.jedTickets",
+      "name": "com_jed.Tickets",
       "type": "style",
-      "uri": "media/com_jed/css/jedtickets.css"
+      "uri": "media/com_jed/css/tickets.css"
     },
     {
       "name": "com_jed.ticketGetmessagetemplate",

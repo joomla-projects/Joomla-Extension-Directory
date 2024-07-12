@@ -39,7 +39,7 @@ try {
         ->useScript('keepalive')
         ->usePreset('choicesjs')
         ->useScript('webcomponent.field-fancy-select')
-        ->useStyle('com_jed.jedTickets')
+        ->useStyle('com_jed.Tickets')
         ->useStyle('com_jed.jquery_dataTables');
 } catch (Exception $e) {
 }

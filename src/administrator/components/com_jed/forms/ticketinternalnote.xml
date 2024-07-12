@@ -29,7 +29,7 @@
                hint="COM_JED_GENERAL_NOTE_LABEL"/>
         <field name="ticket_id" type="foreignkey" label="COM_JED_TICKETINTERNALNOTE_FIELD_TICKET_ID_LABEL"
                description="COM_JED_TICKET_INTERNAL_NOTE_FIELD_TICKET_ID_DESCR" input_type="list"
-               table="#__jed_jedtickets"
+               table="#__jed_tickets"
                key_field="id" value_field="ticket_subject" default="0"/>
         <field name="version_note" type="text" label="JGLOBAL_FIELD_VERSION_NOTE_LABEL"
                description="JGLOBAL_FIELD_VERSION_NOTE_DESC" class="inputbox" size="45" labelclass="control-label"/>

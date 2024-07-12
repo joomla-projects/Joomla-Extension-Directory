@@ -97,7 +97,7 @@ $fieldsets['extra']['fields']      = [
                     } else {
                         ?>
                         <button type="button" class="btn btn-primary"
-                                onclick="Joomla.submitbutton('jedticket.copyAbandonedReporttoVEL')">
+                                onclick="Joomla.submitbutton('ticket.copyAbandonedReporttoVEL')">
                             <?php echo Text::_('COM_JED_VEL_GENERAL_BUTTON_CREATE_ABANDONED_VEL'); ?>
                         </button>
                         <?php

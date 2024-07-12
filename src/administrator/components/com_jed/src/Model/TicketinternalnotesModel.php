@@ -50,10 +50,10 @@ class TicketinternalnotesModel extends ListModel
 
                     $query = $db->getQuery(true);
                     $query
-                        ->select('`#__jed_jedtickets_3591975`.`ticket_subject`')
-                        ->from($db->quoteName('#__jed_jedtickets', '#__jed_jedtickets_3591975'))
+                        ->select('`#__jed_tickets_3591975`.`ticket_subject`')
+                        ->from($db->quoteName('#__jed_tickets', '#__jed_tickets_3591975'))
                         ->where(
-                            $db->quoteName('#__jed_jedtickets_3591975.id') . ' = ' . $db->quote($db->escape($value))
+                            $db->quoteName('#__jed_tickets_3591975.id') . ' = ' . $db->quote($db->escape($value))
                         );
 
                     $db->setQuery($query);
@@ -108,7 +108,7 @@ class TicketinternalnotesModel extends ListModel
         $query->join('LEFT', '#__users AS `modified_by` ON `modified_by`.id = a.`modified_by`');
         // Join over the foreign key 'ticket_id'
         $query->select('`jt`.`ticket_subject` AS jt_ticket_subject');
-        $query->join('LEFT', '#__jed_jedtickets AS jt ON jt.`id` = a.`ticket_id`');
+        $query->join('LEFT', '#__jed_tickets AS jt ON jt.`id` = a.`ticket_id`');
 
 
         // Filter by published state

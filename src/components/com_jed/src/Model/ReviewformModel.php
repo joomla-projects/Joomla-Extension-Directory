@@ -181,7 +181,7 @@ class ReviewformModel extends FormModel
             $this->item = false;
 
             if (empty($id)) {
-                $id = $this->getState('jedticket.id');
+                $id = $this->getState('ticket.id');
             }
 
             // Get a level row instance.
@@ -228,7 +228,7 @@ class ReviewformModel extends FormModel
         {
             if (empty($pk))
             {
-                $pk = (int) $this->getState('jedticket.id');
+                $pk = (int) $this->getState('ticket.id');
             }
 
             if ($pk == 0 || $this->getItem($pk) == null)
@@ -301,8 +301,8 @@ class ReviewformModel extends FormModel
                 $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
 
 
-                //$ticket_model = BaseDatabaseModel::getInstance('Jedticketform', 'JedModel', ['ignore_request' => true]);
-                $ticket_model = new JedticketformModel();
+                //$ticket_model = BaseDatabaseModel::getInstance('Ticketform', 'JedModel', ['ignore_request' => true]);
+                $ticket_model = new TicketformModel();
                 $ticket_model->save($ticket);
 
                 $ticket_id = $ticket_model->getId();

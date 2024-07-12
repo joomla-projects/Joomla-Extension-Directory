@@ -15,7 +15,7 @@ templates.addEventListener('change', function () {
     tinyMCE.get('jform_message_text').execCommand('Delete');
 
     tinyMCE.get('jform_message_text').execCommand('mceInsertContent', false, 'Fetching content - Please Wait!');
-    let messageContent = setMessageContent('Jedticket.getTemplate', templates.value)
+    let messageContent = setMessageContent('Ticket.getTemplate', templates.value)
 })
 
 async function setMessageContent(itemTask, itemId) {

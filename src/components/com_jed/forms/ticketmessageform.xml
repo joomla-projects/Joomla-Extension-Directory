@@ -20,7 +20,7 @@
                label="COM_JED_EXTENSION_MESSAGE_LABEL" description="COM_JED_FORM_DESC_TICKETMESSAGE_MESSAGE"
                hint="COM_JED_EXTENSION_MESSAGE_LABEL"/>
         <field name="ticket_id" type="foreignkey" label="COM_JED_TICKETMESSAGE_TICKET_ID_LABEL"
-               description="COM_JED_TICKETS_TICKET_ID_DESCR" input_type="list" table="#__jed_jedtickets"
+               description="COM_JED_TICKETS_TICKET_ID_DESCR" input_type="list" table="#__jed_tickets"
                key_field="id" value_field="ticket_subject" default="0"/>
         <field name="version_note" type="text" label="JGLOBAL_FIELD_VERSION_NOTE_LABEL"
                description="JGLOBAL_FIELD_VERSION_NOTE_DESC" class="inputbox" size="45" labelclass="control-label"/>

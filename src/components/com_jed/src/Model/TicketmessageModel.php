@@ -161,8 +161,8 @@ class TicketmessageModel extends ItemModel
                 $query = $db->getQuery(true);
 
                 $query
-                    ->select('`#__jed_jedtickets_3591992`.`ticket_subject`')
-                    ->from($db->quoteName('#__jed_jedtickets', '#__jed_jedtickets_3591992'))
+                    ->select('`#__jed_tickets_3591992`.`ticket_subject`')
+                    ->from($db->quoteName('#__jed_tickets', '#__jed_tickets_3591992'))
                     ->where($db->quoteName('id') . ' = ' . $db->quote($value));
 
                 $db->setQuery($query);
