@@ -33,7 +33,6 @@ class HtmlView extends BaseHtmlView
 
     protected mixed $form;
 
-    protected mixed $params;
 
     /**
      * Display the view
@@ -129,12 +128,12 @@ class HtmlView extends BaseHtmlView
 
         // Add Breadcrumbs
         $pathway        = $app->getPathway();
-        $breadcrumbList = Text::_('COM_JED_TITLE_EXTENSIONS');
+        $breadcrumbList = Text::_('COM_JED_EXTENSIONS');
 
         if (!in_array($breadcrumbList, $pathway->getPathwayNames())) {
             $pathway->addItem($breadcrumbList, "index.php?option=com_jed&view=extensions");
         }
-        $breadcrumbTitle = Text::_('COM_JED_TITLE_EXTENSION');
+        $breadcrumbTitle = Text::_('COM_JED_EXTENSION');
 
         if (!in_array($breadcrumbTitle, $pathway->getPathwayNames())) {
             $pathway->addItem($breadcrumbTitle);

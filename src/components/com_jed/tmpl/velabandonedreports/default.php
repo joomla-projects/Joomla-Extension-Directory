@@ -70,32 +70,32 @@ if (!$isLoggedIn) {
                         <?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
                     </th>
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_FIELD_NAME_LABEL', 'a.reporter_fullname', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_NAME_LABEL', 'a.reporter_fullname', $listDirn, $listOrder); ?>
                     </th>
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_FIELD_EMAIL_LABEL', 'a.reporter_email', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_EMAIL_LABEL', 'a.reporter_email', $listDirn, $listOrder); ?>
                     </th>
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_FIELD_ORGANISATION_LABEL', 'a.reporter_organisation', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_ORGANISATION_LABEL', 'a.reporter_organisation', $listDirn, $listOrder); ?>
                     </th>
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_VEL_ABANDONEDREPORTS_EXTENSION_NAME', 'a.extension_name', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_EXTENSION', 'a.extension_name', $listDirn, $listOrder); ?>
                     </th>
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_VEL_GENERAL_FIELD_DEVELOPER_NAME_LABEL', 'a.developer_name', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_VEL_GENERAL_DEVELOPER_NAME_LABEL', 'a.developer_name', $listDirn, $listOrder); ?>
                     </th>
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_VEL_ABANDONEDREPORTS_EXTENSION_VERSION', 'a.extension_version', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_VERSION_LABEL', 'a.extension_version', $listDirn, $listOrder); ?>
                     </th>
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_VEL_GENERAL_FIELD_CONSENT_TO_PROCESS_LABEL', 'a.consent_to_process', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_VEL_GENERAL_CONSENT_TO_PROCESS_LABEL', 'a.consent_to_process', $listDirn, $listOrder); ?>
                     </th>
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_VEL_GENERAL_FIELD_PASSED_TO_VEL_LABEL', 'a.passed_to_vel', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_VEL_GENERAL_PASSED_TO_VEL_LABEL', 'a.passed_to_vel', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_FIELD_DATE_SUBMITTED_LABEL', 'a.date_submitted', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_DATE_SUBMITTED_LABEL', 'a.date_submitted', $listDirn, $listOrder); ?>
                     </th>
 
 
@@ -171,8 +171,8 @@ if (!$isLoggedIn) {
 
                             <?php
                             $date = $item->date_submitted;
-                            echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC6')) : '-';
-                            ?>                </td>
+                    echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC6')) : '-';
+                    ?>                </td>
 
 
                         <?php if ($canEdit || $canDelete) : ?>

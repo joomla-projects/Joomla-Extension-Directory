@@ -25,7 +25,7 @@ $rawData = $displayData->getData();
 
 /* Set up Data fieldsets */
 
-$fieldsets['aboutyou']['title']  = Text::_('COM_JED_VEL_GENERAL_FIELD_ABOUT_YOU_LABEL');
+$fieldsets['aboutyou']['title']  = Text::_('COM_JED_VEL_GENERAL_ABOUT_YOU_LABEL');
 $fieldsets['aboutyou']['fields'] = [
     'contact_fullname',
     'contact_organisation',
@@ -105,7 +105,7 @@ $fscount                      = 0;
                     } else {
                         ?>
                         <button type="button" class="btn btn-primary"
-                                onclick="Joomla.submitbutton('jedticket.assignDeveloperUpdatetoVEL')">
+                                onclick="Joomla.submitbutton('ticket.assignDeveloperUpdatetoVEL')">
                             <?php echo Text::_('COM_JED_VEL_DEVELOPERUPDATES_BUTTON_ASSIGN_TO_VEL'); ?>
                         </button>
                         <?php

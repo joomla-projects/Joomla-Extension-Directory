@@ -12,3 +12,4 @@
 component/backend/vendor
 ## JoRobo config file
 jorobo.ini
+/cc/

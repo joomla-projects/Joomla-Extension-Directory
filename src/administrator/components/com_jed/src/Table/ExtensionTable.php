@@ -247,6 +247,21 @@ class ExtensionTable extends Table
     }
 
     /**
+     * Delete a record by id
+     *
+     * @param mixed $pk Primary key value to delete. Optional
+     *
+     * @return bool
+     *
+     * @since 4.0.0
+     */
+    public function delete($pk = null): bool
+    {
+        $this->load($pk);
+        return parent::delete($pk);
+    }
+
+    /**
      * Get the type alias for the history table
      *
      * @return string  The alias as described above
@@ -256,6 +271,23 @@ class ExtensionTable extends Table
     public function getTypeAlias(): string
     {
         return $this->typeAlias;
+    }
+
+    /**
+     * Method to store a row in the database from the Table instance properties.
+     *
+     * If a primary key value is set the row with that primary key value will be updated with the instance property values.
+     * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
+     *
+     * @param bool $updateNulls True to update fields even if they are null.
+     *
+     * @return bool  True on success.
+     *
+     * @since 4.0.0
+     */
+    public function store($updateNulls = true): bool
+    {
+        return parent::store($updateNulls);
     }
 
     /**
@@ -322,5 +354,46 @@ class ExtensionTable extends Table
         $db->execute();
 
         return ($db->getNumRows() == 0) ? true : false;
+    }
+    /**
+     * Get the Properties of the table
+     *
+     * * @param   bool  $public  If true, returns only the public properties.
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    public function getTableProperties(bool $public = true): array
+    {
+        $vars = get_object_vars($this);
+
+        if ($public) {
+            foreach ($vars as $key => $value) {
+                if (str_starts_with($key, '_')) {
+                    unset($vars[$key]);
+                }
+            }
+
+            // Collect all none public properties of the current class and it's parents
+            $nonePublicProperties = [];
+            $reflection           = new \ReflectionObject($this);
+            do {
+                $nonePublicProperties = array_merge(
+                    $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED),
+                    $nonePublicProperties
+                );
+            } while ($reflection = $reflection->getParentClass());
+
+            // Unset all none public properties, this is needed as get_object_vars returns now all vars
+            // from the current object and not only the CMSObject and the public ones from the inheriting classes
+            foreach ($nonePublicProperties as $prop) {
+                if (\array_key_exists($prop->getName(), $vars)) {
+                    unset($vars[$prop->getName()]);
+                }
+            }
+        }
+
+        return $vars;
     }
 }

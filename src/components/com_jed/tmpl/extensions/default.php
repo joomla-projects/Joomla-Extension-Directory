@@ -47,18 +47,18 @@ $wa->useStyle('com_jed.jazstyle');
                 <?php echo LayoutHelper::render(
                     'cards.extension',
                     [
-                                    'image'         => $item->logo,
-                                    'title'         => $item->title,
-                                    'developer'     => $item->developer,
-                                    'score_string'  => $item->score_string,
-                                    'score'         => $item->score,
-                                    'reviews'       => $item->review_string,
-                                    'compatibility' => $item->version,
-                                    'description'   => $item->description,
-                                    'type'          => $item->type,
-                                    'category'      => $item->category_title,
-                                    'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->primary_category_id, $item->id)),
-                                    ]
+                                                    'image'         => $item->logo,
+                                                    'title'         => $item->title,
+                                                    'developer'     => $item->developer,
+                                                    'score_string'  => $item->score_string,
+                                                    'score'         => $item->score,
+                                                    'reviews'       => $item->review_string,
+                                                    'compatibility' => $item->version,
+                                                    'description'   => $item->description,
+                                                    'type'          => $item->type,
+                                                    'category'      => $item->category_title,
+                                                    'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->primary_category_id, $item->id)),
+                                                    ]
                 ); ?>
             <?php endforeach; ?>
         </ul>
@@ -90,7 +90,7 @@ $wa->useStyle('com_jed.jazstyle');
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSIONS_TITLE', 'a.title', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_GENERAL_TITLE_LABEL', 'a.title', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
@@ -98,39 +98,39 @@ $wa->useStyle('com_jed.jazstyle');
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSIONS_JOOMLA_VERSIONS', 'a.joomla_versions', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSION_JOOMLA_VERSIONS_LABEL', 'a.joomla_versions', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSIONS_POPULAR', 'a.popular', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSION_POPULAR_LABEL', 'a.popular', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSIONS_REQUIRES_REGISTRATION', 'a.requires_registration', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSION_REQUIRES_REGISTRATION_LABEL', 'a.requires_registration', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSIONS_GPL_LICENSE_TYPE', 'a.gpl_license_type', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSION_GPL_LICENSE_TYPE_LABEL', 'a.gpl_license_type', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSIONS_CAN_UPDATE', 'a.can_update', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSION_CAN_UPDATE_LABEL', 'a.can_update', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSIONS_INCLUDES', 'a.includes', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_GENERAL_INCLUDES_LABEL', 'a.includes', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSIONS_PRIMARY_CATEGORY_ID', 'a.primary_category_id', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_GENERAL_CATEGORY_ID_LABEL_LABEL', 'a.primary_category_id', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSIONS_APPROVED', 'a.approved', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSION_APPROVED_LABEL', 'a.approved', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSIONS_APPROVED_TIME', 'a.approved_time', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort',  'COM_JED_EXTENSION_APPROVED_TIME_LABEL', 'a.approved_time', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
@@ -143,7 +143,7 @@ $wa->useStyle('com_jed.jazstyle');
 
                         <?php if ($canEdit || $canDelete): ?>
                     <th class="center">
-                        <?php echo Text::_('COM_JED_EXTENSIONS_ACTIONS'); ?>
+                        <?php echo Text::_('COM_JED_GENERAL_ACTIONS_LABEL'); ?>
                     </th>
                     <?php endif; ?>
 

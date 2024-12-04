@@ -38,7 +38,7 @@ extract($displayData);
         <div class="card__image">
             <div class="image-placeholder">
                 <?php if ($image) : ?>
-                    <img src="<?php echo $image; ?>" alt="<?php echo $title; ?>"/>
+                    <a href="<?php echo $link; ?>"><img src="<?php echo $image; ?>" alt="<?php echo $title; ?>"/></a>
                 <?php endif; ?>
             </div>
         </div>

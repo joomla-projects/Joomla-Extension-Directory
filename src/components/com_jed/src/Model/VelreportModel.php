@@ -120,7 +120,7 @@ class VelreportModel extends ItemModel
                     }
 
                     // Convert the JTable to a clean JObject.
-                    $properties = $table->getProperties(1);
+                    $properties = $table->getTableProperties(1);
 
                     $this->item = ArrayHelper::toObject($properties, stdClass::class);
                 } else {
@@ -139,27 +139,27 @@ class VelreportModel extends ItemModel
 
 
         if (!JedHelper::is_blank($this->item->pass_details_ok)) {
-            $this->item->pass_details_ok = Text::_('COM_JED_VEL_REPORTS_FIELD_PASS_DETAILS_OK_OPTION_' . $this->item->pass_details_ok);
+            $this->item->pass_details_ok = Text::_('COM_JED_VEL_REPORTS_PASS_DETAILS_OK_OPTION_' . $this->item->pass_details_ok);
         }
 
         if (!JedHelper::is_blank($this->item->vulnerability_type)) {
-            $this->item->vulnerability_type = Text::_('COM_JED_VEL_GENERAL_FIELD_VULNERABILITY_TYPE_OPTION_' . $this->item->vulnerability_type);
+            $this->item->vulnerability_type = Text::_('COM_JED_VEL_GENERAL_VULNERABILITY_TYPE_OPTION_' . $this->item->vulnerability_type);
         }
 
         if (!JedHelper::is_blank($this->item->exploit_type)) {
-            $this->item->exploit_type = Text::_('COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_OPTION_' . $this->item->exploit_type);
+            $this->item->exploit_type = Text::_('COM_JED_VEL_GENERAL_EXPLOIT_TYPE_OPTION_' . $this->item->exploit_type);
         }
 
         if (!JedHelper::is_blank($this->item->vulnerability_actively_exploited)) {
-            $this->item->vulnerability_actively_exploited = Text::_('COM_JED_VEL_REPORTS_FIELD_VULNERABILITY_ACTIVELY_EXPLOITED_OPTION_' . $this->item->vulnerability_actively_exploited);
+            $this->item->vulnerability_actively_exploited = Text::_('COM_JED_VEL_REPORTS_VULNERABILITY_ACTIVELY_EXPLOITED_OPTION_' . $this->item->vulnerability_actively_exploited);
         }
 
         if (!JedHelper::is_blank($this->item->vulnerability_publicly_available)) {
-            $this->item->vulnerability_publicly_available = Text::_('COM_JED_VEL_REPORTS_FIELD_VULNERABILITY_PUBLICLY_AVAILABLE_OPTION_' . $this->item->vulnerability_publicly_available);
+            $this->item->vulnerability_publicly_available = Text::_('COM_JED_VEL_REPORTS_VULNERABILITY_PUBLICLY_AVAILABLE_OPTION_' . $this->item->vulnerability_publicly_available);
         }
 
         if (!JedHelper::is_blank($this->item->developer_communication_type)) {
-            $this->item->developer_communication_type = Text::_('COM_JED_VEL_GENERAL_FIELD_DEVELOPER_COMMUNICATION_TYPE_OPTION_' . $this->item->developer_communication_type);
+            $this->item->developer_communication_type = Text::_('COM_JED_VEL_GENERAL_DEVELOPER_COMMUNICATION_TYPE_OPTION_' . $this->item->developer_communication_type);
         }
 
         if (!JedHelper::is_blank($this->item->consent_to_process)) {
@@ -167,11 +167,11 @@ class VelreportModel extends ItemModel
         }
 
         if (!JedHelper::is_blank($this->item->passed_to_vel)) {
-            $this->item->passed_to_vel = Text::_('COM_JED_VEL_GENERAL_FIELD_PASSED_TO_VEL_OPTION_' . $this->item->passed_to_vel);
+            $this->item->passed_to_vel = Text::_('COM_JED_VEL_GENERAL_PASSED_TO_VEL_OPTION_' . $this->item->passed_to_vel);
         }
 
         if (!JedHelper::is_blank($this->item->data_source)) {
-            $this->item->data_source = Text::_('COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_' . $this->item->data_source);
+            $this->item->data_source = Text::_('COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_' . $this->item->data_source);
         }
 
         if (isset($this->item->created_by)) {
@@ -242,5 +242,43 @@ class VelreportModel extends ItemModel
         }
 
         $this->setState('params', $params);
+    }
+
+    /**
+     * Method to check out an item for editing.
+     *
+     * @param int|null $id The id of the row to check out.
+     *
+     * @return bool True on success, false on failure.
+     *
+     * @since 4.0.0
+     *
+     * @throws Exception
+     */
+    public function checkout(int $id = null): bool
+    {
+        // Get the user id.
+        $id = (!empty($id)) ? $id : (int)$this->getState('velreport.id');
+
+        if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
+            if ($id) {
+                // Initialise the table
+                $table = $this->getTable();
+
+                // Get the current user object.
+                $user = Factory::getApplication()->getIdentity();
+
+                // Attempt to check the row out.
+                if (method_exists($table, 'checkout')) {
+                    if (!$table->checkout($user->id, $id)) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        } else {
+            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+        }
     }
 }

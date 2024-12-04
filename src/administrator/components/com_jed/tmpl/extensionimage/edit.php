@@ -30,11 +30,11 @@ HTMLHelper::_('bootstrap.tooltip');
 
     
     <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'extensionimage']); ?>
-    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'extensionimage', Text::_('COM_JED_TAB_EXTENSIONIMAGE', true)); ?>
+    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'extensionimage', Text::_('COM_JED_EXTENSIONIMAGE', true)); ?>
     <div class="row-fluid">
         <div class="span10 form-horizontal">
             <fieldset class="adminform">
-                <legend><?php echo Text::_('COM_JED_FIELDSET_EXTENSIONIMAGE'); ?></legend>
+                <legend><?php echo Text::_('COM_JED_EXTENSIONIMAGE'); ?></legend>
                 <?php echo $this->form->renderField('extension_id'); ?>
                 <?php echo $this->form->renderField('filename'); ?>
                 <?php if (!empty($this->item->filename)) : ?>

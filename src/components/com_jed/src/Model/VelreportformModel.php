@@ -105,7 +105,7 @@ class VelreportformModel extends FormModel
             $table = $this->getTable();
 
             if ($table !== false && $table->load($id) && !empty($table->id)) {
-                $properties = $table->getProperties();
+                $properties = $table->getTableProperties();
                 $table_data = ArrayHelper::toObject($properties, stdClass::class);
 
                 $user = Factory::getApplication()->getIdentity();
@@ -129,7 +129,7 @@ class VelreportformModel extends FormModel
                     }
 
                     // Convert the Table to a clean stdClass.
-                    $properties = $table->getProperties(1);
+                    $properties = $table->getTableProperties(1);
 
                     $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
@@ -262,107 +262,9 @@ class VelreportformModel extends FormModel
         }
 
         if ($data) {
-            // Support for multiple or not foreign key field: pass_details_ok
-            $array = [];
 
-            foreach ((array) $data->pass_details_ok as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->pass_details_ok = $array;
-            }
-            // Support for multiple or not foreign key field: vulnerability_type
-            $array = [];
 
-            foreach ((array) $data->vulnerability_type as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->vulnerability_type = $array;
-            }
-            // Support for multiple or not foreign key field: exploit_type
-            $array = [];
-
-            foreach ((array) $data->exploit_type as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->exploit_type = $array;
-            }
-            // Support for multiple or not foreign key field: vulnerability_actively_exploited
-            $array = [];
-
-            foreach ((array) $data->vulnerability_actively_exploited as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->vulnerability_actively_exploited = $array;
-            }
-            // Support for multiple or not foreign key field: vulnerability_publicly_available
-            $array = [];
-
-            foreach ((array) $data->vulnerability_publicly_available as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->vulnerability_publicly_available = $array;
-            }
-            // Support for multiple or not foreign key field: developer_communication_type
-            $array = [];
-
-            foreach ((array) $data->developer_communication_type as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->developer_communication_type = $array;
-            }
-            // Support for multiple or not foreign key field: consent_to_process
-            $array = [];
-
-            foreach ((array) $data->consent_to_process as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->consent_to_process = $array;
-            }
-            // Support for multiple or not foreign key field: passed_to_vel
-            $array = [];
-
-            foreach ((array) $data->passed_to_vel as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->passed_to_vel = $array;
-            }
-            // Support for multiple or not foreign key field: data_source
-            $array = [];
-
-            foreach ((array) $data->data_source as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->data_source = $array;
-            }
-
-            return $data;
+            return (array)$data;
         }
 
         return [];
@@ -483,8 +385,8 @@ class VelreportformModel extends FormModel
                 $ticket_message['message']           = $ticket['ticket_text'];
                 $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
 
-                //$ticket_model = BaseDatabaseModel::getInstance('Jedticketform', 'JedModel', ['ignore_request' => true]);
-                $ticket_model = new JedticketformModel();
+                //$ticket_model = BaseDatabaseModel::getInstance('Ticketform', 'JedModel', ['ignore_request' => true]);
+                $ticket_model = new TicketformModel();
                 $ticket_model->save($ticket);
 
                 $ticket_id = $ticket_model->getId();

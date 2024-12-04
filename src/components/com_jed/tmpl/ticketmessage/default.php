@@ -33,17 +33,17 @@ if (!$canEdit && Factory::getApplication()->getIdentity()->authorise('core.edit.
 
 
         <tr>
-            <th><?php echo Text::_('COM_JED_TICKETMESSAGE_FIELD_SUBJECT_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_SUBJECT_LABEL'); ?></th>
             <td><?php echo $this->item->subject; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_TICKETMESSAGE_FIELD_MESSAGE_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_EXTENSION_MESSAGE_LABEL'); ?></th>
             <td><?php echo nl2br($this->item->message); ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_TICKETMESSAGE_FIELD_TICKET_ID_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_TICKETMESSAGE_TICKET_ID_LABEL'); ?></th>
             <td><?php echo $this->item->ticket_id; ?></td>
         </tr>
 

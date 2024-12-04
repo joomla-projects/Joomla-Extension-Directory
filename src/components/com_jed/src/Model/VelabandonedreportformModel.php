@@ -48,7 +48,7 @@ class VelabandonedreportformModel extends FormModel
      *
      * @since 4.0.0
      **/
-    // private string $dbtable = "#__jed_vel_abandoned_report";
+    private string $dbtable = "#__jed_vel_abandoned_report";
 
 
 
@@ -103,7 +103,7 @@ class VelabandonedreportformModel extends FormModel
             $table      = $this->getTable();
 
             if ($table->load($id) && !empty($table->id)) {
-                $properties = $table->getProperties();
+                $properties = $table->getTableProperties();
                 $table_data = ArrayHelper::toObject($properties, stdClass::class);
 
                 $user = Factory::getApplication()->getIdentity();
@@ -127,7 +127,7 @@ class VelabandonedreportformModel extends FormModel
                     }
 
                     // Convert the Table to a clean CMSObject.
-                    $properties = $table->getProperties(1);
+                    $properties = $table->getTableProperties(1);
                     $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
@@ -332,8 +332,8 @@ class VelabandonedreportformModel extends FormModel
                 $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
 
 
-                //$ticket_model = BaseDatabaseModel::getInstance('Jedticketform', 'JedModel', ['ignore_request' => true]);
-                $ticket_model = new JedticketformModel();
+                //$ticket_model = BaseDatabaseModel::getInstance('Ticketform', 'JedModel', ['ignore_request' => true]);
+                $ticket_model = new TicketformModel();
                 $ticket_model->save($ticket);
                 $ticket_id = $ticket_model->getId();
                 /* We need to store the incoming ticket message */

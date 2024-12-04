@@ -29,11 +29,11 @@ HTMLHelper::_('bootstrap.tooltip');
 
     
     <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'extensionscore']); ?>
-    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'extensionscore', Text::_('COM_JED_TAB_EXTENSIONSCORE', true)); ?>
+    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'extensionscore', Text::_('COM_JED_EXTENSIONSCORE', true)); ?>
     <div class="row-fluid">
         <div class="span10 form-horizontal">
             <fieldset class="adminform">
-                <legend><?php echo Text::_('COM_JED_FIELDSET_EXTENSIONSCORE'); ?></legend>
+                <legend><?php echo Text::_('COM_JED_EXTENSIONSCORE'); ?></legend>
                 <?php echo $this->form->renderField('extension_id'); ?>
                 <?php echo $this->form->renderField('supply_option_id'); ?>
                 <?php echo $this->form->renderField('functionality_score'); ?>

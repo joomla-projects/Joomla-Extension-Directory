@@ -73,20 +73,7 @@ class ReviewsModel extends ListModel
     }
 
 
-    /**
-     * Checks whether or not a user is manager or super user
-     *
-     * @return bool
-     */
-    public function isAdminOrSuperUser()
-    {
-        try {
-            $user = Factory::getUser();
-            return in_array("8", $user->groups) || in_array("7", $user->groups);
-        } catch (Exception $exc) {
-            return false;
-        }
-    }
+
 
     /**
      * Method to autopopulate the model state.
@@ -178,9 +165,7 @@ class ReviewsModel extends ListModel
 
         // Join over the created by field 'created_by'
         $query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
-        if (!$this->isAdminOrSuperUser()) {
-            $query->where("a.created_by = " . Factory::getUser()->get("id"));
-        }
+
 
 
         // Filter by search in title
@@ -217,7 +202,6 @@ class ReviewsModel extends ListModel
     public function getItems(): mixed
     {
         $items = parent::getItems();
-
         foreach ($items as $item) {
             if (isset($item->extension_id)) {
                 $values    = explode(',', $item->extension_id);

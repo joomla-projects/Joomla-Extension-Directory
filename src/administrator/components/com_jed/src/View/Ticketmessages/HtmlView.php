@@ -174,8 +174,8 @@ class HtmlView extends BaseHtmlView
             'a.`id`'        => Text::_('JGRID_HEADING_ID'),
             'a.`ordering`'  => Text::_('JGRID_HEADING_ORDERING'),
             'a.`state`'     => Text::_('JSTATUS'),
-            'a.`subject`'   => Text::_('COM_JED_TICKETMESSAGE_FIELD_SUBJECT_LABEL'),
-            'a.`ticket_id`' => Text::_('COM_JED_TICKETMESSAGE_FIELD_TICKET_ID_LABEL'),
+            'a.`subject`'   => Text::_('COM_JED_GENERAL_SUBJECT_LABEL'),
+            'a.`ticket_id`' => Text::_('COM_JED_TICKETMESSAGE_TICKET_ID_LABEL'),
         ];
     }
 

@@ -13,102 +13,102 @@
                 filter="safehtml"
                 type="text"
                 required="true"
-                message="COM_JED_VEL_DEVELOPERUPDATES_FIELD_CONTACT_FULLNAME_MSG"
-                label="COM_JED_GENERAL_FIELD_CONTACT_FULLNAME_LABEL"
-                description="COM_JED_VEL_DEVELOPERUPDATES_FIELD_CONTACT_FULLNAME_DESCR"/>
+                message="COM_JED_VEL_DEVELOPERUPDATES_CONTACT_FULLNAME_MSG"
+                label="COM_JED_GENERAL_CONTACT_FULLNAME_LABEL"
+                description="COM_JED_VEL_DEVELOPERUPDATES_CONTACT_FULLNAME_DESCR"/>
         <field
                 name="contact_organisation"
                 filter="safehtml"
                 type="text"
                 required="true"
-                message="COM_JED_VEL_DEVELOPERUPDATES_FIELD_CONTACT_ORGANISATION_MSG"
-                label="COM_JED_VEL_DEVELOPERUPDATES_FIELD_CONTACT_ORGANISATION_LABEL"
-                description="COM_JED_VEL_DEVELOPERUPDATES_FIELD_CONTACT_ORGANISATION_DESCR"/>
+                message="COM_JED_VEL_DEVELOPERUPDATES_CONTACT_ORGANISATION_MSG"
+                label="COM_JED_VEL_DEVELOPERUPDATES_CONTACT_ORGANISATION_LABEL"
+                description="COM_JED_VEL_DEVELOPERUPDATES_CONTACT_ORGANISATION_DESCR"/>
         <field
                 name="contact_email"
                 validate="email"
                 type="email"
                 required="true"
                 message="COM_JED_GENERAL_INVALID_EMAIL_RESPONSE"
-                label="COM_JED_GENERAL_FIELD_CONTACT_EMAIL_LABEL"
-                description="COM_JED_VEL_DEVELOPERUPDATES_FIELD_CONTACT_EMAIL_DESCR"/>
+                label="COM_JED_GENERAL_CONTACT_EMAIL_LABEL"
+                description="COM_JED_VEL_DEVELOPERUPDATES_CONTACT_EMAIL_DESCR"/>
         <field
                 name="vulnerable_item_name"
                 filter="safehtml"
                 type="text"
                 required="true"
                 message="COM_JED_GENERAL_RESPONSE_INVALID_INPUT"
-                label="COM_JED_VEL_GENERAL_FIELD_VULNERABLE_ITEM_NAME_LABEL"
-                description="COM_JED_VEL_DEVELOPERUPDATES_FIELD_VULNERABLE_ITEM_NAME_DESCR"/>
+                label="COM_JED_VEL_GENERAL_VULNERABLE_ITEM_NAME_LABEL"
+                description="COM_JED_VEL_DEVELOPERUPDATES_VULNERABLE_ITEM_NAME_DESCR"/>
         <field
                 name="vulnerable_item_version"
                 filter="safehtml"
                 type="text"
                 required="true"
                 message="COM_JED_GENERAL_RESPONSE_INVALID_INPUT"
-                label="COM_JED_VEL_GENERAL_FIELD_VULNERABLE_ITEM_VERSION_LABEL"
-                description="COM_JED_VEL_DEVELOPERUPDATES_FIELD_VULNERABLE_ITEM_VERSION_DESCR"/>
+                label="COM_JED_VEL_GENERAL_VULNERABLE_ITEM_VERSION_LABEL"
+                description="COM_JED_VEL_DEVELOPERUPDATES_VULNERABLE_ITEM_VERSION_DESCR"/>
         <field
                 name="extension_update"
                 filter="safehtml"
                 type="text"
-                label="COM_JED_VEL_GENERAL_FIELD_EXTENSION_UPDATE_LABEL"
-                description="COM_JED_VEL_DEVELOPERUPDATES_FIELD_EXTENSION_UPDATE_DESCR"/>
+                label="COM_JED_VEL_GENERAL_EXTENSION_UPDATE_LABEL"
+                description="COM_JED_VEL_DEVELOPERUPDATES_EXTENSION_UPDATE_DESCR"/>
         <field
                 name="new_version_number"
                 filter="safehtml"
                 type="text"
-                label="COM_JED_VEL_GENERAL_FIELD_NEW_VERSION_NUMBER_LABEL"
-                description="COM_JED_VEL_DEVELOPERUPDATES_FIELD_NEW_VERSION_NUMBER_DESCR"/>
+                label="COM_JED_VEL_GENERAL_NEW_VERSION_NUMBER_LABEL"
+                description="COM_JED_VEL_DEVELOPERUPDATES_NEW_VERSION_NUMBER_DESCR"/>
         <field
                 name="update_notice_url"
                 validate="url"
                 type="url"
                 required="true"
                 message="COM_JED_GENERAL_RESPONSE_INVALID_INPUT"
-                label="COM_JED_VEL_GENERAL_FIELD_UPDATE_NOTICE_URL_LABEL"
-                description="COM_JED_VEL_GENERAL_FIELD_UPDATE_NOTICE_URL_DESCR"/>
+                label="COM_JED_VEL_GENERAL_UPDATE_NOTICE_URL_LABEL"
+                description="COM_JED_VEL_GENERAL_UPDATE_NOTICE_URL_DESCR"/>
         <field
                 name="changelog_url"
                 validate="url"
                 type="url"
                 required="true"
-                label="COM_JED_VEL_GENERAL_FIELD_CHANGELOG_URL_LABEL"
-                description="COM_JED_VEL_DEVELOPERUPDATES_FIELD_CHANGELOG_URL_DESCR"/>
+                label="COM_JED_VEL_GENERAL_CHANGELOG_URL_LABEL"
+                description="COM_JED_VEL_DEVELOPERUPDATES_CHANGELOG_URL_DESCR"/>
         <field
                 name="download_url"
                 validate="url"
                 type="url"
                 required="true"
                 message="COM_JED_GENERAL_RESPONSE_INVALID_INPUT"
-                label="COM_JED_VEL_GENERAL_FIELD_DOWNLOAD_URL_LABEL"
-                description="COM_JED_VEL_GENERAL_FIELD_DOWNLOAD_URL_DESCR"/>
+                label="COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_URL_LABEL"
+                description="COM_JED_VEL_GENERAL_DOWNLOAD_URL_DESCR"/>
         <field
                 name="consent_to_process"
                 default="0"
                 type="list"
                 required="true"
                 message="COM_JED_GENERAL_RESPONSE_PLEASE_SELECT_PROCEED_NO"
-                label="COM_JED_VEL_GENERAL_FIELD_CONSENT_TO_PROCESS_NOTIFICATION_LABEL"
-                description="COM_JED_VEL_DEVELOPERUPDATES_FIELD_CONSENT_TO_PROCESS_DESCR">
-            <option value="1">COM_JED_VEL_GENERAL_FIELD_CONSENT_TO_PROCESS_OPTION_1</option>
-            <option value="0">COM_JED_VEL_GENERAL_FIELD_PASSED_TO_VEL_OPTION_0</option>
+                label="COM_JED_VEL_GENERAL_CONSENT_TO_PROCESS_NOTIFICATION_LABEL"
+                description="COM_JED_VEL_DEVELOPERUPDATES_CONSENT_TO_PROCESS_DESCR">
+            <option value="1">COM_JED_VEL_GENERAL_CONSENT_TO_PROCESS_OPTION_1</option>
+            <option value="0">COM_JED_VEL_GENERAL_PASSED_TO_VEL_OPTION_0</option>
         </field>
         <field
                 name="vel_item_id"
                 type="hidden"
                 default="-1"
-                label="COM_JED_VEL_GENERAL_FIELD_VEL_ITEM_ID_LABEL"
-                description="COM_JED_VEL_DEVELOPERUPDATES_FIELD_VEL_ITEM_ID_DESCR"
-                hint="COM_JED_VEL_DEVELOPERUPDATES_FIELD_VEL_ITEM_ID"/>
+                label="COM_JED_VEL_GENERAL_VEL_ITEM_ID_LABEL"
+                description="COM_JED_VEL_DEVELOPERUPDATES_VEL_ITEM_ID_DESCR"
+                hint="COM_JED_VEL_DEVELOPERUPDATES_VEL_ITEM_ID"/>
         <field
                 name="update_data_source"
                 default="1"
                 type="hidden"
                 value="1"
-                label="COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_LABEL"
-                description="COM_JED_VEL_DEVELOPERUPDATES_FIELD_UPDATE_DATA_SOURCE_DESCR"
-                hint="COM_JED_VEL_DEVELOPERUPDATES_FIELD_UPDATE_DATA_SOURCE">
+                label="COM_JED_VEL_GENERAL_DATA_SOURCE_LABEL"
+                description="COM_JED_VEL_DEVELOPERUPDATES_UPDATE_DATA_SOURCE_DESCR"
+                hint="COM_JED_VEL_DEVELOPERUPDATES_UPDATE_DATA_SOURCE">
         </field>
         <field
                 name="update_date_submitted"
@@ -124,23 +124,23 @@
                 weeknumbers="false"
                 filltable="false"
                 type="hidden"
-                label="COM_JED_GENERAL_FIELD_DATE_SUBMITTED_LABEL"
-                description="COM_JED_VEL_DEVELOPERUPDATES_FIELD_UPDATE_DATE_SUBMITTED_DESCR"
-                hint="COM_JED_VEL_DEVELOPERUPDATES_FIELD_UPDATE_DATE_SUBMITTED"/>
+                label="COM_JED_GENERAL_DATE_SUBMITTED_LABEL"
+                description="COM_JED_VEL_DEVELOPERUPDATES_UPDATE_DATE_SUBMITTED_DESCR"
+                hint="COM_JED_VEL_DEVELOPERUPDATES_UPDATE_DATE_SUBMITTED"/>
         <field
                 name="created"
                 default="0000-00-00"
                 type="timecreated"
                 label="JGLOBAL_CREATED"
-                description="COM_JED_VEL_DEVELOPERUPDATES_FIELD_CREATED_DESCR"
-                hint="COM_JED_VEL_DEVELOPERUPDATES_FIELD_CREATED"/>
+                description="COM_JED_VEL_DEVELOPERUPDATES_CREATED_DESCR"
+                hint="COM_JED_VEL_DEVELOPERUPDATES_CREATED"/>
         <field
                 name="modified"
                 default="0000-00-00"
                 type="timeupdated"
                 label="JGLOBAL_MODIFIED"
-                description="COM_JED_VEL_DEVELOPERUPDATES_FIELD_MODIFIED_DESCR"
-                hint="COM_JED_VEL_DEVELOPERUPDATES_FIELD_MODIFIED"/>
+                description="COM_JED_VEL_DEVELOPERUPDATES_MODIFIED_DESCR"
+                hint="COM_JED_VEL_DEVELOPERUPDATES_MODIFIED"/>
 
     </fieldset>
 </form>

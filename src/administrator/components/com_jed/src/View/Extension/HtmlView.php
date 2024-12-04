@@ -61,33 +61,23 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
+        $extension_model  = new ExtensionModel();
         $this->state      = $this->get('State');
-        $this->item       = $this->get('Item');
-        $this->form       = $this->get('Form');
+        $everything       = $this->get('Everything', 'Extension');
 
-        //echo "<pre>";print_r($this->item);echo "</pre>";exit();
-        /*    $this->extensionimages  = $this->get('Item', 'Extensionimages');
+        $this->extension  = $everything;
+        $this->form       = $extension_model->getForm($this->extension, false, 'extension_form');
+        $this->form->bind($this->extension);
+        $this->extension->extension_form = $this->form;
 
-            $this->extensionscores            = $this->get('Item', 'Extensionscores');
-            $this->extensionvarieddata        = $this->get('Form', 'Extensionvarieddata');
-            $this->extensionimage             = $this->get('Item', 'Extensionimage');
-            $this->extensionscore             = $this->get('Item', 'Extensionscore'); */
-        //$this->extensionvarieddatum_form  = $this->get('FormTemplate', 'Extensionvarieddatum');
+        $extensionvarieddatum             = new ExtensionvarieddatumModel();
+        $this->extensionvarieddata        = $this->extension->varied_data[0];
+        $this->extensionvarieddatum_form  = $extensionvarieddatum->getForm($this->extensionvarieddata, false, 'extension_varieddata_form');
+        $this->extensionvarieddatum_form->bind($this->extensionvarieddata);
+        $this->extension->varied_form = $this->extensionvarieddatum_form;
 
-        /*
-         * $extensionimagesModel = $this->getModel('Extensionimages');
-                $extensionscoresModel = $this->getModel('Extensionscores');
-                $extensionvarieddataModel = $this->getModel('Extensionvarieddata');
-                $extensionimageModel = $this->getModel('Extensionimage');
-                $extensionscoreModel = $this->getModel('Extensionscore');
-                $extensionvarieddatumModel = $this->getModel('Extensionvarieddatum');
-         */
-        //$this->form  = $this->get('Form');
-        //echo "<pre>";print_r($this->item);echo "</pre>";exit();
 
-        //$this->varied_forms = $this->get('VariedDataForms');
 
-        //echo "<pre>";print_r($this->varied_forms);echo "</pre>";exit();
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {
             throw new Exception(implode("\n", $errors));
@@ -111,7 +101,7 @@ class HtmlView extends BaseHtmlView
         Factory::getApplication()->input->set('hidemainmenu', true);
 
         $user  = Factory::getApplication()->getIdentity();
-        $isNew = ($this->item->id == 0);
+        $isNew = ($this->extension->id == 0);
 
         if (isset($this->item->checked_out)) {
             $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->id);
@@ -121,7 +111,7 @@ class HtmlView extends BaseHtmlView
 
         $canDo = JedHelper::getActions();
 
-        ToolbarHelper::title(Text::_('COM_JED_TITLE_EXTENSION'), "generic");
+        ToolbarHelper::title(Text::_('COM_JED_EXTENSION'), "generic");
 
         // If not checked out, can save the item.
         if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create')))) {

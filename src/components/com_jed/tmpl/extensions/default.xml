@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_JED_EXTENSIONS_LIST_TITLE" option="View">
+	<layout title="COM_JED_GENERAL_EXTENSIONS_LABEL" option="View">
         <message>
-                        <![CDATA[COM_JED_EXTENSIONS_LIST_TITLE_DESC]]>
+                        <![CDATA[COM_JED_GENERAL_EXTENSIONS_LABEL_DESC]]>
         </message>
 	</layout>
 	

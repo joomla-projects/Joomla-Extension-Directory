@@ -20,6 +20,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Router\Route;
 
+use function defined;
+
 /**
  * Extension class.
  *
@@ -103,7 +105,7 @@ class ExtensionController extends BaseController
             $app->setUserState('com_jed.edit.extension.data', null);
 
             // Redirect to the list screen.
-            $this->setMessage(Text::_('COM_JED_ITEM_SAVED_SUCCESSFULLY'));
+            $this->setMessage(Text::_('COM_JED_GENERAL_ITEM_SAVED_SUCCESSFULLY_LABEL'));
             $menu = Factory::getApplication()->getMenu();
             $item = $menu->getActive();
 

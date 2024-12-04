@@ -47,13 +47,49 @@ $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.jazstyle');
 
 ?>
+<div class="jed-home-categories">
+    <div class="container">
+        <div class="row gx-5">
+            <?php
+
+            foreach ($this->items->children as $c) {
+                ?>
+                <div class="col-lg-4 mb-3 card jed-home-category">
+                    <div class="card-header jed-home-item-view">
+                        <span class="jed-home-category-icon fa fa-camera rounded-circle bg-warning p-2 text-white d-inline-block"></span>
+                        <h4 class="jed-home-category-title d-inline-block">
+                            <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $c->id); ?>">
+                                <?php echo $c->title; ?>
+                            </a>
+                        </h4>
+                        <span class="badge rounded-pill float-end"><?php echo $c->getNumItems(true); ?></span>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <?php foreach ($c->getChildren() as $sc) {
+                                if ($sc->getNumItems(true) > 0) { ?>
+                                    <li class="list-group-item">
+                                        <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $sc->id); ?>">
+                                            <?php echo $sc->title; ?>
+                                        </a>
+                                        <span class="badge rounded-pill float-end badge-info-cat">  <?php echo $sc->getNumItems(true); ?></span>
+                                    </li>
+                                <?php }
+                                } ?>
+                        </ul>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+    </div>
+</div>
 
 <div class="jed-cards-wrapper margin-bottom-half">
     <div class="jed-container">
-        <h2 class="heading heading--m"><?php echo $this->get("items")[0]->category_title; ?> Extensions</h2>
-        <p class="font-size-s"><?php echo $this->get("items")[0]->category_hierarchy; ?></p>
+        <h2 class="heading heading--m"><?php echo $this->items[0]->category_title; ?> Extensions</h2>
+        <p class="font-size-s"><?php echo $this->items[0]->category_hierarchy; ?></p>
         <ul class="jed-grid jed-grid--1-1-1">
-            <?php foreach ($this->get("items") as $item) : ?>
+            <?php foreach ($this->items as $item) : ?>
                 <?php echo LayoutHelper::render(
                     'cards.extension',
                     [
@@ -76,12 +112,12 @@ $wa->useStyle('com_jed.jazstyle');
 </div>
 
 
-<?php echo $this->get("pagination")->getPaginationLinks(); ?>
+<?php echo $this->pagination->getPaginationLinks(); ?>
 <?php
 echo LayoutHelper::render(
     'category.children',
     [
-        'children' => $this->get("children"),
+        'children' => $this->children,
     ]
 );
 ?>

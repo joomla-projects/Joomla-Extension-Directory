@@ -72,22 +72,22 @@ if ($saveOrder) {
                             <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_FIELD_ORGANISATIONCOMPANY_LABEL', 'a.`contact_organisation`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_FIELD_EMAIL_LABEL', 'a.`contact_email`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_EMAIL_LABEL', 'a.`contact_email`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_VEL_GENERAL_FIELD_ITEM_NAME_LABEL', 'a.`vulnerable_item_name`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_VEL_GENERAL_ITEM_NAME_LABEL', 'a.`vulnerable_item_name`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_VEL_GENERAL_FIELD_ITEM_VERSION_LABEL', 'a.`vulnerable_item_version`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_VEL_GENERAL_ITEM_VERSION_LABEL', 'a.`vulnerable_item_version`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_VEL_GENERAL_FIELD_VEL_ITEM_ID_LABEL', 'a.`vel_item_id`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_VEL_GENERAL_VEL_ITEM_ID_LABEL', 'a.`vel_item_id`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_LABEL', 'a.`update_data_source`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_VEL_GENERAL_DATA_SOURCE_LABEL', 'a.`update_data_source`', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_FIELD_DATE_SUBMITTED_LABEL', 'a.`update_date_submitted`', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_DATE_SUBMITTED_LABEL', 'a.`update_date_submitted`', $listDirn, $listOrder); ?>
                         </th>
 
 
@@ -180,8 +180,8 @@ if ($saveOrder) {
 
                                 <?php
                                 $date = $item->update_date_submitted;
-                                echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC6')) : '-';
-                                ?>
+                        echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC6')) : '-';
+                        ?>
                             </td>
 
                         </tr>

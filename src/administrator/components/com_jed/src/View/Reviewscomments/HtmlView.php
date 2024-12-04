@@ -161,9 +161,9 @@ class HtmlView extends BaseHtmlView
     {
         return [
             'a.`id`'         => Text::_('JGRID_HEADING_ID'),
-            'a.`review_id`'  => Text::_('COM_JED_REVIEWCOMMENTS_FIELD_REVIEW_ID_LABEL'),
-            'a.`ip_address`' => Text::_('COM_JED_REVIEWCOMMENTS_FIELD_IP_ADDRESS_LABEL'),
-            'a.`created_on`' => Text::_('COM_JED_GENERAL_FIELD_CREATED_ON_LABEL'),
+            'a.`review_id`'  => Text::_('COM_JED_REVIEWCOMMENTS_REVIEW_ID_LABEL'),
+            'a.`ip_address`' => Text::_('COM_JED_GENERAL_IPADDRESS_LABEL'),
+            'a.`created_on`' => Text::_('COM_JED_GENERAL_CREATED_ON_LABEL'),
             'a.`created_by`' => Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'),
             'a.`ordering`'   => Text::_('JGRID_HEADING_ORDERING'),
             'a.`state`'      => Text::_('JSTATUS'),

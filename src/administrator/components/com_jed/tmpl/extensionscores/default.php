@@ -72,28 +72,28 @@ if ($saveOrder) {
                             <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONSCORES_EXTENSION_ID', 'a.extension_id', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_EXTENSION_ID_LABEL', 'a.extension_id', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONSCORES_SUPPLY_OPTION_ID', 'a.supply_option_id', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_SUPPLY_OPTION_ID_LABEL', 'a.supply_option_id', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONSCORES_FUNCTIONALITY_SCORE', 'a.functionality_score', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_FUNCTIONALITY_SCORE_LABEL', 'a.functionality_score', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONSCORES_EASE_OF_USE_SCORE', 'a.ease_of_use_score', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_EASE_OF_USE_SCORE_LABEL', 'a.ease_of_use_score', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONSCORES_SUPPORT_SCORE', 'a.support_score', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_SUPPORT_SCORE_LABEL', 'a.support_score', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONSCORES_VALUE_FOR_MONEY_SCORE', 'a.value_for_money_score', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_REVIEWS_VALUE_FOR_MONEY_SCORE_LABEL', 'a.value_for_money_score', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONSCORES_DOCUMENTATION_SCORE', 'a.documentation_score', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_DOCUMENTATION_SCORE_LABEL', 'a.documentation_score', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONSCORES_NUMBER_OF_REVIEWS', 'a.number_of_reviews', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_NUMBER_OF_REVIEWS_LABEL', 'a.number_of_reviews', $listDirn, $listOrder); ?>
                         </th>
                         <th width="5%" class="nowrap center">
                             <?php echo HTMLHelper::_('searchtools.sort', 'JSTATUS', 'a.state', $listDirn, $listOrder); ?>
@@ -109,7 +109,7 @@ if ($saveOrder) {
                     </tfoot>
                     <tbody <?php if ($saveOrder) :
                         ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
-                           endif; ?>>
+                    endif; ?>>
                     <?php foreach ($this->items as $i => $item) :
                         $ordering   = ($listOrder == 'a.ordering');
                         $canCreate  = $user->authorise('core.create', 'com_jed');
@@ -131,7 +131,7 @@ if ($saveOrder) {
                                 } elseif (!$saveOrder) {
                                     $iconClass = ' inactive" title="' . Text::_('JORDERINGDISABLED');
                                 }
-                                ?>
+                        ?>
                             <span class="sortable-handler<?php echo $iconClass ?>">
                                 <span class="icon-ellipsis-v" aria-hidden="true"></span>
                             </span>

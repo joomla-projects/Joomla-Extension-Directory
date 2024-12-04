@@ -453,11 +453,11 @@ class ReviewModel extends ItemModel
         parent::__construct($config);
 
         $this->score_fields = [
-            'functionality'   => Text::_('COM_JED_REVIEWS_FIELD_FUNCTIONALITY_LABEL'),
-            'ease_of_use'     => Text::_('COM_JED_REVIEWS_FIELD_EASE_OF_USE_LABEL'),
-            'support'         => Text::_('COM_JED_REVIEWS_FIELD_SUPPORT_LABEL'),
-            'documentation'   => Text::_('COM_JED_REVIEWS_FIELD_DOCUMENTATION_LABEL'),
-            'value_for_money' => Text::_('COM_JED_REVIEWS_FIELD_VALUE_FOR_MONEY_LABEL'),
+            'functionality'   => Text::_('COM_JED_REVIEWS_FUNCTIONALITY_LABEL'),
+            'ease_of_use'     => Text::_('COM_JED_REVIEWS_EASE_OF_USE_LABEL'),
+            'support'         => Text::_('COM_JED_GENERAL_SUPPORT_LABEL'),
+            'documentation'   => Text::_('COM_JED_EXTENSION_DOCUMENTATION_LABEL'),
+            'value_for_money' => Text::_('COM_JED_REVIEWS_VALUE_FOR_MONEY_LABEL'),
         ];
     }
 }

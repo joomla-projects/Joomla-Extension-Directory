@@ -310,8 +310,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_internal_notes`
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 /* JED Tickets */
-DROP TABLE IF EXISTS `#__jed_jedtickets`;
-CREATE TABLE IF NOT EXISTS `#__jed_jedtickets`
+DROP TABLE IF EXISTS `#__jed_tickets`;
+CREATE TABLE IF NOT EXISTS `#__jed_tickets`
 (
     `id`                      INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `ticket_origin`           VARCHAR(255)     NULL DEFAULT '0',
@@ -436,25 +436,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions`
     `uses_third_party`      tinyint(1)   DEFAULT '0',
     `primary_category_id`   int          DEFAULT NULL,
     `logo`                  varchar(255) DEFAULT '',
-	`supply_option_id`          int unsigned DEFAULT '0',
-	`title`                     varchar(255) DEFAULT '',
-	`alias`                     varchar(255) DEFAULT NULL,
-	`intro_text`                varchar(255) DEFAULT '',
-	`description`               text,
-	`homepage_link`             varchar(255) DEFAULT '',
-	`download_link`             varchar(255) DEFAULT '',
-	`demo_link`                 varchar(255) DEFAULT '',
-	`support_link`              varchar(255) DEFAULT '',
-	`documentation_link`        varchar(255) DEFAULT '',
-	`license_link`              varchar(255) DEFAULT '',
-	`translation_link`          varchar(255) DEFAULT '',
-	`tags`                      varchar(255) DEFAULT '',
-	`update_url`                varchar(255) DEFAULT '',
-	`update_url_ok`             tinyint(1)   DEFAULT '0',
-	`download_integration_type` varchar(255) DEFAULT '',
-	`download_integration_url`  varchar(255) DEFAULT '',
-	`is_default_data`           tinyint(1)   DEFAULT '0',
-	`ordering`                  int          DEFAULT '0',
     `approved_notes`        text,
     `approved_reason`       varchar(255) DEFAULT '',
     `published_notes`       varchar(255) DEFAULT '',
@@ -475,6 +456,43 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions`
     CONSTRAINT `FKC_jed_extensions_user` FOREIGN KEY (`created_by`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `FKC_jed_extensions_moduser` FOREIGN KEY (`modified_by`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `#__jed_extension_varied_data`
+(
+	`id`                        int unsigned NOT NULL AUTO_INCREMENT,
+	`extension_id`              int unsigned DEFAULT '0',
+	`supply_option_id`          int unsigned DEFAULT '0',
+	`title`                     varchar(255) DEFAULT '',
+	`alias`                     varchar(255) DEFAULT NULL,
+	`intro_text`                varchar(255) DEFAULT '',
+	`description`               text,
+	`homepage_link`             varchar(255) DEFAULT '',
+	`download_link`             varchar(255) DEFAULT '',
+	`demo_link`                 varchar(255) DEFAULT '',
+	`support_link`              varchar(255) DEFAULT '',
+	`documentation_link`        varchar(255) DEFAULT '',
+	`license_link`              varchar(255) DEFAULT '',
+	`translation_link`          varchar(255) DEFAULT '',
+	`tags`                      varchar(255) DEFAULT '',
+	`update_url`                varchar(255) DEFAULT '',
+	`update_url_ok`             tinyint(1)   DEFAULT '0',
+	`download_integration_type` varchar(255) DEFAULT '',
+	`download_integration_url`  varchar(255) DEFAULT '',
+	`logo`                      varchar(255) DEFAULT NULL,
+	`is_default_data`           tinyint(1)   DEFAULT '0',
+	`ordering`                  int          DEFAULT '0',
+	`state`                     tinyint(1)   DEFAULT '0',
+	`checked_out`               int unsigned DEFAULT NULL,
+	`checked_out_time`          datetime     DEFAULT NULL,
+	`created_by`                int          DEFAULT '0',
+	PRIMARY KEY (`id`),
+	KEY `FK_jed_extension_varied_data` (`extension_id`),
+	KEY `FK_jed_extension_varied_data_user` (`created_by`),
+	KEY `FKC_jed_extension_varied_data_supply_option` (`supply_option_id`),
+	CONSTRAINT `FKC_jed_extension_varied_data` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT `FKC_jed_extension_varied_data_user` FOREIGN KEY (`created_by`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT `FKC_jed_extension_varied_data_supply_option` FOREIGN KEY (`supply_option_id`) REFERENCES `#__jed_extension_supply_options` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__jed_extension_images`
 (
@@ -530,5 +548,97 @@ CREATE TABLE IF NOT EXISTS `#__jed_developers`
     `suspicious`     tinyint(1)   DEFAULT '0',
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS `#__jed_extensions_files` (
+    `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `extension_id` INT UNSIGNED NOT NULL   DEFAULT 0,
+    `file` VARCHAR(255)  NOT NULL  DEFAULT "",
+    `meta` TEXT,
+    `created_by` INT(11) NOT NULL  DEFAULT 0,
+    `originalFile` VARCHAR(255) NOT NULL DEFAULT "",
+    PRIMARY KEY (`id`),
+    KEY `jed_extensions_files_FK` (`extension_id`),
+    CONSTRAINT `jed_extensions_files_FK` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `#__jed_extensions_history`
+(
+    `id`                    int unsigned NOT NULL AUTO_INCREMENT,
+    `extension_id`          int unsigned NOT NULL,
+    `joomla_versions`       varchar(255) DEFAULT '',
+    `popular`               tinyint(1)   DEFAULT '0',
+    `requires_registration` tinyint(1)   DEFAULT '0',
+    `gpl_license_type`      varchar(255) DEFAULT '',
+    `jed_internal_note`     text,
+    `can_update`            tinyint(1)   DEFAULT '0',
+    `video`                 varchar(255) DEFAULT '',
+    `version`               varchar(255) DEFAULT '',
+    `uses_updater`          tinyint(1)   DEFAULT '0',
+    `includes`              varchar(255) DEFAULT '',
+    `approved`              tinyint(1)   DEFAULT '0',
+    `approved_time`         datetime     DEFAULT NULL,
+    `second_contact_email`  varchar(100) DEFAULT '',
+    `jed_checked`           tinyint(1)   DEFAULT '0',
+    `uses_third_party`      tinyint(1)   DEFAULT '0',
+    `primary_category_id`   int          DEFAULT NULL,
+    `logo`                  varchar(255) DEFAULT '',
+    `supply_option_id`          int unsigned DEFAULT '0',
+    `title`                     varchar(255) DEFAULT '',
+    `alias`                     varchar(255) DEFAULT NULL,
+    `intro_text`                varchar(255) DEFAULT '',
+    `description`               text,
+    `homepage_link`             varchar(255) DEFAULT '',
+    `download_link`             varchar(255) DEFAULT '',
+    `demo_link`                 varchar(255) DEFAULT '',
+    `support_link`              varchar(255) DEFAULT '',
+    `documentation_link`        varchar(255) DEFAULT '',
+    `license_link`              varchar(255) DEFAULT '',
+    `translation_link`          varchar(255) DEFAULT '',
+    `tags`                      varchar(255) DEFAULT '',
+    `update_url`                varchar(255) DEFAULT '',
+    `update_url_ok`             tinyint(1)   DEFAULT '0',
+    `download_integration_type` varchar(255) DEFAULT '',
+    `download_integration_url`  varchar(255) DEFAULT '',
+    `is_default_data`           tinyint(1)   DEFAULT '0',
+    `ordering`                  int          DEFAULT '0',
+    `approved_notes`        text,
+    `approved_reason`       varchar(255) DEFAULT '',
+    `published_notes`       varchar(255) DEFAULT '',
+    `published_reason`      varchar(255) DEFAULT '',
+    `published`             tinyint(1)   DEFAULT '0',
+    `update_approved_notes`        text,
+    `update_approved_reason`       varchar(255) DEFAULT '',
+    `checked_out`           int unsigned,
+    `checked_out_time`      datetime,
+    `created_by`            int          DEFAULT '0',
+    `modified_by`           int          DEFAULT '0',
+    `created_on`            datetime     DEFAULT NULL,
+    `modified_on`           datetime     DEFAULT NULL,
+    `state`                 int          DEFAULT '0',
+    PRIMARY KEY (`id`),
+
+    KEY `FKC_jed_extensions_history_user` (`created_by`),
+    KEY `FKC_jed_extensions_history_moduser` (`modified_by`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `#__jed_joomla_versions`
+(
+    `id`         int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `label`      varchar(255)     NOT NULL,
+    `long_label` varchar(50)      NOT NULL,
+    `published`  tinyint(4)       NOT NULL DEFAULT 1,
+    PRIMARY KEY (`id`),
+    KEY `inx_published` (`published`),
+    KEY `inx_label` (`label`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('15','1.5','Joomla 1.5','0');
+INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('25','2.5','Joomla 2.5','0');
+INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('30','3','Joomla 3','1');
+INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('40','4','Joomla 4','1');
+INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('50','5.0 compatible','Joomla 5 Compatible','1');
+INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('51','5.0 compatible only with B/C plugin','Joomla 5 Compatible using B/C plugin','1');
+INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('60','6','Joomla 6','0');
+
 
 SET FOREIGN_KEY_CHECKS = 1;

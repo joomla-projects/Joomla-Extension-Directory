@@ -76,31 +76,31 @@ if ($saveOrder)
                             <?php echo HTMLHelper::_('searchtools.sort',  'JFIELD_ALIAS_LABEL', 'a.alias', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSIONS_JOOMLA_VERSIONS', 'a.joomla_versions', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSION_JOOMLA_VERSIONS_LABEL', 'a.joomla_versions', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSIONS_POPULAR', 'a.popular', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSION_POPULAR_LABEL', 'a.popular', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSIONS_REQUIRES_REGISTRATION', 'a.requires_registration', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSION_REQUIRES_REGISTRATION_LABEL', 'a.requires_registration', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSIONS_GPL_LICENSE_TYPE', 'a.gpl_license_type', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSION_GPL_LICENSE_TYPE_LABEL', 'a.gpl_license_type', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSIONS_CAN_UPDATE', 'a.can_update', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSION_CAN_UPDATE_LABEL', 'a.can_update', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSIONS_INCLUDES', 'a.includes', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_GENERAL_INCLUDES_LABEL', 'a.includes', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSIONS_PRIMARY_CATEGORY_ID', 'a.primary_category_id', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_GENERAL_CATEGORY_ID_LABEL_LABEL', 'a.primary_category_id', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSIONS_APPROVED', 'a.approved', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSION_APPROVED_LABEL', 'a.approved', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSIONS_APPROVED_TIME', 'a.approved_time', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort',  'COM_JED_EXTENSION_APPROVED_TIME_LABEL', 'a.approved_time', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
                             <?php echo HTMLHelper::_('searchtools.sort',  'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
@@ -274,7 +274,7 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                 <?php else : ?>
                 <table class="table itemList" id="extensionList">
                     <caption class="visually-hidden">
-                        <?php echo Text::_('COM_JED_EXTENSIONS_TABLE_CAPTION'); ?>,
+                        <?php echo Text::_('COM_JED_EXTENSION_TABLE_CAPTION_LABEL'); ?>,
                         <span id="orderedBy"><?php echo Text::_('JGLOBAL_SORTED_BY'); ?> </span>,
                         <span id="filteredBy"><?php echo Text::_('JGLOBAL_FILTERED_BY'); ?></span>
                     </caption>
@@ -287,28 +287,28 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                             <?php echo HTMLHelper::_('searchtools.sort', 'JPUBLISHED', 'extensions.published', $listDirn, $listOrder); ?>
                         </td>
                         <td scope="col" class="w-1  d-none d-md-table-cell">
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONS_APPROVED', 'extensions.approved', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_APPROVED_LABEL', 'extensions.approved', $listDirn, $listOrder); ?>
                         </td>
                         <td scope="col" class="w-20 d-none d-md-table-cell">
-                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONS_TITLE', 'extensions.title', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_TITLE_LABEL', 'extensions.title', $listDirn, $listOrder); ?>
                         </td>
                         <td scope="col" class="w-10 d-none d-md-table-cell ">
-                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONS_CATEGORY', 'categories.title', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_CATEGORY_LABEL', 'categories.title', $listDirn, $listOrder); ?>
                         </td>
                         <td scope="col" class="w-10 d-none d-md-table-cell ">
-                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONS_LAST_UPDATED', 'extensions.modified_on', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_LAST_UPDATED_LABEL', 'extensions.modified_on', $listDirn, $listOrder); ?>
                         </td>
                         <td scope="col" class="w-10 d-none d-md-table-cell ">
-                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONS_DATE_ADDED', 'extensions.created_on', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_DATE_ADDED_LABEL', 'extensions.created_on', $listDirn, $listOrder); ?>
                         </td>
                         <td scope="col" class="w-10 d-none d-md-table-cell ">
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONS_DEVELOPER', 'users.name', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_DEVELOPER_LABEL', 'users.name', $listDirn, $listOrder); ?>
                         </td>
                         <td scope="col" class="w-10 d-none d-md-table-cell ">
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONS_TYPE', 'extensions.type', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_TYPE_LABEL', 'extensions.type', $listDirn, $listOrder); ?>
                         </td>
                         <td scope="col" class="w-10 d-none d-md-table-cell ">
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONS_REVIEWCOUNT', 'extensions.reviewcount', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_REVIEWCOUNT_LABEL', 'extensions.reviewcount', $listDirn, $listOrder); ?>
                         </td>
                         <td scope="col" class="w-3 d-none d-lg-table-cell">
                             <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ID', 'extensions.id', $listDirn, $listOrder); ?>
@@ -355,32 +355,32 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                                         $icon = 'pending';
                                         break;
                                 }
-                                echo '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
-                                ?>
+                        echo '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
+                        ?>
                             </td>
                             <td>
                                 <?php
-                                switch ($item->approved) {
-                                    // Rejected
-                                    case '-1':
-                                        $icon = 'unpublish';
-                                        break;
-                                        // Approved
-                                    case '1':
-                                        $icon = 'publish';
-                                        break;
-                                        // Awaiting response
-                                    case '2':
-                                        $icon = 'expired';
-                                        break;
-                                        // Pending
-                                    case '0':
-                                    default:
-                                        $icon = 'pending';
-                                        break;
-                                }
-                                echo '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
-                                ?>
+                        switch ($item->approved) {
+                            // Rejected
+                            case '-1':
+                                $icon = 'unpublish';
+                                break;
+                                // Approved
+                            case '1':
+                                $icon = 'publish';
+                                break;
+                                // Awaiting response
+                            case '2':
+                                $icon = 'expired';
+                                break;
+                                // Pending
+                            case '0':
+                            default:
+                                $icon = 'pending';
+                                break;
+                        }
+                        echo '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
+                        ?>
                             </td>
                             <td>
                                 <div class="pull-left break-word">
@@ -402,18 +402,18 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                             </td>
                             <td>
                                 <?php
-                                if (!is_null($item->modified_on)) {
-                                    echo HTMLHelper::_(
-                                        'date',
-                                        $item->modified_on,
-                                        Text::_('COM_JED_DATETIME_FORMAT')
-                                    );
-                                }
-                                ?>
+                        if (!is_null($item->modified_on)) {
+                            echo HTMLHelper::_(
+                                'date',
+                                $item->modified_on,
+                                Text::_('COM_JED_GENERAL_DATETIME_FORMAT')
+                            );
+                        }
+                        ?>
                             </td>
                             <td>
 
-                                <?php echo HTMLHelper::_('date', $item->created_on, Text::_('COM_JED_DATETIME_FORMAT')); ?>
+                                <?php echo HTMLHelper::_('date', $item->created_on, Text::_('COM_JED_GENERAL_DATETIME_FORMAT')); ?>
                             </td>
                             <td>
                                 <?php echo $item->developer; ?>

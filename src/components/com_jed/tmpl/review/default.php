@@ -31,22 +31,22 @@ if (!$canEdit && Factory::getUser()->authorise('core.edit.own', 'com_jed')) {
 
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_ID_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_ID_LABEL'); ?></th>
             <td><?php echo $this->item->id; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_EXTENSION_ID_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_EXTENSION'); ?></th>
             <td><?php echo $this->item->extension_id; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_SUPPLY_OPTION_ID_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_EXTENSION_SUPPLY_OPTION_ID_LABEL'); ?></th>
             <td><?php echo $this->item->supply_option_id; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_TITLE_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_TITLE_LABEL'); ?></th>
             <td><?php echo $this->item->title; ?></td>
         </tr>
 
@@ -56,77 +56,77 @@ if (!$canEdit && Factory::getUser()->authorise('core.edit.own', 'com_jed')) {
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_BODY_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_REVIEWS_BODY_LABEL'); ?></th>
             <td><?php echo nl2br($this->item->body); ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_FUNCTIONALITY_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_REVIEWS_FUNCTIONALITY_LABEL'); ?></th>
             <td><?php echo $this->item->functionality; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_FUNCTIONALITY_LABEL_COMMENT'); ?></th>
+            <th><?php echo Text::_('COM_JED_REVIEWS_FUNCTIONALITY_LABEL_COMMENT'); ?></th>
             <td><?php echo $this->item->functionality_comment; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_EASE_OF_USE_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_REVIEWS_EASE_OF_USE_LABEL'); ?></th>
             <td><?php echo $this->item->ease_of_use; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_EASE_OF_USE_LABEL_COMMENT'); ?></th>
+            <th><?php echo Text::_('COM_JED_REVIEWS_EASE_OF_USE_LABEL_COMMENT'); ?></th>
             <td><?php echo $this->item->ease_of_use_comment; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_SUPPORT_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_SUPPORT_LABEL'); ?></th>
             <td><?php echo $this->item->support; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_SUPPORT_LABEL_COMMENT'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_SUPPORT_LABEL_COMMENT'); ?></th>
             <td><?php echo $this->item->support_comment; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_DOCUMENTATION_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_EXTENSION_DOCUMENTATION_LABEL'); ?></th>
             <td><?php echo $this->item->documentation; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_DOCUMENTATION_LABEL_COMMENT'); ?></th>
+            <th><?php echo Text::_('COM_JED_EXTENSION_DOCUMENTATION_LABEL_COMMENT'); ?></th>
             <td><?php echo $this->item->documentation_comment; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_VALUE_FOR_MONEY_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_REVIEWS_VALUE_FOR_MONEY_LABEL'); ?></th>
             <td><?php echo $this->item->value_for_money; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_VALUE_FOR_MONEY_LABEL_COMMENT'); ?></th>
+            <th><?php echo Text::_('COM_JED_REVIEWS_VALUE_FOR_MONEY_LABEL_COMMENT'); ?></th>
             <td><?php echo $this->item->value_for_money_comment; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_OVERALL_SCORE_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_REVIEWS_OVERALL_SCORE_LABEL'); ?></th>
             <td><?php echo $this->item->overall_score; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_USED_FOR_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_REVIEWS_USED_FOR_LABEL'); ?></th>
             <td><?php echo $this->item->used_for; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_FLAGGED_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_REVIEWS_FLAGGED_LABEL'); ?></th>
             <td><?php echo $this->item->flagged; ?></td>
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_REVIEWS_FIELD_IP_ADDRESS_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_IPADDRESS_LABEL'); ?></th>
             <td><?php echo $this->item->ip_address; ?></td>
         </tr>
 
@@ -136,7 +136,7 @@ if (!$canEdit && Factory::getUser()->authorise('core.edit.own', 'com_jed')) {
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_GENERAL_FIELD_CREATED_ON_LABEL'); ?></th>
+            <th><?php echo Text::_('COM_JED_GENERAL_CREATED_ON_LABEL'); ?></th>
             <td><?php echo $this->item->created_on; ?></td>
         </tr>
 
@@ -166,15 +166,15 @@ if (!$canEdit && Factory::getUser()->authorise('core.edit.own', 'com_jed')) {
         'bootstrap.renderModal',
         'deleteModal',
         [
-                                            'title'  => Text::_('JACTION_DELETE'),
-                                            'height' => '50%',
-                                            'width'  => '20%',
+                                                'title'  => Text::_('JACTION_DELETE'),
+                                                'height' => '50%',
+                                                'width'  => '20%',
 
-                                            'modalWidth' => '50',
-                                            'bodyHeight' => '100',
-                                            'footer'     => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_jed&task=review.remove&id=' . $this->item->id, false, 2) . '" class="btn btn-danger">' . Text::_('JACTION_DELETE') . '</a>',
-                                        ],
-        Text::sprintf('COM_JED_DELETE_CONFIRM', $this->item->id)
+                                                'modalWidth' => '50',
+                                                'bodyHeight' => '100',
+                                                'footer'     => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_jed&task=review.remove&id=' . $this->item->id, false, 2) . '" class="btn btn-danger">' . Text::_('JACTION_DELETE') . '</a>',
+                                            ],
+        Text::sprintf('COM_JED_GENERAL_DELETE_CONFIRM_LABEL', $this->item->id)
     ); ?>
 
 <?php endif; ?>

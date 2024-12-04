@@ -32,11 +32,11 @@ HTMLHelper::_('bootstrap.tooltip');
 
 
     <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'ticketinternalnote']); ?>
-    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'ticketinternalnote', Text::_('COM_JED_TAB_TICKETINTERNALNOTE', true)); ?>
+    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'ticketinternalnote', Text::_('COM_JED_TICKETS_INTERNAL_NOTE_LABEL', true)); ?>
     <div class="row-fluid">
         <div class="span10 form-horizontal">
             <fieldset class="adminform">
-                <legend><?php echo Text::_('COM_JED_TICKETINTERNALNOTE_FIELDSET'); ?></legend>
+                <legend><?php echo Text::_('COM_JED_TICKETS_INTERNAL_NOTE_LABEL'); ?></legend>
                 <?php echo $this->form->renderField('summary'); ?>
                 <?php echo $this->form->renderField('note'); ?>
                 <?php echo $this->form->renderField('ticket_id'); ?>

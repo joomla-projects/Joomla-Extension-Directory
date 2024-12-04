@@ -24,7 +24,7 @@ $rawData            = $displayData->getData();
 
 /* Set up Data fieldsets */
 
-$fieldsets['aboutyou']['title'] = Text::_('COM_JED_VEL_GENERAL_FIELD_ABOUT_YOU_LABEL');
+$fieldsets['aboutyou']['title'] = Text::_('COM_JED_VEL_GENERAL_ABOUT_YOU_LABEL');
 
 $fieldsets['aboutyou']['fields'] = [
     'reporter_fullname',
@@ -79,7 +79,7 @@ $fieldsets['extensiondetails']['fields'] = [
                     } else {
                         ?>
                         <button type="button" class="btn btn-primary"
-                                onclick="Joomla.submitbutton('jedticket.copyAbandonedReporttoVEL')">
+                                onclick="Joomla.submitbutton('ticket.copyAbandonedReporttoVEL')">
                             <?php echo Text::_('COM_JED_VEL_GENERAL_BUTTON_CREATE_ABANDONED_VEL'); ?>
                         </button>
                         <?php

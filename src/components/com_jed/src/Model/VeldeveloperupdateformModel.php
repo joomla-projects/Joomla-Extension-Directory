@@ -179,7 +179,7 @@ class VeldeveloperupdateformModel extends FormModel
             $table = $this->getTable();
 
             if (isset($table) !== false && $table->load($id) && !empty($table->id)) {
-                $properties = $table->getProperties();
+                $properties = $table->getTableProperties();
                 $table_data = ArrayHelper::toObject($properties, stdClass::class);
                 $user       = Factory::getApplication()->getIdentity();
                 $id         = $table->id;
@@ -202,7 +202,7 @@ class VeldeveloperupdateformModel extends FormModel
                     }
 
                     // Convert the JTable to a clean JObject.
-                    $properties = $table->getProperties(1);
+                    $properties = $table->getTableProperties(1);
                     $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
@@ -274,7 +274,7 @@ class VeldeveloperupdateformModel extends FormModel
                 $data->update_data_source = $array;
             }
 
-            return $data;
+            return (array)$data;
         }
 
         return [];
@@ -394,8 +394,8 @@ class VeldeveloperupdateformModel extends FormModel
                 $ticket_message['message']           = $ticket['ticket_text'];
                 $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
 
-                $ticket_model = new JedticketformModel();
-                //$ticket_model = BaseDatabaseModel::getInstance('Jedticketform', 'JedModel', ['ignore_request' => true]);
+                $ticket_model = new TicketformModel();
+                //$ticket_model = BaseDatabaseModel::getInstance('Ticketform', 'JedModel', ['ignore_request' => true]);
                 $ticket_model->save($ticket);
                 $ticket_id = $ticket_model->getId();
                 /* We need to store the incoming ticket message */

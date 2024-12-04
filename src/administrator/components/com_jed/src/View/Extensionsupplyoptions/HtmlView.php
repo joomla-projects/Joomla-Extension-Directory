@@ -60,7 +60,7 @@ class HtmlView extends BaseHtmlView
         $this->state = $this->get('State');
         $canDo       = JedHelper::getActions();
 
-        ToolbarHelper::title(Text::_('COM_JED_TITLE_EXTENSION_SUPPLY_OPTIONS'), "generic");
+        ToolbarHelper::title(Text::_('COM_JED_EXTENSION_SUPPLY_OPTIONS'), "generic");
 
         $toolbar = Toolbar::getInstance(); //Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar();
 
@@ -168,7 +168,7 @@ class HtmlView extends BaseHtmlView
             'a.`id`'       => Text::_('JGRID_HEADING_ID'),
             'a.`state`'    => Text::_('JSTATUS'),
             'a.`ordering`' => Text::_('JGRID_HEADING_ORDERING'),
-            'a.`title`'    => Text::_('COM_JED_EXTENSIONSUPPLYOPTIONS_TITLE'),
+            'a.`title`'    => Text::_('COM_JED_GENERAL_TITLE_LABEL'),
         ];
     }
 

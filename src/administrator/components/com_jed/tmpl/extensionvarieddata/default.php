@@ -72,52 +72,52 @@ if ($saveOrder) {
                             <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONVARIEDDATA_EXTENSION_ID', 'a.extension_id', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION', 'a.extension_id', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONVARIEDDATA_SUPPLY_OPTION_ID', 'a.supply_option_id', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_SUPPLY_OPTION_LABEL', 'a.supply_option_id', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONVARIEDDATA_INTRO_TEXT', 'a.intro_text', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_INTRO_TEXT_LABEL', 'a.intro_text', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONVARIEDDATA_DESCRIPTION', 'a.description', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_DESCRIPTION_LABEL', 'a.description', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
                             <?php echo HTMLHelper::_('searchtools.sort', 'JTAG', 'a.tags', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONVARIEDDATA_HOMEPAGE_LINK', 'a.homepage_link', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_HOMEPAGE_LINK_LABEL', 'a.homepage_link', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONVARIEDDATA_DOWNLOAD_LINK', 'a.download_link', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_DOWNLOAD_LINK_LABEL', 'a.download_link', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONVARIEDDATA_DEMO_LINK', 'a.demo_link', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_DEMO_LINK_LABEL', 'a.demo_link', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONVARIEDDATA_SUPPORT_LINK', 'a.support_link', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_SUPPORT_LINK_LABEL', 'a.support_link', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONVARIEDDATA_DOCUMENTATION_LINK', 'a.documentation_link', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_DOCUMENTATION_LINK_LABEL', 'a.documentation_link', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONVARIEDDATA_LICENSE_LINK', 'a.license_link', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_LICENSE_LINK_LABEL', 'a.license_link', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONVARIEDDATA_TRANSLATION_LINK', 'a.translation_link', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_TRANSLATION_LINK_LABEL', 'a.translation_link', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONVARIEDDATA_UPDATE_URL', 'a.update_url', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_UPDATE_URL_LABEL', 'a.update_url', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONVARIEDDATA_UPDATE_URL_OK', 'a.update_url_ok', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_UPDATE_URL_LABEL_OK', 'a.update_url_ok', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONVARIEDDATA_DOWNLOAD_INTEGRATION_TYPE', 'a.download_integration_type', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_LABEL', 'a.download_integration_type', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSIONVARIEDDATA_IS_DEFAULT_DATA', 'a.is_default_data', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_IS_DEFAULT_DATA_LABEL', 'a.is_default_data', $listDirn, $listOrder); ?>
                         </th>
                         <th width="5%" class="nowrap center">
                             <?php echo HTMLHelper::_('searchtools.sort', 'JSTATUS', 'a.state', $listDirn, $listOrder); ?>
@@ -136,7 +136,7 @@ if ($saveOrder) {
                     </tfoot>
                     <tbody <?php if ($saveOrder) :
                         ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
-                           endif; ?>>
+                    endif; ?>>
                     <?php foreach ($this->items as $i => $item) :
                         $ordering   = ($listOrder == 'a.ordering');
                         $canCreate  = $user->authorise('core.create', 'com_jed');
@@ -158,7 +158,7 @@ if ($saveOrder) {
                                 } elseif (!$saveOrder) {
                                     $iconClass = ' inactive" title="' . Text::_('JORDERINGDISABLED');
                                 }
-                                ?>
+                        ?>
                             <span class="sortable-handler<?php echo $iconClass ?>">
                                 <span class="icon-ellipsis-v" aria-hidden="true"></span>
                             </span>

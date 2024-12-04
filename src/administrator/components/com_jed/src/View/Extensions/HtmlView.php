@@ -91,7 +91,7 @@ class HtmlView extends BaseHtmlView
         $this->state = $this->get('State');
         $canDo       = JedHelper::getActions();
 
-        ToolbarHelper::title(Text::_('COM_JED_TITLE_EXTENSIONS'), "generic");
+        ToolbarHelper::title(Text::_('COM_JED_EXTENSIONS'), "generic");
 
         $toolbar = Toolbar::getInstance(); //$toolbar = Toolbar::getInstance(); //Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar();
 
@@ -163,18 +163,18 @@ class HtmlView extends BaseHtmlView
     {
         return [
             'a.`id`'                    => Text::_('JGRID_HEADING_ID'),
-            'a.`title`'                 => Text::_('COM_JED_EXTENSIONS_TITLE'),
-            'a.`alias`'                 => Text::_('COM_JED_EXTENSIONS_ALIAS'),
+            'a.`title`'                 => Text::_('COM_JED_GENERAL_TITLE_LABEL'),
+            'a.`alias`'                 => Text::_('COM_JED_GENERAL_ALIAS_LABEL'),
             'a.`published`'             => Text::_('JPUBLISHED'),
-            'a.`joomla_versions`'       => Text::_('COM_JED_EXTENSIONS_JOOMLA_VERSIONS'),
-            'a.`popular`'               => Text::_('COM_JED_EXTENSIONS_POPULAR'),
-            'a.`requires_registration`' => Text::_('COM_JED_EXTENSIONS_REQUIRES_REGISTRATION'),
-            'a.`gpl_license_type`'      => Text::_('COM_JED_EXTENSIONS_GPL_LICENSE_TYPE'),
-            'a.`can_update`'            => Text::_('COM_JED_EXTENSIONS_CAN_UPDATE'),
-            'a.`includes`'              => Text::_('COM_JED_EXTENSIONS_INCLUDES'),
-            'a.`approved`'              => Text::_('COM_JED_EXTENSIONS_APPROVED'),
-            'a.`approved_time`'         => Text::_('COM_JED_EXTENSIONS_APPROVED_TIME'),
-            'a.`primary_category_id`'   => Text::_('COM_JED_EXTENSIONS_PRIMARY_CATEGORY_ID'),
+            'a.`joomla_versions`'       => Text::_('COM_JED_EXTENSION_JOOMLA_VERSIONS_LABEL'),
+            'a.`popular`'               => Text::_('COM_JED_EXTENSION_POPULAR_LABEL'),
+            'a.`requires_registration`' => Text::_('COM_JED_EXTENSION_REQUIRES_REGISTRATION_LABEL'),
+            'a.`gpl_license_type`'      => Text::_('COM_JED_EXTENSION_GPL_LICENSE_TYPE_LABEL'),
+            'a.`can_update`'            => Text::_('COM_JED_EXTENSION_CAN_UPDATE_LABEL'),
+            'a.`includes`'              => Text::_('COM_JED_GENERAL_INCLUDES_LABEL'),
+            'a.`approved`'              => Text::_('COM_JED_EXTENSION_APPROVED_LABEL'),
+            'a.`approved_time`'         => Text::_('COM_JED_EXTENSION_APPROVED_TIME_LABEL'),
+            'a.`primary_category_id`'   => Text::_('COM_JED_GENERAL_CATEGORY_ID_LABEL_LABEL'),
             'a.`state`'                 => Text::_('JSTATUS'),
         ];
     }

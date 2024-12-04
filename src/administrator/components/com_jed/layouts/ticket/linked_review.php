@@ -86,7 +86,7 @@ JedHelper::lockFormFields($linked_form, ['published']);
     </div>
     <div class="row ticket-header-row">
         <div class="col-md-2   ticket-header">
-            <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_FUNCTIONALITY_LABEL') . ' - ' . $linked_data[0]->functionality; ?></h1>
+            <h1><?php echo Text::_('COM_JED_REVIEWS_FUNCTIONALITY_LABEL') . ' - ' . $linked_data[0]->functionality; ?></h1>
         </div>
         <div class="col-md-10   ticket-header">
             <?php echo $linked_form->renderField('functionality_comment', null, null, $headerlabeloptions); ?>
@@ -94,7 +94,7 @@ JedHelper::lockFormFields($linked_form, ['published']);
     </div>
     <div class="row ticket-header-row">
         <div class="col-md-2   ticket-header">
-            <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_EASE_OF_USE_LABEL') . ' - ' . $linked_data[0]->ease_of_use; ?></h1>
+            <h1><?php echo Text::_('COM_JED_REVIEWS_EASE_OF_USE_LABEL') . ' - ' . $linked_data[0]->ease_of_use; ?></h1>
         </div>
         <div class="col-md-10   ticket-header">
             <?php echo $linked_form->renderField('ease_of_use_comment', null, null, $headerlabeloptions); ?>
@@ -102,7 +102,7 @@ JedHelper::lockFormFields($linked_form, ['published']);
     </div>
     <div class="row ticket-header-row">
         <div class="col-md-2   ticket-header">
-            <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_SUPPORT_LABEL') . ' - ' . $linked_data[0]->support; ?></h1>
+            <h1><?php echo Text::_('COM_JED_GENERAL_SUPPORT_LABEL') . ' - ' . $linked_data[0]->support; ?></h1>
         </div>
         <div class="col-md-10   ticket-header">
             <?php echo $linked_form->renderField('support_comment', null, null, $headerlabeloptions); ?>
@@ -110,7 +110,7 @@ JedHelper::lockFormFields($linked_form, ['published']);
     </div>
     <div class="row ticket-header-row">
         <div class="col-md-2   ticket-header">
-            <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_DOCUMENTATION_LABEL') . ' - ' . $linked_data[0]->documentation; ?></h1>
+            <h1><?php echo Text::_('COM_JED_EXTENSION_DOCUMENTATION_LABEL') . ' - ' . $linked_data[0]->documentation; ?></h1>
         </div>
         <div class="col-md-10   ticket-header">
             <?php echo $linked_form->renderField('documentation_comment', null, null, $headerlabeloptions); ?>
@@ -118,7 +118,7 @@ JedHelper::lockFormFields($linked_form, ['published']);
     </div>
     <div class="row ticket-header-row">
         <div class="col-md-2   ticket-header">
-            <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_VALUE_FOR_MONEY_LABEL') . ' - ' . $linked_data[0]->value_for_money; ?></h1>
+            <h1><?php echo Text::_('COM_JED_REVIEWS_VALUE_FOR_MONEY_LABEL') . ' - ' . $linked_data[0]->value_for_money; ?></h1>
         </div>
         <div class="col-md-10   ticket-header">
             <?php echo $linked_form->renderField('value_for_money_comment', null, null, $headerlabeloptions); ?>
@@ -126,7 +126,7 @@ JedHelper::lockFormFields($linked_form, ['published']);
     </div>
     <div class="row ticket-header-row">
         <div class="col-md-2   ticket-header">
-            <h1><?php echo Text::_('COM_JED_REVIEWS_FIELD_OVERALL_SCORE_LABEL') . ' - ' . $linked_data[0]->overall_score; ?></h1>
+            <h1><?php echo Text::_('COM_JED_REVIEWS_OVERALL_SCORE_LABEL') . ' - ' . $linked_data[0]->overall_score; ?></h1>
         </div>
         <div class="col-md-10   ticket-header">
             <h1>Created on - <?php echo $linked_data[0]->created_on; ?>&nbsp;&nbsp;IP Address

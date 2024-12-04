@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package JED
+ * @package       JED
  *
  * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @license       GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Helper;
@@ -17,8 +17,13 @@ use Exception;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\User;
+
+use function defined;
 
 /**
  * JED Helper
@@ -33,8 +38,8 @@ class JedHelper
      *
      * @return User\User
      *
-     * @throws Exception
      * @since 4.0.0
+     * @throws Exception
      */
     public static function getUser(): User\User
     {
@@ -44,6 +49,7 @@ class JedHelper
         } catch (Exception $e) {
             throw new Exception($e->getMessage(), $e->getCode());
         }
+
         return $app->getSession()->get('user');
     }
 
@@ -71,11 +77,10 @@ class JedHelper
     }
 
 
-
     /**
      * For a new review this creates a corresponding Ticket
      *
-     * @param int $item_id Reference for stored report
+     * @param   int  $item_id  Reference for stored report
      *
      * @return array  Ticket Template
      * @since  4.0.0
@@ -85,7 +90,6 @@ class JedHelper
 
     public static function CreateReviewTicket(int $item_id): array
     {
-
         $db = Factory::getContainer()->get('DatabaseDriver');
 
         $ticket = [];
@@ -178,11 +182,11 @@ class JedHelper
         return $ticket;
     }
 
+
     /**
-     * When a VEL is reported or a Developer Update or Abandoned Item reported  this creates a corresponding Ticket
+     * For a new review this creates a corresponding Ticket
      *
-     * @param int $report_type 1 for VEL REPORT, 2 for DEVELOPER UPDATE, 3 for ABANDONWARE REPORT
-     * @param int $item_id     Reference for stored report
+     * @param   int  $item_id  Reference for stored report
      *
      * @return array  Ticket Template
      * @since  4.0.0
@@ -190,9 +194,8 @@ class JedHelper
      * @throws Exception
      */
 
-    public static function CreateVELTicket(int $report_type, int $item_id): array
+    public static function CreateExtensionTicket(int $item_id): array
     {
-
         $db = Factory::getContainer()->get('DatabaseDriver');
 
         $ticket = [];
@@ -204,6 +207,113 @@ class JedHelper
         $ticket['modified_by']      = $user->id;
         $ticket['created_on']       = 'now()';
         $ticket['modified_on']      = 'now()';
+        $ticket['state']            = 0;
+        $ticket['ordering']         = 0;
+        $ticket['checked_out']      = 0;
+        $ticket['checked_out_time'] = '0000-00-00 00:00:00';
+        $ticket['ticket_origin']    = 0; //Registered User
+
+
+        $ticket['ticket_category_type'] = 2;
+        $ticket['ticket_subject']       = "A new Extension";
+        $ticket['linked_item_type']     = 2;     //    Extension
+
+
+        /*
+            Ticket Category type
+
+           <option value="1">Unknown</option>
+           <option value="2">Extension</option>
+           <option value="3">Review</option>
+           <option value="4">Joomla Site Issue</option>
+           <option value="5">New Listing Support</option>
+           <option value="6">Current Listing Support</option>
+           <option value="7">Site Technical Issues</option>
+           <option value="8">Unpublished Support</option>
+           <option value="9">Reported Review</option>
+           <option value="10">Reported Extension</option>
+           <option value="11">Vulnerable Item Report</option>
+           <option value="12">VEL Developer Update</option>
+           <option value="13">VEL Abandonware Report</option>*/
+
+
+        $ticket['allocated_group'] = 3; //Assign to review Team
+        /* Alloc Groups
+            1 - Any
+            2 - Team Leadership
+            3 - Listing Specialist
+            4 - Review Specialist
+            5 - Support Specialist
+            6 - VEL Specialist */
+
+        $ticket['linked_item_id'] = $item_id;
+
+        /* Linked Item Types
+         <option value="1" selected="selected">Unknown</option>
+         <option value="2">Extension</option>
+         <option value="3">Review</option>
+         <option value="4">Vulnerable Item Initial Report</option>
+         <option value="5">Vulnerable Item Developer Update</option>
+         <option value="6">Abandonware Report</option>
+        //       <option value="7">Vulnerable Item Email Correspondence</option> */
+
+
+        $ticket['ticket_status'] = 0; //New
+        /*
+            <option value="0" selected="selected">New</option>
+            <option value="1">Awaiting User</option>
+            <option value="2">Awaiting JED</option>
+            <option value="3">Resolved</option>
+            <option value="4">Closed</option>
+            <option value="5">Updated</option>
+
+        */
+        $ticket['ticket_text']    = '<p>Please see linked extension</p>';
+        $ticket['internal_notes'] = '';
+
+        $ticket['uploaded_files_preview']  = '';
+        $ticket['uploaded_files_location'] = '';
+        $ticket['allocated_to']            = 0;
+        $ticket['parent_id']               = -1;
+
+
+        foreach ($ticket as $k => $v) {
+            $ticket[] = $k;
+            if (str_ends_with($k, "_on")) {
+                $ticket[] = $v;
+            } else {
+                $ticket[] = $db->quote($v);
+            }
+        }
+
+        return $ticket;
+    }
+
+    /**
+     * When a VEL is reported or a Developer Update or Abandoned Item reported  this creates a corresponding Ticket
+     *
+     * @param   int  $report_type  1 for VEL REPORT, 2 for DEVELOPER UPDATE, 3 for ABANDONWARE REPORT
+     * @param   int  $item_id      Reference for stored report
+     *
+     * @return array  Ticket Template
+     * @since  4.0.0
+     *
+     * @throws Exception
+     */
+
+    public static function CreateVELTicket(int $report_type, int $item_id): array
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $ticket = [];
+
+        $user = Factory::getApplication()->getIdentity();
+
+        $ticket['id']          = 0;
+        $ticket['created_by']  = $user->id;
+        $ticket['modified_by'] = $user->id;
+        //   $ticket['created_on']       = Factory::getDate()->format('Y-m-d H:i:s');
+        // $ticket['modified_on']      = Factory::getDate()->format('Y-m-d H:i:s');
         $ticket['state']            = 0;
         $ticket['ordering']         = 0;
         $ticket['checked_out']      = 0;
@@ -286,6 +396,14 @@ class JedHelper
         $ticket['allocated_to']            = 0;
         $ticket['parent_id']               = -1;
 
+        /* foreach ($ticket as $k => $v) {
+             if (str_ends_with($k, "_on")) {
+                 $ticket[$k] = $v;
+             } else {
+                 $ticket[$k] = $db->quote($v);
+             }
+         }*/
+
         return $ticket;
     }
 
@@ -294,17 +412,17 @@ class JedHelper
      *
      * @return array
      *
-     * @throws Exception
      * @since 4.0.0
+     * @throws Exception
      */
     public static function CreateEmptyTicketMessage(): array
     {
-        $user                               = Factory::getApplication()->getIdentity();
-        $ticket_message                     = [];
-        $ticket_message['id']               = 0;
-        $ticket_message['created_by']       = $user->id;
-        $ticket_message['modified_by']      = $user->id;
-        $ticket_message['created_on']       = 'now()';
+        $user                          = Factory::getApplication()->getIdentity();
+        $ticket_message                = [];
+        $ticket_message['id']          = 0;
+        $ticket_message['created_by']  = $user->id;
+        $ticket_message['modified_by'] = $user->id;
+        //    $ticket_message['created_on']       = 'now()';
         $ticket_message['state']            = 0;
         $ticket_message['ordering']         = 0;
         $ticket_message['checked_out']      = 0;
@@ -316,7 +434,7 @@ class JedHelper
     /**
      * Get Message Template from Database and return
      *
-     * @param int $template_id
+     * @param   int  $template_id
      *
      * @return object
      *
@@ -327,8 +445,7 @@ class JedHelper
         // Create a new query object.
         $db    = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
-        $query->select('*')->from($db->quoteName('#__jed_message_templates'))
-            ->where('id=' . $template_id);
+        $query->select('*')->from($db->quoteName('#__jed_message_templates'))->where('id=' . $template_id);
         // Reset the query using our newly populated query object.
         $db->setQuery($query);
 
@@ -343,12 +460,11 @@ class JedHelper
      *
      * @return bool
      *
-     * @throws Exception
      * @since 4.0.0
+     * @throws Exception
      */
     public static function IsLoggedIn(): bool
     {
-
         $user = Factory::getApplication()->getIdentity();
         if ($user->id > 0) {
             return true;
@@ -364,19 +480,24 @@ class JedHelper
      *
      * @return bool
      *
-     * @throws Exception
      * @since 4.0.0
+     * @throws Exception
      */
     public static function canUserEdit(mixed $item): bool
     {
-
         $permission = true;
         $user       = Factory::getApplication()->getIdentity();
 
         if ($user->authorise('core.edit', 'com_jed')) {
             $permission = true;
-        } elseif (isset($item->created_by)) {
-            $permission = true;
+        } else {
+            if (isset($item->created_by)) {
+                if ($item->created_by == $user->id) {
+                    $permission = true;
+                }
+            } else {
+                $permission = true;
+            }
         }
 
         return $permission;
@@ -385,8 +506,8 @@ class JedHelper
     /**
      * Function to format JED Extension Images
      *
-     * @param string    $filename The image filename
-     * @param ImageSize $size     Size of image, small|large
+     * @param   string     $filename  The image filename
+     * @param   ImageSize  $size      Size of image, small|large
      *
      * @return string  Full image url
      *
@@ -433,19 +554,19 @@ class JedHelper
         }
 
         // No CDN (e.g. local development). Where should I get my image from?
-        if (file_exists(JPATH_ROOT . '/' . ltrim($bestFilename, '/\\'))) {
+        if (File::exists(JPATH_ROOT . '/' . ltrim($bestFilename, '/\\'))) {
             return Uri::root() . ltrim($bestFilename, '/\\');
         }
 
-        if (file_exists(JPATH_ROOT . '/' . ltrim($filename, '/\\'))) {
+        if (File::exists(JPATH_ROOT . '/' . ltrim($filename, '/\\'))) {
             return Uri::root() . ltrim($filename, '/\\');
         }
 
-        if (file_exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($bestFilename, '/\\'))) {
+        if (File::exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($bestFilename, '/\\'))) {
             return Uri::root() . 'media/com_jed/' . ltrim($bestFilename, '/\\');
         }
 
-        if (file_exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($filename, '/\\'))) {
+        if (File::exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($filename, '/\\'))) {
             return Uri::root() . 'media/com_jed/' . ltrim($filename, '/\\');
         }
 
@@ -468,12 +589,12 @@ class JedHelper
     }
 
     /**
-     * Checks whether a user is manager or superuser
+     * Checks whether or not a user is manager or superuser
      *
      * @return bool
      *
-     * @throws Exception
      * @since 4.0.0
+     * @throws Exception
      */
     public static function isAdminOrSuperUser(): bool
     {
@@ -489,7 +610,7 @@ class JedHelper
     /**
      * Checks if a given date is valid and in a specified format (YYYY-MM-DD)
      *
-     * @param string $date Date to be checked
+     * @param   string  $date  Date to be checked
      *
      * @return bool
      *
@@ -531,7 +652,6 @@ class JedHelper
      */
     public static function reformatTitle($l_str): string
     {
-
         $loc = str_replace(',', ', ', $l_str);
         $loc = str_replace(' ,', ',', $loc);
         $loc = str_replace('  ', ' ', $loc);
@@ -546,8 +666,8 @@ class JedHelper
      * @param   string  $table  The name of the table
      *
      * @return bool             true if the user is the owner of the row, false if not.
-     * @throws Exception
      * @since  4.0.0
+     * @throws Exception
      */
     public static function userIDItem(int $id, string $table): bool
     {
@@ -556,10 +676,7 @@ class JedHelper
             $db   = Factory::getContainer()->get('DatabaseDriver');
 
             $query = $db->getQuery(true);
-            $query->select("id")
-                ->from($db->quoteName($table))
-                ->where("id = " . $db->escape($id))
-                ->where("created_by = " . $user->id);
+            $query->select("id")->from($db->quoteName($table))->where("id = " . $db->escape($id))->where("created_by = " . $user->id);
 
             $db->setQuery($query);
 
@@ -577,7 +694,7 @@ class JedHelper
     /**
      * This method returns whether an alias is available for the view
      *
-     * @param string $view The name of the view
+     * @param   string  $view  The name of the view
      *
      * @return string
      * @since  4.0.0
@@ -608,6 +725,58 @@ class JedHelper
         } catch (Exception $exc) {
             throw new Exception($exc->getMessage(), $exc->getCode());
         }
+
         return false;
+    }
+
+    public static function OutputFieldsets(array $fieldsets, Form $form): bool
+    {
+        $fscount = 0;
+        foreach ($fieldsets as $fscat => $fs) {
+            Log::add($fscat);
+            $fscount = $fscount + 1;
+
+            if ($fs['title'] <> '') {
+                if ($fscount > 1) {
+                    echo '</fieldset>';
+                }
+                if(key_exists('supply_type', $fs)) {
+                    $st = '_'.$fs['supply_type'];
+                } else {
+                    $st = '';
+                };
+
+                echo '<fieldset class="extensionform'.$st.'"><legend>' . $fs['title'] . '</legend>';
+            }
+            if ($fs['description'] <> '') {
+                echo $fs['description'];
+            }
+            $fields       = $fs['fields'];
+            $hiddenFields = $fs['hidden'];
+            foreach ($fields as $field) {
+                if (is_array($field)) {
+                    // Split into two columns
+                    echo '<div class="row"><div class="col-md-6">';
+                    if (in_array($field[0], $hiddenFields)) {
+                        $form->setFieldAttribute($field[0], 'type', 'hidden');
+                    }
+                    echo $form->renderField($field[0], null, null, ['class' => 'control-wrapper-' . $field[0]]);
+                    echo '</div>';
+                    echo '<div class="col-md-6">';
+                    if (in_array($field[1], $hiddenFields)) {
+                        $form->setFieldAttribute($field[1], 'type', 'hidden');
+                    }
+                    echo $form->renderField($field[1], null, null, ['class' => 'control-wrapper-' . $field[1]]);
+                    echo '</div></div>';
+                }
+                if (in_array($field, $hiddenFields)) {
+                    $form->setFieldAttribute($field, 'type', 'hidden');
+                }
+
+                echo $form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+            }
+        }
+        echo '</fieldset>';
+        return true;
     }
 }

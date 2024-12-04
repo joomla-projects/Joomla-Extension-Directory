@@ -103,13 +103,13 @@ class Router extends RouterView
         $this->registerView($extensionvarieddatum);
 
         // JED Tickets
-        $jedtickets = new RouterViewConfiguration('jedtickets');
-        $this->registerView($jedtickets);
-        $jedticket = new RouterViewConfiguration('jedticket');
-        $jedticket->setKey('id')->setParent($jedtickets);
-        $this->registerView($jedticket);
-        $jedticketform = new RouterViewConfiguration('jedticketform');
-        $this->registerView($jedticketform);
+        $tickets = new RouterViewConfiguration('tickets');
+        $this->registerView($tickets);
+        $ticket = new RouterViewConfiguration('ticket');
+        $ticket->setKey('id')->setParent($tickets);
+        $this->registerView($ticket);
+        $ticketform = new RouterViewConfiguration('ticketform');
+        $this->registerView($ticketform);
 
         // Reviews
         $reviews = new RouterViewConfiguration('reviews');
@@ -293,8 +293,8 @@ class Router extends RouterView
         $db        = $this->getDatabase();
         $query     = $db->getQuery(true);
         $query->select($db->quoteName('alias'))
-            ->from($db->quoteName('#__jed_extensions'))
-            ->where($db->quoteName('id') . ' = :id')
+              ->from($db->quoteName('#__jed_extension_varied_data'))
+              ->where($db->quoteName('extension_id') . ' = :id')
             ->bind(':id', $id, ParameterType::INTEGER);
         $db->setQuery($query);
 
@@ -349,12 +349,12 @@ class Router extends RouterView
         return $this->categoryCache[$key];
     }
 
-    public function getJedticketId($segment, $query)
+    public function getTicketId($segment, $query)
     {
         return $segment;
     }
 
-    public function getJedticketSegment($id, $query)
+    public function getTicketSegment($id, $query)
     {
         return [$id];
     }

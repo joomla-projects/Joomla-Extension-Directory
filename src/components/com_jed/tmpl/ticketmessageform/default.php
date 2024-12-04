@@ -68,7 +68,7 @@ $canEdit = JedHelper::canUserEdit($this->item);
             <?php echo $this->form->getInput('created_by'); ?>
             <?php echo $this->form->getInput('modified_by'); ?>
             <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'message']); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'message', Text::_('COM_JED_TAB_MESSAGE', true)); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'message', Text::_('COM_JED_EXTENSION_MESSAGE_LABEL', true)); ?>
             <?php echo $this->form->renderField('subject'); ?>
 
             <?php echo $this->form->renderField('message'); ?>

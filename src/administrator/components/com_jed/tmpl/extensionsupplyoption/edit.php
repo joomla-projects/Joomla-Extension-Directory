@@ -30,11 +30,11 @@ HTMLHelper::_('bootstrap.tooltip');
 
 
     <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'extensionsupplyoption']); ?>
-    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'extensionsupplyoption', Text::_('COM_JED_EXTENSION_SUPPLY_OPTIONS_TAB', true)); ?>
+    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'extensionsupplyoption', Text::_('COM_JED_GENERAL_EXTENSION_SUPPLY_OPTION_TYPES_LABEL', true)); ?>
     <div class="row-fluid">
         <div class="span10 form-horizontal">
             <fieldset class="adminform">
-                <legend><?php echo Text::_('COM_JED_EXTENSION_SUPPLY_OPTIONS_FIELDSET'); ?></legend>
+                <legend><?php echo Text::_('COM_JED_EXTENSION_SUPPLY_OPTION_LABEL'); ?></legend>
                 <?php echo $this->form->renderField('title'); ?>
             </fieldset>
         </div>

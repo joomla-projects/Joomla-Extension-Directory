@@ -32,11 +32,11 @@ HTMLHelper::_('bootstrap.tooltip');
 
 
     <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'message']); ?>
-    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'message', Text::_('COM_JED_TAB_MESSAGE', true)); ?>
+    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'message', Text::_('COM_JED_EXTENSION_MESSAGE_LABEL', true)); ?>
     <div class="row-fluid">
         <div class="span10 form-horizontal">
             <fieldset class="adminform">
-                <legend><?php echo Text::_('COM_JED_TICKETMESSAGE_FIELDSET_MESSAGE'); ?></legend>
+                <legend><?php echo Text::_('COM_JED_EXTENSION_MESSAGE_LABEL'); ?></legend>
                 <?php echo $this->form->renderField('subject'); ?>
                 <?php echo $this->form->renderField('message'); ?>
                 <?php echo $this->form->renderField('ticket_id'); ?>

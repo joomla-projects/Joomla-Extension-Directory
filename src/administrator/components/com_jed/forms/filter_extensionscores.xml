@@ -36,18 +36,18 @@
             <option value="a.extension_id DESC">COM_JED_GENERAL_FILTER_SORT_EXTENSION_ID_DESC</option>
             <option value="a.supply_option_id ASC">COM_JED_REVIEWS_FILTER_SORT_SUPPLY_OPTION_ID_ASC</option>
             <option value="a.supply_option_id DESC">COM_JED_REVIEWS_FILTER_SORT_SUPPLY_OPTION_ID_DESC</option>
-            <option value="a.functionality_score ASC">COM_JED_REVIEWS_FIELD_FUNCTIONALITY_LABEL_SCORE_ASC</option>
-            <option value="a.functionality_score DESC">COM_JED_REVIEWS_FIELD_FUNCTIONALITY_LABEL_SCORE_DESC</option>
-            <option value="a.ease_of_use_score ASC">COM_JED_REVIEWS_FIELD_EASE_OF_USE_LABEL_SCORE_ASC</option>
-            <option value="a.ease_of_use_score DESC">COM_JED_REVIEWS_FIELD_EASE_OF_USE_LABEL_SCORE_DESC</option>
-            <option value="a.support_score ASC">COM_JED_REVIEWS_FIELD_SUPPORT_LABEL_SCORE_ASC</option>
-            <option value="a.support_score DESC">COM_JED_REVIEWS_FIELD_SUPPORT_LABEL_SCORE_DESC</option>
-            <option value="a.value_for_money_score ASC">COM_JED_REVIEWS_FIELD_VALUE_FOR_MONEY_LABEL_SCORE_ASC</option>
-            <option value="a.value_for_money_score DESC">COM_JED_REVIEWS_FIELD_VALUE_FOR_MONEY_LABEL_SCORE_DESC</option>
-            <option value="a.documentation_score ASC">COM_JED_REVIEWS_FIELD_DOCUMENTATION_LABEL_SCORE_ASC</option>
-            <option value="a.documentation_score DESC">COM_JED_REVIEWS_FIELD_DOCUMENTATION_LABEL_SCORE_DESC</option>
-            <option value="a.number_of_reviews ASC">COM_JED_EXTSCORE_FILTER_SORT_NUMBER_OF_REVIEWS_ASC</option>
-            <option value="a.number_of_reviews DESC">COM_JED_EXTSCORE_FILTER_SORT_NUMBER_OF_REVIEWS_DESC</option>
+            <option value="a.functionality_score ASC">COM_JED_REVIEWS_FUNCTIONALITY_LABEL_SCORE_ASC</option>
+            <option value="a.functionality_score DESC">COM_JED_REVIEWS_FUNCTIONALITY_LABEL_SCORE_DESC</option>
+            <option value="a.ease_of_use_score ASC">COM_JED_REVIEWS_EASE_OF_USE_LABEL_SCORE_ASC</option>
+            <option value="a.ease_of_use_score DESC">COM_JED_REVIEWS_EASE_OF_USE_LABEL_SCORE_DESC</option>
+            <option value="a.support_score ASC">COM_JED_GENERAL_SUPPORT_LABEL_SCORE_ASC</option>
+            <option value="a.support_score DESC">COM_JED_GENERAL_SUPPORT_LABEL_SCORE_DESC</option>
+            <option value="a.value_for_money_score ASC">COM_JED_REVIEWS_VALUE_FOR_MONEY_LABEL_SCORE_ASC</option>
+            <option value="a.value_for_money_score DESC">COM_JED_REVIEWS_VALUE_FOR_MONEY_LABEL_SCORE_DESC</option>
+            <option value="a.documentation_score ASC">COM_JED_EXTENSION_DOCUMENTATION_LABEL_SCORE_ASC</option>
+            <option value="a.documentation_score DESC">COM_JED_EXTENSION_DOCUMENTATION_LABEL_SCORE_DESC</option>
+            <option value="a.number_of_reviews ASC">COM_JED_EXTENSION_FILTER_SORT_NUMBER_OF_REVIEWS_ASC_LABEL</option>
+            <option value="a.number_of_reviews DESC">COM_JED_EXTENSION_FILTER_SORT_NUMBER_OF_REVIEWS_DESC_LABEL</option>
 
         </field>
 

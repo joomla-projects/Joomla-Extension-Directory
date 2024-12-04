@@ -96,11 +96,11 @@ class VelreportsModel extends ListModel
 
         foreach ($items as $oneItem) {
             $oneItem->pass_details_ok    = Text::_('COM_JED_VEL_GENERAL_FIELD_PASS_DETAILS_OK_OPTION_' . strtoupper($oneItem->pass_details_ok));
-            $oneItem->vulnerability_type = Text::_('COM_JED_VEL_GENERAL_FIELD_VULNERABILITY_TYPE_OPTION_' . strtoupper($oneItem->vulnerability_type));
-            $oneItem->exploit_type       = Text::_('COM_JED_VEL_GENERAL_FIELD_EXPLOIT_TYPE_OPTION_' . strtoupper($oneItem->exploit_type));
+            $oneItem->vulnerability_type = Text::_('COM_JED_VEL_GENERAL_VULNERABILITY_TYPE_OPTION_' . strtoupper($oneItem->vulnerability_type));
+            $oneItem->exploit_type       = Text::_('COM_JED_VEL_GENERAL_EXPLOIT_TYPE_OPTION_' . strtoupper($oneItem->exploit_type));
             $oneItem->consent_to_process = Text::_('COM_JED_VEL_GENERAL_FIELD_CONSENT_TO_PROCESS_OPTION_' . strtoupper($oneItem->consent_to_process));
-            $oneItem->passed_to_vel      = Text::_('COM_JED_VEL_GENERAL_FIELD_PASSED_TO_VEL_OPTION_' . strtoupper($oneItem->passed_to_vel));
-            $oneItem->data_source        = Text::_('COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_' . strtoupper($oneItem->data_source));
+            $oneItem->passed_to_vel      = Text::_('COM_JED_VEL_GENERAL_PASSED_TO_VEL_OPTION_' . strtoupper($oneItem->passed_to_vel));
+            $oneItem->data_source        = Text::_('COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_' . strtoupper($oneItem->data_source));
         }
 
         return $items;

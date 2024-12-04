@@ -16,6 +16,7 @@ namespace Jed\Component\Jed\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
@@ -103,7 +104,7 @@ class VeldeveloperupdateController extends BaseController
             $app->setUserState('com_jed.edit.veldeveloperupdate.data', null);
 
             // Redirect to the list screen.
-            $this->setMessage(Text::_('COM_JED_ITEM_SAVED_SUCCESSFULLY'));
+            $this->setMessage(Text::_('COM_JED_GENERAL_ITEM_SAVED_SUCCESSFULLY_LABEL'));
             $menu = Factory::getApplication()->getMenu();
             $item = $menu->getActive();
 

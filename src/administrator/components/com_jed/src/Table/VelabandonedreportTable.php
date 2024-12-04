@@ -194,6 +194,22 @@ class VelabandonedreportTable extends Table
     }
 
     /**
+     * Delete a record by id
+     *
+     * @param mixed $pk Primary key value to delete. Optional
+     *
+     * @return bool
+     *
+     * @since 4.0.0
+     */
+    public function delete($pk = null): bool
+    {
+        $this->load($pk);
+
+        return parent::delete($pk);
+    }
+
+    /**
      * Get the type alias for the history table
      *
      * @return string  The alias as described above
@@ -203,5 +219,47 @@ class VelabandonedreportTable extends Table
     public function getTypeAlias(): string
     {
         return $this->typeAlias;
+    }
+
+    /**
+     * Get the Properties of the table
+     *
+     * * @param   boolean  $public  If true, returns only the public properties.
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    public function getTableProperties(bool $public = true): array
+    {
+        $vars = get_object_vars($this);
+
+        if ($public) {
+            foreach ($vars as $key => $value) {
+                if (str_starts_with($key, '_')) {
+                    unset($vars[$key]);
+                }
+            }
+
+            // Collect all none public properties of the current class and it's parents
+            $nonePublicProperties = [];
+            $reflection           = new \ReflectionObject($this);
+            do {
+                $nonePublicProperties = array_merge(
+                    $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED),
+                    $nonePublicProperties
+                );
+            } while ($reflection = $reflection->getParentClass());
+
+            // Unset all none public properties, this is needed as get_object_vars returns now all vars
+            // from the current object and not only the CMSObject and the public ones from the inheriting classes
+            foreach ($nonePublicProperties as $prop) {
+                if (\array_key_exists($prop->getName(), $vars)) {
+                    unset($vars[$prop->getName()]);
+                }
+            }
+        }
+
+        return $vars;
     }
 }

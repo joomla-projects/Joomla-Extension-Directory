@@ -7,11 +7,11 @@
 
         <field name="email_type"
                type="list"
-               label="COM_JED_MESSAGETEMPLATES_FIELD_EMAIL_TYPE_LABEL"
+               label="COM_JED_GENERAL_TYPE_LABEL"
                description="COM_JED_MESSAGETEMPLATES_FIELD_EMAIL_TYPE_DESCR"
                onchange="this.form.submit();"
         >
-            <option value="">COM_JED_MESSAGETEMPLATES_FIELD_EMAIL_TYPE_LABEL_SELECT</option>
+            <option value="">COM_JED_GENERAL_TYPE_LABEL_SELECT</option>
             <option value="1">COM_JED_MESSAGETEMPLATES_FIELD_EMAIL_TYPE_OPTION_1</option>
             <option value="2">COM_JED_MESSAGETEMPLATES_FIELD_EMAIL_TYPE_OPTION_2</option>
             <option value="3">COM_JED_MESSAGETEMPLATES_FIELD_EMAIL_TYPE_OPTION_3</option>

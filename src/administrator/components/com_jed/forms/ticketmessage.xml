@@ -21,14 +21,14 @@
                description="JGLOBAL_FIELD_MODIFIED_BY_DESC" hidden="true"
                hint="JGLOBAL_FIELD_MODIFIED_BY_LABEL"/>
         <field name="subject" filter="safehtml" type="text" required="true" message="Please enter a subject"
-               label="COM_JED_TICKETMESSAGE_FIELD_SUBJECT_LABEL" description="COM_JED_TICKETMESSAGE_FIELD_SUBJECT_DESCR"
-               hint="COM_JED_TICKETMESSAGE_FIELD_SUBJECT_LABEL"/>
+               label="COM_JED_GENERAL_SUBJECT_LABEL" description="COM_JED_TICKETMESSAGE_FIELD_SUBJECT_DESCR"
+               hint="COM_JED_GENERAL_SUBJECT_LABEL"/>
         <field name="message" editor="jce|codemirror||" buttons="false" filter="JComponentHelper::filterText"
                type="editor" required="true" message="Please enter a message"
-               label="COM_JED_TICKETMESSAGE_FIELD_MESSAGE_LABEL" description="COM_JED_TICKETMESSAGE_FIELD_MESSAGE_DESCR"
-               hint="COM_JED_TICKETMESSAGE_FIELD_MESSAGE_LABEL"/>
-        <field name="ticket_id" type="foreignkey" label="COM_JED_TICKETMESSAGE_FIELD_TICKET_ID_LABEL"
-               description="COM_JED_JEDTICKETS_FIELD_TICKET_ID_DESCR" input_type="list" table="#__jed_jedtickets"
+               label="COM_JED_EXTENSION_MESSAGE_LABEL" description="COM_JED_TICKETMESSAGE_FIELD_MESSAGE_DESCR"
+               hint="COM_JED_EXTENSION_MESSAGE_LABEL"/>
+        <field name="ticket_id" type="foreignkey" label="COM_JED_TICKETMESSAGE_TICKET_ID_LABEL"
+               description="COM_JED_TICKETS_TICKET_ID_DESCR" input_type="list" table="#__jed_tickets"
                key_field="id" value_field="ticket_subject" default="0"/>
         <field name="message_direction" default="0" label="COM_JED_TICKETMESSAGE_FIELD_MESSAGE_DIRECTION_LABEL"
                description="COM_JED_TICKETMESSAGE_FIELD_MESSAGE_DIRECTION_DESCR"

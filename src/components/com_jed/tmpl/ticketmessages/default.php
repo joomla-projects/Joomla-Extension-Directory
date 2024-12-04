@@ -64,16 +64,16 @@ $wa->useStyle('com_jed.list');
                         <?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_FIELD_ID_LABEL', 'a.id', $listDirn, $listOrder); ?>
                     </th>
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_TICKETMESSAGE_FIELD_SUBJECT_LABEL', 'a.subject', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_SUBJECT_LABEL', 'a.subject', $listDirn, $listOrder); ?>
                     </th>
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_TICKETMESSAGE_FIELD_TICKET_ID_LABEL', 'a.ticket_id', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_TICKETMESSAGE_TICKET_ID_LABEL', 'a.ticket_id', $listDirn, $listOrder); ?>
                     </th>
 
 
                     <?php if ($canEdit || $canDelete) : ?>
                         <th class="center">
-                            <?php echo Text::_('COM_JED_TICKETMESSAGES_ACTIONS'); ?>
+                            <?php echo Text::_('COM_JED_GENERAL_ACTIONS_LABEL'); ?>
                         </th>
                     <?php endif; ?>
 

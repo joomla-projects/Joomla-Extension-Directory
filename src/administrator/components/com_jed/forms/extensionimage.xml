@@ -14,15 +14,15 @@
         <field name="checked_out_time" type="hidden" filter="unset"/>
         <field name="created_by" type="createdby" default="0" label="JGLOBAL_FIELD_CREATED_BY_LABEL"
                description="JGLOBAL_FIELD_CREATED_BY_DESC" hidden="true"
-               hint="COM_JED_GENERAL_FIELD_CREATED_BY_LABEL "/>
+               hint="COM_JED_GENERAL_CREATED_BY_LABEL "/>
         <field name="modified_by" type="modifiedby" default="0" label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
                description="JGLOBAL_FIELD_MODIFIED_BY_DESC" hidden="true"
                hint="COM_JED_GENERAL_FIELD_MODIFIED_BY_LABEL "/>
-        <field name="extension_id" type="foreignkey" label="COM_JED_FORM_LBL_EXTENSIONIMAGE_EXTENSION_ID"
-               description="COM_JED_FORM_DESC_EXTENSIONIMAGE_EXTENSION_ID" default="0" input_type="list"
+        <field name="extension_id" type="foreignkey" label="COM_JED_EXTENSION_ONIMAGE_EXTENSION_ID_LABEL"
+               description="COM_JED_EXTENSIONIMAGE_EXTENSION_ID_DESCR" default="0" input_type="list"
                table="#__jed_extensions" key_field="id" translate="true" value_field="title"/>
-        <field name="filename" type="filemultiple" label="COM_JED_FORM_LBL_EXTENSIONIMAGE_FILENAME"
-               description="COM_JED_FORM_DESC_EXTENSIONIMAGE_FILENAME" hint="COM_JED_FORM_LBL_EXTENSIONIMAGE_FILENAME"/>
+        <field name="filename" type="filemultiple" label="COM_JED_EXTENSIONIMAGE_FILENAME_LABEL"
+               description="COM_JED_EXTENSIONIMAGE_FILENAME_DESCR" hint="COM_JED_EXTENSIONIMAGE_FILENAME_LABEL"/>
         <field name="version_note" type="text" label="JGLOBAL_FIELD_VERSION_NOTE_LABEL"
                description="JGLOBAL_FIELD_VERSION_NOTE_DESC" class="inputbox" size="45" labelclass="control-label"/>
     </fieldset>

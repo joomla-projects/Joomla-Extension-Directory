@@ -143,7 +143,7 @@ class ReviewcommentformController extends FormController
         $app->setUserState('com_jed.edit.reviewcomment.id', null);
 
         // Redirect to the list screen.
-        $this->setMessage(Text::_('COM_JED_ITEM_SAVED_SUCCESSFULLY'));
+        $this->setMessage(Text::_('COM_JED_GENERAL_ITEM_SAVED_SUCCESSFULLY_LABEL'));
         $menu = Factory::getApplication()->getMenu();
         $item = $menu->getActive();
         $url  = (empty($item->link) ? 'index.php?option=com_jed&view=reviewscomments' : $item->link);

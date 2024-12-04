@@ -87,7 +87,7 @@ class VeldeveloperupdatesModel extends ListModel
             }
 
             if (!empty($item->update_data_source)) {
-                $item->update_data_source = Text::_('COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_' . strtoupper($item->update_data_source));
+                $item->update_data_source = Text::_('COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_' . strtoupper($item->update_data_source));
             }
         }
 

@@ -5,9 +5,13 @@
 <instruction>
  <description>Making sure database is clean of temporary table</description>
  <sql>SET FOREIGN_KEY_CHECKS = 0;DROP TABLE IF EXISTS combine_jed_extensions</sql>
- </instruction>
+</instruction>
 <instruction>
- <description>Create combination of UCM and JED_Extensions</description>
+ <description>Clearing Down old Data</description>
+    <sql>TRUNCATE #_jed_developers; TRUNCATE #_jed_extension_images;TRUNCATE #_jed_extension_scores;TRUNCATE #_jed_extensions_files;TRUNCATE #_jed_reviews;</sql>
+</instruction>
+<instruction>
+<description>Create combination of UCM and JED_Extensions</description>
  <sql>CREATE TABLE combine_jed_extensions (
 id	INT	UNSIGNED	NOT	NULL	DEFAULT	'0', 
 core_content_id INT UNSIGNED DEFAULT 0, 
@@ -171,6 +175,10 @@ paid_logo VARCHAR(255) DEFAULT '',
  
 ) ENGINE=INNODB  DEFAULT CHARSET=utf8mb4</sql>
  </instruction>
+    <instruction>
+        <description>If the next query fails when inserting data, Manually run this query to find out which extensions have duplicate entries in the UCM table. Then manually remove them. The duplicates were caused by an issue in JED3 and VEL items. Query to run = SELECT core_content_item_id,COUNT(core_content_item_id) FROM #__ucm_content WHERE core_type_alias = "com_jed.extension" GROUP BY core_content_item_id</description>
+        <sql>select "Hello"</sql>
+    </instruction>
 <instruction>
  <description>Insert Data </description>
  <sql>INSERT INTO combine_jed_extensions ( id,  core_content_id, core_title, core_alias, core_body, core_state, core_created_user_id , core_created_time, core_catid, core_checked_out_time, core_checked_out_user_id, core_modified_user_id,  core_modified_time, homepage_link, download_link, demo_link, support_link, documentation_link, license_link, versions, popular, requires_registration, type, related_free_paid_id, license, jed_note, update_url, update_url_ok, can_update, tags, language_code, video, version, uses_updater, includes, community_choice, score, approved, approved_time, extension_file, download_integration_type, download_integration_url, second_contact_email, currency, price, price_per, price_interval, language_body, backlink, non_gpl_css_js, parent_id, functionality, ease_of_use, support, documentation, value_for_money, num_reviews, jed_checked, extension_ext_libs ) SELECT   e.id, core_content_id, core_title, core_alias, core_body, core_state, core_created_user_id , core_created_time, core_catid, core_checked_out_time, core_checked_out_user_id, core_modified_user_id,   core_modified_time, homepage_link, download_link, demo_link, support_link, documentation_link, license_link, versions, popular, requires_registration, type, related_free_paid_id, license, jed_note, update_url, update_url_ok, can_update, tags, language_code, video, version, uses_updater, includes, community_choice, score, approved, approved_time, extension_file, download_integration_type, download_integration_url, second_contact_email, currency, price, price_per, price_interval, language_body, backlink, non_gpl_css_js, parent_id, functionality, ease_of_use, support, documentation, value_for_money, num_reviews, jed_checked, extension_ext_libs FROM wqyh6_jed_extensions e, wqyh6_ucm_content u WHERE  u.core_content_item_id = e.id AND u.core_type_alias = "com_jed.extension" ORDER BY e.id ASC </sql>

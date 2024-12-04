@@ -62,7 +62,7 @@ class HtmlView extends BaseHtmlView
         $this->state = $this->get('State');
         $canDo       = JedHelper::getActions();
 
-        ToolbarHelper::title(Text::_('COM_JED_TITLE_TICKETINTERNALNOTES'), "generic");
+        ToolbarHelper::title(Text::_('COM_JED_TICKETS_INTERNAL_NOTE_LABELS'), "generic");
 
         $toolbar = Toolbar::getInstance(); //Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar();
 

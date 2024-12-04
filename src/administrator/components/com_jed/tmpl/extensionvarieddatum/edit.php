@@ -33,7 +33,7 @@ HTMLHelper::_('bootstrap.tooltip');
     <div class="row-fluid">
         <div class="span10 form-horizontal">
             <fieldset class="adminform">
-                <legend><?php echo Text::_('COM_JED_FIELDSET_FIELD'); ?></legend>
+                <legend><?php echo Text::_('COM_JED_TAB_FIELD'); ?></legend>
                 <?php echo $this->form->renderField('id'); ?>
                 <?php echo $this->form->renderField('extension_id'); ?>
                 <?php echo $this->form->renderField('supply_option_id'); ?>

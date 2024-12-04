@@ -295,7 +295,7 @@ HTMLHelper::_('bootstrap.tooltip');
                         'title'  => 'My Tickets',
                         'alias'  => 'my-tickets',
                         'path'   => 'jed-homepage/my-tickets',
-                        'link'   => 'index.php?option=com_jed&view=jedtickets',
+                        'link'   => 'index.php?option=com_jed&view=tickets',
                         'params' => '{"menu-anchor_title":"",'
                             . '"menu-anchor_css":"",'
                             . '"menu_image":"",'
@@ -417,7 +417,7 @@ HTMLHelper::_('bootstrap.tooltip');
                 }
             }
 
-            ?>
+?>
 
         </div>
     </div>

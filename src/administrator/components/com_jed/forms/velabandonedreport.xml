@@ -4,68 +4,68 @@
         <field name="id" type="text" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"
                label="JGRID_HEADING_ID"/>
         <field name="reporter_fullname" filter="safehtml" type="text" required="true" message="Invalid Input"
-               label="COM_JED_GENERAL_FIELD_CONTACT_FULLNAME_LABEL"
+               label="COM_JED_GENERAL_CONTACT_FULLNAME_LABEL"
                description=""
         />
         <field name="reporter_email" validate="email" type="email" required="true" message="Invalid email address."
-               label="COM_JED_GENERAL_FIELD_EMAIL_LABEL"
+               label="COM_JED_GENERAL_EMAIL_LABEL"
                description=""
         />
         <field name="reporter_organisation" filter="safehtml" type="text"
-               label="COM_JED_GENERAL_FIELD_REPORTER_ORGANISATION_LABEL"
+               label="COM_JED_GENERAL_REPORTER_ORGANISATION_LABEL"
                description=""
         />
         <field name="extension_name" filter="safehtml" type="text" required="true" message="Invalid Input"
-               label="COM_JED_VEL_GENERAL_FIELD_ITEM_NAME_LABEL"
+               label="COM_JED_VEL_GENERAL_ITEM_NAME_LABEL"
                description=""
         />
         <field name="developer_name" filter="safehtml" type="text"
-               label="COM_JED_VEL_GENERAL_FIELD_DEVELOPER_NAME_LABEL"
+               label="COM_JED_VEL_GENERAL_DEVELOPER_NAME_LABEL"
                description=""
         />
         <field name="extension_version" filter="safehtml" type="text"
-               label="COM_JED_VEL_GENERAL_FIELD_VULNERABLE_ITEM_VERSION_LABEL"
+               label="COM_JED_VEL_GENERAL_VULNERABLE_ITEM_VERSION_LABEL"
                description=""
         />
         <field name="extension_url" validate="url" type="url"
-               label="COM_JED_VEL_ABANDONEDREPORTS_FIELD_EXTENSION_URL_LABEL"
+               label="COM_JED_VEL_ABANDONEDREPORTS_EXTENSION_URL_LABEL"
                description=""
         />
         <field name="abandoned_reason" filter="safehtml" type="textarea"
-               label="COM_JED_VEL_ABANDONEDREPORTS_FIELD_ABANDONED_REASON_LABEL"
+               label="COM_JED_VEL_ABANDONEDREPORTS_ABANDONED_REASON_LABEL"
                description=""
         />
         <field name="consent_to_process" default="0" type="list" required="true"
                message="COM_JED_GENERAL_RESPONSE_PLEASE_SELECT_PROCEED_NO"
-               label="COM_JED_VEL_GENERAL_FIELD_CONSENT_TO_PROCESS_LABEL"
+               label="COM_JED_VEL_GENERAL_CONSENT_TO_PROCESS_LABEL"
                description=""
         >
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
-        <field name="passed_to_vel" default="0" type="list" label="COM_JED_VEL_GENERAL_FIELD_PASSED_TO_VEL_LABEL"
+        <field name="passed_to_vel" default="0" type="list" label="COM_JED_VEL_GENERAL_PASSED_TO_VEL_LABEL"
                description="">
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
-        <field name="vel_item_id" default="0" label="COM_JED_VEL_GENERAL_FIELD_VEL_ITEM_ID_LABEL"
+        <field name="vel_item_id" default="0" label="COM_JED_VEL_GENERAL_VEL_ITEM_ID_LABEL"
                description=""/>
-        <field name="data_source" default="0" type="list" label="COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_LABEL"
+        <field name="data_source" default="0" type="list" label="COM_JED_VEL_GENERAL_DATA_SOURCE_LABEL"
                description="">
-            <option value="0">COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_0</option>
-            <option value="1">COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_1</option>
-            <option value="5">COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_5</option>
-            <option value="7">COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_7</option>
-            <option value="9">COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_9</option>
-            <option value="10">COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_10</option>
-            <option value="11">COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_11</option>
-            <option value="12">COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_12</option>
-            <option value="13">COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_13</option>
-            <option value="14">COM_JED_VEL_GENERAL_FIELD_DATA_SOURCE_OPTION_14</option>
+            <option value="0">COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_0</option>
+            <option value="1">COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_1</option>
+            <option value="5">COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_5</option>
+            <option value="7">COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_7</option>
+            <option value="9">COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_9</option>
+            <option value="10">COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_10</option>
+            <option value="11">COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_11</option>
+            <option value="12">COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_12</option>
+            <option value="13">COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_13</option>
+            <option value="14">COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_14</option>
         </field>
         <field name="date_submitted" default="" class="inputbox" format="%Y-%m-%d" timeformat="12" filter="user_utc"
                translateformat="false" showtime="false" singleheader="false" todaybutton="false" weeknumbers="false"
-               filltable="false" type="hidden" label="COM_JED_GENERAL_FIELD_DATE_SUBMITTED_LABEL"
+               filltable="false" type="hidden" label="COM_JED_GENERAL_DATE_SUBMITTED_LABEL"
                description=""/>
         <field name="user_ip" type="text" label="COM_JED_VEL_GENERAL_FIELD_UPDATE_USER_IP_LABEL"
                description=""
