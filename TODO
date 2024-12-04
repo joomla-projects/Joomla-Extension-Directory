@@ -84,3 +84,90 @@ Sample video content (mixed bag!). We need a helper to convert them to video lin
     {youtube}7gpl3LEJVRY{/youtube}
     https://www.youtube.com/watch?v=_wINKeqXuwI&list=PL3M1w_AGnChPWpp1eTadr4A6uLLNd5hPJ
     https://www.youtube.com/watch?v=hObBFDYiaq0
+=======
+Updated 04-12-24
+Fix drone build
+
+Initial list by nikosdion
+
+Remove duplicate code in the models. I have only touched the ExtensionModel, really.
+
+Router
+    Only very few views are currently routable
+
+All generated links
+    Links to categories (view=extensions) and single extensions (view=extension) MUST have the parent catid for routing to work
+
+Image uploads (logos and regular images)
+    You need to resize them and upload them to the CDN.
+    Ideally put this behind an option so that testing with sample data on a dev site is actually possible
+    Then, the \Jed\Component\Jed\Site\Helper\JedHelper::formatImage method must be updated
+
+Add the following component parameters to config.xml
+    use_cdn 0/1 Use CDN for images?
+    cdn_url URL The base URL of the CDN, e.g. https://extensionscdn.joomla.org
+    You need media management (e.g. uploading to a CDN), as noted above
+
+Extension page
+    The layout is messy an unintuitive; JXT needs to show a lot of TLC on this page — once functional issues are addressed
+    No images, no video is displayed anywhere
+    Links to website, demo, etc: if an item is empty don't render an empty link!
+    No reviews are shown and links to reviews are dummies
+    Report and Share buttons are dummies?
+    "Get extension" is a dummy button?!
+    The heart (favourite) button is a dummy button?!
+    "Other extensions" is dummy data(!!!) — commented out for now
+    "You might also be interested in" is dummy data(!!!) — commented out for now
+
+Varied data should allow for different titles, e.g. Foobar Lite for the free version and Foobar PLus for the paid version
+
+Sample video content (mixed bag!). We need a helper to convert them to video links. They cannot be used in a carousel — unless we remove all old videos and ask developers to provide a URL to an MP4 or WebM file which is impractical.
+    {youtube}Zv1dMynbm2o{/youtube}
+    {youtube}GZs1q5TYM-g{/youtube}
+    https://www.youtube.com/watch?v=MMD9LksoXmg
+    {youtube}AsIqvWObfLc{/youtube}
+    https://www.youtube.com/embed/PDrsU0u2l6A
+    https://www.akeeba.com/videos/1212-akeeba-backup/1615-abtc01-installation-first-backup.html
+    {vimeo}51714844{/vimeo}
+    {youtube}w-Ra88GJ7bs{/youtube}
+    {youtube}odIoUyv-ncE{/youtube}
+    https://www.youtube.com/watch?v=mVgcMiBDnGM
+    {youtube}djVjU47fmjc{/youtube}
+    {youtube}ZvHinHEO_6A{/youtube}
+    https://www.youtube.com/embed/kuZtyHG0OGQ?VQ=HD720
+    {youtube}YrBIK23eiUg{/youtube}
+    http://www.joomlarulez.com/images/stories/video/01QO7fTM-1753142.mp4
+    {youtube}77zqqY-KL3U{/youtube}
+    {vimeo}30132555{/vimeo}
+    {youtube}58QMSW5bbCs{/youtube}
+    {youtube}Bfi7_Tb72X4{/youtube}
+    {youtube}J8UWw5wnCtU{/youtube}
+    {youtube}bdqWhYgJC9o{/youtube}
+    {youtube}zv27p11NRUU{/youtube}
+    {youtube}U25zbfwFDE8{/youtube}
+    {youtube}mOdl9xbQAEw{/youtube}
+    youtube.com/watch?v=P6qFVbklzGw
+    https://www.youtube.com/watch?v=FQpH5FxPlew
+    {youtube}wsThLArwO-U{/youtube}
+    https://www.youtube.com/watch?v=UFRrG7N8DHQ
+    {youtube}Ef3vzioNWEE{/youtube}
+    {youtube}hJMlbJA_VwM{/youtube}
+    https://www.youtube.com/watch?v=qa2mr8JAktQ&t=1s
+    https://www.youtube.com/watch?v=ykHkxV3zBps
+    https://vimeo.com/64957551
+    https://www.youtube.com/watch?v=qJ9ciSHK_Jw
+    https://www.youtube.com/watch?v=AyQ8lkmR4Sk
+    {youtube}Wk5M-xOj9eI{/youtube}
+    {youtube}JCnN4ghTLPA{/youtube}
+    {youtube}ET7ky_lryFw{/youtube}
+    {youtube}mgz2qRu1ABU{/youtube}
+    https://vimeo.com/138867865
+    {youtube}K0Vf14kMeZU{/youtube}
+    {youtube}8QK4RnUfQeQ{/youtube}
+    https://www.youtube.com/watch?feature=player_embedded&v=uE0FvJL4un8
+    {youtube}GEHkdCQr1BA{/youtube}
+    {youtube}ERq2eYj26rc{/youtube}
+    https://www.youtube.com/channel/UCXISDdtJ70gx-PtdQgmEPlg
+    {youtube}7gpl3LEJVRY{/youtube}
+    https://www.youtube.com/watch?v=_wINKeqXuwI&list=PL3M1w_AGnChPWpp1eTadr4A6uLLNd5hPJ
+    https://www.youtube.com/watch?v=hObBFDYiaq0

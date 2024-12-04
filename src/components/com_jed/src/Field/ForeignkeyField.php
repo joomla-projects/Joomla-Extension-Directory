@@ -230,7 +230,7 @@ class ForeignKeyField extends ListField
             $db->setQuery($this->processQuery());
             $results = $db->loadObjectList();
         } catch (ExecutionFailureException $e) {
-            Factory::getApplication()->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED').' '.$e->getMessage(), 'error');
+            Factory::getApplication()->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED') . ' ' . $e->getMessage(), 'error');
         }
 
         // Add header.
@@ -238,7 +238,7 @@ class ForeignKeyField extends ListField
             $options[] = (object) ["value" => '', "text" => Text::_($this->header)];
         }
 
-        if(!empty($this->option_value_field) || !empty($this->option_key_field)) {
+        if (!empty($this->option_value_field) || !empty($this->option_key_field)) {
             $options[] = (object) ["value" => $this->option_key_field, "text" => Text::_($this->option_value_field)];
         }
 

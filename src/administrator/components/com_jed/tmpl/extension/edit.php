@@ -69,20 +69,20 @@ Factory::getDocument()
         <?php
         echo HTMLHelper::_('uitab.startTabSet', 'extensionTab', ['active' => 'general', 'recall' => true, 'breakpoint' => 768]);
 
-foreach ($this->form->getFieldsets() as $fieldset) :
-    echo HTMLHelper::_('uitab.addTab', 'extensionTab', $fieldset->name, Text::_($fieldset->label));
-    ?>
+        foreach ($this->form->getFieldsets() as $fieldset) :
+            echo HTMLHelper::_('uitab.addTab', 'extensionTab', $fieldset->name, Text::_($fieldset->label));
+            ?>
                 <div class="row">
                     <div class="col-12 col-lg-6">
                         <?php  echo $this->form->renderFieldset($fieldset->name); ?>
                     </div>
                 </div>
             <?php
-        echo HTMLHelper::_('uitab.endTab'); ?>
+                echo HTMLHelper::_('uitab.endTab'); ?>
         <?php endforeach; ?>
 <?php
 foreach ($this->extension->varied as $st) {
-    echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'varied-'.$st->supply_option_id, Text::_($st->supply_option_type));
+    echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'varied-' . $st->supply_option_id, Text::_($st->supply_option_type));
     $varied_form                          = $this->extension->varied_form;
     $varied_form->bind($st);
     $fieldsets                            = [];
@@ -115,31 +115,31 @@ echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'viewextensionreviews', T
 
             <div class="container">
                 <div class="row">
-				    <?php
+                    <?php
 
                     echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_help_reviews_group', $slidesOptions);
 
-$slideid = 0;
-foreach ($this->extension->reviews as $rtype) {
-    foreach($rtype as $review) {
-        $review = (object)$review;
-        if ($review->published === 1) {
-            $ico = '<span class="fas fa-bolt"></span>';
-        } else {
-            $ico = '';
-        }
-        echo HTMLHelper::_(
-            'bootstrap.addSlide',
-            'extension_'.$type.'_reviews_group',
-            $type.' '.$review->id . ' - ' . $review->title . '&nbsp;' .
-            JedHelper::prettyDate($review->created_on) . '&nbsp;',
-            'extension_'.$type.'_reviews_group' . '_slide' . ($slideid++)
-        );
-        $review_model = new ReviewModel();
-        $linked_form = $review_model->getForm($review, false, 'review');
-        $linked_form->bind($review);
-        ?>
-	                        <div class="col-md-4 ticket-header">
+                    $slideid = 0;
+                    foreach ($this->extension->reviews as $rtype) {
+                        foreach ($rtype as $review) {
+                            $review = (object)$review;
+                            if ($review->published === 1) {
+                                $ico = '<span class="fas fa-bolt"></span>';
+                            } else {
+                                $ico = '';
+                            }
+                            echo HTMLHelper::_(
+                                'bootstrap.addSlide',
+                                'extension_' . $type . '_reviews_group',
+                                $type . ' ' . $review->id . ' - ' . $review->title . '&nbsp;' .
+                                JedHelper::prettyDate($review->created_on) . '&nbsp;',
+                                'extension_' . $type . '_reviews_group' . '_slide' . ($slideid++)
+                            );
+                            $review_model = new ReviewModel();
+                            $linked_form = $review_model->getForm($review, false, 'review');
+                            $linked_form->bind($review);
+                            ?>
+                            <div class="col-md-4 ticket-header">
         <h1>Status - <?php echo $linked_form->renderField('published', null, null, $headerlabeloptions); ?>
                     &nbsp;&nbsp;<button id="btn_save_published" type="button" class="">
                         <span class="icon-save"></span>
@@ -170,20 +170,20 @@ foreach ($this->extension->reviews as $rtype) {
                 <P>&nbsp;</P>
                 <div class="row ticket-header-row">
                     <div class="col-md-6   ticket-header">
-			            <?php echo $linked_form->renderField('title', null, null); ?>
+                            <?php echo $linked_form->renderField('title', null, null); ?>
                     </div>
                     <div class="col-md-6   ticket-header">
 
-			            <?php echo $linked_form->renderField('alias', null, null); ?>
+                            <?php echo $linked_form->renderField('alias', null, null); ?>
                     </div>
 
                 </div>
                 <div class="row ticket-header-row">
                     <div class="col-md-12   ticket-header">
-			            <?php echo $linked_form->renderField('body', null, null); ?>
+                            <?php echo $linked_form->renderField('body', null, null); ?>
                     </div>
                     <div class="col-md-12   ticket-header">
-			            <?php echo $linked_form->renderField('used_for', null, null); ?>
+                            <?php echo $linked_form->renderField('used_for', null, null); ?>
                     </div>
                 </div>
                 <div class="row ticket-header-row">
@@ -191,7 +191,7 @@ foreach ($this->extension->reviews as $rtype) {
                         <h1><?php echo Text::_('COM_JED_REVIEWS_FUNCTIONALITY_LABEL') . ' - ' . $review->functionality; ?></h1>
                     </div>
                     <div class="col-md-10   ticket-header">
-			            <?php echo $linked_form->renderField('functionality_comment', null, null, $headerlabeloptions); ?>
+                            <?php echo $linked_form->renderField('functionality_comment', null, null, $headerlabeloptions); ?>
                     </div>
                 </div>
                 <div class="row ticket-header-row">
@@ -199,7 +199,7 @@ foreach ($this->extension->reviews as $rtype) {
                         <h1><?php echo Text::_('COM_JED_REVIEWS_EASE_OF_USE_LABEL') . ' - ' . $review->ease_of_use; ?></h1>
                     </div>
                     <div class="col-md-10   ticket-header">
-			            <?php echo $linked_form->renderField('ease_of_use_comment', null, null, $headerlabeloptions); ?>
+                            <?php echo $linked_form->renderField('ease_of_use_comment', null, null, $headerlabeloptions); ?>
                     </div>
                 </div>
                 <div class="row ticket-header-row">
@@ -207,7 +207,7 @@ foreach ($this->extension->reviews as $rtype) {
                         <h1><?php echo Text::_('COM_JED_GENERAL_SUPPORT_LABEL') . ' - ' . $review->support; ?></h1>
                     </div>
                     <div class="col-md-10   ticket-header">
-			            <?php echo $linked_form->renderField('support_comment', null, null, $headerlabeloptions); ?>
+                            <?php echo $linked_form->renderField('support_comment', null, null, $headerlabeloptions); ?>
                     </div>
                 </div>
                 <div class="row ticket-header-row">
@@ -215,7 +215,7 @@ foreach ($this->extension->reviews as $rtype) {
                         <h1><?php echo Text::_('COM_JED_EXTENSION_DOCUMENTATION_LABEL') . ' - ' . $review->documentation; ?></h1>
                     </div>
                     <div class="col-md-10   ticket-header">
-			            <?php echo $linked_form->renderField('documentation_comment', null, null, $headerlabeloptions); ?>
+                            <?php echo $linked_form->renderField('documentation_comment', null, null, $headerlabeloptions); ?>
                     </div>
                 </div>
                 <div class="row ticket-header-row">
@@ -223,7 +223,7 @@ foreach ($this->extension->reviews as $rtype) {
                         <h1><?php echo Text::_('COM_JED_REVIEWS_VALUE_FOR_MONEY_LABEL') . ' - ' . $review->value_for_money; ?></h1>
                     </div>
                     <div class="col-md-10   ticket-header">
-			            <?php echo $linked_form->renderField('value_for_money_comment', null, null, $headerlabeloptions); ?>
+                            <?php echo $linked_form->renderField('value_for_money_comment', null, null, $headerlabeloptions); ?>
                     </div>
                 </div>
                 <div class="row ticket-header-row">
@@ -235,25 +235,19 @@ foreach ($this->extension->reviews as $rtype) {
                             - <?php echo $review->ip_address; ?></h1>
                     </div>
                 </div>
-<?php
-                echo HTMLHelper::_('bootstrap.endSlide');
-    }
+                            <?php
+                            echo HTMLHelper::_('bootstrap.endSlide');
+                        }
+                    }
+                    echo HTMLHelper::_('bootstrap.endAccordion');
 
-
-
-
-
-
-}
-echo HTMLHelper::_('bootstrap.endAccordion');
-
-?>
+                    ?>
 
 
                 </div>
 
 
-	    <?php
+        <?php
         echo HTMLHelper::_('uitab.endTab');
 /*for ($this->item->varied)
             echo HTMLHelper::_('uitab.endTab');

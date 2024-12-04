@@ -34,7 +34,7 @@ $wa->useScript('keepalive')
     ->useScript('com_jed.extensionTestUpload')
     ->useStyle('com_jed.submitextension')
     ->useScript('com_jed.extensionform')
-	->useScript('com_jed.form_validate');
+    ->useScript('com_jed.form_validate');
 
 
 // Load admin language file
@@ -116,40 +116,34 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
 </style>
 <div class="extension-edit front-end-edit">
 
-	<?php
+    <?php
 
     if (!$isLoggedIn) {
         try {
             $app = Factory::getApplication();
-	        $app->enqueueMessage(Text::_('COM_JED_EXTENSION_NO_ACCESS_LABEL'), 'success');
-	        $app->redirect($redirectURL);
+            $app->enqueueMessage(Text::_('COM_JED_EXTENSION_NO_ACCESS_LABEL'), 'success');
+            $app->redirect($redirectURL);
         } catch (Exception $e) {
             echo $e->getMessage();
         }
-
-
     } else {
-
-
-
         ?>
 
-	<?php
+        <?php
         if (!$canEdit) : ?>
         <h3>
-			<?php
+            <?php
                 throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403); ?>
         </h3>
-	<?php
+            <?php
         else : ?>
-
 <h3 id="extensiontitle"></h3>
         <form id="form-extension"
               action="<?php
                   echo Route::_('index.php?option=com_jed&task=extensionform.save'); ?>"
               method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
 
-			<?php
+            <?php
                 $fieldsets['overview']['title']       = Text::_('COM_JED_EXTENSION_ADD_EXTENSION_LABEL');
             $fieldsets['overview']['description'] = Text::_('COM_JED_EXTENSION_ADD_EXTENSION_LABEL_DESCR') . '</br>' . '</br>';
             $fieldsets['overview']['fields']      = [['title','alias'],'version',['primary_category_id', 'tags']];
@@ -173,7 +167,7 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
 
                 $fieldsets['extensionfile']['supply_type'] = $st->supply_type;
                 $fieldsets['extensionfile']['title']       = '';
-                $fieldsets['extensionfile']['description'] = Text::_('COM_JED_EXTENSION_EXTENSIONFILE_LABEL').'<br/>'.Text::_('COM_JED_EXTENSION_EXTENSIONFILE_EXTRA');
+                $fieldsets['extensionfile']['description'] = Text::_('COM_JED_EXTENSION_EXTENSIONFILE_LABEL') . '<br/>' . Text::_('COM_JED_EXTENSION_EXTENSIONFILE_EXTRA');
                 $fieldsets['extensionfile']['fields']      = ['file'];
                 $fieldsets['extensionfile']['hidden']      = [];
                 $fieldsets['links']['supply_type'] = $st->supply_type;
@@ -215,22 +209,22 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
             <div class="control-group">
                 <div class="controls">
 
-					<?php
+                    <?php
                     if ($this->canSave) : ?>
                         <button type="submit" class="validate btn btn-primary">
                             <span class="fas fa-check" aria-hidden="true"></span>
-							<?php
+                            <?php
                             echo Text::_('JSUBMIT'); ?>
                         </button>
-					<?php
+                        <?php
                     endif; ?>
                     <a class="btn btn-danger"
                        href="<?php
-                       echo Route::_('index.php?option=com_jed&task=extensionform.cancel'); ?>"
+                        echo Route::_('index.php?option=com_jed&task=extensionform.cancel'); ?>"
                        title="<?php
-                       echo Text::_('JCANCEL'); ?>">
+                        echo Text::_('JCANCEL'); ?>">
                         <span class="fas fa-times" aria-hidden="true"></span>
-						<?php
+                        <?php
                         echo Text::_('JCANCEL'); ?>
                     </a>
                 </div>
@@ -239,10 +233,10 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
             <input type="hidden" name="option" value="com_jed"/>
             <input type="hidden" name="task"
                    value="extensionform.save"/>
-			<?php
+            <?php
             echo HTMLHelper::_('form.token'); ?>
         </form>
-	<?php
-    endif;
+            <?php
+        endif;
     }?>
 </div>

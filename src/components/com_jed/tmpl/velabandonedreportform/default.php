@@ -64,54 +64,54 @@ if (!$isLoggedIn) {
                 <?php
 
                 $fieldsets['overview']['title']       = Text::_('COM_JED_VEL_ABANDONEDREPORTS_OVERVIEW_TITLE');
-            $fieldsets['overview']['description']     = Text::_('COM_JED_VEL_ABANDONEDREPORTS_OVERVIEW_DESCRIPTION');
-            $fieldsets['overview']['fields']          = [];
+                $fieldsets['overview']['description']     = Text::_('COM_JED_VEL_ABANDONEDREPORTS_OVERVIEW_DESCRIPTION');
+                $fieldsets['overview']['fields']          = [];
 
 
-            $fieldsets['aboutyou']['title']       = Text::_('COM_JED_VEL_GENERAL_ABOUT_YOU_LABEL');
-            $fieldsets['aboutyou']['description'] = "";
-            $fieldsets['aboutyou']['fields']      = [
-            'reporter_fullname',
-            'reporter_email',
-            'reporter_organisation'];
+                $fieldsets['aboutyou']['title']       = Text::_('COM_JED_VEL_GENERAL_ABOUT_YOU_LABEL');
+                $fieldsets['aboutyou']['description'] = "";
+                $fieldsets['aboutyou']['fields']      = [
+                'reporter_fullname',
+                'reporter_email',
+                'reporter_organisation'];
 
-            $fieldsets['extensiondetails']['title']       = Text::_('COM_JED_VEL_ABANDONEDREPORTS_EXTENSION_TITLE');
-            $fieldsets['extensiondetails']['description'] = "";
-            $fieldsets['extensiondetails']['fields']      = [
-            'extension_name',
-            'developer_name',
-            'extension_version',
-            'extension_url',
-            'abandoned_reason',
-            'consent_to_process'];
-            $fscount                                      = 0;
+                $fieldsets['extensiondetails']['title']       = Text::_('COM_JED_VEL_ABANDONEDREPORTS_EXTENSION_TITLE');
+                $fieldsets['extensiondetails']['description'] = "";
+                $fieldsets['extensiondetails']['fields']      = [
+                'extension_name',
+                'developer_name',
+                'extension_version',
+                'extension_url',
+                'abandoned_reason',
+                'consent_to_process'];
+                $fscount                                      = 0;
 
 
-            foreach ($fieldsets as $fs) {
-                $fscount = $fscount + 1;
-                if ($fs['title'] <> '') {
-                    if ($fscount > 1) {
-                        echo '</fieldset>';
+                foreach ($fieldsets as $fs) {
+                    $fscount = $fscount + 1;
+                    if ($fs['title'] <> '') {
+                        if ($fscount > 1) {
+                            echo '</fieldset>';
+                        }
+
+                        echo '<fieldset class="velabandonwareform"><legend>' . $fs['title'] . '</legend>';
                     }
-
-                    echo '<fieldset class="velabandonwareform"><legend>' . $fs['title'] . '</legend>';
-                }
-                if ($fs['description'] <> '') {
-                    echo $fs['description'];
-                }
-                $fields       = $fs['fields'];
-                $hiddenFields = ['user_ip'];
-                foreach ($fields as $field) {
-                    if (in_array($field, $hiddenFields)) {
-                        $this->form->setFieldAttribute($field, 'type', 'hidden');
+                    if ($fs['description'] <> '') {
+                        echo $fs['description'];
                     }
+                    $fields       = $fs['fields'];
+                    $hiddenFields = ['user_ip'];
+                    foreach ($fields as $field) {
+                        if (in_array($field, $hiddenFields)) {
+                            $this->form->setFieldAttribute($field, 'type', 'hidden');
+                        }
 
-                    echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+                        echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+                    }
                 }
-            }
 
 
-            ?>
+                ?>
 
                 <div class="control-group">
                     <div class="controls">

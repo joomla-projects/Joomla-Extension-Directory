@@ -40,6 +40,7 @@ use stdClass;
 class ExtensionformModel extends FormModel
 {
     use ExtensionUtilities;
+
     /**
      * The item object
      *
@@ -513,19 +514,18 @@ class ExtensionformModel extends FormModel
             if (is_null($this->item->primary_category_id)) {
                 $this->item->category_hierarchy = "";
             } else {
-                //	$this->item->category_hierarchy = ExtensionUtilities::getCategoryHierarchy($this->item->primary_category_id);
+                //  $this->item->category_hierarchy = ExtensionUtilities::getCategoryHierarchy($this->item->primary_category_id);
             }
 
             /* Load Varied Data */
 
             //$s = $item->getTableProperties();
 
-            //	$this->item->varied_data = $this->getVariedData($this->item->id, $supply_option_type);
+            //  $this->item->varied_data = $this->getVariedData($this->item->id, $supply_option_type);
             $supply_types = $this->getSupplyTypes();
             $vi           = new ExtensionvarieddatumModel();
 
-            foreach($supply_types as $st) {
-
+            foreach ($supply_types as $st) {
                 $keys['extension_id']     = $this->item->id;
                 $keys['supply_option_id'] = $st->supply_id;
                 $vi                       = new ExtensionvarieddatumModel();
@@ -533,7 +533,7 @@ class ExtensionformModel extends FormModel
                 //echo "<pre>";print_r($vitem);echo "</pre>";exit();
                 //if($st->supply_type==='Free') {
 
-                //	$vitem->is_default_data=1;
+                //  $vitem->is_default_data=1;
                 //}
                 $this->item->varied[$st->supply_id] = $vitem;
             }

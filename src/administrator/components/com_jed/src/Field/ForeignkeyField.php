@@ -59,7 +59,7 @@ class ForeignKeyField extends ListField
      */
     protected bool $translate;
 
-    //	protected bool $header;
+    //  protected bool $header;
 
     private $input_type;
 

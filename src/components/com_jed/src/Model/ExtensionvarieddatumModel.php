@@ -143,8 +143,7 @@ class ExtensionvarieddatumModel extends FormModel
             if ($table !== false && $table->load($pk) && !empty($table->id)) {
                 $user = Factory::getApplication()->getIdentity();
                 $pk   = $table->id;
-                if(empty($pk) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getUser()->id) {
-
+                if (empty($pk) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getUser()->id) {
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 
                     if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
@@ -169,7 +168,6 @@ class ExtensionvarieddatumModel extends FormModel
                     if (isset($this->item->catid) && is_object($this->item->catid)) {
                         $this->item->catid = ArrayHelper::fromObject($this->item->catid);
                     }
-
                 } else {
                     throw new \Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
                 }
@@ -177,7 +175,6 @@ class ExtensionvarieddatumModel extends FormModel
         }
 
         return $this->item;
-
     }
 
     /**

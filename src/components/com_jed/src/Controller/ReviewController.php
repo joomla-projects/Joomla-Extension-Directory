@@ -156,6 +156,4 @@ class ReviewController extends BaseController
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
     }
-
-
 }

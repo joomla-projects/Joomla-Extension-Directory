@@ -57,7 +57,7 @@ HTMLHelper::_('bootstrap.tooltip');
                                         <span class="badge rounded-pill float-end badge-info-cat">  <?php echo $sc->numitems; ?></span>
                                     </li>
                                 <?php }
-                                } ?>
+                            } ?>
                         </ul>
                     </div>
                 </div>

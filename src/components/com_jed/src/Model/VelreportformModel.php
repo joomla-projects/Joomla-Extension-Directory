@@ -262,8 +262,6 @@ class VelreportformModel extends FormModel
         }
 
         if ($data) {
-
-
             return (array)$data;
         }
 

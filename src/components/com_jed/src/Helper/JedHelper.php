@@ -740,13 +740,13 @@ class JedHelper
                 if ($fscount > 1) {
                     echo '</fieldset>';
                 }
-                if(key_exists('supply_type', $fs)) {
-                    $st = '_'.$fs['supply_type'];
+                if (key_exists('supply_type', $fs)) {
+                    $st = '_' . $fs['supply_type'];
                 } else {
                     $st = '';
                 };
 
-                echo '<fieldset class="extensionform'.$st.'"><legend>' . $fs['title'] . '</legend>';
+                echo '<fieldset class="extensionform' . $st . '"><legend>' . $fs['title'] . '</legend>';
             }
             if ($fs['description'] <> '') {
                 echo $fs['description'];

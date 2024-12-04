@@ -69,11 +69,11 @@ class HtmlView extends BaseHtmlView
 
 
         //echo "<pre>";print_r($this->item);echo "</pre>";exit();
-        foreach($this->supply_types as $st) {
+        foreach ($this->supply_types as $st) {
             $this->supply_forms[$st->supply_id] = $extensionvarieddatum->getForm(
                 $this->item->varied[$st->supply_id],
                 false,
-                'jf_varieddata_form_'.$st->supply_id
+                'jf_varieddata_form_' . $st->supply_id
             );
             $this->supply_forms[$st->supply_id]->bind($this->item->varied[$st->supply_id]);
         }
