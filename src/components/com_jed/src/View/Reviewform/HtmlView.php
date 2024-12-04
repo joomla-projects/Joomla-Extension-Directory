@@ -61,7 +61,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    
+
     protected bool $canSave;
 
     protected mixed $extension_details;

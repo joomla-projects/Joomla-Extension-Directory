@@ -33,7 +33,7 @@ class HtmlView extends BaseHtmlView
 
     protected mixed $form;
 
-    
+
     /**
      * Display the view
      *

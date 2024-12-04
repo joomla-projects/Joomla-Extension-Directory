@@ -34,7 +34,7 @@ class HtmlView extends BaseHtmlView
 
     protected Registry $state;
 
-    
+
     /**
      * Prepares the document
      *

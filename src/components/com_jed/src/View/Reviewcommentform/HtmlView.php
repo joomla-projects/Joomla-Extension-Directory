@@ -34,7 +34,7 @@ class HtmlView extends BaseHtmlView
 
     protected mixed $form;
 
-    
+
     protected bool $canSave;
 
     /**

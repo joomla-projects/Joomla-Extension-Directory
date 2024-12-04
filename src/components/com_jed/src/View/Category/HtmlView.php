@@ -26,7 +26,6 @@ use Joomla\CMS\Language\Text;
  */
 class HtmlView extends CategoryView
 {
-    
     /**
      * Display the view
      *

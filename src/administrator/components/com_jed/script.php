@@ -14,6 +14,7 @@
 use Joomla\CMS\Installer\InstallerAdapter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
+
 // TODO: Add TAG installation for Extension Tag field
 /**
  * Script file of JED Component

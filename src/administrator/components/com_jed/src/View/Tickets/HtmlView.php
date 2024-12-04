@@ -139,7 +139,7 @@ class HtmlView extends BaseHtmlView
     {
         $this->state = $this->get('State');
         $this->items = $this->get('Items');
-         //  echo "<pre>".var_dump($this->items)."</pre>";exit;
+        //  echo "<pre>".var_dump($this->items)."</pre>";exit;
         $this->pagination    = $this->get('Pagination');
         $this->filterForm    = $this->get('FilterForm');
         $this->activeFilters = $this->get('ActiveFilters');
