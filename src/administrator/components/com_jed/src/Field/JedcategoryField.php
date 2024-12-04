@@ -77,7 +77,6 @@ class JedCategoryField extends ListField
             $opt       = HTMLHelper::_('select.option', $row->value, $row->text, 'value', 'text');
             $opt->attr = ' data-level="' . $row->level . '"';
             $opts[]    = $opt;
-
         }
 
 
@@ -163,6 +162,4 @@ class JedCategoryField extends ListField
 
         return $this->cats;
     }
-
-
 }

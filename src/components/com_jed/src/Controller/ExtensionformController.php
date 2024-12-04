@@ -81,7 +81,7 @@ class ExtensionformController extends FormController
         $this->checkToken();
         $isLoggedIn         = JedHelper::IsLoggedIn();
 
-        if($isLoggedIn) {
+        if ($isLoggedIn) {
             // Initialise variables.
             $app   = Factory::getApplication();
             $model = $this->getModel('Extensionform', 'Site');
@@ -93,7 +93,7 @@ class ExtensionformController extends FormController
             //Translate/Fill out default values
             $data['joomla_versions'] = json_encode($data['joomla_versions']);
             $data['includes']        = json_encode($data['includes']);
-            if($data['download_integration_type'] == 2) {
+            if ($data['download_integration_type'] == 2) {
                 $data['requires_registration'] = 1;
             } else {
                 $data['requires_registration'] = 0;
@@ -118,8 +118,6 @@ class ExtensionformController extends FormController
             if (!$form) {
                 throw new Exception($model->getError(), 500);
             }
-
-
         } else {
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
         }

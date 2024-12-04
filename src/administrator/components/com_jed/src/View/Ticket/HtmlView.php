@@ -262,7 +262,6 @@ class HtmlView extends BaseHtmlView
 
             $this->linked_extension_varieddata_form->bind($this->linked_extension_varieddata);
             $this->linked_extension_data->varied_form = $this->linked_extension_varieddata_form;
-
         }
         if ($this->linked_item_type === 4) { // VEL Report
             $this->linked_item_Model = new VelreportModel();

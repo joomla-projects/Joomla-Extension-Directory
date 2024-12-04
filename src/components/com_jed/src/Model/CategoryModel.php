@@ -379,7 +379,6 @@ class CategoryModel extends ListModel
             if (!empty($item->logo)) {
                 //$item->logo = JedHelper::formatImage($item->logo, ImageSize::SMALL);
                 $item->logo = 'https://extensions.joomla.org/cache/fab_image/' . str_replace('.png', '', $item->logo) . '_resizeDown400px175px16.png';
-
             }
 
             $item->scores            = $this->getScores($item->id);

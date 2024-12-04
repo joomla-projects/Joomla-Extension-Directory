@@ -152,8 +152,8 @@ if (!$isLoggedIn) {
 
                             <?php
                             $date = $item->date_submitted;
-                    echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC6')) : '-';
-                    ?>                </td>
+                            echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC6')) : '-';
+                            ?>                </td>
 
 
                         <?php if ($canEdit || $canDelete) : ?>

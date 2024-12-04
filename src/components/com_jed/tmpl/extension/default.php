@@ -47,15 +47,15 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
         <header class="row gap-2">
             <div class="col d-flex flex-column gap-2 mb-3">
                 <h2 class="fs-1 m-0 d-flex flex-row gap-2 align-items-center">
-					<?php
+                    <?php
                     echo $this->escape($this->item->title) ?>
                 </h2>
                 <div class="d-flex flex-row gap-3">
                     <div class="jed-extension-header__developer">By <a
                                 href="#"><?php
-                            echo $this->item->created_by_name ?></a></div>
+                                echo $this->item->created_by_name ?></a></div>
                     <div class="stars-wrapper">
-						<?php
+                        <?php
                         echo $this->item->score_string ?>
                         <span class="text-muted">
                     <?php
@@ -63,29 +63,29 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
                 </span>
                     </div>
                 </div>
-				<?php
+                <?php
                 echo $this->item->category_hierarchy ?>
             </div>
             <div class="col text-end">
-				<?php
+                <?php
                 $canCheckin = Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jed.' . $this->item->id); ?>
-				<?php
+                <?php
                 if ($canEdit) : ?>
                     <a class="btn btn-sm btn-outline-primary" role="button"
                        href="<?php
-                       echo Route::_('index.php?option=com_jed&task=extension.edit&id=' . $this->item->id) ?>">
+                        echo Route::_('index.php?option=com_jed&task=extension.edit&id=' . $this->item->id) ?>">
                         <span class="icon-pencil" aria-hidden="true"></span>
-						<?php
+                        <?php
                         echo Text::_("JACTION_EDIT") ?>
                     </a>
-				<?php
+                    <?php
                 endif; ?>
-				<?php
+                <?php
                 if (false) : // TODO Only show to the developer?
                     //
                     ?>
                     <a class="btn btn-sm btn-outline-warning" role="button" href="#">                        <span class="fa fa-life-ring" aria-hidden="true"></span>                        Support                    </a>
-				<?php
+                    <?php
                 endif ?>
             </div>
         </header>
@@ -97,7 +97,7 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
 
         <div class="row gap-2">
             <div class="col-8 ">
-				<?php
+                <?php
                 echo $this->item->intro_text ?>
             </div>
             <div class="col">
@@ -110,14 +110,14 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
                     <div class="row">
                         <dt class="col">Last updated</dt>
                         <dd class="col">
-							<?php
+                            <?php
                             echo HTMLHelper::_('date', $this->item->modified_on, 'M j Y') ?>
                         </dd>
                     </div>
                     <div class="row">
                         <dt class="col">Date added</dt>
                         <dd class="col">
-							<?php
+                            <?php
                             echo HTMLHelper::_('date', $this->item->created_on, 'M j Y') ?>
                         </dd>
                     </div>
@@ -145,40 +145,40 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
             </div>
         </div>
 
-		<?php
+        <?php
         echo HTMLHelper::_('uitab.startTabSet', 'supply_option_tabs') ?>
-	    <?php
+        <?php
         $varieddata = $this->item->varied_data;
-$tabid      = 0;
-foreach ($varieddata as $vr) {
-    //  echo "<pre>";print_r($vr);echo "</pre>";
-    echo HTMLHelper::_('uitab.addTab', 'supply_option_tabs', 'supply_tab_' . $vr->supply_type, $vr->supply_type);
-    $subItemId  = md5(serialize($vr));
-    ?>
+        $tabid      = 0;
+        foreach ($varieddata as $vr) {
+            //  echo "<pre>";print_r($vr);echo "</pre>";
+            echo HTMLHelper::_('uitab.addTab', 'supply_option_tabs', 'supply_tab_' . $vr->supply_type, $vr->supply_type);
+            $subItemId  = md5(serialize($vr));
+            ?>
         <div class="jed-wrapper jed-extension margin-bottom">
             <div class="jed-extension__image">
-			    <?php if ($vr->logo) : ?>
+                <?php if ($vr->logo) : ?>
                     <img src=" <?php echo $this->item->logo ?>" alt=" <?php echo $this->escape($this->item->title) ?>"
                          class="rounded img-fluid mx-auto d-block" style="max-height: 525px">
-			    <?php endif; ?>
+                <?php endif; ?>
             </div>
             <div class="jed-grid jed-grid--2-1 margin-bottom">
                 <div class="jed-grid__item">
                     <div class="jed-subitem-intro mb-2">
-					     <?php echo $vr->intro_text ?>
-					    <?php if (!empty(trim(strip_tags($vr->description)))) : ?>
-						    <?php HTMLHelper::_('bootstrap.collapse') ?>
+                         <?php echo $vr->intro_text ?>
+                        <?php if (!empty(trim(strip_tags($vr->description)))) : ?>
+                            <?php HTMLHelper::_('bootstrap.collapse') ?>
                             <button type="button" class="btn btn-sm btn-outline-secondary my-2"
                                     data-bs-toggle="collapse" href="#description- <?php echo $subItemId ?>"
                                     aria-expanded="false" aria-controls="description- <?php echo $subItemId ?>"
                             >
                                 Show/hide
                             </button>
-					    <?php endif ?>
+                        <?php endif ?>
                     </div>
 
                     <div class="jed-subitem-description mb-2 collapse" id="description- <?php echo $subItemId ?>">
-					     <?php echo $vr->description ?>
+                         <?php echo $vr->description ?>
                     </div>
 
                     <p class="button-group">
@@ -215,9 +215,9 @@ foreach ($varieddata as $vr) {
 
             </div>
         </div>
-		<?php /*
-        echo HTMLHelper::_('uitab.addTab', 'supply_option_tabs', 'supply_tab_' . $this->item->supply_type, $this->item->supply_type); ?>
-        <div class="jed-wrapper jed-extension margin-bottom">
+            <?php /*
+                echo HTMLHelper::_('uitab.addTab', 'supply_option_tabs', 'supply_tab_' . $this->item->supply_type, $this->item->supply_type); ?>
+                <div class="jed-wrapper jed-extension margin-bottom">
             <div class="jed-extension__image">
                 <?php
                 if ($this->item->logo) : ?>
@@ -290,10 +290,10 @@ foreach ($varieddata as $vr) {
                 </div>
 
             </div>
-        </div>
-        <?php */
-    echo HTMLHelper::_('uitab.endTab');
-}?>
+                </div>
+                <?php */
+            echo HTMLHelper::_('uitab.endTab');
+        }?>
     </article>
 </div>
 
@@ -308,23 +308,23 @@ if ($canEdit && $this->item->checked_out == 0) : ?>
     <a class="btn btn-outline-primary" href="<?php
     echo Route::_('index.php?option=com_jed&task=extension.edit&id=' . $this->item->id) ?>"><?php
 echo Text::_("JACTION_EDIT") ?></a>
-<?php
+    <?php
 elseif ($canCheckin && $this->item->checked_out > 0) : ?>
     <a class="btn btn-outline-primary" href="<?php
     echo Route::_('index.php?option=com_jed&task=extension.checkin&id=' . $this->item->id . '&' . Session::getFormToken() . '=1') ?>"><?php
 echo Text::_("JLIB_HTML_CHECKIN") ?></a>
 
-<?php
+    <?php
 endif; ?>
 
 <?php
 if (Factory::getApplication()->getIdentity()->authorise('core.delete', 'com_jed.extension.' . $this->item->id)) : ?>
     <a class="btn btn-danger" rel="noopener noreferrer" href="#deleteModal" role="button" data-bs-toggle="modal">
-		<?php
+        <?php
         echo Text::_("JACTION_DELETE") ?>
     </a>
 
-	<?php
+    <?php
     echo HTMLHelper::_(
         'bootstrap.renderModal',
         'deleteModal',
@@ -340,5 +340,5 @@ if (Factory::getApplication()->getIdentity()->authorise('core.delete', 'com_jed.
         Text::sprintf('COM_JED_GENERAL_DELETE_CONFIRM_LABEL', $this->item->id)
     ) ?>
 
-<?php
+    <?php
 endif; ?>
