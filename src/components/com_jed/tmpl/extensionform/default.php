@@ -21,9 +21,9 @@ use Joomla\CMS\Router\Route;
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('jquery.framework');
+
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-//    ->useScript('com_jed.form_validate')
     ->useStyle('com_jed.kartikv_fileinput_style')
     ->useScript('com_jed.kartikv_fileinput_buffer_js')
     ->useScript('com_jed.kartikv_fileinput_filetype_js')
@@ -33,7 +33,8 @@ $wa->useScript('keepalive')
     ->useScript('com_jed.kartikv_fileinput_bs5_js')
     ->useScript('com_jed.extensionTestUpload')
     ->useStyle('com_jed.submitextension')
-    ->useScript('com_jed.extensionform');
+    ->useScript('com_jed.extensionform')
+	->useScript('com_jed.form_validate');
 
 
 // Load admin language file
@@ -120,11 +121,13 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
     if (!$isLoggedIn) {
         try {
             $app = Factory::getApplication();
+	        $app->enqueueMessage(Text::_('COM_JED_EXTENSION_NO_ACCESS_LABEL'), 'success');
+	        $app->redirect($redirectURL);
         } catch (Exception $e) {
+            echo $e->getMessage();
         }
 
-        $app->enqueueMessage(Text::_('COM_JED_EXTENSION_NO_ACCESS_LABEL'), 'success');
-        $app->redirect($redirectURL);
+
     } else {
 
 

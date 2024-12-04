@@ -34,8 +34,7 @@ class HtmlView extends BaseHtmlView
 
     protected Registry $state;
 
-    protected mixed $params;
-
+    
     /**
      * Display the view
      *

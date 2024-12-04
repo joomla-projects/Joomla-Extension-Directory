@@ -21,6 +21,7 @@
         </field>
         <field name="title" filter="safehtml" type="text" label="JGLOBAL_TITLE"
                hint="COM_JED_GENERAL_TITLE_LABEL"/>
+        <field name="alias" type="text" class="inputbox" generator="title" label="JFIELD_ALIAS_LABEL" hint="JALIAS"/>
         <field name="intro_text" editor="tinymce" buttons="false" filter="JComponentHelper::filterText"
                type="editor" label="COM_JED_EXTENSION_INTRO_TEXT_LABEL"
                hint="COM_JED_FORM_LBL_EX TENSIONVARIEDDATUM_INTRO_TEXT"/>
@@ -64,44 +65,8 @@
         <field name="translation_link" validate="url" type="url"
                label="REMOVECOM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_TRANSLATION_LINK"
                hint="" default="https://"/>
-        <field name="tags" filter="safehtml" type="text" label="JTAG"
+        <field name="tags" filter="safehtml" type="tag" label="JTAG"
                hint="REMOVECOM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_TAGS"/>
-        <field name="ordering"/>
-        <field name="state" type="list" label="JSTATUS" class="inputbox" size="1" default="0">
-            <option value="1">JPUBLISHED</option>
-            <option value="0">JUNPUBLISHED</option>
-            <option value="2">JARCHIVED</option>
-            <option value="-2">JTRASHED</option>
-        </field>
-        <field name="checked_out" type="hidden" filter="unset"/>
-        <field name="checked_out_time" default="0000-00-00 00:00:00" type="hidden" filter="unset"/>
-        <field name="created_by" type="createdby" label="JGLOBAL_FIELD_CREATED_BY_LABEL"
-               hint="COM_JED_GENERAL_CREATED_BY_LABEL "/>
-
-    </fieldset>
-
-    <fieldset name="info">
-
-        <field name="alias" type="text" class="inputbox" generator="title" label="JFIELD_ALIAS_LABEL" hint="JALIAS"/>
-
-        <field name="homepage_link" validate="url" type="url"
-               label="COM_JED_EXTENSION_HOMEPAGE_LINK_LABEL"
-               hint="COM_JED_EXTENSION_HOMEPAGE_LINK_LABEL"/>
-        <field name="download_link" validate="url" type="url"
-               label="COM_JED_EXTENSION_DOWNLOAD_LINK_LABEL"
-               hint="COM_JED_EXTENSION_DOWNLOAD_LINK_LABEL"/>
-        <field name="demo_link" validate="url" type="url" label="COM_JED_EXTENSION_DEMO_LINK_LABEL"
-               hint="COM_JED_EXTENSION_DEMO_LINK_LABEL"/>
-        <field name="support_link" validate="url" type="url" label="REMOVECOM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_SUPPORT_LINK"
-               hint="REMOVECOM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_SUPPORT_LINK"/>
-        <field name="documentation_link" validate="url" type="url"
-               label="REMOVECOM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_DOCUMENTATION_LINK"
-               hint="REMOVECOM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_DOCUMENTATION_LINK"/>
-        <field name="license_link" validate="url" type="url" label="REMOVECOM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_LICENSE_LINK"
-               hint="REMOVECOM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_LICENSE_LINK"/>
-        <field name="translation_link" validate="url" type="url"
-               label="REMOVECOM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_TRANSLATION_LINK"
-               hint="REMOVECOM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_TRANSLATION_LINK"/>
         <field name="logo"
                type="media"
                label="COM_JED_EXTENSION_LOGO_LABEL"
@@ -122,25 +87,18 @@
             <option value="0">JNO</option>
             <option value="1">JYES</option>
         </field>
-
-        <field name="download_integration_type" type="list"
-               label="COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_LABEL"
-               hint="COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_LABEL">
-            <option value="None">COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_OPTION_0</option>
-            <option value="Free Direct Download link:">COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_OPTION_1
-            </option>
-            <option value="Paid purchase required at link:">
-                COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_OPTION_2
-            </option>
-            <option value="Free but Registration required at link:">
-                COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_OPTION_3
-            </option>
-            <option value="4">COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_TYPE_OPTION_4</option>
+        <field name="ordering"/>
+        <field name="state" type="list" label="JSTATUS" class="inputbox" size="1" default="0">
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+            <option value="2">JARCHIVED</option>
+            <option value="-2">JTRASHED</option>
         </field>
-        <field name="download_integration_url" filter="safehtml" type="text"
-               label="COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_URL_LABEL"
-               hint="COM_JED_EXTENSION_DOWNLOAD_INTEGRATION_URL_LABEL"
-        />
+        <field name="checked_out" type="hidden" filter="unset"/>
+        <field name="checked_out_time" default="0000-00-00 00:00:00" type="hidden" filter="unset"/>
+        <field name="created_by" type="createdby" label="JGLOBAL_FIELD_CREATED_BY_LABEL"
+               hint="COM_JED_GENERAL_CREATED_BY_LABEL "/>
 
     </fieldset>
+
 </form>

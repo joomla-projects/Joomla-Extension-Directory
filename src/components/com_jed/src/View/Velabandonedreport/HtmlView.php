@@ -62,8 +62,7 @@ class HtmlView extends BaseHtmlView
      * @var   Registry
      * @since 4.0.0
      */
-    protected mixed $params;
-
+    
     /**
      * Prepares the document
      *

@@ -26,8 +26,7 @@ use Joomla\CMS\Language\Text;
  */
 class HtmlView extends CategoryView
 {
-    protected mixed $params;
-
+    
     /**
      * Display the view
      *
