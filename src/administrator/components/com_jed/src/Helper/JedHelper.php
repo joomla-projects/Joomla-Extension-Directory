@@ -389,7 +389,7 @@ class JedHelper
         }
     }
 
-    public static function OutputFieldsets(array $fieldsets, Form $form): bool
+    public static function outputFieldsets(array $fieldsets, Form $form): bool
     {
         $fscount = 0;
         foreach ($fieldsets as $fscat => $fs) {

@@ -105,7 +105,7 @@ foreach ($this->extension->varied as $st) {
     $fieldsets['integration']['fields']      = [['download_integration_type', 'download_integration_url']];
     $fieldsets['integration']['hidden']      = [];
 
-    JedHelper::OutputFieldsets($fieldsets, $varied_form);
+    JedHelper::outputFieldsets($fieldsets, $varied_form);
     $fieldsets = [];
 
     echo HTMLHelper::_('uitab.endTab');
@@ -149,7 +149,7 @@ echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'viewextensionreviews', T
 
                 </div>
                 <div class="row ticket-header-row">
-                   
+
                     <div class="col-md-4  ticket-header">
 
                         <h1>Version - <?php echo $review->version; ?></h1>
