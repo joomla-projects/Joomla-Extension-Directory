@@ -7,17 +7,17 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace Joomla\Component\Jed\Administrator\Field;
+namespace Jed\Component\Jed\Administrator\Field;
 
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
 
 use RuntimeException;
-
-use function defined;
 
 /**
  * List of approved states.
@@ -43,7 +43,7 @@ class ApprovedField extends ListField
      * @since   4.0.0
      * @throws  RuntimeException
      */
-    public function getOptions(): array
+    protected function getOptions(): array
     {
         $params  = ComponentHelper::getParams('com_jed');
         $codes   = $params->get('awaiting_response_codes');
