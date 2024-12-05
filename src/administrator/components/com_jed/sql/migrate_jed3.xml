@@ -8,7 +8,7 @@
 </instruction>
 <instruction>
  <description>Clearing Down old Data</description>
-    <sql>TRUNCATE #_jed_developers; TRUNCATE #_jed_extension_images;TRUNCATE #_jed_extension_scores;TRUNCATE #_jed_extensions_files;TRUNCATE #_jed_reviews;</sql>
+    <sql>TRUNCATE #__jed_developers; TRUNCATE #__jed_extension_images;TRUNCATE #__jed_extension_scores;TRUNCATE #__jed_extensions_files;TRUNCATE #__jed_reviews; DROP TABLE IF EXISTS combine_jed_extensions</sql>
 </instruction>
 <instruction>
 <description>Create combination of UCM and JED_Extensions</description>
