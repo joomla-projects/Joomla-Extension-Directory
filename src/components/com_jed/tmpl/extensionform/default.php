@@ -33,8 +33,8 @@ $wa->useScript('keepalive')
     ->useScript('com_jed.kartikv_fileinput_bs5_js')
     ->useScript('com_jed.extensionTestUpload')
     ->useStyle('com_jed.submitextension')
-    ->useScript('com_jed.extensionform')
-    ->useScript('com_jed.form_validate');
+    ->useScript('com_jed.extensionform');
+//    ->useScript('com_jed.form_validate');
 
 
 // Load admin language file
@@ -44,7 +44,7 @@ $lang->load('com_jed', JPATH_SITE);
 $user    = Factory::getApplication()->getIdentity();
 $canEdit = JedHelper::canUserEdit($this->item);
 
-$isLoggedIn  = JedHelper::IsLoggedIn();
+$isLoggedIn  = JedHelper::isLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
 
 if ($this->item->state == 1) {
@@ -149,7 +149,7 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
             $fieldsets['overview']['fields']      = [['title','alias'],'version',['primary_category_id', 'tags']];
             $fieldsets['overview']['hidden']      = [];
 
-            JedHelper::OutputFieldsets($fieldsets, $this->form);
+            JedHelper::outputFieldsets($fieldsets, $this->form);
 
             echo HTMLHelper::_('uitab.startTabSet', 'supplyTab', ['active' => '']);
 
@@ -182,7 +182,7 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
                 $fieldsets['integration']['fields']      = [['download_integration_type', 'download_integration_url']];
                 $fieldsets['integration']['hidden']      = [];
 
-                JedHelper::OutputFieldsets($fieldsets, $varied_form);
+                JedHelper::outputFieldsets($fieldsets, $varied_form);
                 $fieldsets = [];
 
                 echo HTMLHelper::_('uitab.endTab');
@@ -204,7 +204,7 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
             $fieldsets['integration']['hidden']      = [];
 
 
-            JedHelper::OutputFieldsets($fieldsets, $this->form);
+            JedHelper::outputFieldsets($fieldsets, $this->form);
             ?>
             <div class="control-group">
                 <div class="controls">

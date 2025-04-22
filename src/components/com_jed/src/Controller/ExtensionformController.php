@@ -79,7 +79,7 @@ class ExtensionformController extends FormController
     {
         // Check for request forgeries.
         $this->checkToken();
-        $isLoggedIn         = JedHelper::IsLoggedIn();
+        $isLoggedIn         = JedHelper::isLoggedIn();
 
         if ($isLoggedIn) {
             // Initialise variables.

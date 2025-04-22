@@ -34,7 +34,7 @@ $lang->load('com_jed', JPATH_SITE);
 $user    = Factory::getApplication()->getIdentity();
 $canEdit = JedHelper::canUserEdit($this->item);
 
-$isLoggedIn  = JedHelper::IsLoggedIn();
+$isLoggedIn  = JedHelper::isLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
 
 echo LayoutHelper::render('review.guidelines', $this->extension_details);

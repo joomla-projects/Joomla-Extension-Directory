@@ -35,7 +35,7 @@ $canEdit     = $user->authorise('core.edit', 'com_jed');
 $canCheckin  = $user->authorise('core.manage', 'com_jed');
 $canChange   = $user->authorise('core.edit.state', 'com_jed');
 $canDelete   = $user->authorise('core.delete', 'com_jed');
-$isLoggedIn  = JedHelper::IsLoggedIn();
+$isLoggedIn  = JedHelper::isLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
 
 // Import CSS
