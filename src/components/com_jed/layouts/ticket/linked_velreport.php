@@ -159,22 +159,22 @@ $fieldsets['extra']['fields']      = [
             <h1>Actions</h1>
             <?php
             //var_dump($rawData->get('vel_item_id'));exit();
-?>
+            ?>
             <div class="container">
                 <div class="row">
                     <?php
-        if ($rawData->get('vel_item_id') > 0) {
-            echo Text::_('COM_JED_GENERAL_LABEL_NO_ACTIONS');
-        } else {
-            ?>
+                    if ($rawData->get('vel_item_id') > 0) {
+                        echo Text::_('COM_JED_GENERAL_LABEL_NO_ACTIONS');
+                    } else {
+                        ?>
                         <button type="button" class="btn btn-primary"
                                 onclick="Joomla.submitbutton('ticket.copyReporttoVEL')">
                             <?php
-                echo Text::_('COM_JED_VEL_GENERAL_BUTTON_CREATE_VEL'); ?>
+                            echo Text::_('COM_JED_VEL_GENERAL_BUTTON_CREATE_VEL'); ?>
                         </button>
 
-                        <?php
-        } ?>
+                                    <?php
+                    } ?>
                 </div>
             </div>
         </div>
