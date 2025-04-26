@@ -135,14 +135,14 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
             <?php
                 throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403); ?>
         </h3>
-            <?php else : ?>
+        <?php else : ?>
 <h3 id="extensiontitle"></h3>
         <form id="form-extension"
               action="<?php
                   echo Route::_('index.php?option=com_jed&task=extensionform.save'); ?>"
               method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
 
-            <?php
+                <?php
                 $fieldsets['overview']['title']       = Text::_('COM_JED_EXTENSION_ADD_EXTENSION_LABEL');
                 $fieldsets['overview']['description'] = Text::_('COM_JED_EXTENSION_ADD_EXTENSION_LABEL_DESCR') . '</br>' . '</br>';
                 $fieldsets['overview']['fields']      = [['title','alias'],'version',['primary_category_id', 'tags']];
@@ -209,14 +209,14 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
                 <div class="controls">
 
                     <?php
-                        if ($this->canSave) : ?>
+                    if ($this->canSave) : ?>
                         <button type="submit" class="validate btn btn-primary">
                             <span class="fas fa-check" aria-hidden="true"></span>
                             <?php
-                                echo Text::_('JSUBMIT'); ?>
+                            echo Text::_('JSUBMIT'); ?>
                         </button>
                         <?php
-                        endif; ?>
+                    endif; ?>
                     <a class="btn btn-danger"
                        href="<?php
                             echo Route::_('index.php?option=com_jed&task=extensionform.cancel'); ?>"
@@ -232,10 +232,10 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
             <input type="hidden" name="option" value="com_jed"/>
             <input type="hidden" name="task"
                    value="extensionform.save"/>
-            <?php
-            echo HTMLHelper::_('form.token'); ?>
+                <?php
+                echo HTMLHelper::_('form.token'); ?>
         </form>
-            <?php
+                <?php
         endif;
     }?>
 </div>

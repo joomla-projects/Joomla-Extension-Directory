@@ -107,7 +107,7 @@ if (!$isLoggedIn) {
                 <?php
                 throw new Exception(Text::_('COM_JED_GENERAL_ERROR_MESSAGE_NOT_AUTHORISED'), 403); ?>
             </h3>
-            <?php else : ?>
+        <?php else : ?>
             <form id="form-ticket"
                   action="<?php
                     echo Route::_('index.php?option=com_jed&task=ticketform.save'); ?>"
@@ -219,7 +219,7 @@ if (!$isLoggedIn) {
                 <?php
                 echo HTMLHelper::_('form.token'); ?>
             </form>
-            <?php
+                <?php
         endif; ?>
     </div>
     <?php

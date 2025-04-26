@@ -75,7 +75,7 @@ $wa->useStyle('com_jed.jazstyle');
                                         <span class="badge rounded-pill float-end badge-info-cat">  <?php echo $sc->getNumItems(true); ?></span>
                                     </li>
                                 <?php }
-                                } ?>
+                            } ?>
                         </ul>
                     </div>
                 </div>

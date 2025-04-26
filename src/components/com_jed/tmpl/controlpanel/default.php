@@ -41,7 +41,6 @@ if (!$isLoggedIn) {
         echo $e->getMessage();
     }
 } else {
-
     $user       = Factory::getApplication()->getIdentity();
     $userId     = $user->id;
     $listOrder  = $this->state->get('list.ordering');
@@ -57,7 +56,7 @@ if (!$isLoggedIn) {
 
     ?>
 
-<?php
+    <?php
     echo HTMLHelper::_('uitab.startTabSet', 'controlpanel_tabs');
 
     echo HTMLHelper::_('uitab.addTab', 'controlpanel_tabs', 'tickets_tab' . "My Tickets", "My Tickets");
@@ -82,7 +81,5 @@ if (!$isLoggedIn) {
 
 
     echo HTMLHelper::_('uitab.endTabSet');
-
-
 }
 //echo LayoutHelper::render('extension.extension-single', $this->item)

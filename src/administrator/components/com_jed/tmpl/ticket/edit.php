@@ -84,23 +84,23 @@ $userFactory = $container->get('user.factory');
 
                         $slidesOptions = ["active" => 'ticket_messages_group' . '_slide' . count($this->ticket_messages), // It is the ID of the active tab.
                         ];
-echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_messages_group', $slidesOptions);
+                        echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_messages_group', $slidesOptions);
 
-$slideid = 0;
-foreach ($this->ticket_messages as $ticketMessage) {
-    if ($ticketMessage->message_direction == 0) {
-        $inout = "jed-ticket-message-out";
-    } else {
-        $inout = "jed-ticket-message-in";
-    }
+                        $slideid = 0;
+                        foreach ($this->ticket_messages as $ticketMessage) {
+                            if ($ticketMessage->message_direction == 0) {
+                                $inout = "jed-ticket-message-out";
+                            } else {
+                                $inout = "jed-ticket-message-in";
+                            }
 
-    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' . $ticketMessage->subject . ' - ' . JedHelper::prettyDate($ticketMessage->created_on) . '</span>', 'ticket_messages_group' . '_slide' . ($slideid++));
-    echo  $ticketMessage->message ;
-    echo HTMLHelper::_('bootstrap.endSlide');
-}
-echo HTMLHelper::_('bootstrap.endAccordion');
+                            echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' . $ticketMessage->subject . ' - ' . JedHelper::prettyDate($ticketMessage->created_on) . '</span>', 'ticket_messages_group' . '_slide' . ($slideid++));
+                            echo  $ticketMessage->message ;
+                            echo HTMLHelper::_('bootstrap.endSlide');
+                        }
+                        echo HTMLHelper::_('bootstrap.endAccordion');
 
-?>
+                        ?>
 
 
                     </div>
@@ -147,12 +147,12 @@ echo HTMLHelper::_('bootstrap.endAccordion');
                     <div class="row">
                         <div class="col"><?php echo $this->form->renderField('created_by', null, null, $headerlabeloptions); ?></div>
                         <div class="col"><?php
-echo 'on ';
+                        echo 'on ';
 
-echo JedHelper::prettyDate($this->item->created_on);
+                        echo JedHelper::prettyDate($this->item->created_on);
 
 
-?></div>
+                        ?></div>
                     </div>
 
                 </div>
@@ -171,18 +171,18 @@ echo JedHelper::prettyDate($this->item->created_on);
                     <?php
                     $slidesOptions = [];//"active" => "slide0" // It is the ID of the active tab.
 
-echo HTMLHelper::_('bootstrap.startAccordion', 'internal_notes_group', $slidesOptions);
+                    echo HTMLHelper::_('bootstrap.startAccordion', 'internal_notes_group', $slidesOptions);
 
-$slideid = 0;
-foreach ($this->internal_notes as $internalNote) {
-    $user = JedHelper::getUserById($internalNote->created_by);
-    echo HTMLHelper::_('bootstrap.addSlide', 'internal_notes_group', '' . $internalNote->summary . ' - ' . JedHelper::prettyDate($internalNote->created_on) . ' by ' . $user->name, 'internal_notes_group' . '_slide' . ($slideid++));
-    echo "<p>" . $internalNote->note . "</p>";
-    echo HTMLHelper::_('bootstrap.endSlide');
-}
-echo HTMLHelper::_('bootstrap.endAccordion');
+                    $slideid = 0;
+                    foreach ($this->internal_notes as $internalNote) {
+                        $user = JedHelper::getUserById($internalNote->created_by);
+                        echo HTMLHelper::_('bootstrap.addSlide', 'internal_notes_group', '' . $internalNote->summary . ' - ' . JedHelper::prettyDate($internalNote->created_on) . ' by ' . $user->name, 'internal_notes_group' . '_slide' . ($slideid++));
+                        echo "<p>" . $internalNote->note . "</p>";
+                        echo HTMLHelper::_('bootstrap.endSlide');
+                    }
+                    echo HTMLHelper::_('bootstrap.endAccordion');
 
-?>
+                    ?>
                     <div class="widget">
                         <h1>Add Note &nbsp;&nbsp;<button type="button" class=""
                                                          onclick="Joomla.submitbutton('ticket.storeInternalNote')">
@@ -202,72 +202,72 @@ echo HTMLHelper::_('bootstrap.endAccordion');
 
     <?php
     $add_debug_tab     = false;
-$add_extension_tab     = false;
+    $add_extension_tab     = false;
 
-if ($this->linked_item_type === 1) { /* Unknown Type */
-    echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedUnknown', 'Unknown');
+    if ($this->linked_item_type === 1) { /* Unknown Type */
+        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedUnknown', 'Unknown');
 
-    echo LayoutHelper::render('ticket.linked_unknown', $this->linked_form);
+        echo LayoutHelper::render('ticket.linked_unknown', $this->linked_form);
 
-    echo HTMLHelper::_('uitab.endTab');
-}
-if (($this->linked_item_type === 2) || ($this->linked_item_type === 14)) { /* Extension */
-    $add_extension_tab = true;
-    $add_debug_tab     = true;
-    /*   echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension');
+        echo HTMLHelper::_('uitab.endTab');
+    }
+    if (($this->linked_item_type === 2) || ($this->linked_item_type === 14)) { /* Extension */
+        $add_extension_tab = true;
+        $add_debug_tab     = true;
+        /*   echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension');
 
-       echo LayoutHelper::render('ticket.linked_extension', $this->linked_form);
+           echo LayoutHelper::render('ticket.linked_extension', $this->linked_form);
 
-       echo HTMLHelper::_('uitab.endTab');*/
-}
-if ($this->linked_item_type === 3) { /* Review */
-    echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedReview', 'Linked Review');
+           echo HTMLHelper::_('uitab.endTab');*/
+    }
+    if ($this->linked_item_type === 3) { /* Review */
+        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedReview', 'Linked Review');
 
-    $passdata = ["linked_form" => $this->linked_form,
+        $passdata = ["linked_form" => $this->linked_form,
               "linked_data"    => $this->linked_item_data,
               "extension"      => $this->linked_extension_data];
-    echo LayoutHelper::render('ticket.linked_review', $passdata);
+        echo LayoutHelper::render('ticket.linked_review', $passdata);
 
-    echo HTMLHelper::_('uitab.endTab');
-    $add_debug_tab     = true;
-    $add_extension_tab = true;
-}
-if ($this->linked_item_type === 4) { /* VEL Report */
-    echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedVELReport', 'Linked VEL Report');
+        echo HTMLHelper::_('uitab.endTab');
+        $add_debug_tab     = true;
+        $add_extension_tab = true;
+    }
+    if ($this->linked_item_type === 4) { /* VEL Report */
+        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedVELReport', 'Linked VEL Report');
 
-    echo LayoutHelper::render('ticket.linked_velreport', $this->linked_form);
+        echo LayoutHelper::render('ticket.linked_velreport', $this->linked_form);
 
-    echo HTMLHelper::_('uitab.endTab');
-}
-if ($this->linked_item_type === 5) { /* VEL Developer Update */
-    echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedDeveloperUpdate', 'Linked Developer Update');
+        echo HTMLHelper::_('uitab.endTab');
+    }
+    if ($this->linked_item_type === 5) { /* VEL Developer Update */
+        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedDeveloperUpdate', 'Linked Developer Update');
 
-    echo LayoutHelper::render('ticket.linked_veldeveloperupdate', $this->linked_form);
-    echo HTMLHelper::_('uitab.endTab');
-}
-if ($this->linked_item_type === 6) { /* VEL Abandonware */
-    echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedAbandonedReport', 'Linked Abandonware Report');
+        echo LayoutHelper::render('ticket.linked_veldeveloperupdate', $this->linked_form);
+        echo HTMLHelper::_('uitab.endTab');
+    }
+    if ($this->linked_item_type === 6) { /* VEL Abandonware */
+        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedAbandonedReport', 'Linked Abandonware Report');
 
-    echo LayoutHelper::render('ticket.linked_velabandonware', $this->linked_form);
+        echo LayoutHelper::render('ticket.linked_velabandonware', $this->linked_form);
 
-    echo HTMLHelper::_('uitab.endTab');
-}
-if ($add_extension_tab == true) {
-    echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension (' . $this->linked_extension_data->type . ')');
+        echo HTMLHelper::_('uitab.endTab');
+    }
+    if ($add_extension_tab == true) {
+        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension (' . $this->linked_extension_data->type . ')');
 
-    echo LayoutHelper::render('ticket.linked_extension', $this->linked_extension_data);
+        echo LayoutHelper::render('ticket.linked_extension', $this->linked_extension_data);
 
-    echo HTMLHelper::_('uitab.endTab');
-}
-if ($add_debug_tab == true) {
-    echo HTMLHelper::_('uitab.addTab', 'myTab', 'TicketHelp', 'Ticket Help');
+        echo HTMLHelper::_('uitab.endTab');
+    }
+    if ($add_debug_tab == true) {
+        echo HTMLHelper::_('uitab.addTab', 'myTab', 'TicketHelp', 'Ticket Help');
 
-    echo LayoutHelper::render('ticket.ticket_help', $this->ticket_help);
+        echo LayoutHelper::render('ticket.ticket_help', $this->ticket_help);
 
-    echo HTMLHelper::_('uitab.endTab');
-}
+        echo HTMLHelper::_('uitab.endTab');
+    }
 
-?>
+    ?>
 
 
 
