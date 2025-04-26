@@ -40,7 +40,7 @@ $fieldsets['vulnerabilitydetails']['fields'] = [
     'vulnerability_actively_exploited',
     'vulnerability_publicly_available',
     'vulnerability_publicly_url',
-    'vulnerability_specific_impact'
+    'vulnerability_specific_impact',
 ];
 
 $fieldsets['developerdetails']['title']       = "Developer Details";
@@ -53,13 +53,13 @@ $fieldsets['developerdetails']['fields']      = [
     'jed_url',
     'tracking_db_name',
     'tracking_db_id',
-    'developer_additional_info'
+    'developer_additional_info',
 ];
 
 $fieldsets['filelocation']['title']       = "Location of File";
 $fieldsets['filelocation']['description'] = "";
 $fieldsets['filelocation']['fields']      = [
-    'download_url'
+    'download_url',
 ];
 
 $fieldsets['aboutyou']['title']       = "Reporter";
@@ -68,7 +68,7 @@ $fieldsets['aboutyou']['fields']      = [
     'reporter_fullname',
     'reporter_email',
     'reporter_organisation',
-    'pass_details_ok'
+    'pass_details_ok',
 ];
 
 
@@ -80,7 +80,7 @@ $fieldsets['extra']['fields']      = [
     'vel_item_id',
     'date_submitted',
     'user_ip',
-    'data_source'
+    'data_source',
 ];
 
 ?>
@@ -159,22 +159,22 @@ $fieldsets['extra']['fields']      = [
             <h1>Actions</h1>
             <?php
             //var_dump($rawData->get('vel_item_id'));exit();
-            ?>
+?>
             <div class="container">
                 <div class="row">
                     <?php
-                    if ($rawData->get('vel_item_id') > 0) {
-                        echo Text::_('COM_JED_GENERAL_LABEL_NO_ACTIONS');
-                    } else {
-                        ?>
+        if ($rawData->get('vel_item_id') > 0) {
+            echo Text::_('COM_JED_GENERAL_LABEL_NO_ACTIONS');
+        } else {
+            ?>
                         <button type="button" class="btn btn-primary"
                                 onclick="Joomla.submitbutton('ticket.copyReporttoVEL')">
                             <?php
-                            echo Text::_('COM_JED_VEL_GENERAL_BUTTON_CREATE_VEL'); ?>
+                echo Text::_('COM_JED_VEL_GENERAL_BUTTON_CREATE_VEL'); ?>
                         </button>
 
                         <?php
-                    } ?>
+        } ?>
                 </div>
             </div>
         </div>

@@ -30,7 +30,7 @@ $fieldsets['aboutyou']['title']  = Text::_('COM_JED_VEL_GENERAL_ABOUT_YOU_LABEL'
 $fieldsets['aboutyou']['fields'] = [
     'contact_fullname',
     'contact_organisation',
-    'contact_email'
+    'contact_email',
 ];
 
 $fieldsets['vulnerabilitydetails']['title']  = Text::_('COM_JED_VEL_DEVELOPERUPDATES_FORM_VULNERABILITY_DETAILS_TITLE');
@@ -43,7 +43,7 @@ $fieldsets['vulnerabilitydetails']['fields'] = [
     'changelog_url',
     'download_url',
     'consent_to_process',
-    'update_date_submitted'
+    'update_date_submitted',
 ];
 
 
@@ -51,7 +51,7 @@ $fieldsets['final']['title']       = "VEL Details";
 $fieldsets['final']['description'] = "";
 
 $fieldsets['final']['fields'] = [
-    'vel_item_id'
+    'vel_item_id',
 ];
 $fscount                      = 0;
 
