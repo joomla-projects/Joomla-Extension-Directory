@@ -181,12 +181,12 @@ class ReviewformModel extends FormModel
             $this->item = false;
 
             if (empty($id)) {
-                $id = $this->getState('ticket.id');
+                $id = $this->getState('review.id');
             }
 
             // Get a level row instance.
             $table      = $this->getTable();
-            $properties = $table->getProperties();
+            $properties = $table->getTableProperties();
             $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
             if ($table !== false && $table->load($id) && !empty($table->id)) {
@@ -194,7 +194,7 @@ class ReviewformModel extends FormModel
                 $id   = $table->id;
                 if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
                     // Convert the Table to a clean CMSObject.
-                    $properties = $table->getProperties(1);
+                    $properties = $table->getTableProperties(1);
                     $this->item = ArrayHelper::toObject($properties, stdClass::class);
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
@@ -284,7 +284,7 @@ class ReviewformModel extends FormModel
 
         $id                 = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('review.id');
         $data['ip_address'] = $_SERVER['REMOTE_ADDR'];
-        $isLoggedIn         = JedHelper::IsLoggedIn();
+        $isLoggedIn         = JedHelper::isLoggedIn();
         $user               = Factory::getApplication()->getIdentity();
 
         if (!$id && $isLoggedIn) {
@@ -294,8 +294,8 @@ class ReviewformModel extends FormModel
 
             if ($table->save($data) === true) {
                 $this->id                            = $table->id;
-                $ticket                              = JedHelper::CreateReviewTicket($table->id);
-                $ticket_message                      = JedHelper::CreateEmptyTicketMessage();
+                $ticket                              = JedHelper::createReviewTicket($table->id);
+                $ticket_message                      = JedHelper::createEmptyTicketMessage();
                 $ticket_message['subject']           = $ticket['ticket_subject'];
                 $ticket_message['message']           = $ticket['ticket_text'];
                 $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
@@ -315,7 +315,7 @@ class ReviewformModel extends FormModel
                 $ticket_message_model->save($ticket_message);
 
                 /* We need to email standard message to user and store message in ticket */
-                $message_out = JedHelper::GetMessageTemplate(1000);
+                $message_out = JedHelper::getMessageTemplate(1000);
                 if (isset($message_out->subject)) {
                     JedemailHelper::sendEmail($message_out->subject, $message_out->template, $user, 'dummy@dummy.com');
 

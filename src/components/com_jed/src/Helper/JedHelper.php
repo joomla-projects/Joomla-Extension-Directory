@@ -546,19 +546,19 @@ class JedHelper
         }
 
         // No CDN (e.g. local development). Where should I get my image from?
-        if (File::exists(JPATH_ROOT . '/' . ltrim($bestFilename, '/\\'))) {
+        if (file_exists(JPATH_ROOT . '/' . ltrim($bestFilename, '/\\'))) {
             return Uri::root() . ltrim($bestFilename, '/\\');
         }
 
-        if (File::exists(JPATH_ROOT . '/' . ltrim($filename, '/\\'))) {
+        if (file_exists(JPATH_ROOT . '/' . ltrim($filename, '/\\'))) {
             return Uri::root() . ltrim($filename, '/\\');
         }
 
-        if (File::exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($bestFilename, '/\\'))) {
+        if (file_exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($bestFilename, '/\\'))) {
             return Uri::root() . 'media/com_jed/' . ltrim($bestFilename, '/\\');
         }
 
-        if (File::exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($filename, '/\\'))) {
+        if (file_exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($filename, '/\\'))) {
             return Uri::root() . 'media/com_jed/' . ltrim($filename, '/\\');
         }
 
@@ -795,7 +795,7 @@ class JedHelper
     }
 
     /**
-     * Prettyfy a Data
+     * Prettyfy a Date
      *
      * @param   string  $datestr  A String Date
      *
@@ -808,6 +808,25 @@ class JedHelper
             $d = new DateTime($datestr);
 
             return $d->format("d M y H:i");
+        } catch (Exception $e) {
+            return 'Sorry an error occured';
+        }
+    }
+
+    /**
+     * Prettyfy a Date into short format
+     *
+     * @param   string  $datestr  A String Date
+     *
+     * @since 4.0.0
+     **/
+    public static function prettyShortDate(mixed $datestr): string
+    {
+
+        try {
+            $d = new DateTime($datestr);
+
+            return $d->format("d M y");
         } catch (Exception $e) {
             return 'Sorry an error occured';
         }

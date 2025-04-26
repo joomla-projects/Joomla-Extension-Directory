@@ -211,12 +211,14 @@ $userFactory = $container->get('user.factory');
 
         echo HTMLHelper::_('uitab.endTab');
     }
-    if ($this->linked_item_type === 2) { /* Extension */
-        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension');
+    if (($this->linked_item_type === 2) || ($this->linked_item_type === 14)) { /* Extension */
+        $add_extension_tab = true;
+        $add_debug_tab     = true;
+     /*   echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension');
 
         echo LayoutHelper::render('ticket.linked_extension', $this->linked_form);
 
-        echo HTMLHelper::_('uitab.endTab');
+        echo HTMLHelper::_('uitab.endTab');*/
     }
     if ($this->linked_item_type === 3) { /* Review */
         echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedReview', 'Linked Review');

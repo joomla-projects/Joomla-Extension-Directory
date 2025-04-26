@@ -8,17 +8,17 @@
             <option value="0">COM_JED_TICKETS_TICKET_ORIGIN_OPTION_0</option>
             <option value="1">COM_JED_TICKETS_TICKET_ORIGIN_OPTION_1</option>
         </field>
-        <field name="ticket_category_type" type="foreignkey" label="COM_JED_GENERAL_TYPE_LABEL"
+        <field name="ticket_category_type" type="foreignkey" label="COM_JED_TICKETS_TICKET_CATEGORY_TYPE_LABEL"
                description="COM_JED_TICKETS_TICKET_CATEGORY_TYPE_DESCR" input_type="list"
-               table="#__jed_ticket_categories" key_field="id" value_field="categorytype" default="0"/>
+               table="#__jed_ticket_categories" key_field="id" value_field="categorytype" default="0"  condition="`id` not in (11,12,13)"/>
         <field name="ticket_subject" filter="safehtml" type="text" label="COM_JED_GENERAL_SUBJECT_LABEL"
                description="COM_JED_TICKETS_TICKET_SUBJECT_DESCR"
                hint="COM_JED_GENERAL_SUBJECT_LABEL"/>
-        <field name="ticket_text" editor="tinymce" buttons="false" filter="JComponentHelper::filterText" type="editor"
+        <field name="ticket_text" editor="tinymce" buttons="false" filter="ComponentHelper::filterText" type="editor"
                label="COM_JED_TICKETS_TICKET_TEXT_LABEL"
                description="COM_JED_TICKETS_TICKET_TEXT_DESCR"
                hint="COM_JED_TICKETS_TICKET_TEXT_LABEL"/>
-        <field name="internal_notes" editor="tinymce" buttons="false" filter="JComponentHelper::filterText"
+        <field name="internal_notes" editor="tinymce" buttons="false" filter="ComponentHelper::filterText"
                type="editor" label="COM_JED_TICKETS_INTERNAL_NOTES_LABEL"
                description="COM_JED_TICKETS_INTERNAL_NOTES_DESCR"
                hint="COM_JED_TICKETS_INTERNAL_NOTES_LABEL"/>
@@ -41,6 +41,19 @@
         <field name="linked_item_type" type="foreignkey" label="COM_JED_TICKETS_LINKED_ITEM_TYPE_LABEL"
                description="COM_JED_TICKETS_LINKED_ITEM_TYPE_DESCR" input_type="list"
                table="#__jed_ticket_linked_item_types" key_field="id" value_field="title" default="0"/>
+
+        <field name="updated_ticket_text" editor="tinymce" buttons="false" filter="ComponentHelper::filterText" type="editor"
+               label="COM_JED_TICKETS_TICKET_TEXT_LABEL"
+               description="COM_JED_TICKETS_TICKET_TEXT_DESCR"
+               hint="COM_JED_TICKETS_TICKET_TEXT_LABEL"/>
+
+
+        <field name="reported_varied_name" type="jedextensions" label="Extension"
+               description="COM_JED_TICKETS_LINKED_ITEM_TYPE_DESCR" input_type="list" showon="ticket_category_type:14"
+               />
+        <field name="myextension_varied_name" type="jedmyextensions" label="My Extension"
+               description="COM_JED_TICKETS_LINKED_ITEM_TYPE_DESCR" input_type="list" showon="ticket_category_type:2"
+        />
         <field name="linked_item_id" label="COM_JED_TICKETS_LINKED_ITEM_ID_LABEL"
                description="COM_JED_TICKETS_LINKED_ITEM_ID_DESCR"
                hint="COM_JED_TICKETS_LINKED_ITEM_ID_LABEL"/>
@@ -77,5 +90,7 @@
         <field name="checked_out_time" default="0000-00-00" type="hidden" filter="unset"/>
         <field name="version_note" type="text" label="JGLOBAL_FIELD_VERSION_NOTE_LABEL"
                description="JGLOBAL_FIELD_VERSION_NOTE_DESC" class="inputbox" size="45" labelclass="control-label"/>
+
+        <!-- Add Extension Id / Review Id / -->
     </fieldset>
 </form>

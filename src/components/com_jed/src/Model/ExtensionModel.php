@@ -16,7 +16,7 @@ namespace Jed\Component\Jed\Site\Model;
 
 use DateInterval;
 use Exception;
-use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
+use Jed\Component\Jed\Site\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;

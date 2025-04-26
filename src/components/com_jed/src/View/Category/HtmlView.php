@@ -41,20 +41,21 @@ class HtmlView extends CategoryView
     {
 
 
-        $app = Factory::getApplication();
+        $app   = Factory::getApplication();
+        $model = $this->getModel();
+
+        // Get data from the model.
+        $this->items         = $model->getItems();
+        $this->pagination    = $model->getPagination();
+
+        $this->state = $model->getState();
 
 
-        $this->state      = $this->get('State');
-        $this->items      = $this->get('Items');
+        $this->children = $model->getChildren();
 
-        $this->children = $this->get('Children');
 
-        $this->pagination = $this->get('Pagination');
         $this->params     = $app->getParams();
-        //This following line was added I think as a copy - it does nothing for the
-        // JED display of extensions and crashes when
-        // attempting to run so I've commented it out.
-        //parent::commonCategoryDisplay();
+
 
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {

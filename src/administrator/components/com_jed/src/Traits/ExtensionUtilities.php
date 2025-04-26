@@ -132,8 +132,7 @@ trait ExtensionUtilities
         $query = $db->getQuery(true)
             ->select('a.developer_name')
             ->from($db->quoteName('#__jed_developers', 'a'))
-            ->where('a.user_id = :uid')
-            ->bind(':uid', $uid, ParameterType::INTEGER);
+            ->where('a.user_id = ' . $uid);
 
         return $db->setQuery($query)->loadResult();
     }

@@ -128,9 +128,10 @@ class HtmlView extends BaseHtmlView
         $app  = Factory::getApplication();
         $user = Factory::getApplication()->getIdentity();
 
-        $this->state  = $this->get('State');
-        $this->item   = $this->get('Item');
-        $this->params = $app->getParams('com_jed');
+        $this->state    = $this->get('State');
+        $this->item     = $this->get('Item');
+        $this->messages = $this->get('Messages');
+        $this->params   = $app->getParams('com_jed');
 
         if (!empty($this->item)) {
             $this->form = $this->get('Form');
@@ -149,7 +150,13 @@ class HtmlView extends BaseHtmlView
                 throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'));
             }
         }
+        if ($this->_layout == 'viewticket') {
+            $authorised = $user->authorise('core.create', 'com_jed');
 
+            if ($authorised !== true) {
+                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'));
+            }
+        }
         $this->prepareDocument();
 
         parent::display($tpl);
