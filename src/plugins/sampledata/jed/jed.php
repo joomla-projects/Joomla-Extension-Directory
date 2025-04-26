@@ -112,7 +112,7 @@ class PlgSampledataJed extends CMSPlugin
 
         $this->db->setQuery('SELECT id FROM #__assets WHERE name = \'com_jed\'');
         $component_asset_id = $this->db->loadResult();
-        $this->db->setQuery('DELETE FROM `#__assets` WHERE parent_id = \'' . $component_asset_id .'\';');
+        $this->db->setQuery('DELETE FROM `#__assets` WHERE parent_id = \'' . $component_asset_id . '\';');
         $this->db->execute();
         $this->db->setQuery('INSERT INTO `#__assets` (parent_id, LEVEL, NAME, title, rules) SELECT ' . $component_asset_id . ' AS parent_id, level + 1 AS LEVEL, CONCAT(\'com_jed.category.\', id) AS NAME, title, \'{}\' AS rules FROM `#__categories` WHERE extension = \'com_jed\'');
         $this->db->execute();
