@@ -25,8 +25,8 @@ use Joomla\CMS\Router\Route;
  * @var \Jed\Component\Jed\Site\View\Category\HtmlView $this
 */
 $wa = $this->document->getWebAssetManager();
-$wa->useStyle('com_jed.newjed')
-    ->useScript('form.validate');
+//$wa->useStyle('com_jed.newjed')
+//    ->useScript('form.validate');
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');

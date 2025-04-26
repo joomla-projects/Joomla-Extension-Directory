@@ -1071,4 +1071,20 @@ class ExtensionModel extends AdminModel
 
         $db->setQuery($query)->execute();
     }
+
+    public function getExtensionIdfromVariedId($variedId): int
+    {
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true);
+        $query->select('extension_id')->from('#__jed_extension_varied_data')->where('id=' . $variedId);
+        return $db->setQuery($query)->loadResult();
+    }
+
+    public function getExtensionSupplyOptions($extensionId): array
+    {
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true);
+        $query->select('supply_option_id')->from('#__jed_extension_varied_data')->where('extension_id=' . $extensionId);
+        return $db->setQuery($query)->loadColumn();
+    }
 }

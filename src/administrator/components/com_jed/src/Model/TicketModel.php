@@ -223,7 +223,7 @@ class TicketModel extends AdminModel
 
         $user                     = $userFactory->loadUserById($this->ticket_creator);
         $output['ticket_creator'] = $user;
-        $ticket_creator           = 547648;
+        $ticket_creator           = 10270;
         $user                     = $userFactory->loadUserById($ticket_creator); //CMSOvject user
         $output['sample_creator'] = $user;
 

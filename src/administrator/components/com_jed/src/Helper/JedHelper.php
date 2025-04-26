@@ -46,7 +46,7 @@ class JedHelper
     {
         $bar->linkButton('tickets')->text(Text::_('COM_JED_TITLE_TICKETS'))->url('index.php?option=com_jed&view=tickets')->icon('fa fa-ticket-alt');
         $bar->linkButton('vulnerable')->text('Vulnerable Items')->url('index.php?option=com_jed&view=velvulnerableitems')->icon('fa fa-bug');
-
+        $bar->linkButton('extensions')->text('Extensions')->url('index.php?option=com_jed&view=extensions')->icon('fa fa-puzzle-piece');
         $bar->customHtml('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
 
 

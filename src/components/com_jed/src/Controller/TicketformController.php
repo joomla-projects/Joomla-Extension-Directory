@@ -91,7 +91,7 @@ class TicketformController extends FormController
         }
 
         // Redirect to the edit screen.
-        $this->setRedirect(Route::_('index.php?option=com_jed&view=ticketform&layout=edit', false));
+        $this->setRedirect(Route::_('index.php?option=com_jed&view=ticketform&layout=viewticket&id=' . $editId, false));
     }
 
     /**
@@ -164,7 +164,14 @@ class TicketformController extends FormController
 
         // Validate the posted data.
         $data = $model->validate($form, $data);
-
+        if ($data['ticket_category_type'] == 2) { //Extension
+            $data['linked_item_type'] = 2;
+            $data['linked_item_id']   = $data['myextension_varied_name'];
+        }
+        if ($data['ticket_category_type'] == 14) { //My Extension
+            $data['linked_item_type'] = 2;
+            $data['linked_item_id']   = $data['reported_varied_name'];
+        }
         // Check for errors.
         if ($data === false) {
             // Get the validation messages.
@@ -187,8 +194,7 @@ class TicketformController extends FormController
 
             // Redirect back to the edit screen.
             $id = (int) $app->getUserState('com_jed.edit.ticket.id');
-            $this->setRedirect(Route::_('index.php?option=com_jed&view=ticketform&layout=edit&id=' . $id, false));
-
+            $this->setRedirect(Route::_('index.php?option=com_jed&view=tickets', false));
             $this->redirect();
         }
 
@@ -218,8 +224,9 @@ class TicketformController extends FormController
         $this->setMessage(Text::_('COM_JED_GENERAL_ITEM_SAVED_SUCCESSFULLY_LABEL'));
         $menu = Factory::getApplication()->getMenu();
         $item = $menu->getActive();
-        $url  = (empty($item->link) ? 'index.php?option=com_jed&view=tickets' : $item->link);
-        $this->setRedirect(Route::_($url, false));
+        //   $url  = (empty($item->link) ? 'index.php?option=com_jed&view=tickets' : $item->link);
+
+        $this->setRedirect(Route::_('index.php?option=com_jed&view=tickets', false));
 
         // Flush the data from the session.
         $app->setUserState('com_jed.edit.ticket.data', null);

@@ -62,7 +62,7 @@ class TicketController extends BaseController
         }
 
         // Redirect to the edit screen.
-        $this->setRedirect(Route::_('index.php?option=com_jed&view=ticketform&layout=edit', false));
+        $this->setRedirect(Route::_('index.php?option=com_jed&view=ticketform&layout=viewticket&id=' . $editId, false));
     }
 
     /**

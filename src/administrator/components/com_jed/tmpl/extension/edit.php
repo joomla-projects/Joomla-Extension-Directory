@@ -89,8 +89,8 @@ foreach ($this->extension->varied as $st) {
     $fieldsets['overview']['supply_type'] = $st->supply_type;
     $fieldsets['overview']['title']       =  '';
     $fieldsets['overview']['description'] = '';
-    $fieldsets['overview']['fields']   = ['id', 'supply_option_id', ['title', 'is_default_data'],  'description'];
-    $fieldsets['overview']['hidden']   = ['id', 'supply_option_id'];
+    $fieldsets['overview']['fields']      = ['id', 'supply_option_id', ['title', 'is_default_data'],  'description'];
+    $fieldsets['overview']['hidden']      = ['id', 'supply_option_id'];
 
 
     $fieldsets['links']['supply_type'] = $st->supply_type;
@@ -136,7 +136,7 @@ echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'viewextensionreviews', T
                                 'extension_' . $type . '_reviews_group' . '_slide' . ($slideid++)
                             );
                             $review_model = new ReviewModel();
-                            $linked_form = $review_model->getForm($review, false, 'review');
+                            $linked_form  = $review_model->getForm($review, false, 'review');
                             $linked_form->bind($review);
                             ?>
                             <div class="col-md-4 ticket-header">

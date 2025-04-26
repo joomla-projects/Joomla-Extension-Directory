@@ -71,7 +71,7 @@ try {
 
         </div>
     </div>
-    <p><br/>As Test User does not have any other live data we are using CMSJunkie user as Ticket Creator</p>
+    <p><br/>As Test User does not have any other live data we are using Nicholas' user as Ticket Creator</p>
     <div class="row ticket-header-row">
         <div class="col-md-3 ticket-header">
             <h1>Name</h1>
@@ -111,7 +111,7 @@ echo HTMLHelper::_('uitab.addTab', 'viewHelpTab', 'viewhelpextension', Text::_('
         <div class="container">
             <div class="row">
                 <?php
-    //echo "<pre>";print_r($ticket_help_extensions);echo "</pre>";exit();
+//echo "<pre>";print_r($ticket_help_extensions);echo "</pre>";exit();
             $slidesOptions = [//"active" => "slide0" // It is the ID of the active tab.
             ];
 echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_help_extensions_group', $slidesOptions);

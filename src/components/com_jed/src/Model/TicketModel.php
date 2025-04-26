@@ -136,6 +136,7 @@ class TicketModel extends ItemModel
             // Get a level row instance.
             $table = $this->getTable();
 
+            $this->setState('ticket.id', $pk);
             // Attempt to load the row.
             if ($table->load($pk)) {
                 if (empty($result) || JedHelper::isAdminOrSuperUser()) {
@@ -430,5 +431,14 @@ class TicketModel extends ItemModel
         } else {
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
         }
+    }
+
+    public function getMessages()
+    {
+        $db = $this->getDatabase();
+        echo "<pre>";
+        var_dump($this->getState('ticket.id'));
+        echo "</pre>";
+        exit();
     }
 }

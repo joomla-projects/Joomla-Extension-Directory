@@ -210,14 +210,42 @@ class HtmlView extends BaseHtmlView
         $this->internal_notes   = $this->get('TicketInternalNotes');
         $this->ticket_help      = $this->get('TicketHelp');
         $this->linked_item_type = $this->item->linked_item_type;
-
-        if ($this->linked_item_type === 2) { // Extension
-            $this->linked_item_Model     = new ExtensionModel();
-            $this->related_object_string = "Sorry but extensions as related object are not currently coded.";
-            //$this->linked_item_data = $this->get('ExtensionData');
-            //$this->linked_form      = $this->linked_item_Model->getForm($this->linked_item_data, false);
+        $this->linked_item_id   = $this->item->linked_item_id;
+        if ($this->linked_item_type === 0) { // Manual Tickets from User
+            $this->linked_item_Model     = null;
+            $this->related_object_string = "There is no linked item.";
 
             //$this->linked_form->bind($this->linked_item_data);
+        }
+        if ($this->linked_item_type === 2) { // Extension
+            $extension_model = new ExtensionModel();
+            $extension_id    = $extension_model->getExtensionIdfromVariedId($this->linked_item_id);
+            $supplyoptions   = $extension_model->getExtensionSupplyOptions($extension_id);
+
+            $this->related_object_string = "Extension is displayed in 'Linked Extensions' tab.";
+            $this->linked_extension_data = $extension_model->getEverything($extension_id);
+            //echo "<pre>";print_r($this->linked_extension_data);echo "</pre>";exit();
+
+            $this->linked_extension_form = $extension_model->getForm(
+                $this->linked_extension_data,
+                false,
+                'jf_linked_extension_form'
+            );
+            $this->linked_extension_form->bind($this->linked_extension_data);
+            $this->linked_extension_data->extension_form = $this->linked_extension_form;
+
+
+
+            $extensionvarieddatum                   = new ExtensionvarieddatumModel();
+            $this->linked_extension_varieddata      = $this->linked_extension_data->varied[0];
+            $this->linked_extension_varieddata_form = $extensionvarieddatum->getForm(
+                $this->linked_extension_varieddata,
+                false,
+                'jf_linked_extension_varieddata_form'
+            );
+
+            $this->linked_extension_varieddata_form->bind($this->linked_extension_varieddata);
+            $this->linked_extension_data->varied_form = $this->linked_extension_varieddata_form;
         }
         if ($this->linked_item_type === 3) { //Review
             $this->linked_item_Model     = new ReviewModel();

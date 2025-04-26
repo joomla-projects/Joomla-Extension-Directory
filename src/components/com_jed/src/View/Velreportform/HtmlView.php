@@ -133,11 +133,14 @@ class HtmlView extends BaseHtmlView
     {
         $app = Factory::getApplication();
 
-        $this->state   = $this->get('State');
-        $this->item    = $this->get('Item');
-        $this->params  = $app->getParams('com_jed');
-        $this->canSave = JedHelper::canSave();
-        $this->form    = $this->get('Form');
+        $model = $this->getModel();
+
+        // Get data from the model.
+        $this->items         = $model->getItems();
+        $this->pagination    = $model->getPagination();
+        $this->state         = $model->getState();
+        $this->canSave       = JedHelper::canSave();
+        $this->form          = $model->getForm();
 
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {

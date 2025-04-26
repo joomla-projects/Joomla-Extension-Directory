@@ -1,28 +1,29 @@
 <?php
 
 /**
- * @package JED
+ * @package       JED
  *
- * @subpackage TICKETS
+ * @subpackage    TICKETS
  *
  * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @license       GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
 
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Site\Helper\JedemailHelper;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\FormModel;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
 use stdClass;
@@ -60,7 +61,7 @@ class TicketformModel extends FormModel
     /**
      * Method to check in an item.
      *
-     * @param int $pk The id of the row to check out.
+     * @param   int  $pk  The id of the row to check out.
      *
      * @return bool True on success, false on failure.
      *
@@ -93,7 +94,7 @@ class TicketformModel extends FormModel
     /**
      * Method to check out an item for editing.
      *
-     * @param int|null $pk The id of the row to check out.
+     * @param   int|null  $pk  The id of the row to check out.
      *
      * @return bool True on success, false on failure.
      *
@@ -145,8 +146,8 @@ class TicketformModel extends FormModel
      *
      * The base form is loaded from XML
      *
-     * @param array $data     An optional array of data for the form to interogate.
-     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
+     * @param   array  $data      An optional array of data for the form to interogate.
+     * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
      *
      * @return Form    A Form object on success, false on failure
      *
@@ -187,9 +188,9 @@ class TicketformModel extends FormModel
     /**
      * Method to get an object.
      *
-     * @param int|null $id The id of the object to get.
+     * @param   int|null  $id  The id of the object to get.
      *
-     * @return Object|bool Object on success, false on failure.
+     * @return mixed Object on success, false on failure.
      *
      * @since  4.0.0
      * @throws Exception
@@ -206,14 +207,19 @@ class TicketformModel extends FormModel
             // Get a level row instance.
             $table = $this->getTable();
 
+            $properties = $table->getTableProperties();
+            $this->item = ArrayHelper::toObject($properties, stdClass::class);
+
             if ($table !== false && $table->load($id) && !empty($table->id)) {
                 $user = Factory::getApplication()->getIdentity();
                 $id   = $table->id;
                 if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
                     // Convert the Table to a clean CMSObject.
-                    $properties = $table->getTableProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
-
+                    $properties                       = $table->getTableProperties(1);
+                    $this->item                       = ArrayHelper::toObject($properties, stdClass::class);
+                    $this->item->ticket_messages      = self::getTicketMessages($id);
+                    $this->item->ticket_status        = Text::_('COM_JED_TICKETS_TICKET_STATUS_OPTION_' . strtoupper($this->item->ticket_status));
+                    $this->item->ticket_category_type = self::getTicketCategory($this->item->ticket_category_type);
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
                         $this->item->category_id = ArrayHelper::fromObject($this->item->category_id);
                     }
@@ -223,13 +229,23 @@ class TicketformModel extends FormModel
             }
         }
 
+
         return $this->item;
+    }
+
+    public function getTicketMessages($ticketId): array
+    {
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true);
+        $query->select('*')->from('#__jed_ticket_messages')->where('ticket_id = ' . $db->quote($ticketId));
+
+        return $db->setQuery($query)->loadObjectList();
     }
 
     /**
      * Method to delete data
      *
-     * @param int  $pk  Item primary key
+     * @param   int  $pk  Item primary key
      *
      * @return int  The id of the deleted item
      *
@@ -275,9 +291,9 @@ class TicketformModel extends FormModel
     /**
      * Method to get the table
      *
-     * @param string $name
-     * @param string $prefix  Optional prefix for the table class name
-     * @param array  $options
+     * @param   string  $name
+     * @param   string  $prefix  Optional prefix for the table class name
+     * @param   array   $options
      *
      * @return Table|bool Table if found, bool false on failure
      * @since  4.0.0
@@ -285,7 +301,6 @@ class TicketformModel extends FormModel
      */
     public function getTable($name = 'Ticket', $prefix = 'Administrator', $options = [])
     {
-
         return parent::getTable($name, $prefix, $options);
     }
 
@@ -304,34 +319,8 @@ class TicketformModel extends FormModel
             $data = $this->getItem();
         }
 
-        if ($data) {
-            // Support for multiple or not foreign key field: ticket_origin
-            $array = [];
 
-            foreach ((array) $data->ticket_origin as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->ticket_origin = $array;
-            }
-            // Support for multiple or not foreign key field: ticket_status
-            $array = [];
-
-            foreach ((array) $data->ticket_status as $value) {
-                if (!is_array($value)) {
-                    $array[] = $value;
-                }
-            }
-            if (!empty($array)) {
-                $data->ticket_status = $array;
-            }
-
-            return $data;
-        }
-
-        return [];
+        return $data;
     }
 
     /**
@@ -373,7 +362,7 @@ class TicketformModel extends FormModel
     /**
      * Method to save the form data.
      *
-     * @param array $data The form data
+     * @param   array  $data  The form data
      *
      * @return bool
      *
@@ -382,22 +371,53 @@ class TicketformModel extends FormModel
      */
     public function save(array $data): bool
     {
-        $isLoggedIn = JedHelper::IsLoggedIn();
-
+        $isLoggedIn      = JedHelper::isLoggedIn();
+        $data['user_ip'] = $_SERVER['REMOTE_ADDR'];
+        $user            = Factory::getApplication()->getIdentity();
         if ($isLoggedIn) {
             /* Any logged-in user can make a new ticket */
             $table = $this->getTable();
 
             if ($table->save($data) === true) {
-                $this->id = $table->id;
+                $this->id                            = $table->id;
+                $ticket_message                      = JedHelper::createEmptyTicketMessage();
+                $ticket_message['subject']           = $data['ticket_subject'];
+                $ticket_message['message']           = $data['ticket_text'];
+                $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
+                $ticket_message['ticket_id']         = $this->id;
+                $ticket_message_model                = new TicketmessageformModel();
+                $ticket_message_model->save($ticket_message);
+                /* We need to email standard message to user and store message in ticket */
+                $message_out = JedHelper::getMessageTemplate(1000);
+                if (isset($message_out->subject)) {
+                    JedemailHelper::sendEmail($message_out->subject, $message_out->template, $user, 'dummy@dummy.com');
+
+                    $ticket_message['id']                = 0;
+                    $ticket_message['subject']           = $message_out->subject;
+                    $ticket_message['message']           = $message_out->template;
+                    $ticket_message['message_direction'] = 0; /* 1 for coming in, 0 for going out */
+                    $ticket_message['created_by']        = -1;
+                    $ticket_message['modified_by']       = -1;
+                    $ticket_message_model->save($ticket_message);
+                }
 
                 return $table->id;
             } else {
                 echo "can't save";
+
                 return false;
             }
         } else {
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
         }
+    }
+
+    public function getTicketCategory($categoryId): string
+    {
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true);
+        $query->select('categorytype')->from('#__jed_ticket_categories')->where('id = ' . $db->quote($categoryId));
+
+        return $db->setQuery($query)->loadResult();
     }
 }

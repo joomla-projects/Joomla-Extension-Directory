@@ -12,6 +12,8 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Site\Helper\JedHelper;
+use Jed\Component\Jed\Site\Helper\JedscoreHelper;
 use Jed\Component\Jed\Site\Helper\JedtrophyHelper;
 use Jed\Component\Jed\Site\View\Extension\HtmlView;
 use Joomla\CMS\Factory;
@@ -149,7 +151,7 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
         echo HTMLHelper::_('uitab.startTabSet', 'supply_option_tabs') ?>
         <?php
         $varieddata = $this->item->varied_data;
-        $tabid      = 0;
+        $tabid              = 0;
         foreach ($varieddata as $vr) {
             //  echo "<pre>";print_r($vr);echo "</pre>";
             echo HTMLHelper::_('uitab.addTab', 'supply_option_tabs', 'supply_tab_' . $vr->supply_type, $vr->supply_type);
@@ -192,9 +194,15 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
                 <div class="jed-grid__item">
                     <p>
                         <span class="button-group display-block align-right">
-                            <a href="#" class="button button--grey">Report</a>
+                            <!--https://burninglight.biz/j5-restruct/index.php?option=com_jed&view=ticketform&Itemid=203-->
+                            <?php
+
+                            $url =  Route::_('index.php?option=com_jed&view=ticketform&litem=2&lid=' . $this->item->id . '&vr=' . $vr->id)
+                            ?>
+                            <a href="<?php echo $url; ?>" class="button button--grey">Report</a>
                             <a href="#" class="button button--grey">Share</a>
                         </span>
+
                     </p>
                 </div>
             </div>
@@ -202,143 +210,39 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
             <div class="jed-grid jed-grid--1-2">
                 <div class="jed-grid__item">
                     <h2 class="heading heading--m">Reviews for <?php echo $vr->supply_type; ?> version</h2>
-                    <strong>4.0</strong>
-                    <div class="stars">
-                        <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
-                        <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
-                        <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
-                        <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
-                        <div class="star"><span aria-hidden="true" class="icon-star-empty"></span></div>
-                    </div>
-                    <a href="#">132 reviews</a>
+                    <hr>
+                    <?php
+
+                    echo HTMLHelper::_('bootstrap.startAccordion', 'review_extension_group', $slidesOptions);
+                    $slideid = 0;
+                    foreach ($this->item->reviews[$vr->supply_type] as $rev) {
+                        echo HTMLHelper::_(
+                            'bootstrap.addSlide',
+                            'review_extension_group',
+                            $rev->version . ' - ' .
+                            $rev->title . ' - ' . JedscoreHelper::getStars($rev->overall_score) . ' ' . JedHelper::prettyShortDate($rev->created_on),
+                            'review_extension_group' . '_slide' . ($slideid++)
+                        );
+                        echo "<p>" . $rev->body . "</p>";
+                        echo "<p>Functionality (" . $rev->functionality . ") - " . $rev->functionality_comment . "</p>";
+                        echo "<p>Ease of use (" . $rev->ease_of_use . ") - " . $rev->ease_of_use_comment . "</p>";
+                        echo "<p>Documentation (" . $rev->documentation . ") - " . $rev->documentation_comment . "</p>";
+                        echo "<p>Value For Money (" . $rev->value_for_money . ") - " . $rev->value_for_money_comment . "</p>";
+                        echo "<p>Used for - " . $rev->used_for . "</p>";
+                        echo HTMLHelper::_('bootstrap.endSlide');
+                    }
+                    echo HTMLHelper::_('bootstrap.endAccordion');
+
+                    ?>
                 </div>
 
             </div>
         </div>
-            <?php /*
-                echo HTMLHelper::_('uitab.addTab', 'supply_option_tabs', 'supply_tab_' . $this->item->supply_type, $this->item->supply_type); ?>
-                <div class="jed-wrapper jed-extension margin-bottom">
-            <div class="jed-extension__image">
-                <?php
-                if ($this->item->logo) : ?>
-                    <img src="<?php
-                    echo $this->item->logo ?>" alt="<?php
-                    echo $this->escape($this->item->title) ?>"
-                         class="rounded img-fluid mx-auto d-block" style="max-height: 525px">
-                <?php
-                endif; ?>
-            </div>
-            <div class="jed-grid jed-grid--2-1 margin-bottom">
-                <div class="jed-grid__item">
-                    <div class="jed-subitem-intro mb-2">
-                        <?php
-                        echo $this->item->intro_text ?>
-                        <?php
-                        if (!empty(trim(strip_tags($this->item->description)))) : ?>
-                            <?php
-                            HTMLHelper::_('bootstrap.collapse') ?>
-                            <button type="button" class="btn btn-sm btn-outline-secondary my-2"
-                                    data-bs-toggle="collapse" href="#description"
-                                    aria-expanded="false" aria-controls="description"
-                            >
-                                Show/hide
-                            </button>
-                        <?php
-                        endif ?>
-                    </div>
+            <?php
 
-                    <div class="jed-subitem-description mb-2 collapse" id="description">
-                        <?php
-                        echo $this->item->description ?>
-                    </div>
-
-                    <p class="button-group">
-                        <a href="<?php
-                        echo $this->item->homepage_link ?>" class="button button--grey">Website</a>
-                        <a href="<?php
-                        echo $this->item->demo_link ?>" class="button button--grey">Demo</a>
-                        <a href="<?php
-                        echo $this->item->documentation_link ?>" class="button button--grey">Documentation</a>
-                        <a href="<?php
-                        echo $this->item->support_link ?>" class="button button--grey">Support</a>
-                        <a href="<?php
-                        echo $this->item->license_link ?>" class="button button--grey">License</a>
-                    </p>
-                </div>
-                <div class="jed-grid__item">
-                    <p>
-                    <span class="button-group display-block align-right">
-                        <a href="#" class="button button--grey">Report</a>
-                        <a href="#" class="button button--grey">Share</a>
-                    </span>
-                    </p>
-                </div>
-            </div>
-
-            <div class="jed-grid jed-grid--1-2">
-                <div class="jed-grid__item">
-                    <h2 class="heading heading--m">Reviews for free version</h2>
-                    <strong>4.0</strong>
-                    <div class="stars">
-                        <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
-                        <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
-                        <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
-                        <div class="star"><span aria-hidden="true" class="icon-star"></span></div>
-                        <div class="star"><span aria-hidden="true" class="icon-star-empty"></span></div>
-                    </div>
-                    <a href="#">132 reviews</a>
-                </div>
-
-            </div>
-                </div>
-                <?php */
             echo HTMLHelper::_('uitab.endTab');
         }?>
     </article>
 </div>
 
 
-<?php
-//echo LayoutHelper::render('extension.extension-single', $this->item)?>
-
-<?php
-$canCheckin = Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jed.' . $this->item->id) || $this->item->checked_out == Factory::getApplication()->getIdentity()->id; ?>
-<?php
-if ($canEdit && $this->item->checked_out == 0) : ?>
-    <a class="btn btn-outline-primary" href="<?php
-    echo Route::_('index.php?option=com_jed&task=extension.edit&id=' . $this->item->id) ?>"><?php
-echo Text::_("JACTION_EDIT") ?></a>
-    <?php
-elseif ($canCheckin && $this->item->checked_out > 0) : ?>
-    <a class="btn btn-outline-primary" href="<?php
-    echo Route::_('index.php?option=com_jed&task=extension.checkin&id=' . $this->item->id . '&' . Session::getFormToken() . '=1') ?>"><?php
-echo Text::_("JLIB_HTML_CHECKIN") ?></a>
-
-    <?php
-endif; ?>
-
-<?php
-if (Factory::getApplication()->getIdentity()->authorise('core.delete', 'com_jed.extension.' . $this->item->id)) : ?>
-    <a class="btn btn-danger" rel="noopener noreferrer" href="#deleteModal" role="button" data-bs-toggle="modal">
-        <?php
-        echo Text::_("JACTION_DELETE") ?>
-    </a>
-
-    <?php
-    echo HTMLHelper::_(
-        'bootstrap.renderModal',
-        'deleteModal',
-        [
-        'title'  => Text::_('JACTION_DELETE'),
-        'height' => '50%',
-        'width'  => '20%',
-
-        'modalWidth' => '50',
-        'bodyHeight' => '100',
-        'footer'     => '<button class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button><a href="' . Route::_('index.php?option=com_jed&task=extension.remove&id=' . $this->item->id, false, 2) . '" class="btn btn-danger">' . Text::_('JACTION_DELETE') . '</a>',
-        ],
-        Text::sprintf('COM_JED_GENERAL_DELETE_CONFIRM_LABEL', $this->item->id)
-    ) ?>
-
-    <?php
-endif; ?>

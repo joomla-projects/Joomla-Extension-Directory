@@ -21,24 +21,24 @@
     </rule>
 
     <rule ref="PSR1.Classes.ClassDeclaration">
-        <exclude-pattern type="relative">src/administrator/components/com_jed/script\.php</exclude-pattern>
+        <exclude-pattern type="relative">administrator/components/com_jed/script\.php</exclude-pattern>
     </rule>
 
     <rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
-        <exclude-pattern type="relative">src/components/com_jed/src/Model/CategoriesModel\.php</exclude-pattern>
-        <exclude-pattern type="relative">src/administrator/components/com_jed/src/Model/ExtensionModel\.php</exclude-pattern>
+        <exclude-pattern type="relative">components/com_jed/src/Model/CategoriesModel\.php</exclude-pattern>
+        <exclude-pattern type="relative">administrator/components/com_jed/src/Model/ExtensionModel\.php</exclude-pattern>
     </rule>
 
     <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
-        <exclude-pattern type="relative">src/components/com_jed/src/Helper/JedHelper\.php</exclude-pattern>
-        <exclude-pattern type="relative">src/administrator/components/com_jed/script\.php</exclude-pattern>
+        <exclude-pattern type="relative">components/com_jed/src/Helper/JedHelper\.php</exclude-pattern>
+        <exclude-pattern type="relative">administrator/components/com_jed/script\.php</exclude-pattern>
     </rule>
 
     <rule ref="PSR2.Methods.MethodDeclaration.Underscore">
-        <exclude-pattern type="relative">src/administrator/components/com_jed/src/Table/*\.php</exclude-pattern>
+        <exclude-pattern type="relative">administrator/components/com_jed/src/Table/*\.php</exclude-pattern>
     </rule>
 
     <rule ref="Squiz.Classes.ValidClassName">
-        <exclude-pattern type="relative">src/administrator/components/com_jed/script\.php</exclude-pattern>
+        <exclude-pattern type="relative">administrator/components/com_jed/script\.php</exclude-pattern>
     </rule>
 </ruleset>
