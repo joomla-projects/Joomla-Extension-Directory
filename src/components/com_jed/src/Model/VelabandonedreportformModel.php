@@ -25,7 +25,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\FormModel;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
-
 use stdClass;
 
 /**
@@ -316,7 +315,7 @@ class VelabandonedreportformModel extends FormModel
         $data['data_source']   = CURL_HTTP_VERSION_1_0;
         $data['passed_to_vel'] = 0;
 
-        $isLoggedIn = JedHelper::IsLoggedIn();
+        $isLoggedIn = JedHelper::isLoggedIn();
         $user       = Factory::getApplication()->getIdentity();
 
         if ((!$id || JedHelper::isAdminOrSuperUser()) && $isLoggedIn) {
@@ -325,8 +324,8 @@ class VelabandonedreportformModel extends FormModel
             $table = $this->getTable();
 
             if ($table->save($data) === true) {
-                $ticket                              = JedHelper::CreateVELTicket(3, $table->id);
-                $ticket_message                      = JedHelper::CreateEmptyTicketMessage();
+                $ticket                              = JedHelper::createVELTicket(3, $table->id);
+                $ticket_message                      = JedHelper::createEmptyTicketMessage();
                 $ticket_message['subject']           = $ticket['ticket_subject'];
                 $ticket_message['message']           = $ticket['ticket_text'];
                 $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
@@ -345,7 +344,7 @@ class VelabandonedreportformModel extends FormModel
                 $ticket_message_model->save($ticket_message);
 
                 /* We need to email standard message to user and store message in ticket */
-                $message_out = JedHelper::GetMessageTemplate(1000);
+                $message_out = JedHelper::getMessageTemplate(1000);
                 if (isset($message_out->subject)) {
                     JedemailHelper::sendEmail($message_out->subject, $message_out->template, $user, 'dummy@dummy.com');
 

@@ -16,7 +16,6 @@ namespace Jed\Component\Jed\Administrator\Field;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
-
 use RuntimeException;
 
 /**

@@ -36,7 +36,7 @@ $doc->addScript(Uri::base() . '/media/com_jed/js/form.js');
 $user    = Factory::getApplication()->getIdentity();
 $canEdit = JedHelper::canUserEdit($this->item);
 
-$isLoggedIn  = JedHelper::IsLoggedIn();
+$isLoggedIn  = JedHelper::isLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
 
 if (!$isLoggedIn) {

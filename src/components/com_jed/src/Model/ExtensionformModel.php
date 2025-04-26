@@ -352,8 +352,8 @@ class ExtensionformModel extends FormModel
 
             if ($table->save($data) === true) {
                 $this->id                            = $table->id;
-                $ticket                              = JedHelper::CreateExtensionTicket($table->id);
-                $ticket_message                      = JedHelper::CreateEmptyTicketMessage();
+                $ticket                              = JedHelper::createExtensionTicket($table->id);
+                $ticket_message                      = JedHelper::createEmptyTicketMessage();
                 $ticket_message['subject']           = $ticket['ticket_subject'];
                 $ticket_message['message']           = $ticket['ticket_text'];
                 $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
@@ -373,7 +373,7 @@ class ExtensionformModel extends FormModel
                 $ticket_message_model->save($ticket_message);
 
                 /* We need to email standard message to user and store message in ticket */
-                $message_out = JedHelper::GetMessageTemplate(1000);
+                $message_out = JedHelper::getMessageTemplate(1000);
                 if (isset($message_out->subject)) {
                     JedemailHelper::sendEmail($message_out->subject, $message_out->template, $user, 'dummy@dummy.com');
 

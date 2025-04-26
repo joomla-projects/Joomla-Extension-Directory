@@ -345,7 +345,7 @@ class TicketmessageformModel extends FormModel
     {
         $id = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('ticketmessage.id');
 
-        $isLoggedIn = JedHelper::IsLoggedIn();
+        $isLoggedIn = JedHelper::isLoggedIn();
 
         if (!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser() && $isLoggedIn) {
             $table = $this->getTable();

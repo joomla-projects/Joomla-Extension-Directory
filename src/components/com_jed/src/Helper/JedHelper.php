@@ -13,11 +13,12 @@ namespace Jed\Component\Jed\Site\Helper;
 defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use DateTime;
 use Exception;
-use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
+use Jed\Component\Jed\Site\MediaHandling\ImageSize;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Uri\Uri;
@@ -43,14 +44,7 @@ class JedHelper
      */
     public static function getUser(): User\User
     {
-        $app = null;
-        try {
-            $app = Factory::getApplication();
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage(), $e->getCode());
-        }
-
-        return $app->getSession()->get('user');
+        return Factory::getApplication()->getIdentity();
     }
 
     /**
@@ -88,7 +82,7 @@ class JedHelper
      * @throws Exception
      */
 
-    public static function CreateReviewTicket(int $item_id): array
+    public static function createReviewTicket(int $item_id): array
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
 
@@ -194,7 +188,7 @@ class JedHelper
      * @throws Exception
      */
 
-    public static function CreateExtensionTicket(int $item_id): array
+    public static function createExtensionTicket(int $item_id): array
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
 
@@ -301,10 +295,8 @@ class JedHelper
      * @throws Exception
      */
 
-    public static function CreateVELTicket(int $report_type, int $item_id): array
+    public static function createVELTicket(int $report_type, int $item_id): array
     {
-        $db = Factory::getContainer()->get('DatabaseDriver');
-
         $ticket = [];
 
         $user = Factory::getApplication()->getIdentity();
@@ -408,14 +400,14 @@ class JedHelper
     }
 
     /**
-     * Create Empty Ticket for VEL
+     * Create Empty Ticket Message
      *
      * @return array
      *
      * @since 4.0.0
      * @throws Exception
      */
-    public static function CreateEmptyTicketMessage(): array
+    public static function createEmptyTicketMessage(): array
     {
         $user                          = Factory::getApplication()->getIdentity();
         $ticket_message                = [];
@@ -440,7 +432,7 @@ class JedHelper
      *
      * @since version
      */
-    public static function GetMessageTemplate(int $template_id): object
+    public static function getMessageTemplate(int $template_id): object
     {
         // Create a new query object.
         $db    = Factory::getContainer()->get('DatabaseDriver');
@@ -454,7 +446,7 @@ class JedHelper
     }
 
     /**
-     * IsLoggedIn
+     * isLoggedIn
      *
      * Returns if user is logged-in
      *
@@ -463,7 +455,7 @@ class JedHelper
      * @since 4.0.0
      * @throws Exception
      */
-    public static function IsLoggedIn(): bool
+    public static function isLoggedIn(): bool
     {
         $user = Factory::getApplication()->getIdentity();
         if ($user->id > 0) {
@@ -729,7 +721,7 @@ class JedHelper
         return false;
     }
 
-    public static function OutputFieldsets(array $fieldsets, Form $form): bool
+    public static function outputFieldsets(array $fieldsets, Form $form): bool
     {
         $fscount = 0;
         foreach ($fieldsets as $fscat => $fs) {
@@ -744,7 +736,7 @@ class JedHelper
                     $st = '_' . $fs['supply_type'];
                 } else {
                     $st = '';
-                };
+                }
 
                 echo '<fieldset class="extensionform' . $st . '"><legend>' . $fs['title'] . '</legend>';
             }
@@ -778,5 +770,46 @@ class JedHelper
         }
         echo '</fieldset>';
         return true;
+    }
+
+    /**
+     * Get Extension Title from Database and return
+     *
+     * @param   int  $varied_item_id
+     *
+     * @return object
+     *
+     * @since version
+     */
+    public static function getExtensionTitle(int $varied_item_id): string
+    {
+        // Create a new query object.
+        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true);
+        $query->select('title')->from($db->quoteName('#__jed_extension_varied_data'))->where('id=' . $varied_item_id);
+        // Reset the query using our newly populated query object.
+        $db->setQuery($query);
+
+        // Load the results as a stdClass object.
+        return $db->loadResult();
+    }
+
+    /**
+     * Prettyfy a Data
+     *
+     * @param   string  $datestr  A String Date
+     *
+     * @since 4.0.0
+     **/
+    public static function prettyDate(mixed $datestr): string
+    {
+
+        try {
+            $d = new DateTime($datestr);
+
+            return $d->format("d M y H:i");
+        } catch (Exception $e) {
+            return 'Sorry an error occured';
+        }
     }
 }

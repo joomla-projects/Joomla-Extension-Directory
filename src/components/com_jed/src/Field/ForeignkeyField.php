@@ -62,6 +62,8 @@ class ForeignKeyField extends ListField
 
     private string $option_value_field;
 
+    private string $limit;
+
     /**
      * Method to get the field input markup.
      *
@@ -114,7 +116,8 @@ class ForeignKeyField extends ListField
 
         // Flag for translate options
         $this->translate = (bool)$this->getAttribute('translate');
-
+        // Flag for limit options
+        $limit = (int)$this->getAttribute('limit');
 
 
         // Load all the field options
@@ -173,7 +176,9 @@ class ForeignKeyField extends ListField
             $query->where($condition);
         }
 
-
+        if ($limit) {
+            $query->setLimit($limit);
+        }
         return $query;
     }
 

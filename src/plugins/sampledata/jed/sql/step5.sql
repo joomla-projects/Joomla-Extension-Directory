@@ -1,3 +1,4 @@
+DELETE FROM `#__jed_extension_images`;
 INSERT INTO `#__jed_extension_images` (`id`, `extension_id`, `supply_option_id`, `filename`, `state`, `ordering`, `checked_out`, `checked_out_time`, `created_by`, `modified_by`) VALUES
 	(1, 1, 1, 'https://images.pexels.com/photos/3807745/pexels-photo-3807745.jpeg?auto=compress&cs=tinysrgb&h=650&w=940', 1, 0, NULL, NULL, 101, 101),
 	(2, 1, 1, 'https://images.pexels.com/photos/162256/wolf-predator-european-wolf-carnivores-162256.jpeg?auto=compress&cs=tinysrgb&h=650&w=940', 1, 1, NULL, NULL, 101, 101),
