@@ -73,23 +73,23 @@ if (!$isLoggedIn) {
 
                                     $slidesOptions = ["active" => 'ticket_messages_group' . '_slide0' , // It is the ID of the active tab.
                                     ];
-                                    echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_messages_group', $slidesOptions);
+            echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_messages_group', $slidesOptions);
 
-                                    $slideid = 0;
-                                    foreach ($this->item->ticket_messages as $ticketMessage) {
-                                        if ($ticketMessage->message_direction == 0) {
-                                            $inout = "jed-ticket-message-out";
-                                        } else {
-                                            $inout = "jed-ticket-message-in";
-                                        }
+            $slideid = 0;
+            foreach ($this->item->ticket_messages as $ticketMessage) {
+                if ($ticketMessage->message_direction == 0) {
+                    $inout = "jed-ticket-message-out";
+                } else {
+                    $inout = "jed-ticket-message-in";
+                }
 
-                                        echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' . $ticketMessage->subject . ' - ' . JedHelper::prettyDate($ticketMessage->created_on) . '</span>', 'ticket_messages_group' . '_slide' . ($slideid++));
-                                        echo  $ticketMessage->message ;
-                                        echo HTMLHelper::_('bootstrap.endSlide');
-                                    }
-                                    echo HTMLHelper::_('bootstrap.endAccordion');
+                echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' . $ticketMessage->subject . ' - ' . JedHelper::prettyDate($ticketMessage->created_on) . '</span>', 'ticket_messages_group' . '_slide' . ($slideid++));
+                echo  $ticketMessage->message ;
+                echo HTMLHelper::_('bootstrap.endSlide');
+            }
+            echo HTMLHelper::_('bootstrap.endAccordion');
 
-                                    ?>
+            ?>
 
 
                                 </div>

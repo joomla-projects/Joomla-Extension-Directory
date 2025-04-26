@@ -355,32 +355,32 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                                         $icon = 'pending';
                                         break;
                                 }
-                                echo '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
-                                ?>
+                        echo '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
+                        ?>
                             </td>
                             <td>
                                 <?php
-                                switch ($item->approved) {
-                                    // Rejected
-                                    case '-1':
-                                        $icon = 'unpublish';
-                                        break;
-                                        // Approved
-                                    case '1':
-                                        $icon = 'publish';
-                                        break;
-                                        // Awaiting response
-                                    case '2':
-                                        $icon = 'expired';
-                                        break;
-                                        // Pending
-                                    case '0':
-                                    default:
-                                        $icon = 'pending';
-                                        break;
-                                }
-                                echo '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
-                                ?>
+                        switch ($item->approved) {
+                            // Rejected
+                            case '-1':
+                                $icon = 'unpublish';
+                                break;
+                                // Approved
+                            case '1':
+                                $icon = 'publish';
+                                break;
+                                // Awaiting response
+                            case '2':
+                                $icon = 'expired';
+                                break;
+                                // Pending
+                            case '0':
+                            default:
+                                $icon = 'pending';
+                                break;
+                        }
+                        echo '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
+                        ?>
                             </td>
                             <td>
                                 <div class="pull-left break-word">
@@ -402,14 +402,14 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                             </td>
                             <td>
                                 <?php
-                                if (!is_null($item->modified_on)) {
-                                    echo HTMLHelper::_(
-                                        'date',
-                                        $item->modified_on,
-                                        Text::_('COM_JED_GENERAL_DATETIME_FORMAT')
-                                    );
-                                }
-                                ?>
+                        if (!is_null($item->modified_on)) {
+                            echo HTMLHelper::_(
+                                'date',
+                                $item->modified_on,
+                                Text::_('COM_JED_GENERAL_DATETIME_FORMAT')
+                            );
+                        }
+                        ?>
                             </td>
                             <td>
 
