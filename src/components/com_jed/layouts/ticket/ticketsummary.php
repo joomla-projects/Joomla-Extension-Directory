@@ -42,22 +42,22 @@ $rawData            = $displayData->getData();
 *
 * "active" => "slide0" // It is the ID of the active tab.
 **/];
-                    echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_messages_group', $slidesOptions);
+echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_messages_group', $slidesOptions);
 
-                    $slideid = 0;
-                    foreach ($this->ticket_messages as $ticketMessage) {
-                        if ($ticketMessage->message_direction == 0) {
-                            $inout = "jed-ticket-message-out";
-                        } else {
-                            $inout = "jed-ticket-message-in";
-                        }
+$slideid = 0;
+foreach ($this->ticket_messages as $ticketMessage) {
+    if ($ticketMessage->message_direction == 0) {
+        $inout = "jed-ticket-message-out";
+    } else {
+        $inout = "jed-ticket-message-in";
+    }
 
-                        echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' . $ticketMessage->subject . ' - ' . JedHelper::prettyDate($ticketMessage->created_on), 'slide' . ($slideid++));
-                        echo "<p>" . $ticketMessage->message . "</p>";
-                        echo HTMLHelper::_('bootstrap.endSlide');
-                    }
-                    echo HTMLHelper::_('bootstrap.endAccordion');
-                    ?>
+    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' . $ticketMessage->subject . ' - ' . JedHelper::prettyDate($ticketMessage->created_on), 'slide' . ($slideid++));
+    echo "<p>" . $ticketMessage->message . "</p>";
+    echo HTMLHelper::_('bootstrap.endSlide');
+}
+echo HTMLHelper::_('bootstrap.endAccordion');
+?>
                 </div>
             </div>
         </div>
@@ -69,10 +69,10 @@ $rawData            = $displayData->getData();
                 <div class="row">
                     <div class="col"><?php echo $displayData->renderField('created_by', null, null, $headerlabeloptions); ?></div>
                     <div class="col"><?php
-                    echo 'on ';
+echo 'on ';
 //var_dump($rawData);exit();
-                    echo JedHelper::prettyDate($rawData['created_on']);
-                    ?></div>
+echo JedHelper::prettyDate($rawData['created_on']);
+?></div>
                 </div>
             </div>
         </div>

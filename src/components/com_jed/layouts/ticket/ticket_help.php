@@ -112,8 +112,8 @@ try {
 
     echo HTMLHelper::_('uitab.startTabSet', 'viewHelpTab', ['active' => 'viewhelpextension']);
 
-    echo HTMLHelper::_('uitab.addTab', 'viewHelpTab', 'viewhelpextension', Text::_('Registered Extensions', true));
-    ?>
+echo HTMLHelper::_('uitab.addTab', 'viewHelpTab', 'viewhelpextension', Text::_('Registered Extensions', true));
+?>
 
     <div class="widget">
 
@@ -121,64 +121,64 @@ try {
         <div class="container">
             <div class="row">
                 <?php
-                //echo "<pre>";print_r($ticket_help_extensions);echo "</pre>";exit();
-                $slidesOptions = [//"active" => "slide0" // It is the ID of the active tab.
-                ];
-                echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_help_extensions_group', $slidesOptions);
+            //echo "<pre>";print_r($ticket_help_extensions);echo "</pre>";exit();
+            $slidesOptions = [//"active" => "slide0" // It is the ID of the active tab.
+            ];
+echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_help_extensions_group', $slidesOptions);
 
-                $slideid = 0;
+$slideid = 0;
 
-                try {
-                    $extension_model = Factory::getApplication()->bootComponent('com_jed')->getMVCFactory()->createModel('Extension', 'Administrator', ['ignore_request' => true]);
-                } catch (Exception $e) {
-                }
+try {
+    $extension_model = Factory::getApplication()->bootComponent('com_jed')->getMVCFactory()->createModel('Extension', 'Administrator', ['ignore_request' => true]);
+} catch (Exception $e) {
+}
 
-                foreach ($ticket_help_extensions as $ext) {
-                    $linked_extension_form = $extension_model->getForm($ext, false, 'jf_registeredextension_form_' . $ext->id);
-                    try {
-                        $ico = JedHelper::getPublishedIcon($ext->published);
-                    } catch (Exception $e) {
-                    }
+foreach ($ticket_help_extensions as $ext) {
+    $linked_extension_form = $extension_model->getForm($ext, false, 'jf_registeredextension_form_' . $ext->id);
+    try {
+        $ico = JedHelper::getPublishedIcon($ext->published);
+    } catch (Exception $e) {
+    }
 
-                    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_help_extensions_group', $ext->id . ' - ' . $ext->title . ' (' . $ext->version . ') ' . JedHelper::prettyDate($ext->created_on) . '&nbsp;&nbsp;' . $ico . '</span>', 'ticket_help_extensions_group' . '_slide' . ($slideid++));
+    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_help_extensions_group', $ext->id . ' - ' . $ext->title . ' (' . $ext->version . ') ' . JedHelper::prettyDate($ext->created_on) . '&nbsp;&nbsp;' . $ico . '</span>', 'ticket_help_extensions_group' . '_slide' . ($slideid++));
 
-                    $linked_extension_form->bind($ext);
-                    echo $linked_extension_form->renderField('title');
-                    echo $linked_extension_form->renderField('alias');
-                    echo $linked_extension_form->renderField('published');
-                    echo $linked_extension_form->renderField('created_by');
-                    echo $linked_extension_form->renderField('modified_by');
-                    echo $linked_extension_form->renderField('created_on');
-                    echo $linked_extension_form->renderField('modified_on');
-                    echo $linked_extension_form->renderField('joomla_versions');
-                    echo $linked_extension_form->renderField('popular');
-                    echo $linked_extension_form->renderField('requires_registration');
-                    echo $linked_extension_form->renderField('gpl_license_type');
-                    echo $linked_extension_form->renderField('jed_internal_note');
-                    echo $linked_extension_form->renderField('can_update');
-                    echo $linked_extension_form->renderField('video');
-                    echo $linked_extension_form->renderField('version');
-                    echo $linked_extension_form->renderField('uses_updater');
-                    echo $linked_extension_form->renderField('includes');
-                    echo $linked_extension_form->renderField('approved');
-                    echo $linked_extension_form->renderField('approved_time');
-                    echo $linked_extension_form->renderField('second_contact_email');
-                    echo $linked_extension_form->renderField('jed_checked');
-                    echo $linked_extension_form->renderField('uses_third_party');
-                    echo $linked_extension_form->renderField('primary_category_id');
-                    echo $linked_extension_form->renderField('logo');
-                    echo $linked_extension_form->renderField('approved_notes');
-                    echo $linked_extension_form->renderField('approved_reason');
-                    echo $linked_extension_form->renderField('published_notes');
-                    echo $linked_extension_form->renderField('published_reason');
-                    echo $linked_extension_form->renderField('state');
-                    echo "<p>Extension Summary here</p>";
-                    echo HTMLHelper::_('bootstrap.endSlide');
-                }
+    $linked_extension_form->bind($ext);
+    echo $linked_extension_form->renderField('title');
+    echo $linked_extension_form->renderField('alias');
+    echo $linked_extension_form->renderField('published');
+    echo $linked_extension_form->renderField('created_by');
+    echo $linked_extension_form->renderField('modified_by');
+    echo $linked_extension_form->renderField('created_on');
+    echo $linked_extension_form->renderField('modified_on');
+    echo $linked_extension_form->renderField('joomla_versions');
+    echo $linked_extension_form->renderField('popular');
+    echo $linked_extension_form->renderField('requires_registration');
+    echo $linked_extension_form->renderField('gpl_license_type');
+    echo $linked_extension_form->renderField('jed_internal_note');
+    echo $linked_extension_form->renderField('can_update');
+    echo $linked_extension_form->renderField('video');
+    echo $linked_extension_form->renderField('version');
+    echo $linked_extension_form->renderField('uses_updater');
+    echo $linked_extension_form->renderField('includes');
+    echo $linked_extension_form->renderField('approved');
+    echo $linked_extension_form->renderField('approved_time');
+    echo $linked_extension_form->renderField('second_contact_email');
+    echo $linked_extension_form->renderField('jed_checked');
+    echo $linked_extension_form->renderField('uses_third_party');
+    echo $linked_extension_form->renderField('primary_category_id');
+    echo $linked_extension_form->renderField('logo');
+    echo $linked_extension_form->renderField('approved_notes');
+    echo $linked_extension_form->renderField('approved_reason');
+    echo $linked_extension_form->renderField('published_notes');
+    echo $linked_extension_form->renderField('published_reason');
+    echo $linked_extension_form->renderField('state');
+    echo "<p>Extension Summary here</p>";
+    echo HTMLHelper::_('bootstrap.endSlide');
+}
 
-                echo HTMLHelper::_('bootstrap.endAccordion');
+echo HTMLHelper::_('bootstrap.endAccordion');
 
-                ?>
+?>
 
 
             </div>
@@ -188,30 +188,30 @@ try {
     <?php
     echo HTMLHelper::_('uitab.endTab');
 
-    echo HTMLHelper::_('uitab.addTab', 'viewHelpTab', 'viewhelpreviews', Text::_('Reviews', true)); ?>
+echo HTMLHelper::_('uitab.addTab', 'viewHelpTab', 'viewhelpreviews', Text::_('Reviews', true)); ?>
     <div class="widget">
         <h1>Reviews</h1>
         <div class="container">
             <div class="row">
                 <?php
 
-                echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_help_reviews_group', $slidesOptions);
+            echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_help_reviews_group', $slidesOptions);
 
-                $slideid = 0;
-                foreach ($displayData['reviews'] as $review) {
-                    if ($review->published === 1) {
-                        $ico = '<span class="fas fa-bolt"></span>';
-                    } else {
-                        $ico = '';
-                    }
+$slideid = 0;
+foreach ($displayData['reviews'] as $review) {
+    if ($review->published === 1) {
+        $ico = '<span class="fas fa-bolt"></span>';
+    } else {
+        $ico = '';
+    }
 
-                    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_help_reviews_group', $review->id . ' - ' . $review->title . '&nbsp;' . JedHelper::prettyDate($review->created_on) . '&nbsp;', 'ticket_help_reviews_group' . '_slide' . ($slideid++));
-                    echo "<p>Review Summary here</p>";
-                    echo HTMLHelper::_('bootstrap.endSlide');
-                }
-                echo HTMLHelper::_('bootstrap.endAccordion');
+    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_help_reviews_group', $review->id . ' - ' . $review->title . '&nbsp;' . JedHelper::prettyDate($review->created_on) . '&nbsp;', 'ticket_help_reviews_group' . '_slide' . ($slideid++));
+    echo "<p>Review Summary here</p>";
+    echo HTMLHelper::_('bootstrap.endSlide');
+}
+echo HTMLHelper::_('bootstrap.endAccordion');
 
-                ?>
+?>
 
 
             </div>
@@ -221,25 +221,25 @@ try {
     <?php
     echo HTMLHelper::_('uitab.endTab');
 
-    echo HTMLHelper::_('uitab.addTab', 'viewHelpTab', 'viewhelpoldtickets', Text::_('Old Tickets', true)); ?>
+echo HTMLHelper::_('uitab.addTab', 'viewHelpTab', 'viewhelpoldtickets', Text::_('Old Tickets', true)); ?>
     <div class="widget">
         <h1>Old Tickets</h1>
         <div class="container">
             <div class="row">
                 <?php
 
-                echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_help_oldtickets_group', $slidesOptions);
+            echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_help_oldtickets_group', $slidesOptions);
 
-                $slideid = 0;
-                foreach ($displayData['oldtickets'] as $oldticket) {
-                    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_help_oldtickets_group', $oldticket->id . ' - ' . $oldticket->subject . '&nbsp;' . JedHelper::prettyDate($oldticket->date) . '&nbsp;', 'ticket_help_oldtickets_group' . '_slide' . ($slideid++));
+$slideid = 0;
+foreach ($displayData['oldtickets'] as $oldticket) {
+    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_help_oldtickets_group', $oldticket->id . ' - ' . $oldticket->subject . '&nbsp;' . JedHelper::prettyDate($oldticket->date) . '&nbsp;', 'ticket_help_oldtickets_group' . '_slide' . ($slideid++));
 
-                    echo "<p>" . strip_tags($oldticket->messages->message) . "</p>";
-                    echo HTMLHelper::_('bootstrap.endSlide');
-                }
-                echo HTMLHelper::_('bootstrap.endAccordion');
+    echo "<p>" . strip_tags($oldticket->messages->message) . "</p>";
+    echo HTMLHelper::_('bootstrap.endSlide');
+}
+echo HTMLHelper::_('bootstrap.endAccordion');
 
-                ?>
+?>
 
 
             </div>
@@ -250,6 +250,6 @@ try {
     echo HTMLHelper::_('uitab.endTab');
 
 
-    echo HTMLHelper::_('uitab.endTabSet'); ?>
+echo HTMLHelper::_('uitab.endTabSet'); ?>
 </div>
 
