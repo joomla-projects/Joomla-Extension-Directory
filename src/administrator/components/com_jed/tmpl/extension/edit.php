@@ -69,16 +69,16 @@ Factory::getDocument()
         <?php
         echo HTMLHelper::_('uitab.startTabSet', 'extensionTab', ['active' => 'general', 'recall' => true, 'breakpoint' => 768]);
 
-        foreach ($this->form->getFieldsets() as $fieldset) :
-            echo HTMLHelper::_('uitab.addTab', 'extensionTab', $fieldset->name, Text::_($fieldset->label));
-            ?>
+foreach ($this->form->getFieldsets() as $fieldset) :
+    echo HTMLHelper::_('uitab.addTab', 'extensionTab', $fieldset->name, Text::_($fieldset->label));
+    ?>
                 <div class="row">
                     <div class="col-12 col-lg-6">
                         <?php  echo $this->form->renderFieldset($fieldset->name); ?>
                     </div>
                 </div>
             <?php
-                echo HTMLHelper::_('uitab.endTab'); ?>
+        echo HTMLHelper::_('uitab.endTab'); ?>
         <?php endforeach; ?>
 <?php
 foreach ($this->extension->varied as $st) {
@@ -89,8 +89,8 @@ foreach ($this->extension->varied as $st) {
     $fieldsets['overview']['supply_type'] = $st->supply_type;
     $fieldsets['overview']['title']       =  '';
     $fieldsets['overview']['description'] = '';
-    $fieldsets['overview']['fields']   = ['id', 'supply_option_id', ['title', 'is_default_data'],  'description'];
-    $fieldsets['overview']['hidden']   = ['id', 'supply_option_id'];
+    $fieldsets['overview']['fields']      = ['id', 'supply_option_id', ['title', 'is_default_data'],  'description'];
+    $fieldsets['overview']['hidden']      = ['id', 'supply_option_id'];
 
 
     $fieldsets['links']['supply_type'] = $st->supply_type;
@@ -119,26 +119,26 @@ echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'viewextensionreviews', T
 
                     echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_help_reviews_group', $slidesOptions);
 
-                    $slideid = 0;
-                    foreach ($this->extension->reviews as $rtype) {
-                        foreach ($rtype as $review) {
-                            $review = (object)$review;
-                            if ($review->published === 1) {
-                                $ico = '<span class="fas fa-bolt"></span>';
-                            } else {
-                                $ico = '';
-                            }
-                            echo HTMLHelper::_(
-                                'bootstrap.addSlide',
-                                'extension_' . $type . '_reviews_group',
-                                $type . ' ' . $review->id . ' - ' . $review->title . '&nbsp;' .
-                                JedHelper::prettyDate($review->created_on) . '&nbsp;',
-                                'extension_' . $type . '_reviews_group' . '_slide' . ($slideid++)
-                            );
-                            $review_model = new ReviewModel();
-                            $linked_form = $review_model->getForm($review, false, 'review');
-                            $linked_form->bind($review);
-                            ?>
+$slideid = 0;
+foreach ($this->extension->reviews as $rtype) {
+    foreach ($rtype as $review) {
+        $review = (object)$review;
+        if ($review->published === 1) {
+            $ico = '<span class="fas fa-bolt"></span>';
+        } else {
+            $ico = '';
+        }
+        echo HTMLHelper::_(
+            'bootstrap.addSlide',
+            'extension_' . $type . '_reviews_group',
+            $type . ' ' . $review->id . ' - ' . $review->title . '&nbsp;' .
+            JedHelper::prettyDate($review->created_on) . '&nbsp;',
+            'extension_' . $type . '_reviews_group' . '_slide' . ($slideid++)
+        );
+        $review_model = new ReviewModel();
+        $linked_form  = $review_model->getForm($review, false, 'review');
+        $linked_form->bind($review);
+        ?>
                             <div class="col-md-4 ticket-header">
         <h1>Status - <?php echo $linked_form->renderField('published', null, null, $headerlabeloptions); ?>
                     &nbsp;&nbsp;<button id="btn_save_published" type="button" class="">
@@ -236,12 +236,12 @@ echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'viewextensionreviews', T
                     </div>
                 </div>
                             <?php
-                            echo HTMLHelper::_('bootstrap.endSlide');
-                        }
-                    }
-                    echo HTMLHelper::_('bootstrap.endAccordion');
+        echo HTMLHelper::_('bootstrap.endSlide');
+    }
+}
+echo HTMLHelper::_('bootstrap.endAccordion');
 
-                    ?>
+?>
 
 
                 </div>

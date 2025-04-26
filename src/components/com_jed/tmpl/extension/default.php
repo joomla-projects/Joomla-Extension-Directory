@@ -151,12 +151,12 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
         echo HTMLHelper::_('uitab.startTabSet', 'supply_option_tabs') ?>
         <?php
         $varieddata = $this->item->varied_data;
-        $tabid      = 0;
-        foreach ($varieddata as $vr) {
-            //  echo "<pre>";print_r($vr);echo "</pre>";
-            echo HTMLHelper::_('uitab.addTab', 'supply_option_tabs', 'supply_tab_' . $vr->supply_type, $vr->supply_type);
-            $subItemId  = md5(serialize($vr));
-            ?>
+$tabid              = 0;
+foreach ($varieddata as $vr) {
+    //  echo "<pre>";print_r($vr);echo "</pre>";
+    echo HTMLHelper::_('uitab.addTab', 'supply_option_tabs', 'supply_tab_' . $vr->supply_type, $vr->supply_type);
+    $subItemId  = md5(serialize($vr));
+    ?>
         <div class="jed-wrapper jed-extension margin-bottom">
             <div class="jed-extension__image">
                 <?php if ($vr->logo) : ?>
@@ -197,8 +197,8 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
                             <!--https://burninglight.biz/j5-restruct/index.php?option=com_jed&view=ticketform&Itemid=203-->
                             <?php
 
-                            $url =  Route::_('index.php?option=com_jed&view=ticketform&litem=2&lid=' . $this->item->id . '&vr=' . $vr->id)
-                            ?>
+                    $url =  Route::_('index.php?option=com_jed&view=ticketform&litem=2&lid=' . $this->item->id . '&vr=' . $vr->id)
+    ?>
                             <a href="<?php echo $url; ?>" class="button button--grey">Report</a>
                             <a href="#" class="button button--grey">Share</a>
                         </span>
@@ -214,23 +214,26 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
                     <?php
 
                     echo HTMLHelper::_('bootstrap.startAccordion', 'review_extension_group', $slidesOptions);
-                    $slideid = 0;
-                    foreach ($this->item->reviews[$vr->supply_type] as $rev) {
-                        echo HTMLHelper::_(
-                            'bootstrap.addSlide', 'review_extension_group', $rev->version.' - '.
-                            $rev->title . ' - ' . JedscoreHelper::getStars($rev->overall_score) .' '. JedHelper::prettyShortDate($rev->created_on),
-                            'review_extension_group' . '_slide' . ($slideid++));
-                        echo "<p>".$rev->body."</p>";
-                        echo "<p>Functionality (".$rev->functionality.") - ".$rev->functionality_comment."</p>";
-                        echo "<p>Ease of use (".$rev->ease_of_use.") - ".$rev->ease_of_use_comment."</p>";
-                        echo "<p>Documentation (".$rev->documentation.") - ".$rev->documentation_comment."</p>";
-                        echo "<p>Value For Money (".$rev->value_for_money.") - ".$rev->value_for_money_comment."</p>";
-                        echo "<p>Used for - ".$rev->used_for."</p>";
-                        echo HTMLHelper::_('bootstrap.endSlide');
-                    }
-                    echo HTMLHelper::_('bootstrap.endAccordion');
+    $slideid = 0;
+    foreach ($this->item->reviews[$vr->supply_type] as $rev) {
+        echo HTMLHelper::_(
+            'bootstrap.addSlide',
+            'review_extension_group',
+            $rev->version.' - '.
+            $rev->title . ' - ' . JedscoreHelper::getStars($rev->overall_score) .' '. JedHelper::prettyShortDate($rev->created_on),
+            'review_extension_group' . '_slide' . ($slideid++)
+        );
+        echo "<p>".$rev->body."</p>";
+        echo "<p>Functionality (".$rev->functionality.") - ".$rev->functionality_comment."</p>";
+        echo "<p>Ease of use (".$rev->ease_of_use.") - ".$rev->ease_of_use_comment."</p>";
+        echo "<p>Documentation (".$rev->documentation.") - ".$rev->documentation_comment."</p>";
+        echo "<p>Value For Money (".$rev->value_for_money.") - ".$rev->value_for_money_comment."</p>";
+        echo "<p>Used for - ".$rev->used_for."</p>";
+        echo HTMLHelper::_('bootstrap.endSlide');
+    }
+    echo HTMLHelper::_('bootstrap.endAccordion');
 
-                        ?>
+    ?>
                 </div>
 
             </div>
@@ -238,7 +241,7 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
             <?php
 
             echo HTMLHelper::_('uitab.endTab');
-        }?>
+}?>
     </article>
 </div>
 

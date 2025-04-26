@@ -135,8 +135,7 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
             <?php
                 throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403); ?>
         </h3>
-            <?php
-        else : ?>
+            <?php else : ?>
 <h3 id="extensiontitle"></h3>
         <form id="form-extension"
               action="<?php
@@ -145,87 +144,87 @@ $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state
 
             <?php
                 $fieldsets['overview']['title']       = Text::_('COM_JED_EXTENSION_ADD_EXTENSION_LABEL');
-            $fieldsets['overview']['description'] = Text::_('COM_JED_EXTENSION_ADD_EXTENSION_LABEL_DESCR') . '</br>' . '</br>';
-            $fieldsets['overview']['fields']      = [['title','alias'],'version',['primary_category_id', 'tags']];
-            $fieldsets['overview']['hidden']      = [];
+                $fieldsets['overview']['description'] = Text::_('COM_JED_EXTENSION_ADD_EXTENSION_LABEL_DESCR') . '</br>' . '</br>';
+                $fieldsets['overview']['fields']      = [['title','alias'],'version',['primary_category_id', 'tags']];
+                $fieldsets['overview']['hidden']      = [];
 
-            JedHelper::outputFieldsets($fieldsets, $this->form);
+                JedHelper::outputFieldsets($fieldsets, $this->form);
 
-            echo HTMLHelper::_('uitab.startTabSet', 'supplyTab', ['active' => '']);
+                echo HTMLHelper::_('uitab.startTabSet', 'supplyTab', ['active' => '']);
 
 
-            foreach ($this->supply_types as $st) {
-                echo HTMLHelper::_('uitab.addTab', 'supplyTab', $st->supply_type, $st->supply_type);
+                foreach ($this->supply_types as $st) {
+                    echo HTMLHelper::_('uitab.addTab', 'supplyTab', $st->supply_type, $st->supply_type);
 
-                $varied_form                          = $this->supply_forms[$st->supply_id];
-                $fieldsets                            = [];
-                $fieldsets['overview']['supply_type'] = $st->supply_type;
-                $fieldsets['overview']['title']       =  Text::sprintf('COM_JED_EXTENSION_VARIED_TITLE_LABEL', $st->supply_type);
-                $fieldsets['overview']['description'] = Text::_('COM_JED_EXTENSION_VARIED_TITLE_LABEL_DESCR');
-                $fieldsets['overview']['fields']   = ['id', 'supply_option_id', ['title', 'is_default_data'],  'description'];
-                $fieldsets['overview']['hidden']   = ['id', 'supply_option_id'];
+                    $varied_form                          = $this->supply_forms[$st->supply_id];
+                    $fieldsets                            = [];
+                    $fieldsets['overview']['supply_type'] = $st->supply_type;
+                    $fieldsets['overview']['title']       =  Text::sprintf('COM_JED_EXTENSION_VARIED_TITLE_LABEL', $st->supply_type);
+                    $fieldsets['overview']['description'] = Text::_('COM_JED_EXTENSION_VARIED_TITLE_LABEL_DESCR');
+                    $fieldsets['overview']['fields']      = ['id', 'supply_option_id', ['title', 'is_default_data'],  'description'];
+                    $fieldsets['overview']['hidden']      = ['id', 'supply_option_id'];
 
-                $fieldsets['extensionfile']['supply_type'] = $st->supply_type;
-                $fieldsets['extensionfile']['title']       = '';
-                $fieldsets['extensionfile']['description'] = Text::_('COM_JED_EXTENSION_EXTENSIONFILE_LABEL') . '<br/>' . Text::_('COM_JED_EXTENSION_EXTENSIONFILE_EXTRA');
-                $fieldsets['extensionfile']['fields']      = ['file'];
-                $fieldsets['extensionfile']['hidden']      = [];
-                $fieldsets['links']['supply_type'] = $st->supply_type;
-                $fieldsets['links']['title']       = Text::_('COM_JED_EXTENSION_LINKS_TITLE');
-                $fieldsets['links']['description'] = Text::_('COM_JED_EXTENSION_LINKS_DESCR');
-                $fieldsets['links']['fields']      = [['homepage_link', 'download_link'], ['demo_link', 'support_link'], ['documentation_link', 'license_link'], ['translation_link', '']];
-                $fieldsets['links']['hidden']      = [];
+                    $fieldsets['extensionfile']['supply_type'] = $st->supply_type;
+                    $fieldsets['extensionfile']['title']       = '';
+                    $fieldsets['extensionfile']['description'] = Text::_('COM_JED_EXTENSION_EXTENSIONFILE_LABEL') . '<br/>' . Text::_('COM_JED_EXTENSION_EXTENSIONFILE_EXTRA');
+                    $fieldsets['extensionfile']['fields']      = ['file'];
+                    $fieldsets['extensionfile']['hidden']      = [];
+                    $fieldsets['links']['supply_type']         = $st->supply_type;
+                    $fieldsets['links']['title']               = Text::_('COM_JED_EXTENSION_LINKS_TITLE');
+                    $fieldsets['links']['description']         = Text::_('COM_JED_EXTENSION_LINKS_DESCR');
+                    $fieldsets['links']['fields']              = [['homepage_link', 'download_link'], ['demo_link', 'support_link'], ['documentation_link', 'license_link'], ['translation_link', '']];
+                    $fieldsets['links']['hidden']              = [];
 
-                $fieldsets['integration']['supply_type'] = $st->supply_type;
-                $fieldsets['integration']['title']       = Text::_('COM_JED_EXTENSION_INTEGRATION_TITLE');
-                $fieldsets['integration']['description'] = Text::_('COM_JED_EXTENSION_INTEGRATION_DESCR');
-                $fieldsets['integration']['fields']      = [['download_integration_type', 'download_integration_url']];
+                    $fieldsets['integration']['supply_type'] = $st->supply_type;
+                    $fieldsets['integration']['title']       = Text::_('COM_JED_EXTENSION_INTEGRATION_TITLE');
+                    $fieldsets['integration']['description'] = Text::_('COM_JED_EXTENSION_INTEGRATION_DESCR');
+                    $fieldsets['integration']['fields']      = [['download_integration_type', 'download_integration_url']];
+                    $fieldsets['integration']['hidden']      = [];
+
+                    JedHelper::outputFieldsets($fieldsets, $varied_form);
+                    $fieldsets = [];
+
+                    echo HTMLHelper::_('uitab.endTab');
+                }
+                echo HTMLHelper::_('uitab.endTabSet');
+                $fieldsets['integration2']['title']       = '';
+                $fieldsets['integration2']['description'] = '';
+                $fieldsets['integration2']['fields']      = [['gpl_license_type','joomla_versions'],['includes','uses_third_party']];
+                $fieldsets['integration2']['hidden']      = [];
+
+                $fieldsets['media']['title']       = Text::_('COM_JED_EXTENSION_MEDIA_TITLE');
+                $fieldsets['media']['description'] = Text::_('COM_JED_EXTENSION_MEDIA_DESCR');
+                $fieldsets['media']['fields']      = ['video', 'logo', 'images'];
+                $fieldsets['media']['hidden']      = [];
+
+                $fieldsets['confirm']['title']           = Text::_('COM_JED_GENERAL_CONFIRM_LABEL');
+                $fieldsets['integration']['description'] = '';
+                $fieldsets['integration']['fields']      = ['uses_updater'];
                 $fieldsets['integration']['hidden']      = [];
 
-                JedHelper::outputFieldsets($fieldsets, $varied_form);
-                $fieldsets = [];
 
-                echo HTMLHelper::_('uitab.endTab');
-            }
-            echo HTMLHelper::_('uitab.endTabSet');
-            $fieldsets['integration2']['title']       = '';
-            $fieldsets['integration2']['description'] = '';
-            $fieldsets['integration2']['fields']      = [['gpl_license_type','joomla_versions'],['includes','uses_third_party']];
-            $fieldsets['integration2']['hidden']      = [];
-
-            $fieldsets['media']['title']       = Text::_('COM_JED_EXTENSION_MEDIA_TITLE');
-            $fieldsets['media']['description'] = Text::_('COM_JED_EXTENSION_MEDIA_DESCR');
-            $fieldsets['media']['fields']      = ['video', 'logo', 'images'];
-            $fieldsets['media']['hidden']      = [];
-
-            $fieldsets['confirm']['title']       = Text::_('COM_JED_GENERAL_CONFIRM_LABEL');
-            $fieldsets['integration']['description'] = '';
-            $fieldsets['integration']['fields']      = ['uses_updater'];
-            $fieldsets['integration']['hidden']      = [];
-
-
-            JedHelper::outputFieldsets($fieldsets, $this->form);
-            ?>
+                JedHelper::outputFieldsets($fieldsets, $this->form);
+                ?>
             <div class="control-group">
                 <div class="controls">
 
                     <?php
-                    if ($this->canSave) : ?>
+                        if ($this->canSave) : ?>
                         <button type="submit" class="validate btn btn-primary">
                             <span class="fas fa-check" aria-hidden="true"></span>
                             <?php
-                            echo Text::_('JSUBMIT'); ?>
+                                echo Text::_('JSUBMIT'); ?>
                         </button>
                         <?php
-                    endif; ?>
+                        endif; ?>
                     <a class="btn btn-danger"
                        href="<?php
-                        echo Route::_('index.php?option=com_jed&task=extensionform.cancel'); ?>"
+                            echo Route::_('index.php?option=com_jed&task=extensionform.cancel'); ?>"
                        title="<?php
-                        echo Text::_('JCANCEL'); ?>">
+                            echo Text::_('JCANCEL'); ?>">
                         <span class="fas fa-times" aria-hidden="true"></span>
                         <?php
-                        echo Text::_('JCANCEL'); ?>
+                            echo Text::_('JCANCEL'); ?>
                     </a>
                 </div>
             </div>

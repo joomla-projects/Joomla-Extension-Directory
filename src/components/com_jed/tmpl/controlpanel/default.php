@@ -42,49 +42,47 @@ if (!$isLoggedIn) {
     }
 } else {
 
-$user       = Factory::getApplication()->getIdentity();
-$userId     = $user->id;
-$listOrder  = $this->state->get('list.ordering');
-$listDirn   = $this->state->get('list.direction');
-$canCreate  = $user->authorise('core.create', 'com_jed');
-$canEdit    = $user->authorise('core.edit', 'com_jed');
-$canCheckin = $user->authorise('core.manage', 'com_jed');
-$canChange  = $user->authorise('core.edit.state', 'com_jed');
-$canDelete  = $user->authorise('core.delete', 'com_jed');
+    $user       = Factory::getApplication()->getIdentity();
+    $userId     = $user->id;
+    $listOrder  = $this->state->get('list.ordering');
+    $listDirn   = $this->state->get('list.direction');
+    $canCreate  = $user->authorise('core.create', 'com_jed');
+    $canEdit    = $user->authorise('core.edit', 'com_jed');
+    $canCheckin = $user->authorise('core.manage', 'com_jed');
+    $canChange  = $user->authorise('core.edit.state', 'com_jed');
+    $canDelete  = $user->authorise('core.delete', 'com_jed');
 
-// Import CSS
-$this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
+    // Import CSS
+    $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
 
-?>
+    ?>
 
 <?php
-echo HTMLHelper::_('uitab.startTabSet', 'controlpanel_tabs');
+    echo HTMLHelper::_('uitab.startTabSet', 'controlpanel_tabs');
 
     echo HTMLHelper::_('uitab.addTab', 'controlpanel_tabs', 'tickets_tab' . "My Tickets", "My Tickets");
-//echo LayoutHelper::render('controlpanel.tickets', $this->tickets);
+    //echo LayoutHelper::render('controlpanel.tickets', $this->tickets);
     echo $this->loadTemplate('tickets');
     echo HTMLHelper::_('uitab.endTab');
 
     echo HTMLHelper::_('uitab.addTab', 'controlpanel_tabs', 'extensions_tab' . "My Extensions", "My Extensions");
-        echo "Hello";
+    echo "Hello";
     echo HTMLHelper::_('uitab.endTab');
 
 
     echo HTMLHelper::_('uitab.addTab', 'controlpanel_tabs', 'profile_tab' . "My Profile", "My Profile");
 
 
-// Load user_profile plugin language
+    // Load user_profile plugin language
     $lang = $this->getLanguage();
     $lang->load('plg_user_profile', JPATH_ADMINISTRATOR);
-     //   echo LayoutHelper::render('controlpanel.profile', $this->profileform);
+    //   echo LayoutHelper::render('controlpanel.profile', $this->profileform);
     echo $this->loadTemplate('userprofile');
     echo HTMLHelper::_('uitab.endTab');
 
 
-echo HTMLHelper::_('uitab.endTabSet');
+    echo HTMLHelper::_('uitab.endTabSet');
 
 
 }
 //echo LayoutHelper::render('extension.extension-single', $this->item)
-
-

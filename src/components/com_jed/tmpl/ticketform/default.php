@@ -51,12 +51,12 @@ if (!$isLoggedIn) {
     $default_values['ticket_status'] = 0; // NEW
     $default_values['parent_id']     = -1;
     //$default_values['ip_address']   = $_SERVER['REMOTE_ADDR'];
-    $default_values['created_on']       = Factory::getDate()->toSql();
-    $default_values['linked_item_type'] = $this->item->linked_item_type;
-    $default_values['linked_item_id']   = $this->item->linked_item_id;
-    $default_values['exension_varied_name'] = $this->item->vr;
-    $default_values['allocated_group'] = 1; //Any
-    $default_values['internal_notes']       = '';
+    $default_values['created_on']              = Factory::getDate()->toSql();
+    $default_values['linked_item_type']        = $this->item->linked_item_type;
+    $default_values['linked_item_id']          = $this->item->linked_item_id;
+    $default_values['exension_varied_name']    = $this->item->vr;
+    $default_values['allocated_group']         = 1; //Any
+    $default_values['internal_notes']          = '';
     $default_values['uploaded_files_preview']  = '';
     $default_values['uploaded_files_location'] = '';
     $default_values['allocated_to']            = 0;
@@ -82,7 +82,7 @@ if (!$isLoggedIn) {
         'internal_notes',
         'uploaded_files_preview',
         'uploaded_files_location',
-        'allocated_to'
+        'allocated_to',
     ];
     $fieldsets['overview']['hidden']      = ['id', 'linked_item_type', 'linked_item_id','ticket_origin', 'ticket_status', 'allocated_group','internal_notes','uploaded_files_preview','uploaded_files_location','allocated_to', 'parent_id', 'created_on'];
 
@@ -107,8 +107,7 @@ if (!$isLoggedIn) {
                 <?php
                 throw new Exception(Text::_('COM_JED_GENERAL_ERROR_MESSAGE_NOT_AUTHORISED'), 403); ?>
             </h3>
-            <?php
-        else : ?>
+            <?php else : ?>
             <form id="form-ticket"
                   action="<?php
                     echo Route::_('index.php?option=com_jed&task=ticketform.save'); ?>"

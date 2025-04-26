@@ -133,14 +133,17 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
-        $app = Factory::getApplication();
+        $app   = Factory::getApplication();
+        $model = $this->getModel();
 
-        $this->state         = $this->get('State');
-        $this->items         = $this->get('Items');
-        $this->pagination    = $this->get('Pagination');
-        $this->params        = $app->getParams('com_jed');
-        $this->filterForm    = $this->get('FilterForm');
-        $this->activeFilters = $this->get('ActiveFilters');
+        // Get data from the model.
+        $this->items         = $model->getItems();
+        $this->pagination    = $model->getPagination();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
+        $this->state         = $model->getState();
+
+
 
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {
