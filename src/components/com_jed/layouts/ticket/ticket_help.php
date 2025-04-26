@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package JED
+ * @package       JED
  *
- * @subpackage Tickets
+ * @subpackage    Tickets
  *
  * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @license       GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access to file
@@ -20,10 +20,10 @@ use Joomla\CMS\Language\Text;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
-*
+ *
  *
  * @var array $displayData
-*/
+ */
 $headerlabeloptions = ['hiddenLabel' => true];
 $fieldhiddenoptions = ['hidden' => true];
 
@@ -50,24 +50,29 @@ try {
         <div class="col-md-3 ticket-header">
             <h1>Name</h1>
 
-            <span><?php echo $ticket_reviewer->name; ?></span>
+            <span><?php
+                echo $ticket_reviewer->name; ?></span>
         </div>
         <div class="col-md-2  ticket-header">
             <h1>Username</h1>
-            <span><?php echo $ticket_reviewer->username; ?></span>
+            <span><?php
+                echo $ticket_reviewer->username; ?></span>
         </div>
         <div class="col-md-3  ticket-header">
             <h1>Email</h1>
-            <span><?php echo $ticket_reviewer->email; ?></span>
+            <span><?php
+                echo $ticket_reviewer->email; ?></span>
         </div>
         <div class="col-md-2  ticket-header">
             <h1>Registered</h1>
-            <span><?php echo JedHelper::prettyDate($ticket_reviewer->registerDate); ?></span>
+            <span><?php
+                echo JedHelper::prettyDate($ticket_reviewer->registerDate); ?></span>
 
         </div>
         <div class="col-md-2  ticket-header">
             <h1>Last Visit</h1>
-            <span><?php echo JedHelper::prettyDate($ticket_reviewer->lastvisitDate); ?></span>
+            <span><?php
+                echo JedHelper::prettyDate($ticket_reviewer->lastvisitDate); ?></span>
 
         </div>
     </div>
@@ -76,24 +81,29 @@ try {
         <div class="col-md-3 ticket-header">
             <h1>Name</h1>
 
-            <span><?php echo $sample_reviewer->name; ?></span>
+            <span><?php
+                echo $sample_reviewer->name; ?></span>
         </div>
         <div class="col-md-2  ticket-header">
             <h1>Username</h1>
-            <span><?php echo $sample_reviewer->username; ?></span>
+            <span><?php
+                echo $sample_reviewer->username; ?></span>
         </div>
         <div class="col-md-3  ticket-header">
             <h1>Email</h1>
-            <span><?php echo $sample_reviewer->email; ?></span>
+            <span><?php
+                echo $sample_reviewer->email; ?></span>
         </div>
         <div class="col-md-2  ticket-header">
             <h1>Registered</h1>
-            <span><?php echo JedHelper::prettyDate($sample_reviewer->registerDate); ?></span>
+            <span><?php
+                echo JedHelper::prettyDate($sample_reviewer->registerDate); ?></span>
 
         </div>
         <div class="col-md-2  ticket-header">
             <h1>Last Visit</h1>
-            <span><?php echo JedHelper::prettyDate($sample_reviewer->lastvisitDate); ?></span>
+            <span><?php
+                echo JedHelper::prettyDate($sample_reviewer->lastvisitDate); ?></span>
 
         </div>
     </div>
@@ -111,7 +121,7 @@ try {
         <div class="container">
             <div class="row">
                 <?php
-//echo "<pre>";print_r($ticket_help_extensions);echo "</pre>";exit();
+                //echo "<pre>";print_r($ticket_help_extensions);echo "</pre>";exit();
                 $slidesOptions = [//"active" => "slide0" // It is the ID of the active tab.
                 ];
                 echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_help_extensions_group', $slidesOptions);
@@ -119,8 +129,7 @@ try {
                 $slideid = 0;
 
                 try {
-                    $extension_model = Factory::getApplication()->bootComponent('com_jed')->getMVCFactory()
-                        ->createModel('Extension', 'Administrator', ['ignore_request' => true]);
+                    $extension_model = Factory::getApplication()->bootComponent('com_jed')->getMVCFactory()->createModel('Extension', 'Administrator', ['ignore_request' => true]);
                 } catch (Exception $e) {
                 }
 
@@ -131,13 +140,7 @@ try {
                     } catch (Exception $e) {
                     }
 
-                    echo HTMLHelper::_(
-                        'bootstrap.addSlide',
-                        'ticket_help_extensions_group',
-                        $ext->id . ' - ' . $ext->title . ' (' .
-                        $ext->version . ') ' . JedHelper::prettyDate($ext->created_on) . '&nbsp;&nbsp;' . $ico . '</span>',
-                        'ticket_help_extensions_group' . '_slide' . ($slideid++)
-                    );
+                    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_help_extensions_group', $ext->id . ' - ' . $ext->title . ' (' . $ext->version . ') ' . JedHelper::prettyDate($ext->created_on) . '&nbsp;&nbsp;' . $ico . '</span>', 'ticket_help_extensions_group' . '_slide' . ($slideid++));
 
                     $linked_extension_form->bind($ext);
                     echo $linked_extension_form->renderField('title');
@@ -202,13 +205,7 @@ try {
                         $ico = '';
                     }
 
-                    echo HTMLHelper::_(
-                        'bootstrap.addSlide',
-                        'ticket_help_reviews_group',
-                        $review->id . ' - ' . $review->title . '&nbsp;' .
-                        JedHelper::prettyDate($review->created_on) . '&nbsp;',
-                        'ticket_help_reviews_group' . '_slide' . ($slideid++)
-                    );
+                    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_help_reviews_group', $review->id . ' - ' . $review->title . '&nbsp;' . JedHelper::prettyDate($review->created_on) . '&nbsp;', 'ticket_help_reviews_group' . '_slide' . ($slideid++));
                     echo "<p>Review Summary here</p>";
                     echo HTMLHelper::_('bootstrap.endSlide');
                 }
@@ -221,7 +218,8 @@ try {
 
         </div>
     </div>
-    <?php echo HTMLHelper::_('uitab.endTab');
+    <?php
+    echo HTMLHelper::_('uitab.endTab');
 
     echo HTMLHelper::_('uitab.addTab', 'viewHelpTab', 'viewhelpoldtickets', Text::_('Old Tickets', true)); ?>
     <div class="widget">
@@ -234,13 +232,7 @@ try {
 
                 $slideid = 0;
                 foreach ($displayData['oldtickets'] as $oldticket) {
-                    echo HTMLHelper::_(
-                        'bootstrap.addSlide',
-                        'ticket_help_oldtickets_group',
-                        $oldticket->id . ' - ' . $oldticket->subject . '&nbsp;' .
-                        JedHelper::prettyDate($oldticket->date) . '&nbsp;',
-                        'ticket_help_oldtickets_group' . '_slide' . ($slideid++)
-                    );
+                    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_help_oldtickets_group', $oldticket->id . ' - ' . $oldticket->subject . '&nbsp;' . JedHelper::prettyDate($oldticket->date) . '&nbsp;', 'ticket_help_oldtickets_group' . '_slide' . ($slideid++));
 
                     echo "<p>" . strip_tags($oldticket->messages->message) . "</p>";
                     echo HTMLHelper::_('bootstrap.endSlide');
@@ -254,7 +246,8 @@ try {
 
         </div>
     </div>
-    <?php echo HTMLHelper::_('uitab.endTab');
+    <?php
+    echo HTMLHelper::_('uitab.endTab');
 
 
     echo HTMLHelper::_('uitab.endTabSet'); ?>

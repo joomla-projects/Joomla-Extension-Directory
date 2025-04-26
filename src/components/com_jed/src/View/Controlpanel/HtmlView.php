@@ -10,7 +10,9 @@
 namespace Jed\Component\Jed\Site\View\Controlpanel;
 
 // No direct access
-defined('_JEXEC') or die;
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
 use Jed\Component\Jed\Site\Model\TicketsModel;
@@ -122,7 +124,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 5.0.0
      */
-    protected function _prepareDocument()
+    protected function prepareDocument()
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();

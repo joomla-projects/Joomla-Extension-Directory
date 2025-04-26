@@ -9,16 +9,12 @@
 
 namespace Jed\Component\Jed\Site\Controller;
 
+// phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Application\SiteApplication;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Multilanguage;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Uri\Uri;
-use Joomla\Utilities\ArrayHelper;
 
 /**
  * Controlpanel class.
