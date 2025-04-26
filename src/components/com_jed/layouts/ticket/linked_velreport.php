@@ -1,17 +1,18 @@
 <?php
 
 /**
- * @package JED
+ * @package       JED
  *
- * @subpackage Tickets
+ * @subpackage    Tickets
  *
  * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @license       GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access to file
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Language\Text;
@@ -39,7 +40,8 @@ $fieldsets['vulnerabilitydetails']['fields'] = [
     'vulnerability_actively_exploited',
     'vulnerability_publicly_available',
     'vulnerability_publicly_url',
-    'vulnerability_specific_impact'];
+    'vulnerability_specific_impact'
+];
 
 $fieldsets['developerdetails']['title']       = "Developer Details";
 $fieldsets['developerdetails']['description'] = "";
@@ -51,12 +53,14 @@ $fieldsets['developerdetails']['fields']      = [
     'jed_url',
     'tracking_db_name',
     'tracking_db_id',
-    'developer_additional_info'];
+    'developer_additional_info'
+];
 
 $fieldsets['filelocation']['title']       = "Location of File";
 $fieldsets['filelocation']['description'] = "";
 $fieldsets['filelocation']['fields']      = [
-    'download_url'];
+    'download_url'
+];
 
 $fieldsets['aboutyou']['title']       = "Reporter";
 $fieldsets['aboutyou']['description'] = "";
@@ -64,7 +68,8 @@ $fieldsets['aboutyou']['fields']      = [
     'reporter_fullname',
     'reporter_email',
     'reporter_organisation',
-    'pass_details_ok'];
+    'pass_details_ok'
+];
 
 
 $fieldsets['extra']['title']       = "Extra";
@@ -75,16 +80,19 @@ $fieldsets['extra']['fields']      = [
     'vel_item_id',
     'date_submitted',
     'user_ip',
-    'data_source'];
+    'data_source'
+];
 
 ?>
 <div class="row">
     <div class="col">
         <div class="widget">
-            <h1><?php echo $fieldsets['vulnerabilitydetails']['title']; ?></h1>
+            <h1><?php
+                echo $fieldsets['vulnerabilitydetails']['title']; ?></h1>
             <div class="container">
                 <div class="row">
-                    <?php foreach ($fieldsets['vulnerabilitydetails']['fields'] as $field) {
+                    <?php
+                    foreach ($fieldsets['vulnerabilitydetails']['fields'] as $field) {
                         $displayData->setFieldAttribute($field, 'readonly', 'true');
                         echo $displayData->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
                     } ?>
@@ -92,10 +100,12 @@ $fieldsets['extra']['fields']      = [
             </div>
         </div>
         <div class="widget">
-            <h1><?php echo $fieldsets['filelocation']['title']; ?></h1>
+            <h1><?php
+                echo $fieldsets['filelocation']['title']; ?></h1>
             <div class="container">
                 <div class="row">
-                    <?php foreach ($fieldsets['filelocation']['fields'] as $field) {
+                    <?php
+                    foreach ($fieldsets['filelocation']['fields'] as $field) {
                         $displayData->setFieldAttribute($field, 'readonly', 'true');
                         echo $displayData->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
                     } ?>
@@ -104,10 +114,12 @@ $fieldsets['extra']['fields']      = [
         </div>
 
         <div class="widget">
-            <h1><?php echo $fieldsets['extra']['title']; ?></h1>
+            <h1><?php
+                echo $fieldsets['extra']['title']; ?></h1>
             <div class="container">
                 <div class="row">
-                    <?php foreach ($fieldsets['extra']['fields'] as $field) {
+                    <?php
+                    foreach ($fieldsets['extra']['fields'] as $field) {
                         $displayData->setFieldAttribute($field, 'readonly', 'true');
                         echo $displayData->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
                     } ?>
@@ -118,10 +130,12 @@ $fieldsets['extra']['fields']      = [
     </div>
     <div class="col">
         <div class="widget">
-            <h1><?php echo $fieldsets['developerdetails']['title']; ?></h1>
+            <h1><?php
+                echo $fieldsets['developerdetails']['title']; ?></h1>
             <div class="container">
                 <div class="row">
-                    <?php foreach ($fieldsets['developerdetails']['fields'] as $field) {
+                    <?php
+                    foreach ($fieldsets['developerdetails']['fields'] as $field) {
                         $displayData->setFieldAttribute($field, 'readonly', 'true');
                         echo $displayData->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
                     } ?>
@@ -129,10 +143,12 @@ $fieldsets['extra']['fields']      = [
             </div>
         </div>
         <div class="widget">
-            <h1><?php echo $fieldsets['aboutyou']['title']; ?></h1>
+            <h1><?php
+                echo $fieldsets['aboutyou']['title']; ?></h1>
             <div class="container">
                 <div class="row">
-                    <?php foreach ($fieldsets['aboutyou']['fields'] as $field) {
+                    <?php
+                    foreach ($fieldsets['aboutyou']['fields'] as $field) {
                         $displayData->setFieldAttribute($field, 'readonly', 'true');
                         echo $displayData->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
                     } ?>
@@ -141,7 +157,8 @@ $fieldsets['extra']['fields']      = [
         </div>
         <div class="widget">
             <h1>Actions</h1>
-            <?php //var_dump($rawData->get('vel_item_id'));exit();
+            <?php
+            //var_dump($rawData->get('vel_item_id'));exit();
             ?>
             <div class="container">
                 <div class="row">
@@ -152,7 +169,8 @@ $fieldsets['extra']['fields']      = [
                         ?>
                         <button type="button" class="btn btn-primary"
                                 onclick="Joomla.submitbutton('ticket.copyReporttoVEL')">
-                            <?php echo Text::_('COM_JED_VEL_GENERAL_BUTTON_CREATE_VEL'); ?>
+                            <?php
+                            echo Text::_('COM_JED_VEL_GENERAL_BUTTON_CREATE_VEL'); ?>
                         </button>
 
                         <?php
