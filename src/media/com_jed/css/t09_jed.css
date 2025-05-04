@@ -1,0 +1,9 @@
+/* CSS Styling for Com_JED when used with Joomla! Template 4.09 */
+.label-info,
+.badge-info {
+    background-color:#3a87ad
+}
+
+.category_list_jed a {
+    text-decoration: none;
+}
