@@ -44,7 +44,8 @@ Once you see 'Installation of the package was successful.'
 In Admin visit JED and view Tickets, Vulnerable Items, Categories and Extensions
 
 To get the Template:
-* Install Joomla 4 template from the templatework folder (jtemplate_4.0.9_jedcustom).
+* Install Joomla 4 template from the templatework/jtemplate_4.0.9_jed folder (jtemplate_4.0.9_jedcustom.zip).
+* Goto System / Site Template Styles and click on round circle under default for Joomla - Default template.
 
 **Instructions for Front end testing.**
 
