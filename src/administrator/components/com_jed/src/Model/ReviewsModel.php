@@ -81,13 +81,14 @@ class ReviewsModel extends ListModel
     {
         $items = parent::getItems();
 
+        $db    = $this->getDatabase();
+
         foreach ($items as $oneItem) {
             if (isset($oneItem->extension_id)) {
                 $values    = explode(',', $oneItem->extension_id);
                 $textValue = [];
 
                 foreach ($values as $value) {
-                    $db    = Factory::getDbo();
                     $query = $db->getQuery(true);
                     $query
                         ->select('`#__jed_extensions_3715042`.`title`')
@@ -110,7 +111,6 @@ class ReviewsModel extends ListModel
                 $textValue = [];
 
                 foreach ($values as $value) {
-                    $db    = Factory::getDbo();
                     $query = $db->getQuery(true);
                     $query
                         ->select('`#__jed_extension_supply_options_3727708`.`title`')

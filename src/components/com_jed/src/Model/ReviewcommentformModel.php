@@ -64,8 +64,8 @@ class ReviewcommentformModel extends FormModel
     public function userIDItem($id)
     {
         try {
-            $user  = Factory::getApplication()->getIdentity();
-            $db    = Factory::getDbo();
+            $user  = $this->getCurrentUser();
+            $db    = $this->getDatabase();
 
             $query = $db->getQuery(true);
             $query->select("id")

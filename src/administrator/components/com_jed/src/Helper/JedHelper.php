@@ -20,7 +20,6 @@ use Exception;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
@@ -143,19 +142,19 @@ class JedHelper
         }
 
         // No CDN (e.g. local development). Where should I get my image from?
-        if (File::exists(JPATH_ROOT . '/' . ltrim($bestFilename, '/\\'))) {
+        if (file_exists(JPATH_ROOT . '/' . ltrim($bestFilename, '/\\'))) {
             return Uri::root() . ltrim($bestFilename, '/\\');
         }
 
-        if (File::exists(JPATH_ROOT . '/' . ltrim($filename, '/\\'))) {
+        if (file_exists(JPATH_ROOT . '/' . ltrim($filename, '/\\'))) {
             return Uri::root() . ltrim($filename, '/\\');
         }
 
-        if (File::exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($bestFilename, '/\\'))) {
+        if (file_exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($bestFilename, '/\\'))) {
             return Uri::root() . 'media/com_jed/' . ltrim($bestFilename, '/\\');
         }
 
-        if (File::exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($filename, '/\\'))) {
+        if (file_exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($filename, '/\\'))) {
             return Uri::root() . 'media/com_jed/' . ltrim($filename, '/\\');
         }
 
