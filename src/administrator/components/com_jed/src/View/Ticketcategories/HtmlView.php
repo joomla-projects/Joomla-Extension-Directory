@@ -16,16 +16,13 @@ namespace Jed\Component\Jed\Administrator\View\Ticketcategories;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
-use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
@@ -76,7 +73,7 @@ class HtmlView extends BaseHtmlView
      * @return void
      *
      * @since  4.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     protected function addToolbar(): void
     {
@@ -84,7 +81,7 @@ class HtmlView extends BaseHtmlView
 
         ToolbarHelper::title(Text::_('COM_JED_TITLE_TICKET_CATEGORIES'), "generic");
 
-        $toolbar = Toolbar::getInstance(); //$toolbar = Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar('toolbar');
+        $toolbar = $this->getDocument()->getToolbar();
 
         // Check if the form exists before showing the add/edit buttons
         $formPath = JPATH_COMPONENT_ADMINISTRATOR . '/src/View/Ticketcategories';
@@ -154,19 +151,20 @@ class HtmlView extends BaseHtmlView
      * @return void
      *
      * @since  4.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     public function display($tpl = null): void
     {
-        $this->state         = $this->get('State');
-        $this->items         = $this->get('Items');
-        $this->pagination    = $this->get('Pagination');
-        $this->filterForm    = $this->get('FilterForm');
-        $this->activeFilters = $this->get('ActiveFilters');
+        $model               = $this->getModel();
+        $this->state         = $model->getState();
+        $this->items         = $model->getItems();
+        $this->pagination    = $model->getPagination();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
 
         // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
+        if (count($errors = $model->getErrors())) {
+            throw new \Exception(implode("\n", $errors));
         }
 
         $this->addToolbar();
@@ -190,19 +188,5 @@ class HtmlView extends BaseHtmlView
             'a.`state`'        => Text::_('JSTATUS'),
             'a.`categorytype`' => Text::_('COM_JED_TICKET_CATEGORIES_FIELD_CATEGORY_TYPE_LABEL'),
         ];
-    }
-
-    /**
-     * Check if state is set
-     *
-     * @param mixed $state State
-     *
-     * @return bool
-     *
-     * @since 4.0.0
-     */
-    public function getState(mixed $state): bool
-    {
-        return $this->state->{$state} ?? false;
     }
 }

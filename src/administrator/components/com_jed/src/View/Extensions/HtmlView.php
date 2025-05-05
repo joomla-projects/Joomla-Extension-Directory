@@ -16,7 +16,7 @@ namespace Jed\Component\Jed\Administrator\View\Extensions;
 
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
-use Joomla\CMS\Factory;
+use Jed\Component\Jed\Administrator\Model\ExtensionsModel;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
@@ -60,14 +60,16 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
-        $this->state         = $this->get('State');
-        $this->items         = $this->get('Items');
-        $this->pagination    = $this->get('Pagination');
-        $this->filterForm    = $this->get('FilterForm');
-        $this->activeFilters = $this->get('ActiveFilters');
+        /** @var ExtensionsModel $model */
+        $model               = $this->getModel();
+        $this->state         = $model->getState();
+        $this->items         = $model->getItems();
+        $this->pagination    = $model->getPagination();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
 
         // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
+        if (count($errors = $model->getErrors())) {
             throw new Exception(implode("\n", $errors));
         }
 
@@ -87,7 +89,6 @@ class HtmlView extends BaseHtmlView
      */
     protected function addToolbar(): void
     {
-        $this->state = $this->get('State');
         $canDo       = JedHelper::getActions();
 
         ToolbarHelper::title(Text::_('COM_JED_EXTENSIONS'), "generic");
@@ -176,19 +177,5 @@ class HtmlView extends BaseHtmlView
             'a.`primary_category_id`'   => Text::_('COM_JED_GENERAL_CATEGORY_ID_LABEL_LABEL'),
             'a.`state`'                 => Text::_('JSTATUS'),
         ];
-    }
-
-    /**
-     * Check if state is set
-     *
-     * @param mixed $state State
-     *
-     * @return bool
-     *
-     * @since 4.0.0
-     */
-    public function getState(mixed $state): bool
-    {
-        return $this->state->{$state} ?? false;
     }
 }

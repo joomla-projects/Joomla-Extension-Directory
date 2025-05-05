@@ -14,14 +14,12 @@ namespace Jed\Component\Jed\Administrator\View\Copyjed3data;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Jed\Component\Jed\Administrator\Model\Copyjed3dataModel;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Toolbar\Toolbar;
-use Joomla\CMS\Toolbar\ToolbarFactoryInterface;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Registry\Registry;
 use SimpleXMLElement;
@@ -78,27 +76,21 @@ class HtmlView extends BaseHtmlView
      * Add the page title and toolbar.
      *
      * @since  4.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     private function addToolbar(): void
     {
         ToolBarHelper::title(Text::_('COM_JED_TITLE_COPY_JED3_DATA'));
 
-        $user = Factory::getApplication()->getIdentity();
+        $user = $this->getCurrentUser();
 
         if (
             $user->authorise('core.admin', 'com_jed')
-            || $user->authorise(
-                'core.options',
-                'com_jed'
-            )
+            || $user->authorise('core.options', 'com_jed')
         ) {
-            $toolbar = Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar();
-
+            $toolbar = $this->getDocument()->getToolbar();
 
             JedHelper::addConfigToolbar($toolbar);
-
-
             ToolbarHelper::preferences('com_jed');
         }
     }
@@ -111,12 +103,14 @@ class HtmlView extends BaseHtmlView
      * @return void
      *
      * @since  4.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     public function display($tpl = null): void
     {
-        $this->state       = $this->get('State');
-        $this->item        = $this->get('Item');
+        /** @var Copyjed3dataModel $model */
+        $model             = $this->getModel();
+        $this->state       = $model->getState();
+        $this->item        = $model->getItem();
         $this->params      = ComponentHelper::getParams('com_jed');
         $this->migrate_xml = $this->getMigrateXML();
         $app               = Factory::getApplication();
@@ -124,7 +118,6 @@ class HtmlView extends BaseHtmlView
         $this->task        = $input->get('task', '');
 
         $this->addToolbar();
-
 
         parent::display($tpl);
     }

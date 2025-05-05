@@ -14,17 +14,15 @@ namespace Jed\Component\Jed\Administrator\View\Extensionvarieddata;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Pagination\Pagination;
-use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
+use Joomla\Registry\Registry;
 
 /**
  * View class for a list of Extensionvarieddata.
@@ -37,7 +35,7 @@ class HtmlView extends BaseHtmlView
     public array $activeFilters = [];
     protected array $items;
     protected Pagination $pagination;
-    protected CMSObject $state;
+    protected Registry $state;
 
     /**
      * Add the page title and toolbar.
@@ -45,8 +43,7 @@ class HtmlView extends BaseHtmlView
      * @return  void
      *
      * @since   4.0.0
-     * @throws Exception
-     * @throws Exception
+     * @throws \Exception
      */
     protected function addToolbar()
     {
@@ -54,7 +51,7 @@ class HtmlView extends BaseHtmlView
 
         ToolbarHelper::title(Text::_('COM_JED_EXTENSIONVARIEDDATA'), "generic");
 
-        $toolbar = Toolbar::getInstance('toolbar');
+        $toolbar = $this->getDocument()->getToolbar();
 
 
         if ($canDo->get('core.create')) {
@@ -122,7 +119,7 @@ class HtmlView extends BaseHtmlView
     /**
      * Method to order fields
      *
-     * @return void
+     * @return array
      */
     protected function getSortFields()
     {
@@ -148,17 +145,5 @@ class HtmlView extends BaseHtmlView
             'a.`is_default_data`'           => Text::_('COM_JED_EXTENSION_IS_DEFAULT_DATA_LABEL'),
             'a.`translation_link`'          => Text::_('COM_JED_EXTENSION_TRANSLATION_LINK_LABEL'),
         ];
-    }
-
-    /**
-     * Check if state is set
-     *
-     * @param   mixed  $state  State
-     *
-     * @return bool
-     */
-    public function getState(mixed $state): bool
-    {
-        return $this->state->{$state} ?? false;
     }
 }

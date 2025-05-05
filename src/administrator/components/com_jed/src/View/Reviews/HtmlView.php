@@ -14,14 +14,13 @@ namespace Jed\Component\Jed\Administrator\View\Reviews;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Jed\Component\Jed\Administrator\Model\ReviewsModel;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
-use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
@@ -45,21 +44,23 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @since 4.0.0
      */
     public function display($tpl = null): void
     {
-        $this->state         = $this->get('State');
-        $this->items         = $this->get('Items');
-        $this->pagination    = $this->get('Pagination');
-        $this->filterForm    = $this->get('FilterForm');
-        $this->activeFilters = $this->get('ActiveFilters');
+        /** @var ReviewsModel $model */
+        $model               = $this->getModel();
+        $this->state         = $model->getState();
+        $this->items         = $model->getItems();
+        $this->pagination    = $model->getPagination();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
 
         // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
+        if (count($errors = $model->getErrors())) {
+            throw new \Exception(implode("\n", $errors));
         }
 
         $this->addToolbar();
@@ -74,17 +75,15 @@ class HtmlView extends BaseHtmlView
      * @return void
      *
      * @since  4.0.0
-     * @throws Exception
-     * @throws Exception
+     * @throws \Exception
      */
     protected function addToolbar(): void
     {
-        $state = $this->get('State');
         $canDo = JedHelper::getActions();
 
         ToolbarHelper::title(Text::_('COM_JED_TITLE_REVIEWS'), "generic");
 
-        $toolbar = Toolbar::getInstance(); //$toolbar = Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar('toolbar');
+        $toolbar = $this->getDocument()->getToolbar();
 
         // Check if the form exists before showing the add/edit buttons
         $formPath = JPATH_COMPONENT_ADMINISTRATOR . '/src/View/Reviews';
@@ -155,7 +154,7 @@ class HtmlView extends BaseHtmlView
     /**
      * Method to order fields
      *
-     * @return void
+     * @return array
      */
     protected function getSortFields()
     {
@@ -183,17 +182,5 @@ class HtmlView extends BaseHtmlView
             'a.`created_by`'              => Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'),
             'a.`ordering`'                => Text::_('JGRID_HEADING_ORDERING'),
         ];
-    }
-
-    /**
-     * Check if state is set
-     *
-     * @param mixed $state State
-     *
-     * @return bool
-     */
-    public function getState($state)
-    {
-        return $this->state->{$state} ?? false;
     }
 }

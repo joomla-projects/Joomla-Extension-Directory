@@ -100,7 +100,7 @@ class HtmlView extends BaseHtmlView
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
-        $user  = Factory::getApplication()->getIdentity();
+        $user  = $this->getCurrentUser();
         $isNew = ($this->extension->id == 0);
 
         if (isset($this->item->checked_out)) {
