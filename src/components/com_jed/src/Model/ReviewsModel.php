@@ -140,7 +140,7 @@ class ReviewsModel extends ListModel
     protected function getListQuery(): DatabaseQuery
     {
         // Create a new query object.
-        $db    = $this->getDbo();
+        $db    = $this->getDatabase();
         $query = $db->getQuery(true);
 
         // Select the required fields from the table.
@@ -202,13 +202,14 @@ class ReviewsModel extends ListModel
     public function getItems(): mixed
     {
         $items = parent::getItems();
+        $db    = $this->getDatabase();
+
         foreach ($items as $item) {
             if (isset($item->extension_id)) {
                 $values    = explode(',', $item->extension_id);
                 $textValue = [];
 
                 foreach ($values as $value) {
-                    $db    = Factory::getDbo();
                     $query = $db->getQuery(true);
                     $query
                         ->select('`#__jed_extensions_3715042`.`title`')
@@ -232,7 +233,6 @@ class ReviewsModel extends ListModel
                 $textValue = [];
 
                 foreach ($values as $value) {
-                    $db    = Factory::getDbo();
                     $query = $db->getQuery(true);
                     $query
                         ->select('`#__jed_extension_supply_options_3727708`.`title`')

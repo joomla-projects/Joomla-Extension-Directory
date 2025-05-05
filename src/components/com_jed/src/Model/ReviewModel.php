@@ -261,7 +261,7 @@ class ReviewModel extends ItemModel
             $textValue = [];
 
             foreach ($values as $value) {
-                $db    = Factory::getDbo();
+                $db    = $this->getDatabase();
                 $query = $db->getQuery(true);
 
                 $query
@@ -292,10 +292,10 @@ class ReviewModel extends ItemModel
 
             $textValue = [];
 
-            foreach ($values as $value) {
-                $db    = Factory::getDbo();
-                $query = $db->getQuery(true);
+            $db = $this->getDatabase();
 
+            foreach ($values as $value) {
+                $query = $db->getQuery(true);
                 $query
                     ->select('`jso`.`title`')
                     ->from($db->quoteName('#__jed_extension_supply_options', 'jso'))
