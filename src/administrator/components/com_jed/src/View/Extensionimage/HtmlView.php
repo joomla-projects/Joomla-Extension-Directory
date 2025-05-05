@@ -49,7 +49,7 @@ class HtmlView extends BaseHtmlView
     public function display($tpl = null): void
     {
         /** @var ExtensionimageModel $model */
-        $model = $this->getModel();
+        $model       = $this->getModel();
         $this->state = $model->getState();
         $this->item  = $model->getItem();
         $this->form  = $model->getForm();
