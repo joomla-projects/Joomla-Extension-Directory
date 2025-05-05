@@ -92,9 +92,25 @@ volumes:
   - name: composer-cache
     host:
       path: /tmp/composer-cache
+  - name: cypress-cache
+    host:
+      path: /tmp/cypress-cache
+  - name: npm-cache
+    host:
+      path: /tmp/npm-cache
+
+services:
+  - name: mysql
+    image: mysql:8.0
+    command: ["--default-authentication-plugin=mysql_native_password"]
+    environment:
+      MYSQL_USER: joomla_ut
+      MYSQL_PASSWORD: joomla_ut
+      MYSQL_ROOT_PASSWORD: joomla_ut
+      MYSQL_DATABASE: test_joomla
 
 ---
 kind: signature
-hmac: b7d29ee080fe8c7b1182eb423d7951c1f3f1649ba637c3ffe1a878cc76d518ed
+hmac: 946bc2e0a7065982cbd7cd7a6ea3581c068151e244679a1d89d0ed5dd621abb6
 
 ...
