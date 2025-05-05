@@ -16,13 +16,11 @@ namespace Jed\Component\Jed\Administrator\Table;
 
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
-use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Table\Table as Table;
+use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
-use Joomla\Registry\Registry;
+use Joomla\Filesystem\File;
 
 /**
  * Extensionimage table
@@ -43,34 +41,6 @@ class ExtensionimageTable extends Table
         $this->typeAlias = 'com_jed.extensionimage';
         parent::__construct('#__jed_extension_images', 'id', $db);
         $this->setColumnAlias('published', 'state');
-    }
-
-    /**
-     * This function convert an array of Access objects into an rules array.
-     *
-     * @param array $jaccessrules An array of Access objects.
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    private function JAccessRulestoArray(array $jaccessrules): array
-    {
-        $rules = [];
-
-        foreach ($jaccessrules as $action => $jaccess) {
-            $actions = [];
-
-            if ($jaccess) {
-                foreach ($jaccess->getData() as $group => $allow) {
-                    $actions[$group] = ((bool) $allow);
-                }
-            }
-
-            $rules[$action] = $actions;
-        }
-
-        return $rules;
     }
 
     /**
@@ -139,41 +109,6 @@ class ExtensionimageTable extends Table
             $src['filename'] = '';
         }
 
-
-        if (isset($src['params']) && is_array($src['params'])) {
-            $registry = new Registry();
-            $registry->loadArray($src['params']);
-            $src['params'] = (string) $registry;
-        }
-
-        if (isset($src['metadata']) && is_array($src['metadata'])) {
-            $registry = new Registry();
-            $registry->loadArray($src['metadata']);
-            $src['metadata'] = (string) $registry;
-        }
-
-        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jed.extensionimage.' . $src['id'])) {
-            $actions         = Access::getActionsFromFile(
-                JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
-                "/access/section[@name='extensionimage']/"
-            );
-            $default_actions = Access::getAssetRules('com_jed.extensionimage.' . $src['id'])->getData();
-            $array_jaccess   = [];
-
-            foreach ($actions as $action) {
-                if (key_exists($action->name, $default_actions)) {
-                    $array_jaccess[$action->name] = $default_actions[$action->name];
-                }
-            }
-
-            $src['rules'] = $this->JAccessRulestoArray($array_jaccess);
-        }
-
-        // Bind the rules for ACL where supported.
-        if (isset($array['rules']) && is_array($array['rules'])) {
-            $this->setRules($array['rules']);
-        }
-
         return parent::bind($src, $ignore);
     }
 
@@ -189,7 +124,7 @@ class ExtensionimageTable extends Table
     public function check(): bool
     {
         // If there is an ordering column and this is a new row then get the next ordering value
-        if (property_exists($this, 'ordering') && $this->get('id') == 0) {
+        if (property_exists($this, 'ordering') && $this->id == 0) {
             $this->ordering = self::getNextOrder();
         }
 
@@ -238,7 +173,7 @@ class ExtensionimageTable extends Table
                     }
                 } elseif ($fileError == 4) {
                     if (isset($array['filename'])) {
-                        $this->set('filename', $array['filename']);
+                        $this->filename = $array['filename'];
                     }
                 } else {
                     // Replace any special characters in the filename
@@ -249,21 +184,21 @@ class ExtensionimageTable extends Table
                     $uploadPath = JPATH_ROOT . '//tmp/' . $filename;
                     $fileTemp   = $singleFile['tmp_name'];
 
-                    if (!File::exists($uploadPath)) {
+                    if (!file_exists($uploadPath)) {
                         if (!File::upload($fileTemp, $uploadPath)) {
                             $app->enqueueMessage('Error moving file', 'warning');
 
                             return false;
                         }
                     }
-                    $lfname = $this->get('filename');
+                    $lfname = $this->filename;
                     $this->set('filename', $lfname .= (!empty($lfname)) ? "," : "");
-                    $lfname = $this->get('filename');
+                    $lfname = $this->filename;
                     $this->set('filename', $lfname .= $filename);
                 }
             }
         } else {
-            $lfname = $this->get('filename');
+            $lfname = $this->filename;
             $this->set('filename', $lfname .= $array['filename_hidden']);
         }
 
@@ -285,7 +220,7 @@ class ExtensionimageTable extends Table
         $result = parent::delete($pk);
 
         if ($result) {
-            $checkImageVariableType = gettype($this->get('filename'));
+            $checkImageVariableType = gettype($this->filename);
 
             switch ($checkImageVariableType) {
                 case 'string':

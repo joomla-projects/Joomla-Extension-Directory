@@ -15,13 +15,10 @@ namespace Jed\Component\Jed\Administrator\Table;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Administrator\Helper\JedHelper;
-use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
-use Joomla\CMS\Table\Table as Table;
+use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
-use Joomla\Registry\Registry;
 
 /**
  * ExtensionHistory table
@@ -75,7 +72,8 @@ class ExtensionHistoryTable extends Table
     public function bind($src, $ignore = '')
     {
         $date = Factory::getDate();
-        $task = Factory::getApplication()->input->get('task');
+        $app  = Factory::getApplication();
+        $task = $app->input->get('task');
 
 
         // Support for alias field: alias
@@ -83,7 +81,7 @@ class ExtensionHistoryTable extends Table
             if (empty($src['title'])) {
                 $src['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
             } else {
-                if (Factory::getConfig()->get('unicodeslugs') == 1) {
+                if ($app->get('unicodeslugs') == 1) {
                     $src['alias'] = OutputFilter::stringURLUnicodeSlug(trim($src['title']));
                 } else {
                     $src['alias'] = OutputFilter::stringURLSafe(trim($src['title']));
@@ -138,13 +136,9 @@ class ExtensionHistoryTable extends Table
         }
 
         // Support for multiple field: uses_updater
-        if (isset($src['uses_updater'])) {
+        if (isset($src['uses_updater']) && $src['uses_updater']) {
             if (is_array($src['uses_updater'])) {
                 $src['uses_updater'] = implode(',', $src['uses_updater']);
-            } elseif (strpos($src['uses_updater'], ',') != false) {
-                $src['uses_updater'] = explode(',', $src['uses_updater']);
-            } elseif (strlen($src['uses_updater']) == 0) {
-                $src['uses_updater'] = '';
             }
         } else {
             $src['uses_updater'] = '';
@@ -166,52 +160,12 @@ class ExtensionHistoryTable extends Table
         }
 
         // Support for multiple field: primary_category_id
-        if (isset($src['primary_category_id'])) {
+        if (isset($src['primary_category_id']) && $src['primary_category_id']) {
             if (is_array($src['primary_category_id'])) {
                 $src['primary_category_id'] = implode(',', $src['primary_category_id']);
-            } elseif (strpos($src['primary_category_id'], ',') != false) {
-                $src['primary_category_id'] = explode(',', $src['primary_category_id']);
-            } elseif (strlen($src['primary_category_id']) == 0) {
-                $src['primary_category_id'] = '';
             }
         } else {
             $src['primary_category_id'] = '';
-        }
-        $input = Factory::getApplication()->input;
-        $task  = $input->getString('task', '');
-
-        if (isset($src['params']) && is_array($src['params'])) {
-            $registry = new Registry();
-            $registry->loadArray($src['params']);
-            $src['params'] = (string) $registry;
-        }
-
-        if (isset($src['metadata']) && is_array($src['metadata'])) {
-            $registry = new Registry();
-            $registry->loadArray($src['metadata']);
-            $src['metadata'] = (string) $registry;
-        }
-
-        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jed.extension.' . $src['id'])) {
-            $actions         = Access::getActionsFromFile(
-                JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
-                "/access/section[@name='extension']/"
-            );
-            $default_actions = Access::getAssetRules('com_jed.extension.' . $src['id'])->getData();
-            $array_jaccess   = [];
-
-            foreach ($actions as $action) {
-                if (key_exists($action->name, $default_actions)) {
-                    $array_jaccess[$action->name] = $default_actions[$action->name];
-                }
-            }
-
-            $src['rules'] = $this->JAccessRulestoArray($array_jaccess);
-        }
-
-        // Bind the rules for ACL where supported.
-        if (isset($src['rules']) && is_array($src['rules'])) {
-            $this->setRules($src['rules']);
         }
 
         return parent::bind($src, $ignore);
@@ -227,18 +181,16 @@ class ExtensionHistoryTable extends Table
     public function check(): bool
     {
         // If there is an ordering column and this is a new row then get the next ordering value
-        if (property_exists($this, 'ordering') && $this->get('id') == 0) {
+        if (property_exists($this, 'ordering') && $this->id == 0) {
             $this->ordering = self::getNextOrder();
         }
 
         // Check if alias is unique
         if (!$this->isUnique('alias')) {
             $count        = 0;
-            $currentAlias = $this->get('alias');
-            while (!$this->isUnique($this->get('alias'))) {
-            }
-            {
-                $this->set('alias', $currentAlias . '-' . $count++);
+            $currentAlias = $this->alias;
+            while (!$this->isUnique($this->alias)) {
+                $this->alias = $currentAlias . '-' . $count++;
             }
         }
 
@@ -291,35 +243,6 @@ class ExtensionHistoryTable extends Table
     }
 
     /**
-     * This function convert an array of Access objects into an rules array.
-     *
-     * @param array $jaccessrules An array of Access objects.
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    private function JAccessRulestoArray(array $jaccessrules): array
-    {
-        $rules = [];
-
-        foreach ($jaccessrules as $action => $jaccess) {
-            $actions = [];
-
-            if ($jaccess) {
-                foreach ($jaccess->getData() as $group => $allow) {
-                    $actions[$group] = ((bool) $allow);
-                }
-            }
-
-            $rules[$action] = $actions;
-        }
-
-        return $rules;
-    }
-
-
-    /**
      * Check if a field is unique
      *
      * @param string $field Name of the field
@@ -329,7 +252,7 @@ class ExtensionHistoryTable extends Table
      */
     private function isUnique($field): bool
     {
-        $db    = Factory::getDbo();
+        $db    = $this->getDbo();
         $query = $db->getQuery(true);
 
         $categories        = explode(',', $this->primary_category_id);
@@ -354,46 +277,5 @@ class ExtensionHistoryTable extends Table
         $db->execute();
 
         return ($db->getNumRows() == 0) ? true : false;
-    }
-    /**
-     * Get the Properties of the table
-     *
-     * * @param   bool  $public  If true, returns only the public properties.
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    public function getTableProperties(bool $public = true): array
-    {
-        $vars = get_object_vars($this);
-
-        if ($public) {
-            foreach ($vars as $key => $value) {
-                if (str_starts_with($key, '_')) {
-                    unset($vars[$key]);
-                }
-            }
-
-            // Collect all none public properties of the current class and it's parents
-            $nonePublicProperties = [];
-            $reflection           = new \ReflectionObject($this);
-            do {
-                $nonePublicProperties = array_merge(
-                    $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED),
-                    $nonePublicProperties
-                );
-            } while ($reflection = $reflection->getParentClass());
-
-            // Unset all none public properties, this is needed as get_object_vars returns now all vars
-            // from the current object and not only the CMSObject and the public ones from the inheriting classes
-            foreach ($nonePublicProperties as $prop) {
-                if (\array_key_exists($prop->getName(), $vars)) {
-                    unset($vars[$prop->getName()]);
-                }
-            }
-        }
-
-        return $vars;
     }
 }

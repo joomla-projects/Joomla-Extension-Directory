@@ -175,8 +175,7 @@ class ExtensionModel extends ItemModel
                 }
 
                 // Convert the Table to a clean CMSObject.
-                $properties = $table->getTableProperties(1);
-                $this->item = ArrayHelper::toObject($properties, stdClass::class);
+                $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
             }
 
             if (empty($this->item)) {

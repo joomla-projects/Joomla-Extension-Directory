@@ -17,9 +17,8 @@ namespace Jed\Component\Jed\Administrator\Table;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Table\Table as Table;
+use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 
 /**
@@ -41,33 +40,6 @@ class TicketmessageTable extends Table
         $this->typeAlias = 'com_jed.ticketmessage';
         parent::__construct('#__jed_ticket_messages', 'id', $db);
         $this->setColumnAlias('published', 'state');
-    }
-
-    /**
-     * This function convert an array of Access objects into an rules array.
-     *
-     * @param array $jaccessrules An array of Access objects.
-     *
-     * @return array
-     * @since  4.0.0
-     */
-    private function JAccessRulestoArray(array $jaccessrules): array
-    {
-        $rules = [];
-
-        foreach ($jaccessrules as $action => $jaccess) {
-            $actions = [];
-
-            if ($jaccess) {
-                foreach ($jaccess->getData() as $group => $allow) {
-                    $actions[$group] = ((bool) $allow);
-                }
-            }
-
-            $rules[$action] = $actions;
-        }
-
-        return $rules;
     }
 
     /**
@@ -119,29 +91,6 @@ class TicketmessageTable extends Table
             $src['created_on'] = $date->toSql();
         }
 
-
-        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jed.ticketmessage.' . $src['id'])) {
-            $actions         = Access::getActionsFromFile(
-                JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
-                "/access/section[@name='ticketmessage']/"
-            );
-            $default_actions = Access::getAssetRules('com_jed.ticketmessage.' . $src['id'])->getData();
-            $array_jaccess   = [];
-
-            foreach ($actions as $action) {
-                if (key_exists($action->name, $default_actions)) {
-                    $array_jaccess[$action->name] = $default_actions[$action->name];
-                }
-            }
-
-            $src['rules'] = $this->JAccessRulestoArray($array_jaccess);
-        }
-
-        // Bind the rules for ACL where supported.
-        if (isset($src['rules']) && is_array($src['rules'])) {
-            $this->setRules($src['rules']);
-        }
-
         return parent::bind($src, $ignore);
     }
 
@@ -171,47 +120,5 @@ class TicketmessageTable extends Table
     public function getTypeAlias(): string
     {
         return $this->typeAlias;
-    }
-
-    /**
-     * Get the Properties of the table
-     *
-     * * @param   boolean  $public  If true, returns only the public properties.
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    public function getTableProperties(bool $public = true): array
-    {
-        $vars = get_object_vars($this);
-
-        if ($public) {
-            foreach ($vars as $key => $value) {
-                if (str_starts_with($key, '_')) {
-                    unset($vars[$key]);
-                }
-            }
-
-            // Collect all none public properties of the current class and it's parents
-            $nonePublicProperties = [];
-            $reflection           = new \ReflectionObject($this);
-            do {
-                $nonePublicProperties = array_merge(
-                    $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED),
-                    $nonePublicProperties
-                );
-            } while ($reflection = $reflection->getParentClass());
-
-            // Unset all none public properties, this is needed as get_object_vars returns now all vars
-            // from the current object and not only the CMSObject and the public ones from the inheriting classes
-            foreach ($nonePublicProperties as $prop) {
-                if (\array_key_exists($prop->getName(), $vars)) {
-                    unset($vars[$prop->getName()]);
-                }
-            }
-        }
-
-        return $vars;
     }
 }

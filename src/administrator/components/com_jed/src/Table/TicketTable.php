@@ -17,11 +17,9 @@ namespace Jed\Component\Jed\Administrator\Table;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Table\Table as Table;
+use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
-use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
 /**
  * Ticket table
@@ -42,33 +40,6 @@ class TicketTable extends Table
         $this->typeAlias = 'com_jed.ticket';
         parent::__construct('#__jed_tickets', 'id', $db);
         $this->setColumnAlias('published', 'state');
-    }
-
-    /**
-     * This function convert an array of Access objects into an rules array.
-     *
-     * @param array $jaccessrules An array of Access objects.
-     *
-     * @return array
-     * @since  4.0.0
-     */
-    private function JAccessRulestoArray(array $jaccessrules): array
-    {
-        $rules = [];
-
-        foreach ($jaccessrules as $action => $jaccess) {
-            $actions = [];
-
-            if ($jaccess) {
-                foreach ($jaccess->getData() as $group => $allow) {
-                    $actions[$group] = ((bool) $allow);
-                }
-            }
-
-            $rules[$action] = $actions;
-        }
-
-        return $rules;
     }
 
     /**
@@ -101,71 +72,33 @@ class TicketTable extends Table
     public function bind($src, $ignore = '')
     {
         $date = Factory::getDate();
+        $user = Factory::getApplication()->getIdentity();
 
-
-        // Support for multiple field: ticket_origin
-        if (isset($src['ticket_origin'])) {
-            if (is_array($src['ticket_origin'])) {
-                $src['ticket_origin'] = implode(',', $src['ticket_origin']);
-            } elseif (strpos($src['ticket_origin'], ',') != false) {
-                $src['ticket_origin'] = explode(',', $src['ticket_origin']);
-            } elseif (strlen($src['ticket_origin']) == 0) {
-                $src['ticket_origin'] = '';
+        foreach (['ticket_origin', 'ticket_status'] as $field) {
+            if (isset($src[$field]) && $src[$field]) {
+                if (is_array($src[$field])) {
+                    $src[$field] = implode(',', $src[$field]);
+                }
+            } else {
+                $src[$field] = '';
             }
-        } else {
-            $src['ticket_origin'] = '';
         }
 
-        // Support for multiple or not foreign key field: ticket_category_type
-        if (!empty($src['ticket_category_type'])) {
-            if (is_array($src['ticket_category_type'])) {
-                $src['ticket_category_type'] = implode(',', $src['ticket_category_type']);
-            } elseif (strrpos($src['ticket_category_type'], ',') != false) {
-                $src['ticket_category_type'] = explode(',', $src['ticket_category_type']);
+        foreach (['ticket_category_type', 'allocated_group', 'linked_item_type'] as $field) {
+            if (isset($src[$field]) && $src[$field]) {
+                if (is_array($src[$field])) {
+                    $src[$field] = implode(',', $src[$field]);
+                }
+            } else {
+                $src[$field] = 0;
             }
-        } else {
-            $src['ticket_category_type'] = 0;
         }
 
-        // Support for multiple or not foreign key field: allocated_group
-        if (!empty($src['allocated_group'])) {
-            if (is_array($src['allocated_group'])) {
-                $src['allocated_group'] = implode(',', $src['allocated_group']);
-            } elseif (strrpos($src['allocated_group'], ',') != false) {
-                $src['allocated_group'] = explode(',', $src['allocated_group']);
-            }
-        } else {
-            $src['allocated_group'] = 0;
-        }
-
-        // Support for multiple or not foreign key field: linked_item_type
-        if (!empty($src['linked_item_type'])) {
-            if (is_array($src['linked_item_type'])) {
-                $src['linked_item_type'] = implode(',', $src['linked_item_type']);
-            } elseif (strrpos($src['linked_item_type'], ',') != false) {
-                $src['linked_item_type'] = explode(',', $src['linked_item_type']);
-            }
-        } else {
-            $src['linked_item_type'] = 0;
-        }
-
-        // Support for multiple field: ticket_status
-        if (isset($src['ticket_status'])) {
-            if (is_array($src['ticket_status'])) {
-                $src['ticket_status'] = implode(',', $src['ticket_status']);
-            } elseif (strpos($src['ticket_status'], ',') != false) {
-                $src['ticket_status'] = explode(',', $src['ticket_status']);
-            } elseif (strlen($src['ticket_status']) == 0) {
-                $src['ticket_status'] = '';
-            }
-        } else {
-            $src['ticket_status'] = '';
-        }
         $input = Factory::getApplication()->input;
         $task  = $input->getString('task', '');
 
         if ($src['id'] == 0 && empty($src['created_by'])) {
-            $src['created_by'] = Factory::getApplication()->getIdentity()->id;
+            $src['created_by'] = $user->id;
         }
 
         if ($src['id'] == 0) {
@@ -173,38 +106,12 @@ class TicketTable extends Table
         }
 
         if ($src['id'] == 0 && empty($src['modified_by'])) {
-            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
+            $src['modified_by'] = $user->id;
         }
 
         if ($task == 'apply' || $task == 'save') {
-            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
-        }
-
-        if ($task == 'apply' || $task == 'save') {
+            $src['modified_by'] = $user->id;
             $src['modified_on'] = $date->toSql();
-        }
-
-
-        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jed.ticket.' . $src['id'])) {
-            $actions         = Access::getActionsFromFile(
-                JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
-                "/access/section[@name='ticket']/"
-            );
-            $default_actions = Access::getAssetRules('com_jed.ticket.' . $src['id'])->getData();
-            $array_jaccess   = [];
-
-            foreach ($actions as $action) {
-                if (key_exists($action->name, $default_actions)) {
-                    $array_jaccess[$action->name] = $default_actions[$action->name];
-                }
-            }
-
-            $src['rules'] = $this->JAccessRulestoArray($array_jaccess);
-        }
-
-        // Bind the rules for ACL where supported.
-        if (isset($src['rules']) && is_array($src['rules'])) {
-            $this->setRules($src['rules']);
         }
 
         return parent::bind($src, $ignore);
@@ -236,47 +143,5 @@ class TicketTable extends Table
     public function getTypeAlias(): string
     {
         return $this->typeAlias;
-    }
-
-    /**
-     * Get the Properties of the table
-     *
-     * * @param   boolean  $public  If true, returns only the public properties.
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    public function getTableProperties(bool $public = true): array
-    {
-        $vars = get_object_vars($this);
-
-        if ($public) {
-            foreach ($vars as $key => $value) {
-                if (str_starts_with($key, '_')) {
-                    unset($vars[$key]);
-                }
-            }
-
-            // Collect all none public properties of the current class and it's parents
-            $nonePublicProperties = [];
-            $reflection           = new \ReflectionObject($this);
-            do {
-                $nonePublicProperties = array_merge(
-                    $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED),
-                    $nonePublicProperties
-                );
-            } while ($reflection = $reflection->getParentClass());
-
-            // Unset all none public properties, this is needed as get_object_vars returns now all vars
-            // from the current object and not only the CMSObject and the public ones from the inheriting classes
-            foreach ($nonePublicProperties as $prop) {
-                if (\array_key_exists($prop->getName(), $vars)) {
-                    unset($vars[$prop->getName()]);
-                }
-            }
-        }
-
-        return $vars;
     }
 }

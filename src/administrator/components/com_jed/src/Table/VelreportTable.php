@@ -18,9 +18,8 @@ namespace Jed\Component\Jed\Administrator\Table;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Table\Table as Table;
+use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 
 /**
@@ -63,121 +62,15 @@ class VelreportTable extends Table
         $task = Factory::getApplication()->input->get('task');
 
         $src['date_submitted'] = $date->toSQL();
-        // Support for multiple field: pass_details_ok
-        if (isset($src['pass_details_ok'])) {
-            if (is_array($src['pass_details_ok'])) {
-                $src['pass_details_ok'] = implode(',', $src['pass_details_ok']);
-            } elseif (strpos($src['pass_details_ok'], ',')) {
-                $src['pass_details_ok'] = explode(',', $src['pass_details_ok']);
-            } elseif (strlen($src['pass_details_ok']) == 0) {
-                $src['pass_details_ok'] = '';
-            }
-        } else {
-            $src['pass_details_ok'] = '';
-        }
 
-        // Support for multiple field: vulnerability_type
-        if (isset($src['vulnerability_type'])) {
-            if (is_array($src['vulnerability_type'])) {
-                $src['vulnerability_type'] = implode(',', $src['vulnerability_type']);
-            } elseif (strpos($src['vulnerability_type'], ',')) {
-                $src['vulnerability_type'] = explode(',', $src['vulnerability_type']);
-            } elseif (strlen($src['vulnerability_type']) == 0) {
-                $src['vulnerability_type'] = '';
+        foreach (['pass_details_ok', 'vulnerability_type', 'vulnerability_actively_exploited', 'exploit_type', 'data_source', 'vulnerability_publicly_available', 'passed_to_vel', 'consent_to_process', 'developer_communication_type'] as $field) {
+            if (isset($src[$field]) && $src[$field]) {
+                if (is_array($src[$field])) {
+                    $src[$field] = implode(',', $src[$field]);
+                }
+            } else {
+                $src[$field] = '';
             }
-        } else {
-            $src['vulnerability_type'] = '';
-        }
-
-        // Support for multiple field: exploit_type
-        if (isset($src['exploit_type'])) {
-            if (is_array($src['exploit_type'])) {
-                $src['exploit_type'] = implode(',', $src['exploit_type']);
-            } elseif (strpos($src['exploit_type'], ',')) {
-                $src['exploit_type'] = explode(',', $src['exploit_type']);
-            } elseif (strlen($src['exploit_type']) == 0) {
-                $src['exploit_type'] = '';
-            }
-        } else {
-            $src['exploit_type'] = '';
-        }
-
-        // Support for multiple field: vulnerability_actively_exploited
-        if (isset($src['vulnerability_actively_exploited'])) {
-            if (is_array($src['vulnerability_actively_exploited'])) {
-                $src['vulnerability_actively_exploited'] = implode(',', $src['vulnerability_actively_exploited']);
-            } elseif (strpos($src['vulnerability_actively_exploited'], ',')) {
-                $src['vulnerability_actively_exploited'] = explode(',', $src['vulnerability_actively_exploited']);
-            } elseif (strlen($src['vulnerability_actively_exploited']) == 0) {
-                $src['vulnerability_actively_exploited'] = '';
-            }
-        } else {
-            $src['vulnerability_actively_exploited'] = '';
-        }
-
-        // Support for multiple field: vulnerability_publicly_available
-        if (isset($src['vulnerability_publicly_available'])) {
-            if (is_array($src['vulnerability_publicly_available'])) {
-                $src['vulnerability_publicly_available'] = implode(',', $src['vulnerability_publicly_available']);
-            } elseif (strpos($src['vulnerability_publicly_available'], ',')) {
-                $src['vulnerability_publicly_available'] = explode(',', $src['vulnerability_publicly_available']);
-            } elseif (strlen($src['vulnerability_publicly_available']) == 0) {
-                $src['vulnerability_publicly_available'] = '';
-            }
-        } else {
-            $src['vulnerability_publicly_available'] = '';
-        }
-
-        // Support for multiple field: developer_communication_type
-        if (isset($src['developer_communication_type'])) {
-            if (is_array($src['developer_communication_type'])) {
-                $src['developer_communication_type'] = implode(',', $src['developer_communication_type']);
-            } elseif (strpos($src['developer_communication_type'], ',')) {
-                $src['developer_communication_type'] = explode(',', $src['developer_communication_type']);
-            } elseif (strlen($src['developer_communication_type']) == 0) {
-                $src['developer_communication_type'] = '';
-            }
-        } else {
-            $src['developer_communication_type'] = '';
-        }
-
-        // Support for multiple field: consent_to_process
-        if (isset($src['consent_to_process'])) {
-            if (is_array($src['consent_to_process'])) {
-                $src['consent_to_process'] = implode(',', $src['consent_to_process']);
-            } elseif (strpos($src['consent_to_process'], ',')) {
-                $src['consent_to_process'] = explode(',', $src['consent_to_process']);
-            } elseif (strlen($src['consent_to_process']) == 0) {
-                $src['consent_to_process'] = '';
-            }
-        } else {
-            $src['consent_to_process'] = '';
-        }
-
-        // Support for multiple field: passed_to_vel
-        if (isset($src['passed_to_vel'])) {
-            if (is_array($src['passed_to_vel'])) {
-                $src['passed_to_vel'] = implode(',', $src['passed_to_vel']);
-            } elseif (strpos($src['passed_to_vel'], ',')) {
-                $src['passed_to_vel'] = explode(',', $src['passed_to_vel']);
-            } elseif (strlen($src['passed_to_vel']) == 0) {
-                $src['passed_to_vel'] = '';
-            }
-        } else {
-            $src['passed_to_vel'] = '';
-        }
-
-        // Support for multiple field: data_source
-        if (isset($src['data_source'])) {
-            if (is_array($src['data_source'])) {
-                $src['data_source'] = implode(',', $src['data_source']);
-            } elseif (strpos($src['data_source'], ',')) {
-                $src['data_source'] = explode(',', $src['data_source']);
-            } elseif (strlen($src['data_source']) == 0) {
-                $src['data_source'] = '';
-            }
-        } else {
-            $src['data_source'] = '';
         }
 
         // Support for empty date field: date_submitted
@@ -205,29 +98,6 @@ class VelreportTable extends Table
             $src['modified'] = $date->toSql();
         }
 
-
-        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jed.velreport.' . $src['id'])) {
-            $actions         = Access::getActionsFromFile(
-                JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
-                "/access/section[@name='velreport']/"
-            );
-            $default_actions = Access::getAssetRules('com_jed.velreport.' . $src['id'])->getData();
-            $array_jaccess   = [];
-
-            foreach ($actions as $action) {
-                if (key_exists($action->name, $default_actions)) {
-                    $array_jaccess[$action->name] = $default_actions[$action->name];
-                }
-            }
-
-            $src['rules'] = $this->JAccessRulestoArray($array_jaccess);
-        }
-
-        // Bind the rules for ACL where supported.
-        if (isset($src['rules']) && is_array($src['rules'])) {
-            $this->setRules($src['rules']);
-        }
-
         return parent::bind($src, $ignore);
     }
 
@@ -245,76 +115,6 @@ class VelreportTable extends Table
         $this->load($pk);
 
         return parent::delete($pk);
-    }
-
-    /**
-     * This function convert an array of Access objects into a rules array.
-     *
-     * @param array $jaccessrules An array of Access objects.
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    private function JAccessRulestoArray(array $jaccessrules): array
-    {
-        $rules = [];
-
-        foreach ($jaccessrules as $action => $jaccess) {
-            $actions = [];
-
-            if ($jaccess) {
-                foreach ($jaccess->getData() as $group => $allow) {
-                    $actions[$group] = ((bool)$allow);
-                }
-            }
-
-            $rules[$action] = $actions;
-        }
-
-        return $rules;
-    }
-
-    /**
-     * Get the Properties of the table
-     *
-     * * @param   bool  $public  If true, returns only the public properties.
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    public function getTableProperties(bool $public = true): array
-    {
-        $vars = get_object_vars($this);
-
-        if ($public) {
-            foreach ($vars as $key => $value) {
-                if (str_starts_with($key, '_')) {
-                    unset($vars[$key]);
-                }
-            }
-
-            // Collect all none public properties of the current class and it's parents
-            $nonePublicProperties = [];
-            $reflection           = new \ReflectionObject($this);
-            do {
-                $nonePublicProperties = array_merge(
-                    $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED),
-                    $nonePublicProperties
-                );
-            } while ($reflection = $reflection->getParentClass());
-
-            // Unset all none public properties, this is needed as get_object_vars returns now all vars
-            // from the current object and not only the CMSObject and the public ones from the inheriting classes
-            foreach ($nonePublicProperties as $prop) {
-                if (\array_key_exists($prop->getName(), $vars)) {
-                    unset($vars[$prop->getName()]);
-                }
-            }
-        }
-
-        return $vars;
     }
 
     /**

@@ -206,17 +206,14 @@ class TicketformModel extends FormModel
 
             // Get a level row instance.
             $table = $this->getTable();
-
-            $properties = $table->getTableProperties();
-            $this->item = ArrayHelper::toObject($properties, stdClass::class);
+            $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
             if ($table !== false && $table->load($id) && !empty($table->id)) {
                 $user = Factory::getApplication()->getIdentity();
                 $id   = $table->id;
                 if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
                     // Convert the Table to a clean CMSObject.
-                    $properties                       = $table->getTableProperties(1);
-                    $this->item                       = ArrayHelper::toObject($properties, stdClass::class);
+                    $this->item                       = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
                     $this->item->ticket_messages      = self::getTicketMessages($id);
                     $this->item->ticket_status        = Text::_('COM_JED_TICKETS_TICKET_STATUS_OPTION_' . strtoupper($this->item->ticket_status));
                     $this->item->ticket_category_type = self::getTicketCategory($this->item->ticket_category_type);

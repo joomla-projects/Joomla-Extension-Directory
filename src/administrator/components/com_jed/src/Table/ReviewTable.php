@@ -15,13 +15,10 @@ namespace Jed\Component\Jed\Administrator\Table;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
-use Joomla\CMS\Table\Table as Table;
+use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
-use Joomla\Registry\Registry;
-use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
 /**
  * Review table
@@ -75,15 +72,12 @@ class ReviewTable extends Table
     public function bind($src, $ignore = '')
     {
         $date = Factory::getDate();
-        $task = Factory::getApplication()->input->get('task');
-
+        $app  = Factory::getApplication();
 
         // Support for multiple or not foreign key field: extension_id
         if (!empty($src['extension_id'])) {
             if (is_array($src['extension_id'])) {
                 $src['extension_id'] = implode(',', $src['extension_id']);
-            } elseif (strrpos($src['extension_id'], ',') != false) {
-                $src['extension_id'] = explode(',', $src['extension_id']);
             }
         } else {
             $src['extension_id'] = 0;
@@ -93,8 +87,6 @@ class ReviewTable extends Table
         if (!empty($src['supply_option_id'])) {
             if (is_array($src['supply_option_id'])) {
                 $src['supply_option_id'] = implode(',', $src['supply_option_id']);
-            } elseif (strrpos($src['supply_option_id'], ',') != false) {
-                $src['supply_option_id'] = explode(',', $src['supply_option_id']);
             }
         } else {
             $src['supply_option_id'] = 0;
@@ -105,7 +97,7 @@ class ReviewTable extends Table
             if (empty($src['title'])) {
                 $src['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
             } else {
-                if (Factory::getConfig()->get('unicodeslugs') == 1) {
+                if ($app->get('unicodeslugs') == 1) {
                     $src['alias'] = OutputFilter::stringURLUnicodeSlug(trim($src['title']));
                 } else {
                     $src['alias'] = OutputFilter::stringURLSafe(trim($src['title']));
@@ -130,40 +122,6 @@ class ReviewTable extends Table
 
         if ($src['id'] == 0 && empty($src['created_by'])) {
             $src['created_by'] = Factory::getApplication()->getIdentity()->id;
-        }
-
-        if (isset($src['params']) && is_array($src['params'])) {
-            $registry = new Registry();
-            $registry->loadArray($src['params']);
-            $src['params'] = (string) $registry;
-        }
-
-        if (isset($src['metadata']) && is_array($src['metadata'])) {
-            $registry = new Registry();
-            $registry->loadArray($src['metadata']);
-            $src['metadata'] = (string) $registry;
-        }
-
-        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jed.review.' . $src['id'])) {
-            $actions         = Access::getActionsFromFile(
-                JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
-                "/access/section[@name='review']/"
-            );
-            $default_actions = Access::getAssetRules('com_jed.review.' . $src['id'])->getData();
-            $src_jaccess     = [];
-
-            foreach ($actions as $action) {
-                if (key_exists($action->name, $default_actions)) {
-                    $src_jaccess[$action->name] = $default_actions[$action->name];
-                }
-            }
-
-            $src['rules'] = $this->JAccessRulestoArray($src_jaccess);
-        }
-
-        // Bind the rules for ACL where supported.
-        if (isset($src['rules']) && is_array($src['rules'])) {
-            $this->setRules($src['rules']);
         }
 
         return parent::bind($src, $ignore);
@@ -192,24 +150,7 @@ class ReviewTable extends Table
             }
         }
 
-
         return parent::check();
-    }
-
-    /**
-     * Delete a record by id
-     *
-     * @param mixed $pk Primary key value to delete. Optional
-     *
-     * @return bool
-     *
-     * @since 4.0.0
-     */
-    public function delete($pk = null): bool
-    {
-        $this->load($pk);
-
-        return parent::delete($pk);
     }
 
     /**
@@ -242,34 +183,6 @@ class ReviewTable extends Table
     }
 
     /**
-     * This function convert an array of Access objects into an rules array.
-     *
-     * @param array $jaccessrules An array of Access objects.
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    private function JAccessRulestoArray(array $jaccessrules): array
-    {
-        $rules = [];
-
-        foreach ($jaccessrules as $action => $jaccess) {
-            $actions = [];
-
-            if ($jaccess) {
-                foreach ($jaccess->getData() as $group => $allow) {
-                    $actions[$group] = ((bool) $allow);
-                }
-            }
-
-            $rules[$action] = $actions;
-        }
-
-        return $rules;
-    }
-
-    /**
      * Check if a field is unique
      *
      * @param string $field Name of the field
@@ -280,7 +193,7 @@ class ReviewTable extends Table
      */
     private function isUnique(string $field): bool
     {
-        $db    = Factory::getDbo();
+        $db    = $this->getDbo();
         $query = $db->getQuery(true);
 
         $query
@@ -293,47 +206,5 @@ class ReviewTable extends Table
         $db->execute();
 
         return $db->getNumRows() == 0;
-    }
-
-    /**
-     * Get the Properties of the table
-     *
-     * * @param   bool  $public  If true, returns only the public properties.
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    public function getTableProperties(bool $public = true): array
-    {
-        $vars = get_object_vars($this);
-
-        if ($public) {
-            foreach ($vars as $key => $value) {
-                if (str_starts_with($key, '_')) {
-                    unset($vars[$key]);
-                }
-            }
-
-            // Collect all none public properties of the current class and it's parents
-            $nonePublicProperties = [];
-            $reflection           = new \ReflectionObject($this);
-            do {
-                $nonePublicProperties = array_merge(
-                    $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED),
-                    $nonePublicProperties
-                );
-            } while ($reflection = $reflection->getParentClass());
-
-            // Unset all none public properties, this is needed as get_object_vars returns now all vars
-            // from the current object and not only the CMSObject and the public ones from the inheriting classes
-            foreach ($nonePublicProperties as $prop) {
-                if (\array_key_exists($prop->getName(), $vars)) {
-                    unset($vars[$prop->getName()]);
-                }
-            }
-        }
-
-        return $vars;
     }
 }

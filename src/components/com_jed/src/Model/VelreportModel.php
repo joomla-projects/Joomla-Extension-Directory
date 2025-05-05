@@ -120,9 +120,7 @@ class VelreportModel extends ItemModel
                     }
 
                     // Convert the JTable to a clean JObject.
-                    $properties = $table->getTableProperties(1);
-
-                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
+                    $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
                 } else {
                     $app->enqueueMessage("Sorry you did not create that report item", "message");
 
