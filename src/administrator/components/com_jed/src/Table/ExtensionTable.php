@@ -175,6 +175,23 @@ class ExtensionTable extends Table
     }
 
     /**
+     * Method to store a row in the database from the Table instance properties.
+     *
+     * If a primary key value is set the row with that primary key value will be updated with the instance property values.
+     * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
+     *
+     * @param bool $updateNulls True to update fields even if they are null.
+     *
+     * @return bool  True on success.
+     *
+     * @since 4.0.0
+     */
+    public function store($updateNulls = true): bool
+    {
+        return parent::store($updateNulls);
+    }
+
+    /**
      * Check if a field is unique
      *
      * @param string $field Name of the field
