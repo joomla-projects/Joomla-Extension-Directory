@@ -22,7 +22,7 @@ HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-$user       = Factory::getApplication()->getIdentity();
+$user       = $this->getCurrentUser();
 $userId     = $user->id;
 $listOrder  = $this->state->get('list.ordering');
 $listDirn   = $this->state->get('list.direction');
@@ -34,7 +34,7 @@ $canDelete  = $user->authorise('core.delete', 'com_jed');
 
 // Import CSS
 
-$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa = $this->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.jazstyle');
 ?>
 
@@ -160,7 +160,7 @@ $wa->useStyle('com_jed.jazstyle');
             <?php foreach ($this->items as $i => $item) : ?>
                 <?php $canEdit = $user->authorise('core.edit', 'com_jed'); ?>
                 <?php if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')): ?>
-                <?php $canEdit = Factory::getApplication()->getIdentity()->id == $item->created_by; ?>
+                <?php $canEdit = $this->getCurrentUser()->id == $item->created_by; ?>
                 <?php endif; ?>
 
                 <tr class="row<?php echo $i % 2; ?>">
@@ -169,7 +169,7 @@ $wa->useStyle('com_jed.jazstyle');
                         <?php echo $item->id; ?>
                     </td>
                     <td>
-                        <?php $canCheckin = Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jed.' . $item->id) || $item->checked_out == Factory::getApplication()->getIdentity()->id; ?>
+                        <?php $canCheckin = $this->getCurrentUser()->authorise('core.manage', 'com_jed.' . $item->id) || $item->checked_out == $this->getCurrentUser()->id; ?>
                         <?php if($canCheckin && $item->checked_out > 0) : ?>
                             <a href="<?php echo Route::_('index.php?option=com_jed&task=extension.checkin&id=' . $item->id .'&'. Session::getFormToken() .'=1'); ?>">
                             <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'extension.', false); ?></a>
@@ -222,7 +222,7 @@ $wa->useStyle('com_jed.jazstyle');
                     </td>
                     <?php if ($canEdit || $canDelete): ?>
                         <td class="center">
-                            <?php $canCheckin = Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jed.' . $item->id) || $item->checked_out == Factory::getApplication()->getIdentity()->id; ?>
+                            <?php $canCheckin = $this->getCurrentUser()->authorise('core.manage', 'com_jed.' . $item->id) || $item->checked_out == $this->getCurrentUser()->id; ?>
 
                             <?php if($canEdit && $item->checked_out == 0): ?>
                                 <a href="<?php echo Route::_('index.php?option=com_jed&task=extension.edit&id=' . $item->id, false, 2); ?>" class="btn btn-mini" type="button"><i class="icon-edit" ></i></a>

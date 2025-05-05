@@ -27,11 +27,11 @@ HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 
 // Import CSS
-/*$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+/*$wa = $this->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.admin')
     ->useScript('com_jed.admin');
 */
-$user      = Factory::getApplication()->getIdentity();
+$user      = $this->getCurrentUser();
 $userId    = $user->id;
 $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');

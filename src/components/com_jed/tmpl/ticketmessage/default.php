@@ -20,10 +20,10 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
-$canEdit = Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed');
+$canEdit = $this->getCurrentUser()->authorise('core.edit', 'com_jed');
 
-if (!$canEdit && Factory::getApplication()->getIdentity()->authorise('core.edit.own', 'com_jed')) {
-    $canEdit = Factory::getApplication()->getIdentity()->id == $this->item->created_by;
+if (!$canEdit && $this->getCurrentUser()->authorise('core.edit.own', 'com_jed')) {
+    $canEdit = $this->getCurrentUser()->id == $this->item->created_by;
 }
 ?>
 
@@ -51,7 +51,7 @@ if (!$canEdit && Factory::getApplication()->getIdentity()->authorise('core.edit.
 
 </div>
 
-<?php $canCheckin = Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jed.' . $this->item->id) || $this->item->checked_out == Factory::getApplication()->getIdentity()->id; ?>
+<?php $canCheckin = $this->getCurrentUser()->authorise('core.manage', 'com_jed.' . $this->item->id) || $this->item->checked_out == $this->getCurrentUser()->id; ?>
 <?php if ($canEdit && $this->item->checked_out == 0) : ?>
     <a class="btn btn-outline-primary"
        href="<?php echo Route::_('index.php?option=com_jed&task=ticketmessage.edit&id=' . $this->item->id); ?>"><?php echo Text::_("JGLOBAL_EDIT"); ?></a>

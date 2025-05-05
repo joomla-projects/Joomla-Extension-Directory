@@ -17,10 +17,10 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 
-$canEdit = Factory::getUser()->authorise('core.edit', 'com_jed');
+$canEdit = $this->getCurrentUser()->authorise('core.edit', 'com_jed');
 
-if (!$canEdit && Factory::getUser()->authorise('core.edit.own', 'com_jed')) {
-    $canEdit = Factory::getUser()->id == $this->item->created_by;
+if (!$canEdit && $this->getCurrentUser()->authorise('core.edit.own', 'com_jed')) {
+    $canEdit = $this->getCurrentUser()->id == $this->item->created_by;
 }
 ?>
 
@@ -74,7 +74,7 @@ if (!$canEdit && Factory::getUser()->authorise('core.edit.own', 'com_jed')) {
 
 <?php endif; ?>
 
-<?php if (Factory::getUser()->authorise('core.delete', 'com_jed.reviewcomment.' . $this->item->id)) : ?>
+<?php if ($this->getCurrentUser()->authorise('core.delete', 'com_jed.reviewcomment.' . $this->item->id)) : ?>
     <a class="btn btn-danger" rel="noopener noreferrer" href="#deleteModal" role="button" data-bs-toggle="modal">
         <?php echo Text::_("JACTION_DELETE"); ?>
     </a>

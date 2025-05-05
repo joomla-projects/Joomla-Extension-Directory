@@ -23,7 +23,7 @@ HTMLHelper::_('bootstrap.tooltip', '.hasTooltip');
 
 
 /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
-$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa = $this->getDocument()->getWebAssetManager();
 $wa->useScript('keepalive')
    ->useScript('form.validate');
 

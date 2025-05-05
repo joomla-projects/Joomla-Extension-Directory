@@ -27,7 +27,7 @@ HTMLHelper::_('bootstrap.tooltip');
 $lang = Factory::getApplication()->getLanguage();
 $lang->load('com_jed', JPATH_SITE);
 
-$user    = Factory::getApplication()->getIdentity();
+$user    = $this->getCurrentUser();
 $canEdit = JedHelper::canUserEdit($this->item, $user);
 
 
@@ -38,7 +38,7 @@ if ($this->item->state == 1) {
     $state_string = 'Unpublish';
     $state_value  = 0;
 }
-$canState = Factory::getUser()->authorise('core.edit.state', 'com_jed');
+$canState = $this->getCurrentUser()->authorise('core.edit.state', 'com_jed');
 ?>
 
 <div class="reviewcomment-edit front-end-edit">

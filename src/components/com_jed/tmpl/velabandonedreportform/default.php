@@ -30,10 +30,10 @@ HTMLHelper::_('bootstrap.tooltip');
 // Load admin language file
 $lang = Factory::getApplication()->getLanguage();
 $lang->load('com_jed', JPATH_SITE);
-$doc = Factory::getDocument();
+$doc = $this->getDocument();
 $doc->addScript(Uri::base() . '/media/com_jed/js/form.js');
 
-$user    = Factory::getApplication()->getIdentity();
+$user    = $this->getCurrentUser();
 $canEdit = JedHelper::canUserEdit($this->item);
 
 $isLoggedIn  = JedHelper::isLoggedIn();

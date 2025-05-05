@@ -30,7 +30,7 @@ HTMLHelper::_('bootstrap.tooltip');
 $lang = Factory::getApplication()->getLanguage();
 $lang->load('com_jed', JPATH_SITE);
 
-$user    = Factory::getApplication()->getIdentity();
+$user    = $this->getCurrentUser();
 $canEdit = JedHelper::canUserEdit($this->item);
 
 $isLoggedIn  = JedHelper::isLoggedIn();
@@ -94,7 +94,7 @@ if (!$isLoggedIn) {
         $state_string = 'Unpublish';
         $state_value  = 0;
     }
-    $canState = Factory::getApplication()->getIdentity()->authorise('core.edit.state', 'com_jed');
+    $canState = $this->getCurrentUser()->authorise('core.edit.state', 'com_jed');
 
     */
 

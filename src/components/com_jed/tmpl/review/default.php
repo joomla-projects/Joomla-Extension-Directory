@@ -18,10 +18,10 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
 
-$canEdit = Factory::getUser()->authorise('core.edit', 'com_jed');
+$canEdit = $this->getCurrentUser()->authorise('core.edit', 'com_jed');
 
-if (!$canEdit && Factory::getUser()->authorise('core.edit.own', 'com_jed')) {
-    $canEdit = Factory::getUser()->id == $this->item->created_by;
+if (!$canEdit && $this->getCurrentUser()->authorise('core.edit.own', 'com_jed')) {
+    $canEdit = $this->getCurrentUser()->id == $this->item->created_by;
 }
 ?>
 
@@ -149,7 +149,7 @@ if (!$canEdit && Factory::getUser()->authorise('core.edit.own', 'com_jed')) {
 
 </div>
 
-<?php $canCheckin = Factory::getUser()->authorise('core.manage', 'com_jed.' . $this->item->id) || $this->item->checked_out == Factory::getUser()->id; ?>
+<?php $canCheckin = $this->getCurrentUser()->authorise('core.manage', 'com_jed.' . $this->item->id) || $this->item->checked_out == $this->getCurrentUser()->id; ?>
     <?php if ($canEdit && $this->item->checked_out == 0) : ?>
     <a class="btn btn-outline-primary" href="<?php echo Route::_('index.php?option=com_jed&task=review.edit&id=' . $this->item->id); ?>"><?php echo Text::_("JACTION_EDIT"); ?></a>
     <?php elseif ($canCheckin && $this->item->checked_out > 0) : ?>
@@ -157,7 +157,7 @@ if (!$canEdit && Factory::getUser()->authorise('core.edit.own', 'com_jed')) {
 
     <?php endif; ?>
 
-<?php if (Factory::getUser()->authorise('core.delete', 'com_jed.review.' . $this->item->id)) : ?>
+<?php if ($this->getCurrentUser()->authorise('core.delete', 'com_jed.review.' . $this->item->id)) : ?>
     <a class="btn btn-danger" rel="noopener noreferrer" href="#deleteModal" role="button" data-bs-toggle="modal">
         <?php echo Text::_("JACTION_DELETE"); ?>
     </a>

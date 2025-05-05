@@ -30,7 +30,7 @@ HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-$user       = Factory::getApplication()->getIdentity();
+$user       = $this->getCurrentUser();
 $userId     = $user->id;
 $listOrder  = $this->state->get('list.ordering');
 $listDirn   = $this->state->get('list.direction');
@@ -70,7 +70,7 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
             </div>
             <div class="col text-end">
                 <?php
-                $canCheckin = Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jed.' . $this->item->id); ?>
+                $canCheckin = $this->getCurrentUser()->authorise('core.manage', 'com_jed.' . $this->item->id); ?>
                 <?php
                 if ($canEdit) : ?>
                     <a class="btn btn-sm btn-outline-primary" role="button"
