@@ -23,13 +23,94 @@ steps:
       - ./vendor/bin/phpcs --extensions=php -p --standard=ruleset.xml src/
       - echo $(date)
 
+  - name: npm
+    image: node:20-bullseye-slim
+    depends_on: [ phpcs ]
+    volumes:
+      - name: npm-cache
+        path: /tmp/npm-cache
+    environment:
+      npm_config_cache: /tmp/npm-cache
+    commands:
+      - npm i --unsafe-perm
+
+  - name: prepare_tests
+    depends_on: [ npm ]
+    image: joomlaprojects/docker-images:cypress8.2
+    volumes:
+      - name: cypress-cache
+        path: /root/.cache/Cypress
+    environment:
+      CYPRESS_VERIFY_TIMEOUT: 100000
+    commands:
+      - mv cypress.config.dist.js cypress.config.js
+      - npx cypress install
+      - npx cypress verify
+      - vendor/bin/robo build
+      - curl https://joomla.org/latest -L --output joomla.zip
+      - mkdir joomla
+      - cp joomla.zip joomla/joomla.zip
+      - cd joomla
+      - unzip joomla.zip
+
+  - name: phpstan
+    image: joomlaprojects/docker-images:php8.2
+    depends_on: [ prepare_tests ]
+    failure: ignore
+    commands:
+      - vendor/bin/phpstan
+
+  - name: phpunit
+    image: joomlaprojects/docker-images:php8.2
+    depends_on: [ prepare_tests ]
+    commands:
+      - vendor/bin/phpunit
+
+  - name: phpmin-system-mysql
+    depends_on: [ prepare_tests ]
+    image: joomlaprojects/docker-images:cypress8.2
+    volumes:
+      - name: cypress-cache
+        path: /root/.cache/Cypress
+    commands:
+      - mkdir /tests/www/mysql/
+      - cp joomla.zip /tests/www/mysql/joomla.zip
+      - cp dist/pkg-jed-current.zip /tests/www/mysql/pkg-jed-current.zip
+      - cd /tests/www/mysql/
+      - unzip joomla.zip
+      - apache2ctl -D FOREGROUND &
+      - chmod +rwx /root
+      - php installation/joomla.php install --verbose --site-name="Joomla CMS test" --admin-email=admin@example.org --admin-username=ci-admin --admin-user="jane doe" --admin-password=joomla-17082005 --db-type=mysqli --db-host=mysql --db-name=test_joomla --db-pass=joomla_ut --db-user=joomla_ut --db-encryption=0 --db-prefix=mysql_
+      - php cli/joomla.php config:set debug=true error_reporting=maximum
+      - php cli/joomla.php extension:install --path=/tests/www/mysql/pkg-jed-current.zip
+      - chmod -R 777 /tests/www/mysql/
+      - chown -R www-data /tests/www/mysql/
+      - cd /drone/src
+      - npx cypress run --browser=firefox --e2e --env cmsPath=/tests/www/mysql,db_type=mysqli,db_host=mysql,db_name=test_joomla,db_user=joomla_ut,db_password=joomla_ut,db_prefix=mysql_ --config baseUrl=http://localhost/mysql,screenshotsFolder=/drone/src/tests/cypress/output/screenshot
+
 volumes:
   - name: composer-cache
     host:
       path: /tmp/composer-cache
+  - name: cypress-cache
+    host:
+      path: /tmp/cypress-cache
+  - name: npm-cache
+    host:
+      path: /tmp/npm-cache
+
+services:
+  - name: mysql
+    image: mysql:8.0
+    command: ["--default-authentication-plugin=mysql_native_password"]
+    environment:
+      MYSQL_USER: joomla_ut
+      MYSQL_PASSWORD: joomla_ut
+      MYSQL_ROOT_PASSWORD: joomla_ut
+      MYSQL_DATABASE: test_joomla
 
 ---
 kind: signature
-hmac: b7403bc713a0865808f4851c7773a3133d531ceac51a933198a6df8124f30367
+hmac: 946bc2e0a7065982cbd7cd7a6ea3581c068151e244679a1d89d0ed5dd621abb6
 
 ...
