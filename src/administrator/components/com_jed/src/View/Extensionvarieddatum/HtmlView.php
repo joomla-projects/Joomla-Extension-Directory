@@ -14,13 +14,13 @@ namespace Jed\Component\Jed\Administrator\View\Extensionvarieddatum;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Jed\Component\Jed\Administrator\Model\ExtensionvarieddatumModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\Registry\Registry;
 
 /**
  * View class for a single Extensionvarieddatum.
@@ -29,7 +29,7 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
  */
 class HtmlView extends BaseHtmlView
 {
-    protected CMSObject $state;
+    protected Registry $state;
 
     protected mixed $item;
 
@@ -42,19 +42,21 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @since 4.0.0
      */
     public function display($tpl = null)
     {
-        $this->state = $this->get('State');
-        $this->item  = $this->get('Item');
-        $this->form  = $this->get('Form');
+        /** @var ExtensionvarieddatumModel $model */
+        $model       = $this->getModel();
+        $this->state = $model->getState();
+        $this->item  = $model->getItem();
+        $this->form  = $model->getForm();
 
         // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
+        if (count($errors = $model->getErrors())) {
+            throw new \Exception(implode("\n", $errors));
         }
 
         $this->addToolbar();
@@ -66,7 +68,7 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @since 4.0.0
      */

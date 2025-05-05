@@ -14,13 +14,12 @@ namespace Jed\Component\Jed\Administrator\View\Extensionsupplyoptions;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Jed\Component\Jed\Administrator\Model\ExtensionsupplyoptionsModel;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -53,18 +52,15 @@ class HtmlView extends BaseHtmlView
      * @return void
      *
      * @since  4.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     protected function addToolbar(): void
     {
-        $this->state = $this->get('State');
         $canDo       = JedHelper::getActions();
 
         ToolbarHelper::title(Text::_('COM_JED_EXTENSION_SUPPLY_OPTIONS'), "generic");
 
-        $toolbar = Toolbar::getInstance(); //Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar();
-
-
+        $toolbar = $this->getDocument()->getToolbar();
 
         if ($canDo->get('core.create')) {
             $toolbar->addNew('extensionsupplyoption.add');
@@ -134,19 +130,21 @@ class HtmlView extends BaseHtmlView
      * @return void
      *
      * @since  4.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     public function display($tpl = null): void
     {
-        $this->state         = $this->get('State');
-        $this->items         = $this->get('Items');
-        $this->pagination    = $this->get('Pagination');
-        $this->filterForm    = $this->get('FilterForm');
-        $this->activeFilters = $this->get('ActiveFilters');
+        /** @var ExtensionsupplyoptionsModel $model */
+        $model               = $this->getModel();
+        $this->state         = $model->getState();
+        $this->items         = $model->getItems();
+        $this->pagination    = $model->getPagination();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
 
         // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
+        if (count($errors = $model->getErrors())) {
+            throw new \Exception(implode("\n", $errors));
         }
 
         $this->addToolbar();
@@ -170,19 +168,5 @@ class HtmlView extends BaseHtmlView
             'a.`ordering`' => Text::_('JGRID_HEADING_ORDERING'),
             'a.`title`'    => Text::_('COM_JED_GENERAL_TITLE_LABEL'),
         ];
-    }
-
-    /**
-     * Check if state is set
-     *
-     * @param mixed $state State
-     *
-     * @return bool
-     *
-     * @since 4.0.0
-     */
-    public function getState(mixed $state): bool
-    {
-        return $this->state->{$state} ?? false;
     }
 }

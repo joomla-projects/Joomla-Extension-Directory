@@ -13,13 +13,11 @@ namespace Jed\Component\Jed\Administrator\View\Setupdemo;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use SimpleXMLElement;
 
 /**
  * View class for a single Copyjed3data.
@@ -52,10 +50,10 @@ class HtmlView extends BaseHtmlView
     /**
      * Migration SQL
      *
-     * @var   SimpleXMLElement
+     * @var   \SimpleXMLElement
      * @since 4.0.0
      */
-    protected SimpleXMLElement $migrate_xml;
+    protected \SimpleXMLElement $migrate_xml;
     /**
      * Action Task
      *
@@ -67,12 +65,12 @@ class HtmlView extends BaseHtmlView
      * Add the page title and toolbar.
      *
      * @since  4.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     private function addToolbar(): void
     {
         ToolBarHelper::title('Setup Demo Menu');
-        $user = Factory::getApplication()->getIdentity();
+        $user = $this->getCurrentUser();
 
         if (
             $user->authorise('core.admin', 'com_jed')
@@ -93,16 +91,17 @@ class HtmlView extends BaseHtmlView
      * @return void
      *
      * @since  4.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     public function display($tpl = null): void
     {
-        $this->state       = $this->get('State');
-        $this->item        = $this->get('Item');
-        $this->params      = ComponentHelper::getParams('com_jed');
-        $app               = Factory::getApplication();
-        $input             = $app->input->getInputForRequestMethod();
-        $this->task        = $input->get('task', '');
+        $model        = $this->getModel();
+        $this->state  = $model->getState();
+        $this->item   = $model->getItem();
+        $this->params = ComponentHelper::getParams('com_jed');
+        $app          = Factory::getApplication();
+        $input        = $app->input->getInputForRequestMethod();
+        $this->task   = $input->get('task', '');
         $this->addToolbar();
         parent::display($tpl);
     }

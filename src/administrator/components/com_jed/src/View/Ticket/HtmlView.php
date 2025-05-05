@@ -17,11 +17,11 @@ namespace Jed\Component\Jed\Administrator\View\Ticket;
 
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\Model\ExtensionModel;
 use Jed\Component\Jed\Administrator\Model\ExtensionvarieddatumModel;
 use Jed\Component\Jed\Administrator\Model\ReviewModel;
+use Jed\Component\Jed\Administrator\Model\TicketModel;
 use Jed\Component\Jed\Administrator\Model\VelabandonedreportModel;
 use Jed\Component\Jed\Administrator\Model\VeldeveloperupdateModel;
 use Jed\Component\Jed\Administrator\Model\VelreportModel;
@@ -138,13 +138,13 @@ class HtmlView extends BaseHtmlView
      * @return void
      *
      * @since  4.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     protected function addToolbar(): void
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
-        $user  = Factory::getApplication()->getIdentity();
+        $user  = $this->getCurrentUser();
         $isNew = ($this->item->id == 0);
 
         if (isset($this->item->checked_out)) {
@@ -199,16 +199,18 @@ class HtmlView extends BaseHtmlView
      * @return void
      *
      * @since  4.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     public function display($tpl = null): void
     {
-        $this->state            = $this->get('State');
-        $this->item             = $this->get('Item');
-        $this->form             = $this->get('Form');
-        $this->ticket_messages  = $this->get('TicketMessages');
-        $this->internal_notes   = $this->get('TicketInternalNotes');
-        $this->ticket_help      = $this->get('TicketHelp');
+        /** @var TicketModel $model */
+        $model                  = $this->getModel();
+        $this->state            = $model->getState();
+        $this->item             = $model->getItem();
+        $this->form             = $model->getForm();
+        $this->ticket_messages  = $model->getTicketMessages();
+        $this->internal_notes   = $model->getTicketInternalNotes();
+        $this->ticket_help      = $model->getTicketHelp();
         $this->linked_item_type = $this->item->linked_item_type;
         $this->linked_item_id   = $this->item->linked_item_id;
         if ($this->linked_item_type === 0) { // Manual Tickets from User
@@ -251,7 +253,7 @@ class HtmlView extends BaseHtmlView
             $this->linked_item_Model     = new ReviewModel();
             $this->related_object_string = "Review is displayed in 'Linked Review' tab.";
 
-            $this->linked_item_data = $this->get('ReviewData');
+            $this->linked_item_data = $model->getReviewData();
 
             $this->linked_form      = $this->linked_item_Model->getForm(
                 $this->linked_item_data,
@@ -294,7 +296,7 @@ class HtmlView extends BaseHtmlView
         if ($this->linked_item_type === 4) { // VEL Report
             $this->linked_item_Model = new VelreportModel();
 
-            $this->linked_item_data = $this->get('VelReportData');
+            $this->linked_item_data = $model->getVelReportData();
 
             $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
             $this->linked_form->bind($this->linked_item_data);
@@ -309,7 +311,7 @@ class HtmlView extends BaseHtmlView
         if ($this->linked_item_type === 5) { // VEL Developer Update
             $this->linked_item_Model = new VeldeveloperupdateModel();
 
-            $this->linked_item_data = $this->get('VelDeveloperUpdateData');
+            $this->linked_item_data = $model->getVelDeveloperUpdateData();
 
             $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
             $this->linked_form->bind($this->linked_item_data);
@@ -323,7 +325,7 @@ class HtmlView extends BaseHtmlView
         }
         if ($this->linked_item_type === 6) { // VEL Abandonware Report
             $this->linked_item_Model = new VelabandonedreportModel();
-            $this->linked_item_data  = $this->get('VelAbandonedReportData');
+            $this->linked_item_data  = $model->getVelAbandonedReportData();
 
             $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
             $this->linked_form->bind($this->linked_item_data);
@@ -337,31 +339,12 @@ class HtmlView extends BaseHtmlView
 
 
         // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
+        if (count($errors = $model->getErrors())) {
+            throw new \Exception(implode("\n", $errors));
         }
 
         $this->addToolbar();
 
         parent::display($tpl);
-    }
-
-    /**
-     * getArray
-     *
-     * @param string $st
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    public function getArray(string $st): array
-    {
-        $l_version = str_replace('[', '', $st);
-
-        $l_version = str_replace(']', '', $l_version);
-        $l_version = str_replace('"', '', $l_version);
-
-        return explode(',', $l_version);
     }
 }

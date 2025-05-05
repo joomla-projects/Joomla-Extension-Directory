@@ -12,17 +12,13 @@ namespace Jed\Component\Jed\Administrator\View\Extensionimages;
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
-
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -47,8 +43,7 @@ class HtmlView extends BaseHtmlView
      * @return void
      *
      * @since  4.0.0
-     * @throws Exception
-     * @throws Exception
+     * @throws \Exception
      */
     protected function addToolbar(): void
     {
@@ -56,13 +51,12 @@ class HtmlView extends BaseHtmlView
 
         ToolbarHelper::title(Text::_('COM_JED_EXTENSIONIMAGES'), "generic");
 
-        $toolbar = Toolbar::getInstance(); //$toolbar = Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar('toolbar');
+        $toolbar = $this->getDocument()->getToolbar();
 
 
         if ($canDo->get('core.create')) {
             $toolbar->addNew('extensionimage.add');
         }
-
 
         if ($canDo->get('core.edit.state')) {
             $dropdown = $toolbar->dropdownButton('status-group')
@@ -133,19 +127,5 @@ class HtmlView extends BaseHtmlView
             'a.`state`'    => Text::_('JSTATUS'),
             'a.`ordering`' => Text::_('JGRID_HEADING_ORDERING'),
         ];
-    }
-
-    /**
-     * Check if state is set
-     *
-     * @param mixed $state State
-     *
-     * @return bool
-     *
-     * @since 4.0.0
-     */
-    public function getState(mixed $state): bool
-    {
-        return $this->state->{$state} ?? false;
     }
 }

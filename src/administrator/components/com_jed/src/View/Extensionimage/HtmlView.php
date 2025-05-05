@@ -14,8 +14,8 @@ namespace Jed\Component\Jed\Administrator\View\Extensionimage;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Jed\Component\Jed\Administrator\Model\ExtensionimageModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
@@ -42,19 +42,21 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @since 4.0.0
      */
     public function display($tpl = null): void
     {
-        $this->state = $this->get('State');
-        $this->item  = $this->get('Item');
-        $this->form  = $this->get('Form');
+        /** @var ExtensionimageModel $model */
+        $model = $this->getModel();
+        $this->state = $model->getState();
+        $this->item  = $model->getItem();
+        $this->form  = $model->getForm();
 
         // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
+        if (count($errors = $model->getErrors())) {
+            throw new \Exception(implode("\n", $errors));
         }
 
         $this->addToolbar();
@@ -66,13 +68,13 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function addToolbar(): void
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
-        $user  = Factory::getApplication()->getIdentity();
+        $user  = $this->getCurrentUser();
         $isNew = ($this->item->id == 0);
 
         if (isset($this->item->checked_out)) {
@@ -99,8 +101,6 @@ class HtmlView extends BaseHtmlView
         if (!$isNew && $canDo->get('core.create')) {
             ToolbarHelper::custom('extensionimage.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
         }
-
-
 
         if (empty($this->item->id)) {
             ToolbarHelper::cancel('extensionimage.cancel', 'JTOOLBAR_CANCEL');
