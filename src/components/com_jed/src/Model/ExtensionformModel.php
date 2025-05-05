@@ -194,16 +194,14 @@ class ExtensionformModel extends FormModel
 
             // Get a level row instance.
             $table      = $this->getTable();
-            $properties = $table->getTableProperties();
-            $this->item = ArrayHelper::toObject($properties, stdClass::class);
+            $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
             if ($table !== false && $table->load($id) && !empty($table->id)) {
                 $user = Factory::getApplication()->getIdentity();
                 $id   = $table->id;
                 if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
                     // Convert the Table to a clean CMSObject.
-                    $properties = $table->getTableProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
+                    $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
                     if (isset($this->item->primary_category_id) && is_object($this->item->primary_category_id)) {
                         $this->item->primary_category_id = ArrayHelper::fromObject($this->item->primary_category_id);
@@ -231,7 +229,7 @@ class ExtensionformModel extends FormModel
     public function getItemIdByAlias($alias): ?int
     {
         $table      = $this->getTable();
-        $properties = $table->getTableProperties();
+        $properties = ArrayHelper::fromObject($table);
 
         if (!in_array('alias', $properties)) {
             return null;

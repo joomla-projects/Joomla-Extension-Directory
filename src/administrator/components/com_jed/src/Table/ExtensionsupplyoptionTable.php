@@ -15,11 +15,9 @@ namespace Jed\Component\Jed\Administrator\Table;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Table\Table as Table;
+use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
-use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
 /**
  * Extensionsupplyoption table
@@ -87,29 +85,6 @@ class ExtensionsupplyoptionTable extends Table
             $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
-
-        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jed.extensionsupplyoption.' . $src['id'])) {
-            $actions         = Access::getActionsFromFile(
-                JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
-                "/access/section[@name='extensionsupplyoption']/"
-            );
-            $default_actions = Access::getAssetRules('com_jed.extensionsupplyoption.' . $src['id'])->getData();
-            $array_jaccess   = [];
-
-            foreach ($actions as $action) {
-                if (key_exists($action->name, $default_actions)) {
-                    $array_jaccess[$action->name] = $default_actions[$action->name];
-                }
-            }
-
-            $src['rules'] = $this->JAccessRulestoArray($array_jaccess);
-        }
-
-        // Bind the rules for ACL where supported.
-        if (isset($src['rules']) && is_array($src['rules'])) {
-            $this->setRules($src['rules']);
-        }
-
         return parent::bind($src, $ignore);
     }
 
@@ -123,7 +98,7 @@ class ExtensionsupplyoptionTable extends Table
     public function check(): bool
     {
         // If there is an ordering column and this is a new row then get the next ordering value
-        if (property_exists($this, 'ordering') && $this->get('id') == 0) {
+        if (property_exists($this, 'ordering') && $this->id == 0) {
             $this->ordering = self::getNextOrder();
         }
 
@@ -161,34 +136,6 @@ class ExtensionsupplyoptionTable extends Table
     public function store($updateNulls = true): bool
     {
         return parent::store($updateNulls);
-    }
-
-    /**
-     * This function convert an array of Access objects into an rules array.
-     *
-     * @param array $jaccessrules An array of Access objects.
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    private function JAccessRulestoArray(array $jaccessrules): array
-    {
-        $rules = [];
-
-        foreach ($jaccessrules as $action => $jaccess) {
-            $actions = [];
-
-            if ($jaccess) {
-                foreach ($jaccess->getData() as $group => $allow) {
-                    $actions[$group] = ((bool) $allow);
-                }
-            }
-
-            $rules[$action] = $actions;
-        }
-
-        return $rules;
     }
 
     /**

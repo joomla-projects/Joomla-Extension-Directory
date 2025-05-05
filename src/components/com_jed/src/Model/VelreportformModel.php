@@ -105,8 +105,7 @@ class VelreportformModel extends FormModel
             $table = $this->getTable();
 
             if ($table !== false && $table->load($id) && !empty($table->id)) {
-                $properties = $table->getTableProperties();
-                $table_data = ArrayHelper::toObject($properties, stdClass::class);
+                $table_data = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
                 $user = Factory::getApplication()->getIdentity();
 
@@ -129,9 +128,7 @@ class VelreportformModel extends FormModel
                     }
 
                     // Convert the Table to a clean stdClass.
-                    $properties = $table->getTableProperties(1);
-
-                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
+                    $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
                         $this->item->category_id = ArrayHelper::fromObject($this->item->category_id);

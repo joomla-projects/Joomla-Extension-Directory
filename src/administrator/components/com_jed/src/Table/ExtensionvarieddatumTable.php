@@ -15,11 +15,8 @@ namespace Jed\Component\Jed\Administrator\Table;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\Access\Access;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Table\Table as Table;
+use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
-use Joomla\Registry\Registry;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
 /**
@@ -73,15 +70,10 @@ class ExtensionvarieddatumTable extends Table
      */
     public function bind($src, $ignore = ''): ?string
     {
-        $task = Factory::getApplication()->input->get('task');
-
-
         // Support for multiple or not foreign key field: extension_id
-        if (!empty($array['extension_id'])) {
-            if (is_array($array['extension_id'])) {
+        if (!empty($src['extension_id'])) {
+            if (is_array($src['extension_id'])) {
                 $src['extension_id'] = implode(',', $src['extension_id']);
-            } elseif (strrpos($src['extension_id'], ',') != false) {
-                $src['extension_id'] = explode(',', $src['extension_id']);
             }
         } else {
             $src['extension_id'] = 0;
@@ -91,14 +83,10 @@ class ExtensionvarieddatumTable extends Table
         if (!empty($src['supply_option_id'])) {
             if (is_array($src['supply_option_id'])) {
                 $src['supply_option_id'] = implode(',', $src['supply_option_id']);
-            } elseif (strrpos($src['supply_option_id'], ',') != false) {
-                $src['supply_option_id'] = explode(',', $src['supply_option_id']);
             }
         } else {
             $src['supply_option_id'] = 0;
         }
-        $input = Factory::getApplication()->input;
-        $task  = $input->getString('task', '');
 
         if ($src['id'] == 0 && empty($src['created_by'])) {
             $src['created_by'] = JedHelper::getUser()->id;
@@ -108,10 +96,6 @@ class ExtensionvarieddatumTable extends Table
         if (isset($src['download_integration_type'])) {
             if (is_array($src['download_integration_type'])) {
                 $src['download_integration_type'] = implode(',', $src['download_integration_type']);
-            } elseif (strpos($src['download_integration_type'], ',') != false) {
-                $src['download_integration_type'] = explode(',', $src['download_integration_type']);
-            } elseif (strlen($src['download_integration_type']) == 0) {
-                $src['download_integration_type'] = '';
             }
         } else {
             $src['download_integration_type'] = '';
@@ -120,40 +104,6 @@ class ExtensionvarieddatumTable extends Table
         // Support for checkbox field: is_default_data
         if (!isset($src['is_default_data'])) {
             $src['is_default_data'] = 0;
-        }
-
-        if (isset($src['params']) && is_array($src['params'])) {
-            $registry = new Registry();
-            $registry->loadArray($src['params']);
-            $src['params'] = (string) $registry;
-        }
-
-        if (isset($src['metadata']) && is_array($src['metadata'])) {
-            $registry = new Registry();
-            $registry->loadArray($src['metadata']);
-            $src['metadata'] = (string) $registry;
-        }
-
-        if (!JedHelper::getUser()->authorise('core.admin', 'com_jed.extensionvarieddatum.' . $src['id'])) {
-            $actions         = Access::getActionsFromFile(
-                JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
-                "/access/section[@name='extensionvarieddatum']/"
-            );
-            $default_actions = Access::getAssetRules('com_jed.extensionvarieddatum.' . $src['id'])->getData();
-            $array_jaccess   = [];
-
-            foreach ($actions as $action) {
-                if (key_exists($action->name, $default_actions)) {
-                    $array_jaccess[$action->name] = $default_actions[$action->name];
-                }
-            }
-
-            $src['rules'] = $this->JAccessRulestoArray($array_jaccess);
-        }
-
-        // Bind the rules for ACL where supported.
-        if (isset($src['rules']) && is_array($src['rules'])) {
-            $this->setRules($src['rules']);
         }
 
         return parent::bind($src, $ignore);
@@ -169,10 +119,9 @@ class ExtensionvarieddatumTable extends Table
     public function check(): bool
     {
         // If there is an ordering column and this is a new row then get the next ordering value
-        if (property_exists($this, 'ordering') && $this->get('id') == 0) {
+        if (property_exists($this, 'ordering') && $this->id == 0) {
             $this->ordering = self::getNextOrder();
         }
-
 
         return parent::check();
     }
@@ -220,75 +169,5 @@ class ExtensionvarieddatumTable extends Table
     public function store($updateNulls = true): bool
     {
         return parent::store($updateNulls);
-    }
-
-    /**
-     * This function convert an array of Access objects into an rules array.
-     *
-     * @param   array  $jaccessrules  An array of Access objects.
-     *
-     * @return  array
-     *
-     * @since 4.0.0
-     */
-    private function JAccessRulestoArray(array $jaccessrules): array
-    {
-        $rules = [];
-
-        foreach ($jaccessrules as $action => $jaccess) {
-            $actions = [];
-
-            if ($jaccess) {
-                foreach ($jaccess->getData() as $group => $allow) {
-                    $actions[$group] = ((bool) $allow);
-                }
-            }
-
-            $rules[$action] = $actions;
-        }
-
-        return $rules;
-    }
-
-    /**
-     * Get the Properties of the table
-     *
-     * * @param   bool  $public  If true, returns only the public properties.
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    public function getTableProperties(bool $public = true): array
-    {
-        $vars = get_object_vars($this);
-
-        if ($public) {
-            foreach ($vars as $key => $value) {
-                if (str_starts_with($key, '_')) {
-                    unset($vars[$key]);
-                }
-            }
-
-            // Collect all none public properties of the current class and it's parents
-            $nonePublicProperties = [];
-            $reflection           = new \ReflectionObject($this);
-            do {
-                $nonePublicProperties = array_merge(
-                    $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED),
-                    $nonePublicProperties
-                );
-            } while ($reflection = $reflection->getParentClass());
-
-            // Unset all none public properties, this is needed as get_object_vars returns now all vars
-            // from the current object and not only the CMSObject and the public ones from the inheriting classes
-            foreach ($nonePublicProperties as $prop) {
-                if (\array_key_exists($prop->getName(), $vars)) {
-                    unset($vars[$prop->getName()]);
-                }
-            }
-        }
-
-        return $vars;
     }
 }

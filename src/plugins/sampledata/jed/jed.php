@@ -123,7 +123,7 @@ class PlgSampledataJed extends CMSPlugin
         $this->db->setQuery('UPDATE #__categories SET asset_id = id + ' . ($asset_id - 8) . ' WHERE id > 8');
         $this->db->execute();
 
-        $table = \Joomla\CMS\Table\Table::getInstance('Asset');
+        $table = new \Joomla\CMS\Table\Asset($this->db, $this->getDispatcher());
         $table->rebuild();
 
         $response            = [];

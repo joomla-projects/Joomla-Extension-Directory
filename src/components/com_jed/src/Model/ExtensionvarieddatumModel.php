@@ -137,8 +137,7 @@ class ExtensionvarieddatumModel extends FormModel
 
             // Get a level row instance.
             $table      = $this->getTable();
-            $properties = $table->getTableProperties();
-            $this->item = ArrayHelper::toObject($properties, stdClass::class);
+            $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
             if ($table !== false && $table->load($pk) && !empty($table->id)) {
                 $user = Factory::getApplication()->getIdentity();
@@ -162,8 +161,7 @@ class ExtensionvarieddatumModel extends FormModel
                     }
 
                     // Convert the Table to a clean CMSObject.
-                    $properties = $table->getTableProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
+                    $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
                     if (isset($this->item->catid) && is_object($this->item->catid)) {
                         $this->item->catid = ArrayHelper::fromObject($this->item->catid);

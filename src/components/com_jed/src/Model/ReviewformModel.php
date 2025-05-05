@@ -186,16 +186,14 @@ class ReviewformModel extends FormModel
 
             // Get a level row instance.
             $table      = $this->getTable();
-            $properties = $table->getTableProperties();
-            $this->item = ArrayHelper::toObject($properties, stdClass::class);
+            $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
             if ($table !== false && $table->load($id) && !empty($table->id)) {
                 $user = Factory::getApplication()->getIdentity();
                 $id   = $table->id;
                 if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
                     // Convert the Table to a clean CMSObject.
-                    $properties = $table->getTableProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
+                    $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
                         $this->item->category_id = ArrayHelper::fromObject($this->item->category_id);

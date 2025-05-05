@@ -17,9 +17,8 @@ namespace Jed\Component\Jed\Administrator\Table;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Table\Table as Table;
+use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 
 /**
@@ -41,34 +40,6 @@ class VeldeveloperupdateTable extends Table
         $this->typeAlias = 'com_jed.veldeveloperupdate';
         parent::__construct('#__jed_vel_developer_update', 'id', $db);
         $this->setColumnAlias('published', 'state');
-    }
-
-    /**
-     * This function convert an array of Access objects into an rules array.
-     *
-     * @param array $jaccessrules An array of Access objects.
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    private function JAccessRulestoArray(array $jaccessrules): array
-    {
-        $rules = [];
-
-        foreach ($jaccessrules as $action => $jaccess) {
-            $actions = [];
-
-            if ($jaccess) {
-                foreach ($jaccess->getData() as $group => $allow) {
-                    $actions[$group] = ((bool) $allow);
-                }
-            }
-
-            $rules[$action] = $actions;
-        }
-
-        return $rules;
     }
 
     /**
@@ -105,26 +76,18 @@ class VeldeveloperupdateTable extends Table
         $src['update_date_submitted'] = $date->toSQL();
 
         // Support for multiple field: consent_to_process
-        if (isset($src['consent_to_process'])) {
+        if (isset($src['consent_to_process']) && $src['consent_to_process']) {
             if (is_array($src['consent_to_process'])) {
                 $src['consent_to_process'] = implode(',', $src['consent_to_process']);
-            } elseif (strpos($src['consent_to_process'], ',')) {
-                $src['consent_to_process'] = explode(',', $src['consent_to_process']);
-            } elseif (strlen($src['consent_to_process']) == 0) {
-                $src['consent_to_process'] = '';
             }
         } else {
             $src['consent_to_process'] = '';
         }
 
         // Support for multiple field: update_data_source
-        if (isset($src['update_data_source'])) {
+        if (isset($src['update_data_source']) && $src['update_data_source']) {
             if (is_array($src['update_data_source'])) {
                 $src['update_data_source'] = implode(',', $src['update_data_source']);
-            } elseif (strpos($src['update_data_source'], ',')) {
-                $src['update_data_source'] = explode(',', $src['update_data_source']);
-            } elseif (strlen($src['update_data_source']) == 0) {
-                $src['update_data_source'] = '';
             }
         } else {
             $src['update_data_source'] = '';
@@ -156,29 +119,6 @@ class VeldeveloperupdateTable extends Table
             $src['modified'] = $date->toSql();
         }
 
-
-        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jed.veldeveloperupdate.' . $src['id'])) {
-            $actions         = Access::getActionsFromFile(
-                JPATH_ADMINISTRATOR . '/components/com_jed/access.xml',
-                "/access/section[@name='veldeveloperupdate']/"
-            );
-            $default_actions = Access::getAssetRules('com_jed.veldeveloperupdate.' . $src['id'])->getData();
-            $array_jaccess   = [];
-
-            foreach ($actions as $action) {
-                if (key_exists($action->name, $default_actions)) {
-                    $array_jaccess[$action->name] = $default_actions[$action->name];
-                }
-            }
-
-            $src['rules'] = $this->JAccessRulestoArray($array_jaccess);
-        }
-
-        // Bind the rules for ACL where supported.
-        if (isset($src['rules']) && is_array($src['rules'])) {
-            $this->setRules($src['rules']);
-        }
-
         return parent::bind($src, $ignore);
     }
 
@@ -208,46 +148,5 @@ class VeldeveloperupdateTable extends Table
     public function getTypeAlias(): string
     {
         return $this->typeAlias;
-    }
-    /**
-     * Get the Properties of the table
-     *
-     * * @param   boolean  $public  If true, returns only the public properties.
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    public function getTableProperties(bool $public = true): array
-    {
-        $vars = get_object_vars($this);
-
-        if ($public) {
-            foreach ($vars as $key => $value) {
-                if (str_starts_with($key, '_')) {
-                    unset($vars[$key]);
-                }
-            }
-
-            // Collect all none public properties of the current class and it's parents
-            $nonePublicProperties = [];
-            $reflection           = new \ReflectionObject($this);
-            do {
-                $nonePublicProperties = array_merge(
-                    $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED),
-                    $nonePublicProperties
-                );
-            } while ($reflection = $reflection->getParentClass());
-
-            // Unset all none public properties, this is needed as get_object_vars returns now all vars
-            // from the current object and not only the CMSObject and the public ones from the inheriting classes
-            foreach ($nonePublicProperties as $prop) {
-                if (\array_key_exists($prop->getName(), $vars)) {
-                    unset($vars[$prop->getName()]);
-                }
-            }
-        }
-
-        return $vars;
     }
 }
