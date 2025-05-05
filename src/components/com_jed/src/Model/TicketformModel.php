@@ -205,7 +205,7 @@ class TicketformModel extends FormModel
             }
 
             // Get a level row instance.
-            $table = $this->getTable();
+            $table      = $this->getTable();
             $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
             if ($table !== false && $table->load($id) && !empty($table->id)) {
