@@ -41,7 +41,7 @@ if (!$isLoggedIn) {
         echo $e->getMessage();
     }
 } else {
-    $user       = Factory::getApplication()->getIdentity();
+    $user       = $this->getCurrentUser();
     $userId     = $user->id;
     $listOrder  = $this->state->get('list.ordering');
     $listDirn   = $this->state->get('list.direction');

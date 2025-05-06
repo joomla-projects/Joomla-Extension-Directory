@@ -18,10 +18,10 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
-$canEdit = Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed');
+$canEdit = $this->getCurrentUser()->authorise('core.edit', 'com_jed');
 
-if (!$canEdit && Factory::getApplication()->getIdentity()->authorise('core.edit.own', 'com_jed')) {
-    $canEdit = Factory::getApplication()->getIdentity()->id == $this->item->created_by;
+if (!$canEdit && $this->getCurrentUser()->authorise('core.edit.own', 'com_jed')) {
+    $canEdit = $this->getCurrentUser()->id == $this->item->created_by;
 }
 ?>
 

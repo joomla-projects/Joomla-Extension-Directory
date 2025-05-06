@@ -26,7 +26,7 @@ HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-$user        = Factory::getApplication()->getIdentity();
+$user        = $this->getCurrentUser();
 $userId      = $user->id;
 $listOrder   = $this->state->get('list.ordering');
 $listDirn    = $this->state->get('list.direction');
@@ -38,7 +38,7 @@ $canEdit   = $isLoggedIn;
 
 
 // Import CSS
-//$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+//$wa = $this->getDocument()->getWebAssetManager();
 //$wa->useStyle('com_jed.list');
 if (!$isLoggedIn) {
     try {
@@ -99,7 +99,7 @@ if (!$isLoggedIn) {
                 </tfoot>
                 <tbody>
                 <?php foreach ($this->items as $i => $item) : ?>
-                    <?php $canEdit = Factory::getApplication()->getIdentity()->id == $item->created_by; ?>
+                    <?php $canEdit = $this->getCurrentUser()->id == $item->created_by; ?>
 
                     <tr class="row<?php echo $i % 2; ?>">
 

@@ -26,11 +26,11 @@ HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 
 // Import CSS
-$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa = $this->getDocument()->getWebAssetManager();
 //$wa->useStyle('com_jed.admin')
   //  ->useScript('com_jed.admin');
 
-$user      = Factory::getApplication()->getIdentity();
+$user      = $this->getCurrentUser();
 $userId    = $user->id;
 $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
@@ -242,7 +242,7 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
  * @var Joomla\CMS\WebAsset\WebAssetManager $wa
 */
 try {
-    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+    $wa = $this->getDocument()->getWebAssetManager();
 } catch (Exception $e) {
 }
 $wa->getRegistry()
@@ -256,7 +256,7 @@ $wa->usePreset('com_jed.autoComplete')
 JS
     );
 
-$user      = Factory::getApplication()->getIdentity();
+$user      = $this->getCurrentUser();
 $userId    = $user->id;
 $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn  = $this->escape($this->state->get('list.direction'));

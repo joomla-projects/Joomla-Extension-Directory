@@ -31,7 +31,7 @@ HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-$user       = Factory::getApplication()->getIdentity();
+$user       = $this->getCurrentUser();
 $userId     = $user->id;
 $listOrder  = $this->getState('list.ordering');
 $listDirn   = $this->getState('list.direction');
@@ -43,7 +43,7 @@ $canDelete  = $user->authorise('core.delete', 'com_jed');
 
 // Import CSS
 
-$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa = $this->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.jazstyle');
 
 ?>

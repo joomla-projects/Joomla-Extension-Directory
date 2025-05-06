@@ -34,7 +34,7 @@ $fieldhiddenoptions = ['hidden' => true];
 HTMLHelper::_('script', 'com_jed/jed.js', ['version' => 'auto', 'relative' => true]);
 
 try {
-    Factory::getApplication()->getDocument()->getWebAssetManager()
+    $this->getDocument()->getWebAssetManager()
         ->useScript('form.validate')
         ->useScript('keepalive')
         ->usePreset('choicesjs')
@@ -56,8 +56,8 @@ Text::script('COM_JED_EXTENSION_EXTENSION_PUBLISHED_REASON_REQUIRED_LABEL', true
 $extensionUrl = Uri::root() . 'extension/' . $this->extension->alias;
 $downloadUrl  = 'index.php?option=com_jed&task=extension.download&id=' . $this->extension->id;
 
-Factory::getDocument()
-    ->addScriptOptions('joomla.userId', Factory::getUser()->id, false);
+$this->getDocument()
+    ->addScriptOptions('joomla.userId', $this->getCurrentUser()->id, false);
 
 ?>
 

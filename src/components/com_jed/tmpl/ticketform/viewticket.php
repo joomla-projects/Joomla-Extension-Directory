@@ -23,7 +23,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
 $canEdit = JedHelper::canUserEdit($this->item);
-$wa      = Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa      = $this->getDocument()->getWebAssetManager();
 
 $wa->getRegistry()->addExtensionRegistryFile('com_jed');
 $wa->useStyle('com_jed.Tickets');

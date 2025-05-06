@@ -24,7 +24,7 @@ HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-$user       = Factory::getApplication()->getIdentity();
+$user       = $this->getCurrentUser();
 $userId     = $user->id;
 $listOrder  = $this->state->get('list.ordering');
 $listDirn   = $this->state->get('list.direction');
@@ -36,7 +36,7 @@ $canDelete  = $user->authorise('core.delete', 'com_jed');
 
 // Import CSS
 try {
-    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+    $wa = $this->getDocument()->getWebAssetManager();
 } catch (Exception $e) {
 }
 $wa->useStyle('com_jed.list');
@@ -93,7 +93,7 @@ $wa->useStyle('com_jed.list');
             <?php foreach ($this->items as $i => $item) : ?>
                 <?php $canEdit = $user->authorise('core.edit', 'com_jed'); ?>
                 <?php if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) : ?>
-                    <?php $canEdit = Factory::getUser()->id == $item->created_by; ?>
+                    <?php $canEdit = $this->getCurrentUser()->id == $item->created_by; ?>
                 <?php endif; ?>
 
                 <tr class="row<?php echo $i % 2; ?>">
@@ -105,7 +105,7 @@ $wa->useStyle('com_jed.list');
                         <?php echo $item->review_id; ?>
                     </td>
                     <td>
-                        <?php $canCheckin = Factory::getUser()->authorise('core.manage', 'com_jed.' . $item->id) || $item->checked_out == Factory::getUser()->id; ?>
+                        <?php $canCheckin = $this->getCurrentUser()->authorise('core.manage', 'com_jed.' . $item->id) || $item->checked_out == $this->getCurrentUser()->id; ?>
                         <?php if ($canCheckin && $item->checked_out > 0) : ?>
                             <a href="<?php echo Route::_('index.php?option=com_jed&task=reviewcomment.checkin&id=' . $item->id . '&' . Session::getFormToken() . '=1'); ?>">
                             <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'reviewcomment.', false); ?></a>
@@ -117,7 +117,7 @@ $wa->useStyle('com_jed.list');
                         <?php echo $item->created_on; ?>
                     </td>
                     <td>
-                                <?php echo Factory::getUser($item->created_by)->name; ?>
+                                <?php echo $this->getCurrentUser($item->created_by)->name; ?>
                     </td>
                     <td>
                         <?php $class = ($canChange) ? 'active' : 'disabled'; ?>

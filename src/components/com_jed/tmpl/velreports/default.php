@@ -26,7 +26,7 @@ HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-$user        = Factory::getApplication()->getIdentity();
+$user        = $this->getCurrentUser();
 $userId      = $user->id;
 $listOrder   = $this->state->get('list.ordering');
 $listDirn    = $this->state->get('list.direction');
@@ -41,7 +41,7 @@ $redirectURL = JedHelper::getLoginlink();
 // Import CSS
 
 try {
-    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+    $wa = $this->getDocument()->getWebAssetManager();
     $wa->useStyle('com_jed.list');
 } catch (Exception $e) {
 }
@@ -109,7 +109,7 @@ if (!$isLoggedIn) {
                     <?php $canEdit = $user->authorise('core.edit', 'com_jed'); ?>
 
                     <?php if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) : ?>
-                        <?php $canEdit = Factory::getApplication()->getIdentity()->id == $item->created_by; ?>
+                        <?php $canEdit = $this->getCurrentUser()->id == $item->created_by; ?>
                     <?php endif; ?>
 
                     <tr class="row<?php echo $i % 2; ?>">

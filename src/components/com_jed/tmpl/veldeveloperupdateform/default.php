@@ -30,10 +30,10 @@ HTMLHelper::_('bootstrap.tooltip');
 $lang = Factory::getApplication()->getLanguage();
 $lang->load('com_jed', JPATH_SITE);
 // Import CSS
-$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa = $this->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.form');
 
-$user    = Factory::getApplication()->getIdentity();
+$user    = $this->getCurrentUser();
 $canEdit = JedHelper::canUserEdit($this->item);
 
 $isLoggedIn  = JedHelper::isLoggedIn();

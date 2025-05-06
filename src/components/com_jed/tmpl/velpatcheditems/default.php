@@ -28,7 +28,7 @@ $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
 
 // Import CSS
-//$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+//$wa = $this->getDocument()->getWebAssetManager();
 //$wa->useStyle('com_jed.list');
 ?>
 
