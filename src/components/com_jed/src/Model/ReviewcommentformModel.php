@@ -193,7 +193,7 @@ class ReviewcommentformModel extends FormModel
      *
      * @return Table|bool Table if found, bool false on failure
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function getTable($type = 'Reviewcomment', $prefix = 'Administrator', $config = [])
     {
@@ -207,7 +207,7 @@ class ReviewcommentformModel extends FormModel
      *
      * @return int Element id
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function getItemIdByAlias($alias)
     {
@@ -235,7 +235,7 @@ class ReviewcommentformModel extends FormModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function checkin($id = null)
@@ -268,7 +268,7 @@ class ReviewcommentformModel extends FormModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function checkout($id = null)
@@ -307,7 +307,7 @@ class ReviewcommentformModel extends FormModel
      *
      * @return Form    A Form object on success, false on failure
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform')
@@ -333,7 +333,7 @@ class ReviewcommentformModel extends FormModel
      * Method to get the data that should be injected in the form.
      *
      * @return array  The default data is an empty array.
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     protected function loadFormData()
@@ -358,14 +358,14 @@ class ReviewcommentformModel extends FormModel
      *
      * @return bool
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function save($data)
     {
         $id    = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('reviewcomment.id');
         $state = (!empty($data['state'])) ? 1 : 0;
-        $user  = Factory::getUser();
+        $user  = $this->getCurrentUser();
 
         if (!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($id) {
@@ -401,12 +401,12 @@ class ReviewcommentformModel extends FormModel
      *
      * @return int  The id of the deleted item
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function delete($id)
     {
-        $user = Factory::getUser();
+        $user = $this->getCurrentUser();
 
         if (!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if (empty($id)) {

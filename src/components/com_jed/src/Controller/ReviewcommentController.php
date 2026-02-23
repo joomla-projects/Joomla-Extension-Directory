@@ -68,7 +68,7 @@ class ReviewcommentController extends BaseController
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function publish(): void
@@ -121,7 +121,7 @@ class ReviewcommentController extends BaseController
      *
      * @return bool  True on success
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function checkin()

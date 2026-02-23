@@ -61,7 +61,7 @@ class ExtensionvarieddatumModel extends FormModel
      * @return  Form|bool  A Form object on success, false on failure
      *
      * @throws Exception
-     * @since   4.0.0
+     * @since 4.0.0
      *
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
@@ -92,7 +92,7 @@ class ExtensionvarieddatumModel extends FormModel
      * @return  Form|bool  A Form object on success, false on failure
      *
      * @throws Exception
-     * @since   4.0.0
+     * @since 4.0.0
      *
      */
     public function getFormTemplate(): Form|bool
@@ -123,7 +123,7 @@ class ExtensionvarieddatumModel extends FormModel
      * @return stdClass Object on success
      *
      * @throws Exception
-     * @since   4.0.0
+     * @since 4.0.0
      *
      */
     public function getItem($pk = null): stdClass
@@ -140,9 +140,9 @@ class ExtensionvarieddatumModel extends FormModel
             $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
             if ($table !== false && $table->load($pk) && !empty($table->id)) {
-                $user = Factory::getApplication()->getIdentity();
+                $user = $user = $this->getCurrentUser();
                 $pk   = $table->id;
-                if (empty($pk) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getUser()->id) {
+                if (empty($pk) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 
                     if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
@@ -185,7 +185,7 @@ class ExtensionvarieddatumModel extends FormModel
      * @return  Table    A database object
      *
      * @throws Exception
-     * @since   4.0.0
+     * @since 4.0.0
      *
      */
     public function getTable($name = 'Extensionvarieddatum', $prefix = 'Administrator', $options = []): Table
@@ -199,7 +199,7 @@ class ExtensionvarieddatumModel extends FormModel
      * @return  mixed  The data for the form.
      *
      * @throws Exception
-     * @since   4.0.0
+     * @since 4.0.0
      *
      */
     protected function loadFormData(): mixed
@@ -225,7 +225,7 @@ class ExtensionvarieddatumModel extends FormModel
      *
      * @return  void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     protected function prepareTable($table)
     {

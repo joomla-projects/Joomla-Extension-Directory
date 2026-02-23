@@ -96,7 +96,7 @@ class VeldeveloperupdateformModel extends FormModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function checkout($pk = null): bool
@@ -135,7 +135,7 @@ class VeldeveloperupdateformModel extends FormModel
      *
      * @return mixed    A Form object on success, false on failure
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
@@ -163,7 +163,7 @@ class VeldeveloperupdateformModel extends FormModel
      * @param null $id The id of the object to get.
      *
      * @return false|object|null
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItem($id = null): mixed
@@ -224,7 +224,7 @@ class VeldeveloperupdateformModel extends FormModel
      *
      * @return Table Table if found, throws exception on failure
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Veldeveloperupdate', $prefix = 'Administrator', $options = []): Table
@@ -237,7 +237,7 @@ class VeldeveloperupdateformModel extends FormModel
      * Method to get the data that should be injected in the form.
      *
      * @return array  The default data is an empty array.
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     protected function loadFormData(): array
@@ -369,7 +369,7 @@ class VeldeveloperupdateformModel extends FormModel
      *
      * @return bool
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function save(array $data): bool

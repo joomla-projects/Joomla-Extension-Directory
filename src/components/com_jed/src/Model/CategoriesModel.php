@@ -48,7 +48,7 @@ class CategoriesModel extends ListModel
      * @param   array  $config  An optional associative array of configuration settings.
      *
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      * @see    JController
      *
      */
@@ -73,7 +73,7 @@ class CategoriesModel extends ListModel
      *
      * @return array An array of results.
      *
-     * @since 3.0
+     * @since 4.0.0
      */
     public function getItems(int $limitStart = null, int $limit = null, bool $extended = true): array
     {
@@ -138,7 +138,7 @@ class CategoriesModel extends ListModel
      *
      * @return mixed  An array of data items on success, false on failure.
      *
-     * @since 3.0
+     * @since 4.0.0
      */
     public function getParent(): mixed
     {
@@ -154,7 +154,7 @@ class CategoriesModel extends ListModel
      *
      * @return int  Total number of records
      *
-     * @since 3.0
+     * @since 4.0.0
      */
     public function getTotal(): int
     {
@@ -172,7 +172,7 @@ class CategoriesModel extends ListModel
      *
      * @return stdClass
      *
-     * @since 3.0
+     * @since 4.0.0
      */
     private function nodeToObject(object $item): stdClass
     {
@@ -199,7 +199,7 @@ class CategoriesModel extends ListModel
      * @return void
      *
      * @throws Exception
-     * @since  1.6
+     * @since 4.0.0
      */
     protected function populateState($ordering = null, $direction = null): void
     {

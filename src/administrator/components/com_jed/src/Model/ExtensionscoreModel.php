@@ -57,7 +57,7 @@ class ExtensionscoreModel extends AdminModel
      * @return Form|bool  A Form object on success, false on failure
      *
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
     {
@@ -80,7 +80,7 @@ class ExtensionscoreModel extends AdminModel
      * @return mixed Object on success
      *
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function getItem($pk = null): mixed
     {
@@ -98,7 +98,7 @@ class ExtensionscoreModel extends AdminModel
      * @return Table    A database object
      *
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function getTable($name = 'Extensionscore', $prefix = 'Administrator', $options = []): Table
     {
@@ -111,7 +111,7 @@ class ExtensionscoreModel extends AdminModel
      * @return mixed  The data for the form.
      *
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected function loadFormData(): mixed
     {

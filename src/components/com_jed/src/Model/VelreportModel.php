@@ -89,7 +89,7 @@ class VelreportModel extends ItemModel
      *
      * @return mixed    Object on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItem($pk = null): mixed
@@ -191,7 +191,7 @@ class VelreportModel extends ItemModel
      * @param array  $options
      *
      * @return Table Table if success, throws exception on failure.
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Velreport', $prefix = 'Administrator', $options = []): Table

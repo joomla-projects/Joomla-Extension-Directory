@@ -93,7 +93,7 @@ class TicketmessageModel extends ItemModel
      *
      * @return mixed    Object on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItem($pk = null): mixed
@@ -185,7 +185,7 @@ class TicketmessageModel extends ItemModel
      * @param string $alias Item alias
      *
      * @return mixed
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItemIdByAlias(string $alias)
@@ -221,7 +221,7 @@ class TicketmessageModel extends ItemModel
      *
      * @return Table|bool Table if success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Ticketmessage', $prefix = 'Administrator', $options = [])
@@ -301,7 +301,7 @@ class TicketmessageModel extends ItemModel
      * @param int $state Publish state
      *
      * @return bool
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function publish(int $id, int $state): bool

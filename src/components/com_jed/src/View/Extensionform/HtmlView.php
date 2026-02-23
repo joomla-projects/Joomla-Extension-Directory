@@ -69,13 +69,21 @@ class HtmlView extends BaseHtmlView
 
 
         //echo "<pre>";print_r($this->item);echo "</pre>";exit();
+        $st_counter = 0;
         foreach ($this->supply_types as $st) {
             $this->supply_forms[$st->supply_id] = $extensionvarieddatum->getForm(
                 $this->item->varied[$st->supply_id],
                 false,
-                'jf_varieddata_form_' . $st->supply_id
+                'jform[supply][supply' . $st_counter . ']'
             );
-            $this->supply_forms[$st->supply_id]->bind($this->item->varied[$st->supply_id]);
+            $st_counter = $st_counter + 1;
+
+            // Ensure linkage is always present in POST (even for new varied rows)
+            $varied                     = (array) $this->item->varied[$st->supply_id];
+            $varied['extension_id']     = (int) ($this->item->id ?? 0);
+            $varied['supply_option_id'] = (int) $st->supply_id;
+
+            $this->supply_forms[$st->supply_id]->bind($varied);
         }
 
 

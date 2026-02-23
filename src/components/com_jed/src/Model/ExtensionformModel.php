@@ -67,7 +67,7 @@ class ExtensionformModel extends FormModel
      *
      * @return Form    A Form object on success, false on failure
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
@@ -108,7 +108,7 @@ class ExtensionformModel extends FormModel
      * Method to get the data that should be injected in the form.
      *
      * @return mixed  The default data is an empty array.
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     protected function loadFormData(): mixed
@@ -259,23 +259,21 @@ class ExtensionformModel extends FormModel
     {
         // Get the id.
         $pk = (!empty($pk)) ? $pk : (int) $this->getState('extension.id');
-        if (!$pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-            if ($pk) {
-                // Initialise the table
-                $table = $this->getTable();
 
-                // Attempt to check the row in.
-                if (method_exists($table, 'checkin')) {
-                    if (!$table->checkin($pk)) {
-                        return false;
-                    }
+        if ($pk) {
+            // Initialise the table
+            $table = $this->getTable();
+
+            // Attempt to check the row in.
+            if (method_exists($table, 'checkin')) {
+                if (!$table->checkin($pk)) {
+                    return false;
                 }
             }
-
-            return true;
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
         }
+
+        return true;
+
     }
 
     /**
@@ -292,6 +290,8 @@ class ExtensionformModel extends FormModel
     {
         // Get the user id.
         $pk = (!empty($pk)) ? $pk : (int) $this->getState('extension.id');
+
+
         if (!$pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($pk) {
                 // Initialise the table
@@ -325,18 +325,16 @@ class ExtensionformModel extends FormModel
      * @return bool
      *
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function save(array $data): bool
     {
-        $id    = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('extension.id');
-        $state = (!empty($data['state'])) ? 1 : 0;
+        $id    = (!empty($data['id'])) ? (int) $data['id'] : (int) $this->getState('extension.id');
         $user  = Factory::getApplication()->getIdentity();
 
         if (!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($id) {
-                // Check the user can edit this item
-                $authorised = $user->authorise('core.edit', 'com_jed') || $authorised = $user->authorise('core.edit.own', 'com_jed');
+                $authorised = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.edit.own', 'com_jed');
             } else {
                 // Check the user can create new items in this section
                 $authorised = $user->authorise('core.create', 'com_jed');
@@ -347,27 +345,68 @@ class ExtensionformModel extends FormModel
             }
 
             $table = $this->getTable();
-
+            unset($data['alias']);
+            unset($data['title']);
+            //echo "<pre>";print_r($data);echo "</pre>";exit();
             if ($table->save($data) === true) {
-                $this->id                            = $table->id;
+                $extensionId = (int) $table->id;
+
+                // Ensure the submitting user is present in the jed_developers table.
+                try {
+                    $db    = $this->getDatabase();
+                    $query = $db->getQuery(true)
+                      ->select($db->quoteName('id'))
+                      ->from($db->quoteName('#__jed_developers'))
+                      ->where($db->quoteName('user_id') . ' = ' . $db->quote((int) $user->id));
+
+                    $exists = $db->setQuery($query)->loadResult();
+
+                    if (empty($exists)) {
+                        $devName = (!empty($user->name)) ? $user->name : $user->username;
+                        $columns = [
+                          $db->quoteName('user_id'),
+                          $db->quoteName('developer_name'),
+                        ];
+
+                        $values = [
+                          $db->quote((int) $user->id),
+                          $db->quote($devName),
+                        ];
+
+                        $insert = $db->getQuery(true)
+                          ->insert($db->quoteName('#__jed_developers'))
+                          ->columns($columns)
+                          ->values(implode(', ', $values));
+
+                        $db->setQuery($insert)->execute();
+                    }
+                } catch (\Exception $e) {
+                    // Don't break the save if developer insertion fails. Log and continue.
+                    try {
+                        Log::add('Failed to ensure developer entry for user id ' . (int) $user->id . ': ' . $e->getMessage(), Log::ERROR, 'com_jed');
+                    } catch (\Exception $ignored) {
+                    }
+                }
+
+                // Store tabbed varied data (one row per supply option)
+                $this->storeVariedData($extensionId, (array) ($data['supply'] ?? []), (int) $user->id);
+
+                // ... existing code ... (ticket creation etc.)
+                $this->id = $extensionId;
+
                 $ticket                              = JedHelper::createExtensionTicket($table->id);
                 $ticket_message                      = JedHelper::createEmptyTicketMessage();
                 $ticket_message['subject']           = $ticket['ticket_subject'];
                 $ticket_message['message']           = $ticket['ticket_text'];
                 $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
 
-
-                //$ticket_model = BaseDatabaseModel::getInstance('Ticketform', 'JedModel', ['ignore_request' => true]);
                 $ticket_model = new TicketformModel();
                 $ticket_model->save($ticket);
 
-                $ticket_id = $ticket_model->getId();
-                /* We need to store the incoming ticket message */
+                $ticket_id                   = $ticket_model->getId();
                 $ticket_message['ticket_id'] = $ticket_id;
 
-                //$ticket_message_model = BaseDatabaseModel::getInstance('Ticketmessageform', 'JedModel', ['ignore_request' => true]);
                 $ticket_message_model = new TicketmessageformModel();
-
                 $ticket_message_model->save($ticket_message);
 
                 /* We need to email standard message to user and store message in ticket */
@@ -385,14 +424,163 @@ class ExtensionformModel extends FormModel
                 }
 
                 return $table->id;
-            } else {
-                return false;
             }
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+
+            return false;
         }
+
+        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
     }
 
+    /**
+     * Upsert uploaded extension zip file metadata in #__jed_extensions_files.
+     *
+     * @param int   $extensionId
+     * @param array $uploadedFiles
+     * @param int   $userId
+     *
+     * @return void
+     * @throws Exception
+     *
+     * @since 4.0.0
+     */
+    public function storeExtensionFiles(int $extensionId, array $uploadedFiles, int $userId): void
+    {
+        if ($extensionId <= 0 || empty($uploadedFiles)) {
+            return;
+        }
+
+        $db = $this->getDatabase();
+
+        $primary      = reset($uploadedFiles);
+        $file         = (string) ($primary['file'] ?? '');
+        $originalFile = (string) ($primary['originalFile'] ?? '');
+        $meta         = json_encode($uploadedFiles, JSON_UNESCAPED_SLASHES);
+
+        $select = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__jed_extensions_files'))
+            ->where($db->quoteName('extension_id') . ' = ' . (int) $extensionId);
+
+        $existingId = (int) $db->setQuery($select)->loadResult();
+
+        if ($existingId > 0) {
+            $update = $db->getQuery(true)
+                ->update($db->quoteName('#__jed_extensions_files'))
+                ->set($db->quoteName('file') . ' = ' . $db->quote($file))
+                ->set($db->quoteName('originalFile') . ' = ' . $db->quote($originalFile))
+                ->set($db->quoteName('meta') . ' = ' . $db->quote((string) $meta))
+                ->where($db->quoteName('id') . ' = ' . $existingId);
+
+            $db->setQuery($update)->execute();
+
+            return;
+        }
+
+        $insert = $db->getQuery(true)
+            ->insert($db->quoteName('#__jed_extensions_files'))
+            ->columns(
+                $db->quoteName(
+                    [
+                        'extension_id',
+                        'file',
+                        'meta',
+                        'created_by',
+                        'originalFile',
+                    ]
+                )
+            )
+            ->values(
+                implode(
+                    ', ',
+                    [
+                        (int) $extensionId,
+                        $db->quote($file),
+                        $db->quote((string) $meta),
+                        (int) $userId,
+                        $db->quote($originalFile),
+                    ]
+                )
+            );
+
+        $db->setQuery($insert)->execute();
+    }
+
+    /**
+     * Upsert varied data rows for each supply tab into #__jed_extension_varied_data
+     *
+     * @param int   $extensionId
+     * @param array $supplyPayload  Posted as jform[supply][supplyX][field]=...
+     * @param int   $userId
+     *
+     * @return void
+     * @throws Exception
+     *
+     * @since 4.0.0
+     */
+    private function storeVariedData(int $extensionId, array $supplyPayload, int $userId): void
+    {
+        if ($extensionId <= 0 || empty($supplyPayload)) {
+            return;
+        }
+
+        // Ensure at most one "default" row
+        $defaultAlreadySet = false;
+
+        foreach ($supplyPayload as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $row['extension_id'] = $extensionId;
+
+            $supplyOptionId = (int) ($row['supply_option_id'] ?? 0);
+            if ($supplyOptionId <= 0) {
+                continue;
+            }
+
+            // Normalize default flag
+            $row['is_default_data'] = (int) ($row['is_default_data'] ?? 0);
+            if ($row['is_default_data'] === 1) {
+                if ($defaultAlreadySet) {
+                    $row['is_default_data'] = 0;
+                } else {
+                    $defaultAlreadySet = true;
+                }
+            }
+
+            // Basic "skip empty tab" safeguard: only store if there is at least something meaningful
+            $hasMeaningfulContent = !empty($row['title'])
+                    || !empty($row['description'])
+                    || !empty($row['download_link'])
+                    || !empty($row['homepage_link'])
+                    || !empty($row['documentation_link']);
+
+            if (!$hasMeaningfulContent && $row['is_default_data'] !== 1) {
+                continue;
+            }
+
+            // Load existing row by unique key (extension_id + supply_option_id)
+            $variedTable = $this->getTable('Extensionvarieddatum', 'Administrator');
+
+            $existingId = $variedTable->load(
+                [
+                            'extension_id'     => $extensionId,
+                            'supply_option_id' => $supplyOptionId,
+                    ]
+            );
+
+            // If load() found a row, $variedTable->id will be set; otherwise it stays empty/0
+            $row['id'] = (int) ($variedTable->id ?? 0);
+
+            // Ensure created_by is set on insert
+            if (empty($row['created_by'])) {
+                $row['created_by'] = $userId;
+            }
+
+            $variedTable->save($row);
+        }
+    }
     /**
      * Method to delete data
      *
@@ -438,7 +626,7 @@ class ExtensionformModel extends FormModel
      *
      * @return bool
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getCanSave()
@@ -484,7 +672,7 @@ class ExtensionformModel extends FormModel
      *
      * @return stdClass    Object on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getvariedItem(int $pk = null, int $supply_option_type = 0)
@@ -609,7 +797,7 @@ class ExtensionformModel extends FormModel
      * @return array
      *
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function getVariedData(int $extension_id, int $supply_option_type = null): array
     {

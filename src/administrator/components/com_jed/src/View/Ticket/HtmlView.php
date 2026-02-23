@@ -137,7 +137,7 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws \Exception
      */
     protected function addToolbar(): void
@@ -198,7 +198,7 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws \Exception
      */
     public function display($tpl = null): void
@@ -222,6 +222,8 @@ class HtmlView extends BaseHtmlView
         if ($this->linked_item_type === 2) { // Extension
             $extension_model = new ExtensionModel();
             $extension_id    = $extension_model->getExtensionIdfromVariedId($this->linked_item_id);
+
+
             $supplyoptions   = $extension_model->getExtensionSupplyOptions($extension_id);
 
             $this->related_object_string = "Extension is displayed in 'Linked Extensions' tab.";

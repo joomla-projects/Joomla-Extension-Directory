@@ -65,7 +65,7 @@ class TicketformModel extends FormModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function checkin($pk = null): bool
@@ -98,7 +98,7 @@ class TicketformModel extends FormModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function checkout($pk = null): bool
@@ -131,7 +131,7 @@ class TicketformModel extends FormModel
      * Check if data can be saved
      *
      * @return bool
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getCanSave(): bool
@@ -151,7 +151,7 @@ class TicketformModel extends FormModel
      *
      * @return Form    A Form object on success, false on failure
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
@@ -178,7 +178,7 @@ class TicketformModel extends FormModel
      *
      * @return int
      *
-     * @since version
+     * @since 4.0.0
      */
     public function getId(): int
     {
@@ -192,7 +192,7 @@ class TicketformModel extends FormModel
      *
      * @return mixed Object on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItem(int $id = null)
@@ -230,6 +230,12 @@ class TicketformModel extends FormModel
         return $this->item;
     }
 
+    /**
+     * TODO: Add description.
+     * @param mixed $ticketId TODO
+     * @return array TODO
+      * @since 4.0.0
+     */
     public function getTicketMessages($ticketId): array
     {
         $db    = $this->getDatabase();
@@ -293,7 +299,7 @@ class TicketformModel extends FormModel
      * @param   array   $options
      *
      * @return Table|bool Table if found, bool false on failure
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Ticket', $prefix = 'Administrator', $options = [])
@@ -305,7 +311,7 @@ class TicketformModel extends FormModel
      * Method to get the data that should be injected in the form.
      *
      * @return array  The default data is an empty array.
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     protected function loadFormData()
@@ -363,7 +369,7 @@ class TicketformModel extends FormModel
      *
      * @return bool
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function save(array $data): bool
@@ -409,6 +415,12 @@ class TicketformModel extends FormModel
         }
     }
 
+    /**
+     * TODO: Add description.
+     * @param mixed $categoryId TODO
+     * @return string TODO
+      * @since 4.0.0
+     */
     public function getTicketCategory($categoryId): string
     {
         $db    = $this->getDatabase();

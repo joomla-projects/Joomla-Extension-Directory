@@ -12,6 +12,7 @@
                 name="includes"
                 type="checkboxes"
                 label="COM_JED_EXTENSION_EXTENSION_TYPES_LABEL"
+                required="true"
         >
             <option value="com">COM_JED_EXTENSION_EXTENSION_TYPES_OPTION_COMPONENT</option>
             <option value="mod">COM_JED_EXTENSION_EXTENSION_TYPES_OPTION_MODULE</option>
@@ -21,9 +22,18 @@
         <field
                 name="joomla_versions"
                 type="joomlaversion"
+                description="COM_JED_EXTENSION_JOOMLA_VERSIONS_DESCR"
                 label="COM_JED_EXTENSION_JOOMLA_VERSIONS_LABEL"
                 multiple="true"
+                required="true"
         />
+        <field
+            name="joomla_supply_type"
+            type="joomlasupplytype"
+            label="My extension has the following types"
+            multiple="true"
+            checkedOptions="1,2"
+    />
         <field name="gpl_license_type"
                type="list"
                default=""
@@ -64,7 +74,7 @@
             <option value="1">JYES</option>
         </field>
         <field name="video" type="url" label="COM_JED_EXTENSION_VIDEO_LABEL"
-               description="COM_JED_EXTENSION_VIDEO_DESCR" hint="" validate="url" default="https://"/>
+               description="COM_JED_EXTENSION_VIDEO_DESCR" hint=""  />
         <field name="logo"  type="file" class="file" label="COM_JED_EXTENSION_LOGO_LABEL"
                description="COM_JED_FORM_DESC_EXTENSION_LOGO" hint="COM_JED_EXTENSION_LOGO_LABEL"/>
         <field name="popular" type="checkbox" checked="0" label="COM_JED_EXTENSION_POPULAR_LABEL"
@@ -90,8 +100,8 @@
                description="COM_JED_FORM_DESC_EXTENSION_JED_CHECKED" hint="COM_JED_EXTENSION_JED_CHECKED_LABEL"/>
         <field name="modified_on" type="timeupdated" label="COM_JED_GENERAL_MODIFIED_ON_LABEL"
                description="COM_JED_FORM_DESC_EXTENSION_MODIFIED_ON" hint="COM_JED_GENERAL_MODIFIED_ON_LABEL"/>
-        <field name="primary_category_id" extension="com_jed" type="jedcategory" published="1" multiple="false"
-               label="COM_JED_GENERAL_CATEGORY_ID_LABEL"
+        <field name="primary_category_id" extension="com_jed" type="jedcategory" published="1" multiple="false" required="true"
+               label="COM_JED_GENERAL_CATEGORY_LABEL"
                description="COM_JED_FORM_DESC_EXTENSION_PRIMARY_CATEGORY_ID"
                hint="COM_JED_GENERAL_CATEGORY_ID_LABEL"/>
         <field name="published" type="checkbox" checked="0" label="JPUBLISHED"
@@ -108,7 +118,7 @@
                hint=""/>
         <field name="update_url" validate="url" type="url" label="REMOVECOM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_UPDATE_URL"
                description="COM_JED_FORM_DESC_EXTENSIONVARIEDDATUM_UPDATE_URL"
-               hint="REMOVECOM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_UPDATE_URL"  default="https://"/>
+               hint="REMOVECOM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_UPDATE_URL"  />
         <field name="state" type="list" label="JSTATUS" description="JFIELD_PUBLISHED_DESC" class="inputbox" size="1"
                default="1">
             <option value="1">JPUBLISHED</option>

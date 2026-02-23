@@ -56,7 +56,7 @@ class TicketmessageformModel extends FormModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function checkin($pk = null): bool
@@ -89,7 +89,7 @@ class TicketmessageformModel extends FormModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function checkout($pk = null): bool
@@ -128,7 +128,7 @@ class TicketmessageformModel extends FormModel
      *
      * @return Form    A Form object on success, false on failure
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
@@ -157,7 +157,7 @@ class TicketmessageformModel extends FormModel
      *
      * @return Object|bool Object on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItem(int $id = null)
@@ -264,7 +264,7 @@ class TicketmessageformModel extends FormModel
      *
      * @return Table|bool Table if found, bool false on failure
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Ticketmessage', $prefix = 'Administrator', $options = [])
@@ -277,7 +277,7 @@ class TicketmessageformModel extends FormModel
      * Method to get the data that should be injected in the form.
      *
      * @return array  The default data is an empty array.
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     protected function loadFormData()
@@ -338,7 +338,7 @@ class TicketmessageformModel extends FormModel
      *
      * @return bool
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function save(array $data): bool

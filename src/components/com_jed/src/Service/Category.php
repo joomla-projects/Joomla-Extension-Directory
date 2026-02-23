@@ -28,7 +28,7 @@ class Category extends Categories
      *
      * @param array $options Array of options
      *
-     * @since 11.1
+     * @since 4.0.0
      */
     public function __construct($options = [])
     {

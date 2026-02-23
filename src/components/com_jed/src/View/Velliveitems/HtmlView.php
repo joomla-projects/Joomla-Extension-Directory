@@ -21,6 +21,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Version;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
 
@@ -80,13 +81,14 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     protected function prepareDocument(): void
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
+
 
         // Because the application sets a default page title,
         // we need to get it from the menu item itself
@@ -130,7 +132,7 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function display($tpl = null): void

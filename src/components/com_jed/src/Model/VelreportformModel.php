@@ -60,7 +60,7 @@ class VelreportformModel extends FormModel
      *
      * @return Form A JForm object on success, false on failure
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
@@ -88,7 +88,7 @@ class VelreportformModel extends FormModel
      * @param int|null $id id of the object to get.
      *
      * @return object|bool
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItem(int $id = null): mixed
@@ -151,7 +151,7 @@ class VelreportformModel extends FormModel
      *
      * @return Table|bool Table if found, bool false on failure
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Velreport', $prefix = 'Administrator', $options = []): Table|bool
@@ -247,7 +247,7 @@ class VelreportformModel extends FormModel
      * Method to get the data that should be injected in the form.
      *
      * @return array  The default data is an empty array.
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     protected function loadFormData(): array
@@ -356,7 +356,7 @@ class VelreportformModel extends FormModel
      *
      * @return bool
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function save(array $data): bool

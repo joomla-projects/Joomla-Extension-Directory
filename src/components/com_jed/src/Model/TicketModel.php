@@ -49,7 +49,7 @@ class TicketModel extends ItemModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function checkin(int $id = null): bool
@@ -82,7 +82,7 @@ class TicketModel extends ItemModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function checkout(int $id = null): bool
@@ -119,7 +119,7 @@ class TicketModel extends ItemModel
      *
      * @return mixed    Object on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItem($pk = null)
@@ -300,7 +300,7 @@ class TicketModel extends ItemModel
      *
      * @return mixed
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItemIdByAlias(string $alias)
@@ -336,7 +336,7 @@ class TicketModel extends ItemModel
      *
      * @return Table|bool Table if success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Ticket', $prefix = 'Administrator', $options = [])
@@ -417,7 +417,7 @@ class TicketModel extends ItemModel
      * @param int $state Publish state
      *
      * @return bool
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function publish(int $id, int $state): bool
@@ -433,6 +433,11 @@ class TicketModel extends ItemModel
         }
     }
 
+    /**
+     * TODO: Add description.
+     * @return mixed TODO
+      * @since 4.0.0
+     */
     public function getMessages()
     {
         $db = $this->getDatabase();

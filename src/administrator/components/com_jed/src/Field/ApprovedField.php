@@ -39,7 +39,7 @@ class ApprovedField extends ListField
      *
      * @return  array  List of approved states.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      * @throws  RuntimeException
      */
     protected function getOptions(): array

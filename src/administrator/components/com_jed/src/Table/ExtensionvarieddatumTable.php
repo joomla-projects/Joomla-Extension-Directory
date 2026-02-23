@@ -66,7 +66,7 @@ class ExtensionvarieddatumTable extends Table
      *
      * @see     Table:bind
      * @throws Exception
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function bind($src, $ignore = ''): ?string
     {
@@ -147,7 +147,7 @@ class ExtensionvarieddatumTable extends Table
      *
      * @return  string  The alias as described above
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getTypeAlias(): string
     {
@@ -164,7 +164,7 @@ class ExtensionvarieddatumTable extends Table
      *
      * @return  boolean  True on success.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function store($updateNulls = true): bool
     {

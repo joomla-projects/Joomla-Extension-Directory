@@ -72,7 +72,7 @@ class ExtensionvarieddatumController extends BaseController
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      * @throws Exception
      * @throws Exception
@@ -128,7 +128,7 @@ class ExtensionvarieddatumController extends BaseController
      *
      * @return bool  True on success
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      * @throws Exception
      */
@@ -171,6 +171,7 @@ class ExtensionvarieddatumController extends BaseController
      * @throws Exception
      * @throws Exception
      * @throws Exception
+      * @since 4.0.0
      */
     public function remove()
     {

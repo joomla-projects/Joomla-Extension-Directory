@@ -58,7 +58,7 @@ class ExtensionvarieddatumModel extends AdminModel
      * @return  Form|bool  A Form object on success, false on failure
      *
      * @throws Exception
-     * @since   4.0.0
+     * @since 4.0.0
      *
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
@@ -89,7 +89,7 @@ class ExtensionvarieddatumModel extends AdminModel
      * @return  Form|bool  A Form object on success, false on failure
      *
      * @throws Exception
-     * @since   4.0.0
+     * @since 4.0.0
      *
      */
     public function getFormTemplate(): Form|bool
@@ -120,7 +120,7 @@ class ExtensionvarieddatumModel extends AdminModel
      * @return CMSObject Object on success
      *
      * @throws Exception
-     * @since   4.0.0
+     * @since 4.0.0
      *
      */
     public function getItem($pk = null): CMSObject
@@ -139,7 +139,7 @@ class ExtensionvarieddatumModel extends AdminModel
      * @return  Table    A database object
      *
      * @throws Exception
-     * @since   4.0.0
+     * @since 4.0.0
      *
      */
     public function getTable($name = 'Extensionvarieddatum', $prefix = 'Administrator', $options = []): Table
@@ -153,7 +153,7 @@ class ExtensionvarieddatumModel extends AdminModel
      * @return  mixed  The data for the form.
      *
      * @throws Exception
-     * @since   4.0.0
+     * @since 4.0.0
      *
      */
     protected function loadFormData(): mixed
@@ -179,7 +179,7 @@ class ExtensionvarieddatumModel extends AdminModel
      *
      * @return  void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     protected function prepareTable($table)
     {

@@ -72,7 +72,7 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws \Exception
      */
     protected function addToolbar(): void
@@ -121,7 +121,7 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws \Exception
      */
     public function display($tpl = null): void

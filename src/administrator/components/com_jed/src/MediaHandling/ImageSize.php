@@ -34,7 +34,7 @@ enum ImageSize
      *
      * @return array
      *
-     * @since version
+     * @since 4.0.0
      */
     public function getMaximumDimensions(): array
     {

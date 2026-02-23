@@ -34,7 +34,7 @@ class ReviewscommentsModel extends ListModel
      * @param array $config An optional associative array of configuration settings.
      *
      * @see    JController
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      * @throws Exception
      */
@@ -61,6 +61,7 @@ class ReviewscommentsModel extends ListModel
      * Checks whether or not a user is manager or super user
      *
      * @return bool
+      * @since 4.0.0
      */
     public function isAdminOrSuperUser()
     {
@@ -82,7 +83,7 @@ class ReviewscommentsModel extends ListModel
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      *
      * @throws Exception
@@ -192,6 +193,7 @@ class ReviewscommentsModel extends ListModel
      * Method to get an array of data items
      *
      * @return mixed An array of data on success, false on failure.
+      * @since 4.0.0
      */
     public function getItems(): mixed
     {
@@ -208,6 +210,7 @@ class ReviewscommentsModel extends ListModel
      * @return void
      * @throws Exception
      * @throws Exception
+      * @since 4.0.0
      */
     protected function loadFormData()
     {
@@ -236,6 +239,7 @@ class ReviewscommentsModel extends ListModel
      * @param string $date Date to be checked
      *
      * @return bool
+      * @since 4.0.0
      */
     private function isValidDate($date)
     {

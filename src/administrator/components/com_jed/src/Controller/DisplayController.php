@@ -41,7 +41,7 @@ class DisplayController extends BaseController
      *
      * @return DisplayController
      *
-     * @since  3.9.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function display($cachable = false, $urlparams = []): DisplayController

@@ -116,7 +116,7 @@ class ExtensionModel extends ItemModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function checkout(int $id = null): bool
@@ -150,7 +150,7 @@ class ExtensionModel extends ItemModel
      *
      * @return mixed    Object on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItem($pk = null): mixed
@@ -264,7 +264,7 @@ class ExtensionModel extends ItemModel
      * @param string $alias Item alias
      *
      * @return mixed
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItemIdByAlias(string $alias)
@@ -409,7 +409,7 @@ class ExtensionModel extends ItemModel
      * @param array  $options Array of configuration values for the Table object. Optional.
      *
      * @return Table|bool Table if success, false on failure.
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getTable($name = "Extension", $prefix = "Administrator", $options = [])
@@ -421,7 +421,7 @@ class ExtensionModel extends ItemModel
      *
      * @return string
      *
-     * @since  version
+     * @since 4.0.0
      * @throws Exception
      */
     public function getUpdateStatus(): string
@@ -439,7 +439,7 @@ class ExtensionModel extends ItemModel
 
     /**
      * @return bool
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function isOld(): bool
@@ -454,7 +454,7 @@ class ExtensionModel extends ItemModel
 
     /**
      * @return bool
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function isRecentlyUpdated(): bool
@@ -474,7 +474,7 @@ class ExtensionModel extends ItemModel
      * correct unpublished message
      *
      * @return stdClass
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function noExtensionFoundMsg(): stdClass
     {
@@ -589,7 +589,7 @@ class ExtensionModel extends ItemModel
      *
      * @return bool
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function publish(int $id, int $state): bool
@@ -615,7 +615,7 @@ class ExtensionModel extends ItemModel
      * @return array
      *
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function getVariedData(int $extension_id, int $supply_option_type = null): array
     {

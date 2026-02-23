@@ -74,7 +74,7 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws \Exception
      */
     protected function addToolbar(): void
@@ -155,6 +155,7 @@ class HtmlView extends BaseHtmlView
      * Method to order fields
      *
      * @return array
+      * @since 4.0.0
      */
     protected function getSortFields()
     {

@@ -152,6 +152,12 @@ class ExtensionModel extends AdminModel
         return $this->item;
     }
 
+    /**
+     * TODO: Add description.
+     * @param mixed $pk TODO
+     * @return mixed TODO
+      * @since 4.0.0
+     */
     public function getItem($pk = null)
     {
         return $this->getvariedItem($pk, 0);
@@ -165,7 +171,7 @@ class ExtensionModel extends AdminModel
      *
      * @return Form|bool  A \JForm object on success, false on failure
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
@@ -189,7 +195,7 @@ class ExtensionModel extends AdminModel
      *
      * @return Table    A database object
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Extension', $prefix = 'Administrator', $options = []): Table
@@ -202,7 +208,7 @@ class ExtensionModel extends AdminModel
      *
      * @return mixed  The data for the form.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     protected function loadFormData()
@@ -307,6 +313,7 @@ class ExtensionModel extends AdminModel
 
         $db->setQuery($query);
         $result = $db->loadObjectList();
+        $retval =[];
         foreach ($result as $r) {
             if ($r->supply_option_id == 1) {
                 $supply = 'Free';
@@ -375,7 +382,7 @@ class ExtensionModel extends AdminModel
      *
      * @return  stdClass
      *
-     * @since   4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getDeveloperInfo(): stdClass
@@ -417,7 +424,7 @@ class ExtensionModel extends AdminModel
      *
      * @return stdClass    Object on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getvariedItem(int $pk = null, int $supply_option_type = 0)
@@ -571,7 +578,7 @@ class ExtensionModel extends AdminModel
      *
      * @return array
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getVariedData(int $extension_id, int $supply_option_type = null): array
@@ -591,7 +598,7 @@ class ExtensionModel extends AdminModel
             $supply = $variedDatum->supply_type;
 
             if (!empty($variedDatum->logo)) {
-                $variedDatum->logo = \Jed\Component\Jed\Site\Helper\JedHelper::formatImage($variedDatum->logo, ImageSize::LARGE);
+                $variedDatum->logo = JedHelper::formatImage($variedDatum->logo, ImageSize::LARGE);
             }
 
             if ($variedDatum->is_default_data == 1 && empty($variedDatum->intro_text)) {
@@ -692,7 +699,7 @@ class ExtensionModel extends AdminModel
      *
      * @return  Form|bool  A Form object on success, false on failure
      *
-     * @since   4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getVariedDataForm($data = [], $loadData = true, $formname = 'jform_extensionvarieddata'): Form
@@ -791,7 +798,7 @@ class ExtensionModel extends AdminModel
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function savePublish(array $data): void
@@ -1072,6 +1079,12 @@ class ExtensionModel extends AdminModel
         $db->setQuery($query)->execute();
     }
 
+    /**
+     * TODO: Add description.
+     * @param mixed $variedId TODO
+     * @return int TODO
+      * @since 4.0.0
+     */
     public function getExtensionIdfromVariedId($variedId): int
     {
         $db    = $this->getDatabase();
@@ -1080,6 +1093,12 @@ class ExtensionModel extends AdminModel
         return $db->setQuery($query)->loadResult();
     }
 
+    /**
+     * TODO: Add description.
+     * @param mixed $extensionId TODO
+     * @return array TODO
+      * @since 4.0.0
+     */
     public function getExtensionSupplyOptions($extensionId): array
     {
         $db    = $this->getDatabase();

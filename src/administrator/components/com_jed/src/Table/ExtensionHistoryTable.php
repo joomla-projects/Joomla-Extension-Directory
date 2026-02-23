@@ -67,7 +67,7 @@ class ExtensionHistoryTable extends Table
      *
      * @see    Table:bind
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function bind($src, $ignore = '')
     {
@@ -248,7 +248,7 @@ class ExtensionHistoryTable extends Table
      * @param string $field Name of the field
      *
      * @return bool True if unique
-     * @since  4.0.0
+     * @since 4.0.0
      */
     private function isUnique($field): bool
     {

@@ -35,7 +35,7 @@ class VelreportsModel extends ListModel
      * @param array $config An optional associative array of configuration settings.
      *
      * @see    ListModel
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function __construct($config = [])
@@ -195,7 +195,7 @@ class VelreportsModel extends ListModel
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     protected function populateState($ordering = null, $direction = null): void

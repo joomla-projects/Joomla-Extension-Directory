@@ -77,7 +77,7 @@ class JedHelper
      * @param   int  $item_id  Reference for stored report
      *
      * @return array  Ticket Template
-     * @since  4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */
@@ -183,7 +183,7 @@ class JedHelper
      * @param   int  $item_id  Reference for stored report
      *
      * @return array  Ticket Template
-     * @since  4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */
@@ -252,7 +252,7 @@ class JedHelper
         //       <option value="7">Vulnerable Item Email Correspondence</option> */
 
 
-        $ticket['ticket_status'] = 0; //New
+        $ticket['ticket_status'] = 2; //New
         /*
             <option value="0" selected="selected">New</option>
             <option value="1">Awaiting User</option>
@@ -290,7 +290,7 @@ class JedHelper
      * @param   int  $item_id      Reference for stored report
      *
      * @return array  Ticket Template
-     * @since  4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */
@@ -430,7 +430,7 @@ class JedHelper
      *
      * @return object
      *
-     * @since version
+     * @since 4.0.0
      */
     public static function getMessageTemplate(int $template_id): object
     {
@@ -658,7 +658,7 @@ class JedHelper
      * @param   string  $table  The name of the table
      *
      * @return bool             true if the user is the owner of the row, false if not.
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public static function userIDItem(int $id, string $table): bool
@@ -689,7 +689,7 @@ class JedHelper
      * @param   string  $view  The name of the view
      *
      * @return string
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public static function getAliasFieldNameByView(string $view): string
     {
@@ -721,7 +721,15 @@ class JedHelper
         return false;
     }
 
-    public static function outputFieldsets(array $fieldsets, Form $form): bool
+    /**
+     * TODO: Add description.
+     * @param mixed $fieldsets TODO
+     * @param mixed $form TODO
+     * @param mixed $validate TODO
+     * @return bool TODO
+      * @since 4.0.0
+     */
+    public static function outputFieldsets(array $fieldsets, Form $form, bool $validate = true): bool
     {
         $fscount = 0;
         foreach ($fieldsets as $fscat => $fs) {
@@ -750,11 +758,21 @@ class JedHelper
                     // Split into two columns
                     echo '<div class="row"><div class="col-md-6">';
                     if (in_array($field[0], $hiddenFields)) {
+                        if (!$validate) {
+                            $form->setFieldAttribute($field[0], 'required', 'false');
+                            $form->setFieldAttribute($field[0], 'validate', '');
+                        }
+
                         $form->setFieldAttribute($field[0], 'type', 'hidden');
                     }
                     echo $form->renderField($field[0], null, null, ['class' => 'control-wrapper-' . $field[0]]);
                     echo '</div>';
                     echo '<div class="col-md-6">';
+                    if (!$validate) {
+                        $form->setFieldAttribute($field[1], 'required', 'false');
+                        $form->setFieldAttribute($field[1], 'validate', '');
+                    }
+
                     if (in_array($field[1], $hiddenFields)) {
                         $form->setFieldAttribute($field[1], 'type', 'hidden');
                     }
@@ -763,6 +781,10 @@ class JedHelper
                 }
                 if (in_array($field, $hiddenFields)) {
                     $form->setFieldAttribute($field, 'type', 'hidden');
+                }
+                if (!$validate) {
+                    $form->setFieldAttribute($field, 'required', 'false');
+                    $form->setFieldAttribute($field, 'validate', '');
                 }
 
                 echo $form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
@@ -779,7 +801,7 @@ class JedHelper
      *
      * @return object
      *
-     * @since version
+     * @since 4.0.0
      */
     public static function getExtensionTitle(int $varied_item_id): string
     {

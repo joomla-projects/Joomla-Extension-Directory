@@ -67,7 +67,7 @@ class TicketlinkeditemtypeTable extends Table
      * @return  boolean  True on success.
      *
      * @see    Table:bind
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function bind($src, $ignore = '')

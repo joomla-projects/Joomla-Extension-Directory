@@ -38,7 +38,7 @@ class VelreportsController extends AdminController
      *
      * @return object    The Model
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getModel($name = 'Velreport', $prefix = 'Administrator', $config = ['ignore_request' => true]): object

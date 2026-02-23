@@ -26,7 +26,7 @@ class JedscoreHelper
      *
      * @return string
      *
-     * @since version
+     * @since 4.0.0
      */
     public static function getStars(float $score = 0): string
     {
@@ -58,7 +58,7 @@ class JedscoreHelper
      *
      * @return string
      *
-     * @since version
+     * @since 4.0.0
      */
     public static function getStarsShort(float $score = 0): string
     {
@@ -81,7 +81,7 @@ class JedscoreHelper
      *
      * @return false|float|int
      *
-     * @since version
+     * @since 4.0.0
      */
     public static function getStarScore($score): false|float|int
     {
@@ -98,7 +98,7 @@ class JedscoreHelper
      *
      * @return string
      *
-     * @since version
+     * @since 4.0.0
      */
     public static function getClass($score): string
     {

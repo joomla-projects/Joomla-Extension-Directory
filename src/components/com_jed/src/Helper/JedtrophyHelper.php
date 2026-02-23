@@ -30,7 +30,7 @@ class JedtrophyHelper
      *
      * @return string
      *
-     * @since version
+     * @since 4.0.0
      */
     public static function getTrophyVersionsString($versionstr): string
     {
@@ -69,7 +69,7 @@ class JedtrophyHelper
      *
      * @return string
      *
-     * @since version
+     * @since 4.0.0
      */
     public static function getTrophyIncludesString($includestr): string
     {
@@ -95,7 +95,7 @@ class JedtrophyHelper
      *
      * @return string
      *
-     * @since version
+     * @since 4.0.0
      */
     public static function getTrophyIncludesStringFull($includestr): string
     {
@@ -139,7 +139,7 @@ class JedtrophyHelper
      *
      * @return string
      *
-     * @since version
+     * @since 4.0.0
      */
     public static function getTrophyVersionsStringFull($versionstr): string
     {

@@ -39,7 +39,7 @@ class ReviewcommentModel extends ItemModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      * @throws Exception
      */
@@ -73,7 +73,7 @@ class ReviewcommentModel extends ItemModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      * @throws Exception
      */
@@ -112,6 +112,7 @@ class ReviewcommentModel extends ItemModel
      * @return bool
      * @throws Exception
      * @throws Exception
+      * @since 4.0.0
      */
     public function delete($id)
     {
@@ -132,6 +133,7 @@ class ReviewcommentModel extends ItemModel
      * @return mixed    Object on success, false on failure.
      *
      * @throws Exception
+      * @since 4.0.0
      */
     public function getItem($id = null): mixed
     {
@@ -184,6 +186,7 @@ class ReviewcommentModel extends ItemModel
      * @return mixed
      * @throws Exception
      * @throws Exception
+      * @since 4.0.0
      */
     public function getItemIdByAlias($alias)
     {
@@ -219,6 +222,7 @@ class ReviewcommentModel extends ItemModel
      * @return Table|bool Table if success, false on failure.
      * @throws Exception
      * @throws Exception
+      * @since 4.0.0
      */
     public function getTable($type = 'Reviewcomment', $prefix = 'Administrator', $config = [])
     {
@@ -229,6 +233,7 @@ class ReviewcommentModel extends ItemModel
      * Checks whether or not a user is manager or super user
      *
      * @return bool
+      * @since 4.0.0
      */
     public function isAdminOrSuperUser()
     {
@@ -296,6 +301,7 @@ class ReviewcommentModel extends ItemModel
      * @return bool
      * @throws Exception
      * @throws Exception
+      * @since 4.0.0
      */
     public function publish($id, $state)
     {
@@ -316,6 +322,7 @@ class ReviewcommentModel extends ItemModel
      * @param int $id The id of the item
      *
      * @return bool             true if the user is the owner of the row, false if not.
+      * @since 4.0.0
      */
     public function userIDItem($id)
     {

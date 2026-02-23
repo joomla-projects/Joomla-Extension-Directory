@@ -38,7 +38,7 @@ class ModifiedbyField extends FormField
      *
      * @return string    The field input markup.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     protected function getInput(): string

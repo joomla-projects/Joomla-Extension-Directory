@@ -15,6 +15,8 @@ namespace Jed\Component\Jed\Site\View\Controlpanel;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Site\Model\ExtensionModel;
+use Jed\Component\Jed\Site\Model\ExtensionsModel;
 use Jed\Component\Jed\Site\Model\TicketsModel;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Form\Form;
@@ -38,6 +40,7 @@ class HtmlView extends BaseHtmlView
 
     protected $item;
     protected $ticket_items;
+    protected $extension_items;
 
     protected $form;
 
@@ -68,7 +71,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      *
-     * @since 5.0.0
+     * @since 4.0.0
      */
     public function display($tpl = null)
     {
@@ -83,6 +86,9 @@ class HtmlView extends BaseHtmlView
 
         $ticketsModel       = new TicketsModel();
         $this->ticket_items = $ticketsModel->getItems();
+
+        $extensionModel        = new ExtensionsModel();
+        $this->extension_items = $extensionModel->getMyItems();
 
         $this->pagination    = $ticketsModel->getPagination();
         $this->filterForm    = $ticketsModel->getFilterForm();
@@ -122,7 +128,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      *
-     * @since 5.0.0
+     * @since 4.0.0
      */
     protected function prepareDocument()
     {

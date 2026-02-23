@@ -47,7 +47,7 @@ class JedemailHelper
      *
      * @return string
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws \PHPMailer\PHPMailer\Exception
      */
     public static function sendEmail(string $subject, string $body, User $recipient, string $sender): string

@@ -271,6 +271,11 @@ if ($canDelete) {
 				jQuery('.delete-button').click(deleteItem);
 			});
 
+			/**
+			 * TODO: Add description.
+			 * @return mixed TODO
+			  * @since 4.0.0
+			 */
 			function deleteItem() {
 
 				if (!confirm(\"" . Text::_('COM_JED_DELETE_MESSAGE') . "\")) {

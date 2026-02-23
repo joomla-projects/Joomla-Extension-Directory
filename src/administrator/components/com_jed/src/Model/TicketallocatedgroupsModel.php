@@ -34,7 +34,7 @@ class TicketallocatedgroupsModel extends ListModel
      * @param array $config An optional associative array of configuration settings.
      *
      * @see    ListModel
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function __construct($config = [])
@@ -58,7 +58,7 @@ class TicketallocatedgroupsModel extends ListModel
      * Get an array of data items
      *
      * @return mixed Array of data items on success, false on failure.
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function getItems(): mixed
     {
@@ -167,7 +167,7 @@ class TicketallocatedgroupsModel extends ListModel
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     protected function populateState($ordering = null, $direction = null): void

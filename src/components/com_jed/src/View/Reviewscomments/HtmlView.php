@@ -42,6 +42,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      * @throws Exception
+      * @since 4.0.0
      */
     protected function prepareDocument(): void
     {
@@ -128,6 +129,7 @@ class HtmlView extends BaseHtmlView
      * @param mixed $state State
      *
      * @return bool
+      * @since 4.0.0
      */
     public function getState(mixed $state): bool
     {

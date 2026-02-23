@@ -92,7 +92,7 @@ class SetupdemoModel extends AdminModel
      *
      * @return Table    A database object
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Extension', $prefix = 'Administrator', $options = []): Table

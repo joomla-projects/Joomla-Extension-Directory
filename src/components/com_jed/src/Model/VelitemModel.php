@@ -43,7 +43,7 @@ class VelitemModel extends ItemModel
      *
      * @return object|bool Object on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItem($pk = null): object|bool

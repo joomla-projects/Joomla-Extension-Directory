@@ -66,7 +66,7 @@ class ExtensionsupplyoptionTable extends Table
      *
      * @see    Table:bind
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function bind($src, $ignore = '')
     {

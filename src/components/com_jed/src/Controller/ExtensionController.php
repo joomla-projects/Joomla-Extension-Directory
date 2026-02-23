@@ -72,7 +72,7 @@ class ExtensionController extends BaseController
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function publish(): void
@@ -139,7 +139,7 @@ class ExtensionController extends BaseController
         // Checking if the user can remove object
         $user = Factory::getApplication()->getIdentity();
 
-        if ($user->authorise('core.manage', 'com_jed') || $item->checked_out == Factory::getUser()->id) {
+        if ($user->authorise('core.manage', 'com_jed') || $item->checked_out == $user->id) {
             $return = $model->checkin($id);
 
             if ($return === false) {
@@ -163,7 +163,7 @@ class ExtensionController extends BaseController
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function remove()
@@ -172,7 +172,7 @@ class ExtensionController extends BaseController
         $app = Factory::getApplication();
 
         // Checking if the user can remove object
-        $user = Factory::getUser();
+        $user = $app->getIdentity();
 
         if ($user->authorise('core.delete', 'com_jed')) {
             $model = $this->getModel('Extension', 'Site');

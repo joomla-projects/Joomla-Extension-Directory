@@ -41,7 +41,7 @@ class ExtensionsModel extends ListModel
      * @param array $config An optional associative array of configuration settings.
      *
      * @see    JController
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function __construct($config = [])
@@ -238,6 +238,25 @@ class ExtensionsModel extends ListModel
     }
 
     /**
+     * TODO: Add description.
+     * @return mixed TODO
+      * @since 4.0.0
+     */
+    public function getMyItems(): mixed
+    {
+        $user  = Factory::getApplication()->getIdentity();
+        $query = $this->getDatabase()->getQuery(true)
+            ->select('a.id as ext_id,a.*,varied.*,cat.title AS category_title,sup.title as supply_option_title')
+            ->from('#__jed_extensions AS a')
+                ->innerJoin('#__jed_extension_varied_data AS varied ON varied.extension_id = a.id ')
+                ->innerJoin('#__categories AS cat ON cat.id=a.primary_category_id')
+                ->innerJoin('#__jed_extension_supply_options AS sup ON sup.id=varied.supply_option_id')
+            ->where('a.created_by = ' . $user->id);
+        $this->getDatabase()->setQuery($query);
+        return $this->getDatabase()->loadObjectList();
+    }
+
+    /**
      * Method to get an array of data items
      *
      * @return mixed An array of data on success, false on failure.
@@ -247,6 +266,10 @@ class ExtensionsModel extends ListModel
     public function getItems(): mixed
     {
         $items = parent::getItems();
+        echo "<pre>";
+        print_r($items);
+        echo "</pre>";
+        exit();
         foreach ($items as $item) {
             //echo "<pre>";print_r($item);echo "</pre>";exit();
 
@@ -314,7 +337,7 @@ class ExtensionsModel extends ListModel
      *
      * @return mixed
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     protected function loadFormData(): mixed

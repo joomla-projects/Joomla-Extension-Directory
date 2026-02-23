@@ -103,7 +103,7 @@ class JedCategoryField extends ListField
      *
      * @return  object[]    The field option objects.
      *
-     * @since   1.6
+     * @since 4.0.0
      */
     protected function getOptions(): array
     {

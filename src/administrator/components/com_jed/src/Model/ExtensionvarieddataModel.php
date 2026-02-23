@@ -35,7 +35,7 @@ class ExtensionvarieddataModel extends ListModel
      *
      * @see           ListModel
      * @throws Exception
-     * @since         4.0.0
+     * @since 4.0.0
      */
     public function __construct($config = [])
     {
@@ -136,7 +136,7 @@ class ExtensionvarieddataModel extends ListModel
      *
      * @return   QueryInterface
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     protected function getListQuery(): QueryInterface
     {
@@ -215,7 +215,7 @@ class ExtensionvarieddataModel extends ListModel
      *
      * @return  string A store id.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     protected function getStoreId($id = ''): string
     {

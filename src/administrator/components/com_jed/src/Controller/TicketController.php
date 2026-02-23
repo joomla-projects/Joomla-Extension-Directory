@@ -43,7 +43,7 @@ class TicketController extends FormController
 
 
     /**
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function assignDeveloperUpdatetoVEL()
@@ -262,7 +262,7 @@ class TicketController extends FormController
      *
      * function for ajax getting specific template
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
 
@@ -352,7 +352,7 @@ class TicketController extends FormController
     /**
      * Ticket Send and Store Message
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws \PHPMailer\PHPMailer\Exception
      */
     public function sendMessage()
@@ -382,7 +382,7 @@ class TicketController extends FormController
     /**
      * Stores a tickets internal note back to table
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function storeInternalNote()

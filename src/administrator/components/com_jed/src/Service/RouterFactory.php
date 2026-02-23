@@ -52,6 +52,14 @@ class RouterFactory implements RouterFactoryInterface
      */
     private string $namespace;
 
+    /**
+     * TODO: Add description.
+     * @param mixed $namespace TODO
+     * @param mixed $db TODO
+     * @param mixed $factory TODO
+     * @param mixed $categoryFactory TODO
+      * @since 4.0.0
+     */
     public function __construct(string $namespace, DatabaseInterface $db = null, MVCFactoryInterface $factory, CategoryFactoryInterface $categoryFactory)
     {
         $this->namespace       = $namespace;
@@ -62,7 +70,7 @@ class RouterFactory implements RouterFactoryInterface
 
     /**
      * @inheritdoc
-     * @since      4.0.0
+     * @since 4.0.0
      */
     public function createRouter(CMSApplicationInterface $application, AbstractMenu $menu): RouterInterface
     {

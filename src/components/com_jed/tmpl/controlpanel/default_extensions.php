@@ -34,7 +34,7 @@ $isLoggedIn  = JedHelper::isLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
 
 $canCreate = $isLoggedIn;
-
+//echo "<pre>";print_r($this->extension_items);echo "</pre>";
 
 // Import CSS
 //$wa = $this->getDocument()->getWebAssetManager();
@@ -59,6 +59,9 @@ $canCreate = $isLoggedIn;
 
                     <th class='left'>
                         <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_NAME_LABEL', 'a.`name`', $listDirn, $listOrder); ?>
+                    </th>
+                    <th class='left'>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'JCATEGORY', 'category_title', $listDirn, $listOrder); ?>
                     </th>
                     <th class='left'>
                         <?php echo HTMLHelper::_('searchtools.sort', 'Supply Type', 'a.`ticket_subject`', $listDirn, $listOrder); ?>
@@ -88,32 +91,30 @@ $canCreate = $isLoggedIn;
                 </tr>
                 </tfoot>
                 <tbody>
-                <?php foreach ($this->ticket_items as $i => $item) : ?>
+                <?php foreach ($this->extension_items as $i => $item) : ?>
                     <?php $canEdit = $this->getCurrentUser()->id == $item->created_by; ?>
 
                     <tr class="row<?php echo $i % 2; ?>">
 
 
                         <td>
-
-                            <?php // echo $item->categorytype_string; ?>
+                            <?php if ($canEdit) : ?>
+                            <a href="<?php echo Route::_('index.php?option=com_jed&task=extensionform.edit&id=' . (int) $item->ext_id); ?>">
+                                <?php endif; ?>
+                            <?php  echo $item->title; ?>
                         </td>
                         <td>
-
-                            <?php if ($canEdit) : ?>
-                                <a href="<?php echo Route::_('index.php?option=com_jed&task=ticket.edit&id=' . (int) $item->id); ?>">
-                                    <?php // echo $this->escape($item->ticket_subject); ?></a>
-                            <?php else : ?>
-                                <?php // echo  $this->escape($item->ticket_subject); ?>
-                            <?php endif; ?>
-
+                            <?php echo $item->category_title; ?>
+                        </td>
+                        <td>
+                            <?php echo $item->supply_option_title; ?>
                         </td>
 
                         <td>
 
                             <?php try {
                                 $d = new DateTime($item->created_on);
-                               // echo $d->format("d M y H:i");
+                                echo $d->format("d M y H:i");
                             } catch (Exception $e) {
                             }
                             ?>
@@ -122,7 +123,7 @@ $canCreate = $isLoggedIn;
 
                         <td>
 
-                            <?php // echo $item->ticket_status; ?>
+                            <?php  echo $item->published ? 'Published' : 'Unpublished'; ?>
                         </td>
 
 
@@ -132,7 +133,7 @@ $canCreate = $isLoggedIn;
                         <?php if ($canEdit) : ?>
                             <td class="center">
                                 <a
-                                    href="<?php echo Route::_('index.php?option=com_jed&task=ticket.edit&id=' . $item->id, false, 2); ?>"
+                                    href="<?php echo Route::_('index.php?option=com_jed&task=ticket.edit&id=' . $item->ext_id, false, 2); ?>"
                                     class="btn btn-mini" type="button"><i class="icon-edit"></i></a>
 
 

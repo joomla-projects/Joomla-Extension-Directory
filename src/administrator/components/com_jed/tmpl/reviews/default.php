@@ -142,7 +142,7 @@ if ($saveOrder) {
                     </tfoot>
                     <tbody <?php if ($saveOrder) :
                         ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
-                           endif; ?>>
+                    endif; ?>>
                     <?php foreach ($this->items as $i => $item) :
                         $ordering   = ($listOrder == 'a.ordering');
                         $canCreate  = $user->authorise('core.create', 'com_jed');
@@ -164,7 +164,7 @@ if ($saveOrder) {
                                 } elseif (!$saveOrder) {
                                     $iconClass = ' inactive" title="' . Text::_('JORDERINGDISABLED');
                                 }
-                                ?>
+                        ?>
                             <span class="sortable-handler<?php echo $iconClass ?>">
                                 <span class="icon-ellipsis-v" aria-hidden="true"></span>
                             </span>

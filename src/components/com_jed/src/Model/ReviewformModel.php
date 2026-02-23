@@ -68,7 +68,7 @@ class ReviewformModel extends FormModel
      *
      * @return Form    A Form object on success, false on failure
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
@@ -98,7 +98,7 @@ class ReviewformModel extends FormModel
      * @param array  $options
      *
      * @return Table|bool Table if found, bool false on failure
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Review', $prefix = 'Administrator', $options = [])
@@ -111,7 +111,7 @@ class ReviewformModel extends FormModel
      * Method to get the data that should be injected in the form.
      *
      * @return array  The default data is an empty array.
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     protected function loadFormData()
@@ -172,7 +172,7 @@ class ReviewformModel extends FormModel
      *
      * @return object|bool Object on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItem(int $id = null)
@@ -260,7 +260,7 @@ class ReviewformModel extends FormModel
      *
      * @return int
      *
-     * @since version
+     * @since 4.0.0
      */
     public function getId(): int
     {
@@ -274,7 +274,7 @@ class ReviewformModel extends FormModel
      *
      * @return bool
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function save(array $data): bool

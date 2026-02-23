@@ -91,7 +91,7 @@ class JedComponent extends MVCComponent implements
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function countItems(array $items, string $section): void

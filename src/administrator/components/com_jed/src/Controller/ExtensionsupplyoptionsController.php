@@ -31,7 +31,7 @@ class ExtensionsupplyoptionsController extends AdminController
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function duplicate()
@@ -82,7 +82,6 @@ class ExtensionsupplyoptionsController extends AdminController
      *
      * @since 4.0.0
      *
-     * @since  4.0.0
      * @throws Exception
      */
     public function saveOrderAjax(): void

@@ -36,7 +36,7 @@ class VelliveitemsModel extends ListModel
      * @param array $config An optional associative array of configuration settings.
      *
      * @see    JController
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function __construct($config = [])
@@ -120,7 +120,7 @@ class VelliveitemsModel extends ListModel
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     protected function populateState($ordering = null, $direction = null): void

@@ -166,7 +166,7 @@ class JedHelper
      *
      * @return registry
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public static function getActions(): registry
@@ -202,7 +202,7 @@ class JedHelper
      *
      * @return registry
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public static function getApprovedIcon(int $state): string
@@ -258,7 +258,7 @@ class JedHelper
      *
      * @return registry
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public static function getPublishedIcon(int $state): string
@@ -388,6 +388,13 @@ class JedHelper
         }
     }
 
+    /**
+     * TODO: Add description.
+     * @param mixed $fieldsets TODO
+     * @param mixed $form TODO
+     * @return bool TODO
+      * @since 4.0.0
+     */
     public static function outputFieldsets(array $fieldsets, Form $form): bool
     {
         $fscount = 0;

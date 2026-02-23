@@ -56,7 +56,7 @@ class VeldeveloperupdateModel extends ItemModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function checkin(int $id = null): bool
@@ -127,7 +127,7 @@ class VeldeveloperupdateModel extends ItemModel
      *
      * @return false|object|null    Object on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItem($pk = null): object|bool|null
@@ -206,7 +206,7 @@ class VeldeveloperupdateModel extends ItemModel
      * @param array  $options Array of configuration values for the JTable object. Optional.
      *
      * @return Table Table if success, false on failure.
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Veldeveloperupdate', $prefix = 'Administrator', $options = []): Table
@@ -265,7 +265,7 @@ class VeldeveloperupdateModel extends ItemModel
      *
      * @return bool
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function publish(int $id, int $state): bool

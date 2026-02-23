@@ -68,7 +68,7 @@ class ExtensionvarieddataController extends AdminController
      *
      * @return  object  The Model
      *
-     * @since   4.0.0
+     * @since 4.0.0
      */
     public function getModel($name = 'Extensionvarieddatum', $prefix = 'Administrator', $config = []): object
     {
@@ -82,7 +82,7 @@ class ExtensionvarieddataController extends AdminController
      *
      * @return  void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
      * @throws  Exception
      */

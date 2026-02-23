@@ -33,7 +33,7 @@ class ReviewscommentsController extends AdminController
      * @return void
      *
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function duplicate()
     {

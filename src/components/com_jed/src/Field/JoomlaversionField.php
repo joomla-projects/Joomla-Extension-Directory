@@ -44,7 +44,7 @@ class JoomlaVersionField extends CheckboxesField
      *
      * @return  object[]    The field option objects.
      *
-     * @since   1.6
+     * @since 4.0.0
      * @throws Exception
      */
     protected function getOptions(): array

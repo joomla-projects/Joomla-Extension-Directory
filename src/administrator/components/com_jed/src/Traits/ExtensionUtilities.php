@@ -34,7 +34,7 @@ trait ExtensionUtilities
      * @return array
      *
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function splitDescription(string $d): array
     {

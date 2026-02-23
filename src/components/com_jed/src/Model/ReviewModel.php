@@ -119,7 +119,7 @@ class ReviewModel extends ItemModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function checkin($id = null): bool
@@ -152,7 +152,7 @@ class ReviewModel extends ItemModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function checkout($id = null): bool
@@ -188,7 +188,7 @@ class ReviewModel extends ItemModel
      * @param int $id Element id
      *
      * @return bool
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function delete(int $id): bool
@@ -209,7 +209,7 @@ class ReviewModel extends ItemModel
      *
      * @return mixed    Object on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItem($pk = null)
@@ -329,7 +329,7 @@ class ReviewModel extends ItemModel
      *
      * @return mixed
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItemIdByAlias(string $alias)
@@ -365,7 +365,7 @@ class ReviewModel extends ItemModel
      *
      * @return Table|bool Table if success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Review', $prefix = 'Administrator', $options = [])
@@ -424,7 +424,7 @@ class ReviewModel extends ItemModel
      *
      * @return bool
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function publish($id, $state)
@@ -445,7 +445,7 @@ class ReviewModel extends ItemModel
      *
      * @param array $config An array of configuration options (name, state, dbo, table_path, ignore_request).
      *
-     * @since  3.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function __construct($config = [])

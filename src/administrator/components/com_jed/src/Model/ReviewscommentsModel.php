@@ -33,7 +33,7 @@ class ReviewscommentsModel extends ListModel
      *
      * @see    ListModel
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function __construct($config = [])
     {

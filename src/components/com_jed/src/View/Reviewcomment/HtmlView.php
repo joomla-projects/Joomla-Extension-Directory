@@ -42,7 +42,7 @@ class HtmlView extends BaseHtmlView
      * @return void
      *
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function display($tpl = null): void
     {
@@ -83,7 +83,7 @@ class HtmlView extends BaseHtmlView
      * @return void
      *
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected function prepareDocument(): void
     {

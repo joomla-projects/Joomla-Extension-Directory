@@ -31,6 +31,11 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
  */
 class ControlpanelModel extends ItemModel
 {
+    /**
+     * TODO: Add description.
+     * @return mixed TODO
+      * @since 4.0.0
+     */
     protected function populateState()
     {
         $app          = Factory::getApplication('com_jed');
@@ -39,6 +44,12 @@ class ControlpanelModel extends ItemModel
         $this->setState('params', $params);
     }
 
+    /**
+     * TODO: Add description.
+     * @param mixed $id TODO
+     * @return mixed TODO
+      * @since 4.0.0
+     */
     public function getItem($id = null)
     {
     }

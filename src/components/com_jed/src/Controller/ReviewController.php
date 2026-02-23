@@ -68,7 +68,7 @@ class ReviewController extends BaseController
      *
      * @return void
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      * @throws Exception
      * @throws Exception
@@ -138,7 +138,7 @@ class ReviewController extends BaseController
         // Checking if the user can remove object
         $user = Factory::getApplication()->getIdentity();
 
-        if ($user->authorise('core.manage', 'com_jed') || $item->checked_out == Factory::getUser()->id) {
+        if ($user->authorise('core.manage', 'com_jed') || $item->checked_out == $user->id) {
             $return = $model->checkin($id);
 
             if ($return === false) {

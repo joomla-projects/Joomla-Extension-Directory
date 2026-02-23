@@ -83,7 +83,7 @@ class MessagetemplateModel extends AdminModel
      *
      * @return Object|bool    Object on success, false on failure.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItem($pk = null)
@@ -109,7 +109,7 @@ class MessagetemplateModel extends AdminModel
      *
      * @return Table    A database object
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Messagetemplate', $prefix = 'Administrator', $options = []): Table

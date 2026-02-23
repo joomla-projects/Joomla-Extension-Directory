@@ -53,7 +53,7 @@ class DisplayController extends BaseController
      *
      * @return BaseController  This object to support chaining.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function display($cachable = false, $urlparams = []): BaseController

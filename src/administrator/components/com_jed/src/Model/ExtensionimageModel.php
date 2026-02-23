@@ -56,7 +56,7 @@ class ExtensionimageModel extends AdminModel
      *
      * @return Form|bool  A Form object on success, false on failure
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
@@ -86,7 +86,7 @@ class ExtensionimageModel extends AdminModel
      *
      * @return mixed Object on success
      *
-     * @since  4.0.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function getItem($pk = null): mixed

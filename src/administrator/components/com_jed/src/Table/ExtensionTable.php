@@ -67,7 +67,7 @@ class ExtensionTable extends Table
      *
      * @see    Table:bind
      * @throws Exception
-     * @since  4.0.0
+     * @since 4.0.0
      */
     public function bind($src, $ignore = '')
     {
@@ -77,18 +77,7 @@ class ExtensionTable extends Table
         $user = $app->getIdentity();
 
 
-        // Support for alias field: alias
-        if (empty($src['alias'])) {
-            if (empty($src['title'])) {
-                $src['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
-            } else {
-                if ($app->get('unicodeslugs') == 1) {
-                    $src['alias'] = OutputFilter::stringURLUnicodeSlug(trim($src['title']));
-                } else {
-                    $src['alias'] = OutputFilter::stringURLSafe(trim($src['title']));
-                }
-            }
-        }
+
 
         if ($src['id'] == 0 && empty($src['created_by'])) {
             $src['created_by'] = $user->id;
@@ -150,14 +139,7 @@ class ExtensionTable extends Table
             $this->ordering = $this->getNextOrder();
         }
 
-        // Check if alias is unique
-        if (!$this->isUnique('alias')) {
-            $count        = 0;
-            $currentAlias = $this->alias;
-            while (!$this->isUnique($this->alias)) {
-                $this->alias = $currentAlias . '-' . $count++;
-            }
-        }
+
 
         return parent::check();
     }
@@ -197,7 +179,7 @@ class ExtensionTable extends Table
      * @param string $field Name of the field
      *
      * @return bool True if unique
-     * @since  4.0.0
+     * @since 4.0.0
      */
     private function isUnique($field): bool
     {

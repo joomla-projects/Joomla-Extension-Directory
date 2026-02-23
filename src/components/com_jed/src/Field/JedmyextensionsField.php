@@ -187,7 +187,7 @@ class JedmyextensionsField extends ListField
      *
      * @return  string  The field input.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */
@@ -223,7 +223,7 @@ class JedmyextensionsField extends ListField
      *
      * @return  array  The field option objects.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */
