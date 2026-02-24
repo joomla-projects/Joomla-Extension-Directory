@@ -266,10 +266,7 @@ class ExtensionsModel extends ListModel
     public function getItems(): mixed
     {
         $items = parent::getItems();
-        echo "<pre>";
-        print_r($items);
-        echo "</pre>";
-        exit();
+        //echo "<pre>";print_r($items);echo "</pre>";exit();
         foreach ($items as $item) {
             //echo "<pre>";print_r($item);echo "</pre>";exit();
 

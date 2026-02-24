@@ -388,6 +388,11 @@ class ExtensionformModel extends FormModel
                     }
                 }
 
+                // If editing an existing extension, backup current data to history before updating
+                if ($id > 0) {
+                    $this->backupExtensionToHistory($extensionId, (int) $user->id);
+                }
+
                 // Store tabbed varied data (one row per supply option)
                 $this->storeVariedData($extensionId, (array) ($data['supply'] ?? []), (int) $user->id);
 
@@ -860,5 +865,163 @@ class ExtensionformModel extends FormModel
                     ->bind(':uid', $uid, ParameterType::INTEGER);
 
         return $db->setQuery($query)->loadResult();
+    }
+
+    /**
+     * Backup extension and varied data to history table before updating
+     *
+     * @param int $extensionId
+     * @param int $userId
+     *
+     * @return void
+     * @throws Exception
+     *
+     * @since 4.0.0
+     */
+    private function backupExtensionToHistory(int $extensionId, int $userId): void
+    {
+        if ($extensionId <= 0) {
+            return;
+        }
+
+        try {
+            $db = $this->getDatabase();
+
+            // Get current extension data
+            $query = $db->getQuery(true)
+                ->select('e.*')
+                ->from($db->quoteName('#__jed_extensions', 'e'))
+                ->where($db->quoteName('e.id') . ' = ' . (int) $extensionId);
+
+            $extension = $db->setQuery($query)->loadObject();
+
+            if (!$extension) {
+                return;
+            }
+
+            // Get all varied data for this extension
+            $query = $db->getQuery(true)
+                ->select('v.*')
+                ->from($db->quoteName('#__jed_extension_varied_data', 'v'))
+                ->where($db->quoteName('v.extension_id') . ' = ' . (int) $extensionId);
+
+            $variedData = $db->setQuery($query)->loadObjectList();
+
+            // Create a history row for each supply option variant
+            foreach ($variedData as $varied) {
+                $historyColumns = [
+                    'extension_id',
+                    'joomla_versions',
+                    'popular',
+                    'requires_registration',
+                    'gpl_license_type',
+                    'jed_internal_note',
+                    'can_update',
+                    'video',
+                    'version',
+                    'uses_updater',
+                    'includes',
+                    'approved',
+                    'approved_time',
+                    'second_contact_email',
+                    'jed_checked',
+                    'uses_third_party',
+                    'primary_category_id',
+                    'logo',
+                    'supply_option_id',
+                    'title',
+                    'alias',
+                    'intro_text',
+                    'description',
+                    'homepage_link',
+                    'download_link',
+                    'demo_link',
+                    'support_link',
+                    'documentation_link',
+                    'license_link',
+                    'translation_link',
+                    'tags',
+                    'update_url',
+                    'update_url_ok',
+                    'download_integration_type',
+                    'download_integration_url',
+                    'is_default_data',
+                    'ordering',
+                    'approved_notes',
+                    'approved_reason',
+                    'published_notes',
+                    'published_reason',
+                    'published',
+                    'created_by',
+                    'modified_by',
+                    'created_on',
+                    'modified_on',
+                    'state',
+                ];
+
+                $historyValues = [
+                    (int) $extensionId,
+                    $db->quote($extension->joomla_versions ?? ''),
+                    (int) ($extension->popular ?? 0),
+                    (int) ($extension->requires_registration ?? 0),
+                    $db->quote($extension->gpl_license_type ?? ''),
+                    $db->quote($extension->jed_internal_note ?? ''),
+                    (int) ($extension->can_update ?? 0),
+                    $db->quote($extension->video ?? ''),
+                    $db->quote($extension->version ?? ''),
+                    (int) ($extension->uses_updater ?? 0),
+                    $db->quote($extension->includes ?? ''),
+                    (int) ($extension->approved ?? 0),
+                    $extension->approved_time ? $db->quote($extension->approved_time) : 'NULL',
+                    $db->quote($extension->second_contact_email ?? ''),
+                    (int) ($extension->jed_checked ?? 0),
+                    (int) ($extension->uses_third_party ?? 0),
+                    $extension->primary_category_id ? (int) $extension->primary_category_id : 'NULL',
+                    $db->quote($extension->logo ?? ''),
+                    (int) ($varied->supply_option_id ?? 0),
+                    $db->quote($varied->title ?? ''),
+                    $db->quote($varied->alias ?? ''),
+                    $db->quote($varied->intro_text ?? ''),
+                    $db->quote($varied->description ?? ''),
+                    $db->quote($varied->homepage_link ?? ''),
+                    $db->quote($varied->download_link ?? ''),
+                    $db->quote($varied->demo_link ?? ''),
+                    $db->quote($varied->support_link ?? ''),
+                    $db->quote($varied->documentation_link ?? ''),
+                    $db->quote($varied->license_link ?? ''),
+                    $db->quote($varied->translation_link ?? ''),
+                    $db->quote($varied->tags ?? ''),
+                    $db->quote($varied->update_url ?? ''),
+                    (int) ($varied->update_url_ok ?? 0),
+                    $db->quote($varied->download_integration_type ?? ''),
+                    $db->quote($varied->download_integration_url ?? ''),
+                    (int) ($varied->is_default_data ?? 0),
+                    (int) ($varied->ordering ?? 0),
+                    $db->quote($extension->approved_notes ?? ''),
+                    $db->quote($extension->approved_reason ?? ''),
+                    $db->quote($extension->published_notes ?? ''),
+                    $db->quote($extension->published_reason ?? ''),
+                    (int) ($extension->published ?? 0),
+                    (int) ($extension->created_by ?? 0),
+                    (int) $userId,
+                    $extension->created_on ? $db->quote($extension->created_on) : 'NULL',
+                    'NOW()',
+                    (int) ($extension->state ?? 0),
+                ];
+
+                $insert = $db->getQuery(true)
+                    ->insert($db->quoteName('#__jed_extensions_history'))
+                    ->columns($db->quoteName($historyColumns))
+                    ->values(implode(', ', $historyValues));
+
+                $db->setQuery($insert)->execute();
+            }
+        } catch (\Exception $e) {
+            // Don't break the save if backup fails. Log and continue.
+            try {
+                Log::add('Failed to backup extension ' . $extensionId . ' to history: ' . $e->getMessage(), Log::ERROR, 'com_jed');
+            } catch (\Exception $ignored) {
+            }
+        }
     }
 }
