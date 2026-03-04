@@ -61,6 +61,9 @@ $canCreate = $isLoggedIn;
                         <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_NAME_LABEL', 'a.`name`', $listDirn, $listOrder); ?>
                     </th>
                     <th class='left'>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_VERSION_LABEL', 'a.`version`', $listDirn, $listOrder); ?>
+                    </th>
+                    <th class='left'>
                         <?php echo HTMLHelper::_('searchtools.sort', 'JCATEGORY', 'category_title', $listDirn, $listOrder); ?>
                     </th>
                     <th class='left'>
@@ -102,6 +105,9 @@ $canCreate = $isLoggedIn;
                             <a href="<?php echo Route::_('index.php?option=com_jed&task=extensionform.edit&id=' . (int) $item->ext_id); ?>">
                                 <?php endif; ?>
                             <?php  echo $item->title; ?>
+                        </td>
+                        <td>
+                            <?php echo $item->version; ?>
                         </td>
                         <td>
                             <?php echo $item->category_title; ?>
