@@ -147,6 +147,12 @@ class ExtensionformController extends FormController
             // Re-attach varied payload so the model can store it after saving the parent extension
             $data['supply'] = $supplyPayload;
 
+            // Ensure the ID is set for edit operations
+            $editId = (int) $app->getUserState('com_jed.edit.extension.id');
+            if ($editId > 0) {
+                $data['id'] = $editId;
+            }
+
             $return = $model->save($data);
 
             if ($return === false) {

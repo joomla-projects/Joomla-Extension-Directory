@@ -83,6 +83,15 @@ class ExtensionTable extends Table
             $src['created_by'] = $user->id;
         }
 
+        // Preserve created_by on edit if not provided
+        if ($src['id'] > 0 && empty($src['created_by'])) {
+            // Load the existing record to get the original created_by
+            $this->load($src['id']);
+            if (!empty($this->created_by)) {
+                $src['created_by'] = $this->created_by;
+            }
+        }
+
         if ($src['id'] == 0 && empty($src['modified_by'])) {
             $src['modified_by'] = $user->id;
         }
@@ -94,6 +103,11 @@ class ExtensionTable extends Table
 
         if ($src['id'] == 0) {
             $src['created_on'] = $date->toSql();
+        } elseif ($src['id'] > 0 && empty($src['created_on'])) {
+            // Preserve created_on on edit if not provided
+            if (!empty($this->created_on)) {
+                $src['created_on'] = $this->created_on;
+            }
         }
 
         // Support for multiple field: uses_updater

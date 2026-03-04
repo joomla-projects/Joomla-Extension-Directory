@@ -178,9 +178,9 @@ class JedHelper
 
 
     /**
-     * For a new review this creates a corresponding Ticket
+     * For a new Extension this creates a corresponding Ticket
      *
-     * @param   int  $item_id  Reference for stored report
+     * @param   int  $item_id  Reference for extension
      *
      * @return array  Ticket Template
      * @since 4.0.0

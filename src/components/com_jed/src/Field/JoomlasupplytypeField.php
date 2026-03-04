@@ -59,7 +59,7 @@ class JoomlaSupplytypeField extends CheckboxesField
         $rows = $db->loadObjectList();
 
         foreach ($rows as $r) {
-            $r->text =  $r->text ;
+            $r->text = '<span class="joomla_supplytype">' . $r->text . '</span>';
         }
 
         return $rows;

@@ -37,7 +37,6 @@ $wa->useScript('keepalive')
     ->useScript('keepalive')
     ->useScript('form.validate');
 
-
 // Load admin language file
 $lang = Factory::getApplication()->getLanguage();
 $lang->load('com_jed', JPATH_SITE);
@@ -145,8 +144,8 @@ $canState = $this->getCurrentUser()->authorise('core.edit.state', 'com_jed');
                 <?php
                 $fieldsets['overview']['title']       = Text::_('COM_JED_EXTENSION_ADD_EXTENSION_LABEL');
                 $fieldsets['overview']['description']     = Text::_('COM_JED_EXTENSION_ADD_EXTENSION_LABEL_DESCR') . '</br>' . '</br>';
-                $fieldsets['overview']['fields']          = [['title','alias'],'version',['primary_category_id', 'tags']];
-                $fieldsets['overview']['hidden']          = [];
+                $fieldsets['overview']['fields']          = ['id',['title','alias'],'version',['primary_category_id', 'tags']];
+                $fieldsets['overview']['hidden']          = ['id'];
 
                 $fieldsets['integration2']['title']       = '';
                 $fieldsets['integration2']['description'] = '';
@@ -158,8 +157,19 @@ $canState = $this->getCurrentUser()->authorise('core.edit.state', 'com_jed');
                 $fieldsets['media']['fields']      = ['video', 'logo', 'images'];
                 $fieldsets['media']['hidden']      = [];
 
-
                 JedHelper::outputFieldsets($fieldsets, $this->form);
+
+                // Show existing logo if editing
+                if (!empty($this->item->logo)) {
+                    echo '<div class="control-group">';
+                    echo '<div class="control-label"><label>Current Logo:</label></div>';
+                    echo '<div class="controls">';
+                    echo '<a href="' . htmlspecialchars(\Joomla\CMS\Uri\Uri::root() . $this->item->logo) . '" target="_blank">';
+                    echo htmlspecialchars(basename($this->item->logo));
+                    echo '</a>';
+                    echo '</div>';
+                    echo '</div>';
+                }
 
 
            // echo '<div class="control-label"><label id="jform_logo-lbl" for="jform_logo">Supply Type<br/><span style="font-weight:normal"></span><small>Descriptive Text here.</small></span></label></div>';
@@ -195,6 +205,14 @@ echo '<fieldset class="extensionvariedform"><legend>Extension Supply Versions</l
                     $fieldsets['extensionfile']['description'] = Text::_('COM_JED_EXTENSION_EXTENSIONFILE_LABEL') . '<br/>' . Text::_('COM_JED_EXTENSION_EXTENSIONFILE_EXTRA');
                     $fieldsets['extensionfile']['fields']      = ['file'];
                     $fieldsets['extensionfile']['hidden']      = [];
+
+                    // Show existing file if available
+                    if (!empty($this->item->varied[$st->supply_id]->file)) {
+                        $fieldsets['extensionfile']['description'] .= '<div style="margin-top:10px;"><strong>Current file:</strong> ';
+                        $fieldsets['extensionfile']['description'] .= '<a href="' . htmlspecialchars(\Joomla\CMS\Uri\Uri::root() . $this->item->varied[$st->supply_id]->file) . '" target="_blank">';
+                        $fieldsets['extensionfile']['description'] .= htmlspecialchars(basename($this->item->varied[$st->supply_id]->file));
+                        $fieldsets['extensionfile']['description'] .= '</a></div>';
+                    }
                     $fieldsets['links']['supply_type']         = $st->supply_type;
                     $fieldsets['links']['title']               = Text::_('COM_JED_EXTENSION_LINKS_TITLE');
                     $fieldsets['links']['description']         = Text::_('COM_JED_EXTENSION_LINKS_DESCR').'<br/>';

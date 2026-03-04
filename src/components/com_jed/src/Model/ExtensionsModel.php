@@ -253,6 +253,7 @@ class ExtensionsModel extends ListModel
                 ->innerJoin('#__jed_extension_supply_options AS sup ON sup.id=varied.supply_option_id')
             ->where('a.created_by = ' . $user->id);
         $this->getDatabase()->setQuery($query);
+
         return $this->getDatabase()->loadObjectList();
     }
 
@@ -266,7 +267,7 @@ class ExtensionsModel extends ListModel
     public function getItems(): mixed
     {
         $items = parent::getItems();
-        //echo "<pre>";print_r($items);echo "</pre>";exit();
+
         foreach ($items as $item) {
             //echo "<pre>";print_r($item);echo "</pre>";exit();
 

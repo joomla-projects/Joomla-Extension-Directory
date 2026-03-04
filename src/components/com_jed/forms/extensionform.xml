@@ -32,8 +32,7 @@
             type="joomlasupplytype"
             label="My extension has the following types"
             multiple="true"
-            checkedOptions="1,2"
-    />
+                />
         <field name="gpl_license_type"
                type="list"
                default=""
