@@ -40,7 +40,7 @@ class HtmlView extends BaseHtmlView
 
     protected $item;
     protected $ticket_items;
-    protected $extension_items;
+	protected $extension_items;
 
     protected $form;
 
@@ -87,8 +87,8 @@ class HtmlView extends BaseHtmlView
         $ticketsModel       = new TicketsModel();
         $this->ticket_items = $ticketsModel->getItems();
 
-        $extensionModel        = new ExtensionsModel();
-        $this->extension_items = $extensionModel->getMyItems();
+	    $extensionModel = new ExtensionsModel();
+	    $this->extension_items = $extensionModel->getMyItems();
 
         $this->pagination    = $ticketsModel->getPagination();
         $this->filterForm    = $ticketsModel->getFilterForm();

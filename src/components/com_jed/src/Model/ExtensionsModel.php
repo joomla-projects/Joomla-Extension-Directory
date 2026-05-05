@@ -237,25 +237,25 @@ class ExtensionsModel extends ListModel
         return $db->loadObjectList();
     }
 
-    /**
-     * TODO: Add description.
-     * @return mixed TODO
-      * @since 4.0.0
-     */
-    public function getMyItems(): mixed
-    {
-        $user  = Factory::getApplication()->getIdentity();
-        $query = $this->getDatabase()->getQuery(true)
-            ->select('a.id as ext_id,a.*,varied.*,cat.title AS category_title,sup.title as supply_option_title')
-            ->from('#__jed_extensions AS a')
-                ->innerJoin('#__jed_extension_varied_data AS varied ON varied.extension_id = a.id ')
-                ->innerJoin('#__categories AS cat ON cat.id=a.primary_category_id')
-                ->innerJoin('#__jed_extension_supply_options AS sup ON sup.id=varied.supply_option_id')
-            ->where('a.created_by = ' . $user->id);
-        $this->getDatabase()->setQuery($query);
+	/**
+	 * TODO: Add description.
+	 * @return mixed TODO
+	  * @since 4.0.0
+	 */
+	public function getMyItems() : mixed
+	{
+		$user = Factory::getApplication()->getIdentity();
+		$query = $this->getDatabase()->getQuery(true)
+			->select('a.id as ext_id,a.*,varied.*,cat.title AS category_title,sup.title as supply_option_title')
+			->from('#__jed_extensions AS a')
+				->innerJoin('#__jed_extension_varied_data AS varied ON varied.extension_id = a.id ')
+				->innerJoin('#__categories AS cat ON cat.id=a.primary_category_id')
+				->innerJoin('#__jed_extension_supply_options AS sup ON sup.id=varied.supply_option_id')
+			->where( 'a.created_by = ' . $user->id);
+		$this->getDatabase()->setQuery($query);
 
-        return $this->getDatabase()->loadObjectList();
-    }
+		return $this->getDatabase()->loadObjectList();
+	}
 
     /**
      * Method to get an array of data items

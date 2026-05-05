@@ -128,7 +128,7 @@ class ExtensionModel extends AdminModel
                         $this->item->alias      = $vitem->alias;
                         $this->item->intro_text = $vitem->intro_text;
                     }
-
+					$vitem->uploaded_file = $this->getFilename( $vitem->extension_id ,$st->supply_id );
                     $this->item->varied[$st->supply_id] = $vitem;
                 }
             }
@@ -628,18 +628,11 @@ class ExtensionModel extends AdminModel
      *
      * @since 4.0.0
      */
-    public function getFilename(int $extensionId): stdClass
+    public function getFilename(int $extensionId, $supply_option_id): stdClass
     {
         $db = $this->getDatabase();
 
-        $query = $db->getQuery(true)->select(
-            $db->quoteName(
-                [
-                    'file',
-                    'originalFile',
-                ]
-            )
-        )->from($db->quoteName('#__jed_extensions_files'))->where($db->quoteName('extension_id') . ' = ' . $extensionId);
+        $query = $db->getQuery(true)->select('*')->from($db->quoteName('#__jed_extensions_files'))->where($db->quoteName('extension_id') . ' = ' . $extensionId)->where($db->quoteName('supply_option_id') . ' = ' . $supply_option_id);
         $db->setQuery($query);
 
         $fileDetails = $db->loadObject();

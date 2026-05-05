@@ -89,9 +89,9 @@ class HtmlView extends BaseHtmlView
         $menu = $menus->getActive();
 
         if ($menu) {
-            $this->params->def('page_heading', $this->params->get('page_title', $menu->title));
+            $this->params->set('page_heading', $this->params->get('page_title', $menu->title));
         } else {
-            $this->params->def('page_heading', Text::_('COM_JED_DEFAULT_PAGE_TITLE'));
+            $this->params->set('page_heading', Text::_('COM_JED_DEFAULT_PAGE_TITLE'));
         }
 
         $title = $this->params->get('page_title', '');
@@ -133,14 +133,11 @@ class HtmlView extends BaseHtmlView
     {
         $app = Factory::getApplication();
 
-        $model = $this->getModel();
-
-        // Get data from the model.
-        $this->items         = $model->getItems();
-        $this->pagination    = $model->getPagination();
-        $this->state         = $model->getState();
+        $this->state   = $this->get('State');
+        $this->item    = $this->get('Item');
+        $this->params  = $app->getParams('com_jed');
         $this->canSave       = JedHelper::canSave();
-        $this->form          = $model->getForm();
+        $this->form    = $this->get('Form');
 
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {

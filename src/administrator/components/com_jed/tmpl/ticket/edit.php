@@ -253,9 +253,14 @@ if ($this->linked_item_type === 6) { /* VEL Abandonware */
     echo HTMLHelper::_('uitab.endTab');
 }
 if ($add_extension_tab == true) {
-    echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension (' . $this->linked_extension_data->type . ')');
+    echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension (' . current($this->linked_extension_data->varied)->supply_option_type . ')');
 
     echo LayoutHelper::render('ticket.linked_extension', $this->linked_extension_data);
+
+    echo HTMLHelper::_('uitab.endTab');
+    echo HTMLHelper::_('uitab.addTab', 'myTab', 'JEDChecker', 'JED Checker');
+
+    echo LayoutHelper::render('ticket.jedchecker', $this->linked_extension_data);
 
     echo HTMLHelper::_('uitab.endTab');
 }

@@ -221,7 +221,7 @@ class HtmlView extends BaseHtmlView
         }
         if ($this->linked_item_type === 2) { // Extension
             $extension_model = new ExtensionModel();
-            $extension_id    = $extension_model->getExtensionIdfromVariedId($this->linked_item_id);
+            $extension_id    = $this->linked_item_id;// $extension_model->getExtensionIdfromVariedId($this->linked_item_id);
 
 
             $supplyoptions   = $extension_model->getExtensionSupplyOptions($extension_id);
@@ -237,8 +237,6 @@ class HtmlView extends BaseHtmlView
             );
             $this->linked_extension_form->bind($this->linked_extension_data);
             $this->linked_extension_data->extension_form = $this->linked_extension_form;
-
-
 
             $extensionvarieddatum                   = new ExtensionvarieddatumModel();
             $this->linked_extension_varieddata      = $this->linked_extension_data->varied[0];

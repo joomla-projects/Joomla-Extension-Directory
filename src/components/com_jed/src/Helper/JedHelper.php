@@ -758,7 +758,7 @@ class JedHelper
                     // Split into two columns
                     echo '<div class="row"><div class="col-md-6">';
                     if (in_array($field[0], $hiddenFields)) {
-                        if (!$validate) {
+                        if(!$validate) {
                             $form->setFieldAttribute($field[0], 'required', 'false');
                             $form->setFieldAttribute($field[0], 'validate', '');
                         }
@@ -768,7 +768,7 @@ class JedHelper
                     echo $form->renderField($field[0], null, null, ['class' => 'control-wrapper-' . $field[0]]);
                     echo '</div>';
                     echo '<div class="col-md-6">';
-                    if (!$validate) {
+                    if(!$validate) {
                         $form->setFieldAttribute($field[1], 'required', 'false');
                         $form->setFieldAttribute($field[1], 'validate', '');
                     }
@@ -782,7 +782,7 @@ class JedHelper
                 if (in_array($field, $hiddenFields)) {
                     $form->setFieldAttribute($field, 'type', 'hidden');
                 }
-                if (!$validate) {
+                if(!$validate) {
                     $form->setFieldAttribute($field, 'required', 'false');
                     $form->setFieldAttribute($field, 'validate', '');
                 }
