@@ -5,8 +5,8 @@
  *
  * @subpackage TICKETS
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -25,7 +25,6 @@ use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
-use stdClass;
 
 /**
  * Ticket model.
@@ -41,6 +40,14 @@ class TicketModel extends ItemModel
      * @since 4.0.0
      **/
     private string $dbtable = "#__jed_tickets";
+
+    /**
+     * The item object
+     *
+     * @var   mixed
+     * @since 4.0.0
+     */
+    private mixed $item;
 
     /**
      * Method to check in an item.
@@ -122,8 +129,9 @@ class TicketModel extends ItemModel
      * @since 4.0.0
      * @throws Exception
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null): mixed
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         if ($this->item === null) {
@@ -147,9 +155,15 @@ class TicketModel extends ItemModel
                         }
                     }
 
-                    // Convert the Table to a clean CMSObject.
-                    $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
+
+                    // Convert the Table to a clean stdClass.
+                    $properties = get_object_vars($table);
+                    $item       = ArrayHelper::toObject($properties);
+
+                    if (property_exists($item, 'params')) {
+                        $registry     = new Registry($item->params);
+                        $item->params = $registry->toArray();
+                    }
                 } else {
                     $app->enqueueMessage("Sorry you did not create that item", "message");
 
@@ -293,39 +307,6 @@ class TicketModel extends ItemModel
         return $this->item;
     }
 
-    /**
-     * Get the id of an item by alias
-     *
-     * @param string $alias Item alias
-     *
-     * @return mixed
-     *
-     * @since 4.0.0
-     * @throws Exception
-     */
-    public function getItemIdByAlias(string $alias)
-    {
-        $table      = $this->getTable();
-        $properties = $table->getProperties();
-        $result     = null;
-        $aliasKey   = null;
-
-        $aliasKey = JedHelper::getAliasFieldNameByView('ticket');
-
-
-        if (key_exists('alias', $properties)) {
-            $table->load(['alias' => $alias]);
-            $result = $table->id;
-        } elseif (isset($aliasKey) && key_exists($aliasKey, $properties)) {
-            $table->load([$aliasKey => $alias]);
-            $result = $table->id;
-        }
-        if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
-            return $result;
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-        }
-    }
 
     /**
      * Get an instance of Table class
@@ -339,7 +320,7 @@ class TicketModel extends ItemModel
      * @since 4.0.0
      * @throws Exception
      */
-    public function getTable($name = 'Ticket', $prefix = 'Administrator', $options = [])
+    public function getTable($name = 'Ticket', $prefix = 'Administrator', $options = []): Table|bool
     {
         return parent::getTable($name, $prefix, $options);
     }
@@ -433,10 +414,14 @@ class TicketModel extends ItemModel
         }
     }
 
+
     /**
-     * TODO: Add description.
-     * @return mixed TODO
-      * @since 4.0.0
+     * getMessages
+     *
+     * Returns the messages for the ticket
+     *
+     *
+     * @since  4.0
      */
     public function getMessages()
     {

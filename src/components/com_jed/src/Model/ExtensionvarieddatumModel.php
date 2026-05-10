@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -20,7 +20,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Model\FormModel;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
 use stdClass;
@@ -37,13 +36,13 @@ class ExtensionvarieddatumModel extends FormModel
      *
      * @since  4.0.0
      */
-    public $typeAlias = 'com_jed.extensionvarieddatum';
+    public string $typeAlias = 'com_jed.extensionvarieddatum';
     /**
      * @var    string  The prefix to use with controller messages.
      *
      * @since  4.0.0
      */
-    protected $text_prefix = 'COM_JED';
+    protected string $text_prefix = 'COM_JED';
     /**
      * @var    mixed  Item data
      *
@@ -139,8 +138,8 @@ class ExtensionvarieddatumModel extends FormModel
             $table      = $this->getTable();
             $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
-            if ($table !== false && $table->load($pk) && !empty($table->id)) {
-                $user = $user = $this->getCurrentUser();
+            if ($table->load($pk) && !empty($table->id)) {
+                $user = $this->getCurrentUser();
                 $pk   = $table->id;
                 if (empty($pk) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
@@ -160,7 +159,7 @@ class ExtensionvarieddatumModel extends FormModel
                         }
                     }
 
-                    // Convert the Table to a clean CMSObject.
+                    // Convert the Table to a clean stdClass.
                     $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
                     if (isset($this->item->catid) && is_object($this->item->catid)) {
@@ -216,18 +215,5 @@ class ExtensionvarieddatumModel extends FormModel
         }
 
         return $data;
-    }
-
-    /**
-     * Prepare and sanitise the table prior to saving.
-     *
-     * @param   Table  $table  Table Object
-     *
-     * @return  void
-     *
-     * @since 4.0.0
-     */
-    protected function prepareTable($table)
-    {
     }
 }

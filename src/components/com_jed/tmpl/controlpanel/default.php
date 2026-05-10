@@ -14,14 +14,10 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Site\Helper\JedHelper;
-use Jed\Component\Jed\Site\Helper\JedtrophyHelper;
 use Jed\Component\Jed\Site\View\Extension\HtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
 /**
  * @var HtmlView $this
@@ -29,11 +25,12 @@ use Joomla\CMS\Session\Session;
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
-HTMLHelper::_('formbehavior.chosen', 'select');
+
 $isLoggedIn  = JedHelper::isLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
 if (!$isLoggedIn) {
     try {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
         $app->enqueueMessage(Text::_('COM_JED_CONTROLPANEL_NO_ACCESS_LABEL'), 'success');
         $app->redirect($redirectURL);
@@ -52,7 +49,9 @@ if (!$isLoggedIn) {
     $canDelete  = $user->authorise('core.delete', 'com_jed');
 
     // Import CSS
-    $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
+    /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+    $wa->useStyle('com_jed.jazstyle');
 
     ?>
 
@@ -81,4 +80,3 @@ if (!$isLoggedIn) {
 
     echo HTMLHelper::_('uitab.endTabSet');
 }
-//echo LayoutHelper::render('extension.extension-single', $this->item)

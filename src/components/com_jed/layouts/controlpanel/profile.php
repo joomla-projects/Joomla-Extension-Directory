@@ -15,29 +15,27 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
-//var_dump($displayData);exit();
 /** @var Jed\Component\Jed\Site\View\Controlpanel\HtmlView $this */
-
+/**
+ * @var array $displayData
+ */
 HTMLHelper::_('bootstrap.tooltip', '.hasTooltip');
-
-
 
 /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useScript('keepalive')
    ->useScript('form.validate');
-
 ?>
 <div class="com-users-profile__edit profile-edit">
 
 
     <form id="member-profile" action="<?php echo Route::_('index.php?option=com_users'); ?>" method="post" class="com-users-profile__edit-form form-validate form-horizontal well" enctype="multipart/form-data">
-        <?php // Iterate through the form fieldsets and display each one.?>
+        <?php // Iterate through the form fieldsets and display each one. ?>
         <?php foreach ($displayData->getFieldsets() as $group => $fieldset) : ?>
             <?php $fields = $displayData->getFieldset($group); ?>
             <?php if (count($fields)) : ?>
                 <fieldset>
-                    <?php // If the fieldset has a label set, display it as the legend.?>
+                    <?php // If the fieldset has a label set, display it as the legend. ?>
                     <?php if (isset($fieldset->label)) : ?>
                         <legend>
                             <?php echo Text::_($fieldset->label); ?>
@@ -48,7 +46,7 @@ $wa->useScript('keepalive')
                             <?php echo $this->escape(Text::_($fieldset->description)); ?>
                         </p>
                     <?php endif; ?>
-                    <?php // Iterate through the fields in the set and display them.?>
+                    <?php // Iterate through the fields in the set and display them. ?>
                     <?php foreach ($fields as $field) : ?>
                         <?php echo $field->renderField(); ?>
                     <?php endforeach; ?>

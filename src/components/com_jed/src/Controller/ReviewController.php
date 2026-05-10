@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -37,6 +37,7 @@ class ReviewController extends BaseController
      */
     public function edit(): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Get the previous edit id (if any) and the current edit id.
@@ -71,11 +72,11 @@ class ReviewController extends BaseController
      * @since 4.0.0
      * @throws Exception
      * @throws Exception
-     * @throws Exception
      */
     public function publish(): void
     {
         // Initialise variables.
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Checking if the user can remove object

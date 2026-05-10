@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Reviews;
@@ -34,6 +34,8 @@ class HtmlView extends BaseHtmlView
 
     protected Registry $state;
 
+    protected Registry $params;
+
 
     /**
      * Display the view
@@ -48,19 +50,15 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
-        $app = Factory::getApplication();
+        $app  = Factory::getApplication();
+        $model = $this->getModel();
 
-        $this->state         = $this->get('State');
-        $this->items         = $this->get('Items');
-        $this->pagination    = $this->get('Pagination');
-        $this->params        = $app->getParams('com_jed');
-        $this->filterForm    = $this->get('FilterForm');
-        $this->activeFilters = $this->get('ActiveFilters');
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
-        }
+        $this->state      = $model->getState();
+        $this->items       = $model->getItems();
+        $this->params     = $app->getParams('com_jed');
+        $this->pagination    = $model->getPagination();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
 
         $this->prepareDocument();
         parent::display($tpl);

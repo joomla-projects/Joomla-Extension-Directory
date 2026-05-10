@@ -5,8 +5,8 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Velabandonedreports;
@@ -74,7 +74,7 @@ class HtmlView extends BaseHtmlView
      * @var   Registry
      * @since 4.0.0
      */
-
+    protected Registry $params;
     /**
      * Prepares the document
      *
@@ -138,17 +138,15 @@ class HtmlView extends BaseHtmlView
     {
         $app = Factory::getApplication();
 
-        $this->state         = $this->get('State');
-        $this->items         = $this->get('Items');
-        $this->pagination    = $this->get('Pagination');
-        $this->params        = $app->getParams('com_jed');
-        $this->filterForm    = $this->get('FilterForm');
-        $this->activeFilters = $this->get('ActiveFilters');
+        $model = $this->getModel();
+        $this->state      = $model->getState();
+        $this->items      = $model->getItems();
+        $this->params     = $app->getParams('com_jed');
+        $this->pagination    = $model->getPagination();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
 
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
-        }
+
 
         $this->prepareDocument();
         parent::display($tpl);

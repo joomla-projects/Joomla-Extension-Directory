@@ -5,8 +5,8 @@
  *
  * @subpackage TICKETS
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -24,7 +24,7 @@ use Joomla\CMS\Uri\Uri;
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
-HTMLHelper::_('formbehavior.chosen', 'select');
+
 
 $user        = $this->getCurrentUser();
 $userId      = $user->id;
@@ -42,6 +42,7 @@ $canEdit   = $isLoggedIn;
 //$wa->useStyle('com_jed.list');
 if (!$isLoggedIn) {
     try {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
     } catch (Exception $e) {
         throw new Exception($e->getMessage(), $e->getCode());

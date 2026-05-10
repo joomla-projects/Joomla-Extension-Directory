@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -23,7 +23,6 @@ use Jed\Component\Jed\Site\Helper\JedscoreHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ItemModel;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
@@ -39,11 +38,11 @@ class ExtensionModel extends ItemModel
 {
     use ExtensionUtilities;
 
-    public const UPDATE_STATUS_OLD = 1;
+    public const int UPDATE_STATUS_OLD = 1;
 
-    public const UPDATE_STATUS_RECENTLY = 2;
+    public const int UPDATE_STATUS_RECENTLY = 2;
 
-    public const UPDATE_STATUS_WARNING = 3;
+    public const int UPDATE_STATUS_WARNING = 3;
 
     /**
      * Interval during which an extension is considered new: 2 weeks
@@ -75,6 +74,13 @@ class ExtensionModel extends ItemModel
      * @since 4.0.0
      **/
     private string $dbtable = "#__jed_extensions";
+
+    /**
+     * @var    mixed  Item data
+     *
+     * @since  4.0.0
+     */
+    protected mixed $item = null;
 
     /**
      * Method to check in an item.
@@ -174,7 +180,7 @@ class ExtensionModel extends ItemModel
                     throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 403);
                 }
 
-                // Convert the Table to a clean CMSObject.
+                // Convert the Table to a clean stdClass.
                 $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
             }
 
@@ -258,43 +264,7 @@ class ExtensionModel extends ItemModel
         return $this->item;
     }
 
-    /**
-     * Get the id of an item by alias
-     *
-     * @param string $alias Item alias
-     *
-     * @return mixed
-     * @since 4.0.0
-     * @throws Exception
-     */
-    public function getItemIdByAlias(string $alias)
-    {
-        $table      = $this->getTable();
-        $properties = $table->getProperties();
-        $result     = null;
-        $aliasKey   = null;
-
-        $aliasKey = JedHelper::getAliasFieldNameByView('extension');
-
-        if (key_exists('alias', $properties)) {
-            $table->load(['alias' => $alias]);
-            $result = $table->id;
-        } elseif (isset($aliasKey) && key_exists($aliasKey, $properties)) {
-            $table->load([$aliasKey => $alias]);
-            $result = $table->id;
-        }
-
-        if (
-            empty($result) || JedHelper::isAdminOrSuperUser()
-            || $table->get('created_by') == Factory::getApplication()->getIdentity()->id
-        ) {
-            return $result;
-        }
-
-        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-    }
-
-    /**
+     /**
      * Gets array of all reviews for extension
      *
      * @param int $extension_id
@@ -339,6 +309,7 @@ class ExtensionModel extends ItemModel
      */
     public function getScores(int $extension_id): array
     {
+        $retval = null;
         $db    = $this->getDatabase();
         $query = $db->getQuery(true)
             ->select('*')
@@ -392,7 +363,7 @@ class ExtensionModel extends ItemModel
             ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
             ->where(
                 [
-                $db->quoteName('extension_id') . ' = ' . (int)$extension_id,
+                $db->quoteName('extension_id') . ' = ' . $extension_id,
                 ]
             );
 
@@ -475,6 +446,7 @@ class ExtensionModel extends ItemModel
      *
      * @return stdClass
      * @since 4.0.0
+     * @throws Exception
      */
     public function noExtensionFoundMsg(): stdClass
     {
@@ -619,6 +591,7 @@ class ExtensionModel extends ItemModel
      */
     public function getVariedData(int $extension_id, int $supply_option_type = null): array
     {
+        $retval = null;
         $db    = $this->getDatabase();
         $query = $db->getQuery(true)
                     ->select('supply_options.title AS supply_type, a.*')

@@ -5,8 +5,8 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -124,7 +124,7 @@ class VelabandonedreportformModel extends FormModel
                         }
                     }
 
-                    // Convert the Table to a clean CMSObject.
+                    // Convert the Table to a clean stdClass.
                     $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
@@ -271,6 +271,7 @@ class VelabandonedreportformModel extends FormModel
      */
     protected function populateState(): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Load state from the request userState on edit or from the passed variable on default

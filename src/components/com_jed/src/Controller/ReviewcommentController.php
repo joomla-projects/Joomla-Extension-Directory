@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -37,6 +37,7 @@ class ReviewcommentController extends BaseController
      */
     public function edit(): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Get the previous edit id (if any) and the current edit id.
@@ -74,6 +75,7 @@ class ReviewcommentController extends BaseController
     public function publish(): void
     {
         // Initialise variables.
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Checking if the user can remove object
@@ -116,44 +118,7 @@ class ReviewcommentController extends BaseController
         }
     }
 
-    /**
-     * Check in record
-     *
-     * @return bool  True on success
-     *
-     * @since 4.0.0
-     * @throws Exception
-     */
-    public function checkin()
-    {
-        // Check for request forgeries.
-        $this->checkToken('GET');
 
-        $id        = $this->input->post->get('id', 'int', 0);
-        $model     = $this->getModel();
-        $item      = $model->getItem($id);
-
-        // Checking if the user can remove object
-        $user = Factory::getApplication()->getIdentity();
-
-        if ($user->authorise('core.manage', 'com_jed') || $item->checked_out == Factory::getApplication()->getIdentity()->id) {
-            $return = $model->checkin($id);
-
-            if ($return === false) {
-                // Checkin failed.
-                $message = Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError());
-                $this->setRedirect(Route::_('index.php?option=com_jed&view=reviewcomment' . '&id=' . $id, false), $message, 'error');
-                return false;
-            } else {
-                // Checkin succeeded.
-                $message = Text::_('COM_JED_CHECKEDIN_SUCCESSFULLY');
-                $this->setRedirect(Route::_('index.php?option=com_jed&view=reviewcomment' . '&id=' . $id, false), $message);
-                return true;
-            }
-        } else {
-            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-        }
-    }
 
     /**
      * Remove data
@@ -164,9 +129,10 @@ class ReviewcommentController extends BaseController
      *
      * @since 4.0.0
      */
-    public function remove()
+    public function remove(): void
     {
         // Initialise variables.
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Checking if the user can remove object

@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Reviewcommentform;
@@ -34,6 +34,8 @@ class HtmlView extends BaseHtmlView
 
     protected mixed $form;
 
+    protected Registry $params;
+
 
     protected bool $canSave;
 
@@ -52,16 +54,14 @@ class HtmlView extends BaseHtmlView
     {
         $app  = Factory::getApplication();
 
-        $this->state      = $this->get('State');
-        $this->item       = $this->get('Item');
+        $model = $this->getModel();
+        $this->state      = $model->getState();
+        $this->item       = $model->getItem();
         $this->params     = $app->getParams('com_jed');
         $this->canSave    = JedHelper::canSave();
-        $this->form       = $this->get('Form');
+        $this->form       = $model->getForm();
 
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
-        }
+
 
 
 

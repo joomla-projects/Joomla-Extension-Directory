@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Reviewscomments;
@@ -34,13 +34,14 @@ class HtmlView extends BaseHtmlView
 
     protected Registry $state;
 
+    protected Registry $params;
+
 
     /**
      * Prepares the document
      *
      * @return void
      *
-     * @throws Exception
      * @throws Exception
       * @since 4.0.0
      */
@@ -108,16 +109,13 @@ class HtmlView extends BaseHtmlView
     {
         $app = Factory::getApplication();
 
-        $this->state      = $this->get('State');
-        $this->items      = $this->get('Items');
-        $this->pagination = $this->get('Pagination');
+        $model = $this->getModel();
+        $this->state      = $model->getState();
+        $this->item       = $model->getItems();
         $this->params     = $app->getParams('com_jed');
+        $this->form       = $model->getForm();
+        $this->pagination = $model->getPagination();
 
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
-        }
 
         $this->prepareDocument();
         parent::display($tpl);

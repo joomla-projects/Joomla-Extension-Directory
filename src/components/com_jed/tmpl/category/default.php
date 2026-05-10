@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -12,10 +12,8 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
@@ -24,12 +22,12 @@ use Joomla\CMS\Router\Route;
  *
  * @var \Jed\Component\Jed\Site\View\Category\HtmlView $this
 */
-$wa = $this->document->getWebAssetManager();
-//$wa->useStyle('com_jed.newjed')
-//    ->useScript('form.validate');
+
+//    $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->enableAsset('choicesjs'); ;
+
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
-HTMLHelper::_('formbehavior.chosen', 'select');
+//HTMLHelper::_('webcomponent', 'system/webcomponents/joomla-field-fancy-select.min.js', ['version' => 'auto', 'relative' => true]);
 
 $user       = $this->getCurrentUser();
 $userId     = $user->id;
@@ -42,8 +40,8 @@ $canChange  = $user->authorise('core.edit.state', 'com_jed');
 $canDelete  = $user->authorise('core.delete', 'com_jed');
 
 // Import CSS
-
-$wa = $this->getDocument()->getWebAssetManager();
+/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.jazstyle');
 
 ?>

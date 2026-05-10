@@ -57,10 +57,11 @@ class HtmlView extends BaseHtmlView
     /**
      * The components parameters
      *
-     * @var object
+     * @var Registry
      *
      * @since 4.0.0
      */
+    protected Registry $params;
     /**
      * Does user have permission to save form
      *
@@ -85,48 +86,37 @@ class HtmlView extends BaseHtmlView
 
         // Because the application sets a default page title,
         // we need to get it from the menu item itself
-        /*  $menu = $menus->getActive();
+          $menu = $menus->getActive();
 
-            if ($menu)
-            {
-                $this->params->def('page_heading', $this->params->get('page_title', $menu->title));
-            }
-            else
-            {
-                $this->params->def('page_heading', Text::_('COM_JED_DEFAULT_PAGE_TITLE'));
-            }
+        if ($menu) {
+            $this->params->def('page_heading', $this->params->get('page_title', $menu->title));
+        } else {
+            $this->params->def('page_heading', Text::_('COM_JED_DEFAULT_PAGE_TITLE'));
+        }
 
             $title = $this->params->get('page_title', '');
 
-            if (empty($title))
-            {
-                $title = $app->get('sitename');
-            }
-            elseif ($app->get('sitename_pagetitles', 0) == 1)
-            {
-                $title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
-            }
-            elseif ($app->get('sitename_pagetitles', 0) == 2)
-            {
-                $title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
-            }
+        if (empty($title)) {
+            $title = $app->get('sitename');
+        } elseif ($app->get('sitename_pagetitles', 0) == 1) {
+            $title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
+        } elseif ($app->get('sitename_pagetitles', 0) == 2) {
+            $title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
+        }
 
             $this->getDocument()->setTitle($title);
 
-            if ($this->params->get('menu-meta_description'))
-            {
-                $this->getDocument()->setDescription($this->params->get('menu-meta_description'));
-            }
+        if ($this->params->get('menu-meta_description')) {
+            $this->getDocument()->setDescription($this->params->get('menu-meta_description'));
+        }
 
-            if ($this->params->get('menu-meta_keywords'))
-            {
-                $this->getDocument()->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
-            }
+        if ($this->params->get('menu-meta_keywords')) {
+            $this->getDocument()->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
+        }
 
-            if ($this->params->get('robots'))
-            {
-                $this->getDocument()->setMetadata('robots', $this->params->get('robots'));
-            }*/
+        if ($this->params->get('robots')) {
+            $this->getDocument()->setMetadata('robots', $this->params->get('robots'));
+        }
     }
 
     /**
@@ -144,12 +134,13 @@ class HtmlView extends BaseHtmlView
     {
         $app = Factory::getApplication();
 
-        $this->state = $this->get('State');
-        $this->item  = $this->get('Item');
+        $model = $this->getModel();
+        $this->state      = $model->getState();
+        $this->item       = $model->getItem();
+        $this->params     = $app->getParams('com_jed');
+        $this->canSave    = JedHelper::canSave();
+        $this->form       = $model->getForm();
 
-        $this->params  = $app->getParams('com_jed');
-        $this->canSave = JedHelper::canSave();
-        $this->form    = $this->get('Form');
         $input         = $app->input;
         $linked_id     = $input->get('lid', -1, 'int');
         $linked_item   = $input->get('litem', -1, 'int');
@@ -160,6 +151,7 @@ class HtmlView extends BaseHtmlView
             $this->item->linked_item_type = $linked_item;
             $this->item->linked_item_id   = $linked_id;
             $this->item->vr               = $vr;
+            $ticket_type = "Unknwon";
             if ($linked_item == 2) {
                 $ticket_type = "Extension";
             }
@@ -172,10 +164,7 @@ class HtmlView extends BaseHtmlView
         }
 
 
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
-        }
+
 
 
         $this->prepareDocument();

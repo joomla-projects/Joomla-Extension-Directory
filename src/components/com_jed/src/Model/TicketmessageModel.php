@@ -5,8 +5,8 @@
  *
  * @subpackage TICKETS
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -24,7 +24,6 @@ use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
-use stdClass;
 
 /**
  * Ticket Message model.
@@ -98,7 +97,7 @@ class TicketmessageModel extends ItemModel
      */
     public function getItem($pk = null): mixed
     {
-        $app = Factory::getApplication();
+
         if ($this->item === null) {
             $this->item = false;
 
@@ -122,9 +121,15 @@ class TicketmessageModel extends ItemModel
                         }
                     }
 
-                    // Convert the Table to a clean CMSObject.
-                    $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
+                    // Convert the Table to a clean stdClass.
+                    // Convert the Table to a clean stdClass.
+                    $properties = get_object_vars($table);
+                    $item       = ArrayHelper::toObject($properties);
+
+                    if (property_exists($item, 'params')) {
+                        $registry     = new Registry($item->params);
+                        $item->params = $registry->toArray();
+                    }
                 } else {
                     throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
                 }
@@ -144,7 +149,7 @@ class TicketmessageModel extends ItemModel
             $this->item->modified_by_name = JedHelper::getUserById($this->item->modified_by)->name;
         }
 
-        if (isset($this->item->ticket_id) && $this->item->ticket_id != '') {
+      /*  if (isset($this->item->ticket_id) && $this->item->ticket_id != '') {
             if (is_object($this->item->ticket_id)) {
                 $this->item->ticket_id = ArrayHelper::fromObject($this->item->ticket_id);
             }
@@ -174,42 +179,9 @@ class TicketmessageModel extends ItemModel
             }
 
             $this->item->ticket_id = !empty($textValue) ? implode(', ', $textValue) : $this->item->ticket_id;
-        }
+        }*/
 
         return $this->item;
-    }
-
-    /**
-     * Get the id of an item by alias
-     *
-     * @param string $alias Item alias
-     *
-     * @return mixed
-     * @since 4.0.0
-     * @throws Exception
-     */
-    public function getItemIdByAlias(string $alias)
-    {
-        $table      = $this->getTable();
-        $properties = $table->getProperties();
-        $result     = null;
-        $aliasKey   = null;
-
-        $aliasKey = JedHelper::getAliasFieldNameByView('ticketmessage');
-
-
-        if (key_exists('alias', $properties)) {
-            $table->load(['alias' => $alias]);
-            $result = $table->id;
-        } elseif (isset($aliasKey) && key_exists($aliasKey, $properties)) {
-            $table->load([$aliasKey => $alias]);
-            $result = $table->id;
-        }
-        if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
-            return $result;
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-        }
     }
 
     /**
@@ -224,7 +196,7 @@ class TicketmessageModel extends ItemModel
      * @since 4.0.0
      * @throws Exception
      */
-    public function getTable($name = 'Ticketmessage', $prefix = 'Administrator', $options = [])
+    public function getTable($name = 'Ticketmessage', $prefix = 'Administrator', $options = []): Table|bool
     {
         return parent::getTable($name, $prefix, $options);
     }

@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -22,7 +22,6 @@ use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\MVC\Model\FormModel;
-use Joomla\Registry\Registry;
 use stdClass;
 
 /**
@@ -35,56 +34,7 @@ class ReviewcommentformModel extends FormModel
     private $item = null;
 
 
-    /**
-     * Checks whether or not a user is manager or super user
-     *
-     * @return bool
-     *
-     * @since 4.0.0
-     */
-    public function isAdminOrSuperUser()
-    {
-        try {
-            $user = Factory::getApplication()->getIdentity();
-            return in_array("8", $user->groups) || in_array("7", $user->groups);
-        } catch (Exception $exc) {
-            return false;
-        }
-    }
 
-
-    /**
-     * This method revises if the $id of the item belongs to the current user
-     *
-     * @param  int $id The id of the item
-     * @return bool             true if the user is the owner of the row, false if not.
-     *
-     * @since 4.0.0
-     */
-    public function userIDItem($id)
-    {
-        try {
-            $user  = $this->getCurrentUser();
-            $db    = $this->getDatabase();
-
-            $query = $db->getQuery(true);
-            $query->select("id")
-                ->from($db->quoteName('#__jed_reviews_comments'))
-                ->where("id = " . $db->escape($id))
-                ->where("created_by = " . $user->id);
-
-            $db->setQuery($query);
-
-            $results = $db->loadObject();
-            if ($results) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (Exception $exc) {
-            return false;
-        }
-    }
 
     /**
      * Method to autopopulate the model state.
@@ -99,14 +49,14 @@ class ReviewcommentformModel extends FormModel
      */
     protected function populateState(): void
     {
-        $app = Factory::getApplication('com_jed');
+        $app = Factory::getApplication();
 
         // Load state from the request userState on edit or from the passed variable on default
-        if (Factory::getApplication()->input->get('layout') == 'edit') {
-            $id = Factory::getApplication()->getUserState('com_jed.edit.reviewcomment.id');
+        if ($app->input->get('layout') == 'edit') {
+            $id = $app->getUserState('com_jed.edit.reviewcomment.id');
         } else {
-            $id = Factory::getApplication()->input->get('id');
-            Factory::getApplication()->setUserState('com_jed.edit.reviewcomment.id', $id);
+            $id = $app->input->get('id');
+            $app->setUserState('com_jed.edit.reviewcomment.id', $id);
         }
 
         $this->setState('reviewcomment.id', $id);
@@ -127,13 +77,13 @@ class ReviewcommentformModel extends FormModel
      *
      * @param int $id The id of the object to get.
      *
-     * @return Object|bool Object on success, false on failure.
+     * @return Object Object on success, false on failure.
      *
      * @throws Exception
      *
      * @since 4.0.0
      */
-    public function getItem($id = null)
+    public function getItem(int $id = null)
     {
         if ($this->item === null) {
             $this->item = false;
@@ -150,7 +100,7 @@ class ReviewcommentformModel extends FormModel
             if ($table !== false && $table->load($id) && !empty($table->id)) {
                 $user = Factory::getApplication()->getIdentity();
                 $id   = $table->id;
-                if (empty($id) || $this->isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
+                if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 
                     if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
@@ -168,9 +118,15 @@ class ReviewcommentformModel extends FormModel
                         }
                     }
 
-                    // Convert the Table to a clean CMSObject.
-                    $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
+                    // Convert the Table to a clean stdClass.
+                    // Convert the Table to a clean stdClass.
+                    $properties = get_object_vars($table);
+                    $item       = ArrayHelper::toObject($properties);
+
+                    if (property_exists($item, 'params')) {
+                        $registry     = new Registry($item->params);
+                        $item->params = $registry->toArray();
+                    }
 
                     if (isset($this->item->primary_category_id) && is_object($this->item->primary_category_id)) {
                         $this->item->primary_category_id = ArrayHelper::fromObject($this->item->primary_category_id);
@@ -187,45 +143,17 @@ class ReviewcommentformModel extends FormModel
     /**
      * Method to get the table
      *
-     * @param string $type   Name of the Table class
+     * @param string $name   Name of the Table class
      * @param string $prefix Optional prefix for the table class name
-     * @param array  $config Optional configuration array for Table object
+     * @param array  $options Optional configuration array for Table object
      *
      * @return Table|bool Table if found, bool false on failure
      * @throws Exception
      * @since 4.0.0
      */
-    public function getTable($type = 'Reviewcomment', $prefix = 'Administrator', $config = [])
+    public function getTable($name = 'Reviewcomment', $prefix = 'Administrator', $options = [])
     {
-        return parent::getTable($type, $prefix, $config);
-    }
-
-    /**
-     * Get an item by alias
-     *
-     * @param string $alias Alias string
-     *
-     * @return int Element id
-     * @throws Exception
-     * @since 4.0.0
-     */
-    public function getItemIdByAlias($alias)
-    {
-        $table      = $this->getTable();
-        $properties = $table->getProperties();
-
-        if (!in_array('alias', $properties)) {
-            return null;
-        }
-
-        $table->load(['alias' => $alias]);
-        $id = $table->id;
-
-        if (empty($id) || $this->isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
-            return $id;
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-        }
+        return parent::getTable($name, $prefix, $options);
     }
 
     /**
@@ -238,18 +166,18 @@ class ReviewcommentformModel extends FormModel
      * @since 4.0.0
      * @throws Exception
      */
-    public function checkin($id = null)
+    public function checkin($pk = null)
     {
         // Get the id.
-        $id = (!empty($id)) ? $id : (int) $this->getState('reviewcomment.id');
-        if (!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-            if ($id) {
+        $pk = (!empty($pk)) ? $pk : (int) $this->getState('reviewcomment.id');
+        if (!$pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
+            if ($pk) {
                 // Initialise the table
                 $table = $this->getTable();
 
                 // Attempt to check the row in.
                 if (method_exists($table, 'checkin')) {
-                    if (!$table->checkin($id)) {
+                    if (!$table->checkin($pk)) {
                         return false;
                     }
                 }
@@ -271,12 +199,12 @@ class ReviewcommentformModel extends FormModel
      * @since 4.0.0
      * @throws Exception
      */
-    public function checkout($id = null)
+    public function checkout($pk = null)
     {
         // Get the user id.
-        $id = (!empty($id)) ? $id : (int) $this->getState('reviewcomment.id');
-        if (!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-            if ($id) {
+        $pk = (!empty($pk)) ? $pk : (int) $this->getState('reviewcomment.id');
+        if (!$pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
+            if ($pk) {
                 // Initialise the table
                 $table = $this->getTable();
 
@@ -285,7 +213,7 @@ class ReviewcommentformModel extends FormModel
 
                 // Attempt to check the row out.
                 if (method_exists($table, 'checkout')) {
-                    if (!$table->checkout($user->id, $id)) {
+                    if (!$table->checkout($user->id, $pk)) {
                         return false;
                     }
                 }
@@ -321,10 +249,6 @@ class ReviewcommentformModel extends FormModel
                         'load_data' => $loadData,
                 ]
         );
-
-        if (empty($form)) {
-            return false;
-        }
 
         return $form;
     }

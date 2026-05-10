@@ -5,8 +5,8 @@
  *
  * @subpackage TICKETS
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -38,6 +38,7 @@ class TicketmessageformController extends FormController
      */
     public function cancel($key = null): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Get the current edit id.
@@ -68,6 +69,7 @@ class TicketmessageformController extends FormController
      */
     public function edit($key = null, $urlVar = null): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Get the previous edit id (if any) and the current edit id.

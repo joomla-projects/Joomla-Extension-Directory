@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Category;
@@ -40,6 +40,8 @@ class HtmlView extends CategoryView
     public function display($tpl = null): void
     {
 
+        /* @var $model \Jed\Component\Jed\Site\Model\CategoryModel */
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
 
         $app   = Factory::getApplication();
         $model = $this->getModel();
@@ -56,12 +58,6 @@ class HtmlView extends CategoryView
 
         $this->params     = $app->getParams();
 
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
-        }
-
         $this->prepareDocument();
         parent::display($tpl);
     }
@@ -77,6 +73,9 @@ class HtmlView extends CategoryView
      */
     protected function prepareDocument(): void
     {
+
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
+
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
 
@@ -125,7 +124,7 @@ class HtmlView extends CategoryView
     }
 
     /**
-     * Check if state is set
+     * Check if the state is set
      *
      * @param mixed $state State
      *

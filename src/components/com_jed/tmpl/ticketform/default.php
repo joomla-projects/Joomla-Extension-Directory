@@ -40,6 +40,7 @@ echo LayoutHelper::render('ticket.new_ticket_header', $this->item);
 
 if (!$isLoggedIn) {
     try {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
     } catch (Exception $e) {
     }

@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Extensions;
@@ -34,6 +34,7 @@ class HtmlView extends BaseHtmlView
 
     protected Registry $state;
 
+    protected Registry $params;
 
     /**
      * Display the view
@@ -48,17 +49,14 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
+
         $app = Factory::getApplication();
 
-        $this->state      = $this->get('State');
-        $this->items      = $this->get('Items');
-        $this->pagination = $this->get('Pagination');
+        $model = $this->getModel();
+        $this->state      = $model->getState();
+        $this->items       = $model->getItems();
         $this->params     = $app->getParams('com_jed');
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
-        }
+        $this->pagination    = $model->getPagination();
 
         $this->prepareDocument();
         parent::display($tpl);

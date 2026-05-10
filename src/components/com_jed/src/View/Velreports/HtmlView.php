@@ -5,8 +5,8 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Velreports;
@@ -72,7 +72,7 @@ class HtmlView extends BaseHtmlView
      * @var   Registry
      * @since 4.0.0
      */
-
+    protected Registry $params;
     /**
      * Prepares the document
      *
@@ -133,7 +133,7 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
-        $app   = Factory::getApplication();
+        $app  = Factory::getApplication();
         $model = $this->getModel();
 
         // Get data from the model.
@@ -142,13 +142,10 @@ class HtmlView extends BaseHtmlView
         $this->filterForm    = $model->getFilterForm();
         $this->activeFilters = $model->getActiveFilters();
         $this->state         = $model->getState();
+        $this->params = $app->getParams('com_jed');
 
 
 
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
-        }
 
         $this->prepareDocument();
         parent::display($tpl);

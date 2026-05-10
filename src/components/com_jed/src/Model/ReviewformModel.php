@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -21,7 +21,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\FormModel;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
 use stdClass;
@@ -101,7 +100,7 @@ class ReviewformModel extends FormModel
      * @since 4.0.0
      * @throws Exception
      */
-    public function getTable($name = 'Review', $prefix = 'Administrator', $options = [])
+    public function getTable($name = 'Review', $prefix = 'Administrator', $options = []): Table|bool
     {
 
         return parent::getTable($name, $prefix, $options);
@@ -110,11 +109,11 @@ class ReviewformModel extends FormModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return array  The default data is an empty array.
+     * @return object|bool|array The default data is an empty array.
      * @since 4.0.0
      * @throws Exception
      */
-    protected function loadFormData()
+    protected function loadFormData(): object|bool|array
     {
         $data = Factory::getApplication()->getUserState('com_jed.edit.review.data', []);
 
@@ -142,6 +141,7 @@ class ReviewformModel extends FormModel
      */
     protected function populateState(): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Load state from the request userState on edit or from the passed variable on default
@@ -192,7 +192,7 @@ class ReviewformModel extends FormModel
                 $user = Factory::getApplication()->getIdentity();
                 $id   = $table->id;
                 if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
-                    // Convert the Table to a clean CMSObject.
+                    // Convert the Table to a clean stdClass.
                     $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
@@ -321,8 +321,8 @@ class ReviewformModel extends FormModel
                     $ticket_message['subject']           = $message_out->subject;
                     $ticket_message['message']           = $message_out->template;
                     $ticket_message['message_direction'] = 0; /* 1 for coming in, 0 for going out */
-                    $ticket['created_by']                = -1;
-                    $ticket['modified_by']               = -1;
+                    $ticket_message['created_by']                = -1;
+                    $ticket_message['modified_by']               = -1;
                     $ticket_message_model->save($ticket_message);
                 }
 

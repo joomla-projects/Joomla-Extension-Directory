@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -20,7 +20,7 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
-HTMLHelper::_('formbehavior.chosen', 'select');
+
 
 $user       = $this->getCurrentUser();
 $userId     = $user->id;
@@ -33,8 +33,8 @@ $canChange  = $user->authorise('core.edit.state', 'com_jed');
 $canDelete  = $user->authorise('core.delete', 'com_jed');
 
 // Import CSS
-
-$wa = $this->getDocument()->getWebAssetManager();
+/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.jazstyle');
 ?>
 
@@ -264,12 +264,13 @@ $wa->useStyle('com_jed.jazstyle');
              * @return mixed TODO
               * @since 4.0.0
              */
-            function deleteItem() {
+function deleteItem()
+{
 
-                if (!confirm(\"" . Text::_('COM_JED_DELETE_MESSAGE') . "\")) {
+    if (!confirm(\"" . Text::_('COM_JED_DELETE_MESSAGE') . "\")) {
                     return false;
                 }
             }
         ", [], [], ["jquery"]);
-    }
-*/ ?>
+}
+*  / ?>

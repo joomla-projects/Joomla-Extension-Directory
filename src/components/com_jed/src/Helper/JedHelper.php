@@ -18,7 +18,6 @@ use Exception;
 use Jed\Component\Jed\Site\MediaHandling\ImageSize;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-use Joomla\Filesystem\File;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Uri\Uri;
@@ -453,11 +452,15 @@ class JedHelper
      * @return bool
      *
      * @since 4.0.0
-     * @throws Exception
      */
     public static function isLoggedIn(): bool
     {
-        $user = Factory::getApplication()->getIdentity();
+        try {
+            $user = Factory::getApplication()->getIdentity();
+        } catch (Exception) {
+            return false;
+        }
+
         if ($user->id > 0) {
             return true;
         } else {
@@ -477,7 +480,7 @@ class JedHelper
      */
     public static function canUserEdit(mixed $item): bool
     {
-        $permission = true;
+        $permission = false;
         $user       = Factory::getApplication()->getIdentity();
 
         if ($user->authorise('core.edit', 'com_jed')) {
@@ -758,7 +761,7 @@ class JedHelper
                     // Split into two columns
                     echo '<div class="row"><div class="col-md-6">';
                     if (in_array($field[0], $hiddenFields)) {
-                        if(!$validate) {
+                        if (!$validate) {
                             $form->setFieldAttribute($field[0], 'required', 'false');
                             $form->setFieldAttribute($field[0], 'validate', '');
                         }
@@ -768,7 +771,7 @@ class JedHelper
                     echo $form->renderField($field[0], null, null, ['class' => 'control-wrapper-' . $field[0]]);
                     echo '</div>';
                     echo '<div class="col-md-6">';
-                    if(!$validate) {
+                    if (!$validate) {
                         $form->setFieldAttribute($field[1], 'required', 'false');
                         $form->setFieldAttribute($field[1], 'validate', '');
                     }
@@ -782,7 +785,7 @@ class JedHelper
                 if (in_array($field, $hiddenFields)) {
                     $form->setFieldAttribute($field, 'type', 'hidden');
                 }
-                if(!$validate) {
+                if (!$validate) {
                     $form->setFieldAttribute($field, 'required', 'false');
                     $form->setFieldAttribute($field, 'validate', '');
                 }
@@ -830,7 +833,7 @@ class JedHelper
             $d = new DateTime($datestr);
 
             return $d->format("d M y H:i");
-        } catch (Exception $e) {
+        } catch (Exception) {
             return 'Sorry an error occured';
         }
     }
@@ -849,7 +852,7 @@ class JedHelper
             $d = new DateTime($datestr);
 
             return $d->format("d M y");
-        } catch (Exception $e) {
+        } catch (Exception) {
             return 'Sorry an error occured';
         }
     }

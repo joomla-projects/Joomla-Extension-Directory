@@ -5,8 +5,8 @@
  *
  * @subpackage TICKETS
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -97,6 +97,7 @@ class TicketsModel extends ListModel
      * @return object  A \JDatabaseQuery object to retrieve the data set.
      *
      * @since 4.0.0
+     * @throws Exception
      */
     protected function getListQuery(): object
     {
@@ -165,14 +166,14 @@ class TicketsModel extends ListModel
         // Filtering ticket_origin
         $filter_ticket_origin = $this->state->get("filter.ticket_origin");
 
-        if ($filter_ticket_origin !== null && (is_numeric($filter_ticket_origin) || !empty($filter_ticket_origin))) {
+        if ((is_numeric($filter_ticket_origin) || !empty($filter_ticket_origin))) {
             $query->where("a.`ticket_origin` = '" . $db->escape($filter_ticket_origin) . "'");
         }
 
         // Filtering ticket_category_type
         $filter_ticket_category_type = $this->state->get("filter.ticket_category_type");
 
-        if ($filter_ticket_category_type !== null && !empty($filter_ticket_category_type)) {
+        if (!empty($filter_ticket_category_type)) {
             $query->where("a.`ticket_category_type` = '" . $db->escape($filter_ticket_category_type) . "'");
         }
 
@@ -233,6 +234,7 @@ class TicketsModel extends ListModel
      */
     protected function populateState($ordering = null, $direction = null): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         $list = $app->getUserState($this->context . '.list');

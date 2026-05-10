@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Reviewform;
@@ -54,15 +54,10 @@ class HtmlView extends BaseHtmlView
      * @since 4.0.0
      */
     protected mixed $form;
-    /**
-     * The components parameters
-     *
-     * @var object
-     *
-     * @since 4.0.0
-     */
 
     protected bool $canSave;
+
+    protected Registry $params;
 
     protected mixed $extension_details;
 
@@ -80,26 +75,22 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
-        $this->state   = $this->get('State');
-        $this->item    = $this->get('Item');
-        $this->params  = $app->getParams('com_jed');
+        $model = $this->getModel();
+        $this->state      = $model->getState();
+        $this->item       = $model->getItem();
+        $this->params     = $app->getParams('com_jed');
         $this->canSave = JedHelper::canSave();
-        $this->form    = $this->get('Form');
+        $this->form       = $model->getForm();
 
         $input        = $app->input;
         $extension_id = $input->get('extension_id', -1, 'int');
-        //$extension_model         = BaseDatabaseModel::getInstance('Extension', 'JedModel', ['ignore_request' => true]);
+
         $extension_model         = new ExtensionModel();
         $this->extension_details = $extension_model->getItem($extension_id);
         $this->supplytypes       = $extension_model->getSupplyTypes($extension_id);
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
-        }
-
 
         $this->prepareDocument();
 

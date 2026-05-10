@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -23,7 +23,6 @@ use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
-use stdClass;
 
 /**
  * Jed model.
@@ -32,7 +31,7 @@ use stdClass;
  */
 class ReviewModel extends ItemModel
 {
-    public const PROCESSING_WINDOW = 30;
+    public const int PROCESSING_WINDOW = 30;
     /**
      * Log how the score is generated.
      *
@@ -82,7 +81,7 @@ class ReviewModel extends ItemModel
      *
      * @since 4.0.0
      */
-    protected ?array $score_fields = null;
+    protected array $score_fields;
     /**
      * Fields to score on
      *
@@ -98,7 +97,15 @@ class ReviewModel extends ItemModel
      *
      * @since 4.0.0
      */
-    protected $totalAll = null;
+    protected int $totalAll = 0;
+
+    /**
+     * The item object
+     *
+     * @var   object
+     * @since 4.0.0
+     */
+    public mixed $item;
 
     protected int $defaultLimit = 10;
 
@@ -115,14 +122,14 @@ class ReviewModel extends ItemModel
     /**
      * Method to check in an item.
      *
-     * @param int $id The id of the row to check out.
+     * @param   int|null  $id  The id of the row to check out.
      *
      * @return bool True on success, false on failure.
      *
      * @since 4.0.0
      * @throws Exception
      */
-    public function checkin($id = null): bool
+    public function checkin(int $id = null): bool
     {
         // Get the id.
         $id = (!empty($id)) ? $id : (int)$this->getState('review.id');
@@ -148,14 +155,14 @@ class ReviewModel extends ItemModel
     /**
      * Method to check out an item for editing.
      *
-     * @param int $id The id of the row to check out.
+     * @param   int|null  $id  The id of the row to check out.
      *
      * @return bool True on success, false on failure.
      *
      * @since 4.0.0
      * @throws Exception
      */
-    public function checkout($id = null): bool
+    public function checkout(int $id = null): bool
     {
         // Get the user id.
         $id = (!empty($id)) ? $id : (int)$this->getState('review.id');
@@ -212,7 +219,7 @@ class ReviewModel extends ItemModel
      * @since 4.0.0
      * @throws Exception
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null): mixed
     {
         if ($this->item === null) {
             $this->item = false;
@@ -234,9 +241,15 @@ class ReviewModel extends ItemModel
                         }
                     }
 
-                    // Convert the Table to a clean CMSObject.
-                    $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
+                    // Convert the Table to a clean stdClass.
+                    // Convert the Table to a clean stdClass.
+                    $properties = get_object_vars($table);
+                    $item       = ArrayHelper::toObject($properties);
+
+                    if (property_exists($item, 'params')) {
+                        $registry     = new Registry($item->params);
+                        $item->params = $registry->toArray();
+                    }
                 } else {
                     throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
                 }
@@ -248,7 +261,7 @@ class ReviewModel extends ItemModel
         }
 
 
-        if (isset($this->item->extension_id) && $this->item->extension_id != '') {
+       /* if (isset($this->item->extension_id) && $this->item->extension_id != '') {
             if (is_object($this->item->extension_id)) {
                 $this->item->extension_id = ArrayHelper::fromObject($this->item->extension_id);
             }
@@ -278,9 +291,9 @@ class ReviewModel extends ItemModel
             }
 
             $this->item->extension_id = !empty($textValue) ? implode(', ', $textValue) : $this->item->extension_id;
-        }
+        } */
 
-        if (isset($this->item->supply_option_id) && $this->item->supply_option_id != '') {
+       /* if (isset($this->item->supply_option_id) && $this->item->supply_option_id != '') {
             if (is_object($this->item->supply_option_id)) {
                 $this->item->supply_option_id = ArrayHelper::fromObject($this->item->supply_option_id);
             }
@@ -313,48 +326,15 @@ class ReviewModel extends ItemModel
                 ', ',
                 $textValue
             ) : $this->item->supply_option_id;
-        }
+        }*/
 
         if (isset($this->item->created_by)) {
-            $this->item->created_by_name = JedHelper::getUser($this->item->created_by)->name;
+            $this->item->created_by_name = JedHelper::getUserById($this->item->created_by)->name;
         }
 
         return $this->item;
     }
 
-    /**
-     * Get the id of an item by alias
-     *
-     * @param string $alias Item alias
-     *
-     * @return mixed
-     *
-     * @since 4.0.0
-     * @throws Exception
-     */
-    public function getItemIdByAlias(string $alias)
-    {
-        $table      = $this->getTable();
-        $properties = $table->getProperties();
-        $result     = null;
-        $aliasKey   = null;
-
-        $aliasKey = JedHelper::getAliasFieldNameByView('review');
-
-
-        if (key_exists('alias', $properties)) {
-            $table->load(['alias' => $alias]);
-            $result = $table->id;
-        } elseif (isset($aliasKey) && key_exists($aliasKey, $properties)) {
-            $table->load([$aliasKey => $alias]);
-            $result = $table->id;
-        }
-        if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
-            return $result;
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-        }
-    }
 
     /**
      * Get an instance of Table class
@@ -368,7 +348,7 @@ class ReviewModel extends ItemModel
      * @since 4.0.0
      * @throws Exception
      */
-    public function getTable($name = 'Review', $prefix = 'Administrator', $options = [])
+    public function getTable($name = 'Review', $prefix = 'Administrator', $options = []): Table|bool
     {
         return parent::getTable($name, $prefix, $options);
     }
@@ -386,7 +366,7 @@ class ReviewModel extends ItemModel
      */
     protected function populateState(): void
     {
-        $app  = Factory::getApplication('com_jed');
+        $app  = Factory::getApplication();
         $user = Factory::getApplication()->getIdentity();
 
         // Check published state
@@ -427,7 +407,7 @@ class ReviewModel extends ItemModel
      * @since 4.0.0
      * @throws Exception
      */
-    public function publish($id, $state)
+    public function publish(int $id, int $state): bool
     {
         $table = $this->getTable();
         if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {

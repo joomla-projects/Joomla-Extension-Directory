@@ -5,8 +5,8 @@
  *
  * @subpackage TICKETS
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -24,7 +24,7 @@ use Joomla\CMS\Uri\Uri;
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
-HTMLHelper::_('formbehavior.chosen', 'select');
+
 
 $user        = Factory::getApplication()->getIdentity();
 $userId      = $user->id;
@@ -34,11 +34,6 @@ $isLoggedIn  = JedHelper::isLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
 
 $canCreate = $isLoggedIn;
-
-
-// Import CSS
-//$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-//$wa->useStyle('com_jed.list');
 
 ?>
 
@@ -116,7 +111,7 @@ $canCreate = $isLoggedIn;
                                 echo $d->format("d M y H:i");
                             } catch (Exception $e) {
                             }
-                    ?>
+                            ?>
                         </td>
 
 

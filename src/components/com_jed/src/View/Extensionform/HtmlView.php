@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Extensionform;
@@ -70,29 +70,26 @@ class HtmlView extends BaseHtmlView
 //echo "B<pre>";print_r($this->item);echo "</pre>";exit();
         //echo "<pre>";print_r($this->item);echo "</pre>";exit();
         $st_counter = 0;
-	    foreach ($this->supply_types as $st) {
-		    $this->supply_forms[$st->supply_id] = $extensionvarieddatum->getForm(
-				    $this->item->varied[$st->supply_id],
-				    false,
-				    'jform[supply][supply' . $st_counter . ']'
-		    );
-		    $st_counter = $st_counter + 1;
+        foreach ($this->supply_types as $st) {
+            $this->supply_forms[$st->supply_id] = $extensionvarieddatum->getForm(
+                $this->item->varied[$st->supply_id],
+                false,
+                'jform[supply][supply' . $st_counter . ']'
+            );
+            $st_counter = $st_counter + 1;
 
-		    // Ensure linkage is always present in POST (even for new varied rows)
-		    $varied = (array) $this->item->varied[$st->supply_id];
-		    $varied['extension_id']     = (int) ($this->item->id ?? 0);
-		    $varied['supply_option_id'] = (int) $st->supply_id;
+            // Ensure linkage is always present in POST (even for new varied rows)
+            $varied = (array) $this->item->varied[$st->supply_id];
+            $varied['extension_id']     = (int) ($this->item->id ?? 0);
+            $varied['supply_option_id'] = (int) $st->supply_id;
 
-		    $this->supply_forms[$st->supply_id]->bind($varied);
-	    }
-
-
-
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
+            $this->supply_forms[$st->supply_id]->bind($varied);
         }
+
+
+
+
+
 
 
 

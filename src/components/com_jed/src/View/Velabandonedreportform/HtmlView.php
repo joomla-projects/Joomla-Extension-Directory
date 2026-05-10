@@ -5,8 +5,8 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Velabandonedreportform;
@@ -20,7 +20,7 @@ use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
-use Joomla\CMS\HTML\Registry;
+use Joomla\Registry\Registry;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use stdClass;
@@ -62,7 +62,7 @@ class HtmlView extends BaseHtmlView
      * @var   Registry
      * @since 4.0.0
      */
-
+    protected Registry $params;
     /**
      * Does user have permission to save form
      *
@@ -133,17 +133,12 @@ class HtmlView extends BaseHtmlView
     {
         $app = Factory::getApplication();
 
-        $this->state   = $this->get('State');
-        $this->item    = $this->get('Item');
-        $this->params  = $app->getParams('com_jed');
-        $this->canSave = JedHelper::canSave();
-        $this->form    = $this->get('Form');
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
-        }
-
+        $model = $this->getModel();
+        $this->state      = $model->getState();
+        $this->item       = $model->getItem();
+        $this->params     = $app->getParams('com_jed');
+        $this->canSave    = JedHelper::canSave();
+        $this->form       = $model->getForm();
 
         $this->prepareDocument();
 

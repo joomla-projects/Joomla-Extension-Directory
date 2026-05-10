@@ -20,7 +20,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
 /**
  * @var HtmlView $this
@@ -28,7 +27,7 @@ use Joomla\CMS\Session\Session;
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
-HTMLHelper::_('formbehavior.chosen', 'select');
+//
 
 $user       = $this->getCurrentUser();
 $userId     = $user->id;
@@ -41,7 +40,9 @@ $canChange  = $user->authorise('core.edit.state', 'com_jed');
 $canDelete  = $user->authorise('core.delete', 'com_jed');
 
 // Import CSS
-$this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
+/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa->useStyle('com_jed.jazstyle');
 
 ?>
 <div class="jed-cards-wrapper">
@@ -171,15 +172,15 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
                         <?php if (!empty(trim(strip_tags($vr->description)))) : ?>
                             <?php HTMLHelper::_('bootstrap.collapse') ?>
                             <button type="button" class="btn btn-sm btn-outline-secondary my-2"
-                                    data-bs-toggle="collapse" href="#description- <?php echo $subItemId ?>"
-                                    aria-expanded="false" aria-controls="description- <?php echo $subItemId ?>"
+                                    data-bs-toggle="collapse" href="#description-<?php echo $subItemId ?>"
+                                    aria-expanded="false" aria-controls="description-<?php echo $subItemId ?>"
                             >
                                 Show/hide
                             </button>
                         <?php endif ?>
                     </div>
 
-                    <div class="jed-subitem-description mb-2 collapse" id="description- <?php echo $subItemId ?>">
+                    <div class="jed-subitem-description mb-2 collapse" id="description-<?php echo $subItemId ?>">
                          <?php echo $vr->description ?>
                     </div>
 
@@ -194,7 +195,7 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
                 <div class="jed-grid__item">
                     <p>
                         <span class="button-group display-block align-right">
-                            <!--https://burninglight.biz/j5-restruct/index.php?option=com_jed&view=ticketform&Itemid=203-->
+
                             <?php
 
                             $url =  Route::_('index.php?option=com_jed&view=ticketform&litem=2&lid=' . $this->item->id . '&vr=' . $vr->id)
@@ -212,7 +213,7 @@ $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
                     <h2 class="heading heading--m">Reviews for <?php echo $vr->supply_type; ?> version</h2>
                     <hr>
                     <?php
-
+                    $slidesOptions = [];
                     echo HTMLHelper::_('bootstrap.startAccordion', 'review_extension_group', $slidesOptions);
                     $slideid = 0;
                     foreach ($this->item->reviews[$vr->supply_type] as $rev) {

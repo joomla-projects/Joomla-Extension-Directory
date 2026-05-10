@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Controlpanel;
@@ -15,14 +15,12 @@ namespace Jed\Component\Jed\Site\View\Controlpanel;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Site\Model\ExtensionModel;
 use Jed\Component\Jed\Site\Model\ExtensionsModel;
 use Jed\Component\Jed\Site\Model\TicketsModel;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\Registry\Registry;
 use Joomla\Component\Users\Administrator\Helper\Mfa;
 use Joomla\CMS\Pagination\Pagination;
@@ -36,15 +34,12 @@ class HtmlView extends BaseHtmlView
 {
     public Form $filterForm;
     public array $activeFilters;
-
-
-    protected $item;
-    protected $ticket_items;
-	protected $extension_items;
+    protected array $ticket_items;
+    protected array $extension_items;
 
     protected $form;
 
-    protected $params;
+    protected Registry $params;
     /**
      * The pagination object
      *
@@ -73,33 +68,30 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
         $user         = $this->getCurrentUser();
+
         $profileModel = Factory::getApplication()->bootComponent('com_users')
                       ->getMVCFactory()->createModel('Profile', 'Site');
-        $this->profiledata               = $profileModel->get('Data');
-        $this->profileform               = $profileModel->getForm(new CMSObject(['id' => $user->id]));
+        $this->profiledata               = $profileModel->getData();
+        $this->profileform               = $profileModel->getForm(new \stdClass(['id' => $user->id]), true);
         $this->profilestate              = $profileModel->get('State');
-        $this->profileparams             = $profileModel->state->get('params');
+        $this->profileparams             = $profileModel->params->get();
         $this->profilemfaConfigurationUI = Mfa::getConfigurationInterface($user);
 
         $ticketsModel       = new TicketsModel();
         $this->ticket_items = $ticketsModel->getItems();
 
-	    $extensionModel = new ExtensionsModel();
-	    $this->extension_items = $extensionModel->getMyItems();
+        $extensionModel = new ExtensionsModel();
+        $this->extension_items = $extensionModel->getMyItems();
 
         $this->pagination    = $ticketsModel->getPagination();
         $this->filterForm    = $ticketsModel->getFilterForm();
         $this->activeFilters = $ticketsModel->getActiveFilters();
 
         $this->state  = $this->get('State');
-        //$this->item   = $this->get('Item');
         $this->params = Factory::getApplication()->getParams('com_jed');
-
-        if (!empty($this->item)) {
-        }
 
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {

@@ -41,7 +41,7 @@ class TicketformModel extends FormModel
      * @var   object
      * @since 4.0.0
      */
-    private $item = null;
+    private mixed $item = null;
 
     /**
      * Data Table
@@ -195,7 +195,7 @@ class TicketformModel extends FormModel
      * @since 4.0.0
      * @throws Exception
      */
-    public function getItem(int $id = null)
+    public function getItem(int $id = null): mixed
     {
         if ($this->item === null) {
             $this->item = false;
@@ -211,8 +211,8 @@ class TicketformModel extends FormModel
             if ($table !== false && $table->load($id) && !empty($table->id)) {
                 $user = Factory::getApplication()->getIdentity();
                 $id   = $table->id;
-                if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
-                    // Convert the Table to a clean CMSObject.
+                if (JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
+                    // Convert the Table to a clean stdClass.
                     $this->item                       = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
                     $this->item->ticket_messages      = self::getTicketMessages($id);
                     $this->item->ticket_status        = Text::_('COM_JED_TICKETS_TICKET_STATUS_OPTION_' . strtoupper($this->item->ticket_status));
@@ -236,7 +236,7 @@ class TicketformModel extends FormModel
      * @return array TODO
       * @since 4.0.0
      */
-    public function getTicketMessages($ticketId): array
+    public function getTicketMessages(int $ticketId): array
     {
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);
@@ -302,7 +302,7 @@ class TicketformModel extends FormModel
      * @since 4.0.0
      * @throws Exception
      */
-    public function getTable($name = 'Ticket', $prefix = 'Administrator', $options = [])
+    public function getTable($name = 'Ticket', $prefix = 'Administrator', $options = []): Table|bool
     {
         return parent::getTable($name, $prefix, $options);
     }
@@ -314,7 +314,7 @@ class TicketformModel extends FormModel
      * @since 4.0.0
      * @throws Exception
      */
-    protected function loadFormData()
+    protected function loadFormData(): array
     {
         $data = Factory::getApplication()->getUserState('com_jed.edit.ticket.data', []);
 
@@ -339,6 +339,7 @@ class TicketformModel extends FormModel
      */
     protected function populateState(): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Load state from the request userState on edit or from the passed variable on default
@@ -421,7 +422,7 @@ class TicketformModel extends FormModel
      * @return string TODO
       * @since 4.0.0
      */
-    public function getTicketCategory($categoryId): string
+    public function getTicketCategory(int $categoryId): string
     {
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);

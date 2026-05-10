@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Helper;
@@ -16,7 +16,6 @@ namespace Jed\Component\Jed\Site\Helper;
 
 use Exception;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Mail\Mail;
 use Joomla\CMS\Mail\MailerFactoryInterface;
 use Joomla\CMS\User\User;
 
@@ -28,14 +27,6 @@ use Joomla\CMS\User\User;
  */
 class JedemailHelper
 {
-    /**
-     * The mail engine
-     *
-     * @var   Mail
-     * @since 4.0.0
-     */
-
-
     /**
      * Send an email to the user.
      *

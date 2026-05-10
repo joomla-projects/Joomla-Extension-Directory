@@ -120,6 +120,7 @@ $canState = $this->getCurrentUser()->authorise('core.edit.state', 'com_jed');
 
     if (!$isLoggedIn) {
         try {
+            /* @var $app \Joomla\CMS\Application\SiteApplication */
             $app = Factory::getApplication();
             $app->enqueueMessage(Text::_('COM_JED_EXTENSION_NO_ACCESS_LABEL'), 'success');
             $app->redirect($redirectURL);
@@ -174,7 +175,7 @@ $canState = $this->getCurrentUser()->authorise('core.edit.state', 'com_jed');
 
            // echo '<div class="control-label"><label id="jform_logo-lbl" for="jform_logo">Supply Type<br/><span style="font-weight:normal"></span><small>Descriptive Text here.</small></span></label></div>';
         //echo '<div class="controls">';
-echo '<fieldset class="extensionvariedform"><legend>Extension Supply Versions</legend><div class="control-group control-wrapper-video">
+                echo '<fieldset class="extensionvariedform"><legend>Extension Supply Versions</legend><div class="control-group control-wrapper-video">
             <label id="jform_extension_supply_type-lbl" >
     Every extension can be supplied in different forms including Free Versions and Paid Versions which can have unique information (i.e. Title, Download Link) and similar information (License Link, Demo Link). You can select one type as the default and just overwrite values where necessary.</label>
 
@@ -185,9 +186,8 @@ echo '<fieldset class="extensionvariedform"><legend>Extension Supply Versions</l
 
                 echo HTMLHelper::_('uitab.startTabSet', 'supplyTab', ['active' => '']);
 
-                $validate=true;
+                $validate = true;
                 foreach ($this->supply_types as $st) {
-
                     $tabId = 'supply-' . (int) $st->supply_id;
 
                     echo HTMLHelper::_('uitab.addTab', 'supplyTab', $tabId, $st->supply_type);
@@ -215,7 +215,7 @@ echo '<fieldset class="extensionvariedform"><legend>Extension Supply Versions</l
                     }
                     $fieldsets['links']['supply_type']         = $st->supply_type;
                     $fieldsets['links']['title']               = Text::_('COM_JED_EXTENSION_LINKS_TITLE');
-                    $fieldsets['links']['description']         = Text::_('COM_JED_EXTENSION_LINKS_DESCR').'<br/>';
+                    $fieldsets['links']['description']         = Text::_('COM_JED_EXTENSION_LINKS_DESCR') . '<br/>';
                     $fieldsets['links']['fields']              = [['homepage_link', 'download_link'], ['demo_link', 'support_link'], ['documentation_link', 'license_link'], ['translation_link', '']];
                     $fieldsets['links']['hidden']              = [];
 
@@ -225,8 +225,8 @@ echo '<fieldset class="extensionvariedform"><legend>Extension Supply Versions</l
                     $fieldsets['integration']['fields']      = [['download_integration_type', 'download_integration_url']];
                     $fieldsets['integration']['hidden']      = [];
 
-                    JedHelper::outputFieldsets($fieldsets, $varied_form,$validate);
-                    $validate=false;
+                    JedHelper::outputFieldsets($fieldsets, $varied_form, $validate);
+                    $validate = false;
                     $fieldsets = [];
 
                     echo HTMLHelper::_('uitab.endTab');
@@ -234,7 +234,7 @@ echo '<fieldset class="extensionvariedform"><legend>Extension Supply Versions</l
                 echo HTMLHelper::_('uitab.endTabSet');
 
                 echo '</div></fieldset>';
-                $fieldsets['confirm']['title']           = '<br/>'.Text::_('COM_JED_GENERAL_CONFIRM_LABEL');
+                $fieldsets['confirm']['title']           = '<br/>' . Text::_('COM_JED_GENERAL_CONFIRM_LABEL');
                 $fieldsets['integration']['description'] = '';
                 $fieldsets['integration']['fields']      = ['uses_updater'];
                 $fieldsets['integration']['hidden']      = [];

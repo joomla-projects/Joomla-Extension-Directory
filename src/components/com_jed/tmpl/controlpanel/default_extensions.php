@@ -5,8 +5,8 @@
  *
  * @subpackage Extensions
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -24,7 +24,7 @@ use Joomla\CMS\Uri\Uri;
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
-HTMLHelper::_('formbehavior.chosen', 'select');
+
 
 $user        = $this->getCurrentUser();
 $userId      = $user->id;
@@ -103,7 +103,7 @@ $canCreate = $isLoggedIn;
                         <td>
                             <?php if ($canEdit) : ?>
                             <a href="<?php echo Route::_('index.php?option=com_jed&task=extensionform.edit&id=' . (int) $item->ext_id); ?>">
-                                <?php endif; ?>
+                            <?php endif; ?>
                             <?php  echo $item->title; ?>
                         </td>
                         <td>
