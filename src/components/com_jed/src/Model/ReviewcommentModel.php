@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -39,7 +39,7 @@ class ReviewcommentModel extends ItemModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkin($id = null)
@@ -72,7 +72,7 @@ class ReviewcommentModel extends ItemModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkout($id = null)
@@ -109,7 +109,7 @@ class ReviewcommentModel extends ItemModel
      *
      * @return bool
      * @throws Exception
-      * @since 4.0.0
+     * @since  4.0.0
      */
     public function delete($id)
     {
@@ -125,13 +125,13 @@ class ReviewcommentModel extends ItemModel
     /**
      * Method to get an object.
      *
-     * @param int  $pk  The id of the object to get.
+     * @param int $pk The id of the object to get.
      *
      * @return mixed    Object on success, false on failure.
      *
-     * @since 4.0.0
-     *@throws Exception
-      */
+     * @since  4.0.0
+     * @throws Exception
+     */
     public function getItem($pk = null): mixed
     {
         if ($this->item === null) {
@@ -191,7 +191,7 @@ class ReviewcommentModel extends ItemModel
      *
      * @return Table|bool Table if success, false on failure.
      * @throws Exception
-      * @since 4.0.0
+     * @since  4.0.0
      */
     public function getTable($type = 'Reviewcomment', $prefix = 'Administrator', $config = [])
     {
@@ -202,7 +202,7 @@ class ReviewcommentModel extends ItemModel
      * Checks whether or not a user is manager or super user
      *
      * @return bool
-      * @since 4.0.0
+     * @since  4.0.0
      */
     public function isAdminOrSuperUser()
     {
@@ -267,7 +267,7 @@ class ReviewcommentModel extends ItemModel
      *
      * @return bool
      * @throws Exception
-      * @since 4.0.0
+     * @since  4.0.0
      */
     public function publish($id, $state)
     {
@@ -288,7 +288,7 @@ class ReviewcommentModel extends ItemModel
      * @param int $id The id of the item
      *
      * @return bool             true if the user is the owner of the row, false if not.
-      * @since 4.0.0
+     * @since  4.0.0
      */
     public function userIDItem($id)
     {

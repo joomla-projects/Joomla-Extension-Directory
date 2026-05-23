@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -23,14 +23,14 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
-HTMLHelper::addIncludePath(JPATH_COMPONENT . '/src/Helper/');
+
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 
 
 $user      = $this->getCurrentUser();
 $userId    = $user->id;
-$listOrder = $this->state->get('list.ordering');
+$listOrder = $this->state->get('list.ordering', '');
 $listDirn  = $this->state->get('list.direction');
 $canOrder  = $user->authorise('core.edit.state', 'com_jed');
 $saveOrder = $listOrder == 'a.`ordering`';
@@ -113,7 +113,7 @@ if ($saveOrder) {
                     </tfoot>
                     <tbody <?php if ($saveOrder) :
                         ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
-                    endif; ?>>
+                   endif; ?>>
                     <?php foreach ($this->items as $i => $item) :
                         $ordering   = ($listOrder == 'a.ordering');
                         $canCreate  = $user->authorise('core.create', 'com_jed');
@@ -208,8 +208,8 @@ if ($saveOrder) {
 
                                 <?php
                                 $date = $item->date_submitted;
-                        echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC6')) : '-';
-                        ?>
+                                echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC6')) : '-';
+                                ?>
                             </td>
 
                         </tr>

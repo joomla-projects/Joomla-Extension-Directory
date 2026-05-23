@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\View\Extensionvarieddata;
@@ -27,7 +27,7 @@ use Joomla\Registry\Registry;
 /**
  * View class for a list of Extensionvarieddata.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
@@ -40,12 +40,12 @@ class HtmlView extends BaseHtmlView
     /**
      * Add the page title and toolbar.
      *
-     * @return  void
+     * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws \Exception
      */
-    protected function addToolbar()
+    protected function addToolbar(): void
     {
         $canDo = JedHelper::getActions();
 
@@ -76,9 +76,9 @@ class HtmlView extends BaseHtmlView
             } elseif (isset($this->items[0])) {
                 // If this component does not use state then show a direct delete button as we can not trash
                 $toolbar->delete('extensionvarieddata.delete')
-                ->text('JTOOLBAR_EMPTY_TRASH')
-                ->message('JGLOBAL_CONFIRM_DELETE')
-                ->listCheck(true);
+                    ->text('JTOOLBAR_EMPTY_TRASH')
+                    ->message('JGLOBAL_CONFIRM_DELETE')
+                    ->listCheck(true);
             }
 
             $childBar->standardButton('duplicate')
@@ -120,9 +120,9 @@ class HtmlView extends BaseHtmlView
      * Method to order fields
      *
      * @return array
-      * @since 4.0.0
+     * @since  4.0.0
      */
-    protected function getSortFields()
+    protected function getSortFields(): array
     {
         return [
             'a.`id`'                        => Text::_('JGRID_HEADING_ID'),

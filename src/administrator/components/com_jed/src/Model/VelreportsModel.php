@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -35,7 +35,7 @@ class VelreportsModel extends ListModel
      * @param array $config An optional associative array of configuration settings.
      *
      * @see    ListModel
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function __construct($config = [])
@@ -95,10 +95,10 @@ class VelreportsModel extends ListModel
         $items = parent::getItems();
 
         foreach ($items as $oneItem) {
-            $oneItem->pass_details_ok    = Text::_('COM_JED_VEL_GENERAL_FIELD_PASS_DETAILS_OK_OPTION_' . strtoupper($oneItem->pass_details_ok));
+            $oneItem->pass_details_ok    = Text::_('COM_JED_VEL_GENERAL_PASS_DETAILS_OK_OPTION_' . strtoupper($oneItem->pass_details_ok));
             $oneItem->vulnerability_type = Text::_('COM_JED_VEL_GENERAL_VULNERABILITY_TYPE_OPTION_' . strtoupper($oneItem->vulnerability_type));
             $oneItem->exploit_type       = Text::_('COM_JED_VEL_GENERAL_EXPLOIT_TYPE_OPTION_' . strtoupper($oneItem->exploit_type));
-            $oneItem->consent_to_process = Text::_('COM_JED_VEL_GENERAL_FIELD_CONSENT_TO_PROCESS_OPTION_' . strtoupper($oneItem->consent_to_process));
+            $oneItem->consent_to_process = Text::_('COM_JED_VEL_GENERAL_CONSENT_TO_PROCESS_OPTION_' . strtoupper($oneItem->consent_to_process));
             $oneItem->passed_to_vel      = Text::_('COM_JED_VEL_GENERAL_PASSED_TO_VEL_OPTION_' . strtoupper($oneItem->passed_to_vel));
             $oneItem->data_source        = Text::_('COM_JED_VEL_GENERAL_DATA_SOURCE_OPTION_' . strtoupper($oneItem->data_source));
         }
@@ -195,7 +195,7 @@ class VelreportsModel extends ListModel
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function populateState($ordering = null, $direction = null): void

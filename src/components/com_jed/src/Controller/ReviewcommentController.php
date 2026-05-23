@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -69,7 +69,7 @@ class ReviewcommentController extends BaseController
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function publish(): void
@@ -93,7 +93,7 @@ class ReviewcommentController extends BaseController
 
             // Check for errors.
             if ($return === false) {
-                $this->setMessage(Text::sprintf('Save failed: %s', $model->getError()), 'warning');
+                $this->setMessage(Text::_('Save failed'), 'warning');
             }
 
             // Clear the profile id from the session.
@@ -113,60 +113,6 @@ class ReviewcommentController extends BaseController
             } else {
                 $this->setRedirect(Route::_('index.php?Itemid=' . $item->id, false));
             }
-        } else {
-            throw new Exception(500);
-        }
-    }
-
-
-
-    /**
-     * Remove data
-     *
-     * @return void
-     *
-     * @throws Exception
-     *
-     * @since 4.0.0
-     */
-    public function remove(): void
-    {
-        // Initialise variables.
-        /* @var $app \Joomla\CMS\Application\SiteApplication */
-        $app = Factory::getApplication();
-
-        // Checking if the user can remove object
-        $user = Factory::getApplication()->getIdentity();
-
-        if ($user->authorise('core.delete', 'com_jed')) {
-            $model = $this->getModel('Reviewcomment', 'Site');
-
-            // Get the user data.
-            $id = $app->input->getInt('id', 0);
-
-            // Attempt to save the data.
-            $return = $model->delete($id);
-
-            // Check for errors.
-            if ($return === false) {
-                $this->setMessage(Text::sprintf('Delete failed', $model->getError()), 'warning');
-            } else {
-                // Check in the profile.
-                if ($return) {
-                    $model->checkin($return);
-                }
-
-                $app->setUserState('com_jed.edit.reviewcomment.id', null);
-                $app->setUserState('com_jed.edit.reviewcomment.data', null);
-
-                $app->enqueueMessage(Text::_('COM_JED_ITEM_DELETED_SUCCESSFULLY'), 'success');
-                $app->redirect(Route::_('index.php?option=com_jed&view=reviewscomments', false));
-            }
-
-            // Redirect to the list screen.
-            $menu = Factory::getApplication()->getMenu();
-            $item = $menu->getActive();
-            $this->setRedirect(Route::_($item->link, false));
         } else {
             throw new Exception(500);
         }

@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -30,8 +30,6 @@ use Joomla\CMS\Tag\TagServiceTrait;
 use Psr\Container\ContainerInterface;
 use stdClass;
 
-use function defined;
-
 /**
  * Component class for com_jed
  *
@@ -45,9 +43,7 @@ class JedComponent extends MVCComponent implements
 {
     use HTMLRegistryAwareTrait;
     use RouterServiceTrait;
-    use CategoryServiceTrait, TagServiceTrait {
-        CategoryServiceTrait::getTableNameForSection insteadof TagServiceTrait;
-        CategoryServiceTrait::getStateColumnForSection insteadof TagServiceTrait;
+    use CategoryServiceTrait, TagServiceTrait { CategoryServiceTrait::getTableNameForSection insteadof TagServiceTrait; CategoryServiceTrait::getStateColumnForSection insteadof TagServiceTrait; 
     }
 
     /**
@@ -91,7 +87,7 @@ class JedComponent extends MVCComponent implements
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function countItems(array $items, string $section): void

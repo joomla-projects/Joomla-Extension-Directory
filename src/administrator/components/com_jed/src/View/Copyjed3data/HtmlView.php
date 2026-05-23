@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -75,7 +75,7 @@ class HtmlView extends BaseHtmlView
     /**
      * Add the page title and toolbar.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws \Exception
      */
     private function addToolbar(): void
@@ -84,8 +84,7 @@ class HtmlView extends BaseHtmlView
 
         $user = $this->getCurrentUser();
 
-        if (
-            $user->authorise('core.admin', 'com_jed')
+        if ($user->authorise('core.admin', 'com_jed')
             || $user->authorise('core.options', 'com_jed')
         ) {
             $toolbar = $this->getDocument()->getToolbar();
@@ -102,12 +101,14 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws \Exception
      */
     public function display($tpl = null): void
     {
-        /** @var Copyjed3dataModel $model */
+        /**
+ * @var Copyjed3dataModel $model
+*/
         $model             = $this->getModel();
         $this->state       = $model->getState();
         $this->item        = $model->getItem();

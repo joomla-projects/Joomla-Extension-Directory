@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Controlpanel;
@@ -17,10 +17,13 @@ namespace Jed\Component\Jed\Site\View\Controlpanel;
 use Exception;
 use Jed\Component\Jed\Site\Model\ExtensionsModel;
 use Jed\Component\Jed\Site\Model\TicketsModel;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\User\User;
 use Joomla\Registry\Registry;
 use Joomla\Component\Users\Administrator\Helper\Mfa;
 use Joomla\CMS\Pagination\Pagination;
@@ -28,7 +31,7 @@ use Joomla\CMS\Pagination\Pagination;
 /**
  * View class for a list of Jed.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
@@ -38,6 +41,12 @@ class HtmlView extends BaseHtmlView
     protected array $extension_items;
 
     protected $form;
+    protected User $profiledata;
+    protected Form $profileform;
+    protected Registry $profilestate;
+    protected Registry $profileparams;
+    protected string $profilemfaConfigurationUI;
+
 
     protected Registry $params;
     /**
@@ -57,10 +66,11 @@ class HtmlView extends BaseHtmlView
      */
     protected Registry $state;
 
+
     /**
      * Display the view
      *
-     * @param   string  $tpl  Template name
+     * @param string $tpl Template name
      *
      * @return void
      *
@@ -71,31 +81,32 @@ class HtmlView extends BaseHtmlView
     public function display($tpl = null): void
     {
         $user         = $this->getCurrentUser();
+        $model        = $this->getModel();
+        $model->setUseExceptions(true);
+        try {
 
-        $profileModel = Factory::getApplication()->bootComponent('com_users')
-                      ->getMVCFactory()->createModel('Profile', 'Site');
-        $this->profiledata               = $profileModel->getData();
-        $this->profileform               = $profileModel->getForm(new \stdClass(['id' => $user->id]), true);
-        $this->profilestate              = $profileModel->get('State');
-        $this->profileparams             = $profileModel->params->get();
-        $this->profilemfaConfigurationUI = Mfa::getConfigurationInterface($user);
+                $profileModel = Factory::getApplication()->bootComponent('com_users')
+                    ->getMVCFactory()->createModel('Profile', 'Site');
+                $this->profiledata               = $profileModel->getData();
+                $this->profileform               = $profileModel->getForm();
+                $this->profilestate              = $profileModel->getState();
+                $this->profileparams             = ComponentHelper::getParams('com_users');
+                $this->profilemfaConfigurationUI = Mfa::getConfigurationInterface($user);
 
-        $ticketsModel       = new TicketsModel();
-        $this->ticket_items = $ticketsModel->getItems();
+                $ticketsModel       = new TicketsModel();
+                $this->ticket_items = $ticketsModel->getItems();
 
-        $extensionModel = new ExtensionsModel();
-        $this->extension_items = $extensionModel->getMyItems();
+                $extensionModel = new ExtensionsModel();
+                $this->extension_items = $extensionModel->getMyItems();
 
-        $this->pagination    = $ticketsModel->getPagination();
-        $this->filterForm    = $ticketsModel->getFilterForm();
-        $this->activeFilters = $ticketsModel->getActiveFilters();
+                $this->pagination    = $ticketsModel->getPagination();
+                $this->filterForm    = $ticketsModel->getFilterForm();
+                $this->activeFilters = $ticketsModel->getActiveFilters();
 
-        $this->state  = $this->get('State');
-        $this->params = Factory::getApplication()->getParams('com_jed');
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new \Exception(implode("\n", $errors));
+                $this->state  = $model->getState();
+                $this->params = Factory::getApplication()->getParams();
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
         }
 
 
@@ -122,11 +133,10 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected function prepareDocument()
+    protected function prepareDocument(): void
     {
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
-        $title = null;
 
         // Because the application sets a default page title,
         // We need to get it from the menu item itself

@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -14,16 +14,9 @@
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
-/**
-*
- *
- * @var \Jed\Component\Jed\Site\View\Categories\HtmlView $this
-*/
-
-$wa = $this->document->getWebAssetManager();
+$wa = $this->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.t09_jed'); /*
     ->useScript('form.validate');*/
 HTMLHelper::_('bootstrap.tooltip');

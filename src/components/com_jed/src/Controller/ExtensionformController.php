@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -18,6 +18,7 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\Filesystem\File;
@@ -34,8 +35,8 @@ class ExtensionformController extends FormController
     /**
      * Method to check out an item for editing and redirect to the edit form.
      *
-     * @param   null  $key
-     * @param   null  $urlVar
+     * @param null $key
+     * @param null $urlVar
      *
      * @return void
      *
@@ -75,12 +76,12 @@ class ExtensionformController extends FormController
     /**
      * Method to save data.
      *
-     * @param   null  $key
-     * @param   null  $urlVar
+     * @param null $key
+     * @param null $urlVar
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function save($key = null, $urlVar = null): void
@@ -93,6 +94,7 @@ class ExtensionformController extends FormController
             // Initialise variables.
             $app   = Factory::getApplication();
             $model = $this->getModel('Extensionform', 'Site');
+            $model->setUseExceptions(true);
 
             // Raw payload (includes subforms)
             $dataRaw = $app->input->get('jform', [], 'array');
@@ -121,28 +123,16 @@ class ExtensionformController extends FormController
 
             // Handle supply-tab zip uploads and map stored names back into payload.
             $uploadedExtensionFiles = $this->processSupplyFileUploads($supplyPayload);
+            try {
+                        // Validate the posted data. (MAIN form only)
+                        $form = $model->getForm();
 
-            // Validate the posted data. (MAIN form only)
-            $form = $model->getForm();
-
-            if (!$form) {
-                throw new Exception($model->getError(), 500);
+                       $data = $model->validate($form, $dataRaw);
+            } catch (\Exception $e) {
+                throw new GenericDataException($e->getMessage(), 500, $e);
             }
-            // Validate the posted data.
-
-            $data = $model->validate($form, $dataRaw);
-
             // Check for errors.
             if ($data === false) {
-                $errors = $model->getErrors();
-
-                for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++) {
-                    $app->enqueueMessage(
-                        $errors[$i] instanceof Exception ? $errors[$i]->getMessage() : $errors[$i],
-                        'warning'
-                    );
-                }
-
                 $app->setUserState('com_jed.edit.extension.data', $dataRaw);
 
                 $id = (int) $app->getUserState('com_jed.edit.extension.id');
@@ -164,7 +154,7 @@ class ExtensionformController extends FormController
             if ($return === false) {
                 $app->setUserState('com_jed.edit.extension.data', $data);
                 $id = (int) $app->getUserState('com_jed.edit.extension.id');
-                $this->setMessage(Text::sprintf('Save failed', $model->getError()), 'warning');
+                $this->setMessage(Text::_('Save failed'), 'warning');
                 $this->setRedirect(Route::_('index.php?option=com_jed&view=extensionform&layout=edit&id=' . $id, false));
                 return;
             }
@@ -200,7 +190,7 @@ class ExtensionformController extends FormController
      * @return array
      *
      * @throws Exception
-      * @since 4.0.0
+     * @since  4.0.0
      */
     private function processLogoUpload(array $dataRaw, mixed $model): array
     {
@@ -245,7 +235,7 @@ class ExtensionformController extends FormController
      * @return array
      *
      * @throws Exception
-      * @since 4.0.0
+     * @since  4.0.0
      */
     private function processSupplyFileUploads(array &$supplyPayload): array
     {
@@ -299,7 +289,7 @@ class ExtensionformController extends FormController
      * @param string|null $supplyKey
      *
      * @return array|null
-      * @since 4.0.0
+     * @since  4.0.0
      */
     private function getJformUpload(string $field, ?string $supplyKey = null): ?array
     {
@@ -331,15 +321,15 @@ class ExtensionformController extends FormController
     /**
      * Store a single uploaded file in a relative target folder.
      *
-     * @param array $upload
+     * @param array  $upload
      * @param string $targetRelativeDir
-     * @param array $allowedExtensions
+     * @param array  $allowedExtensions
      * @param string $prefix
      *
      * @return string|null
      *
      * @throws Exception
-      * @since 4.0.0
+     * @since  4.0.0
      */
     private function storeUploadedFile(array $upload, string $targetRelativeDir, array $allowedExtensions, string $prefix): ?string
     {
@@ -374,11 +364,11 @@ class ExtensionformController extends FormController
     /**
      * Method to abort current operation
      *
-     * @param   null  $key
+     * @param null $key
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function cancel($key = null): void

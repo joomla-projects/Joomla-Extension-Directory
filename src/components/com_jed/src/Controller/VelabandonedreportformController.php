@@ -5,8 +5,8 @@
  *
  * @subpackage VEL
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -105,7 +105,7 @@ class VelabandonedreportformController extends FormController
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function save($key = null, $urlVar = null): void
@@ -123,33 +123,16 @@ class VelabandonedreportformController extends FormController
         $form = $model->getForm();
 
         if (!$form) {
-            throw new Exception($model->getError(), 500);
+            throw new Exception('Could not validate data', 500);
         }
 
-        // Send an object which can be modified through the plugin event
-        $objData = (object) $data;
-        $this->app->triggerEvent(
-            'onContentNormaliseRequestData',
-            [$this->option . '.' . $this->context, $objData, $form]
-        );
-        $data = (array) $objData;
 
         // Validate the posted data.
         $data = $model->validate($form, $data);
 
         // Check for errors.
         if ($data === false) {
-            // Get the validation messages.
-            $errors = $model->getErrors();
-
-            // Push up to three validation messages out to the user.
-            for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++) {
-                if ($errors[$i] instanceof Exception) {
-                    $this->app->enqueueMessage($errors[$i]->getMessage(), 'warning');
-                } else {
-                    $this->app->enqueueMessage($errors[$i], 'warning');
-                }
-            }
+            $this->app->enqueueMessage('An error occured saving your data. Please go back and try again', 'warning');
 
             $jform = $this->input->get('jform', [], 'ARRAY');
 
@@ -173,7 +156,7 @@ class VelabandonedreportformController extends FormController
 
             // Redirect back to the edit screen.
             $id = (int) $this->app->getUserState('com_jed.edit.velabandonedreport.id');
-            $this->setMessage(Text::sprintf('Save failed', $model->getError()), 'warning');
+            $this->setMessage(Text::_('Save failed'), 'warning');
             $this->setRedirect(Route::_('index.php?option=com_jed&view=velabandonedreportform&layout=edit&id=' . $id, false));
             $this->redirect();
         }

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Model;
@@ -30,6 +30,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\User\User;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\Component\Users\Administrator\Table\NoteTable;
 use Joomla\Database\ParameterType;
 use Michelf\Markdown;
 use RuntimeException;
@@ -70,21 +72,18 @@ class ExtensionModel extends AdminModel
     /**
      * Get everything stored for an extension
      *
-     * @param   int  $extension_id
+     * @param int $pk The id of the extension to get everything for.
      *
-     * @return array
+     * @return stdClass
      *
      * @since 4.0.0
      *
      * @throws Exception
      */
-    public function getEverything($pk = null): stdClass
+    public function getEverything(int $pk = 0): stdClass
     {
         if ($item = parent::getItem($pk)) {
-            /* Convert cmsobject to stdClass */
-            $s = $item->getProperties();
-
-            $this->item = (object) $s;
+            $this->item = $item;
 
             if (isset($this->item->includes)) {
                 $this->item->includes = array_values(json_decode($this->item->includes));
@@ -128,7 +127,7 @@ class ExtensionModel extends AdminModel
                         $this->item->alias      = $vitem->alias;
                         $this->item->intro_text = $vitem->intro_text;
                     }
-					$vitem->uploaded_file = $this->getFilename( $vitem->extension_id ,$st->supply_id );
+                    $vitem->uploaded_file = $this->getFilename($vitem->extension_id, $st->supply_id);
                     $this->item->varied[$st->supply_id] = $vitem;
                 }
             }
@@ -152,13 +151,19 @@ class ExtensionModel extends AdminModel
         return $this->item;
     }
 
+
     /**
-     * TODO: Add description.
-     * @param mixed $pk TODO
-     * @return mixed TODO
-      * @since 4.0.0
+     * Method to get a single record for a varied item.
+     *
+     * @param int $pk The id of the primary key.
+     *
+     * @return \stdClass  Object on success, false on failure.
+     *
+     * @since 1.6
+     *
+     * @throws Exception
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null): stdClass
     {
         return $this->getvariedItem($pk, 0);
     }
@@ -166,12 +171,12 @@ class ExtensionModel extends AdminModel
     /**
      * Method to get the record form.
      *
-     * @param   array  $data      An optional array of data for the form to interogate.
-     * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
+     * @param array $data     An optional array of data for the form to interogate.
+     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
      * @return Form|bool  A \JForm object on success, false on failure
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
@@ -189,13 +194,13 @@ class ExtensionModel extends AdminModel
     /**
      * Returns a reference to the a Table object, always creating it.
      *
-     * @param   string  $name     The table type to instantiate
-     * @param   string  $prefix   A prefix for the table class name. Optional.
-     * @param   array   $options  Configuration array for model. Optional.
+     * @param string $name    The table type to instantiate
+     * @param string $prefix  A prefix for the table class name. Optional.
+     * @param array  $options Configuration array for model. Optional.
      *
      * @return Table    A database object
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Extension', $prefix = 'Administrator', $options = []): Table
@@ -208,10 +213,10 @@ class ExtensionModel extends AdminModel
      *
      * @return mixed  The data for the form.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
-    protected function loadFormData()
+    protected function loadFormData(): mixed
     {
         // Check the session for previously entered form data.
         $data = Factory::getApplication()->getUserState('com_jed.edit.extension.data', []);
@@ -226,7 +231,7 @@ class ExtensionModel extends AdminModel
     /**
      * Method to save the form data.
      *
-     * @param   array  $data  The form data.
+     * @param array $data The form data.
      *
      * @return bool  True on success, False on error.
      *
@@ -246,9 +251,11 @@ class ExtensionModel extends AdminModel
             return false;
         }
 
-        $extensionId = $this->getState($this->getName() . '.id');
 
-        /*  if ((int) $data['approve']['approved'] !== 3)
+
+        /*
+        $extensionId = $this->getState($this->getName() . '.id');
+        if ((int) $data['approve']['approved'] !== 3)
             {
                 $this->removeApprovedReason((int) $data['id']);
             }
@@ -273,8 +280,6 @@ class ExtensionModel extends AdminModel
     /**
      * Get array of supply types for extension
      *
-     * @param   int  $extension_id
-     *
      * @return array
      *
      * @since 4.0.0
@@ -298,7 +303,7 @@ class ExtensionModel extends AdminModel
     /**
      * Get array of review scores for extension
      *
-     * @param   int  $extension_id
+     * @param int $extension_id
      *
      * @return array
      *
@@ -313,7 +318,7 @@ class ExtensionModel extends AdminModel
 
         $db->setQuery($query);
         $result = $db->loadObjectList();
-        $retval =[];
+        $retval = [];
         foreach ($result as $r) {
             if ($r->supply_option_id == 1) {
                 $supply = 'Free';
@@ -329,23 +334,24 @@ class ExtensionModel extends AdminModel
     /**
      * Gets array of all reviews for extension
      *
-     * @param   int  $extension_id
+     * @param int $extension_id
      *
      * @return array
      *
      * @since 4.0.0
      */
-    public function getReviews(int $extension_id): mixed
+    public function getReviews(int $extension_id): array
     {
         $db = $this->getDatabase();
+        $retval = [];
 
         $query = $db->getQuery(true);
-        $query->select('a.*,u.name as created_by_name')->from($db->quoteName('#__jed_reviews', 'a'))->join('LEFT', $db->quoteName('#__users', 'u') . ' ON u.id=a.created_by')->where($db->quoteName('extension_id') . ' = ' . $db->quote($extension_id) . ' and supply_option_id=1');
+        $query->select('"Free" as suptype,a.*,u.name as created_by_name')->from($db->quoteName('#__jed_reviews', 'a'))->join('LEFT', $db->quoteName('#__users', 'u') . ' ON u.id=a.created_by')->where($db->quoteName('extension_id') . ' = ' . $db->quote($extension_id) . ' and supply_option_id=1');
 
         $db->setQuery($query);
         $freeresult = $db->loadAssocList();
         $query      = $db->getQuery(true);
-        $query->select('a.*,u.name as created_by_name')->from($db->quoteName('#__jed_reviews', 'a'))->join('LEFT', $db->quoteName('#__users', 'u') . ' ON u.id=a.created_by')->where($db->quoteName('extension_id') . ' = ' . $db->quote($extension_id) . ' and supply_option_id=2');
+        $query->select('"Paid" as suptype,a.*,u.name as created_by_name')->from($db->quoteName('#__jed_reviews', 'a'))->join('LEFT', $db->quoteName('#__users', 'u') . ' ON u.id=a.created_by')->where($db->quoteName('extension_id') . ' = ' . $db->quote($extension_id) . ' and supply_option_id=2');
 
         $db->setQuery($query);
         $paidresult = $db->loadAssocList();
@@ -353,7 +359,6 @@ class ExtensionModel extends AdminModel
         $paidCount  = count($paidresult);
         if ($paidCount > 0) {
             $retval['Paid']            = $paidresult;
-            $retval['PaidReviewCount'] = $paidCount;
             foreach ($retval['Paid'] as $pr) {
                 if (str_contains($pr['body'], '{functionality}')) {
                     $pr['body'] = '';
@@ -362,7 +367,7 @@ class ExtensionModel extends AdminModel
         }
         if ($freeCount > 0) {
             $retval['Free']            = $freeresult;
-            $retval['FreeReviewCount'] = $freeCount;
+
 
             foreach ($retval['Free'] as $fr) {
                 //291505
@@ -379,10 +384,9 @@ class ExtensionModel extends AdminModel
     /**
      * Method to get Developer Information
      *
+     * @return stdClass
      *
-     * @return  stdClass
-     *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getDeveloperInfo(): stdClass
@@ -408,9 +412,9 @@ class ExtensionModel extends AdminModel
 
         $db    = $this->getDatabase();
         $query = $db->getQuery(true)
-                    ->select('i.supply_option_id,i.filename,i.state')
-                    ->from('#__jed_extension_images as i')
-                    ->where($db->quoteName('i.extension_id') . ' = ' . $this->item->id);
+            ->select('i.supply_option_id,i.filename,i.state')
+            ->from('#__jed_extension_images as i')
+            ->where($db->quoteName('i.extension_id') . ' = ' . $this->item->id);
         $db->setQuery($query);
 
         return $db->loadObjectList();
@@ -419,21 +423,18 @@ class ExtensionModel extends AdminModel
     /**
      * Method to get a single record.
      *
-     * @param   int|null  $pk                  The id of the primary key.
-     * @param   int       $supply_option_type  The type of varied data to look for
+     * @param int|null $pk                 The id of the primary key.
+     * @param int      $supply_option_type The type of varied data to look for
      *
      * @return stdClass    Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
-    public function getvariedItem(int $pk = null, int $supply_option_type = 0)
+    public function getvariedItem(int $pk = null, int $supply_option_type = 0): stdClass
     {
         if ($item = parent::getItem($pk)) {
-            /* Convert cmsobject to stdClass */
-            $s = $item->getProperties();
-
-            $this->item = (object) $s;
+            $this->item = $item;
 
             if (isset($this->item->includes)) {
                 $this->item->includes = array_values(json_decode($this->item->includes));
@@ -573,17 +574,18 @@ class ExtensionModel extends AdminModel
     /**
      * Get varied data for extension, i.e. fields for free, fields for paid
      *
-     * @param   int       $extension_id
-     * @param   int|null  $supply_option_type
+     * @param int      $extension_id
+     * @param int|null $supply_option_type
      *
      * @return array
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getVariedData(int $extension_id, int $supply_option_type = null): array
     {
         $db    = $this->getDatabase();
+        $retval = [];
         $query = $db->getQuery(true)->select('supply_options.title AS supply_type, a.*')->from($db->quoteName('#__jed_extension_varied_data', 'a'))->leftJoin(
             $db->quoteName('#__jed_extension_supply_options', 'supply_options') . ' ON ' . $db->quoteName('supply_options.id') . ' = ' . $db->quoteName('a.supply_option_id')
         )->where($db->quoteName('extension_id') . ' = :extension_id')->bind(':extension_id', $extension_id, ParameterType::INTEGER);
@@ -622,7 +624,7 @@ class ExtensionModel extends AdminModel
     /**
      * Get the filename of the given extension ID.
      *
-     * @param   int  $extensionId  The extension ID to get the filename for
+     * @param int $extensionId The extension ID to get the filename for
      *
      * @return stdClass  The extension file information.
      *
@@ -648,7 +650,7 @@ class ExtensionModel extends AdminModel
     /**
      * Get array of review scores for extension
      *
-     * @param   int  $extension_id
+     * @param int $extension_id
      *
      * @return array
      *
@@ -656,7 +658,7 @@ class ExtensionModel extends AdminModel
      */
     public function getReviewTypes(int $extension_id): array
     {
-        $db     = Factory::getContainer()->get('DatabaseDriver');
+        $db     = $this->getDatabase();
         $query  = $db->getQuery(true);
         $query2 = $db->getQuery(true);
         //SELECT supply_options.id AS supply_id, supply_options.title AS supply_type FROM `fqvpf_jed_extension_supply_options` AS `supply_options` WHERE id<3
@@ -669,33 +671,32 @@ class ExtensionModel extends AdminModel
         $query->select('supply_options.id AS supply_id, supply_options.title AS supply_type')->from($db->quoteName('#__jed_extension_supply_options', 'supply_options'))->where($db->quoteName('id') . ' < 3');
         $query2->select('supply_options.id AS supply_id, supply_options.title AS supply_type')
             //  $query2->select('"3" AS supply_id, "Cloud/Service" AS supply_type')
-               ->from($db->quoteName('#__jed_extension_varied_data', 'a'))->join(
-                   'LEFT',
-                   $db->quoteName(
-                       '#__jed_extension_supply_options',
-                       'supply_options'
-                   ) . ' ON supply_options.id=a.supply_option_id'
-               )->where($db->quoteName('extension_id') . ' = ' . $extension_id . ' and supply_options.id>2');
+            ->from($db->quoteName('#__jed_extension_varied_data', 'a'))->join(
+                'LEFT',
+                $db->quoteName(
+                    '#__jed_extension_supply_options',
+                    'supply_options'
+                ) . ' ON supply_options.id=a.supply_option_id'
+            )->where($db->quoteName('extension_id') . ' = ' . $extension_id . ' and supply_options.id>2');
 
 
         $db->setQuery($query->union($query2));
-        $result = $db->loadObjectList();
 
-        return $result;
+        return $db->loadObjectList();
     }
 
     /**
      * Method to get the varied data form.
      *
-     * @param   array  $data      An optional array of data for the form to interogate.
-     * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
+     * @param array $data     An optional array of data for the form to interogate.
+     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return  Form|bool  A Form object on success, false on failure
+     * @return Form  A Form object on success, false on failure
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
-    public function getVariedDataForm($data = [], $loadData = true, $formname = 'jform_extensionvarieddata'): Form
+    public function getVariedDataForm(array $data = [], bool $loadData = true, string $formname = 'jform_extensionvarieddata'): Form
     {
         // Get the form.
         $form = $this->loadForm(
@@ -711,7 +712,7 @@ class ExtensionModel extends AdminModel
     /**
      * Method to save the approved state.
      *
-     * @param   array  $data  The form data.
+     * @param array $data The form data.
      *
      * @return void
      *
@@ -727,7 +728,7 @@ class ExtensionModel extends AdminModel
             );
         }
 
-        $db          = Factory::getContainer()->get('DatabaseDriver');
+        $db          = $this->getDatabase();
         $extensionId = (int) $data['id'];
 
         /**
@@ -740,7 +741,7 @@ class ExtensionModel extends AdminModel
         $table->load($extensionId);
 
         if (!$table->save($data)) {
-            throw new RuntimeException($table->getError());
+            throw new RuntimeException('Save Failed');
         }
 
         $this->removeApprovedReason($extensionId);
@@ -771,7 +772,7 @@ class ExtensionModel extends AdminModel
     /**
      * Remove approved reasons.
      *
-     * @param   int  $extensionId  The extension ID to remove the approved reasons for
+     * @param int $extensionId The extension ID to remove the approved reasons for
      *
      * @return void
      *
@@ -779,7 +780,7 @@ class ExtensionModel extends AdminModel
      */
     private function removeApprovedReason(int $extensionId): void
     {
-        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $db    = $this->getDatabase();
         $query = $db->getQuery(true)->delete($db->quoteName('#__jed_extensions_approved_reasons'))->where($db->quoteName('extension_id') . ' = ' . $extensionId);
         $db->setQuery($query)->execute();
     }
@@ -787,11 +788,11 @@ class ExtensionModel extends AdminModel
     /**
      * Method to save the published state.
      *
-     * @param   array  $data  The form data.
+     * @param array $data The form data.
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function savePublish(array $data): void
@@ -802,7 +803,7 @@ class ExtensionModel extends AdminModel
             );
         }
 
-        $db          = Factory::getContainer()->get('DatabaseDriver');
+        $db          = $this->getDatabase();
         $extensionId = (int) $data['id'];
 
         /**
@@ -813,7 +814,7 @@ class ExtensionModel extends AdminModel
         $table->load($extensionId);
 
         if (!$table->save($data)) {
-            throw new RuntimeException($table->getError());
+            throw new RuntimeException('Save Failed');
         }
 
         $this->removePublishedReason($extensionId);
@@ -844,7 +845,7 @@ class ExtensionModel extends AdminModel
     /**
      * Remove published reasons.
      *
-     * @param   int  $extensionId  The extension ID to remove the published reasons for
+     * @param int $extensionId The extension ID to remove the published reasons for
      *
      * @return void
      *
@@ -860,8 +861,8 @@ class ExtensionModel extends AdminModel
     /**
      * Store used extension types for an extension.
      *
-     * @param   int    $extensionId  The extension ID to save the types for
-     * @param   array  $types        The extension types to store
+     * @param int   $extensionId The extension ID to save the types for
+     * @param array $types       The extension types to store
      *
      * @return void
      *
@@ -900,8 +901,8 @@ class ExtensionModel extends AdminModel
     /**
      * Store the images for an extension.
      *
-     * @param   int    $extensionId  The extension ID to save the images for
-     * @param   array  $images       The extension types to store
+     * @param int   $extensionId The extension ID to save the images for
+     * @param array $images      The extension types to store
      *
      * @return void
      *
@@ -945,10 +946,10 @@ class ExtensionModel extends AdminModel
     /**
      * Store an internal note.
      *
-     * @param   string  $body         The note content
-     * @param   int     $developerId  The developer to store the note for
-     * @param   int     $userId       The JED member storing the note
-     * @param   int     $extensionId  The extension ID the message is about
+     * @param string $body        The note content
+     * @param int    $developerId The developer to store the note for
+     * @param int    $userId      The JED member storing the note
+     * @param int    $extensionId The extension ID the message is about
      *
      * @return void
      *
@@ -956,37 +957,38 @@ class ExtensionModel extends AdminModel
      */
     public function storeNote(string $body, int $developerId, int $userId, int $extensionId): void
     {
-        $developer = User::getInstance($developerId);
 
-        if ($developer->get('id', null) === null) {
+        $developer = new User($developerId);
+
+        if ($developer->id == 0) {
             throw new InvalidArgumentException(
                 Text::_('COM_JED_DEVELOPER_NOT_FOUND')
             );
         }
 
-        $noteTable = Table::getInstance('Note', 'Table');
+        $noteTable = new NoteTable($this->getDatabase());
         $result    = $noteTable->save(
             [
                 'extension_id'    => $extensionId,
                 'body'            => $body,
-                'developer_id'    => $developer->get('id'),
-                'developer_name'  => $developer->get('name'),
-                'developer_email' => $developer->get('email'),
+                'developer_id'    => $developer->id,
+                'developer_name'  => $developer->name,
+                'developer_email' => $developer->email,
                 'created'         => (Date::getInstance())->toSql(),
                 'created_by'      => $userId,
             ]
         );
 
         if ($result === false) {
-            throw new RuntimeException($noteTable->getError());
+            throw new RuntimeException('Save Failed');
         }
     }
 
     /**
      * Store related categories for an extension.
      *
-     * @param   int    $extensionId         The extension ID to save the categories for
-     * @param   array  $relatedCategoryIds  The related category IDs to store
+     * @param int   $extensionId        The extension ID to save the categories for
+     * @param array $relatedCategoryIds The related category IDs to store
      *
      * @return void
      *
@@ -1030,9 +1032,9 @@ class ExtensionModel extends AdminModel
     /**
      * Store supported versions for an extension.
      *
-     * @param   int     $extensionId  The extension ID to save the versions for
-     * @param   array   $versions     The versions to store
-     * @param   string  $type         THe type of versions to store
+     * @param int    $extensionId The extension ID to save the versions for
+     * @param array  $versions    The versions to store
+     * @param string $type        THe type of versions to store
      *
      * @return void
      *
@@ -1072,13 +1074,19 @@ class ExtensionModel extends AdminModel
         $db->setQuery($query)->execute();
     }
 
+
     /**
-     * TODO: Add description.
-     * @param mixed $variedId TODO
-     * @return int TODO
-      * @since 4.0.0
+     * getExtensionIdfromVariedId
+     *
+     * Get parent Extension ID from varied data ID
+     *
+     * @param int $variedId
+     *
+     * @return int
+     *
+     * @since 1.0
      */
-    public function getExtensionIdfromVariedId($variedId): int
+    public function getExtensionIdfromVariedId(int $variedId): int
     {
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);
@@ -1086,13 +1094,19 @@ class ExtensionModel extends AdminModel
         return $db->setQuery($query)->loadResult();
     }
 
+
     /**
-     * TODO: Add description.
-     * @param mixed $extensionId TODO
-     * @return array TODO
-      * @since 4.0.0
+     * getExtensionSupplyOptions
+     *
+     * Get list of supply options for an extension
+     *
+     * @param int $extensionId
+     *
+     * @return array
+     *
+     * @since 1.0
      */
-    public function getExtensionSupplyOptions($extensionId): array
+    public function getExtensionSupplyOptions(int $extensionId): array
     {
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);

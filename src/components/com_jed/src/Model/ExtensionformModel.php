@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -59,13 +59,12 @@ class ExtensionformModel extends FormModel
     /**
      * Method to delete data
      *
-     * @param   int  $id  Item primary key
+     * @param int $id Item primary key
      *
      * @return int  The id of the deleted item
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
     public function delete(int $id): int
     {
@@ -101,7 +100,7 @@ class ExtensionformModel extends FormModel
      *
      * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getCanSave(): bool
@@ -120,10 +119,10 @@ class ExtensionformModel extends FormModel
     {
         $db    = $this->getDatabase();
         $query = $db->getQuery(true)
-                ->select('a.developer_name')
-                ->from($db->quoteName('#__jed_developers', 'a'))
-                ->where('a.user_id = :uid')
-                ->bind(':uid', $uid, ParameterType::INTEGER);
+            ->select('a.developer_name')
+            ->from($db->quoteName('#__jed_developers', 'a'))
+            ->where('a.user_id = :uid')
+            ->bind(':uid', $uid, ParameterType::INTEGER);
 
         return $db->setQuery($query)->loadResult();
     }
@@ -133,12 +132,12 @@ class ExtensionformModel extends FormModel
      *
      * The base form is loaded from XML
      *
-     * @param   array  $data      An optional array of data for the form to interogate.
-     * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
+     * @param array $data     An optional array of data for the form to interogate.
+     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
      * @return Form    A Form object on success, false on failure
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
@@ -163,12 +162,12 @@ class ExtensionformModel extends FormModel
     /**
      * Method to get the table
      *
-     * @param   string  $name     Name of the Table class
-     * @param   string  $prefix   Optional prefix for the table class name
-     * @param   array   $options  Optional configuration array for Table object
+     * @param string $name    Name of the Table class
+     * @param string $prefix  Optional prefix for the table class name
+     * @param array  $options Optional configuration array for Table object
      *
      * @return Table|bool Table if found, bool false on failure
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Extension', $prefix = 'Administrator', $options = []): Table|bool
@@ -180,7 +179,7 @@ class ExtensionformModel extends FormModel
      * Method to get the data that should be injected in the form.
      *
      * @return mixed  The default data is an empty array.
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function loadFormData(): mixed
@@ -243,11 +242,11 @@ class ExtensionformModel extends FormModel
     /**
      * Method to check in an item.
      *
-     * @param   int  $pk  The id of the row to check out.
+     * @param int $pk The id of the row to check out.
      *
      * @return bool True on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkin($pk = null): bool
@@ -273,11 +272,11 @@ class ExtensionformModel extends FormModel
     /**
      * Method to check out an item for editing.
      *
-     * @param   int  $pk  The id of the row to check out.
+     * @param int $pk The id of the row to check out.
      *
      * @return bool True on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkout($pk = null): bool
@@ -311,11 +310,11 @@ class ExtensionformModel extends FormModel
     /**
      * Method to get an object.
      *
-     * @param   int|null  $id  The id of the object to get.
+     * @param int|null $id The id of the object to get.
      *
      * @return stdClass|bool Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getItem(int $id = null): stdClass|bool
@@ -354,12 +353,12 @@ class ExtensionformModel extends FormModel
     /**
      * Get varied data for extension, i.e. fields for free, fields for paid
      *
-     * @param   int       $extension_id
-     * @param   int|null  $supply_option_type
+     * @param int      $extension_id
+     * @param int|null $supply_option_type
      *
      * @return array
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getVariedData(int $extension_id, int $supply_option_type = null): array
@@ -367,19 +366,19 @@ class ExtensionformModel extends FormModel
         $retval = null;
         $db    = $this->getDatabase();
         $query = $db->getQuery(true)
-                ->select('supply_options.title AS supply_type, a.*')
-                ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
-                ->leftJoin(
-                    $db->quoteName('#__jed_extension_supply_options', 'supply_options')
+            ->select('supply_options.title AS supply_type, a.*')
+            ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
+            ->leftJoin(
+                $db->quoteName('#__jed_extension_supply_options', 'supply_options')
                         . ' ON ' . $db->quoteName('supply_options.id') . ' = ' . $db->quoteName('a.supply_option_id')
-                )
-                ->where($db->quoteName('extension_id') . ' = :extension_id')
-                ->bind(':extension_id', $extension_id, ParameterType::INTEGER);
+            )
+            ->where($db->quoteName('extension_id') . ' = :extension_id')
+            ->bind(':extension_id', $extension_id, ParameterType::INTEGER);
 
         if (($supply_option_type ?? 0) > 0) {
             $query
-                    ->where($db->quoteName('supply_option_id') . ' = :supply_option_type')
-                    ->bind(':supply_option_type', $supply_option_type, ParameterType::INTEGER);
+                ->where($db->quoteName('supply_option_id') . ' = :supply_option_type')
+                ->bind(':supply_option_type', $supply_option_type, ParameterType::INTEGER);
         }
 
         $result = $db->setQuery($query)->loadObjectList();
@@ -418,7 +417,7 @@ class ExtensionformModel extends FormModel
      *
      * @return array
      *
-     * @since  1.0
+     * @since 1.0
      */
     private function jdav($value): array
     {
@@ -432,12 +431,12 @@ class ExtensionformModel extends FormModel
     /**
      * Method to get a single record.
      *
-     * @param   int|null  $pk                  The id of the primary key.
-     * @param   int       $supply_option_type  The type of varied data to look for
+     * @param int|null $pk                 The id of the primary key.
+     * @param int      $supply_option_type The type of varied data to look for
      *
      * @return stdClass    Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getvariedItem(int $pk = null, int $supply_option_type = 0): stdClass
@@ -551,7 +550,7 @@ class ExtensionformModel extends FormModel
                 $retval[$supply] = $r;
             }
             $item->varied_data = $retval; */
-//echo "<pre>";print_r($this->item);echo "</pre>";
+            //echo "<pre>";print_r($this->item);echo "</pre>";
             return $this->item;
         }
 
@@ -577,8 +576,8 @@ class ExtensionformModel extends FormModel
                         $db->quoteName('supply_options.title', 'supply_type'),
                 ]
         )
-                ->from($db->quoteName('#__jed_extension_supply_options', 'supply_options'))
-                ->where('state=1');
+            ->from($db->quoteName('#__jed_extension_supply_options', 'supply_options'))
+            ->where('state=1');
 
         return $db->setQuery($query)->loadObjectList();
     }
@@ -586,11 +585,11 @@ class ExtensionformModel extends FormModel
     /**
      * Method to save the form data.
      *
-     * @param   array  $data  The form data
+     * @param array $data The form data
      *
      * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function save(array $data): bool
@@ -602,7 +601,7 @@ class ExtensionformModel extends FormModel
             if ($id) {
                 $authorised = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.edit.own', 'com_jed');
             } else {
-// Check the user can create new items in this section
+                // Check the user can create new items in this section
                 $authorised = $user->authorise('core.create', 'com_jed');
             }
 
@@ -620,9 +619,9 @@ class ExtensionformModel extends FormModel
                 try {
                     $db    = $this->getDatabase();
                     $query = $db->getQuery(true)
-                            ->select($db->quoteName('id'))
-                            ->from($db->quoteName('#__jed_developers'))
-                            ->where($db->quoteName('user_id') . ' = ' . $db->quote((int) $user->id));
+                        ->select($db->quoteName('id'))
+                        ->from($db->quoteName('#__jed_developers'))
+                        ->where($db->quoteName('user_id') . ' = ' . $db->quote((int) $user->id));
 
                     $exists = $db->setQuery($query)->loadResult();
 
@@ -639,9 +638,9 @@ class ExtensionformModel extends FormModel
                         ];
 
                         $insert = $db->getQuery(true)
-                                ->insert($db->quoteName('#__jed_developers'))
-                                ->columns($columns)
-                                ->values(implode(', ', $values));
+                            ->insert($db->quoteName('#__jed_developers'))
+                            ->columns($columns)
+                            ->values(implode(', ', $values));
 
                         $db->setQuery($insert)->execute();
                     }
@@ -705,13 +704,12 @@ class ExtensionformModel extends FormModel
     /**
      * Backup extension and varied data to history table before updating
      *
-     * @param   int  $extensionId
-     * @param   int  $userId
+     * @param int $extensionId
+     * @param int $userId
      *
      * @return void
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
     private function backupExtensionToHistory(int $extensionId, int $userId): void
     {
@@ -724,9 +722,9 @@ class ExtensionformModel extends FormModel
 
             // Get current extension data
             $query = $db->getQuery(true)
-                    ->select('e.*')
-                    ->from($db->quoteName('#__jed_extensions', 'e'))
-                    ->where($db->quoteName('e.id') . ' = ' . $extensionId);
+                ->select('e.*')
+                ->from($db->quoteName('#__jed_extensions', 'e'))
+                ->where($db->quoteName('e.id') . ' = ' . $extensionId);
 
             $extension = $db->setQuery($query)->loadObject();
 
@@ -736,9 +734,9 @@ class ExtensionformModel extends FormModel
 
             // Get all varied data for this extension
             $query = $db->getQuery(true)
-                    ->select('v.*')
-                    ->from($db->quoteName('#__jed_extension_varied_data', 'v'))
-                    ->where($db->quoteName('v.extension_id') . ' = ' . $extensionId);
+                ->select('v.*')
+                ->from($db->quoteName('#__jed_extension_varied_data', 'v'))
+                ->where($db->quoteName('v.extension_id') . ' = ' . $extensionId);
 
             $variedData = $db->setQuery($query)->loadObjectList();
 
@@ -845,9 +843,9 @@ class ExtensionformModel extends FormModel
                 ];
 
                 $insert = $db->getQuery(true)
-                        ->insert($db->quoteName('#__jed_extensions_history'))
-                        ->columns($db->quoteName($historyColumns))
-                        ->values(implode(', ', $historyValues));
+                    ->insert($db->quoteName('#__jed_extensions_history'))
+                    ->columns($db->quoteName($historyColumns))
+                    ->values(implode(', ', $historyValues));
 
                 $db->setQuery($insert)->execute();
             }
@@ -863,14 +861,13 @@ class ExtensionformModel extends FormModel
     /**
      * Upsert varied data rows for each supply tab into #__jed_extension_varied_data
      *
-     * @param   int    $extensionId
-     * @param   array  $supplyPayload  Posted as jform[supply][supplyX][field]=...
-     * @param   int    $userId
+     * @param int   $extensionId
+     * @param array $supplyPayload Posted as jform[supply][supplyX][field]=...
+     * @param int   $userId
      *
      * @return void
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
     private function storeVariedData(int $extensionId, array $supplyPayload, int $userId): void
     {
@@ -939,14 +936,13 @@ class ExtensionformModel extends FormModel
     /**
      * Upsert uploaded extension zip file metadata in #__jed_extensions_files.
      *
-     * @param   int    $extensionId
-     * @param   array  $uploadedFiles
-     * @param   int    $userId
+     * @param int   $extensionId
+     * @param array $uploadedFiles
+     * @param int   $userId
      *
      * @return void
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
-     *
      */
     public function storeExtensionFiles(int $extensionId, array $uploadedFiles, int $userId): void
     {
@@ -962,19 +958,19 @@ class ExtensionformModel extends FormModel
         $meta         = json_encode($uploadedFiles, JSON_UNESCAPED_SLASHES);
 
         $select = $db->getQuery(true)
-                ->select($db->quoteName('id'))
-                ->from($db->quoteName('#__jed_extensions_files'))
-                ->where($db->quoteName('extension_id') . ' = ' . $extensionId);
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__jed_extensions_files'))
+            ->where($db->quoteName('extension_id') . ' = ' . $extensionId);
 
         $existingId = (int) $db->setQuery($select)->loadResult();
 
         if ($existingId > 0) {
             $update = $db->getQuery(true)
-                    ->update($db->quoteName('#__jed_extensions_files'))
-                    ->set($db->quoteName('file') . ' = ' . $db->quote($file))
-                    ->set($db->quoteName('originalFile') . ' = ' . $db->quote($originalFile))
-                    ->set($db->quoteName('meta') . ' = ' . $db->quote((string) $meta))
-                    ->where($db->quoteName('id') . ' = ' . $existingId);
+                ->update($db->quoteName('#__jed_extensions_files'))
+                ->set($db->quoteName('file') . ' = ' . $db->quote($file))
+                ->set($db->quoteName('originalFile') . ' = ' . $db->quote($originalFile))
+                ->set($db->quoteName('meta') . ' = ' . $db->quote((string) $meta))
+                ->where($db->quoteName('id') . ' = ' . $existingId);
 
             $db->setQuery($update)->execute();
 
@@ -982,30 +978,30 @@ class ExtensionformModel extends FormModel
         }
 
         $insert = $db->getQuery(true)
-                ->insert($db->quoteName('#__jed_extensions_files'))
-                ->columns(
-                    $db->quoteName(
-                        [
+            ->insert($db->quoteName('#__jed_extensions_files'))
+            ->columns(
+                $db->quoteName(
+                    [
                                         'extension_id',
                                         'file',
                                         'meta',
                                         'created_by',
                                         'originalFile',
                                 ]
-                    )
                 )
-                ->values(
-                    implode(
-                        ', ',
-                        [
+            )
+            ->values(
+                implode(
+                    ', ',
+                    [
                                         $extensionId,
                                         $db->quote($file),
                                         $db->quote((string) $meta),
                                         $userId,
                                         $db->quote($originalFile),
                                 ]
-                    )
-                );
+                )
+            );
 
         $db->setQuery($insert)->execute();
     }

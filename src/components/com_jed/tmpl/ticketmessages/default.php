@@ -5,8 +5,8 @@
  *
  * @subpackage TICKETS
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -29,7 +29,7 @@ HTMLHelper::_('behavior.multiselect');
 
 $user       = $this->getCurrentUser();
 $userId     = $user->id;
-$listOrder  = $this->state->get('list.ordering');
+$listOrder  = $this->state->get('list.ordering', '');
 $listDirn   = $this->state->get('list.direction');
 $canCreate  = $user->authorise('core.create', 'com_jed');
 $canEdit    = $user->authorise('core.edit', 'com_jed');
@@ -39,7 +39,7 @@ $canDelete  = $user->authorise('core.delete', 'com_jed');
 
 // Import CSS
 try {
-    $wa = $this->getDocument()->getWebAssetManager();
+    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 } catch (Exception $e) {
 }
 $wa->useStyle('com_jed.list');

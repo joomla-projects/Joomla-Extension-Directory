@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    TICKETS
+ * @subpackage TICKETS
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Ticketform;
@@ -22,6 +22,7 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 
@@ -122,7 +123,7 @@ class HtmlView extends BaseHtmlView
     /**
      * Display the view
      *
-     * @param   string  $tpl  Template name
+     * @param string $tpl Template name
      *
      * @return void
      *
@@ -135,35 +136,38 @@ class HtmlView extends BaseHtmlView
         $app = Factory::getApplication();
 
         $model = $this->getModel();
-        $this->state      = $model->getState();
-        $this->item       = $model->getItem();
-        $this->params     = $app->getParams('com_jed');
-        $this->canSave    = JedHelper::canSave();
-        $this->form       = $model->getForm();
+        $model->setUseExceptions(true);
+        try {
+            $this->state      = $model->getState();
+            $this->item       = $model->getItem();
+            $this->params     = $app->getParams('com_jed');
+            $this->canSave    = JedHelper::canSave();
+            $this->form       = $model->getForm();
 
-        $input         = $app->input;
-        $linked_id     = $input->get('lid', -1, 'int');
-        $linked_item   = $input->get('litem', -1, 'int');
-        $vr            = $input->get('vr', -1, 'int');
+            $input         = $app->input;
+            $linked_id     = $input->get('lid', -1, 'int');
+            $linked_item   = $input->get('litem', -1, 'int');
+            $vr            = $input->get('vr', -1, 'int');
 
-        $this->item->ticket_title = "Submit Ticket";
-        if ($linked_id <> -1) {
-            $this->item->linked_item_type = $linked_item;
-            $this->item->linked_item_id   = $linked_id;
-            $this->item->vr               = $vr;
-            $ticket_type = "Unknwon";
-            if ($linked_item == 2) {
-                $ticket_type = "Extension";
+            $this->item->ticket_title = "Submit Ticket";
+            if ($linked_id <> -1) {
+                $this->item->linked_item_type = $linked_item;
+                $this->item->linked_item_id   = $linked_id;
+                $this->item->vr               = $vr;
+                $ticket_type = "Unknown";
+                if ($linked_item == 2) {
+                    $ticket_type = "Extension";
+                }
+
+                if ($linked_item == 3) {
+                    $ticket_type = "Review";
+                }
+                $this->item->extension_title = JedHelper::getExtensionTitle($vr);
+                $this->item->ticket_title    = "Reporting " . $ticket_type . ' - ' . $this->item->extension_title;
             }
-
-            if ($linked_item == 3) {
-                $ticket_type = "Review";
-            }
-            $this->item->extension_title = JedHelper::getExtensionTitle($vr);
-            $this->item->ticket_title    = "Reporting " . $ticket_type . ' - ' . $this->item->extension_title;
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
         }
-
-
 
 
 

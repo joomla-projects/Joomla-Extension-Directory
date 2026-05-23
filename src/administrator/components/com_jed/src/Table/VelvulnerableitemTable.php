@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -50,13 +50,13 @@ class VelvulnerableitemTable extends Table
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param   array|object  $src     An associative array or object to bind to the Table instance.
-     * @param   array|string  $ignore  An optional array or space separated list of properties to ignore while binding.
+     * @param array|object $src    An associative array or object to bind to the Table instance.
+     * @param array|string $ignore An optional array or space separated list of properties to ignore while binding.
      *
-     * @return  boolean  True on success.
+     * @return bool  True on success.
      *
      * @see    Table:bind
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function bind($src, $ignore = '')
@@ -103,7 +103,7 @@ class VelvulnerableitemTable extends Table
      *
      * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function check(): bool
@@ -134,15 +134,15 @@ class VelvulnerableitemTable extends Table
 
                 if ($fileError > 0 && $fileError != 4) {
                     switch ($fileError) {
-                        case 1:
-                            $message = Text::_('File size exceeds allowed by the server');
-                            break;
-                        case 2:
-                            $message = Text::_('File size exceeds allowed by the html form');
-                            break;
-                        case 3:
-                            $message = Text::_('Partial upload error');
-                            break;
+                    case 1:
+                        $message = Text::_('File size exceeds allowed by the server');
+                        break;
+                    case 2:
+                        $message = Text::_('File size exceeds allowed by the html form');
+                        break;
+                    case 3:
+                        $message = Text::_('Partial upload error');
+                        break;
                     }
 
                     if ($message != '') {
@@ -212,13 +212,13 @@ class VelvulnerableitemTable extends Table
             $checkImageVariableType = gettype($this->xml_manifest);
 
             switch ($checkImageVariableType) {
-                case 'string':
-                    File::delete(JPATH_ROOT . '/tmp/' . $this->xml_manifest);
-                    break;
-                default:
-                    foreach ($this->xml_manifest as $xml_manifestFile) {
-                        File::delete(JPATH_ROOT . '/tmp/' . $xml_manifestFile);
-                    }
+            case 'string':
+                File::delete(JPATH_ROOT . '/tmp/' . $this->xml_manifest);
+                break;
+            default:
+                foreach ($this->xml_manifest as $xml_manifestFile) {
+                    File::delete(JPATH_ROOT . '/tmp/' . $xml_manifestFile);
+                }
             }
         }
 

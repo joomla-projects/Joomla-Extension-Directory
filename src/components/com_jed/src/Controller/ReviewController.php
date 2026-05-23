@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -69,7 +69,7 @@ class ReviewController extends BaseController
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      * @throws Exception
      */
@@ -94,7 +94,7 @@ class ReviewController extends BaseController
 
             // Check for errors.
             if ($return === false) {
-                $this->setMessage(Text::sprintf('Save failed: %s', $model->getError()), 'warning');
+                $this->setMessage(Text::_('Save failed'), 'warning');
             }
 
             // Clear the profile id from the session.
@@ -124,7 +124,7 @@ class ReviewController extends BaseController
      *
      * @return bool  True on success
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkin(): bool
@@ -144,7 +144,7 @@ class ReviewController extends BaseController
 
             if ($return === false) {
                 // Checkin failed.
-                $message = Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError());
+                $message = Text::_('JLIB_APPLICATION_ERROR_CHECKIN_FAILED');
                 $this->setRedirect(Route::_('index.php?option=com_jed&view=review' . '&id=' . $id, false), $message, 'error');
                 return false;
             } else {

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @copyright (C) 2023 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Helper;
@@ -41,7 +41,7 @@ class JedHelper
      *
      * @since 4.0.0
      */
-    public static function addConfigToolbar(Toolbar $bar)
+    public static function addConfigToolbar(Toolbar $bar) : void
     {
         $bar->linkButton('tickets')->text(Text::_('COM_JED_TITLE_TICKETS'))->url('index.php?option=com_jed&view=tickets')->icon('fa fa-ticket-alt');
         $bar->linkButton('vulnerable')->text('Vulnerable Items')->url('index.php?option=com_jed&view=velvulnerableitems')->icon('fa fa-bug');
@@ -94,8 +94,8 @@ class JedHelper
     /**
      * Function to format JED Extension Images
      *
-     * @param   string  $filename  The image filename
-     * @param   string  $size      Size of image, small|large
+     * @param string    $filename The image filename
+     * @param ImageSize $size     Size of image, small|large
      *
      * @return string  Full image url
      *
@@ -126,7 +126,7 @@ class JedHelper
         // TODO Check if the resized file exists; if not resize it
 
         // TODO If the file cannot be resized AND I am configured to use a CDN, fall back to the legacy CDN URLs
-        if (false && $params->get('use_cdn', 0)) {
+        if ($params->get('use_cdn', 0)) {
             $bestFilename = match ($size) {
                 ImageSize::ORIGINAL => $filename,
                 ImageSize::SMALL    => $partialName . '_resizeDown400px175px16' . $extension,
@@ -166,13 +166,14 @@ class JedHelper
      *
      * @return registry
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function getActions(): registry
     {
         //$user   = Factory::getUser();
 
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         $user   = $app->getSession()->get('user');
@@ -202,27 +203,27 @@ class JedHelper
      *
      * @return registry
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function getApprovedIcon(int $state): string
     {
         switch ($state) { //Rejected
-            case '-1':
-                $icon = 'unpublish';
-                break;
-            case '1':// Approved
-                $icon = 'publish';
-                break;
+        case '-1':
+            $icon = 'unpublish';
+            break;
+        case '1':// Approved
+            $icon = 'publish';
+            break;
 
-            case '2':// Awaiting response
-                $icon = 'expired';
-                break;
+        case '2':// Awaiting response
+            $icon = 'expired';
+            break;
 
-            case '0':// Pending
-            default:
-                $icon = 'pending';
-                break;
+        case '0':// Pending
+        default:
+            $icon = 'pending';
+            break;
         }
 
         return '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
@@ -231,11 +232,11 @@ class JedHelper
     /**
      * Gets the files attached to an item
      *
-     * @param   int     $pk     The item's id
+     * @param int    $pk    The item's id
      *
-     * @param   string  $table  The table's name
+     * @param string $table The table's name
      *
-     * @param   string  $field  The field's name
+     * @param string $field The field's name
      *
      * @return array  The files
      *
@@ -258,27 +259,27 @@ class JedHelper
      *
      * @return registry
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function getPublishedIcon(int $state): string
     {
         switch ($state) { //Rejected
-            case '-1':
-                $icon = 'unpublish';
-                break;
-            case '1':// Approved
-                $icon = 'publish';
-                break;
+        case '-1':
+            $icon = 'unpublish';
+            break;
+        case '1':// Approved
+            $icon = 'publish';
+            break;
 
-            case '2':// Awaiting response
-                $icon = 'expired';
-                break;
+        case '2':// Awaiting response
+            $icon = 'expired';
+            break;
 
-            case '0':// Pending
-            default:
-                $icon = 'pending';
-                break;
+        case '0':// Pending
+        default:
+            $icon = 'pending';
+            break;
         }
 
         return '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
@@ -300,7 +301,7 @@ class JedHelper
             $userFactory = $container->get('user.factory');
 
             return $userFactory->loadUserById($userId);
-        } catch (Exception $e) {
+        } catch (Exception)  {
             return new User\User();
         }
     }
@@ -318,7 +319,7 @@ class JedHelper
             $user = self::getUser();
 
             return in_array("8", $user->groups) || in_array("7", $user->groups);
-        } catch (Exception $exc) {
+        } catch (Exception ) {
             return false;
         }
     }
@@ -333,10 +334,10 @@ class JedHelper
     public static function getUser(): User\User
     {
         try {
+            /* @var $app \Joomla\CMS\Application\SiteApplication */
             $app = Factory::getApplication();
-
             return $app->getSession()->get('user');
-        } catch (Exception $e) {
+        } catch (Exception ) {
             return new User\User();
         }
     }
@@ -357,9 +358,7 @@ class JedHelper
     {
         $fields = $form->getFieldset();
         foreach ($fields as $field) :
-            if (in_array($field->getAttribute('name'), $excluded)) {
-                //Do Nothing
-            } else {
+            if (!in_array($field->getAttribute('name'), $excluded)) {
                 $form->setFieldAttribute($field->getAttribute('name'), 'disabled', 'true');
                 $form->setFieldAttribute($field->getAttribute('name'), 'class', 'readonly');
                 $form->setFieldAttribute($field->getAttribute('name'), 'readonly', 'true');
@@ -372,7 +371,7 @@ class JedHelper
     /**
      * Prettyfy a Data
      *
-     * @param   string  $datestr  A String Date
+     * @param string $datestr A String Date
      *
      * @since 4.0.0
      **/
@@ -383,17 +382,23 @@ class JedHelper
             $d = new DateTime($datestr);
 
             return $d->format("d M y H:i");
-        } catch (Exception $e) {
+        } catch (Exception ) {
             return 'Sorry an error occured';
         }
     }
 
+
     /**
-     * TODO: Add description.
-     * @param mixed $fieldsets TODO
-     * @param mixed $form TODO
-     * @return bool TODO
-      * @since 4.0.0
+     * outputFieldsets
+     *
+     * Outputs custom form field from array
+     *
+     * @param array $fieldsets
+     * @param Form  $form
+     *
+     * @return bool
+     *
+     * @since 4.0.0
      */
     public static function outputFieldsets(array $fieldsets, Form $form): bool
     {
@@ -410,7 +415,7 @@ class JedHelper
                     $st = '_' . $fs['supply_type'];
                 } else {
                     $st = '';
-                };
+                }
 
                 echo '<fieldset class="extensionform' . $st . '"><legend>' . $fs['title'] . '</legend>';
             }
@@ -435,11 +440,13 @@ class JedHelper
                     echo $form->renderField($field[1], null, null, ['class' => 'control-wrapper-' . $field[1]]);
                     echo '</div></div>';
                 }
-                if (in_array($field, $hiddenFields)) {
-                    $form->setFieldAttribute($field, 'type', 'hidden');
+                else
+                {
+                    if (in_array($field, $hiddenFields)) {
+                        $form->setFieldAttribute($field, 'type', 'hidden');
+                    }
+                    echo $form->renderField($field, null, null, ['class' => 'control-wrapper-'.$field]);
                 }
-
-                echo $form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
             }
         }
         echo '</fieldset>';

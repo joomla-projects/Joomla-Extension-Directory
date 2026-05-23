@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    Tickets
+ * @subpackage Tickets
  *
- * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Field;
@@ -48,7 +48,7 @@ class JedCategoryField extends ListField
     /**
      * category data
      *
-     * @var  array
+     * @var array
      *
      * @since 4.0.0
      */
@@ -57,7 +57,7 @@ class JedCategoryField extends ListField
     /**
      * getInput
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function getInput($options = []): string
@@ -101,7 +101,7 @@ class JedCategoryField extends ListField
      * which categories should be displayed.
      * Use the show_root attribute to specify whether to show the global category root in the list.
      *
-     * @return  object[]    The field option objects.
+     * @return object[]    The field option objects.
      *
      * @since 4.0.0
      */
@@ -114,7 +114,7 @@ class JedCategoryField extends ListField
      * Get caegories
      *
      * @return array
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     private function getCategories(): array

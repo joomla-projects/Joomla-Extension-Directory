@@ -5,8 +5,8 @@
  *
  * @subpackage VEL
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -42,7 +42,6 @@ class VelabandonedreportformModel extends FormModel
      */
     private mixed $item = null;
     /**
-     *
      * Data Table
      *
      * @since 4.0.0
@@ -61,16 +60,20 @@ class VelabandonedreportformModel extends FormModel
      *
      * @return mixed    A Form object on success, false on failure
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
     {
         // Get the form.
-        $form = $this->loadForm('com_jed.velabandonedreport', 'velabandonedreportform', [
+        $form = $this->loadForm(
+            'com_jed.velabandonedreport',
+            'velabandonedreportform',
+            [
                 'control'   => $formname,
                 'load_data' => $loadData,
-            ]);
+            ]
+        );
 
         if (!is_object($form)) {
             throw new Exception(Text::_('JERROR_LOADFILE_FAILED'), 500);
@@ -86,7 +89,7 @@ class VelabandonedreportformModel extends FormModel
      *
      * @return Object|bool Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getItem(int $id = null): mixed
@@ -194,7 +197,7 @@ class VelabandonedreportformModel extends FormModel
      *
      * @return Table Table if found
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Velabandonedreport', $prefix = 'Administrator', $options = []): Table
@@ -205,11 +208,11 @@ class VelabandonedreportformModel extends FormModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return array  The default data is an empty array.
-     * @since 4.0.0
+     * @return mixed  The default data is an empty array.
+     * @since  4.0.0
      * @throws Exception
      */
-    protected function loadFormData(): array
+    protected function loadFormData(): mixed
     {
         $data = Factory::getApplication()->getUserState('com_jed.edit.velabandonedreport.data', []);
 
@@ -302,7 +305,7 @@ class VelabandonedreportformModel extends FormModel
      *
      * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function save(array $data): bool

@@ -5,8 +5,8 @@
  *
  * @subpackage TICKETS
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -31,11 +31,11 @@ class TicketformController extends FormController
     /**
      * Method to abort current operation
      *
-     * @param   null  $key
+     * @param null $key
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function cancel($key = null): void
@@ -63,8 +63,8 @@ class TicketformController extends FormController
     /**
      * Method to check out an item for editing and redirect to the edit form.
      *
-     * @param   null  $key
-     * @param   null  $urlVar
+     * @param null $key
+     * @param null $urlVar
      *
      * @return void
      *
@@ -106,7 +106,7 @@ class TicketformController extends FormController
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function remove(): void
@@ -145,12 +145,12 @@ class TicketformController extends FormController
     /**
      * Method to save data.
      *
-     * @param   null  $key
-     * @param   null  $urlVar
+     * @param null $key
+     * @param null $urlVar
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function save($key = null, $urlVar = null): void
@@ -169,7 +169,7 @@ class TicketformController extends FormController
         $form = $model->getForm();
 
         if (!$form) {
-            throw new Exception($model->getError(), 500);
+            throw new Exception('Could not validate data', 500);
         }
 
         // Validate the posted data.
@@ -184,20 +184,9 @@ class TicketformController extends FormController
         }
         // Check for errors.
         if ($data === false) {
-            // Get the validation messages.
-            $errors = $model->getErrors();
+            $this->app->enqueueMessage('An error occured saving your data. Please go back and try again', 'warning');
 
-            // Push up to three validation messages out to the user.
-            for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++) {
-                if ($errors[$i] instanceof Exception) {
-                    $app->enqueueMessage($errors[$i]->getMessage(), 'warning');
-                } else {
-                    $app->enqueueMessage($errors[$i], 'warning');
-                }
-            }
-
-            $input = $app->input;
-            $jform = $input->get('jform', [], 'ARRAY');
+            $jform = $this->input->get('jform', [], 'ARRAY');
 
             // Save the data in the session.
             $app->setUserState('com_jed.edit.ticket.data', $jform);
@@ -218,7 +207,7 @@ class TicketformController extends FormController
 
             // Redirect back to the edit screen.
             $id = (int) $app->getUserState('com_jed.edit.ticket.id');
-            $this->setMessage(Text::sprintf('Save failed', $model->getError()), 'warning');
+            $this->setMessage(Text::_('Save failed'), 'warning');
             $this->setRedirect(Route::_('index.php?option=com_jed&view=ticketform&layout=edit&id=' . $id, false));
         }
 

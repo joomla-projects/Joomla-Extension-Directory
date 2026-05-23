@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -21,20 +21,17 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Uri\Uri;
-use Joomla\Component\Actionlogs\Administrator\Helper\ActionlogsHelper;
 
 $headerlabeloptions = ['hiddenLabel' => true, 'readonly' => true];
 $fieldhiddenoptions = ['hidden' => true];
 /**
-*
- *
- * @var HtmlView $this
+ * $model->setUseExceptions(true)
 */
 
 HTMLHelper::_('script', 'com_jed/jed.js', ['version' => 'auto', 'relative' => true]);
 
 try {
-    $this->getDocument()->getWebAssetManager()
+    Factory::getApplication()->getDocument()->getWebAssetManager()
         ->useScript('form.validate')
         ->useScript('keepalive')
         ->usePreset('choicesjs')
@@ -69,37 +66,38 @@ $this->getDocument()
         <?php
         echo HTMLHelper::_('uitab.startTabSet', 'extensionTab', ['active' => 'general', 'recall' => true, 'breakpoint' => 768]);
 
-foreach ($this->form->getFieldsets() as $fieldset) :
-    echo HTMLHelper::_('uitab.addTab', 'extensionTab', $fieldset->name, Text::_($fieldset->label));
-    ?>
+        foreach ($this->form->getFieldsets() as $fieldset) :
+            echo HTMLHelper::_('uitab.addTab', 'extensionTab', $fieldset->name, Text::_($fieldset->label));
+            ?>
                 <div class="row">
                     <div class="col-12 col-lg-6">
                         <?php  echo $this->form->renderFieldset($fieldset->name); ?>
                     </div>
                 </div>
             <?php
-        echo HTMLHelper::_('uitab.endTab'); ?>
+                echo HTMLHelper::_('uitab.endTab'); ?>
         <?php endforeach; ?>
 <?php
 foreach ($this->extension->varied as $st) {
+
     echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'varied-' . $st->supply_option_id, Text::_($st->supply_option_type));
     $varied_form                          = $this->extension->varied_form;
     $varied_form->bind($st);
     $fieldsets                            = [];
-    $fieldsets['overview']['supply_type'] = $st->supply_type;
+    $fieldsets['overview']['supply_type'] = $st->supply_option_type;
     $fieldsets['overview']['title']       =  '';
     $fieldsets['overview']['description'] = '';
     $fieldsets['overview']['fields']      = ['id', 'supply_option_id', ['title', 'is_default_data'],  'description'];
     $fieldsets['overview']['hidden']      = ['id', 'supply_option_id'];
 
 
-    $fieldsets['links']['supply_type'] = $st->supply_type;
+    $fieldsets['links']['supply_type'] = $st->supply_option_type;
     $fieldsets['links']['title']       = Text::_('COM_JED_EXTENSION_LINKS_TITLE');
     $fieldsets['links']['description'] = '';
     $fieldsets['links']['fields']      = [['homepage_link', 'download_link'], ['demo_link', 'support_link'], ['documentation_link', 'license_link'], ['translation_link', '']];
     $fieldsets['links']['hidden']      = [];
 
-    $fieldsets['integration']['supply_type'] = $st->supply_type;
+    $fieldsets['integration']['supply_type'] = $st->supply_option_type;
     $fieldsets['integration']['title']       = Text::_('COM_JED_EXTENSION_INTEGRATION_TITLE');
     $fieldsets['integration']['description'] = Text::_('COM_JED_EXTENSION_INTEGRATION_DESCR');
     $fieldsets['integration']['fields']      = [['download_integration_type', 'download_integration_url']];
@@ -110,35 +108,41 @@ foreach ($this->extension->varied as $st) {
 
     echo HTMLHelper::_('uitab.endTab');
 }
-echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'viewextensionreviews', Text::_('Reviews', true));
+echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'viewextensionreviews', Text::_('Reviews', true));
 ?>
 
             <div class="container">
                 <div class="row">
                     <?php
 
-                    echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_help_reviews_group', $slidesOptions);
+                    $slidesOptions = [//"active" => "slide0" // It is the ID of the active tab.
+                    ];
 
-$slideid = 0;
-foreach ($this->extension->reviews as $rtype) {
-    foreach ($rtype as $review) {
-        $review = (object)$review;
-        if ($review->published === 1) {
-            $ico = '<span class="fas fa-bolt"></span>';
-        } else {
-            $ico = '';
-        }
-        echo HTMLHelper::_(
-            'bootstrap.addSlide',
-            'extension_' . $type . '_reviews_group',
-            $type . ' ' . $review->id . ' - ' . $review->title . '&nbsp;' .
-            JedHelper::prettyDate($review->created_on) . '&nbsp;',
-            'extension_' . $type . '_reviews_group' . '_slide' . ($slideid++)
-        );
-        $review_model = new ReviewModel();
-        $linked_form  = $review_model->getForm($review, false, 'review');
-        $linked_form->bind($review);
-        ?>
+
+                    $slideid = 0;
+
+                    foreach ($this->extension->reviews as $key =>$rtype) {
+
+                        echo HTMLHelper::_('bootstrap.startAccordion', 'extension_' . $key . '_reviews_group', $slidesOptions);
+                        foreach ($rtype as $review) {
+                            $review = (object)$review;
+
+                            if ($review->published === 1) {
+                                $ico = '<span class="fas fa-bolt"></span>';
+                            } else {
+                                $ico = '';
+                            }
+                            echo HTMLHelper::_(
+                                'bootstrap.addSlide',
+                                'extension_' . $key . '_reviews_group',
+                                $review->suptype . ' ' . $review->id . ' - ' . $review->title . '&nbsp;' .
+                                JedHelper::prettyDate($review->created_on) . '&nbsp;',
+                                'extension_' . $review->suptype . '_reviews_group' . '_slide' . ($slideid++)
+                            );
+                            $review_model = new ReviewModel();
+                            $linked_form  = $review_model->getForm($review, false, 'review');
+                            $linked_form->bind($review);
+                            ?>
                             <div class="col-md-4 ticket-header">
         <h1>Status - <?php echo $linked_form->renderField('published', null, null, $headerlabeloptions); ?>
                     &nbsp;&nbsp;<button id="btn_save_published" type="button" class="">
@@ -236,12 +240,13 @@ foreach ($this->extension->reviews as $rtype) {
                     </div>
                 </div>
                             <?php
-        echo HTMLHelper::_('bootstrap.endSlide');
-    }
-}
-echo HTMLHelper::_('bootstrap.endAccordion');
+                            echo HTMLHelper::_('bootstrap.endSlide');
+                        }
+                        echo HTMLHelper::_('bootstrap.endAccordion');
+                    }
 
-?>
+
+                    ?>
 
 
                 </div>
@@ -249,7 +254,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
 
         <?php
         echo HTMLHelper::_('uitab.endTab');
-/*for ($this->item->varied)
+        /*for ($this->item->varied)
             echo HTMLHelper::_('uitab.endTab');
 
             foreach ($this->extension->varied_data as $vr) {
@@ -267,7 +272,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
             }
             //      echo "<pre>";print_r($this->extension);echo "</pre>";exit();
             ?>
-<!-- Legacy stuff from here on -->
+        <!-- Legacy stuff from here on -->
 
             <?php
             echo HTMLHelper::_(
@@ -393,49 +398,49 @@ echo HTMLHelper::_('bootstrap.endAccordion');
                                 ?>
                                 <td><?php
                                 echo HTMLHelper::_('date', $history->logDate, Text::_('COM_JED_GENERAL_DATETIME_FORMAT')); ?></td><?php
-?>
+        ?>
                                 <td><?php
                                                                 echo Text::_('COM_JED_EXTENSION_HISTORY_LOG_' . $history->type); ?></td><?php
 
-if ($history->type === 'mail') {
-    ?>
+        if ($history->type === 'mail') {
+        ?>
                                     <td>
-    <?php
-    echo $history->subject; ?>
+        <?php
+        echo $history->subject; ?>
                                     <?php
                                     echo $history->body; ?>
                                     </td><?php
                                     ?>
                                     <td><?php
                                     echo $history->memberName; ?></td><?php
-?>
+        ?>
                                     <td><?php
                                         echo HTMLHelper::_('link', 'index.php?option=com_users&task=user.edit&id=' . $history->developerId, $history->developerName); ?> &lt;<?php
         echo $history->developerEmail; ?>&gt;</td><?php
-}
-if ($history->type === 'note') {
-    ?>
+        }
+        if ($history->type === 'note') {
+        ?>
                                     <td>
-    <?php
-    echo $history->body; ?>
+        <?php
+        echo $history->body; ?>
                                     </td><?php
                                     ?>
                                     <td><?php
                                     echo $history->memberName; ?></td><?php
-?>
+        ?>
                                     <td><?php
                                         echo HTMLHelper::_('link', 'index.php?option=com_users&task=user.edit&id=' . $history->developerId, $history->developerName); ?></td><?php
-} elseif ($history->type === 'actionLog') {
-    ?>
+        } elseif ($history->type === 'actionLog') {
+        ?>
                                     <td><?php
                                     echo ActionlogsHelper::getHumanReadableLogMessage($history); ?></td><?php
-?>
+        ?>
                                     <td><?php
                                         echo $history->name; ?></td><?php
-?>
+        ?>
                                     <td></td><?php
-}
-?></tr><?php
+        }
+        ?></tr><?php
                             endforeach;
                         endif;
                         ?>

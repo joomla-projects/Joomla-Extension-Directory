@@ -5,8 +5,8 @@
  *
  * @subpackage VEL
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -106,7 +106,10 @@ if (!$isLoggedIn) {
                         if (in_array($field, $hiddenFields)) {
                             $this->form->setFieldAttribute($field, 'type', 'hidden');
                         }
+                        if($this->read_only) {
 
+                            $this->form->setFieldAttribute($field, 'disabled', 'true');
+                        }
                         echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
                     }
                 }

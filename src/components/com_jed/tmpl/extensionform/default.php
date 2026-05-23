@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -173,8 +173,8 @@ $canState = $this->getCurrentUser()->authorise('core.edit.state', 'com_jed');
                 }
 
 
-           // echo '<div class="control-label"><label id="jform_logo-lbl" for="jform_logo">Supply Type<br/><span style="font-weight:normal"></span><small>Descriptive Text here.</small></span></label></div>';
-        //echo '<div class="controls">';
+                // echo '<div class="control-label"><label id="jform_logo-lbl" for="jform_logo">Supply Type<br/><span style="font-weight:normal"></span><small>Descriptive Text here.</small></span></label></div>';
+                //echo '<div class="controls">';
                 echo '<fieldset class="extensionvariedform"><legend>Extension Supply Versions</legend><div class="control-group control-wrapper-video">
             <label id="jform_extension_supply_type-lbl" >
     Every extension can be supplied in different forms including Free Versions and Paid Versions which can have unique information (i.e. Title, Download Link) and similar information (License Link, Demo Link). You can select one type as the default and just overwrite values where necessary.</label>
@@ -235,9 +235,9 @@ $canState = $this->getCurrentUser()->authorise('core.edit.state', 'com_jed');
 
                 echo '</div></fieldset>';
                 $fieldsets['confirm']['title']           = '<br/>' . Text::_('COM_JED_GENERAL_CONFIRM_LABEL');
-                $fieldsets['integration']['description'] = '';
-                $fieldsets['integration']['fields']      = ['uses_updater'];
-                $fieldsets['integration']['hidden']      = [];
+                $fieldsets['confirm']['description'] = '';
+                $fieldsets['confirm']['fields']      = ['uses_updater'];
+                $fieldsets['confirm']['hidden']      = [];
 
                 JedHelper::outputFieldsets($fieldsets, $this->form);
                 ?>

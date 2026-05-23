@@ -5,8 +5,8 @@
  *
  * @subpackage VEL
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -30,7 +30,7 @@ HTMLHelper::_('bootstrap.tooltip');
 $lang = Factory::getApplication()->getLanguage();
 $lang->load('com_jed', JPATH_SITE);
 // Import CSS
-$wa = $this->getDocument()->getWebAssetManager();
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.form');
 
 $user    = $this->getCurrentUser();
@@ -118,7 +118,12 @@ if (!$isLoggedIn) {
 
 
                     foreach ($fields as $field) {
+                        if($this->read_only) {
+
+                            $this->form->setFieldAttribute($field, 'disabled', 'true');
+                        }
                         echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+
                     }
                 }
 

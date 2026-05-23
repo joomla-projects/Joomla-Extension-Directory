@@ -5,8 +5,8 @@
  *
  * @subpackage Tickets
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access to $displayData file
@@ -17,7 +17,9 @@
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 
-/** @var \Joomla\CMS\Form\Form $displayData */
+/**
+ * @var \Joomla\CMS\Form\Form $displayData
+*/
 
 $headerlabeloptions = ['hiddenLabel' => true];
 $fieldhiddenoptions = ['hidden' => true];
@@ -39,7 +41,6 @@ $rawData            = $displayData->getData();
                 <div class="row">
                     <?php
                     $slidesOptions = [/**
-*
 * "active" => "slide0" // It is the ID of the active tab.
 **/];
                     echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_messages_group', $slidesOptions);
@@ -70,7 +71,7 @@ $rawData            = $displayData->getData();
                     <div class="col"><?php echo $displayData->renderField('created_by', null, null, $headerlabeloptions); ?></div>
                     <div class="col"><?php
                     echo 'on ';
-//var_dump($rawData);exit();
+                    //var_dump($rawData);exit();
                     echo JedHelper::prettyDate($rawData['created_on']);
                     ?></div>
                 </div>

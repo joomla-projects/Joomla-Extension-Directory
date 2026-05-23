@@ -5,8 +5,8 @@
  *
  * @subpackage VEL
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -28,8 +28,8 @@ HTMLHelper::_('behavior.multiselect');
 
 $user        = $this->getCurrentUser();
 $userId      = $user->id;
-$listOrder   = $this->state->get('list.ordering');
-$listDirn    = $this->state->get('list.direction');
+$listOrder   = $this->state->get('list.ordering', 'id');
+$listDirn    = $this->state->get('list.direction', 'DESC');
 $canCreate   = $user->authorise('core.create', 'com_jed');
 $canEdit     = $user->authorise('core.edit', 'com_jed');
 $canCheckin  = $user->authorise('core.manage', 'com_jed');
@@ -39,7 +39,7 @@ $isLoggedIn  = JedHelper::isLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
 
 // Import CSS
-$wa = $this->getDocument()->getWebAssetManager();
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.list');
 if (!$isLoggedIn) {
     try {
@@ -100,11 +100,7 @@ if (!$isLoggedIn) {
                     </th>
 
 
-                    <?php if ($canEdit || $canDelete) : ?>
-                        <th class="center">
-                            <?php echo Text::_('COM_JED_VEL_ABANDONEDREPORTS_ACTIONS'); ?>
-                        </th>
-                    <?php endif; ?>
+
 
                 </tr>
                 </thead>
@@ -136,7 +132,7 @@ if (!$isLoggedIn) {
                         </td>
                         <td>
 
-                            <a href="<?php echo Route::_('index.php?option=com_jed&view=velabandonedreport&id=' . (int) $item->id); ?>">
+                            <a href="<?php echo Route::_('index.php?option=com_jed&view=velabandonedreportform&id=' . (int) $item->id); ?>">
                                 <?php echo $this->escape($item->reporter_fullname); ?></a>
                         </td>
                         <td>
@@ -176,18 +172,7 @@ if (!$isLoggedIn) {
                             ?>                </td>
 
 
-                        <?php if ($canEdit || $canDelete) : ?>
-                            <td class="center">
-                                <?php if ($canEdit) : ?>
-                                    <a href="<?php echo Route::_('index.php?option=com_jed&task=velabandonedreport.edit&id=' . $item->id, false, 2); ?>"
-                                       class="btn btn-mini" type="button"><i class="icon-edit"></i></a>
-                                <?php endif; ?>
-                                <?php if ($canDelete) : ?>
-                                    <a href="<?php echo Route::_('index.php?option=com_jed&task=velabandonedreportform.remove&id=' . $item->id, false, 2); ?>"
-                                       class="btn btn-mini delete-button" type="button"><i class="icon-trash"></i></a>
-                                <?php endif; ?>
-                            </td>
-                        <?php endif; ?>
+
 
                     </tr>
                 <?php endforeach; ?>

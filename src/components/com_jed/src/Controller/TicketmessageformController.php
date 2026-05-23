@@ -5,8 +5,8 @@
  *
  * @subpackage TICKETS
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -33,7 +33,7 @@ class TicketmessageformController extends FormController
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function cancel($key = null): void
@@ -101,7 +101,7 @@ class TicketmessageformController extends FormController
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function remove()
@@ -142,7 +142,7 @@ class TicketmessageformController extends FormController
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function save($key = null, $urlVar = null): void
@@ -161,7 +161,7 @@ class TicketmessageformController extends FormController
         $form = $model->getForm();
 
         if (!$form) {
-            throw new Exception($model->getError(), 500);
+            throw new Exception('Could not validate data', 500);
         }
 
         // Validate the posted data.
@@ -169,20 +169,9 @@ class TicketmessageformController extends FormController
 
         // Check for errors.
         if ($data === false) {
-            // Get the validation messages.
-            $errors = $model->getErrors();
+            $this->app->enqueueMessage('An error occured saving your data. Please go back and try again', 'warning');
 
-            // Push up to three validation messages out to the user.
-            for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++) {
-                if ($errors[$i] instanceof Exception) {
-                    $app->enqueueMessage($errors[$i]->getMessage(), 'warning');
-                } else {
-                    $app->enqueueMessage($errors[$i], 'warning');
-                }
-            }
-
-            $input = $app->input;
-            $jform = $input->get('jform', [], 'ARRAY');
+            $jform = $this->input->get('jform', [], 'ARRAY');
 
             // Save the data in the session.
             $app->setUserState('com_jed.edit.ticketmessage.data', $jform);
@@ -204,7 +193,7 @@ class TicketmessageformController extends FormController
 
             // Redirect back to the edit screen.
             $id = (int) $app->getUserState('com_jed.edit.ticketmessage.id');
-            $this->setMessage(Text::sprintf('Save failed', $model->getError()), 'warning');
+            $this->setMessage(Text::_('Save failed'), 'warning');
             $this->setRedirect(Route::_('index.php?option=com_jed&view=ticketmessageform&layout=edit&id=' . $id, false));
         }
 

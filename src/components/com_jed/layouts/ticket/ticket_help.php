@@ -5,8 +5,8 @@
  *
  * @subpackage Tickets
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access to file
@@ -111,7 +111,7 @@ try {
         <div class="container">
             <div class="row">
                 <?php
-    //echo "<pre>";print_r($ticket_help_extensions);echo "</pre>";exit();
+                //echo "<pre>";print_r($ticket_help_extensions);echo "</pre>";exit();
                 $slidesOptions = [//"active" => "slide0" // It is the ID of the active tab.
                 ];
                 echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_help_extensions_group', $slidesOptions);

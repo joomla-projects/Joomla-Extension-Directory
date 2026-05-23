@@ -5,7 +5,7 @@
  *
  * @subpackage Tickets
  *
- * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -101,7 +101,7 @@ class ForeignKeyField extends ListField
      *
      * @return string  The field input.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function getInput(): string
@@ -136,7 +136,7 @@ class ForeignKeyField extends ListField
      *
      * @return array  The field option objects.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function getOptions(): array
@@ -207,21 +207,6 @@ class ForeignKeyField extends ListField
 
         $this->required = (string)$this->getAttribute('required', 0);
 
-        // Flag to identify if the fk_value hides the trashed items
-        $this->hideTrashed = (int)$this->getAttribute('hide_trashed', 0);
-
-        // Flag to identify if the fk_value hides the unpublished items
-        $this->hideUnpublished = (int)$this->getAttribute('hide_unpublished', 0);
-
-        // Flag to identify if the fk_value hides the published items
-        $this->hidePublished = (int)$this->getAttribute('hide_published', 0);
-
-        // Flag to identify if the fk_value hides the archived items
-        $this->hideArchived = (int)$this->getAttribute('hide_archived', 0);
-
-        // Flag to identify if the fk has default order
-        $this->fk_ordering = (string)$this->getAttribute('fk_ordering');
-
         // The where SQL for foreignkey
         $this->condition = (string)$this->getAttribute('condition');
 
@@ -263,26 +248,6 @@ class ForeignKeyField extends ListField
                 ]
             )
             ->from($this->table);
-
-        if ($this->hideTrashed) {
-            $query->where($db->quoteName('state') . ' != -2');
-        }
-
-        if ($this->hideUnpublished) {
-            $query->where($db->quoteName('state') . ' != 0');
-        }
-
-        if ($this->hidePublished) {
-            $query->where($db->quoteName('state') . ' != 1');
-        }
-
-        if ($this->hideArchived) {
-            $query->where($db->quoteName('state') . ' != 2');
-        }
-
-        if ($this->fk_ordering) {
-            $query->order($this->fk_ordering);
-        }
 
         if ($this->condition) {
             $query->where($this->condition);

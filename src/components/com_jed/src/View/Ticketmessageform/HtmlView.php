@@ -5,8 +5,8 @@
  *
  * @subpackage TICKETS
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Ticketmessageform;
@@ -21,6 +21,7 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 
@@ -134,13 +135,16 @@ class HtmlView extends BaseHtmlView
         $app  = Factory::getApplication();
 
         $model = $this->getModel();
-
-        $this->state      = $model->getState();
-        $this->item       = $model->getItem();
-        $this->params     = $app->getParams('com_jed');
-        $this->canSave    = JedHelper::canSave();
-        $this->form       = $model->getForm();
-
+        $model->setUseExceptions(true);
+        try {
+            $this->state      = $model->getState();
+            $this->item       = $model->getItem();
+            $this->params     = $app->getParams('com_jed');
+            $this->canSave    = JedHelper::canSave();
+            $this->form       = $model->getForm();
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
+        }
         $this->prepareDocument();
 
         parent::display($tpl);

@@ -4,8 +4,8 @@
  * @package    Jed\Component\Jed\Administrator\Traits
  * @subpackage
  *
- * @copyright A copyright
- * @license   A "Slug" license name e.g. GPL2
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Traits;
@@ -34,7 +34,7 @@ trait ExtensionUtilities
      * @return array
      *
      * @throws Exception
-     * @since 4.0.0
+     * @since  4.0.0
      */
     public function splitDescription(string $d): array
     {

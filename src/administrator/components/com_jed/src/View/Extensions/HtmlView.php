@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -17,11 +17,13 @@ namespace Jed\Component\Jed\Administrator\View\Extensions;
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\Model\ExtensionsModel;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Toolbar\ToolbarFactoryInterface;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -55,22 +57,24 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function display($tpl = null): void
     {
-        /** @var ExtensionsModel $model */
+        /**
+ * @var ExtensionsModel $model
+*/
         $model               = $this->getModel();
-        $this->state         = $model->getState();
-        $this->items         = $model->getItems();
-        $this->pagination    = $model->getPagination();
-        $this->filterForm    = $model->getFilterForm();
-        $this->activeFilters = $model->getActiveFilters();
-
-        // Check for errors.
-        if (count($errors = $model->getErrors())) {
-            throw new Exception(implode("\n", $errors));
+        $model->setUseExceptions(true);
+        try {
+                $this->state         = $model->getState();
+                $this->items         = $model->getItems();
+                $this->pagination    = $model->getPagination();
+                $this->filterForm    = $model->getFilterForm();
+                $this->activeFilters = $model->getActiveFilters();
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
         }
 
         $this->addToolbar();
@@ -84,7 +88,7 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function addToolbar(): void
@@ -93,7 +97,7 @@ class HtmlView extends BaseHtmlView
 
         ToolbarHelper::title(Text::_('COM_JED_EXTENSIONS'), "generic");
 
-        $toolbar = Toolbar::getInstance(); //$toolbar = Toolbar::getInstance(); //Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar();
+        $toolbar = Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar('extensions.toolbar');
 
 
 

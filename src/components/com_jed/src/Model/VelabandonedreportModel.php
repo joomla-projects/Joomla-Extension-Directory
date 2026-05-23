@@ -5,8 +5,8 @@
  *
  * @subpackage VEL
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -39,10 +39,9 @@ class VelabandonedreportModel extends ItemModel
      * @var   object
      * @since 4.0.0
      */
-    public mixed $item;
+    private mixed $item = null;
 
     /**
-     *
      * Data Table
      *
      * @since 4.0.0
@@ -128,7 +127,7 @@ class VelabandonedreportModel extends ItemModel
      *
      * @return object    Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getItem($pk = null): mixed
@@ -216,7 +215,7 @@ class VelabandonedreportModel extends ItemModel
      * @param array  $options
      *
      * @return Table Table if success
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Velabandonedreport', $prefix = 'Administrator', $options = []): Table

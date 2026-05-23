@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -40,7 +40,9 @@ $canChange  = $user->authorise('core.edit.state', 'com_jed');
 $canDelete  = $user->authorise('core.delete', 'com_jed');
 
 // Import CSS
-/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+/**
+ * @var Joomla\CMS\WebAsset\WebAssetManager $wa
+*/
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.jazstyle');
 

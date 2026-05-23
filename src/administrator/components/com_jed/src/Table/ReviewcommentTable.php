@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -60,8 +60,8 @@ class ReviewcommentTable extends Table
     /**
      * Returns the parent asset's id. If you have a tree structure, retrieve the parent's id using the external key field
      *
-     * @param Table|null   $table Table name
-     * @param integer|null $id    Id
+     * @param Table|null $table Table name
+     * @param int|null   $id    Id
      *
      * @return mixed The id on success, false on failure.
      *
@@ -72,7 +72,7 @@ class ReviewcommentTable extends Table
     protected function _getAssetParentId(Table $table = null, $id = null)
     {
         // We will retrieve the parent-asset from the Asset-table
-        $assetParent = new Asset($this->getDbo(), $this->getDispatcher());
+        $assetParent = new Asset($this->getDatabase(), $this->getDispatcher());
 
         // Default: if no asset-parent can be found we take the global asset
         $assetParentId = $assetParent->getRootId();
@@ -91,14 +91,14 @@ class ReviewcommentTable extends Table
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param   array|object  $src     An associative array or object to bind to the Table instance.
-     * @param   array|string  $ignore  An optional array or space separated list of properties to ignore while binding.
+     * @param array|object $src    An associative array or object to bind to the Table instance.
+     * @param array|string $ignore An optional array or space separated list of properties to ignore while binding.
      *
-     * @return  boolean  True on success.
+     * @return bool  True on success.
      *
      * @see    Table:bind
      * @throws Exception
-     * @since 4.0.0
+     * @since  4.0.0
      */
     public function bind($src, $ignore = '')
     {

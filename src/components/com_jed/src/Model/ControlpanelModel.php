@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -20,18 +20,15 @@ use Joomla\CMS\MVC\Model\ItemModel;
 /**
  * Controlpanel model.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class ControlpanelModel extends ItemModel
 {
     /**
      * populateState
      *
-     *
-     *
      * @since  4.0
      * @throws \Exception
-     *
      */
     protected function populateState(): void
     {
@@ -46,11 +43,13 @@ class ControlpanelModel extends ItemModel
      *
      * Comment
      *
-     * @param $pk
+     * @param null $pk
      *
+     * @return array
      * @since  4.0
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null): array
     {
+        return [];
     }
 }

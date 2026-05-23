@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -41,7 +41,7 @@ class ExtensionsModel extends ListModel
      * @param array $config An optional associative array of configuration settings.
      *
      * @see    JController
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function __construct($config = [])
@@ -145,7 +145,7 @@ class ExtensionsModel extends ListModel
      *
      * @return QueryInterface
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function getListQuery(): QueryInterface
@@ -246,7 +246,6 @@ class ExtensionsModel extends ListModel
      * @return mixed
      * @since  1.0
      * @throws Exception
-     *
      */
     public function getMyItems(): mixed
     {
@@ -254,9 +253,9 @@ class ExtensionsModel extends ListModel
         $query = $this->getDatabase()->getQuery(true)
             ->select('a.id as ext_id,a.*,varied.*,cat.title AS category_title,sup.title as supply_option_title')
             ->from('#__jed_extensions AS a')
-                ->innerJoin('#__jed_extension_varied_data AS varied ON varied.extension_id = a.id ')
-                ->innerJoin('#__categories AS cat ON cat.id=a.primary_category_id')
-                ->innerJoin('#__jed_extension_supply_options AS sup ON sup.id=varied.supply_option_id')
+            ->innerJoin('#__jed_extension_varied_data AS varied ON varied.extension_id = a.id ')
+            ->innerJoin('#__categories AS cat ON cat.id=a.primary_category_id')
+            ->innerJoin('#__jed_extension_supply_options AS sup ON sup.id=varied.supply_option_id')
             ->where('a.created_by = ' . $user->id);
         $this->getDatabase()->setQuery($query);
 
@@ -341,7 +340,7 @@ class ExtensionsModel extends ListModel
      *
      * @return mixed
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function loadFormData(): mixed

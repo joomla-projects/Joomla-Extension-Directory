@@ -5,8 +5,8 @@
  *
  * @subpackage VEL
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -43,7 +43,6 @@ class VelreportformModel extends FormModel
     private mixed $item = null;
 
     /**
-     *
      * Data Table
      *
      * @since 4.0.0
@@ -60,7 +59,7 @@ class VelreportformModel extends FormModel
      *
      * @return Form A JForm object on success, false on failure
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
@@ -88,7 +87,7 @@ class VelreportformModel extends FormModel
      * @param int|null $id id of the object to get.
      *
      * @return object|bool
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getItem(int $id = null): mixed
@@ -151,7 +150,7 @@ class VelreportformModel extends FormModel
      *
      * @return Table|bool Table if found, bool false on failure
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Velreport', $prefix = 'Administrator', $options = []): Table|bool
@@ -246,11 +245,11 @@ class VelreportformModel extends FormModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return array  The default data is an empty array.
-     * @since 4.0.0
+     * @return mixed  The default data is an empty array.
+     * @since  4.0.0
      * @throws Exception
      */
-    protected function loadFormData(): array
+    protected function loadFormData(): mixed
     {
         $data = Factory::getApplication()->getUserState('com_jed.edit.velreport.data', []);
 
@@ -357,7 +356,7 @@ class VelreportformModel extends FormModel
      *
      * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function save(array $data): bool

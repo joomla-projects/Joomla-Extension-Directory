@@ -9,6 +9,7 @@ namespace Jed\Component\Jed\Site\MediaHandling;
 
 /**
  * Image size enumeration and functions for media handling.
+ *
  * @since 4.0.0
  */
 enum ImageSize

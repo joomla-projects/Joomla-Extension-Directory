@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -18,6 +18,11 @@ use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Database\DatabaseInterface;
 use RuntimeException;
 
+/**
+ * JED router factory.
+ *
+ * @since 4.0.0
+ */
 class RouterFactory implements RouterFactoryInterface
 {
     /**
@@ -52,15 +57,17 @@ class RouterFactory implements RouterFactoryInterface
      */
     private string $namespace;
 
+
     /**
-     * TODO: Add description.
-     * @param mixed $namespace TODO
-     * @param mixed $db TODO
-     * @param mixed $factory TODO
-     * @param mixed $categoryFactory TODO
-      * @since 4.0.0
+     * Class constructor.
+     *
+     * @param string                   $namespace
+     * @param DatabaseInterface        $db
+     * @param MVCFactoryInterface      $factory
+     * @param CategoryFactoryInterface $categoryFactory
+     * @since 4.0.0
      */
-    public function __construct(string $namespace, DatabaseInterface $db = null, MVCFactoryInterface $factory, CategoryFactoryInterface $categoryFactory)
+    public function __construct(string $namespace, DatabaseInterface $db, MVCFactoryInterface $factory, CategoryFactoryInterface $categoryFactory)
     {
         $this->namespace       = $namespace;
         $this->factory         = $factory;
@@ -68,8 +75,15 @@ class RouterFactory implements RouterFactoryInterface
         $this->categoryFactory = $categoryFactory;
     }
 
+
     /**
-     * @inheritdoc
+     * Creates a router.
+     *
+     * @param CMSApplicationInterface $application The application
+     * @param AbstractMenu            $menu        The menu object to work with
+     *
+     * @return RouterInterface
+     *
      * @since 4.0.0
      */
     public function createRouter(CMSApplicationInterface $application, AbstractMenu $menu): RouterInterface

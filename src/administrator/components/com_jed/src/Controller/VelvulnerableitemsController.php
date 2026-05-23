@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -16,7 +16,6 @@ namespace Jed\Component\Jed\Administrator\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\AdminController;
@@ -52,7 +51,7 @@ class VelvulnerableitemsController extends AdminController
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function publish(): void
@@ -63,6 +62,7 @@ class VelvulnerableitemsController extends AdminController
 
         if ($user->authorise('core.edit', 'com_jed') || $user->authorise('core.edit.state', 'com_jed')) {
             $model = $this->getModel();
+            $model->setUseExceptions(true);
 
             // Get the user data.
 
@@ -71,13 +71,12 @@ class VelvulnerableitemsController extends AdminController
             $values = ['publish' => 1, 'unpublish' => 0, 'deleteOverrideHistory' => -3];
             $task   = $this->getTask();
             $value  = ArrayHelper::getValue($values, $task, 0, 'int');
-
-            $return = $model->publish($id, $value);
-
-            // Check for errors.
-            if ($return === false) {
-                $this->setMessage(Text::sprintf('Save failed: %s', $model->getError()), 'warning');
+            try {
+                $return = $model->publish($id, $value);
+            } catch (\Exception $e) {
+                throw new \RuntimeException(Text::sprintf('Save failed: %s', $e->getMessage()), 500, $e);
             }
+
 
 
             $this->setRedirect(Route::_('index.php?option=com_jed&view=velvulnerableitems', false));

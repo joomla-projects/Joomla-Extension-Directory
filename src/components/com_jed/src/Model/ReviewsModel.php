@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -34,7 +34,7 @@ class ReviewsModel extends ListModel
      * @param array $config An optional associative array of configuration settings.
      *
      * @see    JController
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function __construct($config = [])
@@ -84,7 +84,7 @@ class ReviewsModel extends ListModel
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      *
      * @throws Exception
@@ -196,7 +196,7 @@ class ReviewsModel extends ListModel
      * Method to get an array of data items
      *
      * @return mixed An array of data on success, false on failure.
-      * @since 4.0.0
+     * @since  4.0.0
      */
     public function getItems(): mixed
     {
@@ -259,7 +259,7 @@ class ReviewsModel extends ListModel
      *
      * @return mixed
      * @throws Exception
-      * @since 4.0.0
+     * @since  4.0.0
      */
     protected function loadFormData(): mixed
     {
@@ -288,7 +288,7 @@ class ReviewsModel extends ListModel
      * @param string $date Date to be checked
      *
      * @return bool
-      * @since 4.0.0
+     * @since  4.0.0
      */
     private function isValidDate(string $date): bool
     {

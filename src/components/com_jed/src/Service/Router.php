@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Service;
@@ -59,11 +59,11 @@ class Router extends RouterView
     /**
      * Class constructor.
      *
-     * @param   SiteApplication           $app   Application-object that the router should use
-     * @param   AbstractMenu              $menu  Menu-object that the router should use
-     * @param   DatabaseInterface         $db
-     * @param   MVCFactory                $factory
-     * @param   CategoryFactoryInterface  $categoryFactory
+     * @param SiteApplication          $app             Application-object that the router should use
+     * @param AbstractMenu             $menu            Menu-object that the router should use
+     * @param DatabaseInterface        $db
+     * @param MVCFactory               $factory
+     * @param CategoryFactoryInterface $categoryFactory
      *
      * @since 4.0.0
      */
@@ -185,7 +185,7 @@ class Router extends RouterView
      * @param array  $query   The request that is parsed right now
      *
      * @return int|bool   The id of this item or false
-     * @since 4.0.0
+     * @since  4.0.0
      */
     public function getCategoriesId(string $segment, array $query): int|bool
     {
@@ -199,7 +199,7 @@ class Router extends RouterView
      * @param array  $query The request that is built right now
      *
      * @return array|string  The segments of this item
-     * @since 4.0.0
+     * @since  4.0.0
      */
     public function getCategoriesSegment(string $id, array $query): array|string
     {
@@ -213,7 +213,7 @@ class Router extends RouterView
      * @param array  $query   The request that is parsed right now
      *
      * @return int|bool   The id of this item or false
-     * @since 4.0.0
+     * @since  4.0.0
      */
     public function getCategoryId(string $segment, array $query): int|bool
     {
@@ -241,7 +241,7 @@ class Router extends RouterView
      * @param array  $query The request that is built right now
      *
      * @return array|string  The segments of this item
-     * @since 4.0.0
+     * @since  4.0.0
      */
     public function getCategorySegment(string $id, array $query): array|string
     {
@@ -293,8 +293,8 @@ class Router extends RouterView
         $db        = $this->getDatabase();
         $query     = $db->getQuery(true);
         $query->select($db->quoteName('alias'))
-              ->from($db->quoteName('#__jed_extension_varied_data'))
-              ->where($db->quoteName('extension_id') . ' = :id')
+            ->from($db->quoteName('#__jed_extension_varied_data'))
+            ->where($db->quoteName('extension_id') . ' = :id')
             ->bind(':id', $id, ParameterType::INTEGER);
         $db->setQuery($query);
 
@@ -349,169 +349,85 @@ class Router extends RouterView
         return $this->categoryCache[$key];
     }
 
-    /**
-     * TODO: Add description.
-     * @param mixed $segment TODO
-     * @param mixed $query TODO
-     * @return mixed TODO
-      * @since 4.0.0
-     */
+
     public function getTicketId($segment, $query)
     {
         return $segment;
     }
 
-    /**
-     * TODO: Add description.
-     * @param mixed $id TODO
-     * @param mixed $query TODO
-     * @return mixed TODO
-      * @since 4.0.0
-     */
+
     public function getTicketSegment($id, $query)
     {
         return [$id];
     }
 
-    /**
-     * TODO: Add description.
-     * @param mixed $segment TODO
-     * @param mixed $query TODO
-     * @return mixed TODO
-      * @since 4.0.0
-     */
+
     public function getReviewId($segment, $query)
     {
         return $segment;
     }
 
-    /**
-     * TODO: Add description.
-     * @param mixed $id TODO
-     * @param mixed $query TODO
-     * @return mixed TODO
-      * @since 4.0.0
-     */
+
     public function getReviewSegment($id, $query)
     {
         return [$id];
     }
 
-    /**
-     * TODO: Add description.
-     * @param mixed $segment TODO
-     * @param mixed $query TODO
-     * @return mixed TODO
-      * @since 4.0.0
-     */
+
     public function getReviewcommentId($segment, $query)
     {
         return $segment;
     }
 
-    /**
-     * TODO: Add description.
-     * @param mixed $id TODO
-     * @param mixed $query TODO
-     * @return mixed TODO
-      * @since 4.0.0
-     */
+
     public function getReviewcommentSegment($id, $query)
     {
         return [$id];
     }
 
-    /**
-     * TODO: Add description.
-     * @param mixed $segment TODO
-     * @param mixed $query TODO
-     * @return mixed TODO
-      * @since 4.0.0
-     */
+
     public function getTicketmessageId($segment, $query)
     {
         return $segment;
     }
 
-    /**
-     * TODO: Add description.
-     * @param mixed $id TODO
-     * @param mixed $query TODO
-     * @return mixed TODO
-      * @since 4.0.0
-     */
+
     public function getTicketmessageSegment($id, $query)
     {
         return [$id];
     }
 
-    /**
-     * TODO: Add description.
-     * @param mixed $segment TODO
-     * @param mixed $query TODO
-     * @return mixed TODO
-      * @since 4.0.0
-     */
+
     public function getVelabandonedreportId($segment, $query)
     {
         return $segment;
     }
 
-    /**
-     * TODO: Add description.
-     * @param mixed $id TODO
-     * @param mixed $query TODO
-     * @return mixed TODO
-      * @since 4.0.0
-     */
+
     public function getVelabandonedreportSegment($id, $query)
     {
         return [$id];
     }
 
-    /**
-     * TODO: Add description.
-     * @param mixed $segment TODO
-     * @param mixed $query TODO
-     * @return mixed TODO
-      * @since 4.0.0
-     */
+
     public function getVeldeveloperupdateId($segment, $query)
     {
         return $segment;
     }
 
-    /**
-     * TODO: Add description.
-     * @param mixed $id TODO
-     * @param mixed $query TODO
-     * @return mixed TODO
-      * @since 4.0.0
-     */
+
     public function getVeldeveloperupdateSegment($id, $query)
     {
         return [$id];
     }
 
-    /**
-     * TODO: Add description.
-     * @param mixed $segment TODO
-     * @param mixed $query TODO
-     * @return mixed TODO
-      * @since 4.0.0
-     */
+
     public function getVelreportId($segment, $query)
     {
         return $segment;
     }
 
-    /**
-     * TODO: Add description.
-     * @param mixed $id TODO
-     * @param mixed $query TODO
-     * @return mixed TODO
-      * @since 4.0.0
-     */
+
     public function getVelreportSegment($id, $query)
     {
         return [$id];

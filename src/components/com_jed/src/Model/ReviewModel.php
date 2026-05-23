@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -111,7 +111,6 @@ class ReviewModel extends ItemModel
 
     // 30 Minutes of Processing Window
     /**
-     *
      * Data Table
      *
      * @var   string
@@ -122,11 +121,11 @@ class ReviewModel extends ItemModel
     /**
      * Method to check in an item.
      *
-     * @param   int|null  $id  The id of the row to check out.
+     * @param int|null $id The id of the row to check out.
      *
      * @return bool True on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkin(int $id = null): bool
@@ -155,11 +154,11 @@ class ReviewModel extends ItemModel
     /**
      * Method to check out an item for editing.
      *
-     * @param   int|null  $id  The id of the row to check out.
+     * @param int|null $id The id of the row to check out.
      *
      * @return bool True on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkout(int $id = null): bool
@@ -195,7 +194,7 @@ class ReviewModel extends ItemModel
      * @param int $id Element id
      *
      * @return bool
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function delete(int $id): bool
@@ -216,7 +215,7 @@ class ReviewModel extends ItemModel
      *
      * @return mixed    Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getItem($pk = null): mixed
@@ -261,7 +260,7 @@ class ReviewModel extends ItemModel
         }
 
 
-       /* if (isset($this->item->extension_id) && $this->item->extension_id != '') {
+        /* if (isset($this->item->extension_id) && $this->item->extension_id != '') {
             if (is_object($this->item->extension_id)) {
                 $this->item->extension_id = ArrayHelper::fromObject($this->item->extension_id);
             }
@@ -293,7 +292,7 @@ class ReviewModel extends ItemModel
             $this->item->extension_id = !empty($textValue) ? implode(', ', $textValue) : $this->item->extension_id;
         } */
 
-       /* if (isset($this->item->supply_option_id) && $this->item->supply_option_id != '') {
+        /* if (isset($this->item->supply_option_id) && $this->item->supply_option_id != '') {
             if (is_object($this->item->supply_option_id)) {
                 $this->item->supply_option_id = ArrayHelper::fromObject($this->item->supply_option_id);
             }
@@ -345,7 +344,7 @@ class ReviewModel extends ItemModel
      *
      * @return Table|bool Table if success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Review', $prefix = 'Administrator', $options = []): Table|bool
@@ -404,7 +403,7 @@ class ReviewModel extends ItemModel
      *
      * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function publish(int $id, int $state): bool
@@ -425,7 +424,7 @@ class ReviewModel extends ItemModel
      *
      * @param array $config An array of configuration options (name, state, dbo, table_path, ignore_request).
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function __construct($config = [])

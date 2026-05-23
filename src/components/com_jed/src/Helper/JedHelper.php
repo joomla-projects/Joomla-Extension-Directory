@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Helper;
@@ -38,7 +38,7 @@ class JedHelper
      *
      * @return User\User
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function getUser(): User\User
@@ -73,14 +73,13 @@ class JedHelper
     /**
      * For a new review this creates a corresponding Ticket
      *
-     * @param   int  $item_id  Reference for stored report
+     * @param int $item_id Reference for stored report
      *
      * @return array  Ticket Template
-     * @since 4.0.0
+     * @since  4.0.0
      *
      * @throws Exception
      */
-
     public static function createReviewTicket(int $item_id): array
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -179,14 +178,13 @@ class JedHelper
     /**
      * For a new Extension this creates a corresponding Ticket
      *
-     * @param   int  $item_id  Reference for extension
+     * @param int $item_id Reference for extension
      *
      * @return array  Ticket Template
-     * @since 4.0.0
+     * @since  4.0.0
      *
      * @throws Exception
      */
-
     public static function createExtensionTicket(int $item_id): array
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -285,15 +283,14 @@ class JedHelper
     /**
      * When a VEL is reported or a Developer Update or Abandoned Item reported  this creates a corresponding Ticket
      *
-     * @param   int  $report_type  1 for VEL REPORT, 2 for DEVELOPER UPDATE, 3 for ABANDONWARE REPORT
-     * @param   int  $item_id      Reference for stored report
+     * @param int $report_type 1 for VEL REPORT, 2 for DEVELOPER UPDATE, 3 for ABANDONWARE REPORT
+     * @param int $item_id     Reference for stored report
      *
      * @return array  Ticket Template
-     * @since 4.0.0
+     * @since  4.0.0
      *
      * @throws Exception
      */
-
     public static function createVELTicket(int $report_type, int $item_id): array
     {
         $ticket = [];
@@ -312,22 +309,22 @@ class JedHelper
         $ticket['ticket_origin']    = 0; //Registered User
 
         switch ($report_type) {
-            case 1: // VEL REPORT
-                $ticket['ticket_category_type'] = 11;
-                $ticket['ticket_subject']       = "A new Vulnerable Item Report";
-                $ticket['linked_item_type']     = 4;     //    Vulnerable Item Initial Report
-                break;
-            case 2: // DEVELOPER UPDATE
-                $ticket['ticket_category_type'] = 12;
-                $ticket['ticket_subject']       = "A new VEL Developer Update";
-                $ticket['linked_item_type']     = 5;     //    Vulnerable Item Developer Update
-                break;
+        case 1: // VEL REPORT
+            $ticket['ticket_category_type'] = 11;
+            $ticket['ticket_subject']       = "A new Vulnerable Item Report";
+            $ticket['linked_item_type']     = 4;     //    Vulnerable Item Initial Report
+            break;
+        case 2: // DEVELOPER UPDATE
+            $ticket['ticket_category_type'] = 12;
+            $ticket['ticket_subject']       = "A new VEL Developer Update";
+            $ticket['linked_item_type']     = 5;     //    Vulnerable Item Developer Update
+            break;
 
-            case 3: // ABANDONWARE REPORT
-                $ticket['ticket_category_type'] = 13;
-                $ticket['ticket_subject']       = "A new VEL Abandonware Report";
-                $ticket['linked_item_type']     = 6;     //    Vulnerable Item Abandonware Report
-                break;
+        case 3: // ABANDONWARE REPORT
+            $ticket['ticket_category_type'] = 13;
+            $ticket['ticket_subject']       = "A new VEL Abandonware Report";
+            $ticket['linked_item_type']     = 6;     //    Vulnerable Item Abandonware Report
+            break;
         }
 
         /*
@@ -403,7 +400,7 @@ class JedHelper
      *
      * @return array
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function createEmptyTicketMessage(): array
@@ -425,7 +422,7 @@ class JedHelper
     /**
      * Get Message Template from Database and return
      *
-     * @param   int  $template_id
+     * @param int $template_id
      *
      * @return object
      *
@@ -471,11 +468,11 @@ class JedHelper
     /**
      * Gets the edit permission for a user
      *
-     * @param   mixed  $item  The item
+     * @param mixed $item The item
      *
      * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function canUserEdit(mixed $item): bool
@@ -501,8 +498,8 @@ class JedHelper
     /**
      * Function to format JED Extension Images
      *
-     * @param   string     $filename  The image filename
-     * @param   ImageSize  $size      Size of image, small|large
+     * @param string    $filename The image filename
+     * @param ImageSize $size     Size of image, small|large
      *
      * @return string  Full image url
      *
@@ -588,7 +585,7 @@ class JedHelper
      *
      * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function isAdminOrSuperUser(): bool
@@ -605,7 +602,7 @@ class JedHelper
     /**
      * Checks if a given date is valid and in a specified format (YYYY-MM-DD)
      *
-     * @param   string  $date  Date to be checked
+     * @param string $date Date to be checked
      *
      * @return bool
      *
@@ -657,11 +654,11 @@ class JedHelper
     /**
      * This method advises if the $id of the item belongs to the current user
      *
-     * @param   int     $id     The id of the item
-     * @param   string  $table  The name of the table
+     * @param int    $id    The id of the item
+     * @param string $table The name of the table
      *
      * @return bool             true if the user is the owner of the row, false if not.
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function userIDItem(int $id, string $table): bool
@@ -689,10 +686,10 @@ class JedHelper
     /**
      * This method returns whether an alias is available for the view
      *
-     * @param   string  $view  The name of the view
+     * @param string $view The name of the view
      *
      * @return string
-     * @since 4.0.0
+     * @since  4.0.0
      */
     public static function getAliasFieldNameByView(string $view): string
     {
@@ -725,12 +722,17 @@ class JedHelper
     }
 
     /**
-     * TODO: Add description.
-     * @param mixed $fieldsets TODO
-     * @param mixed $form TODO
-     * @param mixed $validate TODO
-     * @return bool TODO
-      * @since 4.0.0
+     * outputFieldsets
+     *
+     * Outputs custom form field from array
+     *
+     * @param array $fieldsets
+     * @param Form  $form
+     * @param bool  $validate
+     *
+     * @return bool
+     *
+     * @since 4.0.0
      */
     public static function outputFieldsets(array $fieldsets, Form $form, bool $validate = true): bool
     {
@@ -782,15 +784,17 @@ class JedHelper
                     echo $form->renderField($field[1], null, null, ['class' => 'control-wrapper-' . $field[1]]);
                     echo '</div></div>';
                 }
-                if (in_array($field, $hiddenFields)) {
-                    $form->setFieldAttribute($field, 'type', 'hidden');
+                else {
+                    if (in_array($field, $hiddenFields)) {
+                        $form->setFieldAttribute($field, 'type', 'hidden');
+                    }
+                    if (! $validate) {
+                        $form->setFieldAttribute($field, 'required', 'false');
+                        $form->setFieldAttribute($field, 'validate', '');
+                    }
+                    //var_dump($field);
+                    echo $form->renderField($field, null, null, ['class' => 'control-wrapper-'.$field]);
                 }
-                if (!$validate) {
-                    $form->setFieldAttribute($field, 'required', 'false');
-                    $form->setFieldAttribute($field, 'validate', '');
-                }
-
-                echo $form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
             }
         }
         echo '</fieldset>';
@@ -800,7 +804,7 @@ class JedHelper
     /**
      * Get Extension Title from Database and return
      *
-     * @param   int  $varied_item_id
+     * @param int $varied_item_id
      *
      * @return object
      *
@@ -822,7 +826,7 @@ class JedHelper
     /**
      * Prettyfy a Date
      *
-     * @param   string  $datestr  A String Date
+     * @param string $datestr A String Date
      *
      * @since 4.0.0
      **/
@@ -841,7 +845,7 @@ class JedHelper
     /**
      * Prettyfy a Date into short format
      *
-     * @param   string  $datestr  A String Date
+     * @param string $datestr A String Date
      *
      * @since 4.0.0
      **/

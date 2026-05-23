@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package        JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Model;
@@ -24,18 +24,18 @@ use Joomla\Database\QueryInterface;
 /**
  * Methods supporting a list of Extensionvarieddata records.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class ExtensionvarieddataModel extends ListModel
 {
     /**
      * Constructor.
      *
-     * @param   array  $config  An optional associative array of configuration settings.
+     * @param array $config An optional associative array of configuration settings.
      *
-     * @see           ListModel
+     * @see    ListModel
      * @throws Exception
-     * @since 4.0.0
+     * @since  4.0.0
      */
     public function __construct($config = [])
     {
@@ -134,7 +134,7 @@ class ExtensionvarieddataModel extends ListModel
     /**
      * Build an SQL query to load the list data.
      *
-     * @return   QueryInterface
+     * @return QueryInterface
      *
      * @since 4.0.0
      */
@@ -158,7 +158,7 @@ class ExtensionvarieddataModel extends ListModel
         $query->select("uc.name AS uEditor");
         $query->join("LEFT", "#__users AS uc ON uc.id=a.checked_out");
         if (!JedHelper::isAdminOrSuperUser()) {
-            $query->where("a.created_by = " . JedHelper::getUser()->get("id"));
+            $query->where("a.created_by = " . JedHelper::getUser()->id);
         }
         // Join over the foreign key 'extension_id'
         $query->select('`#__jed_extensions_3727155`.`id` AS extensions_fk_value_3727155');
@@ -211,9 +211,9 @@ class ExtensionvarieddataModel extends ListModel
      * different modules that might need different sets of data or different
      * ordering requirements.
      *
-     * @param   string  $id  A prefix for the store id.
+     * @param string $id A prefix for the store id.
      *
-     * @return  string A store id.
+     * @return string A store id.
      *
      * @since 4.0.0
      */
@@ -232,17 +232,16 @@ class ExtensionvarieddataModel extends ListModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @param   string  $ordering   Elements order
-     * @param   string  $direction  Order direction
+     * @param string $ordering  Elements order
+     * @param string $direction Order direction
      *
      * @return void
      *
      * @throws Exception
      *
      * @since 4.0.0
-     *
      */
-    protected function populateState($ordering = null, $direction = null)
+    protected function populateState($ordering = null, $direction = null): void
     {
         // List state information.
         parent::populateState('id', 'ASC');

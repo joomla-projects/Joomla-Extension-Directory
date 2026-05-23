@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -18,10 +18,6 @@ use Jed\Component\Jed\Site\View\Extension\HtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-
-/**
- * @var HtmlView $this
- */
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
@@ -40,7 +36,7 @@ if (!$isLoggedIn) {
 } else {
     $user       = $this->getCurrentUser();
     $userId     = $user->id;
-    $listOrder  = $this->state->get('list.ordering');
+    $listOrder  = $this->state->get('list.ordering', '');
     $listDirn   = $this->state->get('list.direction');
     $canCreate  = $user->authorise('core.create', 'com_jed');
     $canEdit    = $user->authorise('core.edit', 'com_jed');
@@ -49,7 +45,9 @@ if (!$isLoggedIn) {
     $canDelete  = $user->authorise('core.delete', 'com_jed');
 
     // Import CSS
-    /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+    /**
+ * @var Joomla\CMS\WebAsset\WebAssetManager $wa
+*/
     $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
     $wa->useStyle('com_jed.jazstyle');
 

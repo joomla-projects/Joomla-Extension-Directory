@@ -1,11 +1,11 @@
 <?php
 
 /**
- * @package     Joomla.Site
- * @subpackage  com_users
+ * @package    Joomla.Site
+ * @subpackage com_users
  *
- * @copyright   (C) 2009 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die;
@@ -15,16 +15,20 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 //var_dump($displayData);exit();
-/** @var Jed\Component\Jed\Site\View\Controlpanel\HtmlView $this */
+/**
+ * @var Jed\Component\Jed\Site\View\Controlpanel\HtmlView $this
+*/
 
 HTMLHelper::_('bootstrap.tooltip', '.hasTooltip');
 
 
 
-/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+/**
+ * @var Joomla\CMS\WebAsset\WebAssetManager $wa
+*/
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useScript('keepalive')
-   ->useScript('form.validate');
+    ->useScript('form.validate');
 
 ?>
 <div class="com-users-profile__edit profile-edit">

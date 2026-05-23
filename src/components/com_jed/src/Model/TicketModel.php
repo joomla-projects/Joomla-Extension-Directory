@@ -5,8 +5,8 @@
  *
  * @subpackage TICKETS
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -34,7 +34,6 @@ use Joomla\Utilities\ArrayHelper;
 class TicketModel extends ItemModel
 {
     /**
-     *
      * Data Table
      *
      * @since 4.0.0
@@ -56,7 +55,7 @@ class TicketModel extends ItemModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkin(int $id = null): bool
@@ -85,11 +84,11 @@ class TicketModel extends ItemModel
     /**
      * Method to check out an item for editing.
      *
-     * @param integer|null $id The id of the row to check out.
+     * @param int|null $id The id of the row to check out.
      *
      * @return bool True on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkout(int $id = null): bool
@@ -126,7 +125,7 @@ class TicketModel extends ItemModel
      *
      * @return mixed    Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getItem($pk = null): mixed
@@ -317,7 +316,7 @@ class TicketModel extends ItemModel
      *
      * @return Table|bool Table if success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Ticket', $prefix = 'Administrator', $options = []): Table|bool
@@ -398,7 +397,7 @@ class TicketModel extends ItemModel
      * @param int $state Publish state
      *
      * @return bool
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function publish(int $id, int $state): bool
@@ -420,8 +419,7 @@ class TicketModel extends ItemModel
      *
      * Returns the messages for the ticket
      *
-     *
-     * @since  4.0
+     * @since 4.0
      */
     public function getMessages()
     {

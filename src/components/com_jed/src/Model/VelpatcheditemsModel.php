@@ -5,8 +5,8 @@
  *
  * @subpackage VEL
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -36,7 +36,7 @@ class VelpatcheditemsModel extends ListModel
      * @param array $config An optional associative array of configuration settings.
      *
      * @see    JController
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function __construct($config = [])
@@ -122,7 +122,7 @@ class VelpatcheditemsModel extends ListModel
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function populateState($ordering = null, $direction = null): void
@@ -142,7 +142,7 @@ class VelpatcheditemsModel extends ListModel
             $this->setState('list.ordering', $ordering);
         }
         if (empty($direction)) {
-            $direction = $app->getUserStateFromRequest($this->context . '.filter_order_Dir', 'filter_order_Dir', $app->get('filter_order_Dir'));
+            $direction = $app->getUserStateFromRequest($this->context . '.filter_order_Dir', 'filter_order_Dir', $app->get('filter_order_Dir', ''));
             if (!in_array(strtoupper($direction), ['ASC', 'DESC', ''])) {
                 $direction = "DESC";
             }

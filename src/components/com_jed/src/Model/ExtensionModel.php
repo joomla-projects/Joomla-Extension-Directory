@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -76,9 +76,9 @@ class ExtensionModel extends ItemModel
     private string $dbtable = "#__jed_extensions";
 
     /**
-     * @var    mixed  Item data
+     * @var mixed  Item data
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected mixed $item = null;
 
@@ -122,7 +122,7 @@ class ExtensionModel extends ItemModel
      *
      * @return bool True on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function checkout(int $id = null): bool
@@ -156,7 +156,7 @@ class ExtensionModel extends ItemModel
      *
      * @return mixed    Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getItem($pk = null): mixed
@@ -173,8 +173,7 @@ class ExtensionModel extends ItemModel
 
             // Attempt to load the row.
             if ($table && $table->load($pk)) { // Check published state.
-                if (
-                    ($published = $this->getState('filter.published')) && isset($table->state)
+                if (($published = $this->getState('filter.published')) && isset($table->state)
                     && $table->state != $published
                 ) {
                     throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 403);
@@ -265,14 +264,14 @@ class ExtensionModel extends ItemModel
     }
 
      /**
-     * Gets array of all reviews for extension
-     *
-     * @param int $extension_id
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
+      * Gets array of all reviews for extension
+      *
+      * @param int $extension_id
+      *
+      * @return array
+      *
+      * @since 4.0.0
+      */
     public function getReviews(int $extension_id): array
     {
         $ret = [
@@ -380,7 +379,7 @@ class ExtensionModel extends ItemModel
      * @param array  $options Array of configuration values for the Table object. Optional.
      *
      * @return Table|bool Table if success, false on failure.
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = "Extension", $prefix = "Administrator", $options = [])
@@ -392,7 +391,7 @@ class ExtensionModel extends ItemModel
      *
      * @return string
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getUpdateStatus(): string
@@ -410,7 +409,7 @@ class ExtensionModel extends ItemModel
 
     /**
      * @return bool
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function isOld(): bool
@@ -425,7 +424,7 @@ class ExtensionModel extends ItemModel
 
     /**
      * @return bool
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function isRecentlyUpdated(): bool
@@ -445,7 +444,7 @@ class ExtensionModel extends ItemModel
      * correct unpublished message
      *
      * @return stdClass
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function noExtensionFoundMsg(): stdClass
@@ -561,7 +560,7 @@ class ExtensionModel extends ItemModel
      *
      * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function publish(int $id, int $state): bool
@@ -587,21 +586,21 @@ class ExtensionModel extends ItemModel
      * @return array
      *
      * @throws Exception
-     * @since 4.0.0
+     * @since  4.0.0
      */
     public function getVariedData(int $extension_id, int $supply_option_type = null): array
     {
         $retval = null;
         $db    = $this->getDatabase();
         $query = $db->getQuery(true)
-                    ->select('supply_options.title AS supply_type, a.*')
-                    ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
-                    ->leftJoin(
-                        $db->quoteName('#__jed_extension_supply_options', 'supply_options')
+            ->select('supply_options.title AS supply_type, a.*')
+            ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
+            ->leftJoin(
+                $db->quoteName('#__jed_extension_supply_options', 'supply_options')
                         . ' ON ' . $db->quoteName('supply_options.id') . ' = ' . $db->quoteName('a.supply_option_id')
-                    )
-                    ->where($db->quoteName('extension_id') . ' = :extension_id')
-                    ->bind(':extension_id', $extension_id, ParameterType::INTEGER);
+            )
+            ->where($db->quoteName('extension_id') . ' = :extension_id')
+            ->bind(':extension_id', $extension_id, ParameterType::INTEGER);
 
         if (($supply_option_type ?? 0) > 0) {
             $query

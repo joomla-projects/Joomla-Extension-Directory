@@ -5,8 +5,8 @@
  *
  * @subpackage VEL
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -38,7 +38,7 @@ class VelreportsModel extends ListModel
      * @param array $config An optional associative array of configuration settings.
      *
      * @see    ListModel
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function __construct($config = [])
@@ -99,10 +99,10 @@ class VelreportsModel extends ListModel
 
         foreach ($items as $item) {
             if (!JedHelper::is_blank($item->pass_details_ok)) {
-                $item->pass_details_ok = Text::_('COM_JED_VEL_REPORTS_PASS_DETAILS_OK_OPTION_' . strtoupper($item->pass_details_ok));
+                $item->pass_details_ok = Text::_('COM_JED_VEL_GENERAL_PASS_DETAILS_OK_OPTION_' . strtoupper($item->pass_details_ok));
             }
             if (!JedHelper::is_blank($item->vulnerability_type)) {
-                $item->vulnerability_type = Text::_('COM_JED_VEL_GENERAL_VULNERABILITY_TYPE_OPTION_' . strtoupper($item->vulnerability_type));
+                $item->vulnerability_type = Text::_('COM_JED_VEL_GENERAL_PASS_DETAILS_OK_OPTION_' . strtoupper($item->vulnerability_type));
             }
 
             if (!JedHelper::is_blank($item->exploit_type)) {
@@ -208,7 +208,7 @@ class VelreportsModel extends ListModel
      *
      * @throws Exception
      */
-    protected function loadFormData(): stdClass
+    protected function loadFormData(): mixed
     {
         $app              = Factory::getApplication();
         $filters          = $app->getUserState($this->context . '.filter', []);
@@ -239,7 +239,7 @@ class VelreportsModel extends ListModel
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function populateState($ordering = null, $direction = null): void

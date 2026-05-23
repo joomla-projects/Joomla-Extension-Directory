@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Field;
@@ -185,7 +185,7 @@ class JedextensionsField extends ListField
     /**
      * Method to get the field input for a foreignkey field.
      *
-     * @return  string  The field input.
+     * @return string  The field input.
      *
      * @since 4.0.0
      *
@@ -221,7 +221,7 @@ class JedextensionsField extends ListField
     /**
      * Method to get the field options.
      *
-     * @return  array  The field option objects.
+     * @return array  The field option objects.
      *
      * @since 4.0.0
      *
@@ -264,8 +264,8 @@ class JedextensionsField extends ListField
     /**
      * Wrapper method for getting attributes from the form element
      *
-     * @param   string  $name  Attribute name
-     * @param   mixed   $default    Optional value to return if attribute not found
+     * @param string $name    Attribute name
+     * @param mixed  $default Optional value to return if attribute not found
      *
      * @return mixed The value of the attribute if it exists, null otherwise
      *

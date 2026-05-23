@@ -5,8 +5,8 @@
  *
  * @subpackage VEL
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -38,7 +38,7 @@ class VeldeveloperupdatesModel extends ListModel
      * @param array $config An optional associative array of configuration settings.
      *
      * @see    JController
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function __construct($config = [])
@@ -75,7 +75,7 @@ class VeldeveloperupdatesModel extends ListModel
      * Method to get an array of data items
      *
      * @return mixed An array of data on success, false on failure.
-     * @since 4.0.0
+     * @since  4.0.0
      */
     public function getItems(): mixed
     {
@@ -100,7 +100,7 @@ class VeldeveloperupdatesModel extends ListModel
      * @return QueryInterface
      *
      * @throws Exception
-     * @since 4.0.0
+     * @since  4.0.0
      */
     protected function getListQuery(): QueryInterface
     {
@@ -158,10 +158,10 @@ class VeldeveloperupdatesModel extends ListModel
      * "_dateformat" suffix, and erases the field if it's not correct.
      *
      * @return mixed
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
-    protected function loadFormData(): stdClass
+    protected function loadFormData(): mixed
     {
         $app              = Factory::getApplication();
         $filters          = $app->getUserState($this->context . '.filter', []);
@@ -192,7 +192,7 @@ class VeldeveloperupdatesModel extends ListModel
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function populateState($ordering = null, $direction = null): void

@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -13,9 +13,9 @@ namespace Jed\Component\Jed\Administrator\Field;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 /**
@@ -45,21 +45,24 @@ class TimeupdatedField extends FormField
         // Initialize variables.
         $html = [];
 
-        $old_time_updated = $this->value;
-        $hidden           = (bool) $this->element['hidden'];
+        $time_created = $this->value;
 
-        if (!$hidden) {
-            if (!strtotime($old_time_updated)) {
-                $html[] = '-';
-            } else {
-                $jdate       = new Date($old_time_updated);
-                $pretty_date = $jdate->format(Text::_('DATE_FORMAT_LC2'));
-                $html[]      = "<div>" . $pretty_date . "</div>";
-            }
+        // If time is empty or invalid, use current time in UTC for saving
+        if (empty($time_created) || $time_created === '0000-00-00 00:00:00' || !strtotime($time_created)) {
+            $now = Factory::getDate(); // UTC
+            $time_created = $now->toSql(true);
         }
 
-        $time_updated = Factory::getDate('now', Factory::getConfig()->get('offset'))->toSql(true);
-        $html[]       = '<input type="hidden" name="' . $this->name . '" value="' . $time_updated . '" />';
+        // Store raw UTC date in hidden input
+        $html[] = '<input type="hidden" name="' . $this->name . '" value="' . htmlspecialchars($time_created, ENT_QUOTES, 'UTF-8') . '" />';
+
+
+        $hidden = (bool) $this->element['hidden'];
+
+        if (!$hidden) {
+            $pretty_date = HTMLHelper::_('date', $time_created, Text::_('DATE_FORMAT_LC2'), true);
+                $html[]      = "<div>" . $pretty_date . "</div>";
+        }
 
         return implode($html);
     }

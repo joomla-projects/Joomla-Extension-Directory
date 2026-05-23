@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Controller;
@@ -70,7 +70,7 @@ class ExtensionController extends BaseController
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function publish(): void
@@ -94,7 +94,7 @@ class ExtensionController extends BaseController
 
             // Check for errors.
             if ($return === false) {
-                $this->setMessage(Text::sprintf('Save failed: %s', $model->getError()), 'warning');
+                $this->setMessage(Text::_('Save failed'), 'warning');
             }
 
             // Clear the profile id from the session.

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -17,6 +17,7 @@ namespace Jed\Component\Jed\Site\Model;
 use Exception;
 use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Categories\CategoryNode;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use stdClass;
 
@@ -29,7 +30,6 @@ class CategoriesModel extends ListModel
 {
     public string $_context = 'com_jed.categories';
     public array $_items;
-    protected string $_extension = 'com_jed';
     protected int $_total        = 0;
 
     /**
@@ -45,12 +45,11 @@ class CategoriesModel extends ListModel
     /**
      * Constructor.
      *
-     * @param   array  $config  An optional associative array of configuration settings.
+     * @param array $config An optional associative array of configuration settings.
      *
      * @throws Exception
-     * @since 4.0.0
+     * @since  4.0.0
      * @see    JController
-     *
      */
     public function __construct($config = [])
     {
@@ -67,13 +66,14 @@ class CategoriesModel extends ListModel
     /**
      * Build query and where for protected _getList function and return a list
      *
-     * @param   int|null  $limitStart  Where to start looking up records
-     * @param   int|null  $limit       Number of records to return, set to -1 to return all records
-     * @param   bool      $extended    Extend the data with links etc., default true
+     * @param int|null $limitStart Where to start looking up records
+     * @param int|null $limit      Number of records to return, set to -1 to return all records
+     * @param bool     $extended   Extend the data with links etc., default true
      *
      * @return array An array of results.
      *
-     * @since 4.0.0
+     * @since  4.0.0
+     * @throws Exception
      */
     public function getItems(int $limitStart = null, int $limit = null, bool $extended = true): array
     {
@@ -81,9 +81,9 @@ class CategoriesModel extends ListModel
             return $this->_items;
         }
 
-        $recursive  = false;
         $options    = ['countItems' => 1];
         $categories = Categories::getInstance('Jed', $options);
+        //$categories = Factory::getApplication()->bootComponent('com_jed')->getCategory($options, "jed");
 
         $this->_parent = $categories->get($this->getState('filter.parentId', 'root'));
 
@@ -138,7 +138,8 @@ class CategoriesModel extends ListModel
      *
      * @return mixed  An array of data items on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
+     * @throws Exception
      */
     public function getParent(): mixed
     {
@@ -168,7 +169,7 @@ class CategoriesModel extends ListModel
     /**
      * Convert a node to an object
      *
-     * @param   object  $item  XML node
+     * @param object $item XML node
      *
      * @return stdClass
      *
@@ -193,13 +194,13 @@ class CategoriesModel extends ListModel
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @param   string  $ordering   Elements order
-     * @param   string  $direction  Order direction
+     * @param string $ordering  Elements order
+     * @param string $direction Order direction
      *
      * @return void
      *
      * @throws Exception
-     * @since 4.0.0
+     * @since  4.0.0
      */
     protected function populateState($ordering = null, $direction = null): void
     {

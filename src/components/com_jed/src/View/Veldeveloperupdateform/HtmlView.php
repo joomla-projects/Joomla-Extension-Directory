@@ -5,8 +5,8 @@
  *
  * @subpackage VEL
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\View\Veldeveloperupdateform;
@@ -21,6 +21,7 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 use stdClass;
@@ -72,11 +73,19 @@ class HtmlView extends BaseHtmlView
     protected bool $canSave;
 
     /**
+     * Is the form read only
+     *
+     * @var   bool
+     * @since 4.0.0
+     */
+    protected bool $read_only = false;
+
+    /**
      * Prepares the document
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function prepareDocument(): void
@@ -127,7 +136,7 @@ class HtmlView extends BaseHtmlView
      *
      * @return void
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function display($tpl = null): void
@@ -135,12 +144,21 @@ class HtmlView extends BaseHtmlView
         $app = Factory::getApplication();
 
         $model = $this->getModel();
-        $this->state      = $model->getState();
-        $this->item       = $model->getItem();
-        $this->params     = $app->getParams('com_jed');
-        $this->canSave    = JedHelper::canSave();
-        $this->form       = $model->getForm();
-
+        $model->setUseExceptions(true);
+        try {
+            $this->state      = $model->getState();
+            $this->item       = $model->getItem();
+            $this->params     = $app->getParams('com_jed');
+            $this->canSave    = JedHelper::canSave();
+            $this->form       = $model->getForm();
+            if(!$this->item == false ) {
+                if ($this->item->id > 0) {
+                    $this->read_only = true;
+                }
+            }
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
+        }
         $this->prepareDocument();
 
         parent::display($tpl);

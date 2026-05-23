@@ -5,8 +5,8 @@
  *
  * @subpackage TICKETS
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -28,8 +28,8 @@ HTMLHelper::_('behavior.multiselect');
 
 $user        = Factory::getApplication()->getIdentity();
 $userId      = $user->id;
-$listOrder   = $this->state->get('list.ordering');
-$listDirn    = $this->state->get('list.direction');
+$listOrder   = $this->state->get('list.ordering', 'id');
+$listDirn    = $this->state->get('list.direction', 'DESC');
 $isLoggedIn  = JedHelper::isLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
 

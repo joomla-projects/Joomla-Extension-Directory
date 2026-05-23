@@ -5,8 +5,8 @@
  *
  * @subpackage Extensions
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -28,8 +28,8 @@ HTMLHelper::_('behavior.multiselect');
 
 $user        = $this->getCurrentUser();
 $userId      = $user->id;
-$listOrder   = $this->state->get('list.ordering');
-$listDirn    = $this->state->get('list.direction');
+$listOrder   = $this->state->get('list.ordering', 'id');
+$listDirn    = $this->state->get('list.direction', 'DESC');
 $isLoggedIn  = JedHelper::isLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
 
@@ -37,7 +37,7 @@ $canCreate = $isLoggedIn;
 //echo "<pre>";print_r($this->extension_items);echo "</pre>";
 
 // Import CSS
-//$wa = $this->getDocument()->getWebAssetManager();
+//$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 //$wa->useStyle('com_jed.list');
 
 ?>
@@ -50,7 +50,7 @@ $canCreate = $isLoggedIn;
         <a href="index.php?option=com_jed&view=extensionform" class="btn btn-primary pull-right">Submit Extension</a></div>
             </div></div>
         <?php if (!empty($this->filterForm)) {
-          //  echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
+            //  echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
         } ?>
         <div class="table-responsive">
             <table class="table table-striped" id="ticketList">
@@ -78,7 +78,7 @@ $canCreate = $isLoggedIn;
                         <?php echo HTMLHelper::_('searchtools.sort', 'JSTATUS', 'a.`ticket_status`', $listDirn, $listOrder); ?>
                     </th>
 
-                    <?php if ($canEdit) : ?>
+                    <?php if ($canCreate) : ?>
                         <th class="center">
                             <?php echo Text::_('COM_JED_GENERAL_ACTIONS_LABEL'); ?>
                         </th>
@@ -113,15 +113,17 @@ $canCreate = $isLoggedIn;
                             <?php echo $item->category_title; ?>
                         </td>
                         <td>
-                            <?php echo $item->supply_option_title; ?>
+                            <?php echo $item->supply_option_title;?>
                         </td>
 
                         <td>
-
-                            <?php try {
-                                $d = new DateTime($item->created_on);
-                                echo $d->format("d M y H:i");
-                            } catch (Exception $e) {
+                            <?php
+                            if(!is_null($item->created_on)) {
+                                try {
+                                    $d = new DateTime($item->created_on);
+                                    echo $d->format("d M y H:i");
+                                } catch (Exception $e) {
+                                }
                             }
                             ?>
                         </td>

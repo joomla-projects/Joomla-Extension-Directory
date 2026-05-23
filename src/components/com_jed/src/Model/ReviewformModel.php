@@ -3,8 +3,8 @@
 /**
  * @package JED
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -67,7 +67,7 @@ class ReviewformModel extends FormModel
      *
      * @return Form    A Form object on success, false on failure
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
@@ -97,7 +97,7 @@ class ReviewformModel extends FormModel
      * @param array  $options
      *
      * @return Table|bool Table if found, bool false on failure
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getTable($name = 'Review', $prefix = 'Administrator', $options = []): Table|bool
@@ -109,11 +109,11 @@ class ReviewformModel extends FormModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return object|bool|array The default data is an empty array.
-     * @since 4.0.0
+     * @return mixed The default data is an empty array.
+     * @since  4.0.0
      * @throws Exception
      */
-    protected function loadFormData(): object|bool|array
+    protected function loadFormData(): mixed
     {
         $data = Factory::getApplication()->getUserState('com_jed.edit.review.data', []);
 
@@ -172,7 +172,7 @@ class ReviewformModel extends FormModel
      *
      * @return object|bool Object on success, false on failure.
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getItem(int $id = null)
@@ -208,51 +208,7 @@ class ReviewformModel extends FormModel
     }
 
 
-    /**
-     * Method to delete data
-     *
-     * @param int  $pk  Item primary key
-     *
-     * @return int  The id of the deleted item
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    /*public function delete($pk) : int
-    {
-        $user = Factory::getApplication()->getIdentity();
 
-        if (!$pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser())
-        {
-            if (empty($pk))
-            {
-                $pk = (int) $this->getState('ticket.id');
-            }
-
-            if ($pk == 0 || $this->getItem($pk) == null)
-            {
-                throw new Exception(Text::_('COM_JED_ITEM_DOESNT_EXIST'), 404);
-            }
-
-            if ($user->authorise('core.delete', 'com_jed') !== true)
-            {
-                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-            }
-
-            $table = $this->getTable();
-
-            if ($table->delete($pk) !== true)
-            {
-                throw new Exception(Text::_('JERROR_FAILED'), 501);
-            }
-
-            return $pk;
-        }
-        else
-        {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-        }
-    }*/
 
 
     /**
@@ -274,7 +230,7 @@ class ReviewformModel extends FormModel
      *
      * @return bool
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function save(array $data): bool
