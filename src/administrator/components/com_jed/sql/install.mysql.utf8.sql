@@ -489,6 +489,7 @@ CREATE TABLE `#__jed_extension_varied_data`
 	KEY `FK_jed_extension_varied_data` (`extension_id`),
 	KEY `FK_jed_extension_varied_data_user` (`created_by`),
 	KEY `FKC_jed_extension_varied_data_supply_option` (`supply_option_id`),
+    UNIQUE KEY `uniq_extension_supply_option` (`extension_id`, `supply_option_id`),
 	CONSTRAINT `FKC_jed_extension_varied_data` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `FKC_jed_extension_varied_data_user` FOREIGN KEY (`created_by`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `FKC_jed_extension_varied_data_supply_option` FOREIGN KEY (`supply_option_id`) REFERENCES `#__jed_extension_supply_options` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -636,9 +637,10 @@ INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) 
 INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('25','2.5','Joomla 2.5','0');
 INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('30','3','Joomla 3','1');
 INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('40','4','Joomla 4','1');
-INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('50','5.0 compatible','Joomla 5 Compatible','1');
-INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('51','5.0 compatible only with B/C plugin','Joomla 5 Compatible using B/C plugin','1');
-INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('60','6','Joomla 6','0');
+INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('50','5','Joomla 5','1');
+INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('51','5 (b/c)','Joomla 5 using B/C plugin','1');
+INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('60','6','Joomla 6','1');
+INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('61','6 (b/c)','Joomla 6 using B/C plugin','1');
 
 
 SET FOREIGN_KEY_CHECKS = 1;

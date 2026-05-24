@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    TICKETS
+ * @subpackage TICKETS
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -40,6 +40,7 @@ echo LayoutHelper::render('ticket.new_ticket_header', $this->item);
 
 if (!$isLoggedIn) {
     try {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
     } catch (Exception $e) {
     }
@@ -137,7 +138,7 @@ if (!$isLoggedIn) {
                 }
                 ?>
                 <?php
-            /* echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'ticket']); ?>
+                /* echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'ticket']); ?>
                            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'ticket', Text::_('COM_JED_TAB_TICKET', true)); ?>
                            <?php echo $this->form->renderField('id'); ?>
 

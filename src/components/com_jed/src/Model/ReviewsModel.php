@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -19,7 +19,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
-use Joomla\Database\DatabaseQuery;
+use Joomla\Database\QueryInterface;
 
 /**
  * Methods supporting a list of Jed records.
@@ -35,7 +35,6 @@ class ReviewsModel extends ListModel
      *
      * @see    JController
      * @since  4.0.0
-     * @throws Exception
      * @throws Exception
      */
     public function __construct($config = [])
@@ -89,7 +88,6 @@ class ReviewsModel extends ListModel
      * @throws Exception
      *
      * @throws Exception
-     * @throws Exception
      */
     protected function populateState($ordering = null, $direction = null): void
     {
@@ -133,11 +131,11 @@ class ReviewsModel extends ListModel
     /**
      * Build an SQL query to load the list data.
      *
-     * @return DatabaseQuery
+     * @return QueryInterface|string
      *
      * @since 4.0.0
      */
-    protected function getListQuery(): DatabaseQuery
+    protected function getListQuery(): QueryInterface|string
     {
         // Create a new query object.
         $db    = $this->getDatabase();
@@ -198,6 +196,7 @@ class ReviewsModel extends ListModel
      * Method to get an array of data items
      *
      * @return mixed An array of data on success, false on failure.
+     * @since  4.0.0
      */
     public function getItems(): mixed
     {
@@ -258,11 +257,11 @@ class ReviewsModel extends ListModel
      * Overrides the default function to check Date fields format, identified by
      * "_dateformat" suffix, and erases the field if it's not correct.
      *
-     * @return void
+     * @return mixed
      * @throws Exception
-     * @throws Exception
+     * @since  4.0.0
      */
-    protected function loadFormData()
+    protected function loadFormData(): mixed
     {
         $app              = Factory::getApplication();
         $filters          = $app->getUserState($this->context . '.filter', []);
@@ -289,10 +288,11 @@ class ReviewsModel extends ListModel
      * @param string $date Date to be checked
      *
      * @return bool
+     * @since  4.0.0
      */
-    private function isValidDate($date)
+    private function isValidDate(string $date): bool
     {
         $date = str_replace('/', '-', $date);
-        return (date_create($date)) ? Factory::getDate($date)->format("Y-m-d") : null;
+        return (date_create($date)) ? Factory::getDate($date)->format("Y-m-d") : false;
     }
 }

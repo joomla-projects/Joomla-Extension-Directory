@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -19,6 +19,7 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Model\ExtensionModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 
@@ -54,15 +55,10 @@ class HtmlView extends BaseHtmlView
      * @since 4.0.0
      */
     protected mixed $form;
-    /**
-     * The components parameters
-     *
-     * @var object
-     *
-     * @since 4.0.0
-     */
 
     protected bool $canSave;
+
+    protected Registry $params;
 
     protected mixed $extension_details;
 
@@ -80,27 +76,27 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
-        $this->state   = $this->get('State');
-        $this->item    = $this->get('Item');
-        $this->params  = $app->getParams('com_jed');
-        $this->canSave = JedHelper::canSave();
-        $this->form    = $this->get('Form');
+        $model = $this->getModel();
+        $model->setUseExceptions(true);
+        try {
+            $this->state      = $model->getState();
+            $this->item       = $model->getItem();
+            $this->params     = $app->getParams('com_jed');
+            $this->canSave = JedHelper::canSave();
+            $this->form       = $model->getForm();
 
-        $input        = $app->input;
-        $extension_id = $input->get('extension_id', -1, 'int');
-        //$extension_model         = BaseDatabaseModel::getInstance('Extension', 'JedModel', ['ignore_request' => true]);
-        $extension_model         = new ExtensionModel();
-        $this->extension_details = $extension_model->getItem($extension_id);
-        $this->supplytypes       = $extension_model->getSupplyTypes($extension_id);
+            $input        = $app->input;
+            $extension_id = $input->get('extension_id', -1, 'int');
 
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
+            $extension_model         = new ExtensionModel();
+            $this->extension_details = $extension_model->getItem($extension_id);
+            $this->supplytypes       = $extension_model->getSupplyTypes($extension_id);
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
         }
-
-
         $this->prepareDocument();
 
         parent::display($tpl);

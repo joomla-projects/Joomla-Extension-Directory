@@ -5,7 +5,7 @@
  *
  * @subpackage TICKETS
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -180,11 +180,11 @@ class TicketmessagesModel extends ListModel
      * Overrides the default function to check Date fields format, identified by
      * "_dateformat" suffix, and erases the field if it's not correct.
      *
-     * @return stdClass
+     * @return mixed
      * @since  4.0.0
      * @throws Exception
      */
-    protected function loadFormData(): stdClass
+    protected function loadFormData(): mixed
     {
         $app              = Factory::getApplication();
         $filters          = $app->getUserState($this->context . '.filter', []);
@@ -220,6 +220,7 @@ class TicketmessagesModel extends ListModel
      */
     protected function populateState($ordering = null, $direction = null): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         $list = $app->getUserState($this->context . '.list');
@@ -234,7 +235,7 @@ class TicketmessagesModel extends ListModel
             $this->setState('list.ordering', $ordering);
         }
         if (empty($direction)) {
-            $direction = $app->getUserStateFromRequest($this->context . '.filter_order_Dir', 'filter_order_Dir', $app->get('filter_order_Dir'));
+            $direction = $app->getUserStateFromRequest($this->context . '.filter_order_Dir', 'filter_order_Dir', $app->get('filter_order_Dir', ''));
             if (!in_array(strtoupper($direction), ['ASC', 'DESC', ''])) {
                 $direction = 'ASC';
             }

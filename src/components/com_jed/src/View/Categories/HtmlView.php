@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -17,6 +17,7 @@ namespace Jed\Component\Jed\Site\View\Categories;
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
@@ -58,11 +59,12 @@ class HtmlView extends BaseHtmlView
     /**
      * The components parameters
      *
-     * @var object
+     * @var Registry
      *
      * @since 4.0.0
      */
 
+    protected Registry $params;
     /**
      * Prepares the document
      *
@@ -124,52 +126,17 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
-        //$this->items = $this->get('Items');
-        //       var_dump($this->items);exit();
-        /*  $categories = Categories::getInstance('jed',array("access" => false, "countitems"=>1, "table" => "#_jed_extensions", "field" => "category_id"));
-
-           // $categories = Categories::getInstance("jed",array("countitems"=>1, "table" => "jed_extensions", "field" => "category_id"));
-
-
-            $cat0 = $categories->get('root');
-
-            $cats = $cat0->getChildren(true);
-            $catlist = array();
-            $counter = 0;
-            foreach ($cats as $cat)
-            {
-
-
-                print_r($cat);exit();
-                $ncat = null;
-                $ncat->id = $cat->id;
-                $ncat->title = $cat->title;
-                $ncat->alias = $cat->alias;
-                $ncat->childrennumitems = $cat->childrennumitems;
-                $ncat->level = $cat->level;
-                if($cat->parent_id == 'root')
-                {
-                    $cat->parent_id=0;
-                }
-                $ncat->parent_id = $cat->parent_id;
-                print_r($ncat);echo "<BR />";
-                if($cat->level === 1) {
-
-                    $catlist[$cat->id][0] = $ncat;
-
-                }
-                else
-                {
-                    $catlist[$cat->parent_id][$ncat->id] = $ncat;
-                }
-
-
-            }
-        //  print_r($catlist);exit();*/
-        $this->state      = $this->get('State');
-        $this->items      = $this->get('Items');
-        //  $this->pagination = $this->get('Pagination');
+        $model = $this->getModel();
+        $model->setUseExceptions(true);
+        // try {
+            $this->state = $model->getState();
+            $this->items = $model->getItems();
+            //  $this->pagination = $this->get('Pagination');
+        // } catch (\Exception $e) {
+        //     throw new GenericDataException($e->getMessage(), 500, $e);
+        // }
         $this->params     = $app->getParams('com_jed');
 
 

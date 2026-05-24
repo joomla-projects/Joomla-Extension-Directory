@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  Copyright (C) 2005 - 2020 Open Source Matters, Inc. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. All rights reserved.
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\Field;
@@ -21,26 +21,26 @@ use RuntimeException;
 /**
  * List of approved states.
  *
- * @package  JED
- * @since    4.0.0
+ * @package JED
+ * @since   4.0.0
  */
 class ApprovedField extends ListField
 {
     /**
      * Type of field
      *
-     * @var    string
-     * @since  4.0.0
+     * @var   string
+     * @since 4.0.0
      */
     protected $type = 'Approved';
 
     /**
      * Build a list of approved states.
      *
-     * @return  array  List of approved states.
+     * @return array  List of approved states.
      *
-     * @since   4.0.0
-     * @throws  RuntimeException
+     * @since  4.0.0
+     * @throws RuntimeException
      */
     protected function getOptions(): array
     {

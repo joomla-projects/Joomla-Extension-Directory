@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package    JED
+ * @package JED
  *
- * @copyright  (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Administrator\View\Extensionvarieddatum;
@@ -18,6 +18,7 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\Model\ExtensionvarieddatumModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Registry\Registry;
@@ -25,7 +26,7 @@ use Joomla\Registry\Registry;
 /**
  * View class for a single Extensionvarieddatum.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
@@ -38,7 +39,7 @@ class HtmlView extends BaseHtmlView
     /**
      * Display the view
      *
-     * @param   string  $tpl  Template name
+     * @param string $tpl Template name
      *
      * @return void
      *
@@ -46,17 +47,19 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
-        /** @var ExtensionvarieddatumModel $model */
+        /**
+ * @var ExtensionvarieddatumModel $model
+*/
         $model       = $this->getModel();
-        $this->state = $model->getState();
-        $this->item  = $model->getItem();
-        $this->form  = $model->getForm();
-
-        // Check for errors.
-        if (count($errors = $model->getErrors())) {
-            throw new \Exception(implode("\n", $errors));
+        $model->setUseExceptions(true);
+        try {
+            $this->state = $model->getState();
+            $this->item  = $model->getItem();
+            $this->form  = $model->getForm();
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
         }
 
         $this->addToolbar();
@@ -72,7 +75,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      */
-    protected function addToolbar()
+    protected function addToolbar(): void
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
@@ -80,7 +83,7 @@ class HtmlView extends BaseHtmlView
         $isNew = ($this->item->id == 0);
 
         if (isset($this->item->checked_out)) {
-            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+            $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->id);
         } else {
             $checkedOut = false;
         }

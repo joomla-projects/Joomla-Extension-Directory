@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -36,7 +36,6 @@ class ReviewscommentsModel extends ListModel
      * @see    JController
      * @since  4.0.0
      * @throws Exception
-     * @throws Exception
      */
     public function __construct($config = [])
     {
@@ -61,6 +60,7 @@ class ReviewscommentsModel extends ListModel
      * Checks whether or not a user is manager or super user
      *
      * @return bool
+     * @since  4.0.0
      */
     public function isAdminOrSuperUser()
     {
@@ -85,7 +85,6 @@ class ReviewscommentsModel extends ListModel
      * @since  4.0.0
      * @throws Exception
      *
-     * @throws Exception
      * @throws Exception
      */
     protected function populateState($ordering = null, $direction = null): void
@@ -192,6 +191,7 @@ class ReviewscommentsModel extends ListModel
      * Method to get an array of data items
      *
      * @return mixed An array of data on success, false on failure.
+     * @since  4.0.0
      */
     public function getItems(): mixed
     {
@@ -205,11 +205,11 @@ class ReviewscommentsModel extends ListModel
      * Overrides the default function to check Date fields format, identified by
      * "_dateformat" suffix, and erases the field if it's not correct.
      *
-     * @return void
+     * @return mixed
      * @throws Exception
-     * @throws Exception
+     * @since  4.0.0
      */
-    protected function loadFormData()
+    protected function loadFormData(): mixed
     {
         $app              = Factory::getApplication();
         $filters          = $app->getUserState($this->context . '.filter', []);
@@ -236,6 +236,7 @@ class ReviewscommentsModel extends ListModel
      * @param string $date Date to be checked
      *
      * @return bool
+     * @since  4.0.0
      */
     private function isValidDate($date)
     {

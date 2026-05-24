@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -20,6 +20,7 @@ namespace Jed\Component\Jed\Site\Model;
 use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\CMS\Table\Table;
@@ -42,7 +43,6 @@ class VeldeveloperupdateModel extends ItemModel
     private mixed $item = null;
 
     /**
-     *
      * Data Table
      *
      * @since 4.0.0
@@ -132,6 +132,7 @@ class VeldeveloperupdateModel extends ItemModel
      */
     public function getItem($pk = null): object|bool|null
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
         if ($this->item === null) {
             $this->item = false;
@@ -283,25 +284,28 @@ class VeldeveloperupdateModel extends ItemModel
     }
 
     /**
-     * Method to delete an item
+     * Method to get the record form.
      *
-     * No deletion of data in front end.
+     * @param array $data     An optional array of data for the form to interogate.
+     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @param int  $id  Element id
-     *
-     * @return bool
+     * @return Form|bool  A \JForm object on success, false on failure
      *
      * @since  4.0.0
      * @throws Exception
      */
-    /*public function delete($id) : bool
+    public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
     {
-        $table = $this->getTable();
+        // Get the form.
+        $form = $this->loadForm('com_jed.veldeveloperupdate', 'veldeveloperupdate', ['control' => 'jform', 'load_data' => $loadData]);
 
-                if(empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id){
-                    return $table->delete($id);
-                } else {
-                                                throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-                                          }
-    }*/
+        if (empty($form)) {
+            return false;
+        }
+
+        return $form;
+    }
+
+
+
 }

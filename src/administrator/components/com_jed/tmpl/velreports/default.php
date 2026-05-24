@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -22,14 +22,14 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
-HTMLHelper::addIncludePath(JPATH_COMPONENT . '/src/Helper/');
+
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 
 
 $user      = $this->getCurrentUser();
 $userId    = $user->id;
-$listOrder = $this->state->get('list.ordering');
+$listOrder = $this->state->get('list.ordering', '');
 $listDirn  = $this->state->get('list.direction');
 $canOrder  = $user->authorise('core.edit.state', 'com_jed');
 $saveOrder = $listOrder == 'a.`ordering`';

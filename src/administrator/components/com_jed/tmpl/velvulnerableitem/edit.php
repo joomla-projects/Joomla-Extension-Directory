@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -21,7 +21,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
-HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+
 $wa = $this->document->getWebAssetManager();
 $wa->getRegistry()->addExtensionRegistryFile('com_jed');
 $wa->useStyle('com_jed.jedVel');
@@ -116,11 +116,11 @@ $fieldhiddenoptions = ['hidden' => true];
         echo HTMLHelper::_('uitab.addTab', 'myTab', 'report' . $velcounter, 'Report:' . JedHelper::prettyDate($velreport->created)); ?>
         <div class="row-fluid form-horizontal-desktop">
             <div class="span10 form-horizontal">
-                                <?php echo LayoutHelper::render('vulnerableitem.linked_velreport', $this->VELLinkedReports['velreport']['form']); ?>
+                                    <?php echo LayoutHelper::render('vulnerableitem.linked_velreport', $this->VELLinkedReports['velreport']['form']); ?>
 
             </div>
         </div>
-                        <?php echo HTMLHelper::_('uitab.endTab');
+                            <?php echo HTMLHelper::_('uitab.endTab');
     }
     $velcounter = 0;
     foreach ($this->VELLinkedReports['veldeveloperupdate']['data'] as $veldeveloperupdate) {
@@ -128,11 +128,11 @@ $fieldhiddenoptions = ['hidden' => true];
         echo HTMLHelper::_('uitab.addTab', 'myTab', 'devupdate' . $velcounter, 'Developer Update:' . JedHelper::prettyDate($veldeveloperupdate->created)); ?>
         <div class="row-fluid form-horizontal-desktop">
             <div class="span10 form-horizontal">
-                                <?php echo LayoutHelper::render('vulnerableitem.linked_veldeveloperupdate', $this->VELLinkedReports['veldeveloperupdate']['form']); ?>
+                                    <?php echo LayoutHelper::render('vulnerableitem.linked_veldeveloperupdate', $this->VELLinkedReports['veldeveloperupdate']['form']); ?>
 
             </div>
         </div>
-                        <?php echo HTMLHelper::_('uitab.endTab');
+                            <?php echo HTMLHelper::_('uitab.endTab');
     }
     $velcounter = 0;
     foreach ($this->VELLinkedReports['velabandonware']['data'] as $velabandonware) {
@@ -140,11 +140,11 @@ $fieldhiddenoptions = ['hidden' => true];
         echo HTMLHelper::_('uitab.addTab', 'myTab', 'abandonware' . $velcounter, 'Abandoned Report:' . JedHelper::prettyDate($velabandonware->created)); ?>
         <div class="row-fluid form-horizontal-desktop">
             <div class="span10 form-horizontal">
-                                <?php echo LayoutHelper::render('vulnerableitem.linked_velabandonware', $this->VELLinkedReports['velabandonware']['form']); ?>
+                                    <?php echo LayoutHelper::render('vulnerableitem.linked_velabandonware', $this->VELLinkedReports['velabandonware']['form']); ?>
 
             </div>
         </div>
-                        <?php echo HTMLHelper::_('uitab.endTab');
+                            <?php echo HTMLHelper::_('uitab.endTab');
     }
     ?>
 

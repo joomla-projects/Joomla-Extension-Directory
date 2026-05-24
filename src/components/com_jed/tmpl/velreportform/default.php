@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -39,6 +39,7 @@ $redirectURL = JedHelper::getLoginlink();
 
 if (!$isLoggedIn) {
     try {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
         $app->enqueueMessage(Text::_('COM_JED_VEL_REPORTS_NO_ACCESS'), 'success');
         $app->redirect($redirectURL);
@@ -57,98 +58,100 @@ if (!$isLoggedIn) {
                   action="<?php echo Route::_('index.php?option=com_jed&task=velreportform.save'); ?>"
                   method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
 
+            <?php
 
-                <?php
-
-                $fieldsets['overview']['title']       = Text::_('COM_JED_VEL_REPORTS_OVERVIEW_TITLE');
-                $fieldsets['overview']['description']     = Text::_('COM_JED_VEL_REPORTS_OVERVIEW_DESCR');
-                $fieldsets['overview']['fields']          = [];
-
-
-                $fieldsets['aboutyou']['title']       = Text::_('COM_JED_VEL_GENERAL_ABOUT_YOU_LABEL');
-                $fieldsets['aboutyou']['description'] = "";
-                $fieldsets['aboutyou']['fields']      = [
-                'reporter_fullname',
-                'reporter_email',
-                'reporter_organisation',
-                'pass_details_ok'];
-
-                $fieldsets['vulnerabilitydetails']['title']       = Text::_('COM_JED_VEL_GENERAL_VULNERABILITY_DETAILS_TITLE');
-                $fieldsets['vulnerabilitydetails']['description'] = "";
-                $fieldsets['vulnerabilitydetails']['fields']      = [
-                'vulnerability_type',
-                'vulnerable_item_name',
-                'vulnerable_item_version',
-                'exploit_type',
-                'exploit_other_description',
-                'vulnerability_description',
-                'vulnerability_how_found',
-                'vulnerability_actively_exploited',
-                'vulnerability_publicly_available',
-                'vulnerability_publicly_url',
-                'vulnerability_specific_impact'];
-
-                $fieldsets['developerdetails']['title']       = Text::_('COM_JED_VEL_REPORTS_DEVELOPER_DETAILS_TITLE');
-                $fieldsets['developerdetails']['description'] = Text::_('COM_JED_VEL_REPORTS_DEVELOPER_DETAILS_DESCRIPTION');
-                $fieldsets['developerdetails']['fields']      = [
-                'developer_communication_type',
-                'developer_patch_download_url'];
-
-                $fieldsets['moredeveloperdetails']['title']       = "";
-                $fieldsets['moredeveloperdetails']['description'] = Text::_('COM_JED_VEL_REPORTS_FORM_DEVELOPER_DETAILS_MORE_DESCR');
-                $fieldsets['moredeveloperdetails']['fields']      = [
-                'developer_name',
-                'developer_contact_email',
-                'jed_url',
-                'tracking_db_name',
-                'tracking_db_id'];
+            $fieldsets['overview']['title']       = Text::_('COM_JED_VEL_REPORTS_OVERVIEW_TITLE');
+            $fieldsets['overview']['description']     = Text::_('COM_JED_VEL_REPORTS_OVERVIEW_DESCR');
+            $fieldsets['overview']['fields']          = [];
 
 
-                $fieldsets['additionaldeveloperdetails']['title']       = Text::_('COM_JED_VEL_REPORTS_DEVELOPER_DETAILS_ADDITIONAL_TITLE_LABEL');
-                $fieldsets['additionaldeveloperdetails']['description'] = "";
-                $fieldsets['additionaldeveloperdetails']['fields']      = [
-                'developer_additional_info'];
+            $fieldsets['aboutyou']['title']       = Text::_('COM_JED_VEL_GENERAL_ABOUT_YOU_LABEL');
+            $fieldsets['aboutyou']['description'] = "";
+            $fieldsets['aboutyou']['fields']      = [
+            'reporter_fullname',
+            'reporter_email',
+            'reporter_organisation',
+            'pass_details_ok'];
 
-                $fieldsets['filelocation']['title']       = Text::_('COM_JED_VEL_REPORTS_FILELOCATION_TITLE');
-                $fieldsets['filelocation']['description'] = "";
-                $fieldsets['filelocation']['fields']      = [
-                'download_url',
-                'consent_to_process'];
+            $fieldsets['vulnerabilitydetails']['title']       = Text::_('COM_JED_VEL_GENERAL_VULNERABILITY_DETAILS_TITLE');
+            $fieldsets['vulnerabilitydetails']['description'] = "";
+            $fieldsets['vulnerabilitydetails']['fields']      = [
+            'vulnerability_type',
+            'vulnerable_item_name',
+            'vulnerable_item_version',
+            'exploit_type',
+            'exploit_other_description',
+            'vulnerability_description',
+            'vulnerability_how_found',
+            'vulnerability_actively_exploited',
+            'vulnerability_publicly_available',
+            'vulnerability_publicly_url',
+            'vulnerability_specific_impact'];
 
-                $fieldsets['final']['title']       = "";
-                $fieldsets['final']['description'] = Text::_('COM_JED_VEL_REPORTS_FORM_FINAL_DESCR');
+            $fieldsets['developerdetails']['title']       = Text::_('COM_JED_VEL_REPORTS_DEVELOPER_DETAILS_TITLE');
+            $fieldsets['developerdetails']['description'] = Text::_('COM_JED_VEL_REPORTS_DEVELOPER_DETAILS_DESCRIPTION');
+            $fieldsets['developerdetails']['fields']      = [
+            'developer_communication_type',
+            'developer_patch_download_url'];
 
-                $fieldsets['final']['fields'] = ['captcha', 'passed_to_vel',
-                'date_submitted',
-                'data_source'];
-                $fscount                      = 0;
+            $fieldsets['moredeveloperdetails']['title']       = "";
+            $fieldsets['moredeveloperdetails']['description'] = Text::_('COM_JED_VEL_REPORTS_FORM_DEVELOPER_DETAILS_MORE_DESCR');
+            $fieldsets['moredeveloperdetails']['fields']      = [
+            'developer_name',
+            'developer_contact_email',
+            'jed_url',
+            'tracking_db_name',
+            'tracking_db_id'];
 
 
-                foreach ($fieldsets as $fs) {
-                    $fscount = $fscount + 1;
-                    if ($fs['title'] <> '') {
-                        if ($fscount > 1) {
-                            echo '</fieldset>';
-                        }
+            $fieldsets['additionaldeveloperdetails']['title']       = Text::_('COM_JED_VEL_REPORTS_DEVELOPER_DETAILS_ADDITIONAL_TITLE_LABEL');
+            $fieldsets['additionaldeveloperdetails']['description'] = "";
+            $fieldsets['additionaldeveloperdetails']['fields']      = [
+            'developer_additional_info'];
 
-                        echo '<fieldset class="velreportform"><legend>' . $fs['title'] . '</legend>';
+            $fieldsets['filelocation']['title']       = Text::_('COM_JED_VEL_REPORTS_FILELOCATION_TITLE');
+            $fieldsets['filelocation']['description'] = "";
+            $fieldsets['filelocation']['fields']      = [
+            'download_url',
+            'consent_to_process'];
+
+            $fieldsets['final']['title']       = "";
+            $fieldsets['final']['description'] = Text::_('COM_JED_VEL_REPORTS_FORM_FINAL_DESCR');
+
+            $fieldsets['final']['fields'] = ['captcha', 'passed_to_vel',
+            'date_submitted',
+            'data_source'];
+            $fscount                      = 0;
+
+
+            foreach ($fieldsets as $fs) {
+                $fscount = $fscount + 1;
+                if ($fs['title'] <> '') {
+                    if ($fscount > 1) {
+                        echo '</fieldset>';
                     }
-                    if ($fs['description'] <> '') {
-                        echo $fs['description'];
-                    }
-                    $fields       = $fs['fields'];
-                    $hiddenFields = ['user_ip'];
-                    foreach ($fields as $field) {
-                        if (in_array($field, $hiddenFields)) {
-                            $this->form->setFieldAttribute($field, 'type', 'hidden');
-                        }
 
-                        echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
-                    }
+                    echo '<fieldset class="velreportform"><legend>' . $fs['title'] . '</legend>';
                 }
+                if ($fs['description'] <> '') {
+                    echo $fs['description'];
+                }
+                $fields       = $fs['fields'];
+                $hiddenFields = ['user_ip'];
+                foreach ($fields as $field) {
+                    if (in_array($field, $hiddenFields)) {
+                        $this->form->setFieldAttribute($field, 'type', 'hidden');
+                    }
+                    if($this->read_only) {
+
+                        $this->form->setFieldAttribute($field, 'disabled', 'true');
+                    }
+                    echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+                }
+            }
 
 
-                ?>
+            ?>
 
                 <div class="control-group">
                     <div class="controls">

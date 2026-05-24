@@ -5,7 +5,7 @@
  *
  * @subpackage TICKETS
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -19,14 +19,13 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
-use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
 $canEdit = $this->getCurrentUser()->authorise('core.edit', 'com_jed');
 
 if (!$canEdit && $this->getCurrentUser()->authorise('core.edit.own', 'com_jed')) {
     $canEdit = $this->getCurrentUser()->id == $this->item->created_by;
 }
-$wa = $this->getDocument()->getWebAssetManager();
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
 $wa->getRegistry()->addExtensionRegistryFile('com_jed');
 $wa->useStyle('com_jed.oldjed');
@@ -147,4 +146,3 @@ HTMLHelper::_('bootstrap.tooltip');
        href="<?php echo Route::_('index.php?option=com_jed&task=ticket.checkin&id=' . $this->item->id . '&' . Session::getFormToken() . '=1'); ?>"><?php echo Text::_("JLIB_HTML_CHECKIN"); ?></a>
 
 <?php endif; ?>
-

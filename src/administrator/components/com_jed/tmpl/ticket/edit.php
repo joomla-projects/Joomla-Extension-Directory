@@ -5,7 +5,7 @@
  *
  * @subpackage Tickets
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -224,8 +224,8 @@ $userFactory = $container->get('user.factory');
         echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedReview', 'Linked Review');
 
         $passdata = ["linked_form" => $this->linked_form,
-          "linked_data"        => $this->linked_item_data,
-          "extension"          => $this->linked_extension_data];
+          "linked_data"            => $this->linked_item_data,
+          "extension"              => $this->linked_extension_data];
         echo LayoutHelper::render('ticket.linked_review', $passdata);
 
         echo HTMLHelper::_('uitab.endTab');
@@ -253,9 +253,14 @@ $userFactory = $container->get('user.factory');
         echo HTMLHelper::_('uitab.endTab');
     }
     if ($add_extension_tab == true) {
-        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension (' . $this->linked_extension_data->type . ')');
+        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension (' . current($this->linked_extension_data->varied)->supply_option_type . ')');
 
         echo LayoutHelper::render('ticket.linked_extension', $this->linked_extension_data);
+
+        echo HTMLHelper::_('uitab.endTab');
+        echo HTMLHelper::_('uitab.addTab', 'myTab', 'JEDChecker', 'JED Checker');
+
+        echo LayoutHelper::render('ticket.jedchecker', $this->linked_extension_data);
 
         echo HTMLHelper::_('uitab.endTab');
     }
@@ -302,8 +307,3 @@ $userFactory = $container->get('user.factory');
     <?php echo HTMLHelper::_('form.token'); ?>
 
 </form>
-<?php
-
-
-?>
-

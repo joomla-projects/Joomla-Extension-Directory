@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -60,16 +60,16 @@ class ExtensionHistoryTable extends Table
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param   array|object  $src     An associative array or object to bind to the Table instance.
-     * @param   array|string  $ignore  An optional array or space separated list of properties to ignore while binding.
+     * @param array|object $src    An associative array or object to bind to the Table instance.
+     * @param array|string $ignore An optional array or space separated list of properties to ignore while binding.
      *
-     * @return  boolean  True on success.
+     * @return bool  True on success.
      *
      * @see    Table:bind
      * @throws Exception
      * @since  4.0.0
      */
-    public function bind($src, $ignore = '')
+    public function bind($src, $ignore = ''): bool
     {
         $date = Factory::getDate();
         $app  = Factory::getApplication();
@@ -250,9 +250,9 @@ class ExtensionHistoryTable extends Table
      * @return bool True if unique
      * @since  4.0.0
      */
-    private function isUnique($field): bool
+    private function isUnique(string $field): bool
     {
-        $db    = $this->getDbo();
+        $db    = $this->getDatabase();
         $query = $db->getQuery(true);
 
         $categories        = explode(',', $this->primary_category_id);
@@ -276,6 +276,6 @@ class ExtensionHistoryTable extends Table
         $db->setQuery($query);
         $db->execute();
 
-        return ($db->getNumRows() == 0) ? true : false;
+        return $db->getNumRows() == 0;
     }
 }

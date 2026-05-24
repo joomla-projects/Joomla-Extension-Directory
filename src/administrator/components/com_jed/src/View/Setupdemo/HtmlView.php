@@ -3,7 +3,7 @@
 /**
  * @package jed Portal
  *
- * @copyright (C) 2023 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Administrator\View\Setupdemo;
 
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -72,8 +73,7 @@ class HtmlView extends BaseHtmlView
         ToolBarHelper::title('Setup Demo Menu');
         $user = $this->getCurrentUser();
 
-        if (
-            $user->authorise('core.admin', 'com_jed')
+        if ($user->authorise('core.admin', 'com_jed')
             || $user->authorise(
                 'core.options',
                 'com_jed'
@@ -96,13 +96,19 @@ class HtmlView extends BaseHtmlView
     public function display($tpl = null): void
     {
         $model        = $this->getModel();
-        $this->state  = $model->getState();
-        $this->item   = $model->getItem();
-        $this->params = ComponentHelper::getParams('com_jed');
+        $model->setUseExceptions(true);
+        try {
+            $this->state  = $model->getState();
+            $this->item   = $model->getItem();
+            $this->params = ComponentHelper::getParams('com_jed');
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
+        }
         $app          = Factory::getApplication();
         $input        = $app->input->getInputForRequestMethod();
         $this->task   = $input->get('task', '');
         $this->addToolbar();
+
         parent::display($tpl);
     }
 }

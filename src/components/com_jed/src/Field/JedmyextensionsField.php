@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -185,9 +185,9 @@ class JedmyextensionsField extends ListField
     /**
      * Method to get the field input for a foreignkey field.
      *
-     * @return  string  The field input.
+     * @return string  The field input.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */
@@ -221,9 +221,9 @@ class JedmyextensionsField extends ListField
     /**
      * Method to get the field options.
      *
-     * @return  array  The field option objects.
+     * @return array  The field option objects.
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
      * @throws Exception
      */
@@ -264,8 +264,8 @@ class JedmyextensionsField extends ListField
     /**
      * Wrapper method for getting attributes from the form element
      *
-     * @param   string  $name  Attribute name
-     * @param   mixed   $default    Optional value to return if attribute not found
+     * @param string $name    Attribute name
+     * @param mixed  $default Optional value to return if attribute not found
      *
      * @return mixed The value of the attribute if it exists, null otherwise
      *

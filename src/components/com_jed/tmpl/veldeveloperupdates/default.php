@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -24,12 +24,12 @@ use Joomla\CMS\Uri\Uri;
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
-HTMLHelper::_('formbehavior.chosen', 'select');
+
 
 $user        = $this->getCurrentUser();
 $userId      = $user->id;
-$listOrder   = $this->state->get('list.ordering');
-$listDirn    = $this->state->get('list.direction');
+$listOrder   = $this->state->get('list.ordering', 'id');
+$listDirn    = $this->state->get('list.direction', 'DESC');
 $canCreate   = $user->authorise('core.create', 'com_jed');
 $canEdit     = $user->authorise('core.edit', 'com_jed');
 $canCheckin  = $user->authorise('core.manage', 'com_jed');
@@ -39,10 +39,11 @@ $isLoggedIn  = JedHelper::isLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
 
 // Import CSS
-$wa = $this->getDocument()->getWebAssetManager();
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.list');
 if (!$isLoggedIn) {
     try {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
     } catch (Exception $e) {
         throw new Exception($e->getMessage(), $e->getCode());
@@ -79,11 +80,7 @@ if (!$isLoggedIn) {
                     </th>
 
 
-                    <?php if ($canEdit || $canDelete) : ?>
-                        <th class="center">
-                            <?php echo Text::_('COM_JED_VEL_DEVELOPERUPDATES_LIST_ACTIONS'); ?>
-                        </th>
-                    <?php endif; ?>
+
 
                 </tr>
                 </thead>
@@ -113,13 +110,16 @@ if (!$isLoggedIn) {
                             <?php if (isset($item->checked_out) && $item->checked_out) : ?>
                                 <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'veldeveloperupdates.', $canCheckin); ?>
                             <?php endif; ?>
-                            <a href="<?php echo Route::_('index.php?option=com_jed&view=veldeveloperupdate&id=' . (int) $item->id); ?>">
+                            <a href="<?php echo Route::_('index.php?option=com_jed&view=veldeveloperupdateform&id=' . (int) $item->id); ?>">
                                 <?php echo $this->escape($item->id); ?></a>
                         </td>
 
                         <td>
-
-                            <?php echo $item->vulnerable_item_name; ?>
+                            <?php if (isset($item->checked_out) && $item->checked_out) : ?>
+                                <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'veldeveloperupdates.', $canCheckin); ?>
+                            <?php endif; ?>
+                            <a href="<?php echo Route::_('index.php?option=com_jed&view=veldeveloperupdateform&id=' . (int) $item->id); ?>">
+                                <?php echo $item->vulnerable_item_name; ?></a>
                         </td>
                         <td>
 
@@ -130,26 +130,9 @@ if (!$isLoggedIn) {
                             <?php echo $item->vel_item_id; ?>
                         </td>
 
-                        <td>
+                        <td><?php $date = $item->update_date_submitted;
+                        echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC6')) : '-'; ?>                </td>
 
-                            <?php
-                            $date = $item->update_date_submitted;
-                            echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC6')) : '-';
-                            ?>                </td>
-
-
-                        <?php if ($canEdit || $canDelete) : ?>
-                            <td class="center">
-                                <?php if ($canEdit) : ?>
-                                    <a href="<?php echo Route::_('index.php?option=com_jed&task=veldeveloperupdate.edit&id=' . $item->id, false, 2); ?>"
-                                       class="btn btn-mini" type="button"><i class="icon-edit"></i></a>
-                                <?php endif; ?>
-                                <?php if ($canDelete) : ?>
-                                    <a href="<?php echo Route::_('index.php?option=com_jed&task=veldeveloperupdateform.remove&id=' . $item->id, false, 2); ?>"
-                                       class="btn btn-mini delete-button" type="button"><i class="icon-trash"></i></a>
-                                <?php endif; ?>
-                            </td>
-                        <?php endif; ?>
 
                     </tr>
                 <?php endforeach; ?>

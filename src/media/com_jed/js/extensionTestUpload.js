@@ -7,7 +7,7 @@ $("#jform_file").fileinput({
 document.addEventListener('subform-row-add', ({ detail: { row } }) => {
     console.log(row);
 
-    let $input = $('input.file[type=file]');
+    let $input = jQuery('input.file[type=file]');
     if ($input.length) {
         $input.fileinput();
     }

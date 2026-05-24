@@ -7,6 +7,11 @@ namespace Jed\Component\Jed\Site\MediaHandling;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+/**
+ * Image size enumeration and functions for media handling.
+ *
+ * @since 4.0.0
+ */
 enum ImageSize
 {
     /**
@@ -34,7 +39,7 @@ enum ImageSize
      *
      * @return array
      *
-     * @since version
+     * @since 4.0.0
      */
     public function getMaximumDimensions(): array
     {

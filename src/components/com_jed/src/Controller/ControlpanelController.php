@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -13,26 +13,27 @@ namespace Jed\Component\Jed\Site\Controller;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Exception;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Router\Route;
 
 /**
  * Controlpanel class.
  *
- * @since  1.6.0
+ * @since 1.6.0
  */
 class ControlpanelController extends BaseController
 {
     /**
      * Method to check out an item for editing and redirect to the edit form.
      *
-     * @return  void
+     * @return void
      *
-     * @since   4.0.0
+     * @since 4.0.0
      *
-     * @throws  Exception
+     * @throws Exception
      */
-    public function edit()
+    public function edit(): void
     {
         // Get the previous edit id (if any) and the current edit id.
         $previousId = (int) $this->app->getUserState('com_jed.edit.controlpanel.id');

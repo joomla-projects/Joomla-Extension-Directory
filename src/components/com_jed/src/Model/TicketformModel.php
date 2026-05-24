@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @subpackage    TICKETS
+ * @subpackage TICKETS
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Jed\Component\Jed\Site\Model;
@@ -41,7 +41,7 @@ class TicketformModel extends FormModel
      * @var   object
      * @since 4.0.0
      */
-    private $item = null;
+    private mixed $item = null;
 
     /**
      * Data Table
@@ -61,7 +61,7 @@ class TicketformModel extends FormModel
     /**
      * Method to check in an item.
      *
-     * @param   int  $pk  The id of the row to check out.
+     * @param int $pk The id of the row to check out.
      *
      * @return bool True on success, false on failure.
      *
@@ -94,7 +94,7 @@ class TicketformModel extends FormModel
     /**
      * Method to check out an item for editing.
      *
-     * @param   int|null  $pk  The id of the row to check out.
+     * @param int|null $pk The id of the row to check out.
      *
      * @return bool True on success, false on failure.
      *
@@ -146,8 +146,8 @@ class TicketformModel extends FormModel
      *
      * The base form is loaded from XML
      *
-     * @param   array  $data      An optional array of data for the form to interogate.
-     * @param   bool   $loadData  True if the form is to load its own data (default case), false if not.
+     * @param array $data     An optional array of data for the form to interogate.
+     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
      * @return Form    A Form object on success, false on failure
      *
@@ -178,7 +178,7 @@ class TicketformModel extends FormModel
      *
      * @return int
      *
-     * @since version
+     * @since 4.0.0
      */
     public function getId(): int
     {
@@ -188,14 +188,14 @@ class TicketformModel extends FormModel
     /**
      * Method to get an object.
      *
-     * @param   int|null  $id  The id of the object to get.
+     * @param int|null $id The id of the object to get.
      *
      * @return mixed Object on success, false on failure.
      *
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem(int $id = null)
+    public function getItem(int $id = null): mixed
     {
         if ($this->item === null) {
             $this->item = false;
@@ -211,8 +211,8 @@ class TicketformModel extends FormModel
             if ($table !== false && $table->load($id) && !empty($table->id)) {
                 $user = Factory::getApplication()->getIdentity();
                 $id   = $table->id;
-                if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
-                    // Convert the Table to a clean CMSObject.
+                if (JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
+                    // Convert the Table to a clean stdClass.
                     $this->item                       = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
                     $this->item->ticket_messages      = self::getTicketMessages($id);
                     $this->item->ticket_status        = Text::_('COM_JED_TICKETS_TICKET_STATUS_OPTION_' . strtoupper($this->item->ticket_status));
@@ -230,7 +230,19 @@ class TicketformModel extends FormModel
         return $this->item;
     }
 
-    public function getTicketMessages($ticketId): array
+
+    /**
+     * getTicketMessages
+     *
+     * Returns an array of ticket messages for selected ticket
+     *
+     * @param int $ticketId
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    public function getTicketMessages(int $ticketId): array
     {
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);
@@ -242,7 +254,7 @@ class TicketformModel extends FormModel
     /**
      * Method to delete data
      *
-     * @param   int  $pk  Item primary key
+     * @param int  $pk  Item primary key
      *
      * @return int  The id of the deleted item
      *
@@ -288,15 +300,15 @@ class TicketformModel extends FormModel
     /**
      * Method to get the table
      *
-     * @param   string  $name
-     * @param   string  $prefix  Optional prefix for the table class name
-     * @param   array   $options
+     * @param string $name
+     * @param string $prefix  Optional prefix for the table class name
+     * @param array  $options
      *
      * @return Table|bool Table if found, bool false on failure
      * @since  4.0.0
      * @throws Exception
      */
-    public function getTable($name = 'Ticket', $prefix = 'Administrator', $options = [])
+    public function getTable($name = 'Ticket', $prefix = 'Administrator', $options = []): Table|bool
     {
         return parent::getTable($name, $prefix, $options);
     }
@@ -304,11 +316,11 @@ class TicketformModel extends FormModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return array  The default data is an empty array.
+     * @return mixed  The default data is an empty array.
      * @since  4.0.0
      * @throws Exception
      */
-    protected function loadFormData()
+    protected function loadFormData(): mixed
     {
         $data = Factory::getApplication()->getUserState('com_jed.edit.ticket.data', []);
 
@@ -333,6 +345,7 @@ class TicketformModel extends FormModel
      */
     protected function populateState(): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Load state from the request userState on edit or from the passed variable on default
@@ -359,7 +372,7 @@ class TicketformModel extends FormModel
     /**
      * Method to save the form data.
      *
-     * @param   array  $data  The form data
+     * @param array $data The form data
      *
      * @return bool
      *
@@ -409,7 +422,19 @@ class TicketformModel extends FormModel
         }
     }
 
-    public function getTicketCategory($categoryId): string
+
+    /**
+     * getTicketCategory
+     *
+     * Returns the category type for a given ticket category ID
+     *
+     * @param int $categoryId
+     *
+     * @return string
+     *
+     * @since 4.0.0
+     */
+    public function getTicketCategory(int $categoryId): string
     {
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);

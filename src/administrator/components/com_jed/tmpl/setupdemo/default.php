@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2023 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -407,9 +407,9 @@ HTMLHelper::_('bootstrap.tooltip');
                         $mi->template_style_id = 0;
                         $mi->home              = 0;
                         if ($mi->store()) {
-                            echo "Successfully Created Menu Item - " . $m['title'] . '<br/>' . $mi->getError() . '<br/>';
+                            echo "Successfully Created Menu Item - " . $m['title'] . '<br/>' ;
                         } else {
-                            echo "Failed to create Menu Item - " . $m['title'] . '<br/>' . $mi->getError() . '<br/>';
+                            echo "Failed to create Menu Item - " . $m['title'] . '<br/>' ;
                         }
                     }
                 } catch (Exception $e) {

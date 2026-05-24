@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -41,7 +41,6 @@ class VelreportModel extends ItemModel
     private mixed $item = null;
 
     /**
-     *
      * Data Table
      *
      * @since 4.0.0
@@ -94,6 +93,7 @@ class VelreportModel extends ItemModel
      */
     public function getItem($pk = null): mixed
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
         if ($this->item === null) {
             $this->item = false;

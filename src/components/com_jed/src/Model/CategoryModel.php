@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -15,7 +15,6 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
@@ -80,7 +79,7 @@ class CategoryModel extends ListModel
     /**
      * Array of checked categories -- used to save values when _nodes are null
      *
-     * @var   boolean[]
+     * @var   bool
      * @since 1.6
      */
     protected array $l_checkedCategories;
@@ -180,6 +179,9 @@ class CategoryModel extends ListModel
      */
     protected function populateState($ordering = null, $direction = null): void
     {
+
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         $pk  = $app->getInput()->getInt('id');
@@ -445,6 +447,8 @@ class CategoryModel extends ListModel
      */
     protected function loadFormData(): mixed
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
+
         $app              = Factory::getApplication();
         $filters          = $app->getUserState($this->context . '.filter', []);
         $error_dateformat = false;
@@ -563,7 +567,7 @@ class CategoryModel extends ListModel
      *
      * @return array
      *
-     * @since  1.5
+     * @since  4.0.0
      * @throws Exception
      */
     public function getCategory(): array
@@ -571,7 +575,7 @@ class CategoryModel extends ListModel
         try {
             $db = $this->getDatabase();
         } catch (DatabaseNotFoundException $e) {
-            @trigger_error(sprintf('Database must be set, this will not be caught anymore in 5.0.'), E_USER_DEPRECATED);
+            @trigger_error('Database must be set. ' . $e->getMessage(), E_USER_DEPRECATED);
             $db = Factory::getContainer()->get(DatabaseInterface::class);
         }
         $id         = Factory::getApplication()->getInput()->getInt('id', -1);
@@ -621,7 +625,7 @@ class CategoryModel extends ListModel
             $case_when = ' CASE WHEN ';
             $case_when .= $query->charLength($db->quoteName('c.alias'), '!=', '0');
             $case_when .= ' THEN ';
-            $c_id      = $query->castAsChar($db->quoteName('c.id'));
+            $c_id      = $query->castAs('CHAR', $db->quoteName('c.id'));
             $case_when .= $query->concatenate([$c_id, $db->quoteName('c.alias')], ':');
             $case_when .= ' ELSE ';
             $case_when .= $c_id . ' END as ' . $db->quoteName('slug');
@@ -683,7 +687,7 @@ class CategoryModel extends ListModel
                         // Create the CategoryNode and add to _nodes
                         $categories[$result->id] = new CategoryNode($result, $this);
 
-                        // If this is not root and if the current node's parent is in the list or the current node parent is 0
+                        // If this is not root and if the current node's parent is in the list, or the current node parent is 0
                         if ($result->id !== 'root' && (isset($categories[$result->parent_id]) || $result->parent_id == 1)) {
                             // Compute relationship between node and its parent - set the parent in the _nodes field
                             $categories[$result->id]->setParent($categories[$result->parent_id]);
@@ -791,7 +795,7 @@ class CategoryModel extends ListModel
      *
      * @return CategoryNode An array of categories or false if an error occurs.
      *
-     * @since  1.6
+     * @since  4.0.0
      * @throws Exception
      */
     public function getParent(): CategoryNode

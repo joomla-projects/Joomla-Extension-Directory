@@ -5,7 +5,7 @@
  *
  * @subpackage Tickets
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -61,10 +61,10 @@ class TicketlinkeditemtypeTable extends Table
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param   array|object  $src     An associative array or object to bind to the Table instance.
-     * @param   array|string  $ignore  An optional array or space separated list of properties to ignore while binding.
+     * @param array|object $src    An associative array or object to bind to the Table instance.
+     * @param array|string $ignore An optional array or space separated list of properties to ignore while binding.
      *
-     * @return  boolean  True on success.
+     * @return bool  True on success.
      *
      * @see    Table:bind
      * @since  4.0.0

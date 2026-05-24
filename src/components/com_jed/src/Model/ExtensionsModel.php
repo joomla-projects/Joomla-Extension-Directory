@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -15,7 +15,7 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
+use Jed\Component\Jed\Site\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
@@ -145,7 +145,7 @@ class ExtensionsModel extends ListModel
      *
      * @return QueryInterface
      *
-     * @since 4.0.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function getListQuery(): QueryInterface
@@ -237,6 +237,31 @@ class ExtensionsModel extends ListModel
         return $db->loadObjectList();
     }
 
+
+    /**
+     * getMyItems
+     *
+     * Returns list of extensions created by the current user
+     *
+     * @return mixed
+     * @since  1.0
+     * @throws Exception
+     */
+    public function getMyItems(): mixed
+    {
+        $user = Factory::getApplication()->getIdentity();
+        $query = $this->getDatabase()->getQuery(true)
+            ->select('a.id as ext_id,a.*,varied.*,cat.title AS category_title,sup.title as supply_option_title')
+            ->from('#__jed_extensions AS a')
+            ->innerJoin('#__jed_extension_varied_data AS varied ON varied.extension_id = a.id ')
+            ->innerJoin('#__categories AS cat ON cat.id=a.primary_category_id')
+            ->innerJoin('#__jed_extension_supply_options AS sup ON sup.id=varied.supply_option_id')
+            ->where('a.created_by = ' . $user->id);
+        $this->getDatabase()->setQuery($query);
+
+        return $this->getDatabase()->loadObjectList();
+    }
+
     /**
      * Method to get an array of data items
      *
@@ -247,6 +272,7 @@ class ExtensionsModel extends ListModel
     public function getItems(): mixed
     {
         $items = parent::getItems();
+
         foreach ($items as $item) {
             //echo "<pre>";print_r($item);echo "</pre>";exit();
 

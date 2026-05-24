@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -62,16 +62,16 @@ class ExtensionimageTable extends Table
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param   array|object  $src     An associative array or object to bind to the Table instance.
-     * @param   array|string  $ignore  An optional array or space separated list of properties to ignore while binding.
+     * @param array|object $src    An associative array or object to bind to the Table instance.
+     * @param array|string $ignore An optional array or space separated list of properties to ignore while binding.
      *
-     * @return  boolean  True on success.
+     * @return bool  True on success.
      *
      * @see    Table:bind
      * @throws Exception
      * @since  4.0.0
      */
-    public function bind($src, $ignore = '')
+    public function bind($src, $ignore = ''): bool
     {
         $input = Factory::getApplication()->input;
         $task  = $input->getString('task', '');
@@ -92,7 +92,7 @@ class ExtensionimageTable extends Table
         if (!empty($src['extension_id'])) {
             if (is_array($src['extension_id'])) {
                 $src['extension_id'] = implode(',', $src['extension_id']);
-            } elseif (strrpos($src['extension_id'], ',') != false) {
+            } elseif (strrpos($src['extension_id'], ',')) {
                 $src['extension_id'] = explode(',', $src['extension_id']);
             }
         } else {
@@ -102,7 +102,7 @@ class ExtensionimageTable extends Table
         if (!empty($src['filename'])) {
             if (is_array($src['filename'])) {
                 $src['filename'] = implode(',', $src['filename']);
-            } elseif (strpos($src['filename'], ',') != false) {
+            } elseif (strpos($src['filename'], ',')) {
                 $src['filename'] = explode(',', $src['filename']);
             }
         } else {
@@ -118,7 +118,6 @@ class ExtensionimageTable extends Table
      * @return bool
      *
      * @since  4.0.0
-     * @throws Exception
      * @throws Exception
      */
     public function check(): bool
@@ -155,15 +154,15 @@ class ExtensionimageTable extends Table
 
                 if ($fileError > 0 && $fileError != 4) {
                     switch ($fileError) {
-                        case 1:
-                            $message = Text::_('File size exceeds allowed by the server');
-                            break;
-                        case 2:
-                            $message = Text::_('File size exceeds allowed by the html form');
-                            break;
-                        case 3:
-                            $message = Text::_('Partial upload error');
-                            break;
+                    case 1:
+                        $message = Text::_('File size exceeds allowed by the server');
+                        break;
+                    case 2:
+                        $message = Text::_('File size exceeds allowed by the html form');
+                        break;
+                    case 3:
+                        $message = Text::_('Partial upload error');
+                        break;
                     }
 
                     if ($message != '') {
@@ -192,14 +191,14 @@ class ExtensionimageTable extends Table
                         }
                     }
                     $lfname = $this->filename;
-                    $this->set('filename', $lfname .= (!empty($lfname)) ? "," : "");
+                    $this->filename -  $lfname .= (!empty($lfname)) ? "," : "";
                     $lfname = $this->filename;
-                    $this->set('filename', $lfname .= $filename);
+                    $this->filename -  $lfname .= $filename;
                 }
             }
         } else {
             $lfname = $this->filename;
-            $this->set('filename', $lfname .= $array['filename_hidden']);
+            $this->filename -  $lfname .= $array['filename_hidden'];
         }
 
         return parent::check();
@@ -223,13 +222,13 @@ class ExtensionimageTable extends Table
             $checkImageVariableType = gettype($this->filename);
 
             switch ($checkImageVariableType) {
-                case 'string':
-                    File::delete(JPATH_ROOT . '/tmp/' . $this->filename);
-                    break;
-                default:
-                    foreach ($this->filename as $filenameFile) {
-                        File::delete(JPATH_ROOT . '/tmp/' . $filenameFile);
-                    }
+            case 'string':
+                File::delete(JPATH_ROOT . '/tmp/' . $this->filename);
+                break;
+            default:
+                foreach ($this->filename as $filenameFile) {
+                    File::delete(JPATH_ROOT . '/tmp/' . $filenameFile);
+                }
             }
         }
 

@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -41,6 +41,7 @@ $redirectURL = JedHelper::getLoginlink();
 
 if (!$isLoggedIn) {
     try {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
     } catch (Exception $e) {
     }
@@ -105,7 +106,10 @@ if (!$isLoggedIn) {
                         if (in_array($field, $hiddenFields)) {
                             $this->form->setFieldAttribute($field, 'type', 'hidden');
                         }
+                        if($this->read_only) {
 
+                            $this->form->setFieldAttribute($field, 'disabled', 'true');
+                        }
                         echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
                     }
                 }

@@ -5,7 +5,7 @@
  *
  * @subpackage TICKETS
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -24,12 +24,12 @@ use Joomla\CMS\Uri\Uri;
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
-HTMLHelper::_('formbehavior.chosen', 'select');
+
 
 $user        = $this->getCurrentUser();
 $userId      = $user->id;
-$listOrder   = $this->state->get('list.ordering');
-$listDirn    = $this->state->get('list.direction');
+$listOrder   = $this->state->get('list.ordering', 'id');
+$listDirn    = $this->state->get('list.direction', 'DESC');
 $isLoggedIn  = JedHelper::isLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
 
@@ -38,10 +38,11 @@ $canEdit   = $isLoggedIn;
 
 
 // Import CSS
-//$wa = $this->getDocument()->getWebAssetManager();
+//$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 //$wa->useStyle('com_jed.list');
 if (!$isLoggedIn) {
     try {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
     } catch (Exception $e) {
         throw new Exception($e->getMessage(), $e->getCode());

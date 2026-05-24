@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -16,7 +16,6 @@ namespace Jed\Component\Jed\Administrator\Table;
 
 use Exception;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 
@@ -60,16 +59,16 @@ class ExtensionTable extends Table
     /**
      * Overloaded bind function to pre-process the params.
      *
-     * @param   array|object  $src     An associative array or object to bind to the Table instance.
-     * @param   array|string  $ignore  An optional array or space separated list of properties to ignore while binding.
+     * @param array|object $src    An associative array or object to bind to the Table instance.
+     * @param array|string $ignore An optional array or space separated list of properties to ignore while binding.
      *
-     * @return  boolean  True on success.
+     * @return bool  True on success.
      *
      * @see    Table:bind
      * @throws Exception
      * @since  4.0.0
      */
-    public function bind($src, $ignore = '')
+    public function bind($src, $ignore = ''): bool
     {
         $date = Factory::getDate();
         $app  = Factory::getApplication();
@@ -77,21 +76,19 @@ class ExtensionTable extends Table
         $user = $app->getIdentity();
 
 
-        // Support for alias field: alias
-        if (empty($src['alias'])) {
-            if (empty($src['title'])) {
-                $src['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
-            } else {
-                if ($app->get('unicodeslugs') == 1) {
-                    $src['alias'] = OutputFilter::stringURLUnicodeSlug(trim($src['title']));
-                } else {
-                    $src['alias'] = OutputFilter::stringURLSafe(trim($src['title']));
-                }
-            }
-        }
+
 
         if ($src['id'] == 0 && empty($src['created_by'])) {
             $src['created_by'] = $user->id;
+        }
+
+        // Preserve created_by on edit if not provided
+        if ($src['id'] > 0 && empty($src['created_by'])) {
+            // Load the existing record to get the original created_by
+            $this->load($src['id']);
+            if (!empty($this->created_by)) {
+                $src['created_by'] = $this->created_by;
+            }
         }
 
         if ($src['id'] == 0 && empty($src['modified_by'])) {
@@ -105,6 +102,11 @@ class ExtensionTable extends Table
 
         if ($src['id'] == 0) {
             $src['created_on'] = $date->toSql();
+        } elseif ($src['id'] > 0 && empty($src['created_on'])) {
+            // Preserve created_on on edit if not provided
+            if (!empty($this->created_on)) {
+                $src['created_on'] = $this->created_on;
+            }
         }
 
         // Support for multiple field: uses_updater
@@ -150,14 +152,7 @@ class ExtensionTable extends Table
             $this->ordering = $this->getNextOrder();
         }
 
-        // Check if alias is unique
-        if (!$this->isUnique('alias')) {
-            $count        = 0;
-            $currentAlias = $this->alias;
-            while (!$this->isUnique($this->alias)) {
-                $this->alias = $currentAlias . '-' . $count++;
-            }
-        }
+
 
         return parent::check();
     }
@@ -199,9 +194,9 @@ class ExtensionTable extends Table
      * @return bool True if unique
      * @since  4.0.0
      */
-    private function isUnique($field): bool
+    private function isUnique(string $field): bool
     {
-        $db    = $this->getDbo();
+        $db    = $this->getDatabase();
         $query = $db->getQuery(true);
 
         $categories        = explode(',', $this->primary_category_id);
@@ -225,6 +220,6 @@ class ExtensionTable extends Table
         $db->setQuery($query);
         $db->execute();
 
-        return ($db->getNumRows() == 0) ? true : false;
+        return $db->getNumRows() == 0;
     }
 }

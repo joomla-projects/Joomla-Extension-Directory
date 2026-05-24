@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -22,10 +22,9 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ItemModel;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
+use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
-use stdClass;
 
 /**
  * VEL Abandoned Report Model Class.
@@ -40,10 +39,9 @@ class VelabandonedreportModel extends ItemModel
      * @var   object
      * @since 4.0.0
      */
-    public $item;
+    private mixed $item = null;
 
     /**
-     *
      * Data Table
      *
      * @since 4.0.0
@@ -132,8 +130,9 @@ class VelabandonedreportModel extends ItemModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null): mixed
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
         if ($this->item === null) {
             $this->item = false;
@@ -155,9 +154,14 @@ class VelabandonedreportModel extends ItemModel
                         }
                     }
 
-                    // Convert the Table to a clean CMSObject.
-                    $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
+                    // Convert the Table to a clean stdClass.
+                    $properties = get_object_vars($table);
+                    $item       = ArrayHelper::toObject($properties);
+
+                    if (property_exists($item, 'params')) {
+                        $registry     = new Registry($item->params);
+                        $item->params = $registry->toArray();
+                    }
                 } else {
                     $app->enqueueMessage("Sorry you did not create that report item", "message");
 
@@ -210,7 +214,7 @@ class VelabandonedreportModel extends ItemModel
      * @param string $prefix  Prefix for the table class name. Optional.
      * @param array  $options
      *
-     * @return Table|bool Table if success, false on failure.
+     * @return Table Table if success
      * @since  4.0.0
      * @throws Exception
      */

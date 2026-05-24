@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -30,7 +30,7 @@ class JedtrophyHelper
      *
      * @return string
      *
-     * @since version
+     * @since 4.0.0
      */
     public static function getTrophyVersionsString($versionstr): string
     {
@@ -47,15 +47,15 @@ class JedtrophyHelper
         foreach ($trophies as $v) {
             $title = Text::_('COM_JED_VERSION_' . $v);
             switch ($v) {
-                case '30':
-                    $txt = '<span class="fab fa-joomla"></span>&nbsp;3&nbsp;';
-                    break;
-                case '40':
-                    $txt = '<span class="fab fa-joomla"></span>&nbsp;4&nbsp;';
-                    break;
-                case '41':
-                    $txt = '<span class="fab fa-joomla"></span>&nbsp;4.1&nbsp;';
-                    break;
+            case '30':
+                $txt = '<span class="fab fa-joomla"></span>&nbsp;3&nbsp;';
+                break;
+            case '40':
+                $txt = '<span class="fab fa-joomla"></span>&nbsp;4&nbsp;';
+                break;
+            case '41':
+                $txt = '<span class="fab fa-joomla"></span>&nbsp;4.1&nbsp;';
+                break;
             }
             $output .= '<span title="' . $title . '" class="joomla-version-badge">' . $txt . '</span>';
         }
@@ -69,7 +69,7 @@ class JedtrophyHelper
      *
      * @return string
      *
-     * @since version
+     * @since 4.0.0
      */
     public static function getTrophyIncludesString($includestr): string
     {
@@ -95,7 +95,7 @@ class JedtrophyHelper
      *
      * @return string
      *
-     * @since version
+     * @since 4.0.0
      */
     public static function getTrophyIncludesStringFull($includestr): string
     {
@@ -111,18 +111,18 @@ class JedtrophyHelper
         foreach ($trophies as $v) {
             $str = "";
             switch ($v) {
-                case "com":
-                    $str = "Component";
-                    $comma_count++;
-                    break;
-                case "mod":
-                    $str = "Module";
-                    $comma_count++;
-                    break;
-                case "plugin":
-                    $str = "Plugin";
-                    $comma_count++;
-                    break;
+            case "com":
+                $str = "Component";
+                $comma_count++;
+                break;
+            case "mod":
+                $str = "Module";
+                $comma_count++;
+                break;
+            case "plugin":
+                $str = "Plugin";
+                $comma_count++;
+                break;
             }
             if ($comma_count > 1) {
                 $output .= ', ' . $str;
@@ -139,7 +139,7 @@ class JedtrophyHelper
      *
      * @return string
      *
-     * @since version
+     * @since 4.0.0
      */
     public static function getTrophyVersionsStringFull($versionstr): string
     {

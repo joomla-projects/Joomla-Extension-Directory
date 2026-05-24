@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -21,6 +21,7 @@ use Jed\Component\Jed\Administrator\Model\ExtensionvarieddatumModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Registry\Registry;
@@ -61,27 +62,32 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
-        $extension_model  = new ExtensionModel();
-        $this->state      = $this->get('State');
-        $everything       = $this->get('Everything', 'Extension');
+        $extension_model  = $this->getModel();
+        $extension_model->setUseExceptions(true);
+        try {
+            $this->state = $extension_model->getState();
+            $everything  = $extension_model->getEverything();
+            //var_dump($everything);exit();
+            $this->extension = $everything;
+            $this->form      = $extension_model->getForm($this->extension, false, 'extension_form');
+            $this->form->bind($this->extension);
+            $this->extension->extension_form = $this->form;
 
-        $this->extension  = $everything;
-        $this->form       = $extension_model->getForm($this->extension, false, 'extension_form');
-        $this->form->bind($this->extension);
-        $this->extension->extension_form = $this->form;
+            $extensionvarieddatum            = new ExtensionvarieddatumModel();
+            $extensionvarieddatum->setuseExceptions(true);
 
-        $extensionvarieddatum             = new ExtensionvarieddatumModel();
-        $this->extensionvarieddata        = $this->extension->varied_data[0];
-        $this->extensionvarieddatum_form  = $extensionvarieddatum->getForm($this->extensionvarieddata, false, 'extension_varieddata_form');
-        $this->extensionvarieddatum_form->bind($this->extensionvarieddata);
-        $this->extension->varied_form = $this->extensionvarieddatum_form;
-
-
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
+            $this->extensionvarieddata       = $this->extension->varied[count($this->extension->varied)];
+            $this->extensionvarieddatum_form = $extensionvarieddatum->getForm(
+                $this->extensionvarieddata,
+                false,
+                'extension_varieddata_form'
+            );
+            $this->extensionvarieddatum_form->bind($this->extensionvarieddata);
+            $this->extension->varied_form = $this->extensionvarieddatum_form;
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
         }
+
 
         $this->addToolbar();
         parent::display($tpl);

@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -21,7 +21,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\FormModel;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
 use stdClass;
@@ -101,7 +100,7 @@ class ReviewformModel extends FormModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getTable($name = 'Review', $prefix = 'Administrator', $options = [])
+    public function getTable($name = 'Review', $prefix = 'Administrator', $options = []): Table|bool
     {
 
         return parent::getTable($name, $prefix, $options);
@@ -110,11 +109,11 @@ class ReviewformModel extends FormModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return array  The default data is an empty array.
+     * @return mixed The default data is an empty array.
      * @since  4.0.0
      * @throws Exception
      */
-    protected function loadFormData()
+    protected function loadFormData(): mixed
     {
         $data = Factory::getApplication()->getUserState('com_jed.edit.review.data', []);
 
@@ -142,6 +141,7 @@ class ReviewformModel extends FormModel
      */
     protected function populateState(): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Load state from the request userState on edit or from the passed variable on default
@@ -192,7 +192,7 @@ class ReviewformModel extends FormModel
                 $user = Factory::getApplication()->getIdentity();
                 $id   = $table->id;
                 if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
-                    // Convert the Table to a clean CMSObject.
+                    // Convert the Table to a clean stdClass.
                     $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
@@ -208,51 +208,7 @@ class ReviewformModel extends FormModel
     }
 
 
-    /**
-     * Method to delete data
-     *
-     * @param int  $pk  Item primary key
-     *
-     * @return int  The id of the deleted item
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    /*public function delete($pk) : int
-    {
-        $user = Factory::getApplication()->getIdentity();
 
-        if (!$pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser())
-        {
-            if (empty($pk))
-            {
-                $pk = (int) $this->getState('ticket.id');
-            }
-
-            if ($pk == 0 || $this->getItem($pk) == null)
-            {
-                throw new Exception(Text::_('COM_JED_ITEM_DOESNT_EXIST'), 404);
-            }
-
-            if ($user->authorise('core.delete', 'com_jed') !== true)
-            {
-                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-            }
-
-            $table = $this->getTable();
-
-            if ($table->delete($pk) !== true)
-            {
-                throw new Exception(Text::_('JERROR_FAILED'), 501);
-            }
-
-            return $pk;
-        }
-        else
-        {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-        }
-    }*/
 
 
     /**
@@ -260,7 +216,7 @@ class ReviewformModel extends FormModel
      *
      * @return int
      *
-     * @since version
+     * @since 4.0.0
      */
     public function getId(): int
     {
@@ -321,8 +277,8 @@ class ReviewformModel extends FormModel
                     $ticket_message['subject']           = $message_out->subject;
                     $ticket_message['message']           = $message_out->template;
                     $ticket_message['message_direction'] = 0; /* 1 for coming in, 0 for going out */
-                    $ticket['created_by']                = -1;
-                    $ticket['modified_by']               = -1;
+                    $ticket_message['created_by']                = -1;
+                    $ticket_message['modified_by']               = -1;
                     $ticket_message_model->save($ticket_message);
                 }
 

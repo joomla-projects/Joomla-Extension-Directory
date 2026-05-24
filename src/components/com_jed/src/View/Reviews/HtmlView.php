@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -15,6 +15,8 @@ namespace Jed\Component\Jed\Site\View\Reviews;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -34,6 +36,9 @@ class HtmlView extends BaseHtmlView
 
     protected Registry $state;
 
+    protected Registry $params;
+    public Form $filterForm;
+    public array $activeFilters;
 
     /**
      * Display the view
@@ -48,20 +53,19 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
-        $app = Factory::getApplication();
-
-        $this->state         = $this->get('State');
-        $this->items         = $this->get('Items');
-        $this->pagination    = $this->get('Pagination');
-        $this->params        = $app->getParams('com_jed');
-        $this->filterForm    = $this->get('FilterForm');
-        $this->activeFilters = $this->get('ActiveFilters');
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
+        $app  = Factory::getApplication();
+        $model = $this->getModel();
+        $model->setUseExceptions(true);
+        try {
+                $this->state      = $model->getState();
+                $this->items       = $model->getItems();
+                $this->params     = $app->getParams('com_jed');
+                $this->pagination    = $model->getPagination();
+                $this->filterForm    = $model->getFilterForm();
+                $this->activeFilters = $model->getActiveFilters();
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
         }
-
         $this->prepareDocument();
         parent::display($tpl);
     }
@@ -72,6 +76,7 @@ class HtmlView extends BaseHtmlView
      * @return void
      *
      * @throws Exception
+     * @since  4.0.0
      */
     protected function prepareDocument(): void
     {
@@ -128,6 +133,7 @@ class HtmlView extends BaseHtmlView
      * @param mixed $state State
      *
      * @return bool
+     * @since  4.0.0
      */
     public function getState(mixed $state): bool
     {

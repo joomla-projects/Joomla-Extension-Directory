@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -45,6 +45,7 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
         <?php
         if (!$isLoggedIn) {
             try {
+                /* @var $app \Joomla\CMS\Application\SiteApplication */
                 $app = Factory::getApplication();
             } catch (Exception $e) {
             }

@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Site\View\Extensions;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -34,6 +35,7 @@ class HtmlView extends BaseHtmlView
 
     protected Registry $state;
 
+    protected Registry $params;
 
     /**
      * Display the view
@@ -48,18 +50,19 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
+
         $app = Factory::getApplication();
 
-        $this->state      = $this->get('State');
-        $this->items      = $this->get('Items');
-        $this->pagination = $this->get('Pagination');
-        $this->params     = $app->getParams('com_jed');
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
+        $model = $this->getModel();
+        $model->setUseExceptions(true);
+        try {
+            $this->state      = $model->getState();
+            $this->items       = $model->getItems();
+            $this->params     = $app->getParams('com_jed');
+            $this->pagination    = $model->getPagination();
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
         }
-
         $this->prepareDocument();
         parent::display($tpl);
     }

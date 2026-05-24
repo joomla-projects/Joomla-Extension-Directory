@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -16,7 +16,6 @@ namespace Jed\Component\Jed\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
@@ -40,6 +39,7 @@ class VeldeveloperupdateController extends BaseController
      */
     public function edit(): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Get the previous edit id (if any) and the current edit id.
@@ -77,6 +77,7 @@ class VeldeveloperupdateController extends BaseController
     public function publish(): void
     {
         // Initialise variables.
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Checking if the user can remove object
@@ -94,7 +95,7 @@ class VeldeveloperupdateController extends BaseController
 
             // Check for errors.
             if ($return === false) {
-                $this->setMessage(Text::sprintf('Save failed: %s', $model->getError()), 'warning');
+                $this->setMessage(Text::_('Save failed'), 'warning');
             }
 
             // Clear the profile id from the session.
@@ -117,65 +118,5 @@ class VeldeveloperupdateController extends BaseController
         } else {
             throw new Exception(500);
         }
-    }
-
-    /**
-     * Remove data
-     *
-     * We don't want front-end users to remove posts so this is commented out in case it's needed in the future.
-     *
-     * @return void
-     *
-     * @since 4.0.0
-     *
-     * @throws Exception
-     */
-    public function remove()
-    {
-        // Initialise variables.
-        /*$app = Factory::getApplication();
-
-        // Checking if the user can remove object
-        $user = Factory::getApplication()->getIdentity();
-
-        if ($user->authorise('core.delete', 'com_jed'))
-        {
-            $model = $this->getModel('Veldeveloperupdate', 'Site');
-
-            // Get the user data.
-            $id = $app->input->getInt('id', 0);
-
-            // Attempt to save the data.
-            $return = $model->delete($id);
-
-            // Check for errors.
-            if ($return === false)
-            {
-                $this->setMessage(Text::sprintf('Delete failed', $model->getError()), 'warning');
-            }
-            else
-            {
-                // Check in the profile.
-                if ($return)
-                {
-                    $model->checkin($return);
-                }
-
-                $app->setUserState('com_jed.edit.veldeveloperupdate.id', null);
-                $app->setUserState('com_jed.edit.veldeveloperupdate.data', null);
-
-                $app->enqueueMessage(Text::_('COM_JED_ITEM_DELETED_SUCCESSFULLY'), 'success');
-                $app->redirect(Route::_('index.php?option=com_jed&view=veldeveloperupdates', false));
-            }
-
-            // Redirect to the list screen.
-            $menu = Factory::getApplication()->getMenu();
-            $item = $menu->getActive();
-            $this->setRedirect(Route::_($item->link, false));
-        }
-        else
-        {
-            throw new Exception(500);
-        }*/
     }
 }

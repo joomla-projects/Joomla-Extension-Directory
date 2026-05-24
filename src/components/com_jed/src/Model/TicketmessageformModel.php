@@ -5,7 +5,7 @@
  *
  * @subpackage TICKETS
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Site\Model;
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
@@ -22,10 +23,9 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\FormModel;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
+use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
-use stdClass;
 
 /**
  * Jed model.
@@ -40,9 +40,8 @@ class TicketmessageformModel extends FormModel
      * @var   object
      * @since 4.0.0
      */
-    private $item = null;
+    private mixed $item;
     /**
-     *
      * Data Table
      *
      * @since 4.0.0
@@ -62,15 +61,15 @@ class TicketmessageformModel extends FormModel
     public function checkin($pk = null): bool
     {
         // Get the id.
-        $pk = (!empty($pk)) ? $pk : (int) $this->getState('ticketmessage.id');
-        if (!$pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
+        $pk = ( ! empty($pk)) ? $pk : (int)$this->getState('ticketmessage.id');
+        if (! $pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($pk) {
                 // Initialise the table
                 $table = $this->getTable();
 
                 // Attempt to check the row in.
                 if (method_exists($table, 'checkin')) {
-                    if (!$table->checkin($pk)) {
+                    if (! $table->checkin($pk)) {
                         return false;
                     }
                 }
@@ -95,8 +94,8 @@ class TicketmessageformModel extends FormModel
     public function checkout($pk = null): bool
     {
         // Get the user id.
-        $pk = (!empty($pk)) ? $pk : (int) $this->getState('ticketmessage.id');
-        if (!$pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
+        $pk = ( ! empty($pk)) ? $pk : (int)$this->getState('ticketmessage.id');
+        if (! $pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($pk) {
                 // Initialise the table
                 $table = $this->getTable();
@@ -106,7 +105,7 @@ class TicketmessageformModel extends FormModel
 
                 // Attempt to check the row out.
                 if (method_exists($table, 'checkout')) {
-                    if (!$table->checkout($user->id, $pk)) {
+                    if (! $table->checkout($user->id, $pk)) {
                         return false;
                     }
                 }
@@ -138,12 +137,12 @@ class TicketmessageformModel extends FormModel
             'com_jed.ticketmessage',
             'ticketmessageform',
             [
-                'control'   => $formname,
-                'load_data' => $loadData,
-            ]
+                        'control'   => $formname,
+                        'load_data' => $loadData,
+                ]
         );
 
-        if (!is_object($form)) {
+        if (! is_object($form)) {
             throw new Exception(Text::_('JERROR_LOADFILE_FAILED'), 500);
         }
 
@@ -151,62 +150,20 @@ class TicketmessageformModel extends FormModel
     }
 
     /**
-     * Method to get an ojbect.
+     * Method to get the table
      *
-     * @param int|null $id The id of the object to get.
+     * @param string $name
+     * @param string $prefix  Optional prefix for the table class name
+     * @param array  $options
      *
-     * @return Object|bool Object on success, false on failure.
+     * @return Table|bool Table if found, bool false on failure
      *
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem(int $id = null)
+    public function getTable($name = 'Ticketmessage', $prefix = 'Administrator', $options = []): Table|bool
     {
-        if ($this->item === null) {
-            $this->item = false;
-
-            if (empty($id)) {
-                $id = $this->getState('ticketmessage.id');
-            }
-
-            // Get a level row instance.
-            $table = $this->getTable();
-
-            if ($table !== false && $table->load($id) && !empty($table->id)) {
-                $user = Factory::getApplication()->getIdentity();
-                $id   = $table->id;
-                if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
-                    $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
-
-                    if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
-                        $canEdit = $user->id == $table->created_by;
-                    }
-
-                    if (!$canEdit) {
-                        throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-                    }
-
-                    // Check published state.
-                    if ($published = $this->getState('filter.published')) {
-                        if (isset($table->state) && $table->state != $published) {
-                            return $this->item;
-                        }
-                    }
-
-                    // Convert the Table to a clean CMSObject.
-                    $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
-
-                    if (isset($this->item->category_id) && is_object($this->item->category_id)) {
-                        $this->item->category_id = ArrayHelper::fromObject($this->item->category_id);
-                    }
-                } else {
-                    throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-                }
-            }
-        }
-
-        return $this->item;
+        return parent::getTable($name, $prefix, $options);
     }
 
     /**
@@ -256,31 +213,13 @@ class TicketmessageformModel extends FormModel
         } */
 
     /**
-     * Method to get the table
-     *
-     * @param string $name
-     * @param string $prefix  Optional prefix for the table class name
-     * @param array  $options
-     *
-     * @return Table|bool Table if found, bool false on failure
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function getTable($name = 'Ticketmessage', $prefix = 'Administrator', $options = [])
-    {
-
-        return parent::getTable($name, $prefix, $options);
-    }
-
-    /**
      * Method to get the data that should be injected in the form.
      *
-     * @return array  The default data is an empty array.
+     * @return mixed  The default data is an empty array.
      * @since  4.0.0
      * @throws Exception
      */
-    protected function loadFormData()
+    protected function loadFormData(): mixed
     {
         $data = Factory::getApplication()->getUserState('com_jed.edit.ticketmessage.data', []);
 
@@ -308,6 +247,7 @@ class TicketmessageformModel extends FormModel
      */
     protected function populateState(): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Load state from the request userState on edit or from the passed variable on default
@@ -332,6 +272,73 @@ class TicketmessageformModel extends FormModel
     }
 
     /**
+     * Method to get an ojbect.
+     *
+     * @param int|null $id The id of the object to get.
+     *
+     * @return Object|bool Object on success, false on failure.
+     *
+     * @since  4.0.0
+     * @throws Exception
+     */
+    public function getItem(int $id = null): mixed
+    {
+        if ($this->item === null) {
+            $this->item = false;
+
+            if (empty($id)) {
+                $id = $this->getState('ticketmessage.id');
+            }
+
+            // Get a level row instance.
+            $table = $this->getTable();
+
+            if ($table !== false && $table->load($id) && ! empty($table->id)) {
+                $user = Factory::getApplication()->getIdentity();
+
+                if (JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity(
+                )->id
+                ) {
+                    $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
+
+                    if (! $canEdit && $user->authorise('core.edit.own', 'com_jed')) {
+                        $canEdit = $user->id == $table->created_by;
+                    }
+
+                    if (! $canEdit) {
+                        throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+                    }
+
+                    // Check published state.
+                    if ($published = $this->getState('filter.published')) {
+                        if (isset($table->state) && $table->state != $published) {
+                            return $this->item;
+                        }
+                    }
+
+                    // Convert the Table to a clean stdClass.
+                    // Convert the Table to a clean stdClass.
+                    $properties = get_object_vars($table);
+                    $item       = ArrayHelper::toObject($properties);
+
+                    if (property_exists($item, 'params')) {
+                        $registry     = new Registry($item->params);
+                        $item->params = $registry->toArray();
+                    }
+
+                    if (isset($this->item->category_id) && is_object($this->item->category_id)) {
+                        $this->item->category_id = ArrayHelper::fromObject($this->item->category_id);
+                    }
+                } else {
+                    throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+                }
+            }
+        }
+
+        return $this->item;
+    }
+
+    /**
      * Method to save the form data.
      *
      * @param array $data The form data
@@ -343,11 +350,11 @@ class TicketmessageformModel extends FormModel
      */
     public function save(array $data): bool
     {
-        $id = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('ticketmessage.id');
+        $id = ( ! empty($data['id'])) ? $data['id'] : (int)$this->getState('ticketmessage.id');
 
         $isLoggedIn = JedHelper::isLoggedIn();
 
-        if (!$id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser() && $isLoggedIn) {
+        if (! $id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser() && $isLoggedIn) {
             $table = $this->getTable();
 
             if ($table->save($data) === true) {

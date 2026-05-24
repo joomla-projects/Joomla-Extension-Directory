@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -59,13 +59,13 @@ class Router extends RouterView
     /**
      * Class constructor.
      *
-     * @param   SiteApplication           $app   Application-object that the router should use
-     * @param   AbstractMenu              $menu  Menu-object that the router should use
-     * @param   DatabaseInterface         $db
-     * @param   MVCFactory                $factory
-     * @param   CategoryFactoryInterface  $categoryFactory
+     * @param SiteApplication          $app             Application-object that the router should use
+     * @param AbstractMenu             $menu            Menu-object that the router should use
+     * @param DatabaseInterface        $db
+     * @param MVCFactory               $factory
+     * @param CategoryFactoryInterface $categoryFactory
      *
-     * @since 3.4
+     * @since 4.0.0
      */
     public function __construct(SiteApplication $app, AbstractMenu $menu, DatabaseInterface $db, MVCFactory $factory, CategoryFactoryInterface $categoryFactory)
     {
@@ -293,8 +293,8 @@ class Router extends RouterView
         $db        = $this->getDatabase();
         $query     = $db->getQuery(true);
         $query->select($db->quoteName('alias'))
-              ->from($db->quoteName('#__jed_extension_varied_data'))
-              ->where($db->quoteName('extension_id') . ' = :id')
+            ->from($db->quoteName('#__jed_extension_varied_data'))
+            ->where($db->quoteName('extension_id') . ' = :id')
             ->bind(':id', $id, ParameterType::INTEGER);
         $db->setQuery($query);
 
@@ -349,70 +349,84 @@ class Router extends RouterView
         return $this->categoryCache[$key];
     }
 
+
     public function getTicketId($segment, $query)
     {
         return $segment;
     }
+
 
     public function getTicketSegment($id, $query)
     {
         return [$id];
     }
 
+
     public function getReviewId($segment, $query)
     {
         return $segment;
     }
+
 
     public function getReviewSegment($id, $query)
     {
         return [$id];
     }
 
+
     public function getReviewcommentId($segment, $query)
     {
         return $segment;
     }
+
 
     public function getReviewcommentSegment($id, $query)
     {
         return [$id];
     }
 
+
     public function getTicketmessageId($segment, $query)
     {
         return $segment;
     }
+
 
     public function getTicketmessageSegment($id, $query)
     {
         return [$id];
     }
 
+
     public function getVelabandonedreportId($segment, $query)
     {
         return $segment;
     }
+
 
     public function getVelabandonedreportSegment($id, $query)
     {
         return [$id];
     }
 
+
     public function getVeldeveloperupdateId($segment, $query)
     {
         return $segment;
     }
+
 
     public function getVeldeveloperupdateSegment($id, $query)
     {
         return [$id];
     }
 
+
     public function getVelreportId($segment, $query)
     {
         return $segment;
     }
+
 
     public function getVelreportSegment($id, $query)
     {

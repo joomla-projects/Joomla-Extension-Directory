@@ -5,7 +5,7 @@
  *
  * @subpackage TICKETS
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -23,7 +23,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
 $canEdit = JedHelper::canUserEdit($this->item);
-$wa      = $this->getDocument()->getWebAssetManager();
+$wa      = Factory::getApplication()->getDocument()->getWebAssetManager();
 
 $wa->getRegistry()->addExtensionRegistryFile('com_jed');
 $wa->useStyle('com_jed.Tickets');
@@ -39,6 +39,7 @@ echo LayoutHelper::render('ticket.ticket_edit_header', $this->item);
 
 if (!$isLoggedIn) {
     try {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
     } catch (Exception $e) {
     }

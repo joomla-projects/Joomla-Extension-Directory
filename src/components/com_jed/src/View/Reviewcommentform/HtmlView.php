@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -16,6 +16,7 @@ namespace Jed\Component\Jed\Site\View\Reviewcommentform;
 
 use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -33,6 +34,8 @@ class HtmlView extends BaseHtmlView
     protected mixed $item;
 
     protected mixed $form;
+
+    protected Registry $params;
 
 
     protected bool $canSave;
@@ -52,15 +55,16 @@ class HtmlView extends BaseHtmlView
     {
         $app  = Factory::getApplication();
 
-        $this->state      = $this->get('State');
-        $this->item       = $this->get('Item');
-        $this->params     = $app->getParams('com_jed');
-        $this->canSave    = JedHelper::canSave();
-        $this->form       = $this->get('Form');
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
+        $model = $this->getModel();
+        $model->setUseExceptions(true);
+        try {
+            $this->state      = $model->getState();
+            $this->item       = $model->getItem();
+            $this->params     = $app->getParams('com_jed');
+            $this->canSave    = JedHelper::canSave();
+            $this->form       = $model->getForm();
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
         }
 
 

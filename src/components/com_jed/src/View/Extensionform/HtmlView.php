@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -17,6 +17,7 @@ namespace Jed\Component\Jed\Site\View\Extensionform;
 use Exception;
 use Jed\Component\Jed\Site\Model\ExtensionvarieddatumModel;
 use Jed\Component\Jed\Site\Helper\JedHelper;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -42,7 +43,13 @@ class HtmlView extends BaseHtmlView
 
     protected mixed $supply_forms;
 
-
+    /**
+     * Get the Params
+     *
+     * @var   Registry
+     * @since 4.0.0
+     */
+    protected Registry $params;
     /**
      * Display the view
      *
@@ -58,33 +65,40 @@ class HtmlView extends BaseHtmlView
     {
         $app  = Factory::getApplication();
 
-        $this->state        = $this->get('State');
-        $this->item         = $this->get('variedItem');
-        $this->params       = $app->getParams('com_jed');
-        $this->canSave      = JedHelper::canSave();
-        $this->form         = $this->get('Form');
-        $this->supply_types = $this->get('SupplyTypes');
+        $model = $this->getModel();
+        $model->setUseExceptions(true);
+        try {
+            $this->state        = $model->getState();
+            $this->item         = $model->getvariedItem();
+            $this->params       = $app->getParams('com_jed');
+            $this->canSave      = JedHelper::canSave();
+            $this->form         = $model->getForm();
+            $this->supply_types = $model->getSupplyTypes();
 
-        $extensionvarieddatum                   = new ExtensionvarieddatumModel();
+            $extensionvarieddatum                   = new ExtensionvarieddatumModel();
 
+            //echo "B<pre>";print_r($this->item);echo "</pre>";exit();
+            //echo "<pre>";print_r($this->item);echo "</pre>";exit();
+            $st_counter = 0;
+            foreach ($this->supply_types as $st) {
+                $this->supply_forms[$st->supply_id] = $extensionvarieddatum->getForm(
+                    $this->item->varied[$st->supply_id],
+                    false,
+                    'jform[supply][supply' . $st_counter . ']'
+                );
+                $st_counter = $st_counter + 1;
 
-        //echo "<pre>";print_r($this->item);echo "</pre>";exit();
-        foreach ($this->supply_types as $st) {
-            $this->supply_forms[$st->supply_id] = $extensionvarieddatum->getForm(
-                $this->item->varied[$st->supply_id],
-                false,
-                'jf_varieddata_form_' . $st->supply_id
-            );
-            $this->supply_forms[$st->supply_id]->bind($this->item->varied[$st->supply_id]);
+                // Ensure linkage is always present in POST (even for new varied rows)
+                $varied = (array) $this->item->varied[$st->supply_id];
+                $varied['extension_id']     = (int) ($this->item->id ?? 0);
+                $varied['supply_option_id'] = (int) $st->supply_id;
+
+                $this->supply_forms[$st->supply_id]->bind($varied);
+            }
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
         }
 
-
-
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
-        }
 
 
 

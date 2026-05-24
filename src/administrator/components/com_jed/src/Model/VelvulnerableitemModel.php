@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc. <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -129,7 +129,7 @@ class VelvulnerableitemModel extends AdminModel
      *
      * @return array
      *
-     * @since  version
+     * @since  4.0.0
      * @throws Exception
      */
     public function getVELLinkedReports(): array
@@ -219,7 +219,7 @@ class VelvulnerableitemModel extends AdminModel
      *
      * @return mixed
      *
-     * @since version
+     * @since 4.0.0
      */
     public function getVelDeveloperUpdateData(int $vel_item_id): mixed
     {
@@ -255,7 +255,7 @@ class VelvulnerableitemModel extends AdminModel
      *
      * @return array
      *
-     * @since version
+     * @since 4.0.0
      */
     public function getVelReportData(int $vel_item_id): array
     {

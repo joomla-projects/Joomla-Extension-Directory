@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -41,7 +41,6 @@ class ReviewcommentModel extends ItemModel
      *
      * @since  4.0.0
      * @throws Exception
-     * @throws Exception
      */
     public function checkin($id = null)
     {
@@ -74,7 +73,6 @@ class ReviewcommentModel extends ItemModel
      * @return bool True on success, false on failure.
      *
      * @since  4.0.0
-     * @throws Exception
      * @throws Exception
      */
     public function checkout($id = null)
@@ -111,7 +109,7 @@ class ReviewcommentModel extends ItemModel
      *
      * @return bool
      * @throws Exception
-     * @throws Exception
+     * @since  4.0.0
      */
     public function delete($id)
     {
@@ -127,26 +125,27 @@ class ReviewcommentModel extends ItemModel
     /**
      * Method to get an object.
      *
-     * @param int $id The id of the object to get.
+     * @param int $pk The id of the object to get.
      *
      * @return mixed    Object on success, false on failure.
      *
+     * @since  4.0.0
      * @throws Exception
      */
-    public function getItem($id = null): mixed
+    public function getItem($pk = null): mixed
     {
         if ($this->item === null) {
             $this->item = false;
 
-            if (empty($id)) {
-                $id = $this->getState('reviewcomment.id');
+            if (empty($pk)) {
+                $pk = $this->getState('reviewcomment.id');
             }
 
             // Get a level row instance.
             $table = $this->getTable();
 
             // Attempt to load the row.
-            if ($table && $table->load($id)) {
+            if ($table && $table->load($pk)) {
                 if (empty($result) || $this->isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
                     // Check published state.
                     if ($published = $this->getState('filter.published')) {
@@ -155,9 +154,15 @@ class ReviewcommentModel extends ItemModel
                         }
                     }
 
-                    // Convert the Table to a clean CMSObject.
-                    $properties = $table->getProperties(1);
-                    $this->item = ArrayHelper::toObject($properties, stdClass::class);
+                    // Convert the Table to a clean stdClass.
+                    // Convert the Table to a clean stdClass.
+                    $properties = get_object_vars($table);
+                    $item       = ArrayHelper::toObject($properties);
+
+                    if (property_exists($item, 'params')) {
+                        $registry     = new Registry($item->params);
+                        $item->params = $registry->toArray();
+                    }
                 } else {
                     throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
                 }
@@ -176,38 +181,6 @@ class ReviewcommentModel extends ItemModel
         return $this->item;
     }
 
-    /**
-     * Get the id of an item by alias
-     *
-     * @param string $alias Item alias
-     *
-     * @return mixed
-     * @throws Exception
-     * @throws Exception
-     */
-    public function getItemIdByAlias($alias)
-    {
-        $table      = $this->getTable();
-        $properties = $table->getProperties();
-        $result     = null;
-        $aliasKey   = null;
-
-        $aliasKey = JedHelper::getAliasFieldNameByView('reviewcomment');
-
-
-        if (key_exists('alias', $properties)) {
-            $table->load(['alias' => $alias]);
-            $result = $table->id;
-        } elseif (isset($aliasKey) && key_exists($aliasKey, $properties)) {
-            $table->load([$aliasKey => $alias]);
-            $result = $table->id;
-        }
-        if (empty($result) || $this->isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
-            return $result;
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-        }
-    }
 
     /**
      * Get an instance of Table class
@@ -218,7 +191,7 @@ class ReviewcommentModel extends ItemModel
      *
      * @return Table|bool Table if success, false on failure.
      * @throws Exception
-     * @throws Exception
+     * @since  4.0.0
      */
     public function getTable($type = 'Reviewcomment', $prefix = 'Administrator', $config = [])
     {
@@ -229,6 +202,7 @@ class ReviewcommentModel extends ItemModel
      * Checks whether or not a user is manager or super user
      *
      * @return bool
+     * @since  4.0.0
      */
     public function isAdminOrSuperUser()
     {
@@ -250,8 +224,6 @@ class ReviewcommentModel extends ItemModel
      *
      * @since 4.0.0
      *
-     * @throws Exception
-     * @throws Exception
      * @throws Exception
      * @throws Exception
      */
@@ -295,7 +267,7 @@ class ReviewcommentModel extends ItemModel
      *
      * @return bool
      * @throws Exception
-     * @throws Exception
+     * @since  4.0.0
      */
     public function publish($id, $state)
     {
@@ -316,6 +288,7 @@ class ReviewcommentModel extends ItemModel
      * @param int $id The id of the item
      *
      * @return bool             true if the user is the owner of the row, false if not.
+     * @since  4.0.0
      */
     public function userIDItem($id)
     {

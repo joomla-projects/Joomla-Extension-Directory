@@ -3,7 +3,7 @@
 /**
  * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -20,7 +20,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Model\FormModel;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
 use stdClass;
@@ -28,26 +27,26 @@ use stdClass;
 /**
  * Extensionvarieddatum model.
  *
- * @since  4.0.0
+ * @since 4.0.0
  */
 class ExtensionvarieddatumModel extends FormModel
 {
     /**
-     * @var    string  Alias to manage history control
+     * @var string  Alias to manage history control
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
-    public $typeAlias = 'com_jed.extensionvarieddatum';
+    public string $typeAlias = 'com_jed.extensionvarieddatum';
     /**
-     * @var    string  The prefix to use with controller messages.
+     * @var string  The prefix to use with controller messages.
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
-    protected $text_prefix = 'COM_JED';
+    protected string $text_prefix = 'COM_JED';
     /**
-     * @var    mixed  Item data
+     * @var mixed  Item data
      *
-     * @since  4.0.0
+     * @since 4.0.0
      */
     protected mixed $item = null;
 
@@ -55,14 +54,13 @@ class ExtensionvarieddatumModel extends FormModel
     /**
      * Method to get the record form.
      *
-     * @param   array    $data      An optional array of data for the form to interogate.
-     * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+     * @param array $data     An optional array of data for the form to interogate.
+     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return  Form|bool  A Form object on success, false on failure
+     * @return Form|bool  A Form object on success, false on failure
      *
      * @throws Exception
-     * @since   4.0.0
-     *
+     * @since  4.0.0
      */
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
     {
@@ -87,13 +85,10 @@ class ExtensionvarieddatumModel extends FormModel
     /**
      * Method to get the empty record form.
      *
-
-     *
-     * @return  Form|bool  A Form object on success, false on failure
+     * @return Form|bool  A Form object on success, false on failure
      *
      * @throws Exception
-     * @since   4.0.0
-     *
+     * @since  4.0.0
      */
     public function getFormTemplate(): Form|bool
     {
@@ -118,13 +113,12 @@ class ExtensionvarieddatumModel extends FormModel
     /**
      * Method to get a single record.
      *
-     * @param   null  $pk  The id of the primary key.
+     * @param null $pk The id of the primary key.
      *
      * @return stdClass Object on success
      *
      * @throws Exception
-     * @since   4.0.0
-     *
+     * @since  4.0.0
      */
     public function getItem($pk = null): stdClass
     {
@@ -139,10 +133,10 @@ class ExtensionvarieddatumModel extends FormModel
             $table      = $this->getTable();
             $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
-            if ($table !== false && $table->load($pk) && !empty($table->id)) {
-                $user = Factory::getApplication()->getIdentity();
+            if ($table->load($pk) && !empty($table->id)) {
+                $user = $this->getCurrentUser();
                 $pk   = $table->id;
-                if (empty($pk) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getUser()->id) {
+                if (empty($pk) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 
                     if (!$canEdit && $user->authorise('core.edit.own', 'com_jed')) {
@@ -160,7 +154,7 @@ class ExtensionvarieddatumModel extends FormModel
                         }
                     }
 
-                    // Convert the Table to a clean CMSObject.
+                    // Convert the Table to a clean stdClass.
                     $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
                     if (isset($this->item->catid) && is_object($this->item->catid)) {
@@ -178,15 +172,14 @@ class ExtensionvarieddatumModel extends FormModel
     /**
      * Returns a reference to the a Table object, always creating it.
      *
-     * @param   string  $name     The table type to instantiate
-     * @param   string  $prefix  A prefix for the table class name. Optional.
-     * @param   array   $options  Configuration array for model. Optional.
+     * @param string $name    The table type to instantiate
+     * @param string $prefix  A prefix for the table class name. Optional.
+     * @param array  $options Configuration array for model. Optional.
      *
-     * @return  Table    A database object
+     * @return Table    A database object
      *
      * @throws Exception
-     * @since   4.0.0
-     *
+     * @since  4.0.0
      */
     public function getTable($name = 'Extensionvarieddatum', $prefix = 'Administrator', $options = []): Table
     {
@@ -196,11 +189,10 @@ class ExtensionvarieddatumModel extends FormModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return  mixed  The data for the form.
+     * @return mixed  The data for the form.
      *
      * @throws Exception
-     * @since   4.0.0
-     *
+     * @since  4.0.0
      */
     protected function loadFormData(): mixed
     {
@@ -216,18 +208,5 @@ class ExtensionvarieddatumModel extends FormModel
         }
 
         return $data;
-    }
-
-    /**
-     * Prepare and sanitise the table prior to saving.
-     *
-     * @param   Table  $table  Table Object
-     *
-     * @return  void
-     *
-     * @since   4.0.0
-     */
-    protected function prepareTable($table)
-    {
     }
 }

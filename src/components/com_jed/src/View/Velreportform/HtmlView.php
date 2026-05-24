@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -21,6 +21,7 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 use stdClass;
@@ -62,7 +63,7 @@ class HtmlView extends BaseHtmlView
      * @var   Registry
      * @since 4.0.0
      */
-
+    protected Registry $params;
     /**
      * Does user have permission to save form
      *
@@ -70,6 +71,13 @@ class HtmlView extends BaseHtmlView
      * @since 4.0.0
      */
     protected bool $canSave;
+    /**
+     * Is the form read only
+     *
+     * @var   bool
+     * @since 4.0.0
+     */
+    protected bool $read_only = false;
 
     /**
      * Prepares the document
@@ -89,9 +97,9 @@ class HtmlView extends BaseHtmlView
         $menu = $menus->getActive();
 
         if ($menu) {
-            $this->params->def('page_heading', $this->params->get('page_title', $menu->title));
+            $this->params->set('page_heading', $this->params->get('page_title', $menu->title));
         } else {
-            $this->params->def('page_heading', Text::_('COM_JED_DEFAULT_PAGE_TITLE'));
+            $this->params->set('page_heading', Text::_('COM_JED_DEFAULT_PAGE_TITLE'));
         }
 
         $title = $this->params->get('page_title', '');
@@ -132,19 +140,21 @@ class HtmlView extends BaseHtmlView
     public function display($tpl = null): void
     {
         $app = Factory::getApplication();
-
         $model = $this->getModel();
-
-        // Get data from the model.
-        $this->items         = $model->getItems();
-        $this->pagination    = $model->getPagination();
-        $this->state         = $model->getState();
-        $this->canSave       = JedHelper::canSave();
-        $this->form          = $model->getForm();
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
+        $model->setUseExceptions(true);
+        try {
+            $this->state   = $model->getState();
+            $this->item    = $model->getItem();
+            $this->params  = $app->getParams('com_jed');
+            $this->canSave = JedHelper::canSave();
+            $this->form    = $model->getForm();
+            if(!$this->item == false ) {
+                if ($this->item->id > 0) {
+                    $this->read_only = true;
+                }
+            }
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
         }
 
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Jed\Component\Jed\Administrator\MediaHandling;
+namespace Jed\Component\Jed\Site\MediaHandling;
 
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
@@ -34,7 +34,7 @@ enum ImageSize
      *
      * @return array
      *
-     * @since version
+     * @since 4.0.0
      */
     public function getMaximumDimensions(): array
     {

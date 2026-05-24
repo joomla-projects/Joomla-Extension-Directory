@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -20,7 +20,8 @@ use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
-use Joomla\CMS\HTML\Registry;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\Registry\Registry;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use stdClass;
@@ -62,7 +63,7 @@ class HtmlView extends BaseHtmlView
      * @var   Registry
      * @since 4.0.0
      */
-
+    protected Registry $params;
     /**
      * Does user have permission to save form
      *
@@ -70,6 +71,13 @@ class HtmlView extends BaseHtmlView
      * @since 4.0.0
      */
     protected bool $canSave;
+    /**
+     * Is the form read only
+     *
+     * @var   bool
+     * @since 4.0.0
+     */
+    protected bool $read_only = false;
 
     /**
      * Prepares the document
@@ -133,20 +141,24 @@ class HtmlView extends BaseHtmlView
     {
         $app = Factory::getApplication();
 
-        $this->state   = $this->get('State');
-        $this->item    = $this->get('Item');
-        $this->params  = $app->getParams('com_jed');
-        $this->canSave = JedHelper::canSave();
-        $this->form    = $this->get('Form');
+        $model = $this->getModel();
+        $model->setUseExceptions(true);
+        try {
+            $this->state      = $model->getState();
+            $this->item       = $model->getItem();
+            $this->params     = $app->getParams('com_jed');
+            $this->canSave    = JedHelper::canSave();
+            $this->form       = $model->getForm();
+            if(!$this->item == false ) {
+                if ($this->item->id > 0) {
+                    $this->read_only = true;
+                }
+            }
+            $this->prepareDocument();
 
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
+            parent::display($tpl);
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
         }
-
-
-        $this->prepareDocument();
-
-        parent::display($tpl);
     }
 }

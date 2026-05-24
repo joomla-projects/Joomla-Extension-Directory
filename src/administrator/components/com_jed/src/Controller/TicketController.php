@@ -5,7 +5,7 @@
  *
  * @subpackage Tickets
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -65,6 +65,7 @@ class TicketController extends FormController
             $db->setQuery($queryUpdate);
             $db->execute();
 
+            /* @var $app \Joomla\CMS\Application\SiteApplication */
             $app = Factory::getApplication();
             $app->enqueueMessage('Developer Update linked to Existing VEL Item', 'success');
             $this->setRedirect(
@@ -265,7 +266,6 @@ class TicketController extends FormController
      * @since  4.0.0
      * @throws Exception
      */
-
     public function getTemplate()
     {
         //  Session::checkToken('post') or die;

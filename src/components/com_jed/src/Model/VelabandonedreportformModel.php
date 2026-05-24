@@ -5,7 +5,7 @@
  *
  * @subpackage VEL
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -42,7 +42,6 @@ class VelabandonedreportformModel extends FormModel
      */
     private mixed $item = null;
     /**
-     *
      * Data Table
      *
      * @since 4.0.0
@@ -67,10 +66,14 @@ class VelabandonedreportformModel extends FormModel
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
     {
         // Get the form.
-        $form = $this->loadForm('com_jed.velabandonedreport', 'velabandonedreportform', [
+        $form = $this->loadForm(
+            'com_jed.velabandonedreport',
+            'velabandonedreportform',
+            [
                 'control'   => $formname,
                 'load_data' => $loadData,
-            ]);
+            ]
+        );
 
         if (!is_object($form)) {
             throw new Exception(Text::_('JERROR_LOADFILE_FAILED'), 500);
@@ -124,7 +127,7 @@ class VelabandonedreportformModel extends FormModel
                         }
                     }
 
-                    // Convert the Table to a clean CMSObject.
+                    // Convert the Table to a clean stdClass.
                     $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
@@ -205,11 +208,11 @@ class VelabandonedreportformModel extends FormModel
     /**
      * Method to get the data that should be injected in the form.
      *
-     * @return array  The default data is an empty array.
+     * @return mixed  The default data is an empty array.
      * @since  4.0.0
      * @throws Exception
      */
-    protected function loadFormData(): array
+    protected function loadFormData(): mixed
     {
         $data = Factory::getApplication()->getUserState('com_jed.edit.velabandonedreport.data', []);
 
@@ -271,6 +274,7 @@ class VelabandonedreportformModel extends FormModel
      */
     protected function populateState(): void
     {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
 
         // Load state from the request userState on edit or from the passed variable on default

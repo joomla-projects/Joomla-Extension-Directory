@@ -5,7 +5,7 @@
  *
  * @subpackage Tickets
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -28,6 +28,7 @@ use Jed\Component\Jed\Administrator\Model\VelreportModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -51,6 +52,15 @@ class HtmlView extends BaseHtmlView
      * @since 4.0.0
      */
     protected int $linked_item_type;
+
+    /**
+     * What id of object is linked to the ticket
+     *
+     * @var int
+     *
+     * @since 4.0.0
+     */
+    protected int $linked_item_id;
 
     /**
      * The model of the linked item
@@ -131,6 +141,22 @@ class HtmlView extends BaseHtmlView
      */
     protected mixed $ticket_help;
 
+    /**
+     * The linked extension varied data
+     *
+     * @var mixed
+     *
+     * @since 4.0.0
+     */
+    protected mixed $linked_extension_varieddata;
+    /**
+     * The linked extension varieddata form
+     *
+     * @var Form
+     *
+     * @since 4.0.0
+     */
+    protected mixed $linked_extension_varieddata_form;
 
     /**
      * Add the page title and toolbar.
@@ -203,144 +229,145 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
-        /** @var TicketModel $model */
+        /**
+ * @var TicketModel $model
+*/
         $model                  = $this->getModel();
-        $this->state            = $model->getState();
-        $this->item             = $model->getItem();
-        $this->form             = $model->getForm();
-        $this->ticket_messages  = $model->getTicketMessages();
-        $this->internal_notes   = $model->getTicketInternalNotes();
-        $this->ticket_help      = $model->getTicketHelp();
-        $this->linked_item_type = $this->item->linked_item_type;
-        $this->linked_item_id   = $this->item->linked_item_id;
-        if ($this->linked_item_type === 0) { // Manual Tickets from User
-            $this->linked_item_Model     = null;
-            $this->related_object_string = "There is no linked item.";
+        $model->setUseExceptions(true);
+        try {
+            $this->state            = $model->getState();
+            $this->item             = $model->getItem();
+            $this->form             = $model->getForm();
+            $this->ticket_messages  = $model->getTicketMessages();
+            $this->internal_notes   = $model->getTicketInternalNotes();
+            $this->ticket_help      = $model->getTicketHelp();
+            $this->linked_item_type = $this->item->linked_item_type;
+            $this->linked_item_id   = $this->item->linked_item_id;
+            if ($this->linked_item_type === 0) { // Manual Tickets from User
+                $this->linked_item_Model     = null;
+                $this->related_object_string = "There is no linked item.";
 
-            //$this->linked_form->bind($this->linked_item_data);
-        }
-        if ($this->linked_item_type === 2) { // Extension
-            $extension_model = new ExtensionModel();
-            $extension_id    = $extension_model->getExtensionIdfromVariedId($this->linked_item_id);
-            $supplyoptions   = $extension_model->getExtensionSupplyOptions($extension_id);
-
-            $this->related_object_string = "Extension is displayed in 'Linked Extensions' tab.";
-            $this->linked_extension_data = $extension_model->getEverything($extension_id);
-            //echo "<pre>";print_r($this->linked_extension_data);echo "</pre>";exit();
-
-            $this->linked_extension_form = $extension_model->getForm(
-                $this->linked_extension_data,
-                false,
-                'jf_linked_extension_form'
-            );
-            $this->linked_extension_form->bind($this->linked_extension_data);
-            $this->linked_extension_data->extension_form = $this->linked_extension_form;
+                //$this->linked_form->bind($this->linked_item_data);
+            }
+            if ($this->linked_item_type === 2) { // Extension
+                $extension_model = new ExtensionModel();
+                $extension_id    = $this->linked_item_id;// $extension_model->getExtensionIdfromVariedId($this->linked_item_id);
 
 
+                $supplyoptions   = $extension_model->getExtensionSupplyOptions($extension_id);
 
-            $extensionvarieddatum                   = new ExtensionvarieddatumModel();
-            $this->linked_extension_varieddata      = $this->linked_extension_data->varied[0];
-            $this->linked_extension_varieddata_form = $extensionvarieddatum->getForm(
-                $this->linked_extension_varieddata,
-                false,
-                'jf_linked_extension_varieddata_form'
-            );
+                $this->related_object_string = "Extension is displayed in 'Linked Extensions' tab.";
+                $this->linked_extension_data = $extension_model->getEverything($extension_id);
+                //  echo "<pre>";print_r($this->linked_extension_data);echo "</pre>";exit();
 
-            $this->linked_extension_varieddata_form->bind($this->linked_extension_varieddata);
-            $this->linked_extension_data->varied_form = $this->linked_extension_varieddata_form;
-        }
-        if ($this->linked_item_type === 3) { //Review
-            $this->linked_item_Model     = new ReviewModel();
-            $this->related_object_string = "Review is displayed in 'Linked Review' tab.";
+                $this->linked_extension_form = $extension_model->getForm(
+                    $this->linked_extension_data,
+                    false,
+                    'jf_linked_extension_form'
+                );
+                $this->linked_extension_form->bind($this->linked_extension_data);
+                $this->linked_extension_data->extension_form = $this->linked_extension_form;
 
-            $this->linked_item_data = $model->getReviewData();
+                $extensionvarieddatum                   = new ExtensionvarieddatumModel();
+                $this->linked_extension_varieddata      = $this->linked_extension_data->varied[0];
+                $this->linked_extension_varieddata_form = $extensionvarieddatum->getForm(
+                    $this->linked_extension_varieddata,
+                    false,
+                    'jf_linked_extension_varieddata_form'
+                );
 
-            $this->linked_form      = $this->linked_item_Model->getForm(
-                $this->linked_item_data,
-                false,
-                'jf_linked_form'
-            );
+                $this->linked_extension_varieddata_form->bind($this->linked_extension_varieddata);
+                $this->linked_extension_data->varied_form = $this->linked_extension_varieddata_form;
+            }
+            if ($this->linked_item_type === 3) { //Review
+                $this->linked_item_Model     = new ReviewModel();
+                $this->related_object_string = "Review is displayed in 'Linked Review' tab.";
 
-            $this->linked_form->bind($this->linked_item_data);
-            //$this->linked_extension_data holds actual data plus extension_form
+                $this->linked_item_data = $model->getReviewData();
 
-            $extension_model = new ExtensionModel();
+                $this->linked_form      = $this->linked_item_Model->getForm(
+                    $this->linked_item_data,
+                    false,
+                    'jf_linked_form'
+                );
 
-            $this->linked_extension_data = $extension_model->getvariedItem(
-                $this->linked_item_data[0]->extension_id,
-                $this->linked_item_data[0]->supply_option_id
-            );
+                $this->linked_form->bind($this->linked_item_data);
+                //$this->linked_extension_data holds actual data plus extension_form
 
+                $extension_model = new ExtensionModel();
 
-            $this->linked_extension_form = $extension_model->getForm(
-                $this->linked_extension_data,
-                false,
-                'jf_linked_extension_form'
-            );
-            $this->linked_extension_form->bind($this->linked_extension_data);
-            $this->linked_extension_data->extension_form = $this->linked_extension_form;
-
+                $this->linked_extension_data = $extension_model->getvariedItem(
+                    $this->linked_item_data[0]->extension_id,
+                    $this->linked_item_data[0]->supply_option_id
+                );
 
 
-            $extensionvarieddatum                   = new ExtensionvarieddatumModel();
-            $this->linked_extension_varieddata      = $this->linked_extension_data->varied_data[$this->linked_item_data[0]->supply_type];
-            $this->linked_extension_varieddata_form = $extensionvarieddatum->getForm(
-                $this->linked_extension_varieddata,
-                false,
-                'jf_linked_extension_varieddata_form'
-            );
+                $this->linked_extension_form = $extension_model->getForm(
+                    $this->linked_extension_data,
+                    false,
+                    'jf_linked_extension_form'
+                );
+                $this->linked_extension_form->bind($this->linked_extension_data);
+                $this->linked_extension_data->extension_form = $this->linked_extension_form;
 
-            $this->linked_extension_varieddata_form->bind($this->linked_extension_varieddata);
-            $this->linked_extension_data->varied_form = $this->linked_extension_varieddata_form;
-        }
-        if ($this->linked_item_type === 4) { // VEL Report
-            $this->linked_item_Model = new VelreportModel();
 
-            $this->linked_item_data = $model->getVelReportData();
 
-            $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
-            $this->linked_form->bind($this->linked_item_data);
-            if ($this->linked_item_data[0]->vel_item_id > 0) {
-                $this->related_object_string = '<button type="button" class="btn btn-primary"  ' .
+                $extensionvarieddatum                   = new ExtensionvarieddatumModel();
+                $this->linked_extension_varieddata      = $this->linked_extension_data->varied_data[$this->linked_item_data[0]->supply_type];
+                $this->linked_extension_varieddata_form = $extensionvarieddatum->getForm(
+                    $this->linked_extension_varieddata,
+                    false,
+                    'jf_linked_extension_varieddata_form'
+                );
+
+                $this->linked_extension_varieddata_form->bind($this->linked_extension_varieddata);
+                $this->linked_extension_data->varied_form = $this->linked_extension_varieddata_form;
+            }
+            if ($this->linked_item_type === 4) { // VEL Report
+                $this->linked_item_Model = new VelreportModel();
+
+                $this->linked_item_data = $model->getVelReportData();
+
+                $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
+                $this->linked_form->bind($this->linked_item_data);
+                if ($this->linked_item_data[0]->vel_item_id > 0) {
+                    $this->related_object_string = '<button type="button" class="btn btn-primary"  ' .
                     'onclick="Joomla.submitbutton(\'ticket.gotoVEL\')">View VEL Item ' .
                     $this->linked_item_data[0]->vel_item_id . '</button>';
-            } else {
-                $this->related_object_string = "Awaiting creation of VEL Item";
+                } else {
+                    $this->related_object_string = "Awaiting creation of VEL Item";
+                }
             }
-        }
-        if ($this->linked_item_type === 5) { // VEL Developer Update
-            $this->linked_item_Model = new VeldeveloperupdateModel();
+            if ($this->linked_item_type === 5) { // VEL Developer Update
+                $this->linked_item_Model = new VeldeveloperupdateModel();
 
-            $this->linked_item_data = $model->getVelDeveloperUpdateData();
+                $this->linked_item_data = $model->getVelDeveloperUpdateData();
 
-            $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
-            $this->linked_form->bind($this->linked_item_data);
-            if ($this->linked_item_data[0]->vel_item_id > 0) {
-                $this->related_object_string = '<button type="button" class="btn btn-primary" ' .
+                $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
+                $this->linked_form->bind($this->linked_item_data);
+                if ($this->linked_item_data[0]->vel_item_id > 0) {
+                    $this->related_object_string = '<button type="button" class="btn btn-primary" ' .
                     'onclick="Joomla.submitbutton(\'ticket.gotoVEL\')">View VEL Item ' .
                     $this->linked_item_data[0]->vel_item_id . '</button>';
-            } else {
-                $this->related_object_string = "Awaiting Linking to VEL Item";
+                } else {
+                    $this->related_object_string = "Awaiting Linking to VEL Item";
+                }
             }
-        }
-        if ($this->linked_item_type === 6) { // VEL Abandonware Report
-            $this->linked_item_Model = new VelabandonedreportModel();
-            $this->linked_item_data  = $model->getVelAbandonedReportData();
+            if ($this->linked_item_type === 6) { // VEL Abandonware Report
+                $this->linked_item_Model = new VelabandonedreportModel();
+                $this->linked_item_data  = $model->getVelAbandonedReportData();
 
-            $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
-            $this->linked_form->bind($this->linked_item_data);
+                $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
+                $this->linked_form->bind($this->linked_item_data);
 
-            if ($this->linked_item_data[0]->vel_item_id > 0) {
-                $this->related_object_string = '<button type="button" class="btn btn-primary"  onclick="Joomla.submitbutton(\'ticket.gotoVEL\')">View VEL Item ' . $this->linked_item_data[0]->vel_item_id . '</button>';
-            } else {
-                $this->related_object_string = "Awaiting creation of VEL Item";
+                if ($this->linked_item_data[0]->vel_item_id > 0) {
+                    $this->related_object_string = '<button type="button" class="btn btn-primary"  onclick="Joomla.submitbutton(\'ticket.gotoVEL\')">View VEL Item ' . $this->linked_item_data[0]->vel_item_id . '</button>';
+                } else {
+                    $this->related_object_string = "Awaiting creation of VEL Item";
+                }
             }
-        }
-
-
-        // Check for errors.
-        if (count($errors = $model->getErrors())) {
-            throw new \Exception(implode("\n", $errors));
+        } catch (\Exception $e) {
+            throw new GenericDataException($e->getMessage(), 500, $e);
         }
 
         $this->addToolbar();

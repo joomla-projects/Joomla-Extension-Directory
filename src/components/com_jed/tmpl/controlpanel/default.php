@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package       JED
+ * @package JED
  *
- * @copyright (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
- * @license       GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
@@ -14,26 +14,19 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Site\Helper\JedHelper;
-use Jed\Component\Jed\Site\Helper\JedtrophyHelper;
 use Jed\Component\Jed\Site\View\Extension\HtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
-
-/**
- * @var HtmlView $this
- */
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
-HTMLHelper::_('formbehavior.chosen', 'select');
+
 $isLoggedIn  = JedHelper::isLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
 if (!$isLoggedIn) {
     try {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();
         $app->enqueueMessage(Text::_('COM_JED_CONTROLPANEL_NO_ACCESS_LABEL'), 'success');
         $app->redirect($redirectURL);
@@ -43,7 +36,7 @@ if (!$isLoggedIn) {
 } else {
     $user       = $this->getCurrentUser();
     $userId     = $user->id;
-    $listOrder  = $this->state->get('list.ordering');
+    $listOrder  = $this->state->get('list.ordering', '');
     $listDirn   = $this->state->get('list.direction');
     $canCreate  = $user->authorise('core.create', 'com_jed');
     $canEdit    = $user->authorise('core.edit', 'com_jed');
@@ -52,20 +45,23 @@ if (!$isLoggedIn) {
     $canDelete  = $user->authorise('core.delete', 'com_jed');
 
     // Import CSS
-    $this->document->getWebAssetManager()->useStyle('com_jed.jazstyle');
+    /**
+ * @var Joomla\CMS\WebAsset\WebAssetManager $wa
+*/
+    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+    $wa->useStyle('com_jed.jazstyle');
 
     ?>
 
     <?php
     echo HTMLHelper::_('uitab.startTabSet', 'controlpanel_tabs');
 
-    echo HTMLHelper::_('uitab.addTab', 'controlpanel_tabs', 'tickets_tab' . "My Tickets", "My Tickets");
-    //echo LayoutHelper::render('controlpanel.tickets', $this->tickets);
+    echo HTMLHelper::_('uitab.addTab', 'controlpanel_tabs', 'tickets_tab' . Text::_('COM_JED_TICKETS_LIST_HEADER'), Text::_('COM_JED_TICKETS_LIST_HEADER'));
     echo $this->loadTemplate('tickets');
     echo HTMLHelper::_('uitab.endTab');
 
-    echo HTMLHelper::_('uitab.addTab', 'controlpanel_tabs', 'extensions_tab' . "My Extensions", "My Extensions");
-    echo "Hello";
+    echo HTMLHelper::_('uitab.addTab', 'controlpanel_tabs', 'extensions_tab' . Text::_('COM_JED_EXTENSIONS_LIST_HEADER'), Text::_('COM_JED_EXTENSIONS_LIST_HEADER'));
+    echo $this->loadTemplate('extensions');
     echo HTMLHelper::_('uitab.endTab');
 
 
@@ -82,4 +78,3 @@ if (!$isLoggedIn) {
 
     echo HTMLHelper::_('uitab.endTabSet');
 }
-//echo LayoutHelper::render('extension.extension-single', $this->item)
