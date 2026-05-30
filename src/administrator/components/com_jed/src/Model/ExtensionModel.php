@@ -182,7 +182,7 @@ class ExtensionModel extends AdminModel
     public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
     {
         // Get the form.
-        $form = $this->loadForm('com_jed.extension', 'extension', ['control' => 'jform', 'load_data' => $loadData]);
+        $form = $this->loadForm('com_jed.extension.' . $formname, 'extension', ['control' => $formname, 'load_data' => $loadData]);
 
         if (empty($form)) {
             return false;

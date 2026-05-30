@@ -360,7 +360,7 @@ class JedHelper
         foreach ($fields as $field) :
             if (!in_array($field->getAttribute('name'), $excluded)) {
                 $form->setFieldAttribute($field->getAttribute('name'), 'disabled', 'true');
-                $form->setFieldAttribute($field->getAttribute('name'), 'class', 'readonly');
+                //    $form->setFieldAttribute($field->getAttribute('name'), 'class', 'readonly');
                 $form->setFieldAttribute($field->getAttribute('name'), 'readonly', 'true');
             }
         endforeach;
