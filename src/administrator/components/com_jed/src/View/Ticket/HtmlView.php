@@ -251,33 +251,33 @@ class HtmlView extends BaseHtmlView
             }
             if ($this->linked_item_type === 2) { // Extension
                 $extension_model = new ExtensionModel();
-                $extension_id    = $this->linked_item_id;// $extension_model->getExtensionIdfromVariedId($this->linked_item_id);
+                $extension_model->setUseExceptions(true);
 
-
-                $supplyoptions   = $extension_model->getExtensionSupplyOptions($extension_id);
-
+                $extension_id    = $this->linked_item_id;
                 $this->related_object_string = "Extension is displayed in 'Linked Extensions' tab.";
-                $this->linked_extension_data = $extension_model->getEverything($extension_id);
-                //  echo "<pre>";print_r($this->linked_extension_data);echo "</pre>";exit();
 
-                $this->linked_extension_form = $extension_model->getForm(
-                    $this->linked_extension_data,
-                    false,
-                    'jf_linked_extension_form'
-                );
-                $this->linked_extension_form->bind($this->linked_extension_data);
-                $this->linked_extension_data->extension_form = $this->linked_extension_form;
+                try {
+                    $this->linked_extension_data = $extension_model->getEverything($extension_id);
+                    $this->linked_extension_form = $extension_model->getForm(
+                        $this->linked_extension_data,
+                        false,
+                        'jf_linked_extension_form'
+                    );
+                    $this->linked_extension_form->bind($this->linked_extension_data);
+                    $this->linked_extension_data->extension_form = $this->linked_extension_form;
 
-                $extensionvarieddatum                   = new ExtensionvarieddatumModel();
-                $this->linked_extension_varieddata      = $this->linked_extension_data->varied[0];
-                $this->linked_extension_varieddata_form = $extensionvarieddatum->getForm(
-                    $this->linked_extension_varieddata,
-                    false,
-                    'jf_linked_extension_varieddata_form'
-                );
+                    $extensionvarieddatum            = new ExtensionvarieddatumModel();
+                    $extensionvarieddatum->setuseExceptions(true);
+                    foreach($this->linked_extension_data->varied as $varied) {
+                        $this->linked_extension_varieddata[$varied->supply_option_id] = $varied;
+                        $tmp_form = $extensionvarieddatum->getForm($varied, false, 'jf_linked_extension_varieddata_form_'.$varied->supply_option_id);
+                        $tmp_form->bind($varied);
+                        $this->linked_extension_data->varied_form[$varied->supply_option_id] = $tmp_form;
+                    }
 
-                $this->linked_extension_varieddata_form->bind($this->linked_extension_varieddata);
-                $this->linked_extension_data->varied_form = $this->linked_extension_varieddata_form;
+                } catch (\Exception $e) {
+                    throw new GenericDataException($e->getMessage(), 500, $e);
+                }
             }
             if ($this->linked_item_type === 3) { //Review
                 $this->linked_item_Model     = new ReviewModel();
@@ -295,33 +295,28 @@ class HtmlView extends BaseHtmlView
                 //$this->linked_extension_data holds actual data plus extension_form
 
                 $extension_model = new ExtensionModel();
+                $extension_model->setUseExceptions(true);
 
-                $this->linked_extension_data = $extension_model->getvariedItem(
-                    $this->linked_item_data[0]->extension_id,
-                    $this->linked_item_data[0]->supply_option_id
-                );
+                try {
+                    $this->linked_extension_data = $extension_model->getEverything($this->linked_item_data[0]->extension_id);
+                    $this->linked_extension_form = $extension_model->getForm(
+                        $this->linked_extension_data,
+                        false,
+                        'jf_linked_extension_form'
+                    );
+                    $this->linked_extension_form->bind($this->linked_extension_data);
+                    $this->linked_extension_data->extension_form = $this->linked_extension_form;
 
-
-                $this->linked_extension_form = $extension_model->getForm(
-                    $this->linked_extension_data,
-                    false,
-                    'jf_linked_extension_form'
-                );
-                $this->linked_extension_form->bind($this->linked_extension_data);
-                $this->linked_extension_data->extension_form = $this->linked_extension_form;
-
-
-
-                $extensionvarieddatum                   = new ExtensionvarieddatumModel();
-                $this->linked_extension_varieddata      = $this->linked_extension_data->varied_data[$this->linked_item_data[0]->supply_type];
-                $this->linked_extension_varieddata_form = $extensionvarieddatum->getForm(
-                    $this->linked_extension_varieddata,
-                    false,
-                    'jf_linked_extension_varieddata_form'
-                );
-
-                $this->linked_extension_varieddata_form->bind($this->linked_extension_varieddata);
-                $this->linked_extension_data->varied_form = $this->linked_extension_varieddata_form;
+                    $extensionvarieddatum = new ExtensionvarieddatumModel();
+                    $extensionvarieddatum->setuseExceptions(true);
+                    foreach ($this->linked_extension_data->varied as $varied) {
+                        $tmp_form = $extensionvarieddatum->getForm($varied, false, 'jf_linked_extension_varieddata_form');
+                        $tmp_form->bind($varied);
+                        $this->linked_extension_data->varied_form[$varied->supply_option_id] = $tmp_form;
+                    }
+                } catch (\Exception $e) {
+                    throw new GenericDataException($e->getMessage(), 500, $e);
+                }
             }
             if ($this->linked_item_type === 4) { // VEL Report
                 $this->linked_item_Model = new VelreportModel();

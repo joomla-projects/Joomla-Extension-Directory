@@ -81,7 +81,8 @@ $this->getDocument()
 foreach ($this->extension->varied as $st) {
 
     echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'varied-' . $st->supply_option_id, Text::_($st->supply_option_type));
-    $varied_form                          = $this->extension->varied_form;
+
+    $varied_form                          = $this->extension->varied_form[$st->supply_option_id];
     $varied_form->bind($st);
     $fieldsets                            = [];
     $fieldsets['overview']['supply_type'] = $st->supply_option_type;
@@ -143,6 +144,9 @@ echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'viewextensionreviews', Text:
                             $linked_form  = $review_model->getForm($review, false, 'review');
                             $linked_form->bind($review);
                             ?>
+                    <div class="row ticket-header-row">
+                        <div class="col-md-4 ticket-header">&nbsp;</div>
+                        <div class="col-md-4 ticket-header">&nbsp;</div>
                             <div class="col-md-4 ticket-header">
         <h1>Status - <?php echo $linked_form->renderField('published', null, null, $headerlabeloptions); ?>
                     &nbsp;&nbsp;<button id="btn_save_published" type="button" class="">
@@ -161,7 +165,7 @@ echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'viewextensionreviews', Text:
                     </div>
                     <div class="col-md-4  ticket-header">
 
-                        <h1>Type - <?php echo $review->supply_type; ?></h1>
+                        <h1>Type - <?php echo $review->suptype; ?></h1>
 
                     </div>
                     <div class="col-md-4  ticket-header">

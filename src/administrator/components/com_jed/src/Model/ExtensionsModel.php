@@ -251,13 +251,13 @@ class ExtensionsModel extends ListModel
         }
         $query->group($db->quoteName('a.id'));
 
-        $query->order(
-            $db->quoteName(
-                $db->escape(
-                    $this->getState('list.ordering', 'a.id')
-                )
-            ) . ' ' . $db->escape($this->getState('list.direction', 'DESC'))
-        );
+        // Add the list ordering clause.
+        $orderCol  = $this->state->get('list.ordering', 'id');
+        $orderDirn = $this->state->get('list.direction', 'DESC');
+
+        if ($orderCol && $orderDirn) {
+            $query->order($db->escape($orderCol . ' ' . $orderDirn));
+        }
         //      echo($query->__toString());
         //      exit();
         return $query;
