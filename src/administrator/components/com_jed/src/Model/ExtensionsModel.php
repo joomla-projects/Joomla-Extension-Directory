@@ -252,11 +252,13 @@ class ExtensionsModel extends ListModel
         $query->group($db->quoteName('a.id'));
 
         // Add the list ordering clause.
-        $orderCol  = $this->state->get('list.ordering', 'id');
-        $orderDirn = $this->state->get('list.direction', 'DESC');
+        $orderCol  = $this->state->get('list.ordering', 'a.id');
+        $orderDirn = strtoupper($this->state->get('list.direction', 'DESC')) === 'ASC' ? 'ASC' : 'DESC';
 
-        if ($orderCol && $orderDirn) {
-            $query->order($db->escape($orderCol . ' ' . $orderDirn));
+        if ($orderCol && in_array($orderCol, $this->filter_fields, true)) {
+            $query->order($db->quoteName($orderCol) . ' ' . $orderDirn);
+        } else {
+            $query->order($db->quoteName('a.id') . ' DESC');
         }
         //      echo($query->__toString());
         //      exit();
