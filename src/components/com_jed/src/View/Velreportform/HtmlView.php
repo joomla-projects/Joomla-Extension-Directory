@@ -139,7 +139,7 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
-        $app = Factory::getApplication();
+        $app   = Factory::getApplication();
         $model = $this->getModel();
         $model->setUseExceptions(true);
         try {
@@ -148,7 +148,7 @@ class HtmlView extends BaseHtmlView
             $this->params  = $app->getParams('com_jed');
             $this->canSave = JedHelper::canSave();
             $this->form    = $model->getForm();
-            if(!$this->item == false ) {
+            if (!$this->item == false) {
                 if ($this->item->id > 0) {
                     $this->read_only = true;
                 }

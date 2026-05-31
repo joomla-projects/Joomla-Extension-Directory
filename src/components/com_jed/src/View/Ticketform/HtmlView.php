@@ -87,7 +87,7 @@ class HtmlView extends BaseHtmlView
 
         // Because the application sets a default page title,
         // we need to get it from the menu item itself
-          $menu = $menus->getActive();
+        $menu = $menus->getActive();
 
         if ($menu) {
             $this->params->def('page_heading', $this->params->get('page_title', $menu->title));
@@ -95,7 +95,7 @@ class HtmlView extends BaseHtmlView
             $this->params->def('page_heading', Text::_('COM_JED_DEFAULT_PAGE_TITLE'));
         }
 
-            $title = $this->params->get('page_title', '');
+        $title = $this->params->get('page_title', '');
 
         if (empty($title)) {
             $title = $app->get('sitename');
@@ -105,7 +105,7 @@ class HtmlView extends BaseHtmlView
             $title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
         }
 
-            $this->getDocument()->setTitle($title);
+        $this->getDocument()->setTitle($title);
 
         if ($this->params->get('menu-meta_description')) {
             $this->getDocument()->setDescription($this->params->get('menu-meta_description'));
@@ -154,7 +154,7 @@ class HtmlView extends BaseHtmlView
                 $this->item->linked_item_type = $linked_item;
                 $this->item->linked_item_id   = $linked_id;
                 $this->item->vr               = $vr;
-                $ticket_type = "Unknown";
+                $ticket_type                  = "Unknown";
                 if ($linked_item == 2) {
                     $ticket_type = "Extension";
                 }

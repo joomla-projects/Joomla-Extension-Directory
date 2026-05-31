@@ -47,7 +47,7 @@ extract($displayData);
         <?php foreach ($form->getFieldsets() as $fieldset) : ?>
         <fieldset class="<?php if (!empty($fieldset->class)) {
             echo $fieldset->class;
-                         } ?>">
+        } ?>">
             <?php if (!empty($fieldset->label)) : ?>
                 <legend><?php echo Text::_($fieldset->label); ?></legend>
             <?php endif; ?>

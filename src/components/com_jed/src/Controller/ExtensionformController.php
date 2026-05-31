@@ -24,7 +24,6 @@ use Joomla\CMS\Filter\OutputFilter;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 
-
 /**
  * Extension class.
  *
@@ -124,10 +123,10 @@ class ExtensionformController extends FormController
             // Handle supply-tab zip uploads and map stored names back into payload.
             $uploadedExtensionFiles = $this->processSupplyFileUploads($supplyPayload);
             try {
-                        // Validate the posted data. (MAIN form only)
-                        $form = $model->getForm();
+                // Validate the posted data. (MAIN form only)
+                $form = $model->getForm();
 
-                       $data = $model->validate($form, $dataRaw);
+                $data = $model->validate($form, $dataRaw);
             } catch (\Exception $e) {
                 throw new GenericDataException($e->getMessage(), 500, $e);
             }
@@ -194,7 +193,7 @@ class ExtensionformController extends FormController
      */
     private function processLogoUpload(array $dataRaw, mixed $model): array
     {
-        $logoUpload = $this->getJformUpload('logo');
+        $logoUpload  = $this->getJformUpload('logo');
         $extensionId = (int) ($dataRaw['id'] ?? 0);
 
         if (($logoUpload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
@@ -270,11 +269,11 @@ class ExtensionformController extends FormController
             $row['file'] = $stored;
 
             $uploadedExtensionFiles[] = [
-                'supply_key'     => (string) $supplyKey,
-                'supply_option'  => (int) ($row['supply_option_id'] ?? 0),
-                'file'           => $stored,
-                'originalFile'   => (string) ($upload['name'] ?? ''),
-                'size'           => (int) ($upload['size'] ?? 0),
+                'supply_key'    => (string) $supplyKey,
+                'supply_option' => (int) ($row['supply_option_id'] ?? 0),
+                'file'          => $stored,
+                'originalFile'  => (string) ($upload['name'] ?? ''),
+                'size'          => (int) ($upload['size'] ?? 0),
             ];
         }
         unset($row);

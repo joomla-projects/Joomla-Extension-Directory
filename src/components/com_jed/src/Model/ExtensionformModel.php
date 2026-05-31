@@ -252,7 +252,7 @@ class ExtensionformModel extends FormModel
     public function checkin($pk = null): bool
     {
         // Get the id.
-        $pk = ( ! empty($pk)) ? $pk : (int) $this->getState('extension.id');
+        $pk = (! empty($pk)) ? $pk : (int) $this->getState('extension.id');
 
         if ($pk) {
             // Initialise the table
@@ -282,7 +282,7 @@ class ExtensionformModel extends FormModel
     public function checkout($pk = null): bool
     {
         // Get the user id.
-        $pk = ( ! empty($pk)) ? $pk : (int) $this->getState('extension.id');
+        $pk = (! empty($pk)) ? $pk : (int) $this->getState('extension.id');
 
 
         if (! $pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
@@ -364,8 +364,8 @@ class ExtensionformModel extends FormModel
     public function getVariedData(int $extension_id, int $supply_option_type = null): array
     {
         $retval = null;
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true)
+        $db     = $this->getDatabase();
+        $query  = $db->getQuery(true)
             ->select('supply_options.title AS supply_type, a.*')
             ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
             ->leftJoin(
@@ -464,7 +464,7 @@ class ExtensionformModel extends FormModel
             if (is_null($this->item->primary_category_id)) {
                 $this->item->category_hierarchy = "";
             } else {
-                  $this->item->category_hierarchy = self::getCategoryHierarchy($this->item->primary_category_id);
+                $this->item->category_hierarchy = self::getCategoryHierarchy($this->item->primary_category_id);
             }
 
             /* Load Varied Data */
@@ -594,7 +594,7 @@ class ExtensionformModel extends FormModel
      */
     public function save(array $data): bool
     {
-        $id   = ( ! empty($data['id'])) ? (int) $data['id'] : (int) $this->getState('extension.id');
+        $id   = (! empty($data['id'])) ? (int) $data['id'] : (int) $this->getState('extension.id');
         $user = Factory::getApplication()->getIdentity();
 
         if (! $id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
@@ -626,7 +626,7 @@ class ExtensionformModel extends FormModel
                     $exists = $db->setQuery($query)->loadResult();
 
                     if (empty($exists)) {
-                        $devName = ( ! empty($user->name)) ? $user->name : $user->username;
+                        $devName = (! empty($user->name)) ? $user->name : $user->username;
                         $columns = [
                                 $db->quoteName('user_id'),
                                 $db->quoteName('developer_name'),

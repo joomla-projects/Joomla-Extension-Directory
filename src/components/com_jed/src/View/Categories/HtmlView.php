@@ -127,13 +127,13 @@ class HtmlView extends BaseHtmlView
     public function display($tpl = null): void
     {
         /* @var $app \Joomla\CMS\Application\SiteApplication */
-        $app = Factory::getApplication();
+        $app   = Factory::getApplication();
         $model = $this->getModel();
         $model->setUseExceptions(true);
         // try {
-            $this->state = $model->getState();
-            $this->items = $model->getItems();
-            //  $this->pagination = $this->get('Pagination');
+        $this->state = $model->getState();
+        $this->items = $model->getItems();
+        //  $this->pagination = $this->get('Pagination');
         // } catch (\Exception $e) {
         //     throw new GenericDataException($e->getMessage(), 500, $e);
         // }

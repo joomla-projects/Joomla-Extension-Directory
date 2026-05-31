@@ -89,7 +89,7 @@ class HtmlView extends BaseHtmlView
                 $st_counter = $st_counter + 1;
 
                 // Ensure linkage is always present in POST (even for new varied rows)
-                $varied = (array) $this->item->varied[$st->supply_id];
+                $varied                     = (array) $this->item->varied[$st->supply_id];
                 $varied['extension_id']     = (int) ($this->item->id ?? 0);
                 $varied['supply_option_id'] = (int) $st->supply_id;
 

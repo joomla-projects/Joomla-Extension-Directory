@@ -43,7 +43,9 @@ class JedComponent extends MVCComponent implements
 {
     use HTMLRegistryAwareTrait;
     use RouterServiceTrait;
-    use CategoryServiceTrait, TagServiceTrait { CategoryServiceTrait::getTableNameForSection insteadof TagServiceTrait; CategoryServiceTrait::getStateColumnForSection insteadof TagServiceTrait; 
+    use CategoryServiceTrait, TagServiceTrait {
+        CategoryServiceTrait::getTableNameForSection insteadof TagServiceTrait;
+        CategoryServiceTrait::getStateColumnForSection insteadof TagServiceTrait;
     }
 
     /**

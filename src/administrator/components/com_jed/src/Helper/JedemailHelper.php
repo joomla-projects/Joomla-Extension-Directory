@@ -19,7 +19,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Mail\MailerFactoryInterface;
 use Joomla\CMS\User\User;
 
-
 /**
  * JED Email Helper
  *

@@ -9,6 +9,7 @@
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
+use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\View\Extensions\HtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -71,7 +72,7 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                             <?php echo HTMLHelper::_('grid.checkall'); ?>
                         </td>
                         <td scope="col" class="w-1  d-none d-md-table-cell">
-                            <?php echo HTMLHelper::_('searchtools.sort', 'JPUBLISHED', 'extensions.published', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_PUBLISHED_LABEL', 'extensions.published', $listDirn, $listOrder); ?>
                         </td>
                         <td scope="col" class="w-1  d-none d-md-table-cell">
                             <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_APPROVED_LABEL', 'extensions.approved', $listDirn, $listOrder); ?>
@@ -80,14 +81,9 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                         <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_TITLE_LABEL', 'extensions.title', $listDirn, $listOrder); ?>
                         </td>
                         <td scope="col" class="w-10 d-none d-md-table-cell ">
-                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_CATEGORY_LABEL', 'categories.title', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'JCATEGORY', 'categories.title', $listDirn, $listOrder); ?>
                         </td>
-                        <td scope="col" class="w-10 d-none d-md-table-cell ">
-                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_LAST_UPDATED_LABEL', 'extensions.modified_on', $listDirn, $listOrder); ?>
-                        </td>
-                        <td scope="col" class="w-10 d-none d-md-table-cell ">
-                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_DATE_ADDED_LABEL', 'extensions.created_on', $listDirn, $listOrder); ?>
-                        </td>
+
                         <td scope="col" class="w-10 d-none d-md-table-cell ">
                             <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_DEVELOPER_LABEL', 'users.name', $listDirn, $listOrder); ?>
                         </td>
@@ -96,6 +92,12 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                         </td>
                         <td scope="col" class="w-10 d-none d-md-table-cell ">
                             <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_REVIEWCOUNT_LABEL', 'extensions.reviewcount', $listDirn, $listOrder); ?>
+                        </td>
+                        <td scope="col" class="w-10 d-none d-md-table-cell ">
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_LAST_UPDATED_LABEL', 'extensions.modified_on', $listDirn, $listOrder); ?>
+                        </td>
+                        <td scope="col" class="w-10 d-none d-md-table-cell ">
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_DATE_ADDED_LABEL', 'extensions.created_on', $listDirn, $listOrder); ?>
                         </td>
                         <td scope="col" class="w-3 d-none d-lg-table-cell">
                             <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ID', 'extensions.id', $listDirn, $listOrder); ?>
@@ -125,22 +127,22 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                                 <?php
                                 switch ($item->published) {
                                     // Rejected
-                                case '-1':
-                                    $icon = 'unpublish';
-                                    break;
+                                    case '-1':
+                                        $icon = 'unpublish';
+                                        break;
                                         // Approved
-                                case '1':
-                                    $icon = 'publish';
-                                    break;
+                                    case '1':
+                                        $icon = 'publish';
+                                        break;
                                         // Awaiting response
-                                case '2':
-                                    $icon = 'expired';
-                                    break;
+                                    case '2':
+                                        $icon = 'expired';
+                                        break;
                                         // Pending
-                                case '0':
-                                default:
-                                    $icon = 'pending';
-                                    break;
+                                    case '0':
+                                    default:
+                                        $icon = 'pending';
+                                        break;
                                 }
                                 echo '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
                                 ?>
@@ -149,22 +151,22 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                                 <?php
                                 switch ($item->approved) {
                                     // Rejected
-                                case '-1':
-                                    $icon = 'unpublish';
-                                    break;
+                                    case '-1':
+                                        $icon = 'unpublish';
+                                        break;
                                 // Approved
-                                case '1':
-                                    $icon = 'publish';
-                                    break;
+                                    case '1':
+                                        $icon = 'publish';
+                                        break;
                                 // Awaiting response
-                                case '2':
-                                    $icon = 'expired';
-                                    break;
+                                    case '2':
+                                        $icon = 'expired';
+                                        break;
                                 // Pending
-                                case '0':
-                                default:
-                                    $icon = 'pending';
-                                    break;
+                                    case '0':
+                                    default:
+                                        $icon = 'pending';
+                                        break;
                                 }
                                 echo '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
                                 ?>
@@ -187,21 +189,7 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                             <td>
                                 <?php echo $item->category; ?>
                             </td>
-                            <td>
-                                <?php
-                                if (!is_null($item->modified_on)) {
-                                    echo HTMLHelper::_(
-                                        'date',
-                                        $item->modified_on,
-                                        Text::_('COM_JED_GENERAL_DATETIME_FORMAT')
-                                    );
-                                }
-                                ?>
-                            </td>
-                            <td>
 
-                                <?php echo HTMLHelper::_('date', $item->created_on, Text::_('COM_JED_GENERAL_DATETIME_FORMAT')); ?>
-                            </td>
                             <td>
                                 <?php echo $item->developer; ?>
                             </td>
@@ -210,6 +198,20 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                             </td>
                             <td>
                                 <?php echo $item->reviewCount; ?>
+                            </td>
+                            <td>
+                                <?php
+                                echo JedHelper::prettyDate($item->modified_on);
+
+                                ?>
+                            </td>
+                            <td>
+
+                                <?php
+
+                                echo JedHelper::prettyDate($item->created_on);
+
+                                ?>
                             </td>
                             <td>
                                 <?php echo $item->id; ?>

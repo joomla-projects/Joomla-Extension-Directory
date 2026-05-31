@@ -59,7 +59,7 @@ class JoomlaVersionField extends CheckboxesField
         $rows = $db->loadObjectList();
 
         foreach ($rows as $r) {
-            $r->text = '<span class="joomla_versionsbadge">' . $r->text . '</span>';
+            $r->text    = '<span class="joomla_versionsbadge">' . $r->text . '</span>';
             $r->checked = false;
         }
 

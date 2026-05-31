@@ -67,22 +67,21 @@ class HtmlView extends BaseHtmlView
         try {
             $this->state = $extension_model->getState();
             $everything  = $extension_model->getEverything();
-            //var_dump($everything);exit();
+            //var_dump($everything->varied);exit();
             $this->extension = $everything;
-            $this->form      = $extension_model->getForm($this->extension, false, 'extension_form');
+            $this->form      = $extension_model->getForm($this->extension, false, 'jform');
             $this->form->bind($this->extension);
             $this->extension->extension_form = $this->form;
 
             $extensionvarieddatum            = new ExtensionvarieddatumModel();
             $extensionvarieddatum->setuseExceptions(true);
 
-            $this->extensionvarieddata       = $this->extension->varied[count($this->extension->varied)];
-            $this->extensionvarieddatum_form = $extensionvarieddatum->getForm(
-                $this->extensionvarieddata,
-                false,
-                'extension_varieddata_form'
-            );
-            $this->extensionvarieddatum_form->bind($this->extensionvarieddata);
+            foreach ($this->extension->varied as $varied) {
+                $this->extensionvarieddata[$varied->supply_option_id] = $varied;
+                $tmp_form                                             = $extensionvarieddatum->getForm($varied, false, 'extension_varieddata_form_' . $varied->supply_option_id);
+                $tmp_form->bind($varied);
+                $this->extensionvarieddatum_form[$varied->supply_option_id] = $tmp_form;
+            }
             $this->extension->varied_form = $this->extensionvarieddatum_form;
         } catch (\Exception $e) {
             throw new GenericDataException($e->getMessage(), 500, $e);

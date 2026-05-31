@@ -48,30 +48,30 @@ extract($displayData);
 
     <?php
     $fieldsets                            = [];
-    $fieldsets['overview']['supply_type'] = $st->supply_type;
-    $fieldsets['overview']['title']       =  Text::sprintf('COM_JED_EXTENSION_VARIED_TITLE_LABEL', $st->supply_type);
-    $fieldsets['overview']['description'] = Text::_('COM_JED_EXTENSION_VARIED_TITLE_LABEL_DESCR');
-    $fieldsets['overview']['fields']      = ['id', ['supply_option_id'], ['title', 'is_default_data'],  'description'];
-    $fieldsets['overview']['hidden']      = ['id'];
+$fieldsets['overview']['supply_type']     = $st->supply_type;
+$fieldsets['overview']['title']           =  Text::sprintf('COM_JED_EXTENSION_VARIED_TITLE_LABEL', $st->supply_type);
+$fieldsets['overview']['description']     = Text::_('COM_JED_EXTENSION_VARIED_TITLE_LABEL_DESCR');
+$fieldsets['overview']['fields']          = ['id', ['supply_option_id'], ['title', 'is_default_data'],  'description'];
+$fieldsets['overview']['hidden']          = ['id'];
 
-    $fieldsets['extensionfile']['supply_type'] = $st->supply_type;
-    $fieldsets['extensionfile']['title']       = '';
-    $fieldsets['extensionfile']['description'] = Text::_('COM_JED_EXTENSION_EXTENSIONFILE_LABEL') . '<br/>' . Text::_('COM_JED_EXTENSION_EXTENSIONFILE_EXTRA');
-    $fieldsets['extensionfile']['fields']      = ['file'];
-    $fieldsets['extensionfile']['hidden']      = [];
-    $fieldsets['links']['supply_type']         = $st->supply_type;
-    $fieldsets['links']['title']               = Text::_('COM_JED_EXTENSION_LINKS_TITLE');
-    $fieldsets['links']['description']         = Text::_('COM_JED_EXTENSION_LINKS_DESCR');
-    $fieldsets['links']['fields']              = [['homepage_link', 'download_link'], ['demo_link', 'support_link'], ['documentation_link', 'license_link'], ['translation_link', '']];
-    $fieldsets['links']['hidden']              = [];
+$fieldsets['extensionfile']['supply_type'] = $st->supply_type;
+$fieldsets['extensionfile']['title']       = '';
+$fieldsets['extensionfile']['description'] = Text::_('COM_JED_EXTENSION_EXTENSIONFILE_LABEL') . '<br/>' . Text::_('COM_JED_EXTENSION_EXTENSIONFILE_EXTRA');
+$fieldsets['extensionfile']['fields']      = ['file'];
+$fieldsets['extensionfile']['hidden']      = [];
+$fieldsets['links']['supply_type']         = $st->supply_type;
+$fieldsets['links']['title']               = Text::_('COM_JED_EXTENSION_LINKS_TITLE');
+$fieldsets['links']['description']         = Text::_('COM_JED_EXTENSION_LINKS_DESCR');
+$fieldsets['links']['fields']              = [['homepage_link', 'download_link'], ['demo_link', 'support_link'], ['documentation_link', 'license_link'], ['translation_link', '']];
+$fieldsets['links']['hidden']              = [];
 
-    $fieldsets['integration']['supply_type'] = $st->supply_type;
-    $fieldsets['integration']['title']       = Text::_('COM_JED_EXTENSION_INTEGRATION_TITLE');
-    $fieldsets['integration']['description'] = Text::_('COM_JED_EXTENSION_INTEGRATION_DESCR');
-    $fieldsets['integration']['fields']      = [['download_integration_type', 'download_integration_url']];
-    $fieldsets['integration']['hidden']      = [];
+$fieldsets['integration']['supply_type'] = $st->supply_type;
+$fieldsets['integration']['title']       = Text::_('COM_JED_EXTENSION_INTEGRATION_TITLE');
+$fieldsets['integration']['description'] = Text::_('COM_JED_EXTENSION_INTEGRATION_DESCR');
+$fieldsets['integration']['fields']      = [['download_integration_type', 'download_integration_url']];
+$fieldsets['integration']['hidden']      = [];
 
-    JedHelper::outputFieldsets($fieldsets, $form);
-    $fieldsets = [];
-    ?>
+JedHelper::outputFieldsets($fieldsets, $form);
+$fieldsets = [];
+?>
 </div>

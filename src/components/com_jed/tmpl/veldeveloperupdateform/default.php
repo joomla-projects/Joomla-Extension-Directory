@@ -118,12 +118,10 @@ if (!$isLoggedIn) {
 
 
                     foreach ($fields as $field) {
-                        if($this->read_only) {
-
+                        if ($this->read_only) {
                             $this->form->setFieldAttribute($field, 'disabled', 'true');
                         }
                         echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
-
                     }
                 }
 

@@ -49,7 +49,7 @@ class TimeupdatedField extends FormField
 
         // If time is empty or invalid, use current time in UTC for saving
         if (empty($time_created) || $time_created === '0000-00-00 00:00:00' || !strtotime($time_created)) {
-            $now = Factory::getDate(); // UTC
+            $now          = Factory::getDate(); // UTC
             $time_created = $now->toSql(true);
         }
 
@@ -61,7 +61,7 @@ class TimeupdatedField extends FormField
 
         if (!$hidden) {
             $pretty_date = HTMLHelper::_('date', $time_created, Text::_('DATE_FORMAT_LC2'), true);
-                $html[]      = "<div>" . $pretty_date . "</div>";
+            $html[]      = "<div>" . $pretty_date . "</div>";
         }
 
         return implode($html);

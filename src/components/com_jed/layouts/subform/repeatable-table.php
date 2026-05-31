@@ -111,7 +111,7 @@ if (!empty($groupByFieldset)) {
                 foreach ($forms as $k => $form) :
                     echo $this->sublayout($sublayout, ['form' => $form, 'basegroup' => $fieldname, 'group' => $fieldname . $k, 'buttons' => $buttons]);
                 endforeach;
-                ?>
+?>
                 </tbody>
             </table>
         </div>

@@ -249,7 +249,7 @@ class ExtensionsModel extends ListModel
      */
     public function getMyItems(): mixed
     {
-        $user = Factory::getApplication()->getIdentity();
+        $user  = Factory::getApplication()->getIdentity();
         $query = $this->getDatabase()->getQuery(true)
             ->select('a.id as ext_id,a.*,varied.*,cat.title AS category_title,sup.title as supply_option_title')
             ->from('#__jed_extensions AS a')

@@ -134,15 +134,15 @@ class VelvulnerableitemTable extends Table
 
                 if ($fileError > 0 && $fileError != 4) {
                     switch ($fileError) {
-                    case 1:
-                        $message = Text::_('File size exceeds allowed by the server');
-                        break;
-                    case 2:
-                        $message = Text::_('File size exceeds allowed by the html form');
-                        break;
-                    case 3:
-                        $message = Text::_('Partial upload error');
-                        break;
+                        case 1:
+                            $message = Text::_('File size exceeds allowed by the server');
+                            break;
+                        case 2:
+                            $message = Text::_('File size exceeds allowed by the html form');
+                            break;
+                        case 3:
+                            $message = Text::_('Partial upload error');
+                            break;
                     }
 
                     if ($message != '') {
@@ -212,13 +212,13 @@ class VelvulnerableitemTable extends Table
             $checkImageVariableType = gettype($this->xml_manifest);
 
             switch ($checkImageVariableType) {
-            case 'string':
-                File::delete(JPATH_ROOT . '/tmp/' . $this->xml_manifest);
-                break;
-            default:
-                foreach ($this->xml_manifest as $xml_manifestFile) {
-                    File::delete(JPATH_ROOT . '/tmp/' . $xml_manifestFile);
-                }
+                case 'string':
+                    File::delete(JPATH_ROOT . '/tmp/' . $this->xml_manifest);
+                    break;
+                default:
+                    foreach ($this->xml_manifest as $xml_manifestFile) {
+                        File::delete(JPATH_ROOT . '/tmp/' . $xml_manifestFile);
+                    }
             }
         }
 

@@ -309,22 +309,22 @@ class JedHelper
         $ticket['ticket_origin']    = 0; //Registered User
 
         switch ($report_type) {
-        case 1: // VEL REPORT
-            $ticket['ticket_category_type'] = 11;
-            $ticket['ticket_subject']       = "A new Vulnerable Item Report";
-            $ticket['linked_item_type']     = 4;     //    Vulnerable Item Initial Report
-            break;
-        case 2: // DEVELOPER UPDATE
-            $ticket['ticket_category_type'] = 12;
-            $ticket['ticket_subject']       = "A new VEL Developer Update";
-            $ticket['linked_item_type']     = 5;     //    Vulnerable Item Developer Update
-            break;
+            case 1: // VEL REPORT
+                $ticket['ticket_category_type'] = 11;
+                $ticket['ticket_subject']       = "A new Vulnerable Item Report";
+                $ticket['linked_item_type']     = 4;     //    Vulnerable Item Initial Report
+                break;
+            case 2: // DEVELOPER UPDATE
+                $ticket['ticket_category_type'] = 12;
+                $ticket['ticket_subject']       = "A new VEL Developer Update";
+                $ticket['linked_item_type']     = 5;     //    Vulnerable Item Developer Update
+                break;
 
-        case 3: // ABANDONWARE REPORT
-            $ticket['ticket_category_type'] = 13;
-            $ticket['ticket_subject']       = "A new VEL Abandonware Report";
-            $ticket['linked_item_type']     = 6;     //    Vulnerable Item Abandonware Report
-            break;
+            case 3: // ABANDONWARE REPORT
+                $ticket['ticket_category_type'] = 13;
+                $ticket['ticket_subject']       = "A new VEL Abandonware Report";
+                $ticket['linked_item_type']     = 6;     //    Vulnerable Item Abandonware Report
+                break;
         }
 
         /*
@@ -783,8 +783,7 @@ class JedHelper
                     }
                     echo $form->renderField($field[1], null, null, ['class' => 'control-wrapper-' . $field[1]]);
                     echo '</div></div>';
-                }
-                else {
+                } else {
                     if (in_array($field, $hiddenFields)) {
                         $form->setFieldAttribute($field, 'type', 'hidden');
                     }
@@ -793,7 +792,7 @@ class JedHelper
                         $form->setFieldAttribute($field, 'validate', '');
                     }
                     //var_dump($field);
-                    echo $form->renderField($field, null, null, ['class' => 'control-wrapper-'.$field]);
+                    echo $form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
                 }
             }
         }

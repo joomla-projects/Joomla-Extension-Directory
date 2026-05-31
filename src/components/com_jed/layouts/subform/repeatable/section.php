@@ -50,7 +50,7 @@ extract($displayData);
     $f =  (array) $field->__get('data-colwidth');
     var_dump($f);
     ?>
-    <?php //var_dump($field); ?>
+    <?php //var_dump($field);?>
     <?php echo $field->renderField(); ?>
 <?php endforeach; ?>
 </div>

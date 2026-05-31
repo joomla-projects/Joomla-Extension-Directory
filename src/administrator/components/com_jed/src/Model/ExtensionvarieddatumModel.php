@@ -62,7 +62,7 @@ class ExtensionvarieddatumModel extends AdminModel
     {
         // Get the form.
         $form = $this->loadForm(
-            'com_jed.extensionvarieddatum',
+            'com_jed.extensionvarieddatum.' . $formname,
             'extensionvarieddatum',
             [
                 'control'   => $formname,

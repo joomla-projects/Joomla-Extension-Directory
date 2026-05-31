@@ -171,11 +171,11 @@ class HtmlView extends BaseHtmlView
         $model               = $this->getModel();
         $model->setUseExceptions(true);
         try {
-                $this->state         = $model->getState();
-                $this->items         = $model->getItems();
-                $this->pagination    = $model->getPagination();
-                $this->filterForm    = $model->getFilterForm();
-                $this->activeFilters = $model->getActiveFilters();
+            $this->state         = $model->getState();
+            $this->items         = $model->getItems();
+            $this->pagination    = $model->getPagination();
+            $this->filterForm    = $model->getFilterForm();
+            $this->activeFilters = $model->getActiveFilters();
         } catch (\Exception $e) {
             throw new GenericDataException($e->getMessage(), 500, $e);
         }

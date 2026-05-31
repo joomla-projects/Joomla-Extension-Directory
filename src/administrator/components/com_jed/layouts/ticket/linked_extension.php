@@ -22,13 +22,22 @@ use Joomla\CMS\Language\Text;
 /**
  * @var \Joomla\CMS\Form\Form $displayData
 */
-
+try {
+    Factory::getApplication()->getDocument()->getWebAssetManager()
+        ->useScript('form.validate')
+        ->useScript('keepalive')
+        ->usePreset('choicesjs')
+        ->useScript('webcomponent.field-fancy-select')
+        ->useStyle('com_jed.Tickets')
+        ->useStyle('com_jed.jquery_dataTables');
+} catch (Exception $e) {
+}
 $headerlabeloptions = ['hiddenLabel' => true];
 $fieldhiddenoptions = ['hidden' => true];
 
 $extension_form = $displayData->extension_form;
 $title          = $extension_form->getField('title') ? 'title' : ($extension_form->getField('name') ? 'name' : '');
-JedHelper::lockFormFields($extension_form, ['']);
+JedHelper::lockFormFields($extension_form, ['primary_category_id']);
 ?>
     <div class="row title-alias form-vertical mb-3">
         <div class="col-12 col-md-6">
@@ -36,148 +45,69 @@ JedHelper::lockFormFields($extension_form, ['']);
         </div>
         <div class="col-12 col-md-6">
             <?php echo $extension_form->renderField('alias'); ?>
+
         </div>
     </div>
 <?php
-echo HTMLHelper::_('uitab.startTabSet', 'viewExtensionTab', ['active' => 'viewextension']);
+echo HTMLHelper::_('uitab.startTabSet', 'viewExtensionTab', ['active' => 'info']);
 
-
-echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'general', Text::_('COM_JED_EXTENSION_INFO_TAB')); ?>
-    <div class="row-fluid form-horizontal-desktop">
-        <div class="span9">
-            <div class="form-horizontal">
-                <?php echo $extension_form->renderFieldset('info'); ?>
-
-            </div>
-        </div>
-        <div class="span3">
-            <div class="form-vertical">
-                <?php // echo $this->form->renderFieldset('publication');?>
-            </div>
+foreach ($extension_form->getFieldsets() as $fieldset) :
+    echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', $fieldset->name, Text::_($fieldset->label));
+    ?>
+    <div class="row">
+        <div class="col-12 col-lg-6">
+            <?php  echo $extension_form->renderFieldset($fieldset->name); ?>
         </div>
     </div>
-<?php echo HTMLHelper::_('uitab.endTab');
-/*
-echo HTMLHelper::_(
-    'uitab.addTab',
-    'viewExtensionDescriptionTab',
-    'general',
-    Text::_('COM_JED_EXTENSION_GENERAL_TAB')
-); ?>
-<div class="row-fluid form-horizontal-desktop">
-    <div class="span9">
-        <div class="form-horizontal">
+    <?php
+    echo HTMLHelper::_('uitab.endTab'); ?>
+<?php endforeach;
 
-            <?php echo $extension_form->renderFieldset('description'); ?>
-        </div>
-    </div>
-    <div class="span3">
-        <div class="form-vertical">
-            <?php // echo $this->form->renderFieldset('publication');?>
-        </div>
-    </div>
-</div>
-<?php echo HTMLHelper::_('uitab.endTab'); */
+foreach ($displayData->varied as $st) {
+    echo HTMLHelper::_(
+        'uitab.addTab',
+        'viewExtensionTab',
+        'varied-' . $st->supply_option_id,
+        Text::_($st->supply_option_type)
+    );
 
-/*
-echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'viewextension', Text::_('Extension', true));
+    $varied_form = $displayData->varied_form[$st->supply_option_id];
+    $varied_form->bind($st);
+    $fieldsets                            = [];
+    $fieldsets['overview']['supply_type'] = $st->supply_option_type;
+    $fieldsets['overview']['title']       = '';
+    $fieldsets['overview']['description'] = '';
+    $fieldsets['overview']['fields']      = ['id', 'supply_option_id', ['title', 'is_default_data'], 'description'];
+    $fieldsets['overview']['hidden']      = ['id', 'supply_option_id'];
 
 
-JedHelper::lockFormFields($extension_form, array(''));
+    $fieldsets['links']['supply_type'] = $st->supply_option_type;
+    $fieldsets['links']['title']       = Text::_('COM_JED_EXTENSION_LINKS_TITLE');
+    $fieldsets['links']['description'] = '';
+    $fieldsets['links']['fields']      = [
+            ['homepage_link', 'download_link'],
+            ['demo_link', 'support_link'],
+            ['documentation_link', 'license_link'],
+            ['translation_link', ''],
+    ];
+    $fieldsets['links']['hidden']      = [];
 
-// echo $extension_form->renderField('title',null,null);
-// echo $extension_form->renderField('alias',null,null);
-echo $extension_form->renderField('published',null,null);
-echo $extension_form->renderField('created_by',null,null);
-echo $extension_form->renderField('modified_by',null,null);
-echo $extension_form->renderField('created_on',null,null);
-echo $extension_form->renderField('modified_on',null,null);
-// echo $extension_form->renderField('joomla_versions',null,null);
-echo $extension_form->renderField('popular',null,null);
-echo $extension_form->renderField('requires_registration',null,null);
-echo $extension_form->renderField('gpl_license_type',null,null);
-echo $extension_form->renderField('jed_internal_note',null,null);
-echo $extension_form->renderField('can_update',null,null);
-echo $extension_form->renderField('video',null,null);
-echo $extension_form->renderField('version',null,null);
-echo $extension_form->renderField('uses_updater',null,null);
-// echo $extension_form->renderField('includes',null,null);
-echo $extension_form->renderField('approved',null,null);
-echo $extension_form->renderField('approved_time',null,null);
-echo $extension_form->renderField('second_contact_email',null,null);
-echo $extension_form->renderField('jed_checked',null,null);
-echo $extension_form->renderField('uses_third_party',null,null);
-echo $extension_form->renderField('primary_category_id',null,null);
-echo $extension_form->renderField('logo',null,null);
-echo $extension_form->renderField('approved_notes',null,null);
-echo $extension_form->renderField('approved_reason',null,null);
-echo $extension_form->renderField('published_notes',null,null);
-echo $extension_form->renderField('published_reason',null,null);
-echo $extension_form->renderField('state',null,null);
-echo HTMLHelper::_('uitab.endTab'); */
-$varied_form = $displayData->varied_form;
-//JedHelper::lockFormFields($varied_form,array(''));
-//echo "<pre>";print_r($displayData->varied_data);echo "</pre>";exit();
-foreach ($displayData->varied_data as $vr) {
-    $varied_form->bind($vr);
-    echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'viewextensionsupply_tab_' . $vr->supply_type, Text::_($vr->supply_type, true) . '&nbsp;' . Text::_('COM_JED_GENERAL_VERSION_LABEL', true));
-    echo $varied_form->renderFieldset('info');
-
-    echo $varied_form->renderField('tags');
-    echo $varied_form->renderField('state');
-    echo $varied_form->renderField('created_by');
+    $fieldsets['integration']['supply_type'] = $st->supply_option_type;
+    $fieldsets['integration']['title']       = Text::_('COM_JED_EXTENSION_INTEGRATION_TITLE');
+    $fieldsets['integration']['description'] = Text::_('COM_JED_EXTENSION_INTEGRATION_DESCR');
+    $fieldsets['integration']['fields']      = [['download_integration_type', 'download_integration_url']];
+    $fieldsets['integration']['hidden']      = [];
+    JedHelper::lockFormFields($varied_form, ['']);
+    JedHelper::outputFieldsets($fieldsets, $varied_form);
+    $fieldsets = [];
 
     echo HTMLHelper::_('uitab.endTab');
 }
-echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'viewextensionreviews', Text::_('Reviews', true));
-?>
-    <table id="reviewsTable" class="display" style="width:100%">
-        <thead>
-        <tr>
-            <th></th>
-            <th>Title</th>
-            <th>Score</th>
-            <th>Created By</th>
-            <th>Date Created</th>
-        </tr>
-        </thead>
-        <tbody>
 
-        </tbody>
-        <tfoot>
-        <tr>
-            <th>&nbsp;</th>
-            <th>Title</th>
-            <th>Score</th>
-            <th>Created By</th>
-            <th>Date Created</th>
-        </tr>
-        </tfoot>
-    </table>
-<?php
-echo HTMLHelper::_('uitab.endTab');
+
 
 echo HTMLHelper::_('uitab.endTabSet');
-//echo "<pre>";
-//print_r($displayData);
-//echo "</pre>";
-//$rawData = $displayData->getData();
 
-$reviews = json_encode($displayData->reviews['Free'], JSON_HEX_QUOT | JSON_HEX_TAG);
-// Populate the media config
-$config = [
-    'outputJson' => $reviews,
-    'table_id'   => 'reviewsTable',
-];
-
-
-try {
-    $doc = Factory::getApplication()->getDocument();
-    $doc->addScriptOptions('com_jed', $config);
-    $wa = $doc->getWebAssetManager();
-    $wa->useScript('com_jed.reviews_data');
-} catch (Exception $e) {
-}
 
 
 ?>

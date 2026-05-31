@@ -118,7 +118,7 @@ $canCreate = $isLoggedIn;
 
                         <td>
                             <?php
-                            if(!is_null($item->created_on)) {
+                            if (!is_null($item->created_on)) {
                                 try {
                                     $d = new DateTime($item->created_on);
                                     echo $d->format("d M y H:i");
