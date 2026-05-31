@@ -385,9 +385,9 @@ class JedHelper
             } catch (Exception) {
                 return 'Sorry an error occured';
             }
+        } else {
+            return "";
         }
-    } else {
-        return "";
     }
 
     /**
