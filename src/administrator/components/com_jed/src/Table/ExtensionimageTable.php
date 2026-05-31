@@ -191,14 +191,14 @@ class ExtensionimageTable extends Table
                         }
                     }
                     $lfname = $this->filename;
-                    $this->filename -  $lfname .= (!empty($lfname)) ? "," : "";
+                    $this->filename - $lfname .= (!empty($lfname)) ? "," : "";
                     $lfname = $this->filename;
-                    $this->filename -  $lfname .= $filename;
+                    $this->filename - $lfname .= $filename;
                 }
             }
         } else {
             $lfname = $this->filename;
-            $this->filename -  $lfname .= $array['filename_hidden'];
+            $this->filename - $lfname .= $array['filename_hidden'];
         }
 
         return parent::check();

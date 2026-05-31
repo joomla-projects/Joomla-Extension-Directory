@@ -134,7 +134,7 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
-        $app  = Factory::getApplication();
+        $app   = Factory::getApplication();
         $model = $this->getModel();
         $model->setUseExceptions(true);
 
@@ -147,7 +147,7 @@ class HtmlView extends BaseHtmlView
             $this->state         = $model->getState();
             $this->params        = $app->getParams('com_jed');
         } catch (Exception $e) {
-                throw new GenericDataException($e->getMessage(), 500, $e);
+            throw new GenericDataException($e->getMessage(), 500, $e);
         }
 
 

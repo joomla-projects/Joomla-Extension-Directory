@@ -61,7 +61,7 @@ class TicketmessageformModel extends FormModel
     public function checkin($pk = null): bool
     {
         // Get the id.
-        $pk = ( ! empty($pk)) ? $pk : (int)$this->getState('ticketmessage.id');
+        $pk = (! empty($pk)) ? $pk : (int)$this->getState('ticketmessage.id');
         if (! $pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($pk) {
                 // Initialise the table
@@ -94,7 +94,7 @@ class TicketmessageformModel extends FormModel
     public function checkout($pk = null): bool
     {
         // Get the user id.
-        $pk = ( ! empty($pk)) ? $pk : (int)$this->getState('ticketmessage.id');
+        $pk = (! empty($pk)) ? $pk : (int)$this->getState('ticketmessage.id');
         if (! $pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
             if ($pk) {
                 // Initialise the table
@@ -351,7 +351,7 @@ class TicketmessageformModel extends FormModel
      */
     public function save(array $data): bool
     {
-        $id = ( ! empty($data['id'])) ? $data['id'] : (int)$this->getState('ticketmessage.id');
+        $id = (! empty($data['id'])) ? $data['id'] : (int)$this->getState('ticketmessage.id');
 
         $isLoggedIn = JedHelper::isLoggedIn();
 

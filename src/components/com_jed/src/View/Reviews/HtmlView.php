@@ -53,16 +53,16 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
-        $app  = Factory::getApplication();
+        $app   = Factory::getApplication();
         $model = $this->getModel();
         $model->setUseExceptions(true);
         try {
-                $this->state      = $model->getState();
-                $this->items       = $model->getItems();
-                $this->params     = $app->getParams('com_jed');
-                $this->pagination    = $model->getPagination();
-                $this->filterForm    = $model->getFilterForm();
-                $this->activeFilters = $model->getActiveFilters();
+            $this->state         = $model->getState();
+            $this->items         = $model->getItems();
+            $this->params        = $app->getParams('com_jed');
+            $this->pagination    = $model->getPagination();
+            $this->filterForm    = $model->getFilterForm();
+            $this->activeFilters = $model->getActiveFilters();
         } catch (\Exception $e) {
             throw new GenericDataException($e->getMessage(), 500, $e);
         }

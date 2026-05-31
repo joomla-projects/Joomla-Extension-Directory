@@ -264,15 +264,15 @@ class ExtensionModel extends ItemModel
         return $this->item;
     }
 
-     /**
-      * Gets array of all reviews for extension
-      *
-      * @param int $extension_id
-      *
-      * @return array
-      *
-      * @since 4.0.0
-      */
+    /**
+     * Gets array of all reviews for extension
+     *
+     * @param int $extension_id
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
     public function getReviews(int $extension_id): array
     {
         $ret = [
@@ -310,8 +310,8 @@ class ExtensionModel extends ItemModel
     public function getScores(int $extension_id): array
     {
         $retval = null;
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true)
+        $db     = $this->getDatabase();
+        $query  = $db->getQuery(true)
             ->select('*')
             ->from($db->quoteName('#__jed_extension_scores'))
             ->where($db->quoteName('extension_id') . ' = :extension_id')
@@ -592,8 +592,8 @@ class ExtensionModel extends ItemModel
     public function getVariedData(int $extension_id, int $supply_option_type = null): array
     {
         $retval = null;
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true)
+        $db     = $this->getDatabase();
+        $query  = $db->getQuery(true)
             ->select('supply_options.title AS supply_type, a.*')
             ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
             ->leftJoin(

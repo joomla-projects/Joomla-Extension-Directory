@@ -78,7 +78,7 @@ class HtmlView extends BaseHtmlView
 
             foreach ($this->extension->varied as $varied) {
                 $this->extensionvarieddata[$varied->supply_option_id] = $varied;
-                $tmp_form = $extensionvarieddatum->getForm($varied, false, 'extension_varieddata_form_' . $varied->supply_option_id);
+                $tmp_form                                             = $extensionvarieddatum->getForm($varied, false, 'extension_varieddata_form_' . $varied->supply_option_id);
                 $tmp_form->bind($varied);
                 $this->extensionvarieddatum_form[$varied->supply_option_id] = $tmp_form;
             }

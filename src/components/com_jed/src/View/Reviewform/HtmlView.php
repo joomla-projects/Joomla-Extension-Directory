@@ -85,7 +85,7 @@ class HtmlView extends BaseHtmlView
             $this->state      = $model->getState();
             $this->item       = $model->getItem();
             $this->params     = $app->getParams('com_jed');
-            $this->canSave = JedHelper::canSave();
+            $this->canSave    = JedHelper::canSave();
             $this->form       = $model->getForm();
 
             $input        = $app->input;

@@ -253,7 +253,7 @@ class HtmlView extends BaseHtmlView
                 $extension_model = new ExtensionModel();
                 $extension_model->setUseExceptions(true);
 
-                $extension_id    = $this->linked_item_id;
+                $extension_id                = $this->linked_item_id;
                 $this->related_object_string = "Extension is displayed in 'Linked Extensions' tab.";
 
                 try {
@@ -270,7 +270,7 @@ class HtmlView extends BaseHtmlView
                     $extensionvarieddatum->setuseExceptions(true);
                     foreach ($this->linked_extension_data->varied as $varied) {
                         $this->linked_extension_varieddata[$varied->supply_option_id] = $varied;
-                        $tmp_form = $extensionvarieddatum->getForm($varied, false, 'jf_linked_extension_varieddata_form_' . $varied->supply_option_id);
+                        $tmp_form                                                     = $extensionvarieddatum->getForm($varied, false, 'jf_linked_extension_varieddata_form_' . $varied->supply_option_id);
                         $tmp_form->bind($varied);
                         $this->linked_extension_data->varied_form[$varied->supply_option_id] = $tmp_form;
                     }

@@ -29,7 +29,7 @@ extract($displayData);
     <?php foreach ($form->getFieldsets() as $fieldset) : ?>
     <td class="<?php if (!empty($fieldset->class)) {
         echo $fieldset->class;
-               } ?>">
+    } ?>">
         <?php foreach ($form->getFieldset($fieldset->name) as $field) : ?>
             <?php echo $field->renderField(); ?>
         <?php endforeach; ?>

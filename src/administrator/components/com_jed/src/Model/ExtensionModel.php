@@ -127,7 +127,7 @@ class ExtensionModel extends AdminModel
                         $this->item->alias      = $vitem->alias;
                         $this->item->intro_text = $vitem->intro_text;
                     }
-                    $vitem->uploaded_file = $this->getFilename($vitem->extension_id, $st->supply_id);
+                    $vitem->uploaded_file               = $this->getFilename($vitem->extension_id, $st->supply_id);
                     $this->item->varied[$st->supply_id] = $vitem;
                 }
             }
@@ -342,7 +342,7 @@ class ExtensionModel extends AdminModel
      */
     public function getReviews(int $extension_id): array
     {
-        $db = $this->getDatabase();
+        $db     = $this->getDatabase();
         $retval = [];
 
         $query = $db->getQuery(true);
@@ -584,9 +584,9 @@ class ExtensionModel extends AdminModel
      */
     public function getVariedData(int $extension_id, int $supply_option_type = null): array
     {
-        $db    = $this->getDatabase();
+        $db     = $this->getDatabase();
         $retval = [];
-        $query = $db->getQuery(true)->select('supply_options.title AS supply_type, a.*')->from($db->quoteName('#__jed_extension_varied_data', 'a'))->leftJoin(
+        $query  = $db->getQuery(true)->select('supply_options.title AS supply_type, a.*')->from($db->quoteName('#__jed_extension_varied_data', 'a'))->leftJoin(
             $db->quoteName('#__jed_extension_supply_options', 'supply_options') . ' ON ' . $db->quoteName('supply_options.id') . ' = ' . $db->quoteName('a.supply_option_id')
         )->where($db->quoteName('extension_id') . ' = :extension_id')->bind(':extension_id', $extension_id, ParameterType::INTEGER);
 

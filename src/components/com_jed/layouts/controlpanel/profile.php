@@ -34,12 +34,12 @@ $wa->useScript('keepalive')
 
 
     <form id="member-profile" action="<?php echo Route::_('index.php?option=com_users'); ?>" method="post" class="com-users-profile__edit-form form-validate form-horizontal well" enctype="multipart/form-data">
-        <?php // Iterate through the form fieldsets and display each one. ?>
+        <?php // Iterate through the form fieldsets and display each one.?>
         <?php foreach ($displayData->getFieldsets() as $group => $fieldset) : ?>
             <?php $fields = $displayData->getFieldset($group); ?>
             <?php if (count($fields)) : ?>
                 <fieldset>
-                    <?php // If the fieldset has a label set, display it as the legend. ?>
+                    <?php // If the fieldset has a label set, display it as the legend.?>
                     <?php if (isset($fieldset->label)) : ?>
                         <legend>
                             <?php echo Text::_($fieldset->label); ?>
@@ -50,7 +50,7 @@ $wa->useScript('keepalive')
                             <?php echo $this->escape(Text::_($fieldset->description)); ?>
                         </p>
                     <?php endif; ?>
-                    <?php // Iterate through the fields in the set and display them. ?>
+                    <?php // Iterate through the fields in the set and display them.?>
                     <?php foreach ($fields as $field) : ?>
                         <?php echo $field->renderField(); ?>
                     <?php endforeach; ?>

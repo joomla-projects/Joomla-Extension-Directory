@@ -84,26 +84,26 @@ class HtmlView extends BaseHtmlView
         $model        = $this->getModel();
         $model->setUseExceptions(true);
         try {
-                $profileModel = Factory::getApplication()->bootComponent('com_users')
-                    ->getMVCFactory()->createModel('Profile', 'Site');
-                $this->profiledata               = $profileModel->getData();
-                $this->profileform               = $profileModel->getForm();
-                $this->profilestate              = $profileModel->getState();
-                $this->profileparams             = ComponentHelper::getParams('com_users');
-                $this->profilemfaConfigurationUI = Mfa::getConfigurationInterface($user);
+            $profileModel = Factory::getApplication()->bootComponent('com_users')
+                ->getMVCFactory()->createModel('Profile', 'Site');
+            $this->profiledata               = $profileModel->getData();
+            $this->profileform               = $profileModel->getForm();
+            $this->profilestate              = $profileModel->getState();
+            $this->profileparams             = ComponentHelper::getParams('com_users');
+            $this->profilemfaConfigurationUI = Mfa::getConfigurationInterface($user);
 
-                $ticketsModel       = new TicketsModel();
-                $this->ticket_items = $ticketsModel->getItems();
+            $ticketsModel       = new TicketsModel();
+            $this->ticket_items = $ticketsModel->getItems();
 
-                $extensionModel = new ExtensionsModel();
-                $this->extension_items = $extensionModel->getMyItems();
+            $extensionModel        = new ExtensionsModel();
+            $this->extension_items = $extensionModel->getMyItems();
 
-                $this->pagination    = $ticketsModel->getPagination();
-                $this->filterForm    = $ticketsModel->getFilterForm();
-                $this->activeFilters = $ticketsModel->getActiveFilters();
+            $this->pagination    = $ticketsModel->getPagination();
+            $this->filterForm    = $ticketsModel->getFilterForm();
+            $this->activeFilters = $ticketsModel->getActiveFilters();
 
-                $this->state  = $model->getState();
-                $this->params = Factory::getApplication()->getParams();
+            $this->state  = $model->getState();
+            $this->params = Factory::getApplication()->getParams();
         } catch (\Exception $e) {
             throw new GenericDataException($e->getMessage(), 500, $e);
         }

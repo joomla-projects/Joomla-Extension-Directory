@@ -56,7 +56,7 @@ class HtmlView extends BaseHtmlView
     {
         $app          = Factory::getApplication();
         $user         = Factory::getApplication()->getIdentity();
-        $model = $this->getModel();
+        $model        = $this->getModel();
         $model->setUseExceptions(true);
         try {
             $this->state  = $model->getState();
