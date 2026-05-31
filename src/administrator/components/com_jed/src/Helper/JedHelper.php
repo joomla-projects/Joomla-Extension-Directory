@@ -377,16 +377,18 @@ class JedHelper
      **/
     public static function prettyDate(mixed $datestr): string
     {
+        if (! is_null($datestr)) {
+            try {
+                $d = new DateTime($datestr);
 
-        try {
-            $d = new DateTime($datestr);
-
-            return $d->format("d M y H:i");
-        } catch (Exception) {
-            return 'Sorry an error occured';
+                return $d->format("d M y H:i");
+            } catch (Exception) {
+                return 'Sorry an error occured';
+            }
         }
+    } else {
+        return "";
     }
-
 
     /**
      * outputFieldsets
