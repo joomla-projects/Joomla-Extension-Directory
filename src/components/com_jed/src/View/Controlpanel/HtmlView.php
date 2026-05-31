@@ -84,7 +84,6 @@ class HtmlView extends BaseHtmlView
         $model        = $this->getModel();
         $model->setUseExceptions(true);
         try {
-
                 $profileModel = Factory::getApplication()->bootComponent('com_users')
                     ->getMVCFactory()->createModel('Profile', 'Site');
                 $this->profiledata               = $profileModel->getData();

@@ -73,7 +73,8 @@ class HtmlView extends BaseHtmlView
         ToolBarHelper::title('Setup Demo Menu');
         $user = $this->getCurrentUser();
 
-        if ($user->authorise('core.admin', 'com_jed')
+        if (
+            $user->authorise('core.admin', 'com_jed')
             || $user->authorise(
                 'core.options',
                 'com_jed'

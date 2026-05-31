@@ -19,7 +19,6 @@
 		<field name="primary_category_id" extension="com_jed" type="jedcategory" published="1" multiple="false"
 			   label="COM_JED_GENERAL_CATEGORY_ID_LABEL"
 			   hint="COM_JED_GENERAL_CATEGORY_ID_LABEL"/>
-
         <field
                 name="includes"
                 type="checkboxes"

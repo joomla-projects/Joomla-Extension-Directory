@@ -84,7 +84,8 @@ class HtmlView extends BaseHtmlView
 
         $user = $this->getCurrentUser();
 
-        if ($user->authorise('core.admin', 'com_jed')
+        if (
+            $user->authorise('core.admin', 'com_jed')
             || $user->authorise('core.options', 'com_jed')
         ) {
             $toolbar = $this->getDocument()->getToolbar();

@@ -154,15 +154,15 @@ class ExtensionimageTable extends Table
 
                 if ($fileError > 0 && $fileError != 4) {
                     switch ($fileError) {
-                    case 1:
-                        $message = Text::_('File size exceeds allowed by the server');
-                        break;
-                    case 2:
-                        $message = Text::_('File size exceeds allowed by the html form');
-                        break;
-                    case 3:
-                        $message = Text::_('Partial upload error');
-                        break;
+                        case 1:
+                            $message = Text::_('File size exceeds allowed by the server');
+                            break;
+                        case 2:
+                            $message = Text::_('File size exceeds allowed by the html form');
+                            break;
+                        case 3:
+                            $message = Text::_('Partial upload error');
+                            break;
                     }
 
                     if ($message != '') {
@@ -222,13 +222,13 @@ class ExtensionimageTable extends Table
             $checkImageVariableType = gettype($this->filename);
 
             switch ($checkImageVariableType) {
-            case 'string':
-                File::delete(JPATH_ROOT . '/tmp/' . $this->filename);
-                break;
-            default:
-                foreach ($this->filename as $filenameFile) {
-                    File::delete(JPATH_ROOT . '/tmp/' . $filenameFile);
-                }
+                case 'string':
+                    File::delete(JPATH_ROOT . '/tmp/' . $this->filename);
+                    break;
+                default:
+                    foreach ($this->filename as $filenameFile) {
+                        File::delete(JPATH_ROOT . '/tmp/' . $filenameFile);
+                    }
             }
         }
 

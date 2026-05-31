@@ -268,13 +268,12 @@ class HtmlView extends BaseHtmlView
 
                     $extensionvarieddatum            = new ExtensionvarieddatumModel();
                     $extensionvarieddatum->setuseExceptions(true);
-                    foreach($this->linked_extension_data->varied as $varied) {
+                    foreach ($this->linked_extension_data->varied as $varied) {
                         $this->linked_extension_varieddata[$varied->supply_option_id] = $varied;
-                        $tmp_form = $extensionvarieddatum->getForm($varied, false, 'jf_linked_extension_varieddata_form_'.$varied->supply_option_id);
+                        $tmp_form = $extensionvarieddatum->getForm($varied, false, 'jf_linked_extension_varieddata_form_' . $varied->supply_option_id);
                         $tmp_form->bind($varied);
                         $this->linked_extension_data->varied_form[$varied->supply_option_id] = $tmp_form;
                     }
-
                 } catch (\Exception $e) {
                     throw new GenericDataException($e->getMessage(), 500, $e);
                 }
@@ -310,7 +309,7 @@ class HtmlView extends BaseHtmlView
                     $extensionvarieddatum = new ExtensionvarieddatumModel();
                     $extensionvarieddatum->setuseExceptions(true);
                     foreach ($this->linked_extension_data->varied as $varied) {
-                        $tmp_form = $extensionvarieddatum->getForm($varied, false, 'jf_linked_extension_varieddata_form');
+                        $tmp_form = $extensionvarieddatum->getForm($varied, false, 'jf_linked_extension_varieddata_form_' . $varied->supply_option_id);
                         $tmp_form->bind($varied);
                         $this->linked_extension_data->varied_form[$varied->supply_option_id] = $tmp_form;
                     }

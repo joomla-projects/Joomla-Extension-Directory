@@ -131,6 +131,7 @@ class JedCategoryField extends ListField
         $query  = $db->getQuery(true);
         $query->select('a.id AS value, a.title AS text, a.level')->from('#__categories AS a')->leftJoin('#__categories AS b ON a.lft > b.lft AND a.rgt < b.rgt')->where('a.published = 1 AND a.level >= 1 AND a.extension = ' . $db->q($option))->group('a.id, a.title, a.level, a.lft, a.rgt, a.extension, a.parent_id')->order(' a.lft ASC ')->where('a.access IN (' . implode(',', $user->getAuthorisedViewLevels()) . ')');
         $db->setQuery($query);
+
         $this->cats = $db->loadObjectList();
 
         $ordered  = [];

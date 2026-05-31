@@ -79,7 +79,6 @@ $this->getDocument()
         <?php endforeach; ?>
 <?php
 foreach ($this->extension->varied as $st) {
-
     echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'varied-' . $st->supply_option_id, Text::_($st->supply_option_type));
 
     $varied_form                          = $this->extension->varied_form[$st->supply_option_id];
@@ -122,8 +121,7 @@ echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'viewextensionreviews', Text:
 
                     $slideid = 0;
 
-                    foreach ($this->extension->reviews as $key =>$rtype) {
-
+                    foreach ($this->extension->reviews as $key => $rtype) {
                         echo HTMLHelper::_('bootstrap.startAccordion', 'extension_' . $key . '_reviews_group', $slidesOptions);
                         foreach ($rtype as $review) {
                             $review = (object)$review;

@@ -173,7 +173,8 @@ class ExtensionModel extends ItemModel
 
             // Attempt to load the row.
             if ($table && $table->load($pk)) { // Check published state.
-                if (($published = $this->getState('filter.published')) && isset($table->state)
+                if (
+                    ($published = $this->getState('filter.published')) && isset($table->state)
                     && $table->state != $published
                 ) {
                     throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 403);

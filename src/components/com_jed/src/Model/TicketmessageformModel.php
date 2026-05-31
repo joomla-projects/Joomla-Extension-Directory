@@ -296,8 +296,9 @@ class TicketmessageformModel extends FormModel
             if ($table !== false && $table->load($id) && ! empty($table->id)) {
                 $user = Factory::getApplication()->getIdentity();
 
-                if (JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity(
-                )->id
+                if (
+                    JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity(
+                    )->id
                 ) {
                     $canEdit = $user->authorise('core.edit', 'com_jed') || $user->authorise('core.create', 'com_jed');
 

@@ -41,7 +41,7 @@ class JedHelper
      *
      * @since 4.0.0
      */
-    public static function addConfigToolbar(Toolbar $bar) : void
+    public static function addConfigToolbar(Toolbar $bar): void
     {
         $bar->linkButton('tickets')->text(Text::_('COM_JED_TITLE_TICKETS'))->url('index.php?option=com_jed&view=tickets')->icon('fa fa-ticket-alt');
         $bar->linkButton('vulnerable')->text('Vulnerable Items')->url('index.php?option=com_jed&view=velvulnerableitems')->icon('fa fa-bug');
@@ -209,21 +209,21 @@ class JedHelper
     public static function getApprovedIcon(int $state): string
     {
         switch ($state) { //Rejected
-        case '-1':
-            $icon = 'unpublish';
-            break;
-        case '1':// Approved
-            $icon = 'publish';
-            break;
+            case '-1':
+                $icon = 'unpublish';
+                break;
+            case '1':// Approved
+                $icon = 'publish';
+                break;
 
-        case '2':// Awaiting response
-            $icon = 'expired';
-            break;
+            case '2':// Awaiting response
+                $icon = 'expired';
+                break;
 
-        case '0':// Pending
-        default:
-            $icon = 'pending';
-            break;
+            case '0':// Pending
+            default:
+                $icon = 'pending';
+                break;
         }
 
         return '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
@@ -265,21 +265,21 @@ class JedHelper
     public static function getPublishedIcon(int $state): string
     {
         switch ($state) { //Rejected
-        case '-1':
-            $icon = 'unpublish';
-            break;
-        case '1':// Approved
-            $icon = 'publish';
-            break;
+            case '-1':
+                $icon = 'unpublish';
+                break;
+            case '1':// Approved
+                $icon = 'publish';
+                break;
 
-        case '2':// Awaiting response
-            $icon = 'expired';
-            break;
+            case '2':// Awaiting response
+                $icon = 'expired';
+                break;
 
-        case '0':// Pending
-        default:
-            $icon = 'pending';
-            break;
+            case '0':// Pending
+            default:
+                $icon = 'pending';
+                break;
         }
 
         return '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
@@ -301,7 +301,7 @@ class JedHelper
             $userFactory = $container->get('user.factory');
 
             return $userFactory->loadUserById($userId);
-        } catch (Exception)  {
+        } catch (Exception) {
             return new User\User();
         }
     }
@@ -319,7 +319,7 @@ class JedHelper
             $user = self::getUser();
 
             return in_array("8", $user->groups) || in_array("7", $user->groups);
-        } catch (Exception ) {
+        } catch (Exception) {
             return false;
         }
     }
@@ -337,7 +337,7 @@ class JedHelper
             /* @var $app \Joomla\CMS\Application\SiteApplication */
             $app = Factory::getApplication();
             return $app->getSession()->get('user');
-        } catch (Exception ) {
+        } catch (Exception) {
             return new User\User();
         }
     }
@@ -361,7 +361,7 @@ class JedHelper
             if (!in_array($field->getAttribute('name'), $excluded)) {
                 $form->setFieldAttribute($field->getAttribute('name'), 'disabled', 'true');
                 //    $form->setFieldAttribute($field->getAttribute('name'), 'class', 'readonly');
-                $form->setFieldAttribute($field->getAttribute('name'), 'readonly', 'true');
+              //  $form->setFieldAttribute($field->getAttribute('name'), 'readonly', 'true');
             }
         endforeach;
 
@@ -382,7 +382,7 @@ class JedHelper
             $d = new DateTime($datestr);
 
             return $d->format("d M y H:i");
-        } catch (Exception ) {
+        } catch (Exception) {
             return 'Sorry an error occured';
         }
     }
@@ -439,13 +439,11 @@ class JedHelper
                     }
                     echo $form->renderField($field[1], null, null, ['class' => 'control-wrapper-' . $field[1]]);
                     echo '</div></div>';
-                }
-                else
-                {
+                } else {
                     if (in_array($field, $hiddenFields)) {
                         $form->setFieldAttribute($field, 'type', 'hidden');
                     }
-                    echo $form->renderField($field, null, null, ['class' => 'control-wrapper-'.$field]);
+                    echo $form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
                 }
             }
         }

@@ -142,8 +142,7 @@ if (!$isLoggedIn) {
                     if (in_array($field, $hiddenFields)) {
                         $this->form->setFieldAttribute($field, 'type', 'hidden');
                     }
-                    if($this->read_only) {
-
+                    if ($this->read_only) {
                         $this->form->setFieldAttribute($field, 'disabled', 'true');
                     }
                     echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);

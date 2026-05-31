@@ -127,22 +127,22 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                                 <?php
                                 switch ($item->published) {
                                     // Rejected
-                                case '-1':
-                                    $icon = 'unpublish';
-                                    break;
+                                    case '-1':
+                                        $icon = 'unpublish';
+                                        break;
                                         // Approved
-                                case '1':
-                                    $icon = 'publish';
-                                    break;
+                                    case '1':
+                                        $icon = 'publish';
+                                        break;
                                         // Awaiting response
-                                case '2':
-                                    $icon = 'expired';
-                                    break;
+                                    case '2':
+                                        $icon = 'expired';
+                                        break;
                                         // Pending
-                                case '0':
-                                default:
-                                    $icon = 'pending';
-                                    break;
+                                    case '0':
+                                    default:
+                                        $icon = 'pending';
+                                        break;
                                 }
                                 echo '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
                                 ?>
@@ -151,22 +151,22 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                                 <?php
                                 switch ($item->approved) {
                                     // Rejected
-                                case '-1':
-                                    $icon = 'unpublish';
-                                    break;
+                                    case '-1':
+                                        $icon = 'unpublish';
+                                        break;
                                 // Approved
-                                case '1':
-                                    $icon = 'publish';
-                                    break;
+                                    case '1':
+                                        $icon = 'publish';
+                                        break;
                                 // Awaiting response
-                                case '2':
-                                    $icon = 'expired';
-                                    break;
+                                    case '2':
+                                        $icon = 'expired';
+                                        break;
                                 // Pending
-                                case '0':
-                                default:
-                                    $icon = 'pending';
-                                    break;
+                                    case '0':
+                                    default:
+                                        $icon = 'pending';
+                                        break;
                                 }
                                 echo '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
                                 ?>

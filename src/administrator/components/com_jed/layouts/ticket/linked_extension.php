@@ -37,7 +37,7 @@ $fieldhiddenoptions = ['hidden' => true];
 
 $extension_form = $displayData->extension_form;
 $title          = $extension_form->getField('title') ? 'title' : ($extension_form->getField('name') ? 'name' : '');
-JedHelper::lockFormFields($extension_form, ['']);
+JedHelper::lockFormFields($extension_form, ['primary_category_id']);
 ?>
     <div class="row title-alias form-vertical mb-3">
         <div class="col-12 col-md-6">
@@ -67,7 +67,7 @@ foreach ($displayData->varied as $st) {
     echo HTMLHelper::_(
         'uitab.addTab',
         'viewExtensionTab',
-        'varied-'.$st->supply_option_id,
+        'varied-' . $st->supply_option_id,
         Text::_($st->supply_option_type)
     );
 
@@ -97,7 +97,7 @@ foreach ($displayData->varied as $st) {
     $fieldsets['integration']['description'] = Text::_('COM_JED_EXTENSION_INTEGRATION_DESCR');
     $fieldsets['integration']['fields']      = [['download_integration_type', 'download_integration_url']];
     $fieldsets['integration']['hidden']      = [];
-
+    JedHelper::lockFormFields($varied_form, ['']);
     JedHelper::outputFieldsets($fieldsets, $varied_form);
     $fieldsets = [];
 
