@@ -20,7 +20,10 @@ jobs:
           key: ${{ inputs.composer-cache-key }}-cache-v1
       - name: Install Composer dependencies
         shell: bash
-        run: composer install --no-progress --ignore-platform-reqs
+        run: |
+          git config --global --add safe.directory $GITHUB_WORKSPACE
+          composer config --global home
+          composer install --no-progress --ignore-platform-reqs
 
   phpcs:
     runs-on: ubuntu-latest
