@@ -176,7 +176,7 @@ try {
     $doc->addScriptOptions('com_jed', $config);
     $wa = $doc->getWebAssetManager();
     $wa->useScript('com_jed.reviews_data');
-} catch (Exception $e) {
+} catch (Exception) {
 }
 
 

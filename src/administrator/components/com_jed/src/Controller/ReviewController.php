@@ -39,9 +39,9 @@ class ReviewController extends FormController
     {
         //  Session::checkToken('post') or die;
         $app       = Factory::getApplication();
-        $review_id = $app->input->get('itemId', 0, 'int');
+        $review_id = $app->getInput()->get('itemId', 0, 'int');
 
-        $option_id = $app->input->get('optionId', 0, 'int');
+        $option_id = $app->getInput()->get('optionId', 0, 'int');
         $db        = Factory::getContainer()->get('DatabaseDriver');
 
         $fields     = [$db->quoteName('published') . ' = ' . $db->quote($option_id)];

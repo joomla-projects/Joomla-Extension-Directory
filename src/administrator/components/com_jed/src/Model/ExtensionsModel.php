@@ -40,69 +40,32 @@ class ExtensionsModel extends ListModel
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = [
                 'id', 'a.id',
-                'title', 'varied.title',
-                'alias', 'varied.alias',
-                'published', 'a.published',
+                'name', 'a.name',
+                'alias', 'a.alias',
+                'state', 'a.state',
+                'catid', 'a.catid',
+                'owner', 'a.owner',
                 'created_by', 'a.created_by',
+                'created', 'a.created',
                 'modified_by', 'a.modified_by',
-                'created_on', 'a.created_on',
-                'modified_on', 'a.modified_on',
+                'modified', 'a.modified',
                 'joomla_versions', 'a.joomla_versions',
                 'popular', 'a.popular',
                 'requires_registration', 'a.requires_registration',
-                'gpl_license_type', 'a.gpl_license_type',
-                'jed_internal_note', 'a.jed_internal_note',
-                'can_update', 'a.can_update',
+                'license', 'a.license',
                 'video', 'a.video',
-                'version', 'a.version',
+                'extension_version', 'a.extension_version',
                 'uses_updater', 'a.uses_updater',
-                'includes', 'a.includes',
+                'type', 'a.type',
+                'extension_types', 'a.extension_types',
                 'approved', 'a.approved',
                 'approved_time', 'a.approved_time',
-                'second_contact_email', 'a.second_contact_email',
-                'jed_checked', 'a.jed_checked',
-                'uses_third_party', 'a.uses_third_party',
-                'primary_category_id', 'a.primary_category_id',
-                'logo', 'a.logo',
                 'approved_notes', 'a.approved_notes',
                 'approved_reason', 'a.approved_reason',
-                'published_notes', 'a.published_notes',
-                'published_reason', 'a.published_reason',
-                'state', 'a.state',
             ];
         }
 
         parent::__construct($config);
-    }
-
-    /**
-     * Get an array of data items
-     *
-     * @return mixed Array of data items on success, false on failure.
-     *
-     * @since 4.0.0
-     */
-    public function getItems(): mixed
-    {
-        $items = parent::getItems();
-        $db    = $this->getDatabase();
-
-        $query = $db->getQuery(true)
-            ->select('COUNT(' . $db->quoteName('id') . ')')
-            ->from($db->quoteName('#__jed_reviews'));
-        if ($items) {
-            array_walk(
-                $items,
-                static function ($item) use ($db, $query) {
-                    $query->clear('where')->where($db->quoteName('extension_id') . ' = ' . (int) $item->id)->where($db->quoteName('published') . ' = 1');
-                    $db->setQuery($query);
-                    $item->reviewCount = $db->loadResult();
-                }
-            );
-            return $items;
-        } else {
-            return [];
-        }
     }
 
     /**
@@ -118,38 +81,36 @@ class ExtensionsModel extends ListModel
         $db = $this->getDatabase();
 
         $query = $db->getQuery(true)
-
-        // Select the required fields from the table.
-            // $query->select('varied.description as description, varied.title as title, varied.alias as alias');
-        //        $query->join('INNER', '#__jed_extension_varied_data AS varied ON varied.extension_id = a.id and varied.is_default_data=1');
             ->select(
                 $db->quoteName(
                     [
                     'a.id',
-                        'varied.title',
-                        'varied.alias',
+                    'a.name',
+                    'a.alias',
+                    'a.type',
                     'a.created_by',
-                    'a.modified_on',
-                    'a.created_on',
+                    'a.modified',
+                    'a.created',
                     'a.checked_out',
                     'a.checked_out_time',
                     'a.approved',
-                    'a.published',
+                    'a.state',
                     'categories.title',
                     'users.name',
                     'staff.name',
                     ],
                     [
                     'id',
-                    'title',
+                    'name',
                     'alias',
+                    'type',
                     'created_by',
-                    'modified_on',
-                    'created_on',
+                    'modified',
+                    'created',
                     'checked_out',
                     'checked_out_time',
                     'approved',
-                    'published',
+                    'state',
                     'category',
                     'developer',
                     'editor',
@@ -159,7 +120,7 @@ class ExtensionsModel extends ListModel
             ->from($db->quoteName('#__jed_extensions', 'a'))
             ->leftJoin(
                 $db->quoteName('#__categories', 'categories')
-                . ' ON ' . $db->quoteName('categories.id') . ' = ' . $db->quoteName('a.primary_category_id')
+                . ' ON ' . $db->quoteName('categories.id') . ' = ' . $db->quoteName('a.catid')
             )
             ->leftJoin(
                 $db->quoteName('#__users', 'users')
@@ -169,55 +130,48 @@ class ExtensionsModel extends ListModel
                 $db->quoteName('#__users', 'staff')
                 . ' ON ' . $db->quoteName('staff.id') . ' = ' . $db->quoteName('a.checked_out')
             )
-            ->leftJoin(
-                $db->quoteName('#__jed_extension_varied_data', 'varied')
-                . ' ON ' . $db->quoteName('varied.extension_id') . ' = ' . $db->quoteName('a.id')
+            ->select(
+                '(SELECT COUNT(*) FROM ' . $db->quoteName('#__jed_extensions_history') . ' h'
+                . ' WHERE ' . $db->quoteName('h.extension_id') . ' = ' . $db->quoteName('a.id') . ') AS '
+                . $db->quoteName('versions')
             )
-            ->leftJoin(
-                $db->quoteName('#__jed_extension_supply_options', 'supply_type')
-                . ' ON ' . $db->quoteName('supply_type.id') . ' = ' . $db->quoteName('varied.supply_option_id')
-            )
-            ->select('GROUP_CONCAT(`supply_type`.`title`) as type');
-
-        $query->where('varied.is_default_data=1');
+            ->select(
+                '(SELECT COUNT(*) FROM ' . $db->quoteName('#__jed_reviews') . ' r'
+                . ' WHERE ' . $db->quoteName('r.extension_id') . ' = ' . $db->quoteName('a.id') . ') AS '
+                . $db->quoteName('reviewCount')
+            );
 
         // Filter by published state
         $published = $this->getState('filter.state');
 
         if (is_numeric($published)) {
-            $query->where('a.state = ' . (int) $published);
-        } elseif (empty($published)) {
-            $query->where('(a.state IN (0, 1))');
+            $query->where($db->quoteName('a.state') . ' = ' . (int) $published);
+        } elseif ($published === '') {
+            $query->where('(' . $db->quoteName('a.state') . ' IN (0, 1))');
         }
 
-        // Filter by search in title
+        // Filter by search in name
         $search = $this->getState('filter.search');
 
         if (!empty($search)) {
-            if (stripos($search, 'id:') === 0) {
-                $query->where('a.id = ' . (int) substr($search, 3));
+            if (stripos((string) $search, 'id:') === 0) {
+                $query->where($db->quoteName('a.id') . ' = ' . (int) substr((string) $search, 3));
             } else {
                 $search = $db->quote('%' . $db->escape($search, true) . '%');
-                $query->where($db->quoteName('varied.title') . ' LIKE ' . $search);
+                $query->where($db->quoteName('a.name') . ' LIKE ' . $search);
             }
         }
 
         $categoryIds = $this->getState('filter.category_id');
 
         if ($categoryIds) {
-            $query->where($db->quoteName('a.primary_category_id') . ' IN (' . implode(',', $categoryIds) . ')');
-        }
-
-        $published = $this->getState('filter.published');
-
-        if (is_numeric($published)) {
-            $query->where($db->quoteName('a.state') . ' = ' . (int) $published);
+            $query->where($db->quoteName('a.catid') . ' IN (' . implode(',', array_map('intval', (array) $categoryIds)) . ')');
         }
 
         $approved = $this->getState('filter.approved', '');
 
         if ($approved !== '') {
-            $query->where($db->quoteName('a.approved') . ' = ' . $db->quote($approved));
+            $query->where($db->quoteName('a.approved') . ' = ' . (int) $approved);
         }
 
         $developerId = $this->getState('filter.developer_id');
@@ -226,34 +180,34 @@ class ExtensionsModel extends ListModel
             $query->where($db->quoteName('a.created_by') . ' = ' . (int) $developerId);
         }
 
-        $includes = $this->getState('filter.includes');
+        $extensionTypes = $this->getState('filter.extension_types');
 
-        if ($includes && $includes[0] !== '') {
-            $st = "(";
-            $o  = "";
-            foreach ($includes as $i) {
-                $o  = $o . $st . $db->quoteName('a.includes') . ' LIKE "%' . $i . '%"';
-                $st = " OR ";
+        if ($extensionTypes && $extensionTypes[0] !== '') {
+            $conditions = [];
+
+            foreach ($extensionTypes as $type) {
+                $conditions[] = $db->quoteName('a.extension_types') . ' LIKE ' . $db->quote('%' . $type . '%');
             }
-            $o = $o . ")";
-            $query->where($o);
+
+            $query->extendWhere('AND', $conditions, 'OR');
         }
 
-        $download_type = $this->getState('filter.download_type');
-        if ($download_type && $download_type !== '') {
-            $query->where($db->quoteName('supply_type.id') . ' = ' . $download_type);
+        $type = $this->getState('filter.type', '');
+
+        if ($type !== '') {
+            $query->where($db->quoteName('a.type') . ' = ' . $db->quote($type));
         }
 
         $developer = $this->getState('filter.developer', '');
 
         if ($developer !== '') {
-            $query->where($db->quoteName('users.name') . ' LIKE "%' . trim($developer) . '%"');
+            $query->where($db->quoteName('users.name') . ' LIKE ' . $db->quote('%' . trim((string) $developer) . '%'));
         }
         $query->group($db->quoteName('a.id'));
 
         // Add the list ordering clause.
         $orderCol  = $this->state->get('list.ordering', 'a.id');
-        $orderDirn = strtoupper($this->state->get('list.direction', 'DESC')) === 'ASC' ? 'ASC' : 'DESC';
+        $orderDirn = strtoupper((string) $this->state->get('list.direction', 'DESC')) === 'ASC' ? 'ASC' : 'DESC';
 
         if ($orderCol && in_array($orderCol, $this->filter_fields, true)) {
             $query->order($db->quoteName($orderCol) . ' ' . $orderDirn);

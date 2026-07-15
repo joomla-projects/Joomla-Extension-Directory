@@ -98,9 +98,9 @@ class ReviewTable extends Table
                 $src['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
             } else {
                 if ($app->get('unicodeslugs') == 1) {
-                    $src['alias'] = OutputFilter::stringURLUnicodeSlug(trim($src['title']));
+                    $src['alias'] = OutputFilter::stringURLUnicodeSlug(trim((string) $src['title']));
                 } else {
-                    $src['alias'] = OutputFilter::stringURLSafe(trim($src['title']));
+                    $src['alias'] = OutputFilter::stringURLSafe(trim((string) $src['title']));
                 }
             }
         }

@@ -15,7 +15,7 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Site\MediaHandling\ImageSize;
+use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
@@ -49,35 +49,29 @@ class ExtensionsModel extends ListModel
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = [
                 'id', 'a.id',
-                'title', 'a.title',
+                'name', 'a.name',
                 'alias', 'a.alias',
-                'published', 'a.published',
+                'catid', 'a.catid',
+                'state', 'a.state',
                 'created_by', 'a.created_by',
                 'modified_by', 'a.modified_by',
-                'created_on', 'a.created_on',
-                'modified_on', 'a.modified_on',
+                'created', 'a.created',
+                'modified', 'a.modified',
                 'joomla_versions', 'a.joomla_versions',
                 'popular', 'a.popular',
                 'requires_registration', 'a.requires_registration',
-                'gpl_license_type', 'a.gpl_license_type',
-                'jed_internal_note', 'a.jed_internal_note',
-                'can_update', 'a.can_update',
                 'video', 'a.video',
-                'version', 'a.version',
+                'extension_version', 'a.extension_version',
                 'uses_updater', 'a.uses_updater',
-                'includes', 'a.includes',
+                'extension_types', 'a.extension_types',
                 'approved', 'a.approved',
                 'approved_time', 'a.approved_time',
-                'second_contact_email', 'a.second_contact_email',
-                'jed_checked', 'a.jed_checked',
-                'uses_third_party', 'a.uses_third_party',
-                'primary_category_id', 'a.primary_category_id',
                 'logo', 'a.logo',
                 'approved_notes', 'a.approved_notes',
                 'approved_reason', 'a.approved_reason',
-                'published_notes', 'a.published_notes',
-                'published_reason', 'a.published_reason',
-                'state', 'a.state',
+                // Computed sort presets (see getListQuery()), not real columns.
+                'score_overall',
+                'reviewcount',
             ];
         }
 
@@ -101,35 +95,19 @@ class ExtensionsModel extends ListModel
      *
      * @since 4.0.0
      */
-    protected function populateState($ordering = null, $direction = null): void
+    protected function populateState($ordering = 'a.id', $direction = 'DESC'): void
     {
-        // List state information.
-        parent::populateState('a.id', 'ASC');
+        $app = Factory::getApplication();
 
-        $app  = Factory::getApplication();
-        $list = $app->getUserState($this->context . '.list');
-
-        $value         = $app->getUserState($this->context . '.list.limit', $app->get('list_limit', 25));
-        $list['limit'] = $value;
-
-        $this->setState('list.limit', $value);
-
-        $value = $app->input->get('limitstart', 0, 'uint');
-        $this->setState('list.start', $value);
-
-        $ordering  = $this->getUserStateFromRequest($this->context . '.filter_order', 'filter_order', 'a.id');
-        $direction = strtoupper($this->getUserStateFromRequest($this->context . '.filter_order_Dir', 'filter_order_Dir', 'ASC'));
-
-        if (!empty($ordering) || !empty($direction)) {
-            $list['fullordering'] = $ordering . ' ' . $direction;
-        }
-
-        $app->setUserState($this->context . '.list', $list);
-
-        $this->setState($this->context . 'catid', $app->input->getInt('id', 0));
+        $this->setState($this->context . 'catid', $app->getInput()->getInt('id', 0));
 
         $context = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
         $this->setState('filter.search', $context);
+
+        // "Compatible with J4/J5/J6": filters on the joomla_versions column against the ids in
+        // #__jed_joomla_versions (40/50/51 = J4/J5/J5 b-c, 60/61 = J6/J6 b-c). See getListQuery().
+        $joomlaVersion = $this->getUserStateFromRequest($this->context . '.filter.joomla_version', 'filter_joomla_version', '');
+        $this->setState('filter.joomla_version', $joomlaVersion);
 
         // Split context into component and optional section
         $parts = FieldsHelper::extract($context);
@@ -138,6 +116,11 @@ class ExtensionsModel extends ListModel
             $this->setState('filter.component', $parts[0]);
             $this->setState('filter.section', $parts[1]);
         }
+
+        // List state information: reads the standard "list_fullordering" request var (e.g.
+        // "score_overall DESC") and validates it against $this->filter_fields, falling back to
+        // the $ordering/$direction defaults above.
+        parent::populateState($ordering, $direction);
     }
 
     /**
@@ -165,7 +148,7 @@ class ExtensionsModel extends ListModel
         $query->from('#__jed_extensions AS a');
 
         $query->select('cat.title AS category_title');
-        $query->join('INNER', '#__categories AS cat ON cat.id=a.primary_category_id');
+        $query->join('INNER', '#__categories AS cat ON cat.id=a.catid');
         // Join over the users for the checked out user.
         $query->select('uc.name AS uEditor');
         $query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
@@ -174,12 +157,22 @@ class ExtensionsModel extends ListModel
         $query->select('created_by.name AS developer');
         $query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
 
-        // Join over the created by field 'modified_by'
+        // Join over the modified by field 'modified_by'
         $query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
 
-        //Join to Varied Data to get Default descriptive text
-        $query->select('varied.description as description, varied.title as title, varied.alias as alias');
-        $query->join('INNER', '#__jed_extension_varied_data AS varied ON varied.extension_id = a.id and varied.is_default_data=1');
+        // "Top Rated": average of the 5 sub-scores across all #__jed_extension_scores rows for
+        // this extension, mirroring the same math getItems() uses to compute $item->score.
+        $query->select(
+            '(SELECT COALESCE(AVG(('
+            . 's.functionality_score + s.ease_of_use_score + s.support_score'
+            . ' + s.value_for_money_score + s.documentation_score) / 5), 0)'
+            . ' FROM #__jed_extension_scores AS s WHERE s.extension_id = a.id) AS score_overall'
+        );
+
+        // "Most Reviewed": raw count of #__jed_reviews rows for this extension.
+        $query->select(
+            '(SELECT COUNT(*) FROM #__jed_reviews AS r WHERE r.extension_id = a.id) AS reviewcount'
+        );
 
         if (!Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed')) {
             $query->where('a.state = 1');
@@ -187,27 +180,34 @@ class ExtensionsModel extends ListModel
             $query->where('(a.state IN (0, 1))'); //Published 0=unpublished, 1=published, 2=unpublished by author
         }
 
-        // Filter by search in title
+        // Filter by search in name
         $search = $this->getState('filter.search');
 
         if (!empty($search)) {
-            if (stripos($search, 'id:') === 0) {
-                $query->where('a.id = ' . (int) substr($search, 3));
+            if (stripos((string) $search, 'id:') === 0) {
+                $query->where('a.id = ' . (int) substr((string) $search, 3));
             } else {
                 $search = $db->Quote('%' . $db->escape($search, true) . '%');
-                $query->where('(title LIKE ' . $search);
+                $query->where('(a.name LIKE ' . $search . ')');
             }
         }
 
-
         $category = $this->state->get($this->context . 'catid');
         if (!empty($category)) {
-            $query->where('a.primary_category_id =' . $category);
+            $query->where('a.catid = ' . (int) $category);
+        }
+
+        // "Compatible with J4/J5/J6": a.joomla_versions stores a JSON-ish array of
+        // #__jed_joomla_versions ids, e.g. ["40","50"], so a quoted LIKE reliably matches a
+        // single id regardless of how many other versions are listed alongside it.
+        $joomlaVersion = $this->getState('filter.joomla_version');
+        if (!empty($joomlaVersion)) {
+            $query->where('a.joomla_versions LIKE ' . $db->quote('%"' . $db->escape($joomlaVersion, true) . '"%'));
         }
 
         // Add the list ordering clause.
         $orderCol  = $this->state->get('list.ordering', 'a.id');
-        $orderDirn = $this->state->get('list.direction', 'ASC');
+        $orderDirn = $this->state->get('list.direction', 'DESC');
 
         if ($orderCol && $orderDirn) {
             $query->order($db->escape($orderCol . ' ' . $orderDirn));
@@ -251,11 +251,9 @@ class ExtensionsModel extends ListModel
     {
         $user  = Factory::getApplication()->getIdentity();
         $query = $this->getDatabase()->getQuery(true)
-            ->select('a.id as ext_id,a.*,varied.*,cat.title AS category_title,sup.title as supply_option_title')
+            ->select('a.id as ext_id,a.*,cat.title AS category_title')
             ->from('#__jed_extensions AS a')
-            ->innerJoin('#__jed_extension_varied_data AS varied ON varied.extension_id = a.id ')
-            ->innerJoin('#__categories AS cat ON cat.id=a.primary_category_id')
-            ->innerJoin('#__jed_extension_supply_options AS sup ON sup.id=varied.supply_option_id')
+            ->innerJoin('#__categories AS cat ON cat.id = a.catid')
             ->where('a.created_by = ' . $user->id);
         $this->getDatabase()->setQuery($query);
 
@@ -276,7 +274,7 @@ class ExtensionsModel extends ListModel
         foreach ($items as $item) {
             //echo "<pre>";print_r($item);echo "</pre>";exit();
 
-            $item->category_hierarchy = $this->getCategoryHierarchy($item->primary_category_id);
+            $item->category_hierarchy = $this->getCategoryHierarchy($item->catid);
 
             if (!empty($item->logo)) {
                 $item->logo = JedHelper::formatImage($item->logo, ImageSize::SMALL);
@@ -308,7 +306,7 @@ class ExtensionsModel extends ListModel
                 $item->number_of_reviews = $item->number_of_reviews + $s->number_of_reviews;
             }
             $item->type  = $supplytype;
-            $score       = $score / $supplycounter;
+            $score       = $supplycounter > 0 ? $score / $supplycounter : 0;
             $item->score = floor($score / 5);
             //echo "<pre>";print_r($item);echo "</pre>";exit();
             $item->score_string = JedscoreHelper::getStars($item->score);
@@ -324,14 +322,15 @@ class ExtensionsModel extends ListModel
             // https://extensions.joomla.org/cache/fab_image/27824_resizeDown400px175px16.png
 
             if (!empty($item->uses_updater)) {
-                $item->uses_updater = Text::_('COM_JED_EXTENSION_USES_UPDATER_OPTION_' . strtoupper($item->uses_updater));
+                $item->uses_updater = Text::_('COM_JED_EXTENSION_USES_UPDATER_OPTION_' . strtoupper((string) $item->uses_updater));
             }
             $item->version = JedtrophyHelper::getTrophyVersionsString($item->joomla_versions);
         }
-        $items = array_values($items);
-        array_multisort(array_column($items, "number_of_reviews"), SORT_DESC, $items);
-        //echo "<pre>";print_r($items);echo "</pre>";exit();
-        return $items;
+
+        // Ordering is now applied in SQL (see getListQuery()) according to list.ordering/
+        // list.direction, so the page's items are already in the requested order; no PHP-side
+        // re-sort here.
+        return array_values($items);
     }
 
     /**
@@ -350,7 +349,7 @@ class ExtensionsModel extends ListModel
         $error_dateformat = false;
 
         foreach ($filters as $key => $value) {
-            if (strpos($key, '_dateformat') && !empty($value) && JedHelper::isValidDate($value) == null) {
+            if (strpos((string) $key, '_dateformat') && !empty($value) && JedHelper::isValidDate($value) == null) {
                 $filters[$key]    = '';
                 $error_dateformat = true;
             }
@@ -412,12 +411,14 @@ class ExtensionsModel extends ListModel
     {
         $db    =  Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select($db->quoteName('type'))
-            ->from($db->quoteName('#__jed_extensions_types'))
-            ->where($db->quoteName('extension_id') . ' = ' . $extensionId);
+            ->select($db->quoteName('extension_types'))
+            ->from($db->quoteName('#__jed_extensions'))
+            ->where($db->quoteName('id') . ' = ' . $extensionId);
         $db->setQuery($query);
 
-        return $db->loadColumn();
+        $types = json_decode((string) $db->loadResult(), true);
+
+        return is_array($types) ? $types : [];
     }
 
     /**
@@ -436,7 +437,7 @@ class ExtensionsModel extends ListModel
             ->select($db->quoteName('filename'))
             ->from($db->quoteName('#__jed_extensions_images'))
             ->where($db->quoteName('extension_id') . ' = ' . $extensionId)
-            ->order($db->quoteName('order'));
+            ->order($db->quoteName('ordering'));
         $db->setQuery($query);
 
         $items  = $db->loadObjectList();
@@ -445,7 +446,7 @@ class ExtensionsModel extends ListModel
         array_walk(
             $items,
             static function ($item, $key) use (&$images) {
-                $images['images' . $key]['image'] = $item->filename;
+                $images['images' . $key]['image'] = JedHelper::formatImage($item->filename, ImageSize::SMALL);
             }
         );
 
@@ -466,32 +467,9 @@ class ExtensionsModel extends ListModel
     {
         $db    =  Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select($db->quoteName('category_id'))
-            ->from($db->quoteName('#__jed_extensions_categories'))
+            ->select($db->quoteName('catid'))
+            ->from($db->quoteName('#__jed_extensions_category_map'))
             ->where($db->quoteName('extension_id') . ' = ' . $extensionId);
-        $db->setQuery($query);
-
-        return $db->loadColumn();
-    }
-
-    /**
-     * Get the supported PHP versions.
-     *
-     * @param int    $extensionId The extension ID to get the PHP versions for
-     * @param string $type        The type of version to get
-     *
-     * @return array  List of supported PHP versions.
-     *
-     * @since 4.0.0
-     */
-    public function getVersions(int $extensionId, string $type): array
-    {
-        $db    =  Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true)
-            ->select($db->quoteName('version'))
-            ->from($db->quoteName('#__jed_extensions_' . $type . '_versions'))
-            ->where($db->quoteName('extension_id') . ' = ' . $extensionId);
-
         $db->setQuery($query);
 
         return $db->loadColumn();

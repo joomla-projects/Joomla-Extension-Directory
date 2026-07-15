@@ -110,13 +110,13 @@ class HtmlView extends BaseHtmlView
         /**
  * @var Copyjed3dataModel $model
 */
-        $model             = $this->getModel();
-        $this->state       = $model->getState();
-        $this->item        = $model->getItem();
+        //        $model             = $this->getModel();
+        //        $this->state       = $model->getState();
+        //        $this->item        = $model->getItem();
         $this->params      = ComponentHelper::getParams('com_jed');
         $this->migrate_xml = $this->getMigrateXML();
         $app               = Factory::getApplication();
-        $input             = $app->input->getInputForRequestMethod();
+        $input             = $app->getInput()->getInputForRequestMethod();
         $this->task        = $input->get('task', '');
 
         $this->addToolbar();

@@ -96,7 +96,7 @@ $canCreate = $isLoggedIn;
                         <td>
 
                             <?php if ($canEdit) : ?>
-                                <a href="<?php echo Route::_('index.php?option=com_jed&task=ticket.edit&id=' . (int) $item->id); ?>">
+                                <a href="<?php echo Route::_('index.php?option=com_tickets&task=ticket.edit&id=' . (int) $item->id); ?>">
                                     <?php echo $this->escape($item->ticket_subject); ?></a>
                             <?php else : ?>
                                 <?php echo $this->escape($item->ticket_subject); ?>
@@ -109,7 +109,7 @@ $canCreate = $isLoggedIn;
                             <?php try {
                                 $d = new DateTime($item->created_on);
                                 echo $d->format("d M y H:i");
-                            } catch (Exception $e) {
+                            } catch (Exception) {
                             }
                     ?>
                         </td>
@@ -130,7 +130,7 @@ $canCreate = $isLoggedIn;
                         <?php if ($canEdit) : ?>
                             <td class="center">
                                 <a
-                                    href="<?php echo Route::_('index.php?option=com_jed&task=ticket.edit&id=' . $item->id, false, 2); ?>"
+                                    href="<?php echo Route::_('index.php?option=com_tickets&task=ticket.edit&id=' . $item->id, false, 2); ?>"
                                     class="btn btn-mini" type="button"><i class="icon-edit"></i></a>
 
 

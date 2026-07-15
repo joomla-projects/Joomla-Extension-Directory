@@ -67,7 +67,7 @@ class ReviewscommentsModel extends ListModel
         try {
             $user = Factory::getApplication()->getIdentity();
             return in_array("8", $user->groups) || in_array("7", $user->groups);
-        } catch (Exception $exc) {
+        } catch (Exception) {
             return false;
         }
     }
@@ -100,11 +100,11 @@ class ReviewscommentsModel extends ListModel
 
         $this->setState('list.limit', $value);
 
-        $value = $app->input->get('limitstart', 0, 'uint');
+        $value = $app->getInput()->get('limitstart', 0, 'uint');
         $this->setState('list.start', $value);
 
         $ordering  = $this->getUserStateFromRequest($this->context . '.filter_order', 'filter_order', 'a.id');
-        $direction = strtoupper($this->getUserStateFromRequest($this->context . '.filter_order_Dir', 'filter_order_Dir', 'ASC'));
+        $direction = strtoupper((string) $this->getUserStateFromRequest($this->context . '.filter_order_Dir', 'filter_order_Dir', 'ASC'));
 
         if (!empty($ordering) || !empty($direction)) {
             $list['fullordering'] = $ordering . ' ' . $direction;
@@ -166,8 +166,8 @@ class ReviewscommentsModel extends ListModel
         $search = $this->getState('filter.search');
 
         if (!empty($search)) {
-            if (stripos($search, 'id:') === 0) {
-                $query->where('a.id = ' . (int) substr($search, 3));
+            if (stripos((string) $search, 'id:') === 0) {
+                $query->where('a.id = ' . (int) substr((string) $search, 3));
             } else {
                 $search = $db->Quote('%' . $db->escape($search, true) . '%');
             }
@@ -216,7 +216,7 @@ class ReviewscommentsModel extends ListModel
         $error_dateformat = false;
 
         foreach ($filters as $key => $value) {
-            if (strpos($key, '_dateformat') && !empty($value) && $this->isValidDate($value) == null) {
+            if (strpos((string) $key, '_dateformat') && !empty($value) && $this->isValidDate($value) == null) {
                 $filters[$key]    = '';
                 $error_dateformat = true;
             }

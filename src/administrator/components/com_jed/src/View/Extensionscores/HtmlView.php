@@ -31,7 +31,7 @@ use Joomla\Component\Content\Administrator\Extension\ContentComponent;
  */
 class HtmlView extends BaseHtmlView
 {
-    public ?Form $filterForm;
+    public ?Form $filterForm    = null;
     public array $activeFilters = [];
     protected array $items;
     protected Pagination $pagination;

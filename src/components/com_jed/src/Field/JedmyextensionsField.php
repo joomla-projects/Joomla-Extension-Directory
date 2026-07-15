@@ -62,7 +62,7 @@ class JedmyextensionsField extends ListField
 
     private string $option_value_field;
 
-    private string $limit;
+    private readonly string $limit;
 
     /**
      * Method to get the field input markup.
@@ -231,8 +231,16 @@ class JedmyextensionsField extends ListField
     {
         $options = [];
         $db      = Factory::getContainer()->get('DatabaseDriver');
+        $userId  = Factory::getApplication()->getIdentity()->id;
         try {
-            $db->setQuery("select id as value,CONCAT(title,' (',IF(supply_option_id=1,'Free','Paid'),')') as text from #__jed_extension_varied_data where created_by=10270 order by title asc limit 100");
+            $query = $db->getQuery(true)
+                ->select("id as value, CONCAT(name,' (',type,')') as text")
+                ->from($db->quoteName('#__jed_extensions'))
+                ->where($db->quoteName('created_by') . ' = :userId')
+                ->bind(':userId', $userId, \Joomla\Database\ParameterType::INTEGER)
+                ->order($db->quoteName('name') . ' ASC')
+                ->setLimit(100);
+            $db->setQuery($query);
             $results = $db->loadObjectList();
         } catch (ExecutionFailureException $e) {
             Factory::getApplication()->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED') . ' ' . $e->getMessage(), 'error');
@@ -275,8 +283,7 @@ class JedmyextensionsField extends ListField
     {
         if (!empty($this->element[$name])) {
             return $this->element[$name];
-        } else {
-            return $default;
         }
+        return $default;
     }
 }

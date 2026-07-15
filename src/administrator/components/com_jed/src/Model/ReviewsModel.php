@@ -91,41 +91,19 @@ class ReviewsModel extends ListModel
                 foreach ($values as $value) {
                     $query = $db->getQuery(true);
                     $query
-                        ->select('`#__jed_extensions_3715042`.`title`')
-                        ->from($db->quoteName('#__jed_extensions', '#__jed_extensions_3715042'))
-                        ->where($db->quoteName('#__jed_extensions_3715042.id') . ' = ' . $db->quote($db->escape($value)));
+                        ->select('name')
+                        ->from($db->quoteName('#__jed_extensions'))
+                        ->where($db->quoteName('id') . ' = ' . $db->quote($db->escape($value)));
 
                     $db->setQuery($query);
                     $results = $db->loadObject();
 
                     if ($results) {
-                        $textValue[] = $results->title;
+                        $textValue[] = $results->name;
                     }
                 }
 
                 $oneItem->extension_id = !empty($textValue) ? implode(', ', $textValue) : $oneItem->extension_id;
-            }
-
-            if (isset($oneItem->supply_option_id)) {
-                $values    = explode(',', $oneItem->supply_option_id);
-                $textValue = [];
-
-                foreach ($values as $value) {
-                    $query = $db->getQuery(true);
-                    $query
-                        ->select('`#__jed_extension_supply_options_3727708`.`title`')
-                        ->from($db->quoteName('#__jed_extension_supply_options', '#__jed_extension_supply_options_3727708'))
-                        ->where($db->quoteName('#__jed_extension_supply_options_3727708.id') . ' = ' . $db->quote($db->escape($value)));
-
-                    $db->setQuery($query);
-                    $results = $db->loadObject();
-
-                    if ($results) {
-                        $textValue[] = $results->title;
-                    }
-                }
-
-                $oneItem->supply_option_id = !empty($textValue) ? implode(', ', $textValue) : $oneItem->supply_option_id;
             }
         }
 
@@ -160,23 +138,20 @@ class ReviewsModel extends ListModel
         $query->join("LEFT", "#__users AS uc ON uc.id=a.checked_out");
 
         // Join over the foreign key 'extension_id'
-        $query->select('`#__jed_extensions_3715042`.`title` AS extensions_fk_value_3715042');
-        $query->join('LEFT', '#__jed_extensions AS #__jed_extensions_3715042 ON #__jed_extensions_3715042.`id` = a.`extension_id`');
-        // Join over the foreign key 'supply_option_id'
-        $query->select('`#__jed_extension_supply_options_3727708`.`title` AS extensionsupplyoptions_fk_value_3727708');
-        $query->join('LEFT', '#__jed_extension_supply_options AS #__jed_extension_supply_options_3727708 ON #__jed_extension_supply_options_3727708.`id` = a.`supply_option_id`');
+        $query->select($db->quoteName('e.name', 'extension_name'));
+        $query->leftJoin($db->quoteName('#__jed_extensions', 'e'),$db->quoteName('e.id') . ' = ' . $db->quoteName('a.extension_id'));
 
         // Join over the user field 'created_by'
         $query->select('`created_by`.name AS `created_by`');
-        $query->join('LEFT', '#__users AS `created_by` ON `created_by`.id = a.`created_by`');
+        $query->leftJoin('#__users AS `created_by` ON `created_by`.id = a.`created_by`');
 
 
         // Filter by search in title
         $search = $this->getState('filter.search');
 
         if (!empty($search)) {
-            if (stripos($search, 'id:') === 0) {
-                $query->where('a.id = ' . (int) substr($search, 3));
+            if (stripos((string) $search, 'id:') === 0) {
+                $query->where('a.id = ' . (int) substr((string) $search, 3));
             } else {
                 $search = $db->Quote('%' . $db->escape($search, true) . '%');
                 $query->where('( a.title LIKE ' . $search . '  OR  a.functionality_comment LIKE ' . $search . ' )');
