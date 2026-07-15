@@ -16,7 +16,7 @@ namespace Jed\Component\Jed\Site\Model;
 
 use DateInterval;
 use Exception;
-use Jed\Component\Jed\Site\MediaHandling\ImageSize;
+use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
@@ -110,9 +110,8 @@ class ExtensionModel extends ItemModel
             }
 
             return true;
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
         }
+        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
     }
 
     /**
@@ -199,49 +198,35 @@ class ExtensionModel extends ItemModel
         }
 
         // Load Category Hierarchy
-        $this->item->category_hierarchy = $this->getCategoryHierarchy($this->item->primary_category_id);
-
-        // Load Varied Data
-        $this->item->varied_data = $this->getVariedData($this->item->id);
-
-        foreach ($this->item->varied_data as $v) {
-            if ($v->is_default_data !== 1) {
-                continue;
-            }
-            $this->item->title = $v->title;
-            $this->item->alias = $v->alias;
-
-            $this->item->intro_text   = $v->intro_text;
-            $this->item->support_link = $v->support_link;
-        }
+        $this->item->category_hierarchy = $this->getCategoryHierarchy($this->item->catid);
 
         // Load Scores
-        $this->item->scores            = $this->getScores($this->item->id);
-        $this->item->number_of_reviews = 0;
-        $score                         = 0;
-        $supplycounter                 = 0;
-        $supplytype                    = '';
+        //$this->item->scores            = $this->getScores($this->item->id);
+        //        $this->item->number_of_reviews = 0;
+        //        $score                         = 0;
+        //        $supplycounter                 = 0;
+        //        $supplytype                    = '';
+        //
+        //        foreach ($this->item->scores as $s) {
+        //            $supplycounter = $supplycounter + 1;
+        //            $supplytype    = match ($s->supply_option_id) {
+        //                1 => 'Free',
+        //                2 => 'Paid',
+        //                3 => 'Cloud',
+        //            };
+        //            $score         = $score + $s->functionality_score;
+        //            $score         = $score + $s->ease_of_use_score;
+        //            $score         = $score + $s->support_score;
+        //            $score         = $score + $s->value_for_money_score;
+        //            $score         = $score + $s->documentation_score;
+        //
+        //            $this->item->number_of_reviews = $this->item->number_of_reviews + $s->number_of_reviews;
+        //        }
 
-        foreach ($this->item->scores as $s) {
-            $supplycounter = $supplycounter + 1;
-            $supplytype    = match ($s->supply_option_id) {
-                1 => 'Free',
-                2 => 'Paid',
-                3 => 'Cloud',
-            };
-            $score         = $score + $s->functionality_score;
-            $score         = $score + $s->ease_of_use_score;
-            $score         = $score + $s->support_score;
-            $score         = $score + $s->value_for_money_score;
-            $score         = $score + $s->documentation_score;
-
-            $this->item->number_of_reviews = $this->item->number_of_reviews + $s->number_of_reviews;
-        }
-
-        $this->item->type         = $supplytype;
-        $score                    = $score / $supplycounter;
-        $this->item->score        = floor($score / 5);
-        $this->item->score_string = JedscoreHelper::getStars($this->item->score);
+        //        $this->item->type         = $supplytype;
+        //        $score                    = $score / $supplycounter;
+        //        $this->item->score        = floor($score / 5);
+        //        $this->item->score_string = JedscoreHelper::getStars($this->item->score);
 
         if ($this->item->number_of_reviews == 0) {
             $this->item->review_string = '';
@@ -255,11 +240,12 @@ class ExtensionModel extends ItemModel
         $this->item->reviews = $this->getReviews($this->item->id);
 
         if (!empty($this->item->logo)) {
-            $this->item->logo = JedHelper::formatImage($this->item->logo, ImageSize::SMALL);
+            $this->item->logo_large = JedHelper::formatImage($this->item->logo, ImageSize::LARGE);
+            $this->item->logo       = JedHelper::formatImage($this->item->logo, ImageSize::SMALL);
         }
 
         $this->item->developer_email   = JedHelper::getUserById($this->item->created_by)->email;
-        $this->item->developer_company = $this->getDeveloperName($this->item->created_by);
+        //$this->item->developer_company = $this->getDeveloperName($this->item->created_by);
 
         return $this->item;
     }
@@ -342,33 +328,20 @@ class ExtensionModel extends ItemModel
      */
     public function getSupplyTypes(int $extension_id): array
     {
-        $db     = $this->getDatabase();
-        $query  = $db->getQuery(true);
-        $query2 = $db->getQuery(true);
-
-        $query->select(
-            [
-            $db->quoteName('supply_options.id', 'supply_id'),
-            $db->quoteName('supply_options.title', 'supply_type'),
-            ]
-        )
-            ->from($db->quoteName('#__jed_extension_supply_options', 'supply_options'));
-
-
-        $query2->select(
-            [
-            $db->quoteName('supply_option_id', 'supply_option_id'),
-            ]
-        )
-            ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
-            ->where(
+        // #__jed_extensions no longer tracks which individual supply options a given extension
+        // offers (that per-extension list collapsed into the single "type" enum column), so this
+        // just returns every published supply option for the reviewer to choose from.
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select(
                 [
-                $db->quoteName('extension_id') . ' = ' . $extension_id,
+                    $db->quoteName('supply_options.id', 'supply_id'),
+                    $db->quoteName('supply_options.title', 'supply_type'),
                 ]
-            );
+            )
+            ->from($db->quoteName('#__jed_extension_supply_options', 'supply_options'))
+            ->where($db->quoteName('supply_options.state') . ' = 1');
 
-        $query->where($db->quoteName('supply_options.id') . ' IN (' . $query2 . ')');
-        $query->where($db->quoteName('state') . ' = 1');
         return $db->setQuery($query)->loadObjectList();
     }
 
@@ -383,7 +356,7 @@ class ExtensionModel extends ItemModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getTable($name = "Extension", $prefix = "Administrator", $options = [])
+    public function getTable($name = "ExtensionHistory", $prefix = "Administrator", $options = [])
     {
         return parent::getTable($name, $prefix, $options);
     }
@@ -418,7 +391,7 @@ class ExtensionModel extends ItemModel
         $item      = $this->getItem();
         $dateLimit = Factory::getDate();
         $dateLimit->sub(new DateInterval($this->isOldInterval));
-        $modified = Factory::getDate($item->modified_time);
+        $modified = Factory::getDate($item->modified);
 
         return $modified < $dateLimit;
     }
@@ -433,7 +406,7 @@ class ExtensionModel extends ItemModel
         $item      = $this->getItem();
         $dateLimit = Factory::getDate();
         $dateLimit->sub(new DateInterval($this->isRecentlyUpdatedInterval));
-        $modified = Factory::getDate($item->core_modified_time->value);
+        $modified = Factory::getDate($item->modified);
 
         return $modified > $dateLimit;
     }
@@ -455,53 +428,40 @@ class ExtensionModel extends ItemModel
         $query    = $db->getQuery(true)
             ->select(
                 [
-                $db->quoteName('e.id'),
-                $db->quoteName('state'),
-                $db->quoteName('title'),
-                $db->quoteName('approved'),
-                $db->quoteName('code'),
-                $db->quoteName('created_time'),
-                $db->quoteName('s.message', 'message'),
+                    $db->quoteName('id'),
+                    $db->quoteName('state'),
+                    $db->quoteName('name'),
+                    $db->quoteName('approved'),
+                    $db->quoteName('approved_reason'),
+                    $db->quoteName('approved_notes'),
                 ]
             )
-            ->from('#__jed_extensions', 'e')
-            ->leftJoin('#__jed_extensions_status AS s ON s.extension_id = e.id')
-            ->leftJoin(
-                $db->quoteName('#__jed_extensions_status', 's'),
-                $db->quoteName('s.extension_id') . ' = ' . $db->quoteName('e.id')
-            )
-            ->where($db->quoteName('e.id') . ' = :eid ')
-            ->order($db->quoteName('s.created_time') . ' DESC')
+            ->from($db->quoteName('#__jed_extensions'))
+            ->where($db->quoteName('id') . ' = :eid')
             ->bind(':eid', $this->item->id, ParameterType::INTEGER);
 
         $row = $db->setQuery($query)->loadObject();
         $msg = [];
 
-        if ($row && (int)$row->core_state === 0) {
-            $code = json_decode($row->code);
+        if ($row && (int) $row->state === 0) {
+            $document->setTitle($row->name . ' - Joomla! Extension Directory');
+            $msg[] = '<h2>' . $row->name . '</h2>';
 
-            if (!empty($code)) {
-                $document->setTitle($row->title . ' - Joomla! Extension Directory');
-                $msg[] = '<h2>' . $row->title . '</h2>';
+            if (!empty($row->approved_reason)) {
                 $msg[] = Text::_('COM_JED_ERROR_EXTENSION_UNPUBLISHED_REASON');
-                $msg[] = '<ul>';
-
-                foreach ($code as $c) {
-                    $msg[] = '<li>' . $c . ': ' . Text::_($c) . '</li>';
-                }
-
-                $msg[] = '</ul>';
-
-                $msg[] = '<p>' . Text::_('COM_JED_VIEW_ERROR_CODES_LINK') . '</p>';
+                $msg[] = '<p>' . $row->approved_reason . '</p>';
             } else {
                 $msg[] = Text::_('COM_JED_ERROR_EXTENSION_UNPUBLISHED');
             }
 
-            $msg[] = $row->message;
+            if (!empty($row->approved_notes)) {
+                $msg[] = $row->approved_notes;
+            }
+
             $level = 'warning';
         } else {
             $level = 'info';
-            $msg[] = Text::_('COM_JED_EXTENSION_XTENSIONS_FOUND_LABEL');
+            $msg[] = Text::_('COM_JED_EXTENSION_NOT_FOUND_LABEL');
         }
 
         return (object)[
@@ -536,7 +496,7 @@ class ExtensionModel extends ItemModel
         if (Factory::getApplication()->input->get('layout') == 'edit') {
             $id = $app->getUserState('com_jed.edit.extension.id');
         } else {
-            $id = $app->input->get('id');
+            $id = $app->getInput()->get('id');
             $app->setUserState('com_jed.edit.extension.id', $id);
         }
 
@@ -576,63 +536,5 @@ class ExtensionModel extends ItemModel
         $table->state = $state;
 
         return $table->store();
-    }
-
-    /**
-     * Get varied data for extension, i.e. fields for free, fields for paid
-     *
-     * @param int      $extension_id
-     * @param int|null $supply_option_type
-     *
-     * @return array
-     *
-     * @throws Exception
-     * @since  4.0.0
-     */
-    public function getVariedData(int $extension_id, int $supply_option_type = null): array
-    {
-        $retval = null;
-        $db     = $this->getDatabase();
-        $query  = $db->getQuery(true)
-            ->select('supply_options.title AS supply_type, a.*')
-            ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
-            ->leftJoin(
-                $db->quoteName('#__jed_extension_supply_options', 'supply_options')
-                        . ' ON ' . $db->quoteName('supply_options.id') . ' = ' . $db->quoteName('a.supply_option_id')
-            )
-            ->where($db->quoteName('extension_id') . ' = :extension_id')
-            ->bind(':extension_id', $extension_id, ParameterType::INTEGER);
-
-        if (($supply_option_type ?? 0) > 0) {
-            $query
-                ->where($db->quoteName('supply_option_id') . ' = :supply_option_type')
-                ->bind(':supply_option_type', $supply_option_type, ParameterType::INTEGER);
-        }
-
-        $result = $db->setQuery($query)->loadObjectList();
-
-        foreach ($result as $variedDatum) {
-            $supply = $variedDatum->supply_type;
-
-            if (!empty($variedDatum->logo)) {
-                $variedDatum->logo = \Jed\Component\Jed\Site\Helper\JedHelper::formatImage($variedDatum->logo, ImageSize::LARGE);
-            }
-
-            if ($variedDatum->is_default_data == 1 && empty($variedDatum->intro_text)) {
-                $split_data = $this->splitDescription($variedDatum->description);
-
-                if (!is_null($split_data)) {
-                    $variedDatum->intro_text  = $split_data['intro'];
-                    $variedDatum->description = $split_data['body'] . Markdown::defaultTransform($variedDatum->description);
-                }
-            } else {
-                $variedDatum->intro_text  = Markdown::defaultTransform($variedDatum->intro_text);
-                $variedDatum->description = Markdown::defaultTransform($variedDatum->description);
-            }
-
-            $retval[$supply] = $variedDatum;
-        }
-
-        return $retval;
     }
 }

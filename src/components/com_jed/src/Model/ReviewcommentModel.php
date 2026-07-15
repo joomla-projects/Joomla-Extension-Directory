@@ -60,9 +60,8 @@ class ReviewcommentModel extends ItemModel
             }
 
             return true;
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
         }
+        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
     }
 
     /**
@@ -97,9 +96,8 @@ class ReviewcommentModel extends ItemModel
             }
 
             return true;
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
         }
+        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
     }
 
     /**
@@ -117,9 +115,8 @@ class ReviewcommentModel extends ItemModel
 
         if (empty($result) || $this->isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
             return $table->delete($id);
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
         }
+        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
     }
 
     /**
@@ -175,7 +172,7 @@ class ReviewcommentModel extends ItemModel
 
 
         if (isset($this->item->created_by)) {
-            $this->item->created_by_name = JedHelper::getUser($this->item->created_by)->name;
+            $this->item->created_by_name = JedHelper::getUser()->name;
         }
 
         return $this->item;
@@ -210,7 +207,7 @@ class ReviewcommentModel extends ItemModel
             $user = Factory::getApplication()->getIdentity();
 
             return in_array("8", $user->groups) || in_array("7", $user->groups);
-        } catch (Exception $exc) {
+        } catch (Exception) {
             return false;
         }
     }
@@ -229,7 +226,7 @@ class ReviewcommentModel extends ItemModel
      */
     protected function populateState(): void
     {
-        $app  = Factory::getApplication('com_jed');
+        $app  = Factory::getApplication();
         $user = Factory::getApplication()->getIdentity();
 
         // Check published state
@@ -277,9 +274,8 @@ class ReviewcommentModel extends ItemModel
             $table->state = $state;
 
             return $table->store();
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
         }
+        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
     }
 
     /**
@@ -307,10 +303,9 @@ class ReviewcommentModel extends ItemModel
             $results = $db->loadObject();
             if ($results) {
                 return true;
-            } else {
-                return false;
             }
-        } catch (Exception $exc) {
+            return false;
+        } catch (Exception) {
             return false;
         }
     }

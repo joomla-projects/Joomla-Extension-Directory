@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field name="search" type="text" hint="JSEARCH_FILTER"
+               label="COM_USERS_FILTER_SEARCH_DESC"
+               class="js-stools-search-string"/>
+
+        <field name="joomla_version"
+               type="list"
+               label="COM_JED_EXTENSIONS_FILTER_JOOMLA_VERSION_LABEL"
+               description="COM_JED_EXTENSIONS_FILTER_JOOMLA_VERSION_DESC"
+               onchange="this.form.submit();"
+        >
+            <option value="">COM_JED_EXTENSIONS_FILTER_JOOMLA_VERSION_ANY</option>
+            <option value="40">COM_JED_EXTENSIONS_FILTER_JOOMLA_VERSION_J4</option>
+            <option value="50">COM_JED_EXTENSIONS_FILTER_JOOMLA_VERSION_J5</option>
+            <option value="60">COM_JED_EXTENSIONS_FILTER_JOOMLA_VERSION_J6</option>
+        </field>
+    </fields>
+
+    <fields name="list">
+        <field name="fullordering"
+               type="list"
+               label="COM_JED_LIST_FULL_ORDERING"
+               description="COM_JED_LIST_FULL_ORDERING_DESC"
+               onchange="this.form.submit();"
+               default="a.id DESC"
+        >
+            <option value="">JGLOBAL_SORT_BY</option>
+            <option value="a.name ASC">COM_JED_TITLE_ASC</option>
+            <option value="a.name DESC">COM_JED_TITLE_DESC</option>
+            <option value="score_overall DESC">COM_JED_EXTENSIONS_FILTER_SORT_TOP_RATED</option>
+            <option value="reviewcount DESC">COM_JED_EXTENSIONS_FILTER_SORT_MOST_REVIEWED</option>
+            <option value="a.created DESC">COM_JED_EXTENSIONS_FILTER_SORT_NEW</option>
+            <option value="a.modified DESC">COM_JED_EXTENSIONS_FILTER_SORT_RECENTLY_UPDATED</option>
+        </field>
+
+        <field name="limit"
+               type="limitbox"
+               label="COM_JED_LIST_LIMIT"
+               description="COM_JED_LIST_LIMIT_DESC"
+               class="input-mini"
+               default="25"
+               onchange="this.form.submit();"
+        />
+    </fields>
+</form>

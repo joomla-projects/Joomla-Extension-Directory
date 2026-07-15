@@ -39,7 +39,7 @@ try {
 try {
     $lastvisit_date  = date_format(new dateTime($ticket_reviewer->lastvisitDate), "d-m-Y H:i");
     $lastvisit_date2 = date_format(new dateTime($sample_reviewer->lastvisitDate), "d-m-Y H:i");
-} catch (Exception $e) {
+} catch (Exception) {
 }
 
 ?>
@@ -121,14 +121,14 @@ $slideid = 0;
 try {
     $extension_model = Factory::getApplication()->bootComponent('com_jed')->getMVCFactory()
         ->createModel('Extension', 'Administrator', ['ignore_request' => true]);
-} catch (Exception $e) {
+} catch (Exception) {
 }
 
 foreach ($ticket_help_extensions as $ext) {
     $linked_extension_form = $extension_model->getForm($ext, false, 'jf_registeredextension_form_' . $ext->id);
     try {
         $ico = JedHelper::getPublishedIcon($ext->published);
-    } catch (Exception $e) {
+    } catch (Exception) {
     }
 
     echo HTMLHelper::_(
@@ -242,7 +242,7 @@ foreach ($displayData['oldtickets'] as $oldticket) {
         'ticket_help_oldtickets_group' . '_slide' . ($slideid++)
     );
 
-    echo "<p>" . strip_tags($oldticket->messages->message) . "</p>";
+    echo "<p>" . strip_tags((string) $oldticket->messages->message) . "</p>";
     echo HTMLHelper::_('bootstrap.endSlide');
 }
 echo HTMLHelper::_('bootstrap.endAccordion');

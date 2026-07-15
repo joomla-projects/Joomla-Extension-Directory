@@ -1,12 +1,12 @@
 <?php
 
+/** @var \Jed\Component\Jed\Site\View\Extensions\HtmlView $this */
 /**
  * @package JED
  *
  * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
-
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -35,7 +35,7 @@ if ($filters !== false) {
     $filled       = false;
 
     foreach ($filterFields as $filterField) {
-        $filterField = substr($filterField, 7);
+        $filterField = substr((string) $filterField, 7);
         $filter      = $data['view']->getState('filter.' . $filterField);
 
         if (!empty($filter)) {
@@ -62,7 +62,7 @@ try {
         'searchFieldSelector' => '#filter_search',
         'orderFieldSelector'  => '#list_fullordering',
     ];
-} catch (Exception $e) {
+} catch (Exception) {
 }
 
 $data['options'] = array_unique(array_merge($customOptions, $data['options']));

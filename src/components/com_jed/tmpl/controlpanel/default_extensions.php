@@ -1,5 +1,6 @@
 <?php
 
+/** @var \Jed\Component\Jed\Site\View\Controlpanel\HtmlView $this */
 /**
  * @package JED
  *
@@ -8,7 +9,6 @@
  * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
-
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -61,21 +61,18 @@ $canCreate = $isLoggedIn;
                         <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_NAME_LABEL', 'a.`name`', $listDirn, $listOrder); ?>
                     </th>
                     <th class='left'>
-                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_VERSION_LABEL', 'a.`version`', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_VERSION_LABEL', 'a.`extension_version`', $listDirn, $listOrder); ?>
                     </th>
                     <th class='left'>
                         <?php echo HTMLHelper::_('searchtools.sort', 'JCATEGORY', 'category_title', $listDirn, $listOrder); ?>
                     </th>
+
                     <th class='left'>
-                        <?php echo HTMLHelper::_('searchtools.sort', 'Supply Type', 'a.`ticket_subject`', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_CREATED_ON_LABEL', 'a.`created`', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class='left'>
-                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_CREATED_ON_LABEL', 'a.`created_on`', $listDirn, $listOrder); ?>
-                    </th>
-
-                    <th class='left'>
-                        <?php echo HTMLHelper::_('searchtools.sort', 'JSTATUS', 'a.`ticket_status`', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'JSTATUS', 'a.`state`', $listDirn, $listOrder); ?>
                     </th>
 
                     <?php if ($canCreate) : ?>
@@ -88,7 +85,7 @@ $canCreate = $isLoggedIn;
                 </thead>
                 <tfoot>
                 <tr>
-                    <td colspan="<?php echo isset($this->ticket_items[0]) ? count(get_object_vars($this->ticket_items[0])) : 10; ?>">
+                    <td colspan="<?php echo isset($this->extension_items[0]) ? count(get_object_vars($this->extension_items[0])) : 10; ?>">
                         <?php echo $this->pagination->getListFooter(); ?>
                     </td>
                 </tr>
@@ -104,25 +101,22 @@ $canCreate = $isLoggedIn;
                             <?php if ($canEdit) : ?>
                             <a href="<?php echo Route::_('index.php?option=com_jed&task=extensionform.edit&id=' . (int) $item->ext_id); ?>">
                             <?php endif; ?>
-                            <?php  echo $item->title; ?>
+                            <?php  echo $item->name; ?>
                         </td>
                         <td>
-                            <?php echo $item->version; ?>
+                            <?php echo $item->extension_version; ?>
                         </td>
                         <td>
                             <?php echo $item->category_title; ?>
                         </td>
-                        <td>
-                            <?php echo $item->supply_option_title;?>
-                        </td>
 
                         <td>
                             <?php
-                            if (!is_null($item->created_on)) {
+                            if (!is_null($item->created)) {
                                 try {
-                                    $d = new DateTime($item->created_on);
+                                    $d = new DateTime($item->created);
                                     echo $d->format("d M y H:i");
-                                } catch (Exception $e) {
+                                } catch (Exception) {
                                 }
                             }
                             ?>
@@ -131,7 +125,7 @@ $canCreate = $isLoggedIn;
 
                         <td>
 
-                            <?php  echo $item->published ? 'Published' : 'Unpublished'; ?>
+                            <?php  echo $item->state ? Text::_('JPUBLISHED') : Text::_('JUNPUBLISHED'); ?>
                         </td>
 
 
@@ -141,7 +135,7 @@ $canCreate = $isLoggedIn;
                         <?php if ($canEdit) : ?>
                             <td class="center">
                                 <a
-                                    href="<?php echo Route::_('index.php?option=com_jed&task=ticket.edit&id=' . $item->ext_id, false, 2); ?>"
+                                    href="<?php echo Route::_('index.php?option=com_jed&task=extensionform.edit&id=' . $item->ext_id, false, 2); ?>"
                                     class="btn btn-mini" type="button"><i class="icon-edit"></i></a>
 
 
