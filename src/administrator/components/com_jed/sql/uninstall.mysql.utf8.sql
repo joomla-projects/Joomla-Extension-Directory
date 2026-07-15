@@ -1,21 +1,14 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
-/* Templates for Emails being sent from JED */
-DROP TABLE IF EXISTS `#__jed_message_templates`;
-DROP TABLE IF EXISTS `#__jed_ticket_categories`;
-DROP TABLE IF EXISTS `#__jed_ticket_groups`;
-DROP TABLE IF EXISTS `#__jed_ticket_linked_item_types`;
 DROP TABLE IF EXISTS `#__jed_vel_report`;
 DROP TABLE IF EXISTS `#__jed_vel_developer_update`;
 DROP TABLE IF EXISTS `#__jed_vel_abandoned_report`;
 DROP TABLE IF EXISTS `#__jed_vel_vulnerable_item`;
-DROP TABLE IF EXISTS `#__jed_ticket_messages`;
-DROP TABLE IF EXISTS `#__jed_ticket_internal_notes`;
-DROP TABLE IF EXISTS `#__jed_tickets`;
 DROP TABLE IF EXISTS `#__jed_extensions_approved_reasons`;
 DROP TABLE IF EXISTS `#__jed_extensions_categories`;
 DROP TABLE IF EXISTS `#__jed_extensions_logos`;
 DROP TABLE IF EXISTS `#__jed_extensions_favoured`;
+DROP TABLE IF EXISTS `#__jed_extensions_maintainers`;
 DROP TABLE IF EXISTS `#__jed_extensions_files`;
 DROP TABLE IF EXISTS `#__jed_extensions_joomla_versions`;
 DROP TABLE IF EXISTS `#__jed_extensions_notes`;
