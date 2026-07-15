@@ -6,10 +6,10 @@
  *
  * @copyright   (C) 2023 Open Source Matters, Inc. <https://www.joomla.org>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
-
  * @phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
  */
-
+use Joomla\Event\SubscriberInterface;
+use Joomla\CMS\Table\Asset;
 use Joomla\CMS\Application\AdministratorApplication;
 use Joomla\CMS\Application\ApplicationHelper;
 use Joomla\CMS\Component\ComponentHelper;
@@ -30,6 +30,8 @@ use Joomla\Database\DatabaseDriver;
  */
 class PlgSampledataJed extends CMSPlugin
 {
+    use \Joomla\Database\DatabaseAwareTrait;
+
     /**
      * Database object
      *
@@ -50,6 +52,7 @@ class PlgSampledataJed extends CMSPlugin
 
     public function __construct(&$subject, $config = [])
     {
+        $this->setDatabase(Factory::getDBO());
         parent::__construct($subject, $config);
         $this->setApplication(Factory::getApplication());
     }
@@ -110,20 +113,20 @@ class PlgSampledataJed extends CMSPlugin
 
         $this->importFile(__DIR__ . '/sql/step2.sql');
 
-        $this->db->setQuery('SELECT id FROM #__assets WHERE name = \'com_jed\'');
-        $component_asset_id = $this->db->loadResult();
-        $this->db->setQuery('DELETE FROM `#__assets` WHERE parent_id = \'' . $component_asset_id . '\';');
-        $this->db->execute();
-        $this->db->setQuery('INSERT INTO `#__assets` (parent_id, LEVEL, NAME, title, rules) SELECT ' . $component_asset_id . ' AS parent_id, level + 1 AS LEVEL, CONCAT(\'com_jed.category.\', id) AS NAME, title, \'{}\' AS rules FROM `#__categories` WHERE extension = \'com_jed\'');
-        $this->db->execute();
+        $this->getDatabase()->setQuery('SELECT id FROM #__assets WHERE name = \'com_jed\'');
+        $component_asset_id = $this->getDatabase()->loadResult();
+        $this->getDatabase()->setQuery('DELETE FROM `#__assets` WHERE parent_id = \'' . $component_asset_id . '\';');
+        $this->getDatabase()->execute();
+        $this->getDatabase()->setQuery('INSERT INTO `#__assets` (parent_id, LEVEL, NAME, title, rules) SELECT ' . $component_asset_id . ' AS parent_id, level + 1 AS LEVEL, CONCAT(\'com_jed.category.\', id) AS NAME, title, \'{}\' AS rules FROM `#__categories` WHERE extension = \'com_jed\'');
+        $this->getDatabase()->execute();
 
-        $this->db->setQuery('SELECT id FROM #__assets WHERE name = \'com_jed.category.9\'');
-        $asset_id = $this->db->loadResult();
+        $this->getDatabase()->setQuery('SELECT id FROM #__assets WHERE name = \'com_jed.category.9\'');
+        $asset_id = $this->getDatabase()->loadResult();
 
-        $this->db->setQuery('UPDATE #__categories SET asset_id = id + ' . ($asset_id - 8) . ' WHERE id > 8');
-        $this->db->execute();
+        $this->getDatabase()->setQuery('UPDATE #__categories SET asset_id = id + ' . ($asset_id - 8) . ' WHERE id > 8');
+        $this->getDatabase()->execute();
 
-        $table = new \Joomla\CMS\Table\Asset($this->db, $this->getDispatcher());
+        $table = new Asset($this->getDatabase(), $this->getDispatcher());
         $table->rebuild();
 
         $response            = [];
@@ -259,15 +262,15 @@ class PlgSampledataJed extends CMSPlugin
 
         foreach ($queries as $query) {
             // Trim any whitespace.
-            $query = trim($query);
+            $query = trim((string) $query);
 
             // If the query isn't empty and is not a MySQL or PostgreSQL comment, execute it.
             if (!empty($query) && ($query[0] != '#') && ($query[0] != '-')) {
                 // Execute the query.
-                $this->db->setQuery($query);
+                $this->getDatabase()->setQuery($query);
 
                 try {
-                    $this->db->execute();
+                    $this->getDatabase()->execute();
                 } catch (\RuntimeException $e) {
                     Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
 
@@ -304,7 +307,7 @@ class PlgSampledataJed extends CMSPlugin
         $query = preg_replace("/\n\--[^\n]*/", '', "\n" . $query);
 
         // Find function.
-        $funct = explode('CREATE OR REPLACE FUNCTION', $query);
+        $funct = explode('CREATE OR REPLACE FUNCTION', (string) $query);
 
         // Save sql before function and parse it.
         $query = $funct[0];
