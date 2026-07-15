@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" method="upgrade">
+    <name>COM_VEL</name>
+    <author>Joomla! Project</author>
+    <creationDate>January 2022</creationDate>
+    <copyright>(C) 2022 Open Source Matters, Inc.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>admin@joomla.org</authorEmail>
+    <authorUrl>www.joomla.org</authorUrl>
+    <version>4.0.0</version>
+    <description>COM_VEL_XML_DESCRIPTION</description>
+    <namespace path="src">Jed\Component\Vel</namespace>
+
+    <files folder="components/com_vel">
+        <folder>forms</folder>
+        <folder>language</folder>
+        <folder>layouts</folder>
+        <folder>src</folder>
+        <folder>tmpl</folder>
+    </files>
+
+    <administration>
+        <menu view="vulnerableitems">COM_VEL</menu>
+        <submenu>
+            <menu view="vulnerableitems">COM_VEL_TITLE_VULNERABLEITEMS</menu>
+            <menu view="reports">COM_VEL_TITLE_REPORTS</menu>
+            <menu view="abandonedreports">COM_VEL_TITLE_ABANDONEDREPORTS</menu>
+            <menu view="developerupdates">COM_VEL_TITLE_DEVELOPERUPDATES</menu>
+        </submenu>
+
+        <files folder="administrator/components/com_vel">
+            <folder>forms</folder>
+            <folder>language</folder>
+            <folder>layouts</folder>
+            <folder>services</folder>
+            <folder>src</folder>
+            <folder>tmpl</folder>
+            <file>access.xml</file>
+        </files>
+
+        <languages folder="administrator/components/com_vel/language">
+            <language tag="en-GB">en-GB/com_vel.ini</language>
+            <language tag="en-GB">en-GB/com_vel.sys.ini</language>
+        </languages>
+    </administration>
+	<install>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.sql</file>
+		</sql>
+	</install>
+
+	<uninstall>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.sql</file>
+		</sql>
+	</uninstall>
+</extension>
