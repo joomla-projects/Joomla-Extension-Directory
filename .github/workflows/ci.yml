@@ -188,7 +188,7 @@ jobs:
           DB_USER=${{ matrix.db == 'pgsql' && 'root' || 'joomla_ut' }}
           DB_PASS=${{ matrix.db == 'pgsql' && 'root' || 'joomla_ut' }}
           cp -r joomla /tests/www/${{ matrix.db }}
-          cp dist/pkg-weblinks-current.zip /tests/www/${{ matrix.db }}/
+          cp dist/pkg-jed-current.zip /tests/www/${{ matrix.db }}/
           cd /tests/www/${{ matrix.db }}/
           apache2ctl -D FOREGROUND &
           php installation/joomla.php install --verbose --site-name="Joomla test" --admin-email=admin@example.org --admin-username=ci-admin --admin-user="jane doe" --admin-password=joomla-17082005 --db-type=${{ matrix.db-type }} --db-host=${{ matrix.db-host }} --db-name=test_joomla --db-pass=$DB_PASS --db-user=$DB_USER --db-encryption=0 --db-prefix=${{ matrix.db-prefix }}
