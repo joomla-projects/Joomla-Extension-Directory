@@ -197,7 +197,7 @@ jobs:
           php cli/joomla.php config:set smtphost=mailpit
           php cli/joomla.php config:set smtpport=1025
           php cli/joomla.php config:set smtpauth=0
-          php cli/joomla.php extension:install --path=/tests/www/${{ matrix.db }}/pkg-weblinks-current.zip
+          php cli/joomla.php extension:install --path=/tests/www/${{ matrix.db }}/pkg-jed-current.zip
           mkdir -p tmp/api_rate_limit tmp/plg_system_ratelimit
           chown -R www-data:www-data /tests/www/${{ matrix.db }}/
           chmod -R 777 /tests/www/${{ matrix.db }}/
