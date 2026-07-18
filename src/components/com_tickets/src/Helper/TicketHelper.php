@@ -372,16 +372,11 @@ class TicketHelper
      */
     public static function createEmptyTicketMessage(): array
     {
-        $user                          = Factory::getApplication()->getIdentity();
-        $ticket_message                = [];
-        $ticket_message['id']          = 0;
-        $ticket_message['created_by']  = $user->id;
-        $ticket_message['modified_by'] = $user->id;
+        $user                         = Factory::getApplication()->getIdentity();
+        $ticket_message               = [];
+        $ticket_message['id']         = 0;
+        $ticket_message['created_by'] = $user->id;
         //    $ticket_message['created_on']       = 'now()';
-        $ticket_message['state']            = 0;
-        $ticket_message['ordering']         = 0;
-        $ticket_message['checked_out']      = 0;
-        $ticket_message['checked_out_time'] = '0000-00-00 00:00:00';
 
         return $ticket_message;
     }

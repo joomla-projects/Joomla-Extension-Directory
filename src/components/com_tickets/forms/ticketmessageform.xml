@@ -2,16 +2,9 @@
 <form addfieldprefix="Jed\Component\Jed\Site\Field">
     <fieldset>
         <field name="id" type="text" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"/>
-        <field name="ordering"/>
-        <field name="state" default="1" type="list" label="JSTATUS" description="JFIELD_PUBLISHED_DESC" class="inputbox"
-               size="1">
-            <option value="1">JPUBLISHED</option>
-            <option value="0">JUNPUBLISHED</option>
-            <option value="2">JARCHIVED</option>
-            <option value="-2">JTRASHED</option>
-        </field>
-        <field name="checked_out" type="hidden" filter="unset"/>
-        <field name="checked_out_time" type="hidden" filter="unset"/>
+        <field name="internal" type="checkbox" default="0" label="COM_TICKETS_TICKETMESSAGE_INTERNAL_LABEL"
+               description="COM_TICKETS_TICKETMESSAGE_INTERNAL_DESCR"
+               hint="COM_TICKETS_TICKETMESSAGE_INTERNAL_LABEL"/>
         <field name="subject" filter="safehtml" type="text" required="true" message="Please enter a subject"
                label="COM_TICKETS_GENERAL_SUBJECT_LABEL" description="COM_TICKETS_FORM_DESC_TICKETMESSAGE_SUBJECT"
                hint="COM_TICKETS_GENERAL_SUBJECT_LABEL"/>
