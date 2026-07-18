@@ -52,30 +52,6 @@ INSERT INTO `#__jed_ticket_groups`(`id`, `name`, `ordering`, `state`, `checked_o
 (5, 'Support Speciailist', 0, 1, NULL, NULL, 652, 652),
 (6, 'VEL Specialist', 0, 1, NULL, NULL, 652, 652);
 
-/* Ticket Linked Items */
-DROP TABLE IF EXISTS `#__jed_ticket_linked_item_types`;
-CREATE TABLE IF NOT EXISTS `#__jed_ticket_linked_item_types`
-(
-    `id`               int unsigned NOT NULL AUTO_INCREMENT,
-    `title`            varchar(255) DEFAULT '',
-    `model`            varchar(255) DEFAULT '',
-    `ordering`         int          DEFAULT '0',
-    `state`            tinyint(1)   DEFAULT '1',
-    `checked_out`      int unsigned,
-    `checked_out_time` datetime,
-    `created_by`       int          DEFAULT '0',
-    `modified_by`      int          DEFAULT '0',
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `#__jed_ticket_linked_item_types`(`id`, `title`, `model`, `ordering`, `state`, `checked_out`, `checked_out_time`, `created_by`, `modified_by`) VALUES
-(1, 'Unknown', 'unknown', 0, 1, NULL, NULL, 652, 652),
-(2, 'Extension', 'Extension', 1, 1, NULL, NULL, 652, 652),
-(3, 'Review', 'Review', 0, 1, NULL, NULL, 652, 652),
-(4, 'Vulnerable Item Initial Report', 'Velreport', 0, 1, NULL, NULL, 652, 652),
-(5, 'Vulnerable Item Developer Update', 'Veldeveloperupdate', 0, 1, NULL, NULL, 652, 652),
-(6, 'VEL Abandonware Report', 'Velabandonedreport', 0, 1, NULL, NULL, 652, 652);
-
 /* JED Ticket Messages */
 DROP TABLE IF EXISTS `#__jed_ticket_messages`;
 CREATE TABLE IF NOT EXISTS `#__jed_ticket_messages`

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<form addfieldprefix="Jed\Component\Jed\Administrator\Field">
+<form addfieldprefix="Jed\Component\Jed\Administrator\Field,Jed\Component\Tickets\Administrator\Field">
     <fieldset>
         <field name="id" type="text" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"/>
         <field name="ticket_origin" default="0" type="list" label="COM_TICKETS_TICKETS_TICKET_ORIGIN_LABEL"
@@ -42,9 +42,11 @@
         <field name="allocated_to" type="user" label="COM_TICKETS_TICKETS_ALLOCATED_TO_LABEL"
                description="COM_TICKETS_TICKETS_ALLOCATED_TO_DESCR"
                hint="COM_TICKETS_TICKETS_ALLOCATED_TO_LABEL"/>
-        <field name="linked_item_type" type="foreignkey" label="COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_LABEL"
-               description="COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_DESCR" input_type="list"
-               table="#__jed_ticket_linked_item_types" key_field="id" value_field="title" default="0"/>
+        <field name="linked_item_type" type="enum" enum="Jed\Component\Tickets\Administrator\Enum\TicketType"
+               prefix="COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_OPTION" label="COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_LABEL"
+               description="COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_DESCR" default="0">
+            <option value="0">COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_OPTION_NONE</option>
+        </field>
         <field name="linked_item_id" label="COM_TICKETS_TICKETS_LINKED_ITEM_ID_LABEL"
                description="COM_TICKETS_TICKETS_LINKED_ITEM_ID_DESCR"
                hint="COM_TICKETS_TICKETS_LINKED_ITEM_ID_LABEL"/>

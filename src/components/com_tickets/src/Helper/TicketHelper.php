@@ -14,6 +14,7 @@ defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
 
 /**
@@ -69,7 +70,7 @@ class TicketHelper
 
         $ticket['ticket_category_type'] = 3;
         $ticket['ticket_subject']       = "A new Review";
-        $ticket['linked_item_type']     = 3;     //    Review
+        $ticket['linked_item_type']     = TicketType::Review->value;
 
 
         /*
@@ -174,7 +175,7 @@ class TicketHelper
 
         $ticket['ticket_category_type'] = 2;
         $ticket['ticket_subject']       = "A new Extension";
-        $ticket['linked_item_type']     = 2;     //    Extension
+        $ticket['linked_item_type']     = TicketType::Extension->value;
 
 
         /*
@@ -279,18 +280,18 @@ class TicketHelper
             case 1: // VEL REPORT
                 $ticket['ticket_category_type'] = 11;
                 $ticket['ticket_subject']       = "A new Vulnerable Item Report";
-                $ticket['linked_item_type']     = 4;     //    Vulnerable Item Initial Report
+                $ticket['linked_item_type']     = TicketType::VELReport->value;
                 break;
             case 2: // DEVELOPER UPDATE
                 $ticket['ticket_category_type'] = 12;
                 $ticket['ticket_subject']       = "A new VEL Developer Update";
-                $ticket['linked_item_type']     = 5;     //    Vulnerable Item Developer Update
+                $ticket['linked_item_type']     = TicketType::VulnerableExtension->value;
                 break;
 
             case 3: // ABANDONWARE REPORT
                 $ticket['ticket_category_type'] = 13;
                 $ticket['ticket_subject']       = "A new VEL Abandonware Report";
-                $ticket['linked_item_type']     = 6;     //    Vulnerable Item Abandonware Report
+                $ticket['linked_item_type']     = TicketType::AbandonedExtension->value;
                 break;
         }
 
