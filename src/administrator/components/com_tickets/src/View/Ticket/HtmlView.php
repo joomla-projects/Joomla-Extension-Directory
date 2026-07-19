@@ -225,17 +225,17 @@ class HtmlView extends BaseHtmlView
 */
         $model                  = $this->getModel();
         $model->setUseExceptions(true);
-        try {
-            $this->state            = $model->getState();
-            $this->item             = $model->getItem();
-            $this->form             = $model->getForm();
-            $this->ticket_messages  = $model->getTicketMessages();
-            $this->ticket_help      = $model->getTicketHelp();
-            $this->linked_item_type = $this->item->linked_item_type;
-            $this->linked_item_id   = $this->item->linked_item_id;
-            if ($this->linked_item_type === 0) { // Manual Tickets from User
-                $this->linked_item_Model     = null;
-                $this->related_object_string = "There is no linked item.";
+
+        $this->state            = $model->getState();
+        $this->item             = $model->getItem();
+        $this->form             = $model->getForm();
+        $this->ticket_messages  = $model->getTicketMessages();
+        $this->ticket_help      = $model->getTicketHelp();
+        $this->linked_item_type = $this->item->linked_item_type;
+        $this->linked_item_id   = $this->item->linked_item_id;
+        if ($this->linked_item_type === 0) { // Manual Tickets from User
+            $this->linked_item_Model     = null;
+            $this->related_object_string = "There is no linked item.";
 
                 //$this->linked_form->bind($this->linked_item_data);
             }

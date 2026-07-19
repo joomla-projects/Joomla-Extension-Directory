@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Jed\Component\Jed\Site\Field">
+    <fieldset name="message">
+        <field name="id" type="hidden" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"/>
+        <field name="message" editor="tinymce|codemirror" buttons="false" filter="Joomla\CMS\Component\ComponentHelper::filterText"
+               type="editor" required="true" message="Please enter a message"
+               label="COM_TICKETS_EXTENSION_MESSAGE_LABEL" description="COM_TICKETS_FORM_DESC_TICKETMESSAGE_MESSAGE"
+               hint="COM_TICKETS_EXTENSION_MESSAGE_LABEL"/>
+	    <field name="internal" type="checkbox" default="1" checked="true" label="COM_TICKETS_TICKETMESSAGE_INTERNAL_LABEL"
+	           description="COM_TICKETS_TICKETMESSAGE_INTERNAL_DESCR"
+	           hint="COM_TICKETS_TICKETMESSAGE_INTERNAL_LABEL"/>
+    </fieldset>
+</form>
