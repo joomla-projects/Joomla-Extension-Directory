@@ -18,7 +18,6 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\Model\ExtensionimageModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -54,13 +53,9 @@ class HtmlView extends BaseHtmlView
 */
         $model       = $this->getModel();
         $model->setUseExceptions(true);
-        try {
-            $this->state = $model->getState();
-            $this->item  = $model->getItem();
-            $this->form  = $model->getForm();
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
-        }
+        $this->state = $model->getState();
+        $this->item  = $model->getItem();
+        $this->form  = $model->getForm();
 
         $this->addToolbar();
         parent::display($tpl);

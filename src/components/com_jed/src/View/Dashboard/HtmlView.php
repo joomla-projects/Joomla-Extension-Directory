@@ -14,11 +14,9 @@ namespace Jed\Component\Jed\Site\View\Dashboard;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Site\Model\DashboardModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 
