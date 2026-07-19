@@ -60,7 +60,7 @@ class TicketHelper
         $ticket['modified_by']      = $user->id;
         $ticket['created_on']       = 'now()';
         $ticket['modified_on']      = 'now()';
-        $ticket['state']            = 0;
+        $ticket['state']            = 1; // Open
         $ticket['ordering']         = 0;
         $ticket['checked_out']      = 0;
         $ticket['checked_out_time'] = '0000-00-00 00:00:00';
@@ -165,7 +165,7 @@ class TicketHelper
         $ticket['modified_by']      = $user->id;
         $ticket['created_on']       = 'now()';
         $ticket['modified_on']      = 'now()';
-        $ticket['state']            = 0;
+        $ticket['state']            = 1; // Open
         $ticket['ordering']         = 0;
         $ticket['checked_out']      = 0;
         $ticket['checked_out_time'] = '0000-00-00 00:00:00';
@@ -269,7 +269,7 @@ class TicketHelper
         $ticket['modified_by'] = $user->id;
         //   $ticket['created_on']       = Factory::getDate()->format('Y-m-d H:i:s');
         // $ticket['modified_on']      = Factory::getDate()->format('Y-m-d H:i:s');
-        $ticket['state']            = 0;
+        $ticket['state']            = 1; // Open
         $ticket['ordering']         = 0;
         $ticket['checked_out']      = 0;
         $ticket['checked_out_time'] = '0000-00-00 00:00:00';

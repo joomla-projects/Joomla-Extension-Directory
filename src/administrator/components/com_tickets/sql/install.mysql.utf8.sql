@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_tickets`
     `linked_item_id`          INT              NULL DEFAULT 0,
     `ticket_status`           VARCHAR(255)     NULL DEFAULT '0',
     `parent_id`               INT              NULL DEFAULT 0,
-    `state`                   INT              NULL DEFAULT 0,
+    `state`                   INT              NULL DEFAULT 1,
     `ordering`                INT              NULL DEFAULT 0,
     `created_by`              INT(11)          NULL DEFAULT 0,
     `created_on`              DATETIME,
