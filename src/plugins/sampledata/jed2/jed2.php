@@ -92,11 +92,9 @@ class PlgSampledataJed2 extends CMSPlugin
         $db = Factory::getDbo();
 
         $componentIds = [
-            'com_jed'    => $this->getComponentId($db, 'com_jed'),
-            'com_finder' => $this->getComponentId($db, 'com_finder'),
-            'com_users'  => $this->getComponentId($db, 'com_users'),
             'com_jed'     => $this->getComponentId($db, 'com_jed'),
             'com_tickets' => $this->getComponentId($db, 'com_tickets'),
+            'com_vel'     => $this->getComponentId($db, 'com_vel'),
             'com_finder'  => $this->getComponentId($db, 'com_finder'),
             'com_users'   => $this->getComponentId($db, 'com_users'),
         ];
@@ -237,6 +235,54 @@ class PlgSampledataJed2 extends CMSPlugin
             'path'         => 'ticketform',
             'link'         => 'index.php?option=com_tickets&view=ticketform',
             'component_id' => $componentIds['com_tickets'],
+        ], 1, $messages);
+
+        $this->createMenuItem($db, [
+            'title'        => 'Abandoned Extensions',
+            'alias'        => 'abandoned-extensions',
+            'path'         => 'abandoned-extensions',
+            'link'         => 'index.php?option=com_vel&view=abandoneditems',
+            'component_id' => $componentIds['com_vel'],
+        ], 1, $messages);
+
+        $this->createMenuItem($db, [
+            'title'        => 'Report an Abandoned Extensions',
+            'alias'        => 'report-abandoned-extensions',
+            'path'         => 'report-abandoned-extensions',
+            'link'         => 'index.php?option=com_vel&view=abandonedreport',
+            'component_id' => $componentIds['com_vel'],
+        ], 1, $messages);
+
+        $this->createMenuItem($db, [
+            'title'        => 'List of Vulnerable Extensions',
+            'alias'        => 'vulnerable-extensions',
+            'path'         => 'vulnerable-extensions',
+            'link'         => 'index.php?option=com_vel&view=vulnerabilities',
+            'component_id' => $componentIds['com_vel'],
+        ], 1, $messages);
+
+        $this->createMenuItem($db, [
+            'title'        => 'List of Resolved Vulnerabilities',
+            'alias'        => 'resolved-vulnerabilities',
+            'path'         => 'resolved-vulnerabilities',
+            'link'         => 'index.php?option=com_vel&view=vulnerabilities&state=2',
+            'component_id' => $componentIds['com_vel'],
+        ], 1, $messages);
+
+        $this->createMenuItem($db, [
+            'title'        => 'Report a Vulnerability',
+            'alias'        => 'report-vulnerability',
+            'path'         => 'report-vulnerability',
+            'link'         => 'index.php?option=com_vel&view=vulnerabilityreport',
+            'component_id' => $componentIds['com_vel'],
+        ], 1, $messages);
+
+        $this->createMenuItem($db, [
+            'title'        => 'Report a Developer Update',
+            'alias'        => 'developer-update',
+            'path'         => 'developer-update',
+            'link'         => 'index.php?option=com_vel&view=developerupdate',
+            'component_id' => $componentIds['com_vel'],
         ], 1, $messages);
 
         foreach ($messages as $message) {
