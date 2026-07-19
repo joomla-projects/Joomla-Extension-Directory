@@ -164,36 +164,6 @@ $userFactory = $container->get('user.factory');
                     <p><?php echo $this->related_object_string; ?></p>
                 </div>
             </div>
-            <div class="widget">
-                <h1>Internal Notes</h1>
-                <div class="container">
-                    <?php
-                    $slidesOptions = [];//"active" => "slide0" // It is the ID of the active tab.
-
-                    echo HTMLHelper::_('bootstrap.startAccordion', 'internal_notes_group', $slidesOptions);
-
-                    $slideid = 0;
-                    foreach ($this->internal_notes as $internalNote) {
-                        $user = JedHelper::getUserById($internalNote->created_by);
-                        echo HTMLHelper::_('bootstrap.addSlide', 'internal_notes_group', '' . $internalNote->summary . ' - ' . JedHelper::prettyDate($internalNote->created_on) . ' by ' . $user->name, 'internal_notes_group' . '_slide' . ($slideid++));
-                        echo "<p>" . $internalNote->note . "</p>";
-                        echo HTMLHelper::_('bootstrap.endSlide');
-                    }
-                    echo HTMLHelper::_('bootstrap.endAccordion');
-
-                    ?>
-                    <div class="widget">
-                        <h1>Add Note &nbsp;&nbsp;<button type="button" class=""
-                                                         onclick="Joomla.submitbutton('ticket.storeInternalNote')">
-                                <span class="icon-save"></span>
-                            </button>
-                        </h1>
-                        <?php echo $this->form->renderField('summary', null, null, $headerlabeloptions); ?>
-                        <?php echo $this->form->renderField('internal_notes', null, null, $headerlabeloptions); ?>
-
-                    </div>
-                </div>
-            </div>
 
         </div>
     </div>

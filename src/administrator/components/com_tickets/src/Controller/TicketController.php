@@ -389,41 +389,6 @@ class TicketController extends FormController
     }
 
     /**
-     * Stores a tickets internal note back to table
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function storeInternalNote()
-    {
-        $summary   = $_POST['jform']['summary'];
-        $note      = $_POST['jform']['internal_notes'];
-        $ticket_id = $_POST['jform']['id'];
-        if ($summary == '') {
-            /* Do Nothing */
-        } else {
-            $ticket_internal_notes_model = $this->getModel('Ticketinternalnote', 'Administrator');
-
-            $internal_note['id']        = 0;
-            $internal_note['ticket_id'] = $ticket_id;
-            $internal_note['summary']   = $summary;
-            $internal_note['note']      = $note;
-            /*$internal_note['ordering']         = 0;
-            $internal_note['state']            = 0;
-            $internal_note['checked_out']      = 0;
-            $internal_note['checked_out_time'] = '0000-00-00 00:00:00';
-            $internal_note['created_by']       = $user->id;
-            $internal_note['modified_by']      = $user->id;
-            $internal_note['created_on']       = 'now()';*/
-
-            $ticket_internal_notes_model->save($internal_note);
-        }
-        $this->setRedirect(
-            Route::_('index.php?option=com_tickets&view=ticket&layout=edit&id=' . (int)$ticket_id, false)
-        );
-    }
-
-    /**
      * Store Ticket Message back to database
      *
      * @param int $ticket_id

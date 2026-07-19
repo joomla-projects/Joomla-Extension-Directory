@@ -81,15 +81,6 @@ class HtmlView extends BaseHtmlView
     protected mixed $ticket_messages;
 
     /**
-     * A list of internal notes for this ticket
-     *
-     * @var mixed
-     *
-     * @since 4.0.0
-     */
-    protected mixed $internal_notes;
-
-    /**
      * A string containing html linking ticket to remote object
      *
      * @var string
@@ -239,7 +230,6 @@ class HtmlView extends BaseHtmlView
             $this->item             = $model->getItem();
             $this->form             = $model->getForm();
             $this->ticket_messages  = $model->getTicketMessages();
-            $this->internal_notes   = $model->getTicketInternalNotes();
             $this->ticket_help      = $model->getTicketHelp();
             $this->linked_item_type = $this->item->linked_item_type;
             $this->linked_item_id   = $this->item->linked_item_id;
