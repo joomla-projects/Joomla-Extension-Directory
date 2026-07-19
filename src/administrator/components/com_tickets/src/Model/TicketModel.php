@@ -380,12 +380,7 @@ class TicketModel extends AdminModel
 
         // Load the items
         $db->setQuery($query);
-        $db->execute();
-        if ($db->getNumRows()) {
-            return $db->loadObjectList();
-        }
-
-        return [];
+        return $db->loadObjectList();
     }
 
     /**
