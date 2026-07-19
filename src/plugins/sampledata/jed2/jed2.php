@@ -95,6 +95,10 @@ class PlgSampledataJed2 extends CMSPlugin
             'com_jed'    => $this->getComponentId($db, 'com_jed'),
             'com_finder' => $this->getComponentId($db, 'com_finder'),
             'com_users'  => $this->getComponentId($db, 'com_users'),
+            'com_jed'     => $this->getComponentId($db, 'com_jed'),
+            'com_tickets' => $this->getComponentId($db, 'com_tickets'),
+            'com_finder'  => $this->getComponentId($db, 'com_finder'),
+            'com_users'   => $this->getComponentId($db, 'com_users'),
         ];
 
         if (!$componentIds['com_jed']) {
@@ -217,6 +221,22 @@ class PlgSampledataJed2 extends CMSPlugin
             'path'         => 'dashboard',
             'link'         => 'index.php?option=com_jed&view=dashboard',
             'component_id' => $componentIds['com_jed'],
+        ], 1, $messages);
+
+        $this->createMenuItem($db, [
+            'title'        => 'Tickets',
+            'alias'        => 'tickets',
+            'path'         => 'tickets',
+            'link'         => 'index.php?option=com_tickets&view=tickets',
+            'component_id' => $componentIds['com_tickets'],
+        ], 1, $messages);
+
+        $this->createMenuItem($db, [
+            'title'        => 'Ticketform',
+            'alias'        => 'ticketform',
+            'path'         => 'ticketform',
+            'link'         => 'index.php?option=com_tickets&view=ticketform',
+            'component_id' => $componentIds['com_tickets'],
         ], 1, $messages);
 
         foreach ($messages as $message) {
