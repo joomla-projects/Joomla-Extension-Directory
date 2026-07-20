@@ -175,10 +175,9 @@ class HtmlView extends BaseHtmlView
             'a.`requires_registration`' => Text::_('COM_JED_EXTENSION_REQUIRES_REGISTRATION_LABEL'),
             'a.`type`'                  => Text::_('COM_JED_GENERAL_TYPE_LABEL'),
             'a.`extension_types`'       => Text::_('COM_JED_GENERAL_INCLUDES_LABEL'),
-            'a.`approved`'              => Text::_('COM_JED_EXTENSION_APPROVED_LABEL'),
             'a.`approved_time`'         => Text::_('COM_JED_EXTENSION_APPROVED_TIME_LABEL'),
             'a.`catid`'                 => Text::_('COM_JED_GENERAL_CATEGORY_ID_LABEL_LABEL'),
-            'a.`state`'                 => Text::_('JSTATUS'),
+            'a.`state`'                 => Text::_('COM_JED_EXTENSION_STATE_LABEL'),
         ];
     }
 }
