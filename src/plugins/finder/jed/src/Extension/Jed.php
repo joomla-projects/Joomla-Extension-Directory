@@ -2,7 +2,7 @@
 
 /**
  * @package     Joomla.Plugin
- * @subpackage  Finder.content
+ * @subpackage  Finder.jed
  *
  * @copyright   (C) 2011 Open Source Matters, Inc. <https://www.joomla.org>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -10,86 +10,112 @@
 
 namespace Joomla\Plugin\Finder\Jed\Extension;
 
+use Jed\Component\Jed\Site\Helper\RouteHelper;
 use Joomla\CMS\Component\ComponentHelper;
-use Joomla\CMS\Table\Table;
-use Joomla\Component\Jed\Site\Helper\RouteHelper;
+use Joomla\CMS\Event\Finder as FinderEvent;
+use Joomla\CMS\Language\Text;
 use Joomla\Component\Finder\Administrator\Indexer\Adapter;
 use Joomla\Component\Finder\Administrator\Indexer\Helper;
 use Joomla\Component\Finder\Administrator\Indexer\Indexer;
 use Joomla\Component\Finder\Administrator\Indexer\Result;
 use Joomla\Database\DatabaseAwareTrait;
-use Joomla\Database\DatabaseQuery;
-use Joomla\Registry\Registry;
+use Joomla\Database\QueryInterface;
+use Joomla\Event\SubscriberInterface;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * Smart Search adapter for com_jed.
+ * Smart Search adapter for com_jed extensions.
  */
-final class Jed extends Adapter
+final class Jed extends Adapter implements SubscriberInterface
 {
     use DatabaseAwareTrait;
 
     /**
-     * The plugin identifier.
-     *
-     * @var    string
-     * @since  2.5
+     * @var string
      */
     protected $context = 'Jed';
 
     /**
-     * The extension name.
-     *
-     * @var    string
-     * @since  2.5
+     * @var string
      */
     protected $extension = 'com_jed';
 
     /**
-     * The sublayout to use when rendering the results.
-     *
-     * @var    string
-     * @since  2.5
+     * @var string
      */
     protected $layout = 'extension';
 
     /**
-     * The type of content that the adapter indexes.
-     *
-     * @var    string
-     * @since  2.5
+     * @var string
      */
     protected $type_title = 'Extension';
 
     /**
-     * The table name.
-     *
-     * @var    string
-     * @since  2.5
+     * @var string
      */
     protected $table = '#__jed_extensions';
 
     /**
-     * Load the language file on instantiation.
-     *
-     * @var    boolean
-     * @since  3.1
+     * @var string
+     */
+    protected $state_field = 'state';
+
+    /**
+     * @var boolean
      */
     protected $autoloadLanguage = true;
 
     /**
-     * Method to setup the indexer to be run.
+     * Human-readable labels for the `type` field, keyed by stored value.
      *
-     * @return  boolean  True on success.
-     *
-     * @since   2.5
+     * @var array<string, string>
+     * @since 4.0.0
      */
-    protected function setup()
+    private const TYPE_LABELS = [
+        'free'     => 'COM_JED_GENERAL_TYPE_LABEL_FREE',
+        'paid'     => 'COM_JED_GENERAL_TYPE_LABEL_PAID',
+        'freemium' => 'COM_JED_GENERAL_TYPE_LABEL_FREEMIUM',
+        'cloud'    => 'COM_JED_GENERAL_TYPE_LABEL_CLOUD',
+    ];
+
+    /**
+     * Human-readable labels for the `extension_types` checkboxes, keyed by stored value.
+     *
+     * @var array<string, string>
+     * @since 4.0.0
+     */
+    private const EXTENSION_TYPE_LABELS = [
+        'com'      => 'COM_JED_EXTENSION_COMPONENT_LABEL',
+        'mod'      => 'COM_JED_EXTENSION_MODULE_LABEL',
+        'plugin'   => 'COM_JED_EXTENSION_PLUGIN_LABEL',
+        'specific' => 'COM_JED_EXTENSION_SPECIFIC_LABEL',
+    ];
+
+    /**
+     * `#__jed_joomla_versions.id` => `label`, populated once in {@see setup()}.
+     *
+     * @var array<string, string>
+     * @since 4.0.0
+     */
+    private array $joomlaVersionLabels = [];
+
+    /**
+     * Returns an array of events this subscriber will listen to.
+     *
+     * @return array
+     */
+    public static function getSubscribedEvents(): array
     {
-        return true;
+        return array_merge(parent::getSubscribedEvents(), [
+            'onFinderCategoryChangeState' => 'onFinderCategoryChangeState',
+            'onFinderAfterDelete'         => 'onFinderAfterDelete',
+            'onFinderAfterSave'           => 'onFinderAfterSave',
+            'onFinderBeforeSave'          => 'onFinderBeforeSave',
+            'onFinderChangeState'         => 'onFinderChangeState',
+        ]);
     }
 
     /**
@@ -97,35 +123,30 @@ final class Jed extends Adapter
      * changed. This is fired when the item category is published or unpublished
      * from the list view.
      *
-     * @param   string   $extension  The extension whose category has been updated.
-     * @param   array    $pks        A list of primary key ids of the content that has changed state.
-     * @param   integer  $value      The value of the state that the content has been changed to.
+     * @param FinderEvent\AfterCategoryChangeStateEvent $event The event instance.
      *
-     * @return  void
-     *
-     * @since   2.5
+     * @return void
      */
-    public function onFinderCategoryChangeState($extension, $pks, $value)
+    public function onFinderCategoryChangeState(FinderEvent\AfterCategoryChangeStateEvent $event): void
     {
-        // Make sure we're handling com_jed categories.
-        if ($extension === 'com_content') {
-            $this->categoryStateChange($pks, $value);
+        if ($event->getExtension() === 'com_jed') {
+            $this->categoryStateChange($event->getPks(), $event->getValue());
         }
     }
 
     /**
      * Method to remove the link information for items that have been deleted.
      *
-     * @param   string  $context  The context of the action being performed.
-     * @param   Table   $table    A Table object containing the record to be deleted
+     * @param FinderEvent\AfterDeleteEvent $event The event instance.
      *
-     * @return  void
-     *
-     * @since   2.5
-     * @throws  Exception on database error.
+     * @return void
+     * @throws \Exception on database error.
      */
-    public function onFinderAfterDelete($context, $table): void
+    public function onFinderAfterDelete(FinderEvent\AfterDeleteEvent $event): void
     {
+        $context = $event->getContext();
+        $table   = $event->getItem();
+
         if ($context === 'com_jed.extension') {
             $id = $table->id;
         } elseif ($context === 'com_finder.index') {
@@ -134,42 +155,31 @@ final class Jed extends Adapter
             return;
         }
 
-        // Remove item from the index.
         $this->remove($id);
     }
 
     /**
-     * Smart Search after save content method.
-     * Reindexes the link information for an article that has been saved.
-     * It also makes adjustments if the access level of an item or the
-     * category to which it belongs has changed.
+     * Reindexes an extension that has been saved. Extensions have no item-level
+     * `access` column, so unlike the core content/contacts adapters there is no
+     * item access-change cascade here - only the category's access can change.
      *
-     * @param   string   $context  The context of the content passed to the plugin.
-     * @param   Table    $row      A Table object.
-     * @param   boolean  $isNew    True if the content has just been created.
+     * @param FinderEvent\AfterSaveEvent $event The event instance.
      *
-     * @return  void
-     *
-     * @since   2.5
-     * @throws  Exception on database error.
+     * @return void
+     * @throws \Exception on database error.
      */
-    public function onFinderAfterSave($context, $row, $isNew): void
+    public function onFinderAfterSave(FinderEvent\AfterSaveEvent $event): void
     {
-        // We only want to handle articles here.
-        if ($context === 'com_jed.extension' || $context === 'com_jed.form') {
-            // Check if the access levels are different.
-            if (!$isNew && $this->old_access != $row->access) {
-                // Process the change.
-                $this->itemAccessChange($row);
-            }
+        $context = $event->getContext();
+        $row     = $event->getItem();
 
-            // Reindex the item.
+        if ($context === 'com_jed.extension') {
             $this->reindex($row->id);
         }
 
-        // Check for access changes in the category.
         if ($context === 'com_categories.category') {
-            // Check if the access levels are different.
+            $isNew = $event->getIsNew();
+
             if (!$isNew && $this->old_cataccess != $row->access) {
                 $this->categoryAccessChange($row);
             }
@@ -177,60 +187,40 @@ final class Jed extends Adapter
     }
 
     /**
-     * Smart Search before content save method.
-     * This event is fired before the data is actually saved.
+     * @param FinderEvent\BeforeSaveEvent $event The event instance.
      *
-     * @param   string   $context  The context of the content passed to the plugin.
-     * @param   Table    $row      A Table object.
-     * @param   boolean  $isNew    If the content is just about to be created.
-     *
-     * @return  boolean  True on success.
-     *
-     * @since   2.5
-     * @throws  Exception on database error.
+     * @return void
+     * @throws \Exception on database error.
      */
-    public function onFinderBeforeSave($context, $row, $isNew)
+    public function onFinderBeforeSave(FinderEvent\BeforeSaveEvent $event): void
     {
-        // We only want to handle articles here.
-        if ($context === 'com_jed.extension' || $context === 'com_jed.form') {
-            // Query the database for the old access level if the item isn't new.
-            if (!$isNew) {
-                $this->checkItemAccess($row);
-            }
-        }
+        $context = $event->getContext();
+        $row     = $event->getItem();
+        $isNew   = $event->getIsNew();
 
-        // Check for access levels from the category.
-        if ($context === 'com_categories.category') {
-            // Query the database for the old access level if the item isn't new.
-            if (!$isNew) {
-                $this->checkCategoryAccess($row);
-            }
+        if ($context === 'com_categories.category' && !$isNew) {
+            $this->checkCategoryAccess($row);
         }
-
-        return true;
     }
 
     /**
      * Method to update the link information for items that have been changed
-     * from outside the edit screen. This is fired when the item is published,
-     * unpublished, archived, or unarchived from the list view.
+     * from outside the edit screen (published, unpublished, archived, trashed).
      *
-     * @param   string   $context  The context for the content passed to the plugin.
-     * @param   array    $pks      An array of primary key ids of the content that has changed state.
-     * @param   integer  $value    The value of the state that the content has been changed to.
+     * @param FinderEvent\AfterChangeStateEvent $event The event instance.
      *
-     * @return  void
-     *
-     * @since   2.5
+     * @return void
      */
-    public function onFinderChangeState($context, $pks, $value)
+    public function onFinderChangeState(FinderEvent\AfterChangeStateEvent $event): void
     {
-        // We only want to handle articles here.
-        if ($context === 'com_jed.extension' || $context === 'com_content.form') {
+        $context = $event->getContext();
+        $pks     = $event->getPks();
+        $value   = $event->getValue();
+
+        if ($context === 'com_jed.extension') {
             $this->itemStateChange($pks, $value);
         }
 
-        // Handle when the plugin is disabled.
         if ($context === 'com_plugins.plugin' && $value === 0) {
             $this->pluginDisable($pks);
         }
@@ -239,32 +229,27 @@ final class Jed extends Adapter
     /**
      * Method to index an item. The item must be a Result object.
      *
-     * @param   Result  $item  The item to index as a Result object.
+     * @param Result $item The item to index as a Result object.
      *
-     * @return  void
+     * @return void
      *
-     * @since   2.5
-     * @throws  Exception on database error.
+     * @throws \Exception on database error.
      */
     protected function index(Result $item)
     {
         $item->setLanguage();
 
-        // Check if the extension is enabled.
         if (ComponentHelper::isEnabled($this->extension) === false) {
             return;
         }
 
         $item->context = 'com_jed.extension';
 
-        // Initialise the item parameters.
-        $registry     = new Registry($item->params);
+        // #__jed_extensions has no per-item params column - only the global
+        // component params apply.
         $item->params = clone ComponentHelper::getParams('com_jed', true);
-        $item->params->merge($registry);
 
-        $item->metadata = new Registry($item->metadata);
-
-        // Trigger the onContentPrepare event.
+        // Trigger the onContentPrepare event on the free-text fields.
         $item->summary = Helper::prepareContent($item->summary, $item->params, $item);
         $item->body    = Helper::prepareContent($item->body, $item->params, $item);
 
@@ -272,55 +257,110 @@ final class Jed extends Adapter
         $item->url = $this->getUrl($item->id, $this->extension, $this->layout);
 
         // Build the necessary route and path information.
-        $item->route = 'index.php?option=com_jed&view=extension&catid=' . $item->primary_category_id . '&id=' . $item->slug;
+        $item->route = RouteHelper::getArticleRoute($item->id, $item->catid, $item->language);
 
         // Get the menu title if it exists.
         $title = $this->getItemMenuTitle($item->url);
 
-        // Adjust the title if necessary.
         if (!empty($title) && $this->params->get('use_menu_title', true)) {
             $item->title = $title;
         }
 
-        $images = $item->images ? json_decode($item->images) : false;
-
-        // Add the image.
-        if ($images && !empty($images->image_intro)) {
-            $item->imageUrl = $images->image_intro;
-            $item->imageAlt = $images->image_intro_alt ?? '';
+        // Add the image - prefer the overview image, fall back to the logo.
+        if (!empty($item->overview_image)) {
+            $item->imageUrl = $item->overview_image;
+            $item->imageAlt = $item->title ?? '';
+        } elseif (!empty($item->logo)) {
+            $item->imageUrl = $item->logo;
+            $item->imageAlt = $item->title ?? '';
         }
 
-        // Add the meta author.
-        $item->metaauthor = $item->metadata->get('author');
+        // Prefer the extension's JED developer identity over the raw Joomla username.
+        $item->author = !empty($item->developer_name) ? $item->developer_name : $item->author;
 
-        // Add the metadata processing instructions.
-        $item->addInstruction(Indexer::META_CONTEXT, 'metakey');
-        $item->addInstruction(Indexer::META_CONTEXT, 'metadesc');
-        $item->addInstruction(Indexer::META_CONTEXT, 'metaauthor');
+        // Resolve the free/paid/freemium/cloud type to a human-readable label.
+        $item->typeLabel = !empty(self::TYPE_LABELS[$item->type])
+            ? Text::_(self::TYPE_LABELS[$item->type])
+            : '';
+
+        // Resolve the extension_types checkboxes (com/mod/plugin/specific) to human-readable labels.
+        $extensionTypeValues = $this->decodeCheckboxValues($item->extension_types);
+        $extensionTypeLabels = [];
+
+        foreach ($extensionTypeValues as $value) {
+            if (!empty(self::EXTENSION_TYPE_LABELS[$value])) {
+                $extensionTypeLabels[] = Text::_(self::EXTENSION_TYPE_LABELS[$value]);
+            }
+        }
+
+        $item->extensionTypesText = implode(', ', $extensionTypeLabels);
+
+        // Resolve the joomla_versions checkboxes to human-readable labels (#__jed_joomla_versions).
+        $joomlaVersionValues = $this->decodeCheckboxValues($item->joomla_versions);
+        $joomlaVersionLabels = [];
+
+        foreach ($joomlaVersionValues as $value) {
+            if (!empty($this->joomlaVersionLabels[$value])) {
+                $joomlaVersionLabels[] = $this->joomlaVersionLabels[$value];
+            }
+        }
+
+        $item->joomlaVersionsText = implode(', ', $joomlaVersionLabels);
+
+        // Add the free-text search instructions. developer_email is deliberately
+        // excluded: it must never be exposed via public search result snippets.
         $item->addInstruction(Indexer::META_CONTEXT, 'author');
-        $item->addInstruction(Indexer::META_CONTEXT, 'created_by_alias');
+        $item->addInstruction(Indexer::META_CONTEXT, 'license');
+        $item->addInstruction(Indexer::META_CONTEXT, 'typeLabel');
+        $item->addInstruction(Indexer::META_CONTEXT, 'extensionTypesText');
+        $item->addInstruction(Indexer::META_CONTEXT, 'joomlaVersionsText');
 
-        // Translate the state. Articles should only be published if the category is published.
+        // Translate the state. Extensions should only be indexed as published if the category is published.
         $item->state = $this->translateState($item->state, $item->cat_state);
-
-        // Add the type taxonomy data.
-        $item->addTaxonomy('Type', 'Article');
-
-        // Add the author taxonomy data.
-        if (!empty($item->author) || !empty($item->created_by_alias)) {
-            $item->addTaxonomy('Author', !empty($item->created_by_alias) ? $item->created_by_alias : $item->author, $item->state);
-        }
 
         // Add the category taxonomy data.
         $categories = $this->getApplication()->bootComponent('com_jed')->getCategory(['published' => false, 'access' => false]);
         $category   = $categories->get($item->catid);
 
-        // Category does not exist, stop here
         if (!$category) {
             return;
         }
 
-        $item->addNestedTaxonomy('Category', $category, $this->translateState($category->published), $category->access, $category->language);
+        // No item-level access column: the category's own access level is the only
+        // real access gate available for this content, so it is used for the item too.
+        $item->access = (int) $category->access;
+
+        $item->addNestedTaxonomy('Category', $category, $this->translateState($category->published), $item->access, $item->language);
+
+        // Add the type taxonomy data.
+        if ($item->typeLabel !== '') {
+            $item->addTaxonomy('Type', $item->typeLabel, $item->state, $item->access);
+        }
+
+        // Add the extension type taxonomy data (a single extension can be several types).
+        foreach ($extensionTypeLabels as $label) {
+            $item->addTaxonomy('Extension Type', $label, $item->state, $item->access);
+        }
+
+        // Add the Joomla version compatibility taxonomy data.
+        foreach ($joomlaVersionLabels as $label) {
+            $item->addTaxonomy('Joomla Version', $label, $item->state, $item->access);
+        }
+
+        // Add the license taxonomy data.
+        if (!empty($item->license)) {
+            $item->addTaxonomy('License', $item->license, $item->state, $item->access);
+        }
+
+        // Add the author taxonomy data.
+        if (!empty($item->author)) {
+            $item->addTaxonomy('Author', $item->author, $item->state, $item->access);
+        }
+
+        // Add the popular taxonomy data.
+        if (!empty($item->popular)) {
+            $item->addTaxonomy('Popular', Text::_('JYES'), $item->state, $item->access);
+        }
 
         // Get content extras.
         Helper::getContentExtras($item);
@@ -330,25 +370,89 @@ final class Jed extends Adapter
     }
 
     /**
+     * Method to setup the indexer to be run. Preloads the Joomla version label
+     * lookup table once per indexing run (rather than once per item).
+     *
+     * @return boolean True on success.
+     */
+    protected function setup()
+    {
+        $this->getApplication()->getLanguage()->load('com_jed', JPATH_SITE);
+
+        $db = $this->getDatabase();
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(['id', 'label']))
+            ->from($db->quoteName('#__jed_joomla_versions'));
+
+        $this->joomlaVersionLabels = $db->setQuery($query)->loadAssocList('id', 'label') ?: [];
+
+        return true;
+    }
+
+    /**
+     * Decode a JSON-ish checkboxes field value (e.g. `["40","50"]`) into a plain array.
+     *
+     * @param mixed $value The raw column value.
+     *
+     * @return string[]
+     */
+    private function decodeCheckboxValues($value): array
+    {
+        if (empty($value)) {
+            return [];
+        }
+
+        $decoded = json_decode((string) $value, true);
+
+        return \is_array($decoded) ? array_values(array_filter(array_map('strval', $decoded), 'strlen')) : [];
+    }
+
+    /**
      * Method to get the SQL query used to retrieve the list of content items.
      *
-     * @param   mixed  $query  A DatabaseQuery object or null.
+     * @param mixed $query An object implementing QueryInterface or null.
      *
-     * @return  DatabaseQuery  A database object.
-     *
-     * @since   2.5
+     * @return QueryInterface A database object.
      */
     protected function getListQuery($query = null)
     {
         $db = $this->getDatabase();
 
-        // Check if we can use the supplied SQL query.
-        $query = $query instanceof DatabaseQuery ? $query : $db->getQuery(true)
-            ->select('a.*')
+        $query = $query instanceof QueryInterface ? $query : $db->createQuery()
+            ->select('a.id, a.name AS title, a.intro AS summary, a.description AS body')
+            ->select('a.state, a.catid, a.created AS start_date, a.created_by, a.modified, a.modified_by')
+            ->select('a.type, a.extension_types, a.joomla_versions, a.license')
+            ->select('a.logo, a.overview_image, a.popular')
+            ->select('c.title AS category, c.published AS cat_state, c.access AS cat_access')
             ->select('u.name AS author')
+            ->select('d.developer_name')
             ->from('#__jed_extensions AS a')
-            ->join('LEFT', '#__categories AS c ON c.id = a.primary_category_id')
-            ->join('LEFT', '#__users AS u ON u.id = a.created_by');
+            ->join('LEFT', '#__categories AS c ON c.id = a.catid')
+            ->join('LEFT', '#__users AS u ON u.id = a.created_by')
+            ->join('LEFT', '#__jed_developers AS d ON d.user_id = a.created_by');
+
+        return $query;
+    }
+
+    /**
+     * Method to get a query to retrieve item state, category state, and category
+     * access for cascading state/access changes. Overridden because
+     * `#__jed_extensions` has no `access` column - a constant is selected in its
+     * place so the inherited categoryStateChange()/itemStateChange()/
+     * categoryAccessChange() helpers keep working without referencing it.
+     *
+     * @return QueryInterface
+     */
+    protected function getStateQuery()
+    {
+        $query = $this->db->createQuery();
+
+        $query->select('a.id')
+            ->select('a.' . $this->state_field . ' AS state, c.published AS cat_state')
+            ->select('1 AS access, c.access AS cat_access')
+            ->from($this->table . ' AS a')
+            ->join('LEFT', '#__categories AS c ON c.id = a.catid');
 
         return $query;
     }
