@@ -92,6 +92,28 @@ class TicketmessageModel extends AdminModel
     }
 
     /**
+     * Removes the "internal" field for users who don't have core.manage on com_tickets - only
+     * managers may flag a ticket message as internal-only.
+     *
+     * @param Form   $form  The form to process.
+     * @param mixed  $data  The data to bind to the form.
+     * @param string $group The name of the plugin group to import.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     * @throws Exception
+     */
+    protected function preprocessForm(Form $form, $data, $group = 'content'): void
+    {
+        parent::preprocessForm($form, $data, $group);
+
+        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_tickets')) {
+            $form->removeField('internal');
+        }
+    }
+
+    /**
      * Returns a reference to the a Table object, always creating it.
      *
      * @param string $name

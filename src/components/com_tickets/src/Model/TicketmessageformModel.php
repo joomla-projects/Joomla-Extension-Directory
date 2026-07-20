@@ -165,6 +165,28 @@ class TicketmessageformModel extends FormModel
     }
 
     /**
+     * Removes the "internal" field for users who don't have core.manage on com_tickets - only
+     * managers may flag a ticket message as internal-only.
+     *
+     * @param Form   $form  The form to process.
+     * @param mixed  $data  The data to bind to the form.
+     * @param string $group The name of the plugin group to import.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     * @throws Exception
+     */
+    protected function preprocessForm(Form $form, $data, $group = 'content'): void
+    {
+        parent::preprocessForm($form, $data, $group);
+
+        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_tickets')) {
+            $form->removeField('internal');
+        }
+    }
+
+    /**
      * Method to delete data
      *
      * @param int  $pk  Item primary key
@@ -306,13 +328,6 @@ class TicketmessageformModel extends FormModel
 
                     if (! $canEdit) {
                         throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-                    }
-
-                    // Check published state.
-                    if ($published = $this->getState('filter.published')) {
-                        if (isset($table->state) && $table->state != $published) {
-                            return $this->item;
-                        }
                     }
 
                     // Convert the Table to a clean stdClass.

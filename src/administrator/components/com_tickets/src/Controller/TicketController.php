@@ -443,14 +443,8 @@ class TicketController extends FormController
         $ticket_message['message']           = $message;
         $ticket_message['message_direction'] = 0; /* 1 for coming in, 0 for going out */
         $ticket_message['created_by']        = $user->id;
-        $ticket_message['modified_by']       = $user->id;
         $ticket_message['created_on']        = 'now()';
         $ticket_message['modified_on']       = 'now()';
-        $ticket_message['state']             = 0;
-        $ticket_message['ordering']          = 0;
-        $ticket_message['checked_out']       = 0;
-        $ticket_message['checked_out_time']  = '0000-00-00 00:00:00';
-
 
         $ticket_message_model->save($ticket_message);
     }
