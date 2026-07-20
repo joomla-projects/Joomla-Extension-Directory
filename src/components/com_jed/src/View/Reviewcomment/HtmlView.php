@@ -15,7 +15,6 @@ namespace Jed\Component\Jed\Site\View\Reviewcomment;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -52,17 +51,14 @@ class HtmlView extends BaseHtmlView
 
         $model = $this->getModel();
         $model->setUseExceptions(true);
-        try {
-            $this->state  = $model->getState();
-            $this->item   = $model->getItem();
-            $this->params = Factory::getApplication()->getParams('com_jed');
+        $this->state  = $model->getState();
+        $this->item   = $model->getItem();
+        $this->params = Factory::getApplication()->getParams('com_jed');
 
-            if (!empty($this->item)) {
-                $this->form = $model->getForm();
-            }
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
+        if (!empty($this->item)) {
+            $this->form = $model->getForm();
         }
+
         if ($this->_layout == 'edit') {
             $authorised = $user->authorise('core.create', 'com_jed');
 
@@ -121,7 +117,6 @@ class HtmlView extends BaseHtmlView
         if ($this->params->get('robots')) {
             $this->getDocument()->setMetadata('robots', $this->params->get('robots'));
         }
-
 
         // Add Breadcrumbs
         $pathway        = $app->getPathway();

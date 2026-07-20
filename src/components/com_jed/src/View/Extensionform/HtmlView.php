@@ -14,9 +14,7 @@ namespace Jed\Component\Jed\Site\View\Extensionform;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;

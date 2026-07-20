@@ -103,13 +103,7 @@ class ExtensionModel extends AdminModel
                 $return = $table->load(['extension_id' => $pk, 'id' => $version]);
             } else {
                 // Load the most recent history entry (highest id) for this extension.
-                $db          = $this->getDatabase();
-                $latestQuery = $db->getQuery(true)
-                    ->select('MAX(' . $db->quoteName('id') . ')')
-                    ->from($db->quoteName('#__jed_extensions_history'))
-                    ->where($db->quoteName('extension_id') . ' = :eid')
-                    ->bind(':eid', $pk, ParameterType::INTEGER);
-                $latestId = (int) $db->setQuery($latestQuery)->loadResult();
+                $latestId = $this->getLatestHistoryId($pk);
 
                 $return = $latestId > 0 ? $table->load($latestId) : false;
             }
@@ -151,6 +145,157 @@ class ExtensionModel extends AdminModel
         );
 
         return $item;
+    }
+
+    /**
+     * Get the id of the most recent (highest id) history entry for an extension.
+     *
+     * @param int $extensionId The extension id.
+     *
+     * @return int The history row id, or 0 if the extension has no history yet.
+     *
+     * @since 4.1.0
+     */
+    private function getLatestHistoryId(int $extensionId): int
+    {
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select('MAX(' . $db->quoteName('id') . ')')
+            ->from($db->quoteName('#__jed_extensions_history'))
+            ->where($db->quoteName('extension_id') . ' = :eid')
+            ->bind(':eid', $extensionId, ParameterType::INTEGER);
+
+        return (int) $db->setQuery($query)->loadResult();
+    }
+
+    /**
+     * Load the live `#__jed_extensions` row as a plain object, for use alongside
+     * {@see getItem()} (which always loads from the history table) in the compare
+     * layout.
+     *
+     * @param int $extensionId The extension id.
+     *
+     * @return object|null Null if no live row exists for this id.
+     *
+     * @since 4.1.0
+     */
+    public function getLiveItem(int $extensionId): ?object
+    {
+        /** @var ExtensionTable $table */
+        $table = $this->getTable('Extension');
+
+        if (!$table->load($extensionId)) {
+            return null;
+        }
+
+        return ArrayHelper::toObject(get_object_vars($table));
+    }
+
+    /**
+     * Resolve the two sides to show in the compare layout.
+     *
+     * @param int      $extensionId    The extension id.
+     * @param int|null $leftHistoryId  A specific history id, or null for "the live row".
+     * @param int|null $rightHistoryId A specific history id, or null for "the latest history row".
+     *
+     * @return array{0: object|null, 1: object|null, 2: int} [$left, $right, $resolvedRightHistoryId]
+     *
+     * @since 4.1.0
+     */
+    public function getCompareItems(int $extensionId, ?int $leftHistoryId, ?int $rightHistoryId): array
+    {
+        $left = $leftHistoryId
+            ? $this->getItem($extensionId, $leftHistoryId)
+            : $this->getLiveItem($extensionId);
+
+        $rightHistoryId = $rightHistoryId ?: $this->getLatestHistoryId($extensionId);
+        $right          = $rightHistoryId ? $this->getItem($extensionId, $rightHistoryId) : null;
+
+        return [$left, $right, $rightHistoryId];
+    }
+
+    /**
+     * Approve a pending history entry: overwrite the live `#__jed_extensions` row
+     * with that entry's content, mark it the active history row, and point
+     * `entry_version` at it.
+     *
+     * @param int $extensionId The extension id.
+     * @param int $historyId   The `#__jed_extensions_history` id to promote to live.
+     *
+     * @return void
+     *
+     * @throws Exception If the history row doesn't belong to this extension.
+     *
+     * @since 4.1.0
+     */
+    public function approve(int $extensionId, int $historyId): void
+    {
+        /** @var ExtensionHistoryTable $historyTable */
+        $historyTable = $this->getTable('ExtensionHistory');
+
+        if (!$historyTable->load(['id' => $historyId, 'extension_id' => $extensionId])) {
+            throw new Exception(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
+        }
+
+        // #__jed_extensions has no extension_id/active columns; #__jed_extensions_history
+        // has no id-as-live-primary-key semantics - id is replaced with extension_id.
+        $liveData = get_object_vars($historyTable);
+        unset($liveData['extension_id'], $liveData['active']);
+        $liveData['id'] = $extensionId;
+
+        /** @var ExtensionTable $liveTable */
+        $liveTable = $this->getTable('Extension');
+
+        if (!$liveTable->bind($liveData) || !$liveTable->check() || !$liveTable->store()) {
+            throw new Exception($liveTable->getError());
+        }
+
+        // Marks this history row active (deactivating the rest) - existing, tested logic.
+        $this->activateVersion($extensionId, $historyId);
+
+        // Point the live row at the now-approved history entry.
+        $this->updateEntryVersion($extensionId, $historyId);
+    }
+
+    /**
+     * Publish/unpublish/archive/trash the live `#__jed_extensions` row(s).
+     *
+     * Overridden because {@see getTable()} defaults to `ExtensionHistoryTable`
+     * (needed for the item edit-form flow), which would make the inherited
+     * `AdminModel::publish()` target history rows instead of the live table.
+     *
+     * @param array|int $pks   The extension id(s) to change state for.
+     * @param int       $value The new state value.
+     *
+     * @return bool
+     *
+     * @since 4.1.0
+     */
+    public function publish(&$pks, $value = 1)
+    {
+        $user  = $this->getCurrentUser();
+        $table = $this->getTable('Extension');
+        $pks   = (array) $pks;
+
+        foreach ($pks as $i => $pk) {
+            $table->reset();
+
+            if ($table->load($pk) && !$this->canEditState($table)) {
+                unset($pks[$i]);
+            }
+        }
+
+        if (!\count($pks)) {
+            return true;
+        }
+
+        if (!$table->publish($pks, $value, $user->id)) {
+            $this->setError($table->getError());
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -470,8 +615,8 @@ class ExtensionModel extends AdminModel
             return false;
         }
 
-        // Point the live row at the history entry that was just created.
-        $this->updateEntryVersion($extensionId, (int) $table->id);
+        // The live row is intentionally NOT advanced here: every save is a pending
+        // review, only ExtensionModel::approve() writes to #__jed_extensions.
 
         // deleteImages/deleteFiles are plain checkboxes, not declared form fields, so they were
         // stripped by Form::filter() in AdminModel::validate() before $data reached us here.

@@ -403,7 +403,6 @@ class TicketformModel extends FormModel
                     $ticket_message['message']           = $message_out->htmlbody;
                     $ticket_message['message_direction'] = 0; /* 1 for coming in, 0 for going out */
                     $ticket_message['created_by']        = -1;
-                    $ticket_message['modified_by']       = -1;
                     $ticket_message_model->save($ticket_message);
                 }
 

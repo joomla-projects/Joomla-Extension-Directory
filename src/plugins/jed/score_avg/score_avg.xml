@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="plugin" group="jed" method="upgrade">
+	<name>plg_jed_score_avg</name>
+	<author>Joomla! Project</author>
+	<creationDate>2026-07</creationDate>
+	<copyright>(C) 2026 Open Source Matters, Inc.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>admin@joomla.org</authorEmail>
+	<authorUrl>www.joomla.org</authorUrl>
+	<version>1.0.0</version>
+	<description>PLG_JED_SCORE_AVG_XML_DESCRIPTION</description>
+	<namespace path="src">Joomla\Plugin\Jed\ScoreAvg</namespace>
+	<files>
+		<folder plugin="score_avg">services</folder>
+		<folder>src</folder>
+	</files>
+	<languages>
+		<language tag="en-GB">language/en-GB/plg_jed_score_avg.ini</language>
+		<language tag="en-GB">language/en-GB/plg_jed_score_avg.sys.ini</language>
+	</languages>
+</extension>

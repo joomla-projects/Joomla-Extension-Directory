@@ -95,6 +95,7 @@ class ExtensionsModel extends ListModel
                     'a.checked_out_time',
                     'a.approved',
                     'a.state',
+                    'a.entry_version',
                     'categories.title',
                     'users.name',
                     'staff.name',
@@ -111,6 +112,7 @@ class ExtensionsModel extends ListModel
                     'checked_out_time',
                     'approved',
                     'state',
+                    'entry_version',
                     'category',
                     'developer',
                     'editor',
@@ -139,6 +141,11 @@ class ExtensionsModel extends ListModel
                 '(SELECT COUNT(*) FROM ' . $db->quoteName('#__jed_reviews') . ' r'
                 . ' WHERE ' . $db->quoteName('r.extension_id') . ' = ' . $db->quoteName('a.id') . ') AS '
                 . $db->quoteName('reviewCount')
+            )
+            ->select(
+                '(SELECT MAX(h2.id) FROM ' . $db->quoteName('#__jed_extensions_history') . ' h2'
+                . ' WHERE ' . $db->quoteName('h2.extension_id') . ' = ' . $db->quoteName('a.id') . ') AS '
+                . $db->quoteName('latest_history_id')
             );
 
         // Filter by published state
