@@ -27,6 +27,8 @@ $wa->getRegistry()
     ->addExtensionRegistryFile('com_jed');
 $wa->usePreset('com_jed.autoComplete');
 
+HTMLHelper::_('bootstrap.tooltip');
+
 $user      = $this->getCurrentUser();
 $userId    = $user->id;
 $listOrder = $this->escape($this->state->get('list.ordering'));
@@ -55,10 +57,10 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                             <?php echo HTMLHelper::_('grid.checkall'); ?>
                         </td>
                         <td scope="col" class="w-1  d-none d-md-table-cell">
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_PUBLISHED_LABEL', 'a.state', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_STATE_LABEL', 'a.state', $listDirn, $listOrder); ?>
                         </td>
-                        <td scope="col" class="w-1  d-none d-md-table-cell">
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_APPROVED_LABEL', 'a.approved', $listDirn, $listOrder); ?>
+                        <td scope="col" class="w-1 d-none d-md-table-cell text-center">
+                            <?php echo Text::_('COM_JED_EXTENSION_PENDING_LABEL'); ?>
                         </td>
                         <td scope="col" class="w-1 d-none d-md-table-cell text-center">
                             <?php echo Text::_('COM_JED_EXTENSION_HISTORY_LABEL'); ?>
@@ -112,30 +114,28 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                             <td>
                                 <?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
                             </td>
-                            <td class="center" width="50">
-                                <?php
-                                $icon = match ($item->state) {
-                            '-1' => 'unpublish',
-                            '1' => 'publish',
-                            '2' => 'expired',
-                            default => 'pending',
-                        };
-                                echo '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
-                                ?>
-                            </td>
-                            <td>
-                                <?php
-                                $icon = match ($item->approved) {
-                                    '-1' => 'unpublish',
-                                    '1' => 'publish',
-                                    '2' => 'expired',
-                                    default => 'pending',
-                                };
-                                echo '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
-                                ?>
+                            <td class="text-center">
+                                <?php echo HTMLHelper::_('jgrid.published', $item->state, $i, 'extensions.', $canChange, 'cb'); ?>
+                                <?php echo JedHelper::getApprovedIcon((int) $item->approved); ?>
                             </td>
                             <td class="text-center">
-                                <a href="<?php echo Route::_('index.php?option=com_jed&view=extension&layout=historylist&id=' . $item->id); ?>'); ?>"
+                                <?php
+                                $isPending = !empty($item->latest_history_id) && (int) $item->latest_history_id !== (int) $item->entry_version;
+                                ?>
+                                <?php if ($isPending) : ?>
+                                    <a href="<?php echo Route::_('index.php?option=com_jed&view=extension&layout=compare&id=' . $item->id); ?>"
+                                       title="<?php echo Text::_('COM_JED_EXTENSION_PENDING_DESC'); ?>"
+                                       data-bs-toggle="tooltip">
+                                        <span class="icon-refresh text-warning" aria-hidden="true"></span>
+                                    </a>
+                                <?php else : ?>
+                                    <span class="icon-check text-muted"
+                                          title="<?php echo Text::_('COM_JED_EXTENSION_UP_TO_DATE_LABEL'); ?>"
+                                          data-bs-toggle="tooltip" aria-hidden="true"></span>
+                                <?php endif; ?>
+                            </td>
+                            <td class="text-center">
+                                <a href="<?php echo Route::_('index.php?option=com_jed&view=extension&layout=historylist&id=' . $item->id); ?>"
                                    class="jed-history-btn"
                                    data-extension-id="<?php echo (int) $item->id; ?>"
                                    title="<?php echo Text::_('COM_JED_EXTENSION_HISTORY_LABEL'); ?>">

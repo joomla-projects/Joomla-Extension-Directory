@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Administrator\Controller;
 
 use Jed\Component\Jed\Administrator\Model\ExtensionModel;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
 
@@ -87,6 +88,72 @@ class ExtensionController extends FormController
         /** @var ExtensionModel $model */
         $model = $this->getModel();
         $model->activateVersion($extensionId, $historyId);
+
+        // The modal quick-view flow (tmpl/extensions/default.php) fetches this via
+        // AJAX and ignores the redirect target; the full-page history view (with
+        // its own toolbar) benefits from landing back on itself.
+        $this->setRedirect(Route::_('index.php?option=com_jed&view=extension&layout=historylist&id=' . $extensionId, false));
+
+        return true;
+    }
+
+    /**
+     * Redirect to the "compare" layout for one or two selected history entries.
+     * Called from the history page's toolbar Compare button.
+     *
+     * @return bool
+     *
+     * @since 4.1.0
+     */
+    public function compareHistory(): bool
+    {
+        $this->checkToken();
+
+        $extensionId = $this->input->getInt('extension_id');
+        $historyIds  = $this->input->post->get('history', [], 'array');
+        $historyIds  = array_values(array_unique(array_filter(array_map('intval', $historyIds))));
+
+        if (empty($historyIds)) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JED_EXTENSION_COMPARE_SELECT_AT_LEAST_ONE'), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jed&view=extension&layout=historylist&id=' . $extensionId, false));
+
+            return false;
+        }
+
+        $url = 'index.php?option=com_jed&view=extension&layout=compare&id=' . $extensionId;
+        $url .= count($historyIds) === 1
+            ? '&right=' . $historyIds[0]
+            : '&left=' . $historyIds[0] . '&right=' . $historyIds[1];
+
+        $this->setRedirect(Route::_($url, false));
+
+        return true;
+    }
+
+    /**
+     * Approve a pending history entry: overwrites the live #__jed_extensions row
+     * with that entry's content. Called from the "compare" layout's toolbar.
+     *
+     * @return bool
+     *
+     * @since 4.1.0
+     */
+    public function approve(): bool
+    {
+        $this->checkToken();
+
+        $extensionId = $this->input->getInt('extension_id');
+        $historyId   = $this->input->getInt('history_id');
+
+        /** @var ExtensionModel $model */
+        $model = $this->getModel();
+
+        try {
+            $model->approve($extensionId, $historyId);
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JED_EXTENSION_APPROVED_MESSAGE'));
+        } catch (\Exception $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+        }
 
         $this->setRedirect(Route::_('index.php?option=com_jed&view=extensions', false));
 
