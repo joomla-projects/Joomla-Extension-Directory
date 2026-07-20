@@ -14,16 +14,12 @@ namespace Jed\Component\Tickets\Site\Model;
 // No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
-
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
-use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\Model\ItemModel;
-use Joomla\Registry\Registry;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
 
@@ -32,91 +28,8 @@ use Joomla\Utilities\ArrayHelper;
  *
  * @since 4.0.0
  */
-class TicketModel extends ItemModel
+class TicketModel extends AdminModel
 {
-    /**
-     * Data Table
-     *
-     * @since 4.0.0
-     **/
-    private string $dbtable = "#__jed_tickets";
-
-    /**
-     * The item object
-     *
-     * @var   mixed
-     * @since 4.0.0
-     */
-    private mixed $item;
-
-    /**
-     * Method to check in an item.
-     *
-     * @param int|null $id The id of the row to check out.
-     *
-     * @return bool True on success, false on failure.
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function checkin(int $id = null): bool
-    {
-        // Get the id.
-        $id = (!empty($id)) ? $id : (int)$this->getState('ticket.id');
-        if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-            if ($id) {
-                // Initialise the table
-                $table = $this->getTable();
-
-                // Attempt to check the row in.
-                if (method_exists($table, 'checkin')) {
-                    if (!$table->checkin($id)) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-    }
-
-    /**
-     * Method to check out an item for editing.
-     *
-     * @param int|null $id The id of the row to check out.
-     *
-     * @return bool True on success, false on failure.
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function checkout(int $id = null): bool
-    {
-        // Get the user id.
-        $id = (!empty($id)) ? $id : (int)$this->getState('ticket.id');
-
-        if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-            if ($id) {
-                // Initialise the table
-                $table = $this->getTable();
-
-                // Get the current user object.
-                $user = Factory::getApplication()->getIdentity();
-
-                // Attempt to check the row out.
-                if (method_exists($table, 'checkout')) {
-                    if (!$table->checkout($user->id, $id)) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-    }
-
     /**
      * Method to get an object.
      *
@@ -125,175 +38,23 @@ class TicketModel extends ItemModel
      * @return mixed    Object on success, false on failure.
      *
      * @since  4.0.0
-     * @throws Exception
+     * @throws \Exception
      */
-    public function getItem($pk = null): mixed
+    public function getItem($pk = null)
     {
-        /* @var $app \Joomla\CMS\Application\SiteApplication */
-        $app = Factory::getApplication();
+        $itemId = (int) (!empty($itemId)) ? $itemId : $this->getState('ticket.id');
 
-        if ($this->item === null) {
-            $this->item = false;
+        // Get a row instance.
+        $table = $this->getTable();
+        $table->setUseExceptions(true);
 
-            if (empty($pk)) {
-                $pk = $this->getState('ticket.id');
-            }
+        // Attempt to load the row.
+        $return = $table->load($itemId);
 
-            // Get a level row instance.
-            $table = $this->getTable();
+        $properties = $table->getProperties(1);
+        $value      = ArrayHelper::toObject($properties);
 
-            $this->setState('ticket.id', $pk);
-            // Attempt to load the row.
-            if ($table->load($pk)) {
-                if (empty($result) || JedHelper::isAdminOrSuperUser()) {
-                    // Check published state.
-                    if ($published = $this->getState('filter.published')) {
-                        if (isset($table->state) && $table->state != $published) {
-                            throw new Exception(Text::_('COM_TICKETS_ITEM_NOT_LOADED'), 403);
-                        }
-                    }
-
-
-                    // Convert the Table to a clean stdClass.
-                    $properties = get_object_vars($table);
-                    $item       = ArrayHelper::toObject($properties);
-
-                    if (property_exists($item, 'params')) {
-                        $registry     = new Registry($item->params);
-                        $item->params = $registry->toArray();
-                    }
-                } else {
-                    $app->enqueueMessage("Sorry you did not create that item", "message");
-
-                    return null;
-                }
-            }
-
-            if (empty($this->item)) {
-                throw new Exception(Text::_('COM_TICKETS_SECURITY_CANT_LOAD'), 404);
-            }
-        }
-
-
-        if (!empty($this->item->ticket_origin) || $this->item->ticket_origin == 0) {
-            $this->item->ticket_origin = Text::_(
-                'COM_TICKETS_TICKETS_TICKET_ORIGIN_LABEL_OPTION_' . $this->item->ticket_origin
-            );
-        }
-
-        if (isset($this->item->ticket_category_type) && $this->item->ticket_category_type != '') {
-            if (is_object($this->item->ticket_category_type)) {
-                $this->item->ticket_category_type = ArrayHelper::fromObject($this->item->ticket_category_type);
-            }
-
-            $values = (is_array($this->item->ticket_category_type)) ? $this->item->ticket_category_type : explode(
-                ',',
-                (string) $this->item->ticket_category_type
-            );
-
-            $textValue = [];
-
-            foreach ($values as $value) {
-                $db    = Factory::getContainer()->get('DatabaseDriver');
-                $query = $db->getQuery(true);
-
-                $query
-                    ->select('`#__jed_ticket_categories_3583656`.`categorytype`')
-                    ->from($db->quoteName('#__jed_ticket_categories', '#__jed_ticket_categories_3583656'))
-                    ->where($db->quoteName('id') . ' = ' . $db->quote($value));
-
-                $db->setQuery($query);
-                $results = $db->loadObject();
-
-                if ($results) {
-                    $textValue[] = $results->categorytype;
-                }
-            }
-
-            $this->item->ticket_category_type = !empty($textValue) ? implode(
-                ', ',
-                $textValue
-            ) : $this->item->ticket_category_type;
-        }
-
-        if (isset($this->item->allocated_group) && $this->item->allocated_group != '') {
-            if (is_object($this->item->allocated_group)) {
-                $this->item->allocated_group = ArrayHelper::fromObject($this->item->allocated_group);
-            }
-
-            $values = (is_array($this->item->allocated_group)) ? $this->item->allocated_group : explode(
-                ',',
-                (string) $this->item->allocated_group
-            );
-
-            $textValue = [];
-
-            foreach ($values as $value) {
-                $db    = Factory::getContainer()->get('DatabaseDriver');
-                $query = $db->getQuery(true);
-
-                $query
-                    ->select('`#__jed_ticket_groups_3583668`.`role`')
-                    ->from($db->quoteName('#__jed_ticket_groups', '#__jed_ticket_groups_3583668'))
-                    ->where($db->quoteName('id') . ' = ' . $db->quote($value));
-
-                $db->setQuery($query);
-                $results = $db->loadObject();
-
-                if ($results) {
-                    $textValue[] = $results->role;
-                }
-            }
-
-            $this->item->allocated_group = !empty($textValue) ? implode(
-                ', ',
-                $textValue
-            ) : $this->item->allocated_group;
-        }
-
-        if (isset($this->item->allocated_to)) {
-            $this->item->allocated_to_name = JedHelper::getUserById($this->item->allocated_to)->name;
-        }
-
-        if (isset($this->item->linked_item_type) && $this->item->linked_item_type != '') {
-            if (is_object($this->item->linked_item_type)) {
-                $this->item->linked_item_type = ArrayHelper::fromObject($this->item->linked_item_type);
-            }
-
-            $values = (is_array($this->item->linked_item_type)) ? $this->item->linked_item_type : explode(
-                ',',
-                (string) $this->item->linked_item_type
-            );
-
-            $textValue = [];
-
-            foreach ($values as $value) {
-                $linkedItemType = TicketType::tryFrom((int) $value);
-
-                if ($linkedItemType !== null) {
-                    $textValue[] = Text::_('COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_OPTION_' . strtoupper($linkedItemType->name));
-                }
-            }
-
-            $this->item->linked_item_type = !empty($textValue) ? implode(
-                ', ',
-                $textValue
-            ) : $this->item->linked_item_type;
-        }
-
-        if (!empty($this->item->ticket_status) || $this->item->ticket_status == 0) {
-            $this->item->ticket_status = Text::_('JSTATUS_OPTION_' . $this->item->ticket_status);
-        }
-
-        if (isset($this->item->created_by)) {
-            $this->item->created_by_name = JedHelper::getUserById($this->item->created_by)->name;
-        }
-
-        if (isset($this->item->modified_by)) {
-            $this->item->modified_by_name = JedHelper::getUserById($this->item->modified_by)->name;
-        }
-
-        return $this->item;
+        return $value;
     }
 
 
@@ -307,7 +68,7 @@ class TicketModel extends ItemModel
      * @return Table|bool Table if success, false on failure.
      *
      * @since  4.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     public function getTable($name = 'Ticket', $prefix = 'Administrator', $options = []): Table|bool
     {
@@ -323,7 +84,7 @@ class TicketModel extends ItemModel
      *
      * @since 4.0.0
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function populateState(): void
     {
@@ -358,50 +119,23 @@ class TicketModel extends ItemModel
     }
 
     /**
-     * Method to delete an item
+     * Method to get the record form.
      *
-     * @param int  $id  Element id
+     * @param   array    $data      Data for the form.
+     * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
      *
-     * @return bool
-     * @since  4.0.0
-     * @throws Exception
+     * @return  Form  A Form object
+     *
+     * @since   1.6
+     * @throws  \Exception on failure
      */
-    /*public function delete(int $id) : bool
+    public function getForm($data = [], $loadData = true)
     {
-        $table = $this->getTable();
+        // Get the form.
+        $form = $this->loadForm('com_tickets.ticket', 'ticket', ['control' => 'jform', 'load_data' => $loadData]);
 
-        if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id)
-        {
-            return $table->delete($id);
-        }
-        else
-        {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-        }
-    }*/
-
-    /**
-     * Publish the element
-     *
-     * @param int $id    Item id
-     * @param int $state Publish state
-     *
-     * @return bool
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function publish(int $id, int $state): bool
-    {
-        $table = $this->getTable();
-        if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-            $table->load($id);
-            $table->state = $state;
-
-            return $table->store();
-        }
-        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+        return $form;
     }
-
 
     /**
      * getMessages
@@ -410,12 +144,23 @@ class TicketModel extends ItemModel
      *
      * @since 4.0
      */
-    public function getMessages(): never
+    public function getMessages($pk = null)
     {
+        if (empty($pk)) {
+            $pk = $this->getState('ticket.id');
+        }
+
         $db = $this->getDatabase();
-        echo "<pre>";
-        var_dump($this->getState('ticket.id'));
-        echo "</pre>";
-        exit();
+        $query = $db->getQuery(true);
+        $query->select('*')->from('#__jed_ticket_messages')->where($db->quoteName('ticket_id') . ' = ' . $db->quote($pk));
+
+        if (!$this->getCurrentUser()->authorise('core.manage', 'com_tickets')) {
+            $query->where($db->quoteName('internal') . ' = 0');
+        }
+
+        $db->setQuery($query);
+        $messages = $db->loadObjectList();
+
+        return $messages;
     }
 }

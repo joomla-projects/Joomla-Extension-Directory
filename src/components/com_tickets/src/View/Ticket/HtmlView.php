@@ -16,12 +16,13 @@ namespace Jed\Component\Tickets\Site\View\Ticket;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
+use Jed\Component\Tickets\Site\Model\TicketModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 
 /**
@@ -64,6 +65,7 @@ class HtmlView extends BaseHtmlView
      * @since 4.0.0
      */
     protected Registry $params;
+
     /**
      * Prepares the document
      *
@@ -71,7 +73,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function prepareDocument(): void
     {
@@ -122,41 +124,36 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function display($tpl = null): void
     {
         $app  = Factory::getApplication();
-        $user = Factory::getApplication()->getIdentity();
+        $user = $this->getCurrentUser();
 
+        /** @var TicketModel $model */
         $model = $this->getModel();
         $model->setUseExceptions(true);
-        try {
-            $this->state    = $model->getState();
-            $this->item     = $model->getItem();
-            // $this->messages = $model->getMessages();
-            $this->params   = $app->getParams('com_jed');
+        $this->state    = $model->getState();
+        $this->item     = $model->getItem();
+        $this->messages = $model->getMessages();
+        $this->form     = $model->getForm();
+        $this->params   = $app->getParams('com_jed');
 
-            if (!empty($this->item)) {
-                $this->form = $model->getForm();
-            }
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
+        if (!$user->id) {
+            $return                = base64_encode(Uri::getInstance());
+            $login_url_with_return = Route::_('index.php?option=com_users&view=login&return=' . $return);
+            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'notice');
+            $app->redirect($login_url_with_return, 403);
         }
-        if ($this->_layout == 'edit') {
-            $authorised = $user->authorise('core.create', 'com_jed');
 
-            if ($authorised !== true) {
-                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'));
-            }
+        if (
+            !$user->authorise('core.manage', 'com_tickets.ticket')
+            && $this->item->created_by != $user->id
+        ) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'));
         }
-        if ($this->_layout == 'viewticket') {
-            $authorised = $user->authorise('core.create', 'com_jed');
 
-            if ($authorised !== true) {
-                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'));
-            }
-        }
         $this->prepareDocument();
 
         parent::display($tpl);
