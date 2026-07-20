@@ -16,12 +16,12 @@ namespace Jed\Component\Tickets\Site\View\Tickets;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
 
@@ -33,6 +33,7 @@ use Joomla\CMS\Pagination\Pagination;
 class HtmlView extends BaseHtmlView
 {
     public Form $filterForm;
+
     public array $activeFilters;
     /**
      * An array of items
@@ -42,6 +43,7 @@ class HtmlView extends BaseHtmlView
      * @since 4.0.0
      */
     protected array $items;
+
     /**
      * The pagination object
      *
@@ -50,6 +52,7 @@ class HtmlView extends BaseHtmlView
      * @since 4.0.0
      */
     protected Pagination $pagination;
+
     /**
      * The model state
      *
@@ -58,6 +61,7 @@ class HtmlView extends BaseHtmlView
      * @since 4.0.0
      */
     protected Registry $state;
+
     /**
      * The components parameters
      *
@@ -66,7 +70,6 @@ class HtmlView extends BaseHtmlView
      * @since 4.0.0
      */
     protected Registry $params;
-
 
     /**
      * Display the view
@@ -77,41 +80,31 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function display($tpl = null): void
     {
-
-        $app = Factory::getApplication();
+        $app  = Factory::getApplication();
+        $user = $this->getCurrentUser();
 
         $model = $this->getModel();
         $model->setUseExceptions(true);
-        try {
-            $this->state         = $model->getState();
-            $this->items         = $model->getItems();
-            $this->params        = $app->getParams('com_jed');
-            $this->pagination    = $model->getPagination();
-            $this->filterForm    = $model->getFilterForm();
-            $this->activeFilters = $model->getActiveFilters();
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
+        $this->state         = $model->getState();
+        $this->items         = $model->getItems();
+        $this->params        = $app->getParams('com_jed');
+        $this->pagination    = $model->getPagination();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
+
+        if ($user->guest) {
+            $return                = base64_encode(Uri::getInstance());
+            $login_url_with_return = Route::_('index.php?option=com_users&view=login&return=' . $return);
+            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'notice');
+            $app->redirect($login_url_with_return, 403);
         }
+
         $this->prepareDocument();
         parent::display($tpl);
-    }
-
-    /**
-     * Check if state is set
-     *
-     * @param mixed $state State
-     *
-     * @return bool
-     *
-     * @since 4.0.0
-     */
-    public function getState(mixed $state): bool
-    {
-        return $this->state->{$state} ?? false;
     }
 
     /**
@@ -121,7 +114,7 @@ class HtmlView extends BaseHtmlView
      *
      * @since 4.0.0
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function prepareDocument(): void
     {

@@ -347,48 +347,6 @@ class TicketModel extends AdminModel
     }
 
     /**
-     * Method to get Ticket Internal Notes Data
-     *
-     * @return array  Object on success
-     *
-     * @since 4.0.0
-     */
-    public function getTicketInternalNotes(): array
-    {
-        /* Steps
-            1 - Look to see if there are notes, if not set flag
-            2 - If there are notes store them in array in reverse date order
-            3 - Create Empty New notes array / flag for holding */
-        $db = $this->getDatabase();
-
-        $query = $db->getQuery(true);
-        // Select some fields
-        $query->select('a.*');
-
-        // From the jed_ticket_internal_notes table
-        $query->from($db->quoteName('#__jed_ticket_internal_notes', 'a'));
-
-        // Filter by Ticket Id
-
-        $ticketId = $this->item->id;
-        if (is_numeric($ticketId)) {
-            $query->where('a.ticket_id = ' . (int) $ticketId);
-        } elseif (is_string($ticketId)) {
-            $query->where('a.ticket_id = ' . $db->quote($ticketId));
-        } else {
-            $query->where('a.ticket_id = -5');
-        }
-        // Load the items
-        $db->setQuery($query);
-        $db->execute();
-        if ($db->getNumRows()) {
-            return $db->loadObjectList();
-        }
-
-        return [];
-    }
-
-    /**
      * Method to get Ticket Messages
      *
      * @retun array|bool    An array on success, false on failure
@@ -422,12 +380,7 @@ class TicketModel extends AdminModel
 
         // Load the items
         $db->setQuery($query);
-        $db->execute();
-        if ($db->getNumRows()) {
-            return $db->loadObjectList();
-        }
-
-        return [];
+        return $db->loadObjectList();
     }
 
     /**

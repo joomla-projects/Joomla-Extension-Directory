@@ -14,8 +14,6 @@ namespace Jed\Component\Jed\Site\View\Extensions;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -59,16 +57,14 @@ class HtmlView extends BaseHtmlView
 
         $model = $this->getModel();
         $model->setUseExceptions(true);
-        try {
-            $this->state         = $model->getState();
-            $this->items         = $model->getItems();
-            $this->params        = $app->getParams('com_jed');
-            $this->pagination    = $model->getPagination();
-            $this->filterForm    = $model->getFilterForm();
-            $this->activeFilters = $model->getActiveFilters();
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
-        }
+
+        $this->state         = $model->getState();
+        $this->items         = $model->getItems();
+        $this->params        = $app->getParams('com_jed');
+        $this->pagination    = $model->getPagination();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
+
         $this->prepareDocument();
         parent::display($tpl);
     }

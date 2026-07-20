@@ -19,6 +19,7 @@ namespace Jed\Component\Tickets\Site\View\Ticketform;
 
 use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
@@ -155,11 +156,11 @@ class HtmlView extends BaseHtmlView
                 $this->item->linked_item_id   = $linked_id;
                 $this->item->vr               = $vr;
                 $ticket_type                  = "Unknown";
-                if ($linked_item == 2) {
+                if ($linked_item === TicketType::Extension->value) {
                     $ticket_type = "Extension";
                 }
 
-                if ($linked_item == 3) {
+                if ($linked_item === TicketType::Review->value) {
                     $ticket_type = "Review";
                 }
                 $this->item->extension_title = JedHelper::getExtensionTitle($vr);

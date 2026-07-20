@@ -14,12 +14,10 @@ namespace Jed\Component\Jed\Site\View\Reviewform;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Model\ExtensionModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 
@@ -81,22 +79,20 @@ class HtmlView extends BaseHtmlView
 
         $model = $this->getModel();
         $model->setUseExceptions(true);
-        try {
-            $this->state      = $model->getState();
-            $this->item       = $model->getItem();
-            $this->params     = $app->getParams('com_jed');
-            $this->canSave    = JedHelper::canSave();
-            $this->form       = $model->getForm();
 
-            $input        = $app->getInput();
-            $extension_id = $input->get('extension_id', -1, 'int');
+        $this->state      = $model->getState();
+        $this->item       = $model->getItem();
+        $this->params     = $app->getParams('com_jed');
+        $this->canSave    = JedHelper::canSave();
+        $this->form       = $model->getForm();
 
-            $extension_model         = new ExtensionModel();
-            $this->extension_details = $extension_model->getItem($extension_id);
-            $this->supplytypes       = $extension_model->getSupplyTypes($extension_id);
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
-        }
+        $input        = $app->getInput();
+        $extension_id = $input->get('extension_id', -1, 'int');
+
+        $extension_model         = new ExtensionModel();
+        $this->extension_details = $extension_model->getItem($extension_id);
+        $this->supplytypes       = $extension_model->getSupplyTypes($extension_id);
+
         $this->prepareDocument();
 
         parent::display($tpl);

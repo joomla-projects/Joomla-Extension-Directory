@@ -65,6 +65,10 @@ class HtmlView extends BaseHtmlView
 
         $toolbar = $this->getDocument()->getToolbar();
 
+        if ($canDo->get('core.create')) {
+            $toolbar->addNew('ticket.add');
+        }
+
         if ($canDo->get('core.edit.state')) {
             $dropdown = $toolbar->dropdownButton('status-group')
                 ->text('JTOOLBAR_CHANGE_STATUS')

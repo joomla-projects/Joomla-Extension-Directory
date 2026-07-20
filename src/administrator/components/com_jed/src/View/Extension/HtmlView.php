@@ -14,7 +14,6 @@ namespace Jed\Component\Jed\Administrator\View\Extension;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\Model\ExtensionModel;
 use Joomla\CMS\Factory;
@@ -22,7 +21,6 @@ use Joomla\Database\ParameterType;
 use stdClass;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Registry\Registry;
@@ -42,9 +40,7 @@ class HtmlView extends BaseHtmlView
     protected mixed $extensionscores;
     protected mixed $extensionimage;
     protected mixed $extensionscore;
-    protected mixed $extensionvarieddatum_form;
     protected mixed $extensionform;
-    protected mixed $varied_forms;
     protected ?stdClass $historyItem = null;
     protected array $images          = [];
     protected array $files           = [];

@@ -85,31 +85,9 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_messages`
     `subject`           varchar(255) NOT NULL,
     `message`           text,
     `message_direction` int          DEFAULT '0',
-    `ordering`          int          DEFAULT '0',
-    `state`             tinyint(1)   DEFAULT '1',
-    `checked_out`       int unsigned,
-    `checked_out_time`  datetime,
+    `internal`          tinyint(1)   DEFAULT '0',
     `created_by`        int          DEFAULT '0',
-    `modified_by`       int          DEFAULT '0',
     `created_on`        datetime     DEFAULT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
-/* Table for Ticket Internal Notes */
-DROP TABLE IF EXISTS `#__jed_ticket_internal_notes`;
-CREATE TABLE IF NOT EXISTS `#__jed_ticket_internal_notes`
-(
-    `id`               INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `ticket_id`        INT(10)          NULL DEFAULT 0,
-    `summary`          VARCHAR(255)     NULL DEFAULT '',
-    `note`             TEXT             NULL,
-    `ordering`         INT(11)          NULL DEFAULT 0,
-    `state`            TINYINT(1)       NULL DEFAULT 1,
-    `checked_out`      int unsigned,
-    `checked_out_time` datetime,
-    `created_by`       INT(11)          NULL DEFAULT 0,
-    `modified_by`      INT(11)          NULL DEFAULT 0,
-    `created_on`       DATETIME              DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
@@ -131,7 +109,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_tickets`
     `linked_item_id`          INT              NULL DEFAULT 0,
     `ticket_status`           VARCHAR(255)     NULL DEFAULT '0',
     `parent_id`               INT              NULL DEFAULT 0,
-    `state`                   INT              NULL DEFAULT 0,
+    `state`                   INT              NULL DEFAULT 1,
     `ordering`                INT              NULL DEFAULT 0,
     `created_by`              INT(11)          NULL DEFAULT 0,
     `created_on`              DATETIME,

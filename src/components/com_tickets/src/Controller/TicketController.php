@@ -16,10 +16,13 @@ namespace Jed\Component\Tickets\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Tickets\Administrator\Model\TicketmessageModel;
+use Jed\Component\Tickets\Site\Model\TicketModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Router\Route;
+use Joomla\Database\ParameterType;
 
 /**
  * Ticket class.
@@ -29,94 +32,88 @@ use Joomla\CMS\Router\Route;
 class TicketController extends BaseController
 {
     /**
-     * Method to check out an item for editing and redirect to the edit form.
+     * Method to save a new message on an existing ticket, using the "message"/"internal" fields
+     * defined in forms/ticket.xml, persisted into #__jed_ticket_messages.
      *
-     * @return void
-     *
-     * @since 4.0.0
-     *
-     * @throws Exception
-     */
-    public function edit(): void
-    {
-        /* @var $app \Joomla\CMS\Application\SiteApplication */
-        $app = Factory::getApplication();
-
-        // Get the previous edit id (if any) and the current edit id.
-        $previousId = (int) $app->getUserState('com_jed.edit.ticket.id');
-        $editId     = $app->getInput()->getInt('id', 0);
-
-        // Set the user id for the user to edit in the session.
-        $app->setUserState('com_jed.edit.ticket.id', $editId);
-
-        // Get the model.
-        $model = $this->getModel('Ticket', 'Site');
-
-        // Check out the item
-        if ($editId) {
-            $model->checkout($editId);
-        }
-
-        // Check in the previous user.
-        if ($previousId && $previousId !== $editId) {
-            $model->checkin($previousId);
-        }
-
-        // Redirect to the edit screen.
-        $this->setRedirect(Route::_('index.php?option=com_tickets&view=ticketform&layout=viewticket&id=' . $editId, false));
-    }
-
-    /**
-     * Method to save data
+     * Only a user with core.manage on com_tickets, or the ticket's own creator (#__jed_tickets.
+     * created_by), may post a message. A user without core.manage can never mark a message as
+     * internal - that flag is always forced to 0 for them, regardless of what was submitted.
      *
      * @return void
      *
      * @since  4.0.0
      * @throws Exception
      */
-    public function publish(): void
+    public function save(): void
     {
-        // Initialise variables.
+        $this->checkToken();
 
-        $app = Factory::getApplication();
+        $app  = Factory::getApplication();
+        $user = $app->getIdentity();
 
-        // Checking if the user can remove object
-        $user = Factory::getApplication()->getIdentity();
+        $ticketId = $app->getInput()->getInt('id', 0);
 
-        if ($user->authorise('core.edit', 'com_jed') || $user->authorise('core.edit.state', 'com_jed')) {
-            $model = $this->getModel('Ticket', 'Site');
-
-            // Get the user data.
-            $id    = $app->getInput()->getInt('id');
-            $state = $app->getInput()->getInt('state');
-
-            // Attempt to save the data.
-            $return = $model->publish($id, $state);
-
-            // Check for errors.
-            if ($return === false) {
-                $this->setMessage(Text::_('Save failed'), 'warning');
-            }
-
-            // Clear the profile id from the session.
-            $app->setUserState('com_jed.edit.ticket.id', null);
-
-            // Flush the data from the session.
-            $app->setUserState('com_jed.edit.ticket.data', null);
-
-            // Redirect to the list screen.
-            $this->setMessage(Text::_('COM_TICKETS_GENERAL_ITEM_SAVED_SUCCESSFULLY_LABEL'));
-            $menu = Factory::getApplication()->getMenu();
-            $item = $menu->getActive();
-
-            if (!$item) {
-                // If there isn't any menu item active, redirect to list view
-                $this->setRedirect(Route::_('index.php?option=com_tickets&view=tickets', false));
-            } else {
-                $this->setRedirect(Route::_('index.php?Itemid=' . $item->id, false));
-            }
-        } else {
-            throw new Exception(500);
+        if (!$ticketId) {
+            throw new Exception(Text::_('COM_TICKETS_ITEM_DOESNT_EXIST'), 404);
         }
+
+        $db    = Factory::getDbo();
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(['created_by', 'ticket_subject']))
+            ->from($db->quoteName('#__jed_tickets'))
+            ->where($db->quoteName('id') . ' = :id')
+            ->bind(':id', $ticketId, ParameterType::INTEGER);
+        $ticket = $db->setQuery($query)->loadObject();
+
+        if (!$ticket) {
+            throw new Exception(Text::_('COM_TICKETS_ITEM_DOESNT_EXIST'), 404);
+        }
+
+        $canManage = $user->authorise('core.manage', 'com_tickets');
+
+        if (!$canManage && (int) $ticket->created_by !== (int) $user->id) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        /** @var TicketModel $ticketModel */
+        $ticketModel = $this->getModel('Ticket', 'Site');
+        $data        = $app->getInput()->post->get('jform', [], 'array');
+        $form        = $ticketModel->getForm($data, false);
+
+        if (!$form) {
+            throw new Exception(Text::_('JERROR_LOADFILE_FAILED'), 500);
+        }
+
+        $validatedData = $ticketModel->validate($form, $data);
+
+        if ($validatedData === false) {
+            $this->setMessage(Text::_('JGLOBAL_ERROR_SAVE_FAILED'), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_tickets&view=ticket&id=' . $ticketId, false));
+
+            return;
+        }
+
+        $messageModel = new TicketmessageModel();
+
+        $messageData = [
+            'id'                => 0,
+            'ticket_id'         => $ticketId,
+            'subject'           => 'Re: ' . $ticket->ticket_subject,
+            'message'           => $validatedData['message'] ?? '',
+            'message_direction' => $canManage ? 0 : 1,
+            'internal'          => $canManage ? (int) ($validatedData['internal'] ?? 0) : 0,
+            'created_by'        => $user->id,
+            'created_on'        => date('Y-m-d H:i:s'),
+        ];
+
+        if (!$messageModel->save($messageData)) {
+            $this->setMessage(Text::_('JGLOBAL_ERROR_SAVE_FAILED'), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_tickets&view=ticket&id=' . $ticketId, false));
+
+            return;
+        }
+
+        $this->setMessage(Text::_('COM_TICKETS_GENERAL_ITEM_SAVED_SUCCESSFULLY_LABEL'));
+        $this->setRedirect(Route::_('index.php?option=com_tickets&view=ticket&id=' . $ticketId, false));
     }
 }

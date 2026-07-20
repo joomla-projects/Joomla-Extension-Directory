@@ -17,7 +17,6 @@ namespace Jed\Component\Jed\Site\View\Categories;
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
@@ -78,7 +77,6 @@ class HtmlView extends BaseHtmlView
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
 
-
         // Because the application sets a default page title,
         // we need to get it from the menu item itself
         $menu = $menus->getActive();
@@ -130,21 +128,9 @@ class HtmlView extends BaseHtmlView
         $app   = Factory::getApplication();
         $model = $this->getModel();
         $model->setUseExceptions(true);
-        // try {
-        $this->state = $model->getState();
-        $this->items = $model->getItems();
-        //  $this->pagination = $this->get('Pagination');
-        // } catch (\Exception $e) {
-        //     throw new GenericDataException($e->getMessage(), 500, $e);
-        // }
-        $this->params     = $app->getParams('com_jed');
-
-
-        // Check for errors.
-        /*  if (count($errors = $this->get('Errors')))
-            {
-                throw new Exception(implode("\n", $errors));
-            }*/
+        $this->state  = $model->getState();
+        $this->items  = $model->getItems();
+        $this->params = $app->getParams('com_jed');
 
         $this->prepareDocument();
         parent::display($tpl);
