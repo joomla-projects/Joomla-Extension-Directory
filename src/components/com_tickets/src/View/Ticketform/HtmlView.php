@@ -17,13 +17,11 @@ namespace Jed\Component\Tickets\Site\View\Ticketform;
 
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 
@@ -138,17 +136,16 @@ class HtmlView extends BaseHtmlView
 
         $model = $this->getModel();
         $model->setUseExceptions(true);
-        try {
-            $this->state      = $model->getState();
-            $this->item       = $model->getItem();
-            $this->params     = $app->getParams('com_jed');
-            $this->canSave    = JedHelper::canSave();
-            $this->form       = $model->getForm();
+        $this->state      = $model->getState();
+        $this->item       = $model->getItem();
+        $this->params     = $app->getParams('com_jed');
+        $this->canSave    = JedHelper::canSave();
+        $this->form       = $model->getForm();
 
-            $input         = $app->getInput();
-            $linked_id     = $input->get('lid', -1, 'int');
-            $linked_item   = $input->get('litem', -1, 'int');
-            $vr            = $input->get('vr', -1, 'int');
+        $input         = $app->getInput();
+        $linked_id     = $input->get('lid', -1, 'int');
+        $linked_item   = $input->get('litem', -1, 'int');
+        $vr            = $input->get('vr', -1, 'int');
 
             $this->item->ticket_title = "Submit Ticket";
             if ($linked_id <> -1) {
@@ -166,9 +163,6 @@ class HtmlView extends BaseHtmlView
                 $this->item->extension_title = JedHelper::getExtensionTitle($vr);
                 $this->item->ticket_title    = "Reporting " . $ticket_type . ' - ' . $this->item->extension_title;
             }
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
-        }
 
 
 
