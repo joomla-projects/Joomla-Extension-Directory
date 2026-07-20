@@ -27,7 +27,6 @@ use Vel\Component\Vel\Administrator\Model\ReportModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -232,20 +231,20 @@ class HtmlView extends BaseHtmlView
                 $this->linked_item_Model     = new ReviewModel();
                 $this->related_object_string = "Review is displayed in 'Linked Review' tab.";
 
-                $this->linked_item_data = $model->getReviewData();
+            $this->linked_item_data = $model->getReviewData();
 
-                $this->linked_form      = $this->linked_item_Model->getForm(
-                    $this->linked_item_data,
-                    false,
-                    'jf_linked_form'
-                );
+            $this->linked_form      = $this->linked_item_Model->getForm(
+                $this->linked_item_data,
+                false,
+                'jf_linked_form'
+            );
 
                 $this->linked_form->bind($this->linked_item_data);
             }
             if ($this->linked_item_type === TicketType::VELReport->value) {
                 $this->linked_item_Model = new ReportModel();
 
-                $this->linked_item_data = $model->getVelReportData();
+            $this->linked_item_data = $model->getVelReportData();
 
                 $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
                 $this->linked_form->bind($this->linked_item_data);
@@ -260,7 +259,7 @@ class HtmlView extends BaseHtmlView
             if ($this->linked_item_type === TicketType::VulnerableExtension->value) { // VEL Developer Update
                 $this->linked_item_Model = new DeveloperupdateModel();
 
-                $this->linked_item_data = $model->getVelDeveloperUpdateData();
+            $this->linked_item_data = $model->getVelDeveloperUpdateData();
 
                 $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
                 $this->linked_form->bind($this->linked_item_data);
@@ -276,18 +275,16 @@ class HtmlView extends BaseHtmlView
                 $this->linked_item_Model = new AbandonedreportModel();
                 $this->linked_item_data  = $model->getVelAbandonedReportData();
 
-                $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
-                $this->linked_form->bind($this->linked_item_data);
+            $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
+            $this->linked_form->bind($this->linked_item_data);
 
-                if ($this->linked_item_data[0]->vel_item_id > 0) {
-                    $this->related_object_string = '<button type="button" class="btn btn-primary"  onclick="Joomla.submitbutton(\'ticket.gotoVEL\')">View VEL Item ' . $this->linked_item_data[0]->vel_item_id . '</button>';
-                } else {
-                    $this->related_object_string = "Awaiting creation of VEL Item";
-                }
+            if ($this->linked_item_data[0]->vel_item_id > 0) {
+                $this->related_object_string = '<button type="button" class="btn btn-primary"  onclick="Joomla.submitbutton(\'ticket.gotoVEL\')">View VEL Item ' . $this->linked_item_data[0]->vel_item_id . '</button>';
+            } else {
+                $this->related_object_string = "Awaiting creation of VEL Item";
             }
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
         }
+
 
         $this->addToolbar();
 
