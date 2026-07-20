@@ -95,7 +95,7 @@ class HtmlView extends BaseHtmlView
     protected function addToolbar(): void
     {
         /* @var HtmlDocument $doc */
-        $doc = $this->getDocument();
+        $doc         = $this->getDocument();
         $canDo       = JedHelper::getActions('com_jed', 'extension');
 
         ToolbarHelper::title(Text::_('COM_JED_EXTENSIONS'), "generic");
