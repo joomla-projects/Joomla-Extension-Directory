@@ -52,31 +52,6 @@
       "version": "4.0.0"
     },
     {
-      "name": "com_jed.Tickets",
-      "type": "style",
-      "uri": "media/com_jed/css/tickets.css"
-    },
-    {
-      "name": "com_jed.ticketGetmessagetemplate",
-      "type": "script",
-      "uri": "media/com_jed/js/ticketGetmessagetemplate.js",
-      "attributes": {
-        "defer": true
-      },
-      "package": "jed",
-      "version": "4.0.0"
-    },
-    {
-      "name": "com_jed.ticketVELDeveloperUpdateActionButton",
-      "type": "script",
-      "uri": "media/com_jed/js/ticketVELDeveloperUpdateActionButton.js",
-      "attributes": {
-        "defer": true
-      },
-      "package": "jed",
-      "version": "4.0.0"
-    },
-    {
       "name": "com_jed.jedMigrate",
       "type": "style",
       "uri": "media/com_jed/css/jedmigrate.css"
@@ -279,16 +254,6 @@
       "version": "4.0.0"
     },
     {
-      "name": "com_jed.ticketPublishUnPublishReview",
-      "type": "script",
-      "uri": "media/com_jed/js/ticketPublishUnPublishReview.js",
-      "attributes": {
-        "defer": true
-      },
-      "package": "jed",
-      "version": "4.0.0"
-    },
-    {
       "name": "com_jed.kartikv_fileinput_style",
       "type": "style",
       "uri": "media/com_jed/bootstrap-fileinput/css/fileinput.css"
@@ -382,6 +347,31 @@
       },
       "package": "jed",
       "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.extensionUploadAreas",
+      "type": "script",
+      "uri": "media/com_jed/js/extensionUploadAreas.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.newextension",
+      "type": "script",
+      "uri": "media/com_jed/js/newextension.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.newextension",
+      "type": "style",
+      "uri": "media/com_jed/css/newextension.css"
     }
   ],
   "description": "Joomla Extension Directory",

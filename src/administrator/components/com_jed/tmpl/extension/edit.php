@@ -1,12 +1,12 @@
 <?php
 
+/** @var \Jed\Component\Jed\Administrator\View\Extension\HtmlView $this */
 /**
  * @package JED
  *
  * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
-
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -16,11 +16,64 @@
 use Jed\Component\Jed\Administrator\Model\ReviewModel;
 use Jed\Component\Jed\Administrator\View\Extension\HtmlView;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Uri\Uri;
+
+/**
+ * Renders the "existing items + drag & drop upload" area used for the images and files
+ * subforms. Existing rows are shown as read-only cards with a delete checkbox; the dropzone
+ * lets the user pick/drop new files, which only get attached to a hidden subform row - the
+ * actual upload happens when the surrounding admin form is submitted.
+ *
+ * @since 4.0.0
+ */
+if (!function_exists('jedRenderExtensionUploadArea')) {
+    function jedRenderExtensionUploadArea(
+        HtmlView $view,
+        string $title,
+        array $items,
+        string $type,
+        string $subformName,
+        string $dropzoneId,
+        string $deleteFieldName
+    ): void {
+        $isImage = $type === 'image';
+        ?>
+        <div class="jed-upload-area" data-subform="<?php echo $subformName; ?>" data-upload-type="<?php echo $type; ?>"
+             data-file-selector=".jed-upload-input" data-accept="<?php echo $isImage ? 'image/*' : ''; ?>"
+             data-remove-label="<?php echo Text::_('JGLOBAL_FIELD_REMOVE'); ?>">
+            <h3><?php echo $title; ?></h3>
+            <div class="jed-upload-gallery">
+                <?php foreach ($items as $item) : ?>
+                    <div class="jed-upload-card" data-existing-id="<?php echo (int) $item->id; ?>">
+                        <?php if ($isImage) : ?>
+                            <img src="<?php echo $view->escape(JedHelper::formatImage((string) $item->filename, ImageSize::SMALL)); ?>" alt="" class="jed-upload-thumb" loading="lazy">
+                        <?php else : ?>
+                            <span class="icon-file-alt jed-upload-file-icon" aria-hidden="true"></span>
+                        <?php endif; ?>
+                        <span class="jed-upload-filename">
+                            <?php echo $view->escape($isImage ? $item->filename : ($item->originalFile ?: $item->file)); ?>
+                        </span>
+                        <label class="jed-upload-delete">
+                            <input type="checkbox" name="<?php echo $deleteFieldName; ?>[]" value="<?php echo (int) $item->id; ?>">
+                            <?php echo Text::_('JACTION_DELETE'); ?>
+                        </label>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <div class="jed-upload-dropzone" id="<?php echo $dropzoneId; ?>" tabindex="0" role="button"
+                 aria-label="<?php echo Text::_('COM_JED_EXTENSION_UPLOAD_DROPZONE_LABEL'); ?>">
+                <span class="icon-cloud-upload jed-upload-dropzone-icon" aria-hidden="true"></span>
+                <p class="mb-0"><?php echo Text::_('COM_JED_EXTENSION_UPLOAD_DROPZONE_TEXT'); ?></p>
+            </div>
+        </div>
+        <?php
+    }
+}
 
 $headerlabeloptions = ['hiddenLabel' => true, 'readonly' => true];
 $fieldhiddenoptions = ['hidden' => true];
@@ -36,9 +89,11 @@ try {
         ->useScript('keepalive')
         ->usePreset('choicesjs')
         ->useScript('webcomponent.field-fancy-select')
-        ->useStyle('com_jed.Tickets')
+        ->useScript('webcomponent.field-subform')
+        ->useScript('com_jed.extensionUploadAreas')
+        ->useStyle('com_tickets.Tickets')
         ->useStyle('com_jed.jquery_dataTables');
-} catch (Exception $e) {
+} catch (Exception) {
 }
 
 Text::script('COM_JED_EXTENSION_ERROR_DURING_SEND_EMAIL_LABEL', true);
@@ -50,15 +105,56 @@ Text::script('COM_JED_EXTENSION_EXTENSION_APPROVED_REASON_REQUIRED_LABEL', true)
 Text::script('COM_JED_EXTENSION_ERROR_SAVING_PUBLISH_LABEL', true);
 Text::script('COM_JED_EXTENSION_EXTENSION_PUBLISHED_REASON_REQUIRED_LABEL', true);
 
-$extensionUrl = Uri::root() . 'extension/' . $this->extension->alias;
-$downloadUrl  = 'index.php?option=com_jed&task=extension.download&id=' . $this->extension->id;
+$extensionUrl = Uri::root() . 'extension/' . $this->item->alias;
+$downloadUrl  = 'index.php?option=com_jed&task=extension.download&id=' . $this->item->id;
+
+// joomla.edit.title_alias expects ->title; the item only carries ->name (the #__jed_extensions_history column).
+$this->item->title = $this->item->name ?? '';
 
 $this->getDocument()
     ->addScriptOptions('joomla.userId', $this->getCurrentUser()->id, false);
 
 ?>
+<style>
+    .jed-upload-area { padding: .25rem; }
+    .jed-upload-gallery { display: flex; flex-wrap: wrap; gap: 1rem; padding: .25rem 0; }
+    .jed-upload-card {
+        position: relative;
+        flex: 0 0 160px;
+        max-width: 160px;
+        border: 1px solid var(--bs-border-color, #dee2e6);
+        border-radius: .375rem;
+        padding: .5rem;
+        text-align: center;
+    }
+    .jed-upload-card.jed-upload-card-new { border-style: dashed; border-color: var(--bs-primary, #2a69b8); }
+    .jed-upload-thumb { width: 100%; height: 100px; object-fit: cover; border-radius: .25rem; display: block; }
+    .jed-upload-file-icon { display: block; font-size: 2.5rem; margin: 1rem 0; }
+    .jed-upload-filename { display: block; font-size: .75rem; word-break: break-word; margin-top: .25rem; }
+    .jed-upload-delete { display: block; font-size: .75rem; margin-top: .25rem; cursor: pointer; }
+    .jed-upload-remove {
+        position: absolute; top: -.5rem; right: -.5rem;
+        width: 1.5rem; height: 1.5rem; line-height: 1;
+        border: none; border-radius: 50%;
+        background: var(--bs-danger, #dc3545); color: #fff;
+    }
+    .jed-upload-dropzone {
+        border: 2px dashed var(--bs-border-color, #adb5bd);
+        border-radius: .5rem;
+        padding: 2rem 1rem;
+        text-align: center;
+        cursor: pointer;
+        color: var(--bs-secondary-color, #6c757d);
+    }
+    .jed-upload-dropzone.jed-upload-dropzone-active {
+        border-color: var(--bs-primary, #2a69b8);
+        background: var(--bs-tertiary-bg, rgba(42, 105, 184, .05));
+    }
+    .jed-upload-dropzone-icon { display: block; font-size: 2rem; margin-bottom: .5rem; }
+    .jed-upload-subform-hidden { display: none; }
+</style>
 
-<form action="index.php?option=com_jed&view=extension&layout=edit&id=<?php echo (int)$this->extension->id; ?>" method="post" name="adminForm" id="extension-form" class="form-validate">
+<form action="index.php?option=com_jed&view=extension&layout=edit&id=<?php echo (int) ($this->item->extension_id ?: $this->item->id); ?>" method="post" name="adminForm" id="extension-form" class="form-validate">
 
     <?php echo LayoutHelper::render('joomla.edit.title_alias', $this); ?>
 
@@ -71,45 +167,60 @@ $this->getDocument()
             ?>
                 <div class="row">
                     <div class="col-12 col-lg-6">
-                        <?php  echo $this->form->renderFieldset($fieldset->name); ?>
+                        <?php
+                        if ($fieldset->name === 'media' || $fieldset->name === 'files') {
+                            // Render the technical subform markup (needed for correct field names/ids and the
+                            // joomla-field-subform web component), but keep it out of view: the custom gallery
+                            // below is the actual user-facing UI for images/files.
+                            echo '<div class="jed-upload-subform-hidden">';
+                            echo $this->form->renderFieldset($fieldset->name);
+                            echo '</div>';
+                        } else {
+                            echo $this->form->renderFieldset($fieldset->name);
+                        }
+                        ?>
                     </div>
                 </div>
+                <?php if ($fieldset->name === 'media') : ?>
+                    <div class="row">
+                        <div class="col-12">
+                            <?php
+                            jedRenderExtensionUploadArea(
+                                $this,
+                                Text::_('COM_JED_EXTENSION_IMAGES_LABEL'),
+                                $this->images,
+                                'image',
+                                'jform[images]',
+                                'jed-images-dropzone',
+                                'jform[deleteImages]'
+                            );
+                            ?>
+                        </div>
+                    </div>
+                <?php elseif ($fieldset->name === 'files') : ?>
+                    <div class="row">
+                        <div class="col-12">
+                            <?php
+                            jedRenderExtensionUploadArea(
+                                $this,
+                                Text::_('COM_JED_EXTENSION_FILES_LABEL'),
+                                $this->files,
+                                'file',
+                                'jform[files]',
+                                'jed-files-dropzone',
+                                'jform[deleteFiles]'
+                            );
+                            ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
             <?php
                 echo HTMLHelper::_('uitab.endTab'); ?>
         <?php endforeach; ?>
-<?php
-foreach ($this->extension->varied as $st) {
-    echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'varied-' . $st->supply_option_id, Text::_($st->supply_option_type));
 
-    $varied_form                          = $this->extension->varied_form[$st->supply_option_id];
-    $varied_form->bind($st);
-    $fieldsets                            = [];
-    $fieldsets['overview']['supply_type'] = $st->supply_option_type;
-    $fieldsets['overview']['title']       =  '';
-    $fieldsets['overview']['description'] = '';
-    $fieldsets['overview']['fields']      = ['id', 'supply_option_id', ['title', 'is_default_data'],  'description'];
-    $fieldsets['overview']['hidden']      = ['id', 'supply_option_id'];
-
-
-    $fieldsets['links']['supply_type'] = $st->supply_option_type;
-    $fieldsets['links']['title']       = Text::_('COM_JED_EXTENSION_LINKS_TITLE');
-    $fieldsets['links']['description'] = '';
-    $fieldsets['links']['fields']      = [['homepage_link', 'download_link'], ['demo_link', 'support_link'], ['documentation_link', 'license_link'], ['translation_link', '']];
-    $fieldsets['links']['hidden']      = [];
-
-    $fieldsets['integration']['supply_type'] = $st->supply_option_type;
-    $fieldsets['integration']['title']       = Text::_('COM_JED_EXTENSION_INTEGRATION_TITLE');
-    $fieldsets['integration']['description'] = Text::_('COM_JED_EXTENSION_INTEGRATION_DESCR');
-    $fieldsets['integration']['fields']      = [['download_integration_type', 'download_integration_url']];
-    $fieldsets['integration']['hidden']      = [];
-
-    JedHelper::outputFieldsets($fieldsets, $varied_form);
-    $fieldsets = [];
-
-    echo HTMLHelper::_('uitab.endTab');
-}
-echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'viewextensionreviews', Text::_('Reviews', true));
-?>
+        <?php
+        echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'viewextensionreviews', Text::_('Reviews', true));
+        ?>
 
             <div class="container">
                 <div class="row">
@@ -121,23 +232,21 @@ echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'viewextensionreviews', Text:
 
                     $slideid = 0;
 
-                    foreach ($this->extension->reviews as $key => $rtype) {
-                        echo HTMLHelper::_('bootstrap.startAccordion', 'extension_' . $key . '_reviews_group', $slidesOptions);
-                        foreach ($rtype as $review) {
-                            $review = (object)$review;
+                    foreach ($this->reviews as $review) {
+                        echo HTMLHelper::_('bootstrap.startAccordion', 'extension_' . $review->id . '_reviews_group', $slidesOptions);
 
-                            if ($review->published === 1) {
-                                $ico = '<span class="fas fa-bolt"></span>';
-                            } else {
-                                $ico = '';
-                            }
-                            echo HTMLHelper::_(
-                                'bootstrap.addSlide',
-                                'extension_' . $key . '_reviews_group',
-                                $review->suptype . ' ' . $review->id . ' - ' . $review->title . '&nbsp;' .
-                                JedHelper::prettyDate($review->created_on) . '&nbsp;',
-                                'extension_' . $review->suptype . '_reviews_group' . '_slide' . ($slideid++)
-                            );
+                        if ($review->published === 1) {
+                            $ico = '<span class="fas fa-bolt"></span>';
+                        } else {
+                            $ico = '';
+                        }
+                        echo HTMLHelper::_(
+                            'bootstrap.addSlide',
+                            'extension_' . $review->id . '_reviews_group',
+                            $review->suptype . ' ' . $review->id . ' - ' . $review->title . '&nbsp;' .
+                            JedHelper::prettyDate($review->created_on) . '&nbsp;',
+                            'extension_' . $review->suptype . '_reviews_group' . '_slide' . ($slideid++)
+                        );
                             $review_model = new ReviewModel();
                             $linked_form  = $review_model->getForm($review, false, 'review');
                             $linked_form->bind($review);
@@ -243,216 +352,13 @@ echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'viewextensionreviews', Text:
                 </div>
                             <?php
                             echo HTMLHelper::_('bootstrap.endSlide');
-                        }
                         echo HTMLHelper::_('bootstrap.endAccordion');
                     }
-
-
                     ?>
-
-
-                </div>
-
-
-        <?php
-        echo HTMLHelper::_('uitab.endTab');
-        /*for ($this->item->varied)
-            echo HTMLHelper::_('uitab.endTab');
-
-            foreach ($this->extension->varied_data as $vr) {
-                $varied_form = $this->extensionvarieddatum_form;
-
-                $varied_form->bind($vr);
-                echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'viewextensionsupply_tab_' . $vr->supply_type, Text::_($vr->supply_type, true) . '&nbsp;' . Text::_('COM_JED_GENERAL_VERSION_LABEL', true));
-                echo $varied_form->renderFieldset('info');
-
-                echo $varied_form->renderField('tags');
-                echo $varied_form->renderField('state');
-                echo $varied_form->renderField('created_by');
-
-                echo HTMLHelper::_('uitab.endTab');
-            }
-            //      echo "<pre>";print_r($this->extension);echo "</pre>";exit();
-            ?>
-        <!-- Legacy stuff from here on -->
-
-            <?php
-            echo HTMLHelper::_(
-                'uitab.addTab',
-                'extensionTab',
-                'downloads',
-                Text::_('COM_JED_EXTENSION_DOWNLOADS_TAB_LABEL')
-            ); ?>
-            <div class="row-fluid">
-                <div class="span12">
-                    <div class="form-horizontal">
-                        <?php
-                                    echo $this->form->renderField('downloadIntegrationType'); ?>
-                        <?php
-                                    echo $this->form->renderField('requiresRegistration'); ?>
-                        <?php
-                                    echo $this->form->renderField('downloadIntegrationUrl'); ?>
-                        <h3><?php
-                                        echo Text::_('COM_JED_EXTENSION_DOWNLOAD_ALTERNATIVE_DOWNLOAD_LABEL'); ?></h3>
-                        <?php
-                                    echo $this->form->renderField('downloadIntegrationType1'); ?>
-                        <?php
-                                    echo $this->form->renderField('downloadIntegrationType2'); ?>
-                        <?php
-                                    echo $this->form->renderField('downloadIntegrationType3'); ?>
-                        <?php
-                                    echo $this->form->renderField('downloadIntegrationType4'); ?>
-                    </div>
                 </div>
             </div>
-            <?php
-                        echo HTMLHelper::_('uitab.endTab'); ?>
 
-            <?php
-                        echo HTMLHelper::_(
-                            'uitab.addTab',
-                            'extensionTab',
-                            'reviews',
-                            Text::_('COM_JED_TITLE_REVIEWS')
-                        ); ?>
-            <div class="row-fluid">
-                <div class="span12">
-                    <div class="form-horizontal">
-                        <?php
-                                    echo $this->form->renderFieldset('reviews'); ?>
-                    </div>
-                    <?php
-                                echo HTMLHelper::_(
-                                    'link',
-                                    'index.php?option=com_jed&view=reviews&filter[extension]=' . $this->extension->id,
-                                    Text::_('COM_JED_EXTENSION_REVIEW_LINK_LABEL') . ' <span class="icon-new-tab"></span>',
-                                    'target="_blank"'
-                                );
-                                ?>
-                </div>
-            </div>
-            <?php
-            echo HTMLHelper::_('uitab.endTab'); ?>
-
-            <?php
-            echo HTMLHelper::_(
-                'uitab.addTab',
-                'extensionTab',
-                'communication',
-                Text::_('COM_JED_EXTENSION_COMMUNICATION_TAB')
-            ); ?>
-            <div class="row-fluid">
-                <div class="span12">
-                    <div class="form-horizontal">
-                        <?php
-                        echo $this->form->renderFieldset('communication'); ?>
-                        <div class="control-group">
-                            <div class="control-label">
-                            </div>
-                            <div class="controls">
-                                <button class="btn btn-success js-messageType js-sendMessage" onclick="jed.sendMessage(); return false;">
-                                    <?php
-                                    echo Text::_('COM_JED_SEND_EMAIL'); ?>
-                                </button>
-
-                                <button class="btn btn-success js-messageType js-storeNote" style="display: none;" onclick="jed.storeNote(); return false;">
-                                    <?php
-                                    echo Text::_('COM_JED_STORE_NOTE'); ?>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <?php
-            echo HTMLHelper::_('uitab.endTab'); ?>
-
-            <?php
-            echo HTMLHelper::_(
-                'uitab.addTab',
-                'extensionTab',
-                'history',
-                Text::_('COM_JED_EXTENSION_HISTORY_TAB')
-            ); ?>
-            <div class="row-fluid">
-                <div class="span12">
-                    <table class="table table-striped table-condensed">
-                        <thead>
-                        <tr>
-                            <td><?php
-                                echo Text::_('COM_JED_EXTENSION_HISTORY_DATE_LABEL'); ?></td>
-                            <td><?php
-                                echo Text::_('COM_JED_GENERAL_TYPE_LABEL'); ?></td>
-                            <td><?php
-                                echo Text::_('COM_JED_EXTENSION_MESSAGE_LABEL'); ?></td>
-                            <td><?php
-                                echo Text::_('COM_JED_EXTENSION_HISTORY_MEMBER'); ?></td>
-                            <td><?php
-                                echo Text::_('COM_JED_EXTENSION_HISTORY_USER'); ?></td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php
-                        if (isset($this->extension->history)) :
-                            foreach ($this->extension->history as $history) :
-                                ?>
-                                <tr><?php
-                                ?>
-                                <td><?php
-                                echo HTMLHelper::_('date', $history->logDate, Text::_('COM_JED_GENERAL_DATETIME_FORMAT')); ?></td><?php
-        ?>
-                                <td><?php
-                                                                echo Text::_('COM_JED_EXTENSION_HISTORY_LOG_' . $history->type); ?></td><?php
-
-        if ($history->type === 'mail') {
-        ?>
-                                    <td>
-        <?php
-        echo $history->subject; ?>
-                                    <?php
-                                    echo $history->body; ?>
-                                    </td><?php
-                                    ?>
-                                    <td><?php
-                                    echo $history->memberName; ?></td><?php
-        ?>
-                                    <td><?php
-                                        echo HTMLHelper::_('link', 'index.php?option=com_users&task=user.edit&id=' . $history->developerId, $history->developerName); ?> &lt;<?php
-        echo $history->developerEmail; ?>&gt;</td><?php
-        }
-        if ($history->type === 'note') {
-        ?>
-                                    <td>
-        <?php
-        echo $history->body; ?>
-                                    </td><?php
-                                    ?>
-                                    <td><?php
-                                    echo $history->memberName; ?></td><?php
-        ?>
-                                    <td><?php
-                                        echo HTMLHelper::_('link', 'index.php?option=com_users&task=user.edit&id=' . $history->developerId, $history->developerName); ?></td><?php
-        } elseif ($history->type === 'actionLog') {
-        ?>
-                                    <td><?php
-                                    echo ActionlogsHelper::getHumanReadableLogMessage($history); ?></td><?php
-        ?>
-                                    <td><?php
-                                        echo $history->name; ?></td><?php
-        ?>
-                                    <td></td><?php
-        }
-        ?></tr><?php
-                            endforeach;
-                        endif;
-                        ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <?php
-            echo HTMLHelper::_('uitab.endTab'); */?>
-
+        <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
         <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
     </div>

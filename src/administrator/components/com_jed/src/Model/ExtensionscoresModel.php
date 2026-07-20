@@ -78,7 +78,7 @@ class ExtensionscoresModel extends ListModel
                     $db    = $this->getDatabase();
                     $query = $db->getQuery(true);
                     $query
-                        ->select('`#__jed_extensions_3727473`.`title`')
+                        ->select('`#__jed_extensions_3727473`.`name`')
                         ->from($db->quoteName('#__jed_extensions', '#__jed_extensions_3727473'))
                         ->where($db->quoteName('#__jed_extensions_3727473.id') . ' = ' . $db->quote($db->escape($value)));
 
@@ -86,7 +86,7 @@ class ExtensionscoresModel extends ListModel
                     $results = $db->loadObject();
 
                     if ($results) {
-                        $textValue[] = $results->title;
+                        $textValue[] = $results->name;
                     }
                 }
 
@@ -155,7 +155,7 @@ class ExtensionscoresModel extends ListModel
         $query->select('`modified_by`.name AS `modified_by`');
         $query->join('LEFT', '#__users AS `modified_by` ON `modified_by`.id = a.`modified_by`');
         // Join over the foreign key 'extension_id'
-        $query->select('`#__jed_extensions_3727473`.`title` AS extensions_fk_value_3727473');
+        $query->select('`#__jed_extensions_3727473`.`name` AS extensions_fk_value_3727473');
         $query->join('LEFT', '#__jed_extensions AS #__jed_extensions_3727473 ON #__jed_extensions_3727473.`id` = a.`extension_id`');
         // Join over the foreign key 'supply_option_id'
         $query->select('`#__jed_extension_supply_options_3727474`.`title` AS extensionsupplyoptions_fk_value_3727474');
@@ -175,11 +175,11 @@ class ExtensionscoresModel extends ListModel
         $search = $this->getState('filter.search');
 
         if (!empty($search)) {
-            if (stripos($search, 'id:') === 0) {
-                $query->where('a.id = ' . (int) substr($search, 3));
+            if (stripos((string) $search, 'id:') === 0) {
+                $query->where('a.id = ' . (int) substr((string) $search, 3));
             } else {
                 $search = $db->Quote('%' . $db->escape($search, true) . '%');
-                $query->where('(a.title LIKE ' . $search . ') ');
+                $query->where('(`#__jed_extensions_3727473`.`name` LIKE ' . $search . ') ');
             }
         }
 

@@ -17,8 +17,9 @@ namespace Jed\Component\Jed\Administrator\View\Extension;
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\Model\ExtensionModel;
-use Jed\Component\Jed\Administrator\Model\ExtensionvarieddatumModel;
 use Joomla\CMS\Factory;
+use Joomla\Database\ParameterType;
+use stdClass;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
@@ -33,12 +34,10 @@ use Joomla\Registry\Registry;
  */
 class HtmlView extends BaseHtmlView
 {
-    public mixed $extensionvarieddata;
     protected Registry $state;
     protected mixed $item;
     protected Form $form;
     protected mixed $forms;
-    protected mixed $extension;
     protected mixed $extensionimages;
     protected mixed $extensionscores;
     protected mixed $extensionimage;
@@ -46,6 +45,13 @@ class HtmlView extends BaseHtmlView
     protected mixed $extensionvarieddatum_form;
     protected mixed $extensionform;
     protected mixed $varied_forms;
+    protected ?stdClass $historyItem = null;
+    protected array $images          = [];
+    protected array $files           = [];
+    protected array $categories      = [];
+    protected array $maintainers     = [];
+    protected array $history         = [];
+    protected array $reviews         = [];
 
 
 
@@ -62,31 +68,26 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
-        $extension_model  = $this->getModel();
-        $extension_model->setUseExceptions(true);
-        try {
-            $this->state = $extension_model->getState();
-            $everything  = $extension_model->getEverything();
-            //var_dump($everything->varied);exit();
-            $this->extension = $everything;
-            $this->form      = $extension_model->getForm($this->extension, false, 'jform');
-            $this->form->bind($this->extension);
-            $this->extension->extension_form = $this->form;
+        /** @var ExtensionModel $model */
+        $model = $this->getModel();
+        $model->setUseExceptions(true);
 
-            $extensionvarieddatum            = new ExtensionvarieddatumModel();
-            $extensionvarieddatum->setuseExceptions(true);
-
-            foreach ($this->extension->varied as $varied) {
-                $this->extensionvarieddata[$varied->supply_option_id] = $varied;
-                $tmp_form                                             = $extensionvarieddatum->getForm($varied, false, 'extension_varieddata_form_' . $varied->supply_option_id);
-                $tmp_form->bind($varied);
-                $this->extensionvarieddatum_form[$varied->supply_option_id] = $tmp_form;
-            }
-            $this->extension->varied_form = $this->extensionvarieddatum_form;
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
+        if ($tpl === 'historylist') {
+            $this->history = $model->getHistory();
+            $this->item    = $model->getItem();
+            parent::display($tpl);
+            return;
         }
 
+        $this->item        = $model->getItem();
+        $this->form        = $model->getForm();
+        $this->state       = $model->getState();
+        $this->images      = $model->getImages();
+        $this->files       = $model->getFiles();
+        $this->categories  = $model->getCategories();
+        $this->maintainers = $model->getMaintainers();
+        $this->history     = $model->getHistory();
+        $this->reviews     = $model->getReviews();
 
         $this->addToolbar();
         parent::display($tpl);
@@ -106,7 +107,7 @@ class HtmlView extends BaseHtmlView
         Factory::getApplication()->input->set('hidemainmenu', true);
 
         $user  = $this->getCurrentUser();
-        $isNew = ($this->extension->id == 0);
+        $isNew = ($this->item->id == 0);
 
         if (isset($this->item->checked_out)) {
             $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->id);

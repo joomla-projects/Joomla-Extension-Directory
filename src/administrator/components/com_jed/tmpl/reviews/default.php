@@ -1,12 +1,12 @@
 <?php
 
+/** @var \Jed\Component\Jed\Administrator\View\Reviews\HtmlView $this */
 /**
  * @package JED
  *
  * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
-
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -28,10 +28,10 @@ HTMLHelper::_('behavior.multiselect');
 // Import CSS
 try {
     $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-} catch (Exception $e) {
+} catch (Exception) {
 }
-$wa->useStyle('com_jed.admin')
-    ->useScript('com_jed.admin');
+//$wa->useStyle('com_jed.admin')
+//    ->useScript('com_jed.admin');
 
 $user      = $this->getCurrentUser();
 $userId    = $user->id;
@@ -141,7 +141,7 @@ if ($saveOrder) {
                     </tr>
                     </tfoot>
                     <tbody <?php if ($saveOrder) :
-                        ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" <?php
+                        ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower((string) $listDirn); ?>" <?php
                            endif; ?>>
                     <?php foreach ($this->items as $i => $item) :
                         $ordering   = ($listOrder == 'a.ordering');

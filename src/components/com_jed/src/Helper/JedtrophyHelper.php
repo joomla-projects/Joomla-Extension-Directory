@@ -43,9 +43,9 @@ class JedtrophyHelper
         $trophies = explode(',', $l_version);
 
         $output = ''; //<div class="trophies versions">';
-        $txt    = '';
         foreach ($trophies as $v) {
             $title = Text::_('COM_JED_VERSION_' . $v);
+            $txt   = '';
             switch ($v) {
                 case '30':
                     $txt = '<span class="fab fa-joomla"></span>&nbsp;3&nbsp;';
@@ -55,6 +55,18 @@ class JedtrophyHelper
                     break;
                 case '41':
                     $txt = '<span class="fab fa-joomla"></span>&nbsp;4.1&nbsp;';
+                    break;
+                case '50':
+                    $txt = '<span class="fab fa-joomla"></span>&nbsp;5&nbsp;';
+                    break;
+                case '51':
+                    $txt = '<span class="fab fa-joomla"></span>&nbsp;5 (b/c)&nbsp;';
+                    break;
+                case '60':
+                    $txt = '<span class="fab fa-joomla"></span>&nbsp;6&nbsp;';
+                    break;
+                case '61':
+                    $txt = '<span class="fab fa-joomla"></span>&nbsp;6 (b/c)&nbsp;';
                     break;
             }
             $output .= '<span title="' . $title . '" class="joomla-version-badge">' . $txt . '</span>';
@@ -99,39 +111,26 @@ class JedtrophyHelper
      */
     public static function getTrophyIncludesStringFull($includestr): string
     {
-        $l_include = str_replace('[', '', $includestr);
+        $trophies = (array) json_decode($includestr);
 
-        $l_include = str_replace(']', '', $l_include);
-        $l_include = str_replace('"', '', $l_include);
-        $trophies  = explode(',', $l_include);
-
-        $output      = '';
-        $comma_count = 0;
+        $output      = [];
 
         foreach ($trophies as $v) {
             $str = "";
             switch ($v) {
                 case "com":
-                    $str = "Component";
-                    $comma_count++;
+                    $output[] = "Component";
                     break;
                 case "mod":
-                    $str = "Module";
-                    $comma_count++;
+                    $output[] = "Module";
                     break;
                 case "plugin":
-                    $str = "Plugin";
-                    $comma_count++;
+                    $output[] = "Plugin";
                     break;
-            }
-            if ($comma_count > 1) {
-                $output .= ', ' . $str;
-            } else {
-                $output .= $str;
             }
         }
 
-        return $output;
+        return implode(', ', $output);
     }
 
     /**
