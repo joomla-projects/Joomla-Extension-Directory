@@ -95,8 +95,8 @@ class ExtensionVersionUpdater
         $historyId = (int) $db->insertid();
 
         // Direct overwrite of the live row.
-        $live->extension_version = $newVersion;
-        $live->modified           = $now;
+        $live->extension_version   = $newVersion;
+        $live->modified            = $now;
         $live->entry_version       = $historyId;
 
         if ($newDownloadUrl !== null) {

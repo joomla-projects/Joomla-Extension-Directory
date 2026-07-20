@@ -216,7 +216,7 @@ class QueueService
         $stuck = $db->setQuery($query)->loadObjectList();
 
         foreach ($stuck as $row) {
-            $id         = (int) $row->id;
+            $id          = (int) $row->id;
             $newAttempts = ((int) $row->attempts) + 1;
             $newStatus   = $newAttempts >= self::MAX_ATTEMPTS ? 'failed' : 'pending';
 

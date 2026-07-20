@@ -163,7 +163,7 @@ class ClaudeAuditor
             }
 
             $chunk    = \sprintf("\n--- %s ---\n%s\n", $path, $contents);
-            $bytes   += \strlen($chunk);
+            $bytes += \strlen($chunk);
             $count++;
             $parts[]  = $chunk;
         }
