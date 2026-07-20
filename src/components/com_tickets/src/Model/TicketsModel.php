@@ -16,6 +16,7 @@ namespace Jed\Component\Tickets\Site\Model;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
@@ -84,6 +85,11 @@ class TicketsModel extends ListModel
 
 
             $oneItem->ticket_status = Text::_('COM_TICKETS_TICKETS_TICKET_STATUS_OPTION_' . strtoupper((string) $oneItem->ticket_status));
+
+            $linkedItemType                        = TicketType::tryFrom((int) $oneItem->linked_item_type);
+            $oneItem->ticketlinkeditemtypes_string = $linkedItemType !== null
+                ? Text::_('COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_OPTION_' . strtoupper($linkedItemType->name))
+                : Text::_('COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_OPTION_NONE');
         }
 
         return $items;
@@ -127,9 +133,6 @@ class TicketsModel extends ListModel
         // Join over the user field 'allocated_to'
         $query->select('`allocated_to`.name AS `allocated_to`');
         $query->join('LEFT', '#__users AS `allocated_to` ON `allocated_to`.id = a.`allocated_to`');
-        // Join over the foreign key 'linked_item_type'
-        $query->select('`jt_linked_item_types`.`title` AS ticketlinkeditemtypes_string');
-        $query->join('LEFT', '#__jed_ticket_linked_item_types AS jt_linked_item_types ON jt_linked_item_types.`id` = a.`linked_item_type`');
 
         // Join over the created by field 'created_by'
         $query->leftJoin($db->qn('#__users', 'created_by'), 'created_by.id = a.created_by');

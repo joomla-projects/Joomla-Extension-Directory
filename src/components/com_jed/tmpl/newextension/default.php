@@ -109,7 +109,7 @@ $manualUrl = Route::_('index.php?option=com_jed&task=newextension.manual&' . Ses
      data-label-name="<?php echo $this->escape(Text::_('COM_JED_GENERAL_TITLE_LABEL')); ?>"
      data-label-developer-url="<?php echo $this->escape(Text::_('COM_JED_EXTENSION_DEVELOPER_URL_LABEL')); ?>"
      data-label-developer-email="<?php echo $this->escape(Text::_('COM_JED_EXTENSION_DEVELOPER_EMAIL_LABEL')); ?>"
-     data-label-update-url="<?php echo $this->escape(Text::_('COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_UPDATE_URL')); ?>"
+     data-label-update-url="<?php echo $this->escape(Text::_('COM_JED_EXTENSION_UPDATE_URL_LABEL')); ?>"
      data-label-changelog-url="<?php echo $this->escape(Text::_('COM_JED_EXTENSION_CHANGELOG_URL_LABEL')); ?>"
      data-label-extension-types="<?php echo $this->escape(Text::_('COM_JED_EXTENSION_EXTENSION_TYPE_LABEL')); ?>"
 ></div>

@@ -15,6 +15,7 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -33,7 +34,7 @@ $wa->useScript('keepalive')
     ->useScript('form.validate')
     ->useScript('com_tickets.ticketGetmessagetemplate')
     ->useScript('com_jed.jquery_dataTables');
-if ($this->linked_item_type === 3) { //Review
+if ($this->linked_item_type === TicketType::Review->value) {
     $wa->useScript('com_tickets.ticketPublishUnPublishReview');
 }
 //->useScript('com_jed.bootstrap_dataTables')
@@ -173,14 +174,14 @@ $userFactory = $container->get('user.factory');
     $add_debug_tab     = false;
     $add_extension_tab     = false;
 
-    if ($this->linked_item_type === 1) { /* Unknown Type */
+    if ($this->linked_item_type === TicketType::Other->value) { /* Unknown Type */
         echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedUnknown', 'Unknown');
 
         echo LayoutHelper::render('ticket.linked_unknown', $this->linked_form);
 
         echo HTMLHelper::_('uitab.endTab');
     }
-    if (($this->linked_item_type === 2) || ($this->linked_item_type === 14)) { /* Extension */
+    if ($this->linked_item_type === TicketType::Extension->value) {
         $add_extension_tab = true;
         $add_debug_tab     = true;
         /*   echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension');
@@ -189,7 +190,7 @@ $userFactory = $container->get('user.factory');
 
            echo HTMLHelper::_('uitab.endTab');*/
     }
-    if ($this->linked_item_type === 3) { /* Review */
+    if ($this->linked_item_type === TicketType::Review->value) {
         echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedReview', 'Linked Review');
 
         $passdata = ["linked_form" => $this->linked_form,
@@ -201,27 +202,27 @@ $userFactory = $container->get('user.factory');
         $add_debug_tab     = true;
         $add_extension_tab = true;
     }
-    if ($this->linked_item_type === 4) { /* VEL Report */
+    if ($this->linked_item_type === TicketType::VELReport->value) {
         echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedVELReport', 'Linked VEL Report');
 
         echo LayoutHelper::render('ticket.linked_velreport', $this->linked_form);
 
         echo HTMLHelper::_('uitab.endTab');
     }
-    if ($this->linked_item_type === 5) { /* VEL Developer Update */
+    if ($this->linked_item_type === TicketType::VulnerableExtension->value) { /* VEL Developer Update */
         echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedDeveloperUpdate', 'Linked Developer Update');
 
         echo LayoutHelper::render('ticket.linked_veldeveloperupdate', $this->linked_form);
         echo HTMLHelper::_('uitab.endTab');
     }
-    if ($this->linked_item_type === 6) { /* VEL Abandonware */
+    if ($this->linked_item_type === TicketType::AbandonedExtension->value) { /* VEL Abandonware */
         echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedAbandonedReport', 'Linked Abandonware Report');
 
         echo LayoutHelper::render('ticket.linked_velabandonware', $this->linked_form);
 
         echo HTMLHelper::_('uitab.endTab');
     }
-    if ($add_extension_tab == true) {
+    if ($add_extension_tab == true && !empty($this->linked_extension_data)) {
         echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension');
 
         echo LayoutHelper::render('ticket.linked_extension', $this->linked_extension_data);
