@@ -18,8 +18,6 @@ namespace Jed\Component\Tickets\Administrator\View\Ticket;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
-use Jed\Component\Jed\Administrator\Model\ExtensionModel;
-use Jed\Component\Jed\Administrator\Model\ExtensionvarieddatumModel;
 use Jed\Component\Jed\Administrator\Model\ReviewModel;
 use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Jed\Component\Tickets\Administrator\Model\TicketModel;
@@ -143,23 +141,6 @@ class HtmlView extends BaseHtmlView
     protected mixed $ticket_help;
 
     /**
-     * The linked extension varied data
-     *
-     * @var mixed
-     *
-     * @since 4.0.0
-     */
-    protected mixed $linked_extension_varieddata;
-    /**
-     * The linked extension varieddata form
-     *
-     * @var Form
-     *
-     * @since 4.0.0
-     */
-    protected mixed $linked_extension_varieddata_form;
-
-    /**
      * Add the page title and toolbar.
      *
      * @return void
@@ -256,28 +237,6 @@ class HtmlView extends BaseHtmlView
 
                 $extension_id                = $this->linked_item_id;
                 $this->related_object_string = "Extension is displayed in 'Linked Extensions' tab.";
-
-                try {
-                    $this->linked_extension_data = $extension_model->getEverything($extension_id);
-                    $this->linked_extension_form = $extension_model->getForm(
-                        $this->linked_extension_data,
-                        false,
-                        'jf_linked_extension_form'
-                    );
-                    $this->linked_extension_form->bind($this->linked_extension_data);
-                    $this->linked_extension_data->extension_form = $this->linked_extension_form;
-
-                    $extensionvarieddatum            = new ExtensionvarieddatumModel();
-                    $extensionvarieddatum->setuseExceptions(true);
-                    foreach ($this->linked_extension_data->varied as $varied) {
-                        $this->linked_extension_varieddata[$varied->supply_option_id] = $varied;
-                        $tmp_form                                                     = $extensionvarieddatum->getForm($varied, false, 'jf_linked_extension_varieddata_form_' . $varied->supply_option_id);
-                        $tmp_form->bind($varied);
-                        $this->linked_extension_data->varied_form[$varied->supply_option_id] = $tmp_form;
-                    }
-                } catch (\Exception $e) {
-                    throw new GenericDataException($e->getMessage(), 500, $e);
-                }
             }
             if ($this->linked_item_type === TicketType::Review->value) {
                 $this->linked_item_Model     = new ReviewModel();
@@ -292,31 +251,6 @@ class HtmlView extends BaseHtmlView
                 );
 
                 $this->linked_form->bind($this->linked_item_data);
-                //$this->linked_extension_data holds actual data plus extension_form
-
-                $extension_model = new ExtensionModel();
-                $extension_model->setUseExceptions(true);
-
-                try {
-                    $this->linked_extension_data = $extension_model->getEverything($this->linked_item_data[0]->extension_id);
-                    $this->linked_extension_form = $extension_model->getForm(
-                        $this->linked_extension_data,
-                        false,
-                        'jf_linked_extension_form'
-                    );
-                    $this->linked_extension_form->bind($this->linked_extension_data);
-                    $this->linked_extension_data->extension_form = $this->linked_extension_form;
-
-                    $extensionvarieddatum = new ExtensionvarieddatumModel();
-                    $extensionvarieddatum->setuseExceptions(true);
-                    foreach ($this->linked_extension_data->varied as $varied) {
-                        $tmp_form = $extensionvarieddatum->getForm($varied, false, 'jf_linked_extension_varieddata_form_' . $varied->supply_option_id);
-                        $tmp_form->bind($varied);
-                        $this->linked_extension_data->varied_form[$varied->supply_option_id] = $tmp_form;
-                    }
-                } catch (\Exception $e) {
-                    throw new GenericDataException($e->getMessage(), 500, $e);
-                }
             }
             if ($this->linked_item_type === TicketType::VELReport->value) {
                 $this->linked_item_Model = new ReportModel();
