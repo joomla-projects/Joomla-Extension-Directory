@@ -150,7 +150,7 @@ class TicketModel extends AdminModel
             $pk = $this->getState('ticket.id');
         }
 
-        $db = $this->getDatabase();
+        $db    = $this->getDatabase();
         $query = $db->getQuery(true);
         $query->select('*')->from('#__jed_ticket_messages')->where($db->quoteName('ticket_id') . ' = ' . $db->quote($pk));
 

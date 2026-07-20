@@ -154,7 +154,7 @@ class TicketsModel extends ListModel
             $query->where('a.created_by = ' . $user->id);
 
             $published = (string) $this->getState('filter.state');
-            $states = [0,1,2];
+            $states    = [0,1,2];
 
             if ($published !== '' && is_numeric($published) && in_array($published, $states)) {
                 $state = (int) $published;
