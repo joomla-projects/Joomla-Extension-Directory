@@ -1,0 +1,16 @@
+{
+    "name": "jed/audit-tooling",
+    "description": "Build-time dependencies for the com_jed audit sandbox image (jorobo, phpstan). Never merge into com_jed's own composer.json/vendor - this exists only inside the Docker build context.",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "config": {
+        "platform": {
+            "php": "8.3.0"
+        }
+    },
+    "require": {
+        "php": "^8.3",
+        "joomla-projects/jorobo": "^0.13.1",
+        "phpstan/phpstan": "^2.1.8"
+    }
+}

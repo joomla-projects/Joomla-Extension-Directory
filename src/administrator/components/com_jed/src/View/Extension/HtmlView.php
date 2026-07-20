@@ -130,6 +130,17 @@ class HtmlView extends BaseHtmlView
             ToolbarHelper::custom('extension.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
         }
 
+        // If an existing item, queue a manual, per-extension score recalculation job.
+        if (!$isNew && !$checkedOut && $canDo->get('core.edit')) {
+            ToolbarHelper::custom(
+                'extension.recalculateScore',
+                'refresh.png',
+                'refresh.png',
+                'COM_JED_TOOLBAR_RECALCULATE_SCORE',
+                false
+            );
+        }
+
         if (empty($this->item->id)) {
             ToolbarHelper::cancel('extension.cancel', 'JTOOLBAR_CANCEL');
         } else {

@@ -45,6 +45,33 @@
             filter="string"
             />
     </fieldset>
+    <fieldset name="audit" label="COM_JED_CONFIG_AUDIT_FIELDSET_LABEL">
+        <field
+            name="anthropic_api_key"
+            type="password"
+            filter="raw"
+            label="COM_JED_CONFIG_ANTHROPIC_API_KEY_LABEL"
+            description="COM_JED_CONFIG_ANTHROPIC_API_KEY_DESC"
+            />
+
+        <field
+            name="anthropic_model"
+            type="text"
+            default="claude-opus-4-8"
+            label="COM_JED_CONFIG_ANTHROPIC_MODEL_LABEL"
+            description="COM_JED_CONFIG_ANTHROPIC_MODEL_DESC"
+            filter="string"
+            />
+
+        <field
+            name="docker_binary_path"
+            type="text"
+            default="docker"
+            label="COM_JED_CONFIG_DOCKER_BINARY_LABEL"
+            description="COM_JED_CONFIG_DOCKER_BINARY_DESC"
+            filter="string"
+            />
+    </fieldset>
     <fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">
         <field name="rules" type="rules" component="com_jed" class="inputbox" filter="rules" validate="rules" label="JCONFIG_PERMISSIONS_LABEL" section="component" />
 	</fieldset>

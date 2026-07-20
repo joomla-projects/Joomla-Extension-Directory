@@ -29,6 +29,9 @@ DROP TABLE IF EXISTS `#__jed_extensions`;
 DROP TABLE IF EXISTS `#__jed_extensions_history`;
 DROP TABLE IF EXISTS `#__jed_joomla_versions`;
 DROP TABLE IF EXISTS `#__jed_extensions_history`;
+DROP TABLE IF EXISTS `#__jed_queue_jobs`;
+
+DELETE FROM `#__mail_templates` WHERE `template_id` = 'com_jed.audit_report';
 
 DROP TABLE IF EXISTS old_rsform5;
 DROP TABLE IF EXISTS old_rsform7;
