@@ -1,12 +1,12 @@
 <?php
 
+/** @var \Jed\Component\Jed\Site\View\Reviewcomment\HtmlView $this */
 /**
  * @package JED
  *
  * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
-
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -62,7 +62,7 @@ if (!$canEdit && $this->getCurrentUser()->authorise('core.edit.own', 'com_jed'))
 
         <tr>
             <th><?php echo Text::_('COM_JED_REVIEWCOMMENTS_COMMENTS_LABEL'); ?></th>
-            <td><?php echo nl2br($this->item->comments); ?></td>
+            <td><?php echo nl2br((string) $this->item->comments); ?></td>
         </tr>
 
     </table>

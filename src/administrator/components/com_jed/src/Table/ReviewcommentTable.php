@@ -74,18 +74,15 @@ class ReviewcommentTable extends Table
         // We will retrieve the parent-asset from the Asset-table
         $assetParent = new Asset($this->getDatabase(), $this->getDispatcher());
 
-        // Default: if no asset-parent can be found we take the global asset
-        $assetParentId = $assetParent->getRootId();
-
         // The item has the component as asset-parent
         $assetParent->loadByName('com_jed');
 
         // Return the found asset-parent-id
         if ($assetParent->id) {
-            $assetParentId = $assetParent->id;
+            return $assetParent->id;
         }
 
-        return $assetParentId;
+        return $assetParent->getRootId();
     }
 
     /**

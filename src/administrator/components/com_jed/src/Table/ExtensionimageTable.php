@@ -39,7 +39,7 @@ class ExtensionimageTable extends Table
     public function __construct(DatabaseDriver $db)
     {
         $this->typeAlias = 'com_jed.extensionimage';
-        parent::__construct('#__jed_extension_images', 'id', $db);
+        parent::__construct('#__jed_extensions_images', 'id', $db);
         $this->setColumnAlias('published', 'state');
     }
 
@@ -92,8 +92,8 @@ class ExtensionimageTable extends Table
         if (!empty($src['extension_id'])) {
             if (is_array($src['extension_id'])) {
                 $src['extension_id'] = implode(',', $src['extension_id']);
-            } elseif (strrpos($src['extension_id'], ',')) {
-                $src['extension_id'] = explode(',', $src['extension_id']);
+            } elseif (strrpos((string) $src['extension_id'], ',')) {
+                $src['extension_id'] = explode(',', (string) $src['extension_id']);
             }
         } else {
             $src['extension_id'] = 0;
@@ -102,8 +102,8 @@ class ExtensionimageTable extends Table
         if (!empty($src['filename'])) {
             if (is_array($src['filename'])) {
                 $src['filename'] = implode(',', $src['filename']);
-            } elseif (strpos($src['filename'], ',')) {
-                $src['filename'] = explode(',', $src['filename']);
+            } elseif (strpos((string) $src['filename'], ',')) {
+                $src['filename'] = explode(',', (string) $src['filename']);
             }
         } else {
             $src['filename'] = '';
@@ -130,8 +130,8 @@ class ExtensionimageTable extends Table
 
         // Support multi file field: filename
         $app   = Factory::getApplication();
-        $files = $app->input->files->get('jform', [], 'raw');
-        $array = $app->input->get('jform', [], 'ARRAY');
+        $files = $app->getInput()->files->get('jform', [], 'raw');
+        $array = $app->getInput()->get('jform', [], 'ARRAY');
 
         if ($files['filename'][0]['size'] > 0) {
             // Deleting existing files

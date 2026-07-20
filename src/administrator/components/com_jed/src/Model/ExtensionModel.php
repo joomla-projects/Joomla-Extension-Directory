@@ -19,20 +19,24 @@ use Exception;
 use InvalidArgumentException;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
+use Jed\Component\Jed\Administrator\Table\ExtensionHistoryTable;
 use Jed\Component\Jed\Administrator\Table\ExtensionTable;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
-use Jed\Component\Jed\Site\Model\ExtensionvarieddatumModel;
 use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormFactoryInterface;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\User\User;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Component\Users\Administrator\Table\NoteTable;
 use Joomla\Database\ParameterType;
+use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 use Michelf\Markdown;
 use RuntimeException;
 use stdClass;
@@ -69,103 +73,84 @@ class ExtensionModel extends AdminModel
      */
     protected mixed $item;
 
-    /**
-     * Get everything stored for an extension
-     *
-     * @param int $pk The id of the extension to get everything for.
-     *
-     * @return stdClass
-     *
-     * @since 4.0.0
-     *
-     * @throws Exception
-     */
-    public function getEverything(int $pk = 0): stdClass
-    {
-        if ($item = parent::getItem($pk)) {
-            $this->item = $item;
-
-            if (isset($this->item->includes)) {
-                $this->item->includes = array_values(json_decode($this->item->includes));
-            }
-            if (isset($this->item->joomla_versions)) {
-                $this->item->joomla_versions = array_values(json_decode($this->item->joomla_versions));
-            }
-            if (isset($this->item->created_by)) {
-                $this->item->created_by_name = JedHelper::getUserById($this->item->created_by)->name;
-            }
-
-            if (isset($this->item->modified_by)) {
-                $this->item->modified_by_name = JedHelper::getUserById($this->item->modified_by)->name;
-            }
-
-            /* Load Category Hierarchy */
-            if (is_null($this->item->primary_category_id)) {
-                $this->item->category_hierarchy = "";
-            } else {
-                $this->item->category_hierarchy = $this->getCategoryHierarchy($this->item->primary_category_id);
-            }
-            $supply_types = $this->getSupplyTypes();
-            foreach ($supply_types as $st) {
-                $keys['extension_id']     = $this->item->id;
-                $keys['supply_option_id'] = $st->supply_id;
-                $vi                       = new ExtensionvarieddatumModel();
-                $vitem                    = $vi->getItem($keys);
-                if ($vitem->id > 0) {
-                    $vitem->supply_option_type = $st->supply_type;
-                    $vitem->extension_id       = $this->item->id;
-
-
-                    if ($vitem->is_default_data == 1) {
-                        $split_data = $this->SplitDescription($vitem->description);
-
-                        if (!is_null($split_data)) {
-                            $vitem->intro_text  = $split_data['intro'];
-                            $vitem->description = $split_data['body'];
-                        }
-                        $this->item->title      = $vitem->title;
-                        $this->item->alias      = $vitem->alias;
-                        $this->item->intro_text = $vitem->intro_text;
-                    }
-                    $vitem->uploaded_file               = $this->getFilename($vitem->extension_id, $st->supply_id);
-                    $this->item->varied[$st->supply_id] = $vitem;
-                }
-            }
-
-
-            $this->item->scores = $this->getScores($this->item->id);
-
-
-            $this->item->reviews = $this->getReviews($this->item->id);
-
-            $dev_info = $this->getDeveloperInfo();
-
-
-            $this->item->developer_email    = $dev_info->email;
-            $this->item->developer_company  = $dev_info->developer_name;
-            $this->item->developer_username = $dev_info->username;
-
-            $this->item->images = $this->getExtensionImages();
-        }
-
-        return $this->item;
+    public function __construct(
+        $config = [],
+        ?MVCFactoryInterface $factory = null,
+        ?FormFactoryInterface $formFactory = null
+    ) {
+        parent::__construct($config, $factory, $formFactory);
+        $this->setUseExceptions(true);
     }
 
-
-    /**
-     * Method to get a single record for a varied item.
-     *
-     * @param int $pk The id of the primary key.
-     *
-     * @return \stdClass  Object on success, false on failure.
-     *
-     * @since 1.6
-     *
-     * @throws Exception
-     */
-    public function getItem($pk = null): stdClass
+    protected function populateState()
     {
-        return $this->getvariedItem($pk, 0);
+        parent::populateState();
+
+        // Get the version ID of the record from the request.
+        $version = Factory::getApplication()->getInput()->getInt('version');
+        $this->setState($this->getName() . '.version', $version);
+    }
+
+    public function getItem($pk = null, $version = null)
+    {
+        $pk      = (!empty($pk)) ? $pk : (int) $this->getState($this->getName() . '.id');
+        $version = (!empty($version)) ? $version : (int) $this->getState($this->getName() . '.version');
+        $table   = $this->getTable('ExtensionHistory');
+
+        if ($pk > 0) {
+            // Attempt to load the row.
+            if ($version) {
+                $return = $table->load(['extension_id' => $pk, 'id' => $version]);
+            } else {
+                // Load the most recent history entry (highest id) for this extension.
+                $db          = $this->getDatabase();
+                $latestQuery = $db->getQuery(true)
+                    ->select('MAX(' . $db->quoteName('id') . ')')
+                    ->from($db->quoteName('#__jed_extensions_history'))
+                    ->where($db->quoteName('extension_id') . ' = :eid')
+                    ->bind(':eid', $pk, ParameterType::INTEGER);
+                $latestId = (int) $db->setQuery($latestQuery)->loadResult();
+
+                $return = $latestId > 0 ? $table->load($latestId) : false;
+            }
+
+            // Check for a table object error.
+            if ($return === false) {
+                // If there was no underlying error, then the false means there simply was not a row in the db for this $pk.
+                throw new Exception(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
+            }
+        }
+
+        // Convert to \stdClass before adding other data
+        $properties = get_object_vars($table);
+        $item       = ArrayHelper::toObject($properties);
+
+        if (property_exists($item, 'params')) {
+            $registry     = new Registry($item->params);
+            $item->params = $registry->toArray();
+        }
+
+        $db               = $this->getDatabase();
+        $mapId            = $item->extension_id ?: (int) $item->id;
+        $catQuery         = $db->getQuery(true)
+            ->select($db->quoteName('catid'))
+            ->from($db->quoteName('#__jed_extensions_category_map'))
+            ->where($db->quoteName('extension_id') . ' = :eid')
+            ->bind(':eid', $mapId, ParameterType::INTEGER);
+        $item->categories = $db->setQuery($catQuery)->loadColumn() ?: [];
+
+        // Pre-fill the "maintainer" subform with the extension's existing maintainers.
+        $maintainerQuery = $db->getQuery(true)
+            ->select($db->quoteName('user_id'))
+            ->from($db->quoteName('#__jed_extensions_maintainers'))
+            ->where($db->quoteName('extension_id') . ' = :eid')
+            ->bind(':eid', $mapId, ParameterType::INTEGER);
+        $item->maintainer = array_map(
+            static fn ($userId) => ['user_id' => (int) $userId],
+            $db->setQuery($maintainerQuery)->loadColumn() ?: []
+        );
+
+        return $item;
     }
 
     /**
@@ -192,6 +177,196 @@ class ExtensionModel extends AdminModel
     }
 
     /**
+     * Load all images for an extension from #__jed_extensions_images, ordered by ordering.
+     *
+     * @param int $extensionId The extension id to load images for.
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    public function getImages(?int $extensionId = null): array
+    {
+        $extensionId      = (!empty($extensionId)) ? $extensionId : (int) $this->getState($this->getName() . '.id');
+
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select('*')
+            ->from($db->quoteName('#__jed_extensions_images'))
+            ->where($db->quoteName('extension_id') . ' = :extensionId')
+            ->bind(':extensionId', $extensionId, ParameterType::INTEGER)
+            ->order($db->quoteName('ordering') . ' ASC');
+
+        return $db->setQuery($query)->loadObjectList() ?: [];
+    }
+
+    /**
+     * Load all uploaded files for an extension from #__jed_extensions_files.
+     *
+     * @param int $extensionId The extension id to load files for.
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    public function getFiles(?int $extensionId = null): array
+    {
+        $extensionId = (!empty($extensionId)) ? $extensionId : (int) $this->getState($this->getName() . '.id');
+
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select('*')
+            ->from($db->quoteName('#__jed_extensions_files'))
+            ->where($db->quoteName('extension_id') . ' = :extensionId')
+            ->bind(':extensionId', $extensionId, ParameterType::INTEGER)
+            ->order($db->quoteName('id') . ' ASC');
+
+        return $db->setQuery($query)->loadObjectList() ?: [];
+    }
+
+    /**
+     * Load the selected categories for an extension from #__jed_extensions_category_map.
+     *
+     * @param int $extensionId The extension id to load categories for.
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    public function getCategories(?int $extensionId = null): array
+    {
+        $extensionId = (!empty($extensionId)) ? $extensionId : (int) $this->getState($this->getName() . '.id');
+
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(['map.catid', 'c.title']))
+            ->from($db->quoteName('#__jed_extensions_category_map', 'map'))
+            ->leftJoin(
+                $db->quoteName('#__categories', 'c')
+                . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('map.catid')
+            )
+            ->where($db->quoteName('map.extension_id') . ' = :extensionId')
+            ->bind(':extensionId', $extensionId, ParameterType::INTEGER)
+            ->order($db->quoteName('c.title') . ' ASC');
+
+        return $db->setQuery($query)->loadObjectList() ?: [];
+    }
+
+    /**
+     * Load the maintainers for an extension from #__jed_extensions_maintainers.
+     *
+     * @param int $extensionId The extension id to load maintainers for.
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    public function getMaintainers(?int $extensionId = null): array
+    {
+        $extensionId = (!empty($extensionId)) ? $extensionId : (int) $this->getState($this->getName() . '.id');
+
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(['m.user_id', 'u.name', 'u.username']))
+            ->from($db->quoteName('#__jed_extensions_maintainers', 'm'))
+            ->leftJoin(
+                $db->quoteName('#__users', 'u')
+                . ' ON ' . $db->quoteName('u.id') . ' = ' . $db->quoteName('m.user_id')
+            )
+            ->where($db->quoteName('m.extension_id') . ' = :extensionId')
+            ->bind(':extensionId', $extensionId, ParameterType::INTEGER)
+            ->order($db->quoteName('u.name') . ' ASC');
+
+        return $db->setQuery($query)->loadObjectList() ?: [];
+    }
+
+    /**
+     * Load all history entries for an extension from #__jed_extensions_history.
+     *
+     * @param int $extensionId The extension id to load history for.
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    public function getHistory(?int $extensionId = null): array
+    {
+        $extensionId = (!empty($extensionId)) ? $extensionId : (int) $this->getState($this->getName() . '.id');
+
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('h') . '.*')
+            ->select($db->quoteName('u.name', 'editor_name'))
+            ->from($db->quoteName('#__jed_extensions_history', 'h'))
+            ->leftJoin(
+                $db->quoteName('#__users', 'u')
+                . ' ON ' . $db->quoteName('u.id') . ' = ' . $db->quoteName('h.modified_by')
+            )
+            ->where($db->quoteName('h.extension_id') . ' = :extensionId')
+            ->bind(':extensionId', $extensionId, ParameterType::INTEGER)
+            ->order($db->quoteName('h.id') . ' ASC');
+
+        return $db->setQuery($query)->loadObjectList() ?: [];
+    }
+
+    /**
+     * Set one history entry as active and deactivate all others for the extension.
+     *
+     * @param int $extensionId The extension PK in #__jed_extensions.
+     * @param int $historyId   The history entry PK to activate.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    public function activateVersion(int $extensionId, int $historyId): void
+    {
+        $db = $this->getDatabase();
+
+        $db->setQuery(
+            $db->getQuery(true)
+                ->update($db->quoteName('#__jed_extensions_history'))
+                ->set($db->quoteName('active') . ' = 0')
+                ->where($db->quoteName('extension_id') . ' = :eid')
+                ->bind(':eid', $extensionId, ParameterType::INTEGER)
+        )->execute();
+
+        $db->setQuery(
+            $db->getQuery(true)
+                ->update($db->quoteName('#__jed_extensions_history'))
+                ->set($db->quoteName('active') . ' = 1')
+                ->where($db->quoteName('id') . ' = :id')
+                ->where($db->quoteName('extension_id') . ' = :eid')
+                ->bind(':id', $historyId, ParameterType::INTEGER)
+                ->bind(':eid', $extensionId, ParameterType::INTEGER)
+        )->execute();
+    }
+
+    /**
+     * Load all review entries for an extension from #__jed_reviews.
+     *
+     * @param int $extensionId The extension id to load reviews for.
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    public function getReviews(?int $extensionId = null): array
+    {
+        $extensionId      = (!empty($extensionId)) ? $extensionId : (int) $this->getState($this->getName() . '.id');
+
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select('*')
+            ->from($db->quoteName('#__jed_reviews'))
+            ->where($db->quoteName('extension_id') . ' = :extensionId')
+            ->bind(':extensionId', $extensionId, ParameterType::INTEGER)
+            ->order($db->quoteName('id') . ' ASC');
+
+        return $db->setQuery($query)->loadObjectList() ?: [];
+    }
+
+    /**
      * Returns a reference to the a Table object, always creating it.
      *
      * @param string $name    The table type to instantiate
@@ -203,7 +378,7 @@ class ExtensionModel extends AdminModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getTable($name = 'Extension', $prefix = 'Administrator', $options = []): Table
+    public function getTable($name = 'ExtensionHistory', $prefix = 'Administrator', $options = []): Table
     {
         return parent::getTable($name, $prefix, $options);
     }
@@ -222,7 +397,7 @@ class ExtensionModel extends AdminModel
         $data = Factory::getApplication()->getUserState('com_jed.edit.extension.data', []);
 
         if (empty($data)) {
-            $data = $this->getItem();
+            return $this->getItem();
         }
 
         return $data;
@@ -241,63 +416,117 @@ class ExtensionModel extends AdminModel
      */
     public function save($data): bool
     {
-        unset($data['created_on']);
+        // The extension id is tracked explicitly in the session by
+        // ExtensionController::edit()/add() - the same pattern the site side's
+        // ExtensionformController/ExtensionformModel already use. Model::getState() alone isn't
+        // reliable here because getTable() intentionally returns the history table rather than
+        // the live #__jed_extensions table, so the framework's generic id bookkeeping doesn't apply.
+        $extensionId = (int) Factory::getApplication()->getUserState('com_jed.edit.extension.id');
 
-        if (!$data['id']) {
-            $data['created_by'] = Factory::getApplication()->getSession()->get('user')->get('id');
+        if (!$extensionId) {
+            // No live row yet: create one first, so we have an id to attach the history entry to.
+            $extensionId = $this->createExtension($data);
+
+            if (!$extensionId) {
+                return false;
+            }
+
+            Factory::getApplication()->setUserState('com_jed.edit.extension.id', $extensionId);
         }
 
-        if (!parent::save($data)) {
+        $categories = (array) ($data['categories'] ?? []);
+
+        // Force a new INSERT rather than an UPDATE of an existing history entry
+        $data['id']           = 0;
+        $data['extension_id'] = $extensionId;
+        $data['active']       = 1;
+        unset($data['created']); // ExtensionHistoryTable::bind() sets this for new rows
+
+        // Only one history entry may be active per extension; deactivate the rest
+        // before inserting the new (active) one.
+        $db = $this->getDatabase();
+        $db->setQuery(
+            $db->getQuery(true)
+                ->update($db->quoteName('#__jed_extensions_history'))
+                ->set($db->quoteName('active') . ' = 0')
+                ->where($db->quoteName('extension_id') . ' = :eid')
+                ->bind(':eid', $extensionId, ParameterType::INTEGER)
+        )->execute();
+
+        $table = $this->getTable();
+
+        if (!$table->bind($data)) {
+            $this->setError($table->getError());
             return false;
         }
 
+        if (!$table->check()) {
+            $this->setError($table->getError());
+            return false;
+        }
 
+        if (!$table->store()) {
+            $this->setError($table->getError());
+            return false;
+        }
 
-        /*
-        $extensionId = $this->getState($this->getName() . '.id');
-        if ((int) $data['approve']['approved'] !== 3)
-            {
-                $this->removeApprovedReason((int) $data['id']);
-            }
+        // Point the live row at the history entry that was just created.
+        $this->updateEntryVersion($extensionId, (int) $table->id);
 
-            if ((int) $data['publish']['published'] === 1)
-            {
-                $this->removePublishedReason((int) $data['id']);
-            }
+        // deleteImages/deleteFiles are plain checkboxes, not declared form fields, so they were
+        // stripped by Form::filter() in AdminModel::validate() before $data reached us here.
+        // Read them straight from the raw request instead.
+        $rawPost = (array) Factory::getApplication()->getInput()->post->get('jform', [], 'array');
 
-            $this->storeRelatedCategories($extensionId, $data['related'] ?? []);
-            $this->storeVersions($extensionId, $data['phpVersion'] ?? [], 'php');
-            $this->storeVersions(
-                $extensionId, $data['joomlaVersion'] ?? [], 'joomla'
-            );
-            $this->storeExtensionTypes($extensionId, $data['extensionTypes'] ?? []);
-            $this->storeImages($extensionId, $data['images'] ?? []);
-        */
+        $this->storeCategories($extensionId, $categories);
+        $this->storeMaintainers($extensionId, (array) ($data['maintainer'] ?? []));
+        $this->deleteMarkedUploads($extensionId, (array) ($rawPost['deleteImages'] ?? []), '#__jed_extensions_images');
+        $this->deleteMarkedUploads($extensionId, (array) ($rawPost['deleteFiles'] ?? []), '#__jed_extensions_files');
+        $this->storeUploadedImages($extensionId, (array) ($data['images'] ?? []));
+        $this->storeUploadedFiles($extensionId, (array) ($data['files'] ?? []));
+
+        // Keep state pointing to the extension ID (not the new history entry's PK)
+        $this->setState($this->getName() . '.id', $extensionId);
 
         return true;
     }
 
     /**
-     * Get array of supply types for extension
+     * Create the live #__jed_extensions row for a brand new extension (state.id is still 0).
      *
-     * @return array
+     * @param array $data The submitted form data.
+     *
+     * @return int The new #__jed_extensions.id, or 0 on failure (an error is set on the model).
      *
      * @since 4.0.0
      */
-    public function getSupplyTypes(): array
+    private function createExtension(array $data): int
     {
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true);
+        $user = Factory::getApplication()->getIdentity();
 
+        /** @var ExtensionTable $table */
+        $table = $this->getTable('Extension');
 
-        $query->select(
-            [
-                $db->quoteName('supply_options.id', 'supply_id'),
-                $db->quoteName('supply_options.title', 'supply_type'),
-            ]
-        )->from($db->quoteName('#__jed_extension_supply_options', 'supply_options'))->where('state=1');
+        $liveData = [
+            'id'    => 0,
+            'name'  => (string) ($data['name'] ?? ''),
+            'alias' => (string) ($data['alias'] ?? ''),
+            'catid' => !empty($data['catid']) ? (int) $data['catid'] : null,
+            'owner' => !empty($data['owner']) ? (int) $data['owner'] : (int) $user->id,
+            'state' => 0,
+        ];
 
-        return $db->setQuery($query)->loadObjectList();
+        if (!$table->save($liveData)) {
+            $this->setError($table->getError());
+
+            return 0;
+        }
+
+        $extensionId = (int) $table->id;
+
+        $this->setState($this->getName() . '.id', $extensionId);
+
+        return $extensionId;
     }
 
     /**
@@ -332,56 +561,6 @@ class ExtensionModel extends AdminModel
     }
 
     /**
-     * Gets array of all reviews for extension
-     *
-     * @param int $extension_id
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    public function getReviews(int $extension_id): array
-    {
-        $db     = $this->getDatabase();
-        $retval = [];
-
-        $query = $db->getQuery(true);
-        $query->select('"Free" as suptype,a.*,u.name as created_by_name')->from($db->quoteName('#__jed_reviews', 'a'))->join('LEFT', $db->quoteName('#__users', 'u') . ' ON u.id=a.created_by')->where($db->quoteName('extension_id') . ' = ' . $db->quote($extension_id) . ' and supply_option_id=1');
-
-        $db->setQuery($query);
-        $freeresult = $db->loadAssocList();
-        $query      = $db->getQuery(true);
-        $query->select('"Paid" as suptype,a.*,u.name as created_by_name')->from($db->quoteName('#__jed_reviews', 'a'))->join('LEFT', $db->quoteName('#__users', 'u') . ' ON u.id=a.created_by')->where($db->quoteName('extension_id') . ' = ' . $db->quote($extension_id) . ' and supply_option_id=2');
-
-        $db->setQuery($query);
-        $paidresult = $db->loadAssocList();
-        $freeCount  = count($freeresult);
-        $paidCount  = count($paidresult);
-        if ($paidCount > 0) {
-            $retval['Paid']            = $paidresult;
-            foreach ($retval['Paid'] as $pr) {
-                if (str_contains($pr['body'], '{functionality}')) {
-                    $pr['body'] = '';
-                }
-            }
-        }
-        if ($freeCount > 0) {
-            $retval['Free']            = $freeresult;
-
-
-            foreach ($retval['Free'] as $fr) {
-                //291505
-                if (str_contains($fr['body'], '{functionality}')) {
-                    $fr['body'] = '';
-                }
-            }
-        }
-
-
-        return $retval;
-    }
-
-    /**
      * Method to get Developer Information
      *
      * @return stdClass
@@ -396,317 +575,6 @@ class ExtensionModel extends AdminModel
         $db->setQuery($query);
 
         return $db->loadObject();
-    }
-
-    /**
-     * Get Extension Images
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     *
-     * @throws Exception
-     */
-    public function getExtensionImages(): array
-    {
-
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true)
-            ->select('i.supply_option_id,i.filename,i.state')
-            ->from('#__jed_extension_images as i')
-            ->where($db->quoteName('i.extension_id') . ' = ' . $this->item->id);
-        $db->setQuery($query);
-
-        return $db->loadObjectList();
-    }
-
-    /**
-     * Method to get a single record.
-     *
-     * @param int|null $pk                 The id of the primary key.
-     * @param int      $supply_option_type The type of varied data to look for
-     *
-     * @return stdClass    Object on success, false on failure.
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function getvariedItem(int $pk = null, int $supply_option_type = 0): stdClass
-    {
-        if ($item = parent::getItem($pk)) {
-            $this->item = $item;
-
-            if (isset($this->item->includes)) {
-                $this->item->includes = array_values(json_decode($this->item->includes));
-            }
-            if (isset($this->item->joomla_versions)) {
-                $this->item->joomla_versions = array_values(json_decode($this->item->joomla_versions));
-            }
-            if (isset($this->item->created_by)) {
-                $this->item->created_by_name = JedHelper::getUserById($this->item->created_by)->name;
-            }
-
-            if (isset($this->item->modified_by)) {
-                $this->item->modified_by_name = JedHelper::getUserById($this->item->modified_by)->name;
-            }
-
-            /* Load Category Hierarchy */
-            if (is_null($this->item->primary_category_id)) {
-                $this->item->category_hierarchy = "";
-            } else {
-                $this->item->category_hierarchy = $this->getCategoryHierarchy($this->item->primary_category_id);
-            }
-
-            /* Load Varied Data */
-
-
-            $this->item->varied_data = $this->getVariedData($this->item->id, $supply_option_type);
-
-            foreach ($this->item->varied_data as $v) {
-                if ($v->is_default_data === 1) {
-                    $this->item->title        = $v->title;
-                    $this->item->alias        = $v->alias;
-                    $this->item->intro_text   = $v->intro_text;
-                    $this->item->support_link = $v->support_link;
-                }
-            }
-            /* Load Scores */
-            try {
-                $this->item->scores = $this->getScores($this->item->id);
-            } catch (Exception $e) {
-            }
-
-            $this->item->number_of_reviews = 0;
-            $score                         = 0;
-            $supplycounter                 = 0;
-            $supplytype                    = '';
-            foreach ($this->item->scores as $s) {
-                $supplycounter = $supplycounter + 1;
-                if ($s->supply_option_id == 1) {
-                    $supplytype .= 'Free';
-                }
-                if ($s->supply_option_id == 2) {
-                    $comma = '';
-                    if ($supplytype <> '') {
-                        $comma = ', ';
-                    }
-
-                    $supplytype .= $comma . 'Paid';
-                }
-                $score                         = $score + $s->functionality_score;
-                $score                         = $score + $s->ease_of_use_score;
-                $score                         = $score + $s->support_score;
-                $score                         = $score + $s->value_for_money_score;
-                $score                         = $score + $s->documentation_score;
-                $this->item->number_of_reviews = $this->item->number_of_reviews + $s->number_of_reviews;
-            }
-            $this->item->type         = $supplytype;
-            $score                    = $score / $supplycounter;
-            $this->item->score        = floor($score / 5);
-            $this->item->score_string = JedscoreHelper::getStars($this->item->score);
-            if ($this->item->number_of_reviews == 0) {
-                $this->item->review_string = '';
-            } elseif ($this->item->number_of_reviews == 1) {
-                $this->item->review_string = '<span>' . $this->item->number_of_reviews . ' review</span>';
-            } elseif ($this->item->number_of_reviews > 1) {
-                $this->item->review_string = '<span>' . $this->item->number_of_reviews . ' reviews</span>';
-            }
-            /* Load Reviews */
-
-            $this->item->reviews = $this->getReviews($this->item->id);
-            //echo "<pre>";print_r($this->item);echo "</pre>";exit();
-
-            if ($this->item->logo <> "") {
-                $this->item->logo = JedHelper::formatImage($this->item->logo, ImageSize::SMALL);
-            }
-
-
-            $this->item->developer_email   = JedHelper::getUserById($this->item->created_by)->email;
-            $this->item->developer_company = $this->getDeveloperName($this->item->created_by);
-
-
-            /*  $db = $this->getDatabase();
-
-            $query = $db->getQuery(true);
-            $query->select('supply_options.title AS supply_type, a.*')
-                ->from($db->quoteName('#__jed_extension_varied_data', 'a'))
-                ->leftJoin(
-                    $db->quoteName('#__jed_extension_supply_options', 'supply_options')
-                    . ' ON ' . $db->quoteName('supply_options.id') . ' = ' . $db->quoteName('a.supply_option_id')
-                )
-                ->where($db->quoteName('extension_id') . ' = ' . $db->quote($pk))
-            ->where($db->quoteName('supply_option_id') . ' = ' . $db->quote($supply_option_type));
-
-            $db->setQuery($query);
-            $result = $db->loadObjectList();
-
-            foreach ($result as $r)
-            {
-
-                $supply = $r->supply_type;
-
-                if ($r->logo <> "")
-                {
-                    ///cache/fab_image/61273fd97f89c_resizeDown1200px525px16.png
-                    $r->logo = 'https://extensions.joomla.org/cache/fab_image/' . str_replace('.png', '', $r->logo) . '_resizeDown1200px525px16.png';
-                    //echo $item->logo;exit();
-                }
-                if($r->is_default_data == 1)
-                {
-                    //echo "<pre>";print_r($r);echo "</pre>";exit();
-                    $split_data =  $this->SplitDescription($r->description);
-                    if(!is_null($split_data))
-                    {
-                        $r->intro_text =$split_data['intro'];
-                        $r->description = $split_data['body'];
-                    }
-                }
-                $retval[$supply] = $r;
-            }
-            $item->varied_data = $retval; */
-
-            return $this->item;
-        }
-
-        return new stdClass();
-    }
-
-    /**
-     * Get varied data for extension, i.e. fields for free, fields for paid
-     *
-     * @param int      $extension_id
-     * @param int|null $supply_option_type
-     *
-     * @return array
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function getVariedData(int $extension_id, int $supply_option_type = null): array
-    {
-        $db     = $this->getDatabase();
-        $retval = [];
-        $query  = $db->getQuery(true)->select('supply_options.title AS supply_type, a.*')->from($db->quoteName('#__jed_extension_varied_data', 'a'))->leftJoin(
-            $db->quoteName('#__jed_extension_supply_options', 'supply_options') . ' ON ' . $db->quoteName('supply_options.id') . ' = ' . $db->quoteName('a.supply_option_id')
-        )->where($db->quoteName('extension_id') . ' = :extension_id')->bind(':extension_id', $extension_id, ParameterType::INTEGER);
-
-        if (($supply_option_type ?? 0) > 0) {
-            $query->where($db->quoteName('supply_option_id') . ' = :supply_option_type')->bind(':supply_option_type', $supply_option_type, ParameterType::INTEGER);
-        }
-
-        $result = $db->setQuery($query)->loadObjectList();
-
-        foreach ($result as $variedDatum) {
-            $supply = $variedDatum->supply_type;
-
-            if (!empty($variedDatum->logo)) {
-                $variedDatum->logo = JedHelper::formatImage($variedDatum->logo, ImageSize::LARGE);
-            }
-
-            if ($variedDatum->is_default_data == 1 && empty($variedDatum->intro_text)) {
-                $split_data = $this->splitDescription($variedDatum->description);
-
-                if (!is_null($split_data)) {
-                    $variedDatum->intro_text  = $split_data['intro'];
-                    $variedDatum->description = $split_data['body'] . Markdown::defaultTransform($variedDatum->description);
-                }
-            } else {
-                $variedDatum->intro_text  = Markdown::defaultTransform($variedDatum->intro_text);
-                $variedDatum->description = Markdown::defaultTransform($variedDatum->description);
-            }
-
-            $retval[$supply] = $variedDatum;
-        }
-
-        return $retval;
-    }
-
-    /**
-     * Get the filename of the given extension ID.
-     *
-     * @param int $extensionId The extension ID to get the filename for
-     *
-     * @return stdClass  The extension file information.
-     *
-     * @since 4.0.0
-     */
-    public function getFilename(int $extensionId, $supply_option_id): stdClass
-    {
-        $db = $this->getDatabase();
-
-        $query = $db->getQuery(true)->select('*')->from($db->quoteName('#__jed_extensions_files'))->where($db->quoteName('extension_id') . ' = ' . $extensionId)->where($db->quoteName('supply_option_id') . ' = ' . $supply_option_id);
-        $db->setQuery($query);
-
-        $fileDetails = $db->loadObject();
-
-        if ($fileDetails === null) {
-            $fileDetails       = new stdClass();
-            $fileDetails->file = '';
-        }
-
-        return $fileDetails;
-    }
-
-    /**
-     * Get array of review scores for extension
-     *
-     * @param int $extension_id
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    public function getReviewTypes(int $extension_id): array
-    {
-        $db     = $this->getDatabase();
-        $query  = $db->getQuery(true);
-        $query2 = $db->getQuery(true);
-        //SELECT supply_options.id AS supply_id, supply_options.title AS supply_type FROM `fqvpf_jed_extension_supply_options` AS `supply_options` WHERE id<3
-        //UNION
-        //SELECT supply_options.id AS supply_id, supply_options.title AS supply_type FROM
-        //fqvpf_jed_extension_varied_data a
-        //LEFT JOIN `fqvpf_jed_extension_supply_options` AS `supply_options`
-        // ON `supply_options`.id = a.`supply_option_id` WHERE extension_id=80 AND supply_options.id>2;
-
-        $query->select('supply_options.id AS supply_id, supply_options.title AS supply_type')->from($db->quoteName('#__jed_extension_supply_options', 'supply_options'))->where($db->quoteName('id') . ' < 3');
-        $query2->select('supply_options.id AS supply_id, supply_options.title AS supply_type')
-            //  $query2->select('"3" AS supply_id, "Cloud/Service" AS supply_type')
-            ->from($db->quoteName('#__jed_extension_varied_data', 'a'))->join(
-                'LEFT',
-                $db->quoteName(
-                    '#__jed_extension_supply_options',
-                    'supply_options'
-                ) . ' ON supply_options.id=a.supply_option_id'
-            )->where($db->quoteName('extension_id') . ' = ' . $extension_id . ' and supply_options.id>2');
-
-
-        $db->setQuery($query->union($query2));
-
-        return $db->loadObjectList();
-    }
-
-    /**
-     * Method to get the varied data form.
-     *
-     * @param array $data     An optional array of data for the form to interogate.
-     * @param bool  $loadData True if the form is to load its own data (default case), false if not.
-     *
-     * @return Form  A Form object on success, false on failure
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function getVariedDataForm(array $data = [], bool $loadData = true, string $formname = 'jform_extensionvarieddata'): Form
-    {
-        // Get the form.
-        $form = $this->loadForm(
-            'com_jed.extensionvarieddatum',
-            'extensionvarieddatum',
-            ['control' => $formname, 'load_data' => $loadData]
-        );
-
-
-        return $form ?? new Form('com_jed.extensionvarieddatum');
     }
 
     /**
@@ -728,7 +596,6 @@ class ExtensionModel extends AdminModel
             );
         }
 
-        $db          = $this->getDatabase();
         $extensionId = (int) $data['id'];
 
         /**
@@ -740,49 +607,14 @@ class ExtensionModel extends AdminModel
 
         $table->load($extensionId);
 
+        // approved_reason/approved_notes live directly on #__jed_extensions and are persisted by save() below.
+        if (!empty($data['approvedReason']) && (int) $data['approved'] === 3) {
+            $data['approved_reason'] = implode("\n", (array) $data['approvedReason']);
+        }
+
         if (!$table->save($data)) {
             throw new RuntimeException('Save Failed');
         }
-
-        $this->removeApprovedReason($extensionId);
-
-        if (empty($data['approvedReason']) || (int) $data['approved'] !== 3) {
-            return;
-        }
-
-        $query = $db->getQuery(true)->insert($db->quoteName('#__jed_extensions_approved_reasons'))->columns(
-            $db->quoteName(
-                [
-                    'extension_id',
-                    'reason',
-                ]
-            )
-        );
-
-        array_walk(
-            $data['approvedReason'],
-            static function ($reason) use (&$query, $db, $extensionId) {
-                $query->values($extensionId . ',' . $db->quote($reason));
-            }
-        );
-
-        $db->setQuery($query)->execute();
-    }
-
-    /**
-     * Remove approved reasons.
-     *
-     * @param int $extensionId The extension ID to remove the approved reasons for
-     *
-     * @return void
-     *
-     * @since 4.0.0
-     */
-    private function removeApprovedReason(int $extensionId): void
-    {
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true)->delete($db->quoteName('#__jed_extensions_approved_reasons'))->where($db->quoteName('extension_id') . ' = ' . $extensionId);
-        $db->setQuery($query)->execute();
     }
 
     /**
@@ -803,7 +635,6 @@ class ExtensionModel extends AdminModel
             );
         }
 
-        $db          = $this->getDatabase();
         $extensionId = (int) $data['id'];
 
         /**
@@ -813,89 +644,14 @@ class ExtensionModel extends AdminModel
 
         $table->load($extensionId);
 
+        // approved_notes lives directly on #__jed_extensions and is persisted by save() below.
+        if (!empty($data['publishedReason']) && (int) $data['published'] !== 1) {
+            $data['approved_notes'] = implode("\n", (array) $data['publishedReason']);
+        }
+
         if (!$table->save($data)) {
             throw new RuntimeException('Save Failed');
         }
-
-        $this->removePublishedReason($extensionId);
-
-        if (empty($data['publishedReason']) || (int) $data['published'] === 1) {
-            return;
-        }
-
-        $query = $db->getQuery(true)->insert($db->quoteName('#__jed_extensions_published_reasons'))->columns(
-            $db->quoteName(
-                [
-                    'extension_id',
-                    'reason',
-                ]
-            )
-        );
-
-        array_walk(
-            $data['publishedReason'],
-            static function ($reason) use (&$query, $db, $extensionId) {
-                $query->values($extensionId . ',' . $db->quote($reason));
-            }
-        );
-
-        $db->setQuery($query)->execute();
-    }
-
-    /**
-     * Remove published reasons.
-     *
-     * @param int $extensionId The extension ID to remove the published reasons for
-     *
-     * @return void
-     *
-     * @since 4.0.0
-     */
-    private function removePublishedReason(int $extensionId): void
-    {
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true)->delete($db->quoteName('#__jed_extensions_published_reasons'))->where($db->quoteName('extension_id') . ' = ' . $extensionId);
-        $db->setQuery($query)->execute();
-    }
-
-    /**
-     * Store used extension types for an extension.
-     *
-     * @param int   $extensionId The extension ID to save the types for
-     * @param array $types       The extension types to store
-     *
-     * @return void
-     *
-     * @since 4.0.0
-     */
-    private function storeExtensionTypes(int $extensionId, array $types): void
-    {
-        $db = $this->getDatabase();
-
-        $query = $db->getQuery(true)->delete($db->quoteName('#__jed_extensions_types'))->where($db->quoteName('extension_id') . ' = ' . $extensionId);
-        $db->setQuery($query)->execute();
-
-        if (empty($types)) {
-            return;
-        }
-
-        $query->clear()->insert($db->quoteName('#__jed_extensions_types'))->columns(
-            $db->quoteName(
-                [
-                    'extension_id',
-                    'type',
-                ]
-            )
-        );
-
-        array_walk(
-            $types,
-            static function ($type) use (&$query, $db, $extensionId) {
-                $query->values($extensionId . ',' . $db->quote($type));
-            }
-        );
-
-        $db->setQuery($query)->execute();
     }
 
     /**
@@ -985,51 +741,6 @@ class ExtensionModel extends AdminModel
     }
 
     /**
-     * Store related categories for an extension.
-     *
-     * @param int   $extensionId        The extension ID to save the categories for
-     * @param array $relatedCategoryIds The related category IDs to store
-     *
-     * @return void
-     *
-     * @since 4.0.0
-     */
-    private function storeRelatedCategories(
-        int $extensionId,
-        array $relatedCategoryIds
-    ): void {
-        $db = $this->getDatabase();
-
-
-        $query = $db->getQuery(true)->delete($db->quoteName('#__jed_extensions_categories'))->where($db->quoteName('extension_id') . ' = ' . $extensionId);
-        $db->setQuery($query)->execute();
-
-        if (empty($relatedCategoryIds)) {
-            return;
-        }
-
-        $relatedCategoryIds = array_slice($relatedCategoryIds, 0, 5);
-
-        $query->clear()->insert($db->quoteName('#__jed_extensions_categories'))->columns(
-            $db->quoteName(
-                [
-                    'extension_id',
-                    'category_id',
-                ]
-            )
-        );
-
-        array_walk(
-            $relatedCategoryIds,
-            static function ($relatedCategoryId) use (&$query, $extensionId) {
-                $query->values($extensionId . ',' . $relatedCategoryId);
-            }
-        );
-
-        $db->setQuery($query)->execute();
-    }
-
-    /**
      * Store supported versions for an extension.
      *
      * @param int    $extensionId The extension ID to save the versions for
@@ -1072,45 +783,5 @@ class ExtensionModel extends AdminModel
         );
 
         $db->setQuery($query)->execute();
-    }
-
-
-    /**
-     * getExtensionIdfromVariedId
-     *
-     * Get parent Extension ID from varied data ID
-     *
-     * @param int $variedId
-     *
-     * @return int
-     *
-     * @since 1.0
-     */
-    public function getExtensionIdfromVariedId(int $variedId): int
-    {
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true);
-        $query->select('extension_id')->from('#__jed_extension_varied_data')->where('id=' . $variedId);
-        return $db->setQuery($query)->loadResult();
-    }
-
-
-    /**
-     * getExtensionSupplyOptions
-     *
-     * Get list of supply options for an extension
-     *
-     * @param int $extensionId
-     *
-     * @return array
-     *
-     * @since 1.0
-     */
-    public function getExtensionSupplyOptions(int $extensionId): array
-    {
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true);
-        $query->select('supply_option_id')->from('#__jed_extension_varied_data')->where('extension_id=' . $extensionId);
-        return $db->setQuery($query)->loadColumn();
     }
 }

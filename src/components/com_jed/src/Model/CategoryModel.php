@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
@@ -97,66 +98,27 @@ class CategoryModel extends ListModel
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = [
-                'id',
-                'a.id',
-                'title',
-                'a.title',
-                'alias',
-                'a.alias',
-                'published',
-                'a.published',
-                'created_by',
-                'a.created_by',
-                'modified_by',
-                'a.modified_by',
-                'created_on',
-                'a.created_on',
-                'modified_on',
-                'a.modified_on',
-                'joomla_versions',
-                'a.joomla_versions',
-                'popular',
-                'a.popular',
-                'requires_registration',
-                'a.requires_registration',
-                'gpl_license_type',
-                'a.gpl_license_type',
-                'jed_internal_note',
-                'a.jed_internal_note',
-                'can_update',
-                'a.can_update',
-                'video',
-                'a.video',
-                'version',
-                'a.version',
-                'uses_updater',
-                'a.uses_updater',
-                'includes',
-                'a.includes',
-                'approved',
-                'a.approved',
-                'approved_time',
-                'a.approved_time',
-                'second_contact_email',
-                'a.second_contact_email',
-                'jed_checked',
-                'a.jed_checked',
-                'uses_third_party',
-                'a.uses_third_party',
-                'primary_category_id',
-                'a.primary_category_id',
-                'logo',
-                'a.logo',
-                'approved_notes',
-                'a.approved_notes',
-                'approved_reason',
-                'a.approved_reason',
-                'published_notes',
-                'a.published_notes',
-                'published_reason',
-                'a.published_reason',
-                'state',
-                'a.state',
+                'id', 'a.id',
+                'name', 'a.name',
+                'alias', 'a.alias',
+                'catid', 'a.catid',
+                'state', 'a.state',
+                'created_by', 'a.created_by',
+                'modified_by', 'a.modified_by',
+                'created', 'a.created',
+                'modified', 'a.modified',
+                'joomla_versions', 'a.joomla_versions',
+                'popular', 'a.popular',
+                'requires_registration', 'a.requires_registration',
+                'video', 'a.video',
+                'extension_version', 'a.extension_version',
+                'uses_updater', 'a.uses_updater',
+                'extension_types', 'a.extension_types',
+                'approved', 'a.approved',
+                'approved_time', 'a.approved_time',
+                'logo', 'a.logo',
+                'approved_notes', 'a.approved_notes',
+                'approved_reason', 'a.approved_reason',
             ];
         }
 
@@ -232,7 +194,7 @@ class CategoryModel extends ListModel
 
         $listOrder = $app->getUserStateFromRequest('com_content.category.list.' . $itemid . '.filter_order_Dir', 'filter_order_Dir', '', 'cmd');
 
-        if (!\in_array(strtoupper($listOrder), ['ASC', 'DESC', ''])) {
+        if (!\in_array(strtoupper((string) $listOrder), ['ASC', 'DESC', ''])) {
             $listOrder = 'ASC';
         }
 
@@ -291,7 +253,7 @@ class CategoryModel extends ListModel
         $query->from('#__jed_extensions AS a');
 
         $query->select('cat.title AS category_title');
-        $query->join('INNER', '#__categories AS cat ON cat.id=a.primary_category_id');
+        $query->join('INNER', '#__categories AS cat ON cat.id=a.catid');
         // Join over the users for the checked out user.
         $query->select('uc.name AS uEditor');
         $query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
@@ -303,11 +265,6 @@ class CategoryModel extends ListModel
         // Join over the created by field 'modified_by'
         $query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
 
-        //Join to Varied Data to get Default descriptive text
-        $query->select('varied.description as description, varied.title as title, varied.alias as alias');
-        $query->join('INNER', '#__jed_extension_varied_data AS varied ON varied.extension_id = a.id and varied.is_default_data=1');
-
-
         if (!Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed')) {
             $query->where('a.state = 1');
         } else {
@@ -318,18 +275,18 @@ class CategoryModel extends ListModel
         $search = $this->getState('filter.search');
 
         if (!empty($search)) {
-            if (stripos($search, 'id:') === 0) {
-                $query->where('a.id = ' . (int)substr($search, 3));
+            if (stripos((string) $search, 'id:') === 0) {
+                $query->where('a.id = ' . (int)substr((string) $search, 3));
             } else {
                 $search = $db->Quote('%' . $db->escape($search, true) . '%');
-                $query->where('(title LIKE ' . $search);
+                $query->where('(a.name LIKE ' . $search . ')');
             }
         }
 
 
         $category = $this->state->get($this->context . 'category.id');
         if (!empty($category)) {
-            $query->where('a.primary_category_id =' . $category);
+            $query->where('a.catid =' . $category);
         }
 
         // Add the list ordering clause.
@@ -373,14 +330,12 @@ class CategoryModel extends ListModel
     public function getItems(): mixed
     {
         $items = parent::getItems();
-        foreach ($items as $item) {
-            //echo "<pre>";print_r($item);echo "</pre>";exit();
 
-            $item->category_hierarchy = $this->getCategoryHierarchy($item->primary_category_id);
+        foreach ($items as $item) {
+            $item->category_hierarchy = $this->getCategoryHierarchy($item->catid);
 
             if (!empty($item->logo)) {
-                //$item->logo = JedHelper::formatImage($item->logo, ImageSize::SMALL);
-                $item->logo = 'https://extensions.joomla.org/cache/fab_image/' . str_replace('.png', '', $item->logo) . '_resizeDown400px175px16.png';
+                $item->logo = JedHelper::formatImage($item->logo, ImageSize::SMALL);
             }
 
             $item->scores            = $this->getScores($item->id);
@@ -408,11 +363,11 @@ class CategoryModel extends ListModel
                 $score                   = $score + $s->documentation_score;
                 $item->number_of_reviews = $item->number_of_reviews + $s->number_of_reviews;
             }
-            $item->type  = $supplytype;
-            $score       = $score / $supplycounter;
-            $item->score = floor($score / 5);
-            //echo "<pre>";print_r($item);echo "</pre>";exit();
+            $item->type         = $supplytype;
+            $score              = $supplycounter > 0 ? $score / $supplycounter : 0;
+            $item->score        = floor($score / 5);
             $item->score_string = JedscoreHelper::getStars($item->score);
+
             if ($item->number_of_reviews == 0) {
                 $item->review_string = '';
             } elseif ($item->number_of_reviews == 1) {
@@ -420,20 +375,14 @@ class CategoryModel extends ListModel
             } elseif ($item->number_of_reviews > 1) {
                 $item->review_string = '<span>' . $item->number_of_reviews . ' reviews</span>';
             }
-            //echo "<pre>";print_r($item);echo "</pre>";exit();
-
-            // https://extensions.joomla.org/cache/fab_image/27824_resizeDown400px175px16.png
 
             if (!empty($item->uses_updater)) {
-                $item->uses_updater = Text::_('COM_JED_EXTENSION_USES_UPDATER_OPTION_' . strtoupper($item->uses_updater));
+                $item->uses_updater = Text::_('COM_JED_EXTENSION_USES_UPDATER_OPTION_' . strtoupper((string) $item->uses_updater));
             }
             $item->version = JedtrophyHelper::getTrophyVersionsString($item->joomla_versions);
         }
-        $items = array_values($items);
-        array_multisort(array_column($items, "number_of_reviews"), SORT_DESC, $items);
 
-        //echo "<pre>";print_r($items);echo "</pre>";exit();
-        return $items;
+        return array_values($items);
     }
 
     /**
@@ -454,7 +403,7 @@ class CategoryModel extends ListModel
         $error_dateformat = false;
 
         foreach ($filters as $key => $value) {
-            if (strpos($key, '_dateformat') && !empty($value) && JedHelper::isValidDate($value) == null) {
+            if (strpos((string) $key, '_dateformat') && !empty($value) && JedHelper::isValidDate($value) == null) {
                 $filters[$key]    = '';
                 $error_dateformat = true;
             }
@@ -508,10 +457,12 @@ class CategoryModel extends ListModel
     public function getExtensionTypes(int $extensionId): array
     {
         $db    = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true)->select($db->quoteName('type'))->from($db->quoteName('#__jed_extensions_types'))->where($db->quoteName('extension_id') . ' = ' . $extensionId);
+        $query = $db->getQuery(true)->select($db->quoteName('extension_types'))->from($db->quoteName('#__jed_extensions'))->where($db->quoteName('id') . ' = ' . $extensionId);
         $db->setQuery($query);
 
-        return $db->loadColumn();
+        $types = json_decode((string) $db->loadResult(), true);
+
+        return is_array($types) ? $types : [];
     }
 
     /**
@@ -526,7 +477,7 @@ class CategoryModel extends ListModel
     public function getImages(int $extensionId): array
     {
         $db    = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true)->select($db->quoteName('filename'))->from($db->quoteName('#__jed_extensions_images'))->where($db->quoteName('extension_id') . ' = ' . $extensionId)->order($db->quoteName('order'));
+        $query = $db->getQuery(true)->select($db->quoteName('filename'))->from($db->quoteName('#__jed_extensions_images'))->where($db->quoteName('extension_id') . ' = ' . $extensionId)->order($db->quoteName('ordering'));
         $db->setQuery($query);
 
         $items  = $db->loadObjectList();
@@ -535,7 +486,7 @@ class CategoryModel extends ListModel
         array_walk(
             $items,
             static function ($item, $key) use (&$images) {
-                $images['images' . $key]['image'] = $item->filename;
+                $images['images' . $key]['image'] = JedHelper::formatImage($item->filename, ImageSize::SMALL);
             }
         );
 
@@ -555,7 +506,7 @@ class CategoryModel extends ListModel
     public function getRelatedCategories(int $extensionId): array
     {
         $db    = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true)->select($db->quoteName('category_id'))->from($db->quoteName('#__jed_extensions_categories'))->where($db->quoteName('extension_id') . ' = ' . $extensionId);
+        $query = $db->getQuery(true)->select($db->quoteName('catid'))->from($db->quoteName('#__jed_extensions_category_map'))->where($db->quoteName('extension_id') . ' = ' . $extensionId);
         $db->setQuery($query);
 
         return $db->loadColumn();
@@ -655,7 +606,7 @@ class CategoryModel extends ListModel
 
             // Note: i for item
 
-            $subQuery = $db->getQuery(true)->select('COUNT(' . $db->quoteName($db->escape('i.id')) . ')')->from($db->quoteName($db->escape('#__jed_extensions'), 'i'))->where($db->quoteName($db->escape('i.primary_category_id')) . ' = ' . $db->quoteName('c.id'));
+            $subQuery = $db->getQuery(true)->select('COUNT(' . $db->quoteName($db->escape('i.id')) . ')')->from($db->quoteName($db->escape('#__jed_extensions'), 'i'))->where($db->quoteName($db->escape('i.catid')) . ' = ' . $db->quoteName('c.id'));
 
 
             $subQuery->where($db->quoteName($db->escape('i.state')) . ' = 1');

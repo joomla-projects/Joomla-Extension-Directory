@@ -52,7 +52,7 @@ class JoomlaSupplytypeField extends CheckboxesField
         $app    = Factory::getApplication();
         $user   = $app->getIdentity();
         $db     = Factory::getContainer()->get(DatabaseInterface::class);
-        $option = $app->input->get('option');
+        $option = $app->getInput()->get('option');
         $query  = $db->getQuery(true);
         $query->select('a.id AS value, a.title AS text')->from('#__jed_extension_supply_options AS a')->where('a.state=1');
         $db->setQuery($query);

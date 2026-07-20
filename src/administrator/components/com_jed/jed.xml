@@ -29,7 +29,11 @@
             </params>
         </menu>
         <submenu>
-	        <menu link="option=com_categories&amp;extension=com_jed">
+            <menu view="extensions">
+                COM_JED_EXTENSIONS
+            </menu>
+
+            <menu link="option=com_categories&amp;extension=com_jed">
                 COM_JED_TITLE_CATEGORIES
                 <params>
                     <menu-quicktask>index.php?option=com_categories&amp;amp;view=category&amp;layout=edit&amp;extension=com_jed</menu-quicktask>
@@ -38,17 +42,9 @@
                 </params>
             </menu>
 
-            <menu view="tickets">
-                COM_JED_TITLE_TICKETS
+            <menu view="reviews">
+                COM_JED_TITLE_REVIEWS
             </menu>
-
-            <menu view="velvulnerableitems">
-                COM_JED_TITLE_VEL
-            </menu>
-
-			<menu view="extensions">
-				COM_JED_EXTENSIONS
-			</menu>
         </submenu>
 
         <files folder="administrator/components/com_jed">

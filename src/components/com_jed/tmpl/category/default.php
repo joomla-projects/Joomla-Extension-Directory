@@ -94,7 +94,7 @@ $wa->useStyle('com_jed.jazstyle');
                     'cards.extension',
                     [
                     'image'         => $item->logo,
-                    'title'         => $item->title,
+                    'title'         => $item->name,
                     'developer'     => $item->developer,
                     'score_string'  => $item->score_string,
                     'score'         => $item->score,
@@ -103,7 +103,7 @@ $wa->useStyle('com_jed.jazstyle');
                     'description'   => $item->description,
                     'type'          => $item->type,
                     'category'      => $item->category_title,
-                    'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->primary_category_id, $item->id)),
+                    'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->catid, $item->id)),
                     ]
                 ); ?>
             <?php endforeach; ?>

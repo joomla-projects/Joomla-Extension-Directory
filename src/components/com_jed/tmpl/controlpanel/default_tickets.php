@@ -1,5 +1,6 @@
 <?php
 
+/** @var \Jed\Component\Jed\Site\View\Controlpanel\HtmlView $this */
 /**
  * @package JED
  *
@@ -8,7 +9,6 @@
  * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
-
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -47,7 +47,7 @@ $canCreate = $isLoggedIn;
         <div class="container"><div class="row">
         <div class="col-10"><?php echo '<fieldset class="mytickets"><legend>' . Text::_('COM_JED_TICKETS_LIST_HEADER') . '</legend>' . Text::_('COM_JED_TICKETS_LIST_DESCR') . '</fieldset>'; ?></div>
         <div class="col-2">
-        <a href="index.php?option=com_jed&view=ticketform" class="btn btn-primary pull-right">Create Ticket</a></div>
+        <a href="index.php?option=com_tickets&view=ticketform" class="btn btn-primary pull-right">Create Ticket</a></div>
             </div></div>
         <?php if (!empty($this->filterForm)) {
             //  echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
@@ -105,7 +105,7 @@ $canCreate = $isLoggedIn;
                         <td>
 
                             <?php if ($canEdit) : ?>
-                                <a href="<?php echo Route::_('index.php?option=com_jed&task=ticket.edit&id=' . (int) $item->id); ?>">
+                                <a href="<?php echo Route::_('index.php?option=com_tickets&task=ticket.edit&id=' . (int) $item->id); ?>">
                                     <?php echo $this->escape($item->ticket_subject); ?></a>
                             <?php else : ?>
                                 <?php echo $this->escape($item->ticket_subject); ?>
@@ -118,7 +118,7 @@ $canCreate = $isLoggedIn;
                             <?php try {
                                 $d = new DateTime($item->created_on);
                                 echo $d->format("d M y H:i");
-                            } catch (Exception $e) {
+                            } catch (Exception) {
                             }
                             ?>
                         </td>
@@ -139,7 +139,7 @@ $canCreate = $isLoggedIn;
                         <?php if ($canEdit) : ?>
                             <td class="center">
                                 <a
-                                    href="<?php echo Route::_('index.php?option=com_jed&task=ticket.edit&id=' . $item->id, false, 2); ?>"
+                                    href="<?php echo Route::_('index.php?option=com_tickets&task=ticket.edit&id=' . $item->id, false, 2); ?>"
                                     class="btn btn-mini" type="button"><i class="icon-edit"></i></a>
 
 
