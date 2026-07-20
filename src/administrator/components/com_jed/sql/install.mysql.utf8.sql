@@ -38,6 +38,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions`
 	`download_key`           varchar(255)    DEFAULT '',
 	`uses_updater`           tinyint(1)      NOT NULL DEFAULT '0',
 	`update_url`             varchar(255)    DEFAULT '',
+	`last_update_check`      datetime        DEFAULT NULL,
+	`last_update_check_error` varchar(255)   DEFAULT NULL,
 	`developer_url`          varchar(255)    DEFAULT '',
 	`developer_email`        varchar(255)    DEFAULT '',
 	`changelog_url`          varchar(255)    DEFAULT '',
@@ -295,6 +297,34 @@ INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) 
 INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('51','5 (b/c)','Joomla 5 using B/C plugin','1');
 INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('60','6','Joomla 6','1');
 INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('61','6 (b/c)','Joomla 6 using B/C plugin','1');
+
+
+DROP TABLE IF EXISTS `#__jed_queue_jobs`;
+
+CREATE TABLE IF NOT EXISTS `#__jed_queue_jobs`
+(
+	`id`             int unsigned NOT NULL AUTO_INCREMENT,
+	`type`           varchar(50)  NOT NULL,
+	`extension_id`   int unsigned DEFAULT NULL,
+	`history_id`     int unsigned DEFAULT NULL,
+	`payload`        text,
+	`status`         varchar(20)  NOT NULL DEFAULT 'pending',
+	`attempts`       tinyint unsigned NOT NULL DEFAULT '0',
+	`last_error`     text,
+	`result_meta`    text,
+	`created`        datetime     NOT NULL,
+	`created_by`     int unsigned NOT NULL DEFAULT '0',
+	`started_time`   datetime     DEFAULT NULL,
+	`finished_time`  datetime     DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	KEY `IDX_jed_queue_jobs_status` (`status`),
+	KEY `IDX_jed_queue_jobs_type` (`type`),
+	KEY `IDX_jed_queue_jobs_extension` (`extension_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+
+INSERT INTO `#__mail_templates` (`template_id`, `extension`, `language`, `subject`, `body`, `htmlbody`, `attachments`, `params`) VALUES
+('com_jed.audit_report', 'com_jed', '', 'COM_JED_AUDIT_REPORT_EMAIL_SUBJECT', 'COM_JED_AUDIT_REPORT_EMAIL_BODY', '', '', '{"tags":["sitename","extensionname","extensionversion","phpstanreport","claudereport"]}');
 
 
 SET FOREIGN_KEY_CHECKS = 1;
