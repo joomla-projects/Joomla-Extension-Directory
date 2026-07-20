@@ -16,13 +16,6 @@
         <action name="core.edit.state" title="JACTION_EDITSTATE" description="COM_CATEGORIES_ACCESS_EDITSTATE_DESC"/>
         <action name="core.edit.own" title="JACTION_EDITOWN" description="COM_CATEGORIES_ACCESS_EDITOWN_DESC"/>
     </section>
-    <section name="ticket">
-        <action name="core.create" title="JACTION_CREATE" description="JACTION_CREATE"/>
-        <action name="core.delete" title="JACTION_DELETE" description="JACTION_DELETE"/>
-        <action name="core.edit" title="JACTION_EDIT" description="JACTION_EDIT"/>
-        <action name="core.edit.state" title="JACTION_EDITSTATE" description="JACTION_EDITSTATE"/>
-        <action name="core.edit.own" title="JACTION_EDITOWN" description="JACTION_EDITOWN"/>
-    </section>
     <section name="temp">
         <action name="core.create" title="JACTION_CREATE" description="JACTION_CREATE"/>
         <action name="core.delete" title="JACTION_DELETE" description="JACTION_DELETE"/>

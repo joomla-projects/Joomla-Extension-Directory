@@ -88,7 +88,7 @@ class HtmlView extends BaseHtmlView
             $this->canSave    = JedHelper::canSave();
             $this->form       = $model->getForm();
 
-            $input        = $app->input;
+            $input        = $app->getInput();
             $extension_id = $input->get('extension_id', -1, 'int');
 
             $extension_model         = new ExtensionModel();

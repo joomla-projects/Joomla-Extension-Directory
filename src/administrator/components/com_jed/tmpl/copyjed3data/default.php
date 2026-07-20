@@ -1,12 +1,12 @@
 <?php
 
+/** @var \Jed\Component\Jed\Administrator\View\Copyjed3data\HtmlView $this */
 /**
  * @package JED
  *
  * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
-
 use Jed\Component\Jed\Administrator\Helper\JedmigrateHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 
@@ -56,7 +56,7 @@ HTMLHelper::_('bootstrap.tooltip');
                     echo '<div class="taskheading">' . $task->heading . '</div>';
                     foreach ($task->instruction as $instruction) {
                         echo '<div class="taskdescription">' . date("H:i:s") . " - " . $instruction->description . '</div>';
-                        $instruction->sql = htmlspecialchars_decode($instruction->sql);
+                        $instruction->sql = htmlspecialchars_decode((string) $instruction->sql);
                         $sqlrows          = explode(";", $instruction->sql);
                         foreach ($sqlrows as $sql) {
                             //  echo '<div class="taskdescription">'.date().' - Q - '.$sql . '<br/><br/></div>';

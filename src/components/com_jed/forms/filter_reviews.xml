@@ -58,8 +58,8 @@
             <option value="a.created_on DESC">COM_JED_GENERAL_FILTER_SORT_CREATED_ON_DESC</option>
             <option value="a.created_by ASC">COM_JED_GENERAL_FILTER_SORT_CREATED_BY_ASC</option>
             <option value="a.created_by DESC">COM_JED_GENERAL_FILTER_SORT_CREATED_BY_DESC</option>
-            <option value="a.ordering ASC">COM_JED_GENERAL_FILTER_SORT_</option>
-            <option value="a.ordering DESC">COM_JED_GENERAL_FILTER_SORT_</option>
+            <option value="a.ordering ASC">COM_JED_GENERAL_FILTER_SORT_ORDERING_ASC</option>
+            <option value="a.ordering DESC">COM_JED_GENERAL_FILTER_SORT_ORDERING_DESC</option>
 
         </field>
 

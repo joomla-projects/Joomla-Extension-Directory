@@ -52,7 +52,7 @@ class JoomlaVersionField extends CheckboxesField
         $app    = Factory::getApplication();
         $user   = $app->getIdentity();
         $db     = Factory::getContainer()->get(DatabaseInterface::class);
-        $option = $app->input->get('option');
+        $option = $app->getInput()->get('option');
         $query  = $db->getQuery(true);
         $query->select('a.id AS value, a.label AS text')->from('#__jed_joomla_versions AS a')->where('a.published=1');
         $db->setQuery($query);

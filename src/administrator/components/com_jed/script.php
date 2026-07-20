@@ -48,7 +48,7 @@ class Com_JedInstallerScript
      *
      * @since 4.0.0
      */
-    public function install(Joomla\CMS\Installer\InstallerAdapter $parent): bool
+    public function install(InstallerAdapter $parent): bool
     {
         echo Text::_('COM_JED_INSTALLERSCRIPT_INSTALL');
 
@@ -67,7 +67,7 @@ class Com_JedInstallerScript
      */
     public function postflight(
         string $type,
-        Joomla\CMS\Installer\InstallerAdapter $parent
+        InstallerAdapter $parent
     ): bool {
         echo Text::_('COM_JED_INSTALLERSCRIPT_POSTFLIGHT');
 
@@ -88,7 +88,7 @@ class Com_JedInstallerScript
      */
     public function preflight(
         string $type,
-        Joomla\CMS\Installer\InstallerAdapter $parent
+        InstallerAdapter $parent
     ): bool {
         if ($type !== 'uninstall') {
             // Check for the minimum PHP version before continuing
@@ -129,7 +129,7 @@ class Com_JedInstallerScript
      * @since 4.0.0
      */
     public function uninstall(
-        Joomla\CMS\Installer\InstallerAdapter $parent
+        InstallerAdapter $parent
     ): bool {
         echo Text::_('COM_JED_INSTALLERSCRIPT_UNINSTALL');
 
@@ -146,7 +146,7 @@ class Com_JedInstallerScript
      * @since 4.0.0
      */
     public function update(
-        Joomla\CMS\Installer\InstallerAdapter $parent
+        InstallerAdapter $parent
     ): bool {
         echo Text::_('COM_JED_INSTALLERSCRIPT_UPDATE');
 
