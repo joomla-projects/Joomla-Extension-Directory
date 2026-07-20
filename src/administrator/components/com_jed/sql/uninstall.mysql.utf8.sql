@@ -21,7 +21,6 @@ DROP TABLE IF EXISTS `#__jed_extension_supply_options`;
 DROP TABLE IF EXISTS `#__jed_reviews`;
 DROP TABLE IF EXISTS `#__jed_reviews_comments`;
 DROP TABLE IF EXISTS `#__jed_extensions`;
-DROP TABLE IF EXISTS `#__jed_extension_varied_data`;
 DROP TABLE IF EXISTS `#__jed_extension_images`;
 DROP TABLE IF EXISTS `#__jed_extension_scores`;
 DROP TABLE IF EXISTS `#__jed_developers`;

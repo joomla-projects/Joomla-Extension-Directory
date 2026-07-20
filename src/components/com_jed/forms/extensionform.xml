@@ -69,13 +69,13 @@
     <fieldset name="links" label="COM_JED_FIELDSET_LINKS_LABEL">
         <field name="download_url" validate="url" type="url" label="COM_JED_EXTENSION_DOWNLOAD_LINK_LABEL"
                hint="COM_JED_EXTENSION_DOWNLOAD_LINK_LABEL"/>
-        <field name="support_url" validate="url" type="url" label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_SUPPORT_LINK"
-               hint="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_SUPPORT_LINK"/>
+        <field name="support_url" validate="url" type="url" label="COM_JED_EXTENSION_SUPPORT_LINK_LABEL"
+               hint="COM_JED_EXTENSION_SUPPORT_LINK_LABEL"/>
         <field name="demo_url" validate="url" type="url" label="COM_JED_EXTENSION_DEMO_LINK_LABEL"
                hint="COM_JED_EXTENSION_DEMO_LINK_LABEL"/>
         <field name="documentation_url" validate="url" type="url"
-               label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_DOCUMENTATION_LINK"
-               hint="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_DOCUMENTATION_LINK"/>
+               label="COM_JED_EXTENSION_DOCUMENTATION_LINK_LABEL"
+               hint="COM_JED_EXTENSION_DOCUMENTATION_LINK_LABEL"/>
         <field name="git_url" validate="url" type="url" label="COM_JED_EXTENSION_GIT_URL_LABEL"
                hint="COM_JED_EXTENSION_GIT_URL_LABEL"/>
         <field name="internal_download_url" validate="url" type="url"
@@ -88,8 +88,8 @@
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
-        <field name="update_url" validate="url" type="url" label="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_UPDATE_URL"
-               hint="COM_JED_FORM_LBL_EXTENSIONVARIEDDATUM_UPDATE_URL"/>
+        <field name="update_url" validate="url" type="url" label="COM_JED_EXTENSION_UPDATE_URL_LABEL"
+               hint="COM_JED_EXTENSION_UPDATE_URL_LABEL"/>
         <field name="developer_url" validate="url" type="url" label="COM_JED_EXTENSION_DEVELOPER_URL_LABEL"
                hint="COM_JED_EXTENSION_DEVELOPER_URL_LABEL"/>
         <field name="developer_email" filter="string" type="email" label="COM_JED_EXTENSION_DEVELOPER_EMAIL_LABEL"

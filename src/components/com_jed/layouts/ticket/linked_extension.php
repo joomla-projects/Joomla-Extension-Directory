@@ -115,20 +115,6 @@ echo $extension_form->renderField('published_notes',null,null);
 echo $extension_form->renderField('published_reason',null,null);
 echo $extension_form->renderField('state',null,null);
 echo HTMLHelper::_('uitab.endTab'); */
-$varied_form = $displayData->varied_form;
-//JedHelper::lockFormFields($varied_form,array(''));
-//echo "<pre>";print_r($displayData->varied_data);echo "</pre>";exit();
-foreach ($displayData->varied_data as $vr) {
-    $varied_form->bind($vr);
-    echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'viewextensionsupply_tab_' . $vr->supply_type, Text::_($vr->supply_type, true) . '&nbsp;' . Text::_('COM_JED_GENERAL_VERSION_LABEL', true));
-    echo $varied_form->renderFieldset('info');
-
-    echo $varied_form->renderField('tags');
-    echo $varied_form->renderField('state');
-    echo $varied_form->renderField('created_by');
-
-    echo HTMLHelper::_('uitab.endTab');
-}
 echo HTMLHelper::_('uitab.addTab', 'viewExtensionTab', 'viewextensionreviews', Text::_('Reviews', true));
 ?>
     <table id="reviewsTable" class="display" style="width:100%">

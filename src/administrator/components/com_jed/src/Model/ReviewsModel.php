@@ -139,7 +139,7 @@ class ReviewsModel extends ListModel
 
         // Join over the foreign key 'extension_id'
         $query->select($db->quoteName('e.name', 'extension_name'));
-        $query->leftJoin($db->quoteName('#__jed_extensions', 'e'),$db->quoteName('e.id') . ' = ' . $db->quoteName('a.extension_id'));
+        $query->leftJoin($db->quoteName('#__jed_extensions', 'e'), $db->quoteName('e.id') . ' = ' . $db->quoteName('a.extension_id'));
 
         // Join over the user field 'created_by'
         $query->select('`created_by`.name AS `created_by`');

@@ -39,7 +39,6 @@ class TicketmessageTable extends Table
     {
         $this->typeAlias = 'com_jed.ticketmessage';
         parent::__construct('#__jed_ticket_messages', 'id', $db);
-        $this->setColumnAlias('published', 'state');
     }
 
     /**
@@ -73,20 +72,10 @@ class TicketmessageTable extends Table
     {
         $date = Factory::getDate();
 
-        $input = Factory::getApplication()->input;
-        $task  = $input->getString('task', '');
-
         if ($src['id'] == 0 && empty($src['created_by'])) {
             $src['created_by'] = Factory::getApplication()->getIdentity()->id;
         }
 
-        if ($src['id'] == 0 && empty($src['modified_by'])) {
-            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
-        }
-
-        if ($task == 'apply' || $task == 'save') {
-            $src['modified_by'] = Factory::getApplication()->getIdentity()->id;
-        }
         if ($src['id'] == 0) {
             $src['created_on'] = $date->toSql();
         }
