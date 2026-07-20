@@ -73,26 +73,19 @@ class ExtensionHistoryTable extends Table
     {
         $date = Factory::getDate();
         $app  = Factory::getApplication();
-        $task = $app->input->get('task');
-
+        $task = $app->getInput()->get('task');
 
         // Support for alias field: alias
         if (empty($src['alias'])) {
-            if (empty($src['title'])) {
+            if (empty($src['name'])) {
                 $src['alias'] = OutputFilter::stringURLSafe(date('Y-m-d H:i:s'));
             } else {
                 if ($app->get('unicodeslugs') == 1) {
-                    $src['alias'] = OutputFilter::stringURLUnicodeSlug(trim($src['title']));
+                    $src['alias'] = OutputFilter::stringURLUnicodeSlug(trim((string) $src['name']));
                 } else {
-                    $src['alias'] = OutputFilter::stringURLSafe(trim($src['title']));
+                    $src['alias'] = OutputFilter::stringURLSafe(trim((string) $src['name']));
                 }
             }
-        }
-
-
-        // Support for checkbox field: published
-        if (!isset($src['published'])) {
-            $src['published'] = 0;
         }
 
         // Support for checkbox field: checked_out
@@ -113,59 +106,19 @@ class ExtensionHistoryTable extends Table
         }
 
         if ($src['id'] == 0) {
-            $src['created_on'] = $date->toSql();
+            $src['created'] = $date->toSql();
         }
 
         if ($task == 'apply' || $task == 'save') {
-            $src['modified_on'] = $date->toSql();
+            $src['modified'] = $date->toSql();
         }
 
-        // Support for checkbox field: popular
-        if (!isset($src['popular'])) {
-            $src['popular'] = 0;
-        }
+        $checkboxFields = ['popular', 'requires_registration', 'approved', 'uses_updater', 'active'];
 
-        // Support for checkbox field: requires_registration
-        if (!isset($src['requires_registration'])) {
-            $src['requires_registration'] = 0;
-        }
-
-        // Support for checkbox field: can_update
-        if (!isset($src['can_update'])) {
-            $src['can_update'] = 0;
-        }
-
-        // Support for multiple field: uses_updater
-        if (isset($src['uses_updater']) && $src['uses_updater']) {
-            if (is_array($src['uses_updater'])) {
-                $src['uses_updater'] = implode(',', $src['uses_updater']);
+        foreach ($checkboxFields as $field) {
+            if (!isset($src[$field])) {
+                $src[$field] = 0;
             }
-        } else {
-            $src['uses_updater'] = '';
-        }
-
-        // Support for checkbox field: approved
-        if (!isset($src['approved'])) {
-            $src['approved'] = 0;
-        }
-
-        // Support for checkbox field: jed_checked
-        if (!isset($src['jed_checked'])) {
-            $src['jed_checked'] = 0;
-        }
-
-        // Support for checkbox field: uses_third_party
-        if (!isset($src['uses_third_party'])) {
-            $src['uses_third_party'] = 0;
-        }
-
-        // Support for multiple field: primary_category_id
-        if (isset($src['primary_category_id']) && $src['primary_category_id']) {
-            if (is_array($src['primary_category_id'])) {
-                $src['primary_category_id'] = implode(',', $src['primary_category_id']);
-            }
-        } else {
-            $src['primary_category_id'] = '';
         }
 
         return parent::bind($src, $ignore);
@@ -189,7 +142,7 @@ class ExtensionHistoryTable extends Table
         if (!$this->isUnique('alias')) {
             $count        = 0;
             $currentAlias = $this->alias;
-            while (!$this->isUnique($this->alias)) {
+            while (!$this->isUnique('alias')) {
                 $this->alias = $currentAlias . '-' . $count++;
             }
         }
@@ -255,23 +208,15 @@ class ExtensionHistoryTable extends Table
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);
 
-        $categories        = explode(',', $this->primary_category_id);
-        $andWhereCondition = [];
-        foreach ($categories as $categoryid) {
-            $andWhereCondition[] = $db->quoteName('primary_category_id') . ' like "%' . $categoryid . '%"';
-        }
-
-
         $query
             ->select($db->quoteName($field))
             ->from($db->quoteName($this->_tbl))
             ->where($db->quoteName($field) . ' = ' . $db->quote($this->$field))
-            ->where($db->quoteName('id') . ' <> ' . (int) $this->{$this->_tbl_key});
+            ->where($db->quoteName('extension_id') . ' <> ' . (int) $this->{$this->extension_id});
 
-        if (!empty($andWhereCondition)) {
-            $query->andWhere($andWhereCondition);
+        if (!empty($this->catid)) {
+            $query->where($db->quoteName('catid') . ' = ' . (int) $this->catid);
         }
-
 
         $db->setQuery($query);
         $db->execute();

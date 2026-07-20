@@ -72,11 +72,8 @@ class ExtensionTable extends Table
     {
         $date = Factory::getDate();
         $app  = Factory::getApplication();
-        $task = $app->input->get('task');
+        $task = $app->getInput()->get('task');
         $user = $app->getIdentity();
-
-
-
 
         if ($src['id'] == 0 && empty($src['created_by'])) {
             $src['created_by'] = $user->id;
@@ -97,37 +94,19 @@ class ExtensionTable extends Table
 
         if ($task == 'apply' || $task == 'save') {
             $src['modified_by'] = $user->id;
-            $src['modified_on'] = $date->toSql();
+            $src['modified']    = $date->toSql();
         }
 
         if ($src['id'] == 0) {
-            $src['created_on'] = $date->toSql();
-        } elseif ($src['id'] > 0 && empty($src['created_on'])) {
-            // Preserve created_on on edit if not provided
-            if (!empty($this->created_on)) {
-                $src['created_on'] = $this->created_on;
+            $src['created'] = $date->toSql();
+        } elseif ($src['id'] > 0 && empty($src['created'])) {
+            // Preserve created on edit if not provided
+            if (!empty($this->created)) {
+                $src['created'] = $this->created;
             }
         }
 
-        // Support for multiple field: uses_updater
-        if (isset($src['uses_updater']) && $src['uses_updater']) {
-            if (is_array($src['uses_updater'])) {
-                $src['uses_updater'] = implode(',', $src['uses_updater']);
-            }
-        } else {
-            $src['uses_updater'] = '';
-        }
-
-        // Support for multiple field: primary_category_id
-        if (isset($src['primary_category_id']) && $src['primary_category_id']) {
-            if (is_array($src['primary_category_id'])) {
-                $src['primary_category_id'] = implode(',', $src['primary_category_id']);
-            }
-        } else {
-            $src['primary_category_id'] = '';
-        }
-
-        $checkboxFields = ['published', 'checked_out', 'popular', 'requires_registration', 'can_update', 'approved', 'jed_checked', 'uses_third_party'];
+        $checkboxFields = ['checked_out', 'popular', 'requires_registration', 'approved', 'uses_updater'];
 
         foreach ($checkboxFields as $field) {
             if (!isset($src[$field])) {
@@ -199,23 +178,15 @@ class ExtensionTable extends Table
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);
 
-        $categories        = explode(',', $this->primary_category_id);
-        $andWhereCondition = [];
-        foreach ($categories as $categoryid) {
-            $andWhereCondition[] = $db->quoteName('primary_category_id') . ' like "%' . $categoryid . '%"';
-        }
-
-
         $query
             ->select($db->quoteName($field))
             ->from($db->quoteName($this->_tbl))
             ->where($db->quoteName($field) . ' = ' . $db->quote($this->$field))
             ->where($db->quoteName('id') . ' <> ' . (int) $this->{$this->_tbl_key});
 
-        if (!empty($andWhereCondition)) {
-            $query->andWhere($andWhereCondition);
+        if (!empty($this->catid)) {
+            $query->where($db->quoteName('catid') . ' = ' . (int) $this->catid);
         }
-
 
         $db->setQuery($query);
         $db->execute();

@@ -38,7 +38,7 @@ class HtmlView extends BaseHtmlView
     protected Pagination $pagination;
 
     protected Registry $state;
-    public ?Form $filterForm;
+    public ?Form $filterForm    = null;
     public array $activeFilters = [];
     public string $sidebar;
 

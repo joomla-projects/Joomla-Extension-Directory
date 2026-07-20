@@ -91,9 +91,8 @@ class ForeignKeyField extends ListField
     {
         if (!empty($this->element[$name])) {
             return $this->element[$name];
-        } else {
-            return $default;
         }
+        return $default;
     }
 
     /**
@@ -146,7 +145,7 @@ class ForeignKeyField extends ListField
         try {
             $db->setQuery($this->processQuery());
             $results = $db->loadObjectList();
-        } catch (ExecutionFailureException $e) {
+        } catch (ExecutionFailureException) {
             Factory::getApplication()->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
         }
 

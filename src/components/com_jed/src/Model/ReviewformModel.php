@@ -15,8 +15,10 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Site\Helper\JedemailHelper;
 use Jed\Component\Jed\Site\Helper\JedHelper;
+use Jed\Component\Tickets\Site\Helper\TicketHelper;
+use Jed\Component\Tickets\Site\Model\TicketformModel;
+use Jed\Component\Tickets\Site\Model\TicketmessageformModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
@@ -248,8 +250,8 @@ class ReviewformModel extends FormModel
 
             if ($table->save($data) === true) {
                 $this->id                            = $table->id;
-                $ticket                              = JedHelper::createReviewTicket($table->id);
-                $ticket_message                      = JedHelper::createEmptyTicketMessage();
+                $ticket                              = TicketHelper::createReviewTicket($table->id);
+                $ticket_message                      = TicketHelper::createEmptyTicketMessage();
                 $ticket_message['subject']           = $ticket['ticket_subject'];
                 $ticket_message['message']           = $ticket['ticket_text'];
                 $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
@@ -269,13 +271,11 @@ class ReviewformModel extends FormModel
                 $ticket_message_model->save($ticket_message);
 
                 /* We need to email standard message to user and store message in ticket */
-                $message_out = JedHelper::getMessageTemplate(1000);
-                if (isset($message_out->subject)) {
-                    JedemailHelper::sendEmail($message_out->subject, $message_out->template, $user, 'dummy@dummy.com');
-
+                $message_out = JedHelper::sendMailTemplate(TicketHelper::MAIL_TEMPLATE_TICKET_CONFIRMATION, $user);
+                if ($message_out !== null) {
                     $ticket_message['id']                        = 0;
                     $ticket_message['subject']                   = $message_out->subject;
-                    $ticket_message['message']                   = $message_out->template;
+                    $ticket_message['message']                   = $message_out->htmlbody;
                     $ticket_message['message_direction']         = 0; /* 1 for coming in, 0 for going out */
                     $ticket_message['created_by']                = -1;
                     $ticket_message['modified_by']               = -1;
@@ -283,11 +283,9 @@ class ReviewformModel extends FormModel
                 }
 
                 return $table->id;
-            } else {
-                return false;
             }
-        } else {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+            return false;
         }
+        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
     }
 }

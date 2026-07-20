@@ -37,9 +37,9 @@ class Category extends Categories
             [
             'extension'  => 'com_jed',
             'table'      => '#__jed_extensions',
-            'field'      => 'primary_category_id',
+            'field'      => 'catid',
             'key'        => 'id',
-            'statefield' => 'published',
+            'statefield' => 'state',
             ]
         );
 

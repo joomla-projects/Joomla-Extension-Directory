@@ -14,7 +14,6 @@ namespace Jed\Component\Jed\Administrator\Extension;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Administrator\Service\Html\Jed;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Categories\CategoryServiceInterface;
 use Joomla\CMS\Categories\CategoryServiceTrait;
@@ -63,7 +62,7 @@ class JedComponent extends MVCComponent implements
      */
     public function boot(ContainerInterface $container): void
     {
-        $this->getRegistry()->register('jed', new Jed());
+        //$this->getRegistry()->register('jed', new Jed());
     }
 
     /**
@@ -97,7 +96,7 @@ class JedComponent extends MVCComponent implements
         $config = (object) [
             'related_tbl'   => $this->getTableNameForSection($section),
             'state_col'     => $this->getStateColumnForSection($section),
-            'group_col'     => 'primary_category_id',
+            'group_col'     => 'catid',
             'relation_type' => 'category_or_group',
         ];
 

@@ -16,7 +16,7 @@ namespace Jed\Component\Jed\Site\View\Controlpanel;
 
 use Exception;
 use Jed\Component\Jed\Site\Model\ExtensionsModel;
-use Jed\Component\Jed\Site\Model\TicketsModel;
+use Jed\Component\Tickets\Site\Model\TicketsModel;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;

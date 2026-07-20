@@ -44,7 +44,7 @@ class ReviewformController extends FormController
 
         // Get the previous edit id (if any) and the current edit id.
         $previousId = (int) $app->getUserState('com_jed.edit.review.id');
-        $editId     = $app->input->getInt('id', 0);
+        $editId     = $app->getInput()->getInt('id', 0);
 
         // Set the user id for the user to edit in the session.
         $app->setUserState('com_jed.edit.review.id', $editId);
@@ -90,7 +90,7 @@ class ReviewformController extends FormController
 
         // Get the user data.
 
-        $data                    = $app->input->get('jform', [], 'array');
+        $data                    = $app->getInput()->get('jform', [], 'array');
         $data['functionality']   = $data['func_num'];
         $data['ease_of_use']     = $data['ease_num'];
         $data['support']         = $data['support_num'];
@@ -197,7 +197,7 @@ class ReviewformController extends FormController
     {
         $app   = Factory::getApplication();
         $model = $this->getModel('Reviewform', 'Site');
-        $pk    = $app->input->getInt('id');
+        $pk    = $app->getInput()->getInt('id');
 
         // Attempt to save the data
         try {
