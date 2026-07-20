@@ -47,14 +47,7 @@ class Router extends RouterView
      */
     private array $categoryCache = [];
 
-    /**
-     * The category factory
-     *
-     * @var   CategoryFactoryInterface
-     * @since 4.0.0
-     */
-    private CategoryFactoryInterface $categoryFactory;
-
+    protected $categoryFactory;
 
     /**
      * Class constructor.
@@ -62,21 +55,16 @@ class Router extends RouterView
      * @param SiteApplication          $app             Application-object that the router should use
      * @param AbstractMenu             $menu            Menu-object that the router should use
      * @param DatabaseInterface        $db
-     * @param MVCFactory               $factory
      * @param CategoryFactoryInterface $categoryFactory
      *
      * @since 4.0.0
      */
-    public function __construct(SiteApplication $app, AbstractMenu $menu, DatabaseInterface $db, MVCFactory $factory, CategoryFactoryInterface $categoryFactory)
+    public function __construct(SiteApplication $app, AbstractMenu $menu, CategoryFactoryInterface $categoryFactory, DatabaseInterface $db)
     {
         parent::__construct($app, $menu);
-
-        $this->categoryFactory = $categoryFactory;
         $this->setDatabase($db);
-        $this->setMVCFactory($factory);
-
-        $homepage = new RouterViewConfiguration('homepage');
-        $this->registerView($homepage);
+        $this->categoryFactory = $categoryFactory;
+        //$this->setMVCFactory($factory);
 
         // Extensions
         $categories = new RouterViewConfiguration('categories');
@@ -86,7 +74,7 @@ class Router extends RouterView
         $category = new RouterViewConfiguration('category');
         $category
             ->setKey('id')
-            ->setParent($categories, 'catid')
+            ->setParent($categories)
             ->setNestable();
         $this->registerView($category);
 
@@ -97,19 +85,17 @@ class Router extends RouterView
             ->addLayout('edit');
         $this->registerView($extension);
 
+        $extensions = new RouterViewConfiguration('extensions');
+        $this->registerView($extensions);
+
         $extensionform = new RouterViewConfiguration('extensionform');
         $this->registerView($extensionform);
-        $extensionvarieddatum = new RouterViewConfiguration('extensionvarieddatum');
-        $this->registerView($extensionvarieddatum);
 
-        // JED Tickets
-        $tickets = new RouterViewConfiguration('tickets');
-        $this->registerView($tickets);
-        $ticket = new RouterViewConfiguration('ticket');
-        $ticket->setKey('id')->setParent($tickets);
-        $this->registerView($ticket);
-        $ticketform = new RouterViewConfiguration('ticketform');
-        $this->registerView($ticketform);
+        $newextension = new RouterViewConfiguration('newextension');
+        $this->registerView($newextension);
+
+        $dashboard = new RouterViewConfiguration('dashboard');
+        $this->registerView($dashboard);
 
         // Reviews
         $reviews = new RouterViewConfiguration('reviews');
@@ -126,52 +112,6 @@ class Router extends RouterView
         $this->registerView($reviewcomment);
         $reviewcommentform = new RouterViewConfiguration('reviewcommentform');
         $this->registerView($reviewcommentform);
-
-        // Tickets
-        $ticketmessages = new RouterViewConfiguration('ticketmessages');
-        $this->registerView($ticketmessages);
-        $ticketmessage = new RouterViewConfiguration('ticketmessage');
-        $ticketmessage->setKey('id')->setParent($ticketmessages);
-        $this->registerView($ticketmessage);
-        $ticketmessageform = new RouterViewConfiguration('ticketmessageform');
-        $this->registerView($ticketmessageform);
-
-        // VEL list
-        $velabandonedreports = new RouterViewConfiguration('velabandonedreports');
-        $this->registerView($velabandonedreports);
-        $velabandonedreport = new RouterViewConfiguration('velabandonedreport');
-        $velabandonedreport->setKey('id')->setParent($velabandonedreports);
-        $this->registerView($velabandonedreport);
-        $velabandonedreportform = new RouterViewConfiguration('velabandonedreportform');
-        $this->registerView($velabandonedreportform);
-
-        $veldeveloperupdates = new RouterViewConfiguration('veldeveloperupdates');
-        $this->registerView($veldeveloperupdates);
-        $veldeveloperupdate = new RouterViewConfiguration('veldeveloperupdate');
-        $veldeveloperupdate->setKey('id')->setParent($veldeveloperupdates);
-        $this->registerView($veldeveloperupdate);
-        $veldeveloperupdateform = new RouterViewConfiguration('veldeveloperupdateform');
-        $this->registerView($veldeveloperupdateform);
-
-        $velabandoneditems = new RouterViewConfiguration('velabandoneditems');
-        $this->registerView($velabandoneditems);
-        $velitem = new RouterViewConfiguration('velitem');
-        $this->registerView($velitem);
-        $velliveitems = new RouterViewConfiguration('velliveitems');
-        $this->registerView($velliveitems);
-        $velpatcheditems = new RouterViewConfiguration('velpatcheditems');
-        $this->registerView($velpatcheditems);
-
-        // VEL reports
-        $velreports = new RouterViewConfiguration('velreports');
-        $this->registerView($velreports);
-
-        $velreport = new RouterViewConfiguration('velreport');
-        $velreport->setKey('id')->setParent($velreports);
-        $this->registerView($velreport);
-
-        $velreportform = new RouterViewConfiguration('velreportform');
-        $this->registerView($velreportform);
 
         $this->attachRule(new MenuRules($this));
         $this->attachRule(new StandardRules($this));
@@ -252,7 +192,7 @@ class Router extends RouterView
             $path[0] = '1:root';
 
             foreach ($path as &$segment) {
-                [$id, $segment] = explode(':', $segment, 2);
+                [$id, $segment] = explode(':', (string) $segment, 2);
             }
 
             return $path;
@@ -284,7 +224,7 @@ class Router extends RouterView
      */
     public function getExtensionSegment($id, $query): array
     {
-        if (strpos($id, ':')) {
+        if (strpos((string) $id, ':')) {
             return [(int) $id => $id];
         }
 
@@ -293,8 +233,8 @@ class Router extends RouterView
         $db        = $this->getDatabase();
         $query     = $db->getQuery(true);
         $query->select($db->quoteName('alias'))
-            ->from($db->quoteName('#__jed_extension_varied_data'))
-            ->where($db->quoteName('extension_id') . ' = :id')
+            ->from($db->quoteName('#__jed_extensions'))
+            ->where($db->quoteName('id') . ' = :id')
             ->bind(':id', $id, ParameterType::INTEGER);
         $db->setQuery($query);
 
@@ -350,18 +290,6 @@ class Router extends RouterView
     }
 
 
-    public function getTicketId($segment, $query)
-    {
-        return $segment;
-    }
-
-
-    public function getTicketSegment($id, $query)
-    {
-        return [$id];
-    }
-
-
     public function getReviewId($segment, $query)
     {
         return $segment;
@@ -386,50 +314,4 @@ class Router extends RouterView
     }
 
 
-    public function getTicketmessageId($segment, $query)
-    {
-        return $segment;
-    }
-
-
-    public function getTicketmessageSegment($id, $query)
-    {
-        return [$id];
-    }
-
-
-    public function getVelabandonedreportId($segment, $query)
-    {
-        return $segment;
-    }
-
-
-    public function getVelabandonedreportSegment($id, $query)
-    {
-        return [$id];
-    }
-
-
-    public function getVeldeveloperupdateId($segment, $query)
-    {
-        return $segment;
-    }
-
-
-    public function getVeldeveloperupdateSegment($id, $query)
-    {
-        return [$id];
-    }
-
-
-    public function getVelreportId($segment, $query)
-    {
-        return $segment;
-    }
-
-
-    public function getVelreportSegment($id, $query)
-    {
-        return [$id];
-    }
 }

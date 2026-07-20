@@ -103,7 +103,7 @@ class Copyjed3dataModel extends AdminModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getTable($name = 'Ticketallocatedgroup', $prefix = 'Administrator', $options = []): Table
+    public function getTable($name = 'Copyjed3data', $prefix = 'Administrator', $options = []): Table
     {
         return parent::getTable($name, $prefix, $options);
     }

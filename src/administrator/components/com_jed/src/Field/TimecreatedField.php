@@ -48,13 +48,13 @@ class TimecreatedField extends FormField
         $time_created = $this->value;
 
         // If time is empty or invalid, use current time in UTC for saving
-        if (empty($time_created) || $time_created === '0000-00-00 00:00:00' || !strtotime($time_created)) {
+        if (empty($time_created) || $time_created === '0000-00-00 00:00:00' || !strtotime((string) $time_created)) {
             $now          = Factory::getDate(); // UTC
             $time_created = $now->toSql(true);
         }
 
         // Store raw UTC date in hidden input
-        $html[] = '<input type="hidden" name="' . $this->name . '" value="' . htmlspecialchars($time_created, ENT_QUOTES, 'UTF-8') . '" />';
+        $html[] = '<input type="hidden" name="' . $this->name . '" value="' . htmlspecialchars((string) $time_created, ENT_QUOTES, 'UTF-8') . '" />';
 
 
         $hidden = (bool) $this->element['hidden'];
@@ -64,6 +64,6 @@ class TimecreatedField extends FormField
             $html[]      = "<div>" . $pretty_date . "</div>";
         }
 
-        return implode($html);
+        return implode('', $html);
     }
 }

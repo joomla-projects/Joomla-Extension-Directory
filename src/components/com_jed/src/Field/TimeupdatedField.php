@@ -49,7 +49,7 @@ class TimeupdatedField extends FormField
         $hidden           = (bool) $this->element['hidden'];
 
         if (!$hidden) {
-            if (!strtotime($old_time_updated)) {
+            if (!strtotime((string) $old_time_updated)) {
                 $html[] = '-';
             } else {
                 $jdate       = new Date($old_time_updated);
@@ -61,6 +61,6 @@ class TimeupdatedField extends FormField
         $time_updated = Factory::getDate()->toSql();
         $html[]       = '<input type="hidden" name="' . $this->name . '" value="' . $time_updated . '" />';
 
-        return implode($html);
+        return implode('', $html);
     }
 }

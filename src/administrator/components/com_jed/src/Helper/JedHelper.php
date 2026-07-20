@@ -21,6 +21,7 @@ use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
+use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Toolbar\Toolbar;
@@ -34,7 +35,7 @@ use Joomla\Registry\Registry;
  * @package JED
  * @since   4.0.0
  */
-class JedHelper
+class JedHelper extends ContentHelper
 {
     /**
      * Add config toolbar to admin pages
@@ -43,59 +44,28 @@ class JedHelper
      */
     public static function addConfigToolbar(Toolbar $bar): void
     {
-        $bar->linkButton('tickets')->text(Text::_('COM_JED_TITLE_TICKETS'))->url('index.php?option=com_jed&view=tickets')->icon('fa fa-ticket-alt');
+        $bar->linkButton('tickets')->text(Text::_('COM_JED_TITLE_TICKETS'))->url('index.php?option=com_tickets&view=tickets')->icon('fa fa-ticket-alt');
         $bar->linkButton('vulnerable')->text('Vulnerable Items')->url('index.php?option=com_jed&view=velvulnerableitems')->icon('fa fa-bug');
         $bar->linkButton('extensions')->text('Extensions')->url('index.php?option=com_jed&view=extensions')->icon('fa fa-puzzle-piece');
-        $bar->customHtml('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
 
-
-        $configGroup = $bar->dropdownButton('config-group')->text(Text::_('COM_JED_GENERAL_CONFIG_LABEL'))->toggleSplit(false)->icon('fa fa-cog')->buttonClass('btn btn-action')->listCheck(false);
-
-        $configChild = $configGroup->getChildToolbar();
-
-        $configChild->linkButton('emailtemplates')->text('COM_JED_TITLE_MESSAGETEMPLATES')->icon('fa fa-envelope')->url('index.php?option=com_jed&view=messagetemplates');
-
-        $configChild->linkButton('ticketcategories')->text('COM_JED_TITLE_TICKET_CATEGORIES')->icon('fa fa-folder')->url('index.php?option=com_jed&view=ticketcategories');
-
-        $configChild->linkButton('ticketgroups')->text('COM_JED_TITLE_ALLOCATEDGROUPS')->icon('fa fa-user-friends')->url('index.php?option=com_jed&view=ticketallocatedgroups');
-
-        $configChild->linkButton('ticketlinkeditemtypes')->text('COM_JED_TICKETS_LINKED_ITEM_TYPE_LABELS')->icon('fa fa-link')->url('index.php?option=com_jed&view=ticketlinkeditemtypes');
-
-        $configChild->linkButton('extensionsupplyoptions')->text('COM_JED_EXTENSION_SUPPLY_OPTIONS')->icon('fa fa-link')->url('index.php?option=com_jed&view=extensionsupplyoptions');
-
-        $configChild->linkButton('setupdemomenu')->text('COM_JED_TITLE_SETUP_DEMO_MENU')->icon('fa fa-link')->url('index.php?option=com_jed&view=setupdemo');
 
         /*
          * Only for finally moving live to test
          */
-        $configChild->linkButton('copyjed3data')->text('COM_JED_TITLE_COPY_JED3_DATA')->icon('fa fa-link')->url('index.php?option=com_jed&view=copyjed3data');
-
-        $bar->customHtml('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-
-        $debugGroup = $bar->dropdownButton('debug-group')->text('Debug')->toggleSplit(false)->icon('fa fa-cog')->buttonClass('btn btn-action')->listCheck(false);
-
-        $debugChild = $debugGroup->getChildToolbar();
-
-        $debugChild->linkButton('velabandonedreports')->text('VEL Abandoned Reports')->icon('fa fa-link')->url('index.php?option=com_jed&view=velabandonedreports');
-
-        $debugChild->linkButton('velreports')->text('VEL Reports')->icon('fa fa-link')->url('index.php?option=com_jed&view=velreports');
-
-        $debugChild->linkButton('veldeveloperupdates')->text('VEL Developer Updates')->icon('fa fa-link')->url('index.php?option=com_jed&view=veldeveloperupdates');
-
-        $debugChild->linkButton('velvulnerableitems')->text('VEL Vulnerable Items')->icon('fa fa-link')->url('index.php?option=com_jed&view=velvulnerableitems');
-        $debugChild->linkButton('ticketmessages')->text('Ticket Messages')->icon('fa fa-link')->url('index.php?option=com_jed&view=ticketmessages');
-
-        $debugChild->linkButton('ticketinternalnotes')->text('Ticket Internal Notes')->icon('fa fa-link')->url('index.php?option=com_jed&view=ticketinternalnotes');
-
-        $debugChild->linkButton('tickets')->text('JED Tickets')->icon('fa fa-link')->url('index.php?option=com_jed&view=tickets');
-        $debugChild->linkButton('extensions')->text('Extensions')->icon('fa fa-link')->url('index.php?option=com_jed&view=extensions');
+        $bar->linkButton('copyjed3data')->text('COM_JED_TITLE_COPY_JED3_DATA')->icon('fa fa-link')->url('index.php?option=com_jed&view=copyjed3data');
     }
 
     /**
      * Function to format JED Extension Images
      *
-     * @param string    $filename The image filename
-     * @param ImageSize $size     Size of image, small|large
+     * Resolves a filename stored on #__jed_extensions.logo/overview_image or
+     * #__jed_extensions_images.filename to a full, browsable URL. Depending on the
+     * component's "use_cdn" setting, images are either served from the local
+     * images/extensions folder or from the configured CDN base URL.
+     *
+     * @param string    $filename The image filename (or already-absolute URL)
+     * @param ImageSize $size     Size of image, small|large (currently informational only,
+     *                            no resized variants are generated)
      *
      * @return string  Full image url
      *
@@ -111,54 +81,16 @@ class JedHelper
             return $filename;
         }
 
-        $params = ComponentHelper::getParams('com_jed');
-        $cdnUrl = rtrim($params->get('cdn_url', 'https://extensionscdn.joomla.org'), '/');
+        $params   = ComponentHelper::getParams('com_jed');
+        $filename = ltrim($filename, '/\\');
 
-        $lastDot      = strrpos($filename, '.');
-        $partialName  = substr($filename, 0, $lastDot - 1);
-        $extension    = substr($filename, $lastDot);
-        $bestFilename = match ($size) {
-            ImageSize::ORIGINAL => $filename,
-            ImageSize::SMALL    => $partialName . '_small' . $extension,
-            ImageSize::LARGE    => $partialName . '_large' . $extension,
-        };
-
-        // TODO Check if the resized file exists; if not resize it
-
-        // TODO If the file cannot be resized AND I am configured to use a CDN, fall back to the legacy CDN URLs
         if ($params->get('use_cdn', 0)) {
-            $bestFilename = match ($size) {
-                ImageSize::ORIGINAL => $filename,
-                ImageSize::SMALL    => $partialName . '_resizeDown400px175px16' . $extension,
-                ImageSize::LARGE    => $partialName . '_resizeDown1200px525px16' . $extension,
-            };
+            $cdnUrl = rtrim((string) $params->get('cdn_url', ''), '/');
 
-            return $cdnUrl . '/cache/fab_image/' . $bestFilename;
+            return $cdnUrl . '/' . $filename;
         }
 
-        // If I am configured to use a CDN, use the https://extensionscdn.joomla.org CDN
-        if ($params->get('use_cdn', 0)) {
-            return $cdnUrl . '/cache/' . $bestFilename;
-        }
-
-        // No CDN (e.g. local development). Where should I get my image from?
-        if (file_exists(JPATH_ROOT . '/' . ltrim($bestFilename, '/\\'))) {
-            return Uri::root() . ltrim($bestFilename, '/\\');
-        }
-
-        if (file_exists(JPATH_ROOT . '/' . ltrim($filename, '/\\'))) {
-            return Uri::root() . ltrim($filename, '/\\');
-        }
-
-        if (file_exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($bestFilename, '/\\'))) {
-            return Uri::root() . 'media/com_jed/' . ltrim($bestFilename, '/\\');
-        }
-
-        if (file_exists(JPATH_ROOT . '/media/com_jed/cache/' . ltrim($filename, '/\\'))) {
-            return Uri::root() . 'media/com_jed/' . ltrim($filename, '/\\');
-        }
-
-        return '';
+        return Uri::root() . 'images/extensions/' . $filename;
     }
 
     /**
@@ -169,8 +101,11 @@ class JedHelper
      * @since  4.0.0
      * @throws Exception
      */
-    public static function getActions(): registry
+    public static function getActions($component = '', $section = '', $id = 0)
     {
+        if ($component) {
+            return parent::getActions($component, $section, $id);
+        }
         //$user   = Factory::getUser();
 
         /* @var $app \Joomla\CMS\Application\SiteApplication */
@@ -208,23 +143,14 @@ class JedHelper
      */
     public static function getApprovedIcon(int $state): string
     {
-        switch ($state) { //Rejected
-            case '-1':
-                $icon = 'unpublish';
-                break;
-            case '1':// Approved
-                $icon = 'publish';
-                break;
-
-            case '2':// Awaiting response
-                $icon = 'expired';
-                break;
-
-            case '0':// Pending
-            default:
-                $icon = 'pending';
-                break;
-        }
+        $icon = match ((string) $state) {
+            '-1' => 'unpublish',
+            // Approved
+            '1' => 'publish',
+            // Awaiting response
+            '2'     => 'expired',
+            default => 'pending',
+        };
 
         return '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
     }
@@ -251,7 +177,7 @@ class JedHelper
 
         $db->setQuery($query);
 
-        return explode(',', $db->loadResult());
+        return explode(',', (string) $db->loadResult());
     }
 
     /**
@@ -264,23 +190,14 @@ class JedHelper
      */
     public static function getPublishedIcon(int $state): string
     {
-        switch ($state) { //Rejected
-            case '-1':
-                $icon = 'unpublish';
-                break;
-            case '1':// Approved
-                $icon = 'publish';
-                break;
-
-            case '2':// Awaiting response
-                $icon = 'expired';
-                break;
-
-            case '0':// Pending
-            default:
-                $icon = 'pending';
-                break;
-        }
+        $icon = match ((string) $state) {
+            '-1' => 'unpublish',
+            // Approved
+            '1' => 'publish',
+            // Awaiting response
+            '2'     => 'expired',
+            default => 'pending',
+        };
 
         return '<span class="icon-' . $icon . '" aria-hidden="true"></span>';
     }

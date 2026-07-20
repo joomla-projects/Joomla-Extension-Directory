@@ -15,7 +15,6 @@ namespace Jed\Component\Jed\Site\View\Extensionform;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Site\Model\ExtensionvarieddatumModel;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
@@ -39,9 +38,10 @@ class HtmlView extends BaseHtmlView
 
     protected bool $canSave;
 
-    protected array $supply_types;
-
-    protected mixed $supply_forms;
+    protected array $images      = [];
+    protected array $files       = [];
+    protected array $categories  = [];
+    protected array $maintainers = [];
 
     /**
      * Get the Params
@@ -67,40 +67,15 @@ class HtmlView extends BaseHtmlView
 
         $model = $this->getModel();
         $model->setUseExceptions(true);
-        try {
-            $this->state        = $model->getState();
-            $this->item         = $model->getvariedItem();
-            $this->params       = $app->getParams('com_jed');
-            $this->canSave      = JedHelper::canSave();
-            $this->form         = $model->getForm();
-            $this->supply_types = $model->getSupplyTypes();
-
-            $extensionvarieddatum                   = new ExtensionvarieddatumModel();
-
-            //echo "B<pre>";print_r($this->item);echo "</pre>";exit();
-            //echo "<pre>";print_r($this->item);echo "</pre>";exit();
-            $st_counter = 0;
-            foreach ($this->supply_types as $st) {
-                $this->supply_forms[$st->supply_id] = $extensionvarieddatum->getForm(
-                    $this->item->varied[$st->supply_id],
-                    false,
-                    'jform[supply][supply' . $st_counter . ']'
-                );
-                $st_counter = $st_counter + 1;
-
-                // Ensure linkage is always present in POST (even for new varied rows)
-                $varied                     = (array) $this->item->varied[$st->supply_id];
-                $varied['extension_id']     = (int) ($this->item->id ?? 0);
-                $varied['supply_option_id'] = (int) $st->supply_id;
-
-                $this->supply_forms[$st->supply_id]->bind($varied);
-            }
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
-        }
-
-
-
+        $this->state        = $model->getState();
+        $this->item         = $model->getItem();
+        $this->params       = $app->getParams('com_jed');
+        $this->canSave      = JedHelper::canSave();
+        $this->form         = $model->getForm();
+        $this->images       = $model->getImages();
+        $this->files        = $model->getFiles();
+        $this->categories   = $model->getCategories();
+        $this->maintainers  = $model->getMaintainers();
 
         $this->prepareDocument();
 
@@ -162,7 +137,8 @@ class HtmlView extends BaseHtmlView
         if (!in_array($breadcrumbList, $pathway->getPathwayNames())) {
             $pathway->addItem($breadcrumbList, "index.php?option=com_jed&view=extensions");
         }
-        $breadcrumbTitle = isset($this->item->id) ? Text::_("JGLOBAL_EDIT") : Text::_("JGLOBAL_FIELD_ADD");
+        // This view only ever edits an existing extension; there is no "add new" path.
+        $breadcrumbTitle = Text::_("JGLOBAL_EDIT");
 
         if (!in_array($breadcrumbTitle, $pathway->getPathwayNames())) {
             $pathway->addItem($breadcrumbTitle);

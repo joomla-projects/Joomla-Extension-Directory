@@ -6,7 +6,6 @@
  * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
-
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -21,15 +20,12 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
+/** @var \Jed\Component\Jed\Site\View\Extension\HtmlView $this */
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
 
-
 $user       = $this->getCurrentUser();
-$userId     = $user->id;
-$listOrder  = $this->state->get('list.ordering', '');
-$listDirn   = $this->state->get('list.direction');
 $canCreate  = $user->authorise('core.create', 'com_jed');
 $canEdit    = $user->authorise('core.edit', 'com_jed');
 $canCheckin = $user->authorise('core.manage', 'com_jed');
@@ -50,15 +46,14 @@ $wa->useStyle('com_jed.jazstyle');
             <div class="col d-flex flex-column gap-2 mb-3">
                 <h2 class="fs-1 m-0 d-flex flex-row gap-2 align-items-center">
                     <?php
-                    echo $this->escape($this->item->title) ?>
+                    echo $this->escape($this->item->name) ?>
                 </h2>
                 <div class="d-flex flex-row gap-3">
                     <div class="jed-extension-header__developer">By <a
                                 href="#"><?php
                                 echo $this->item->created_by_name ?></a></div>
                     <div class="stars-wrapper">
-                        <?php
-                        echo $this->item->score_string ?>
+                        <?php echo JedscoreHelper::getStars($this->item->score_overall); ?>
                         <span class="text-muted">
                     <?php
                     echo $this->item->review_string ?>
@@ -82,113 +77,65 @@ $wa->useStyle('com_jed.jazstyle');
                     </a>
                     <?php
                 endif; ?>
-                <?php
-                if (false) : // TODO Only show to the developer?
-                    //
-                    ?>
-                    <a class="btn btn-sm btn-outline-warning" role="button" href="#">                        <span class="fa fa-life-ring" aria-hidden="true"></span>                        Support                    </a>
-                    <?php
-                endif ?>
             </div>
         </header>
 
         <img src="<?php
         echo $this->item->logo ?>" alt="<?php
-        echo $this->escape($this->item->title) ?>"
+        echo $this->escape($this->item->name) ?>"
              class="rounded img-fluid mx-auto d-block" style="max-height: 525px">
 
         <div class="row gap-2">
             <div class="col-8 ">
                 <?php
-                echo $this->item->intro_text ?>
+                echo $this->item->intro; ?>
             </div>
-            <div class="col">
-                <dl>
-                    <div class="row">
-                        <dt class="col">Version</dt>
-                        <dd class="col"><?php
-                            echo $this->item->version ?></dd>
-                    </div>
-                    <div class="row">
-                        <dt class="col">Last updated</dt>
-                        <dd class="col">
-                            <?php
-                            echo HTMLHelper::_('date', $this->item->modified_on, 'M j Y') ?>
-                        </dd>
-                    </div>
-                    <div class="row">
-                        <dt class="col">Date added</dt>
-                        <dd class="col">
-                            <?php
-                            echo HTMLHelper::_('date', $this->item->created_on, 'M j Y') ?>
-                        </dd>
-                    </div>
-                    <div class="row">
-                        <dt class="col">Includes</dt>
-                        <dd class="col"><?php
-                            echo JedtrophyHelper::getTrophyIncludesStringFull($this->item->includes) ?></dd>
-                    </div>
-                    <div class="row">
-                        <dt class="col">Compatibility</dt>
-                        <dd class="col"><?php
-                            echo JedtrophyHelper::getTrophyVersionsStringFull($this->item->joomla_versions) ?></dd>
-                    </div>
-                    <div class="row">
-                        <div class="col col-lg-8 offset-lg-2">
-                            <a href="?option=com_jed&view=reviewform&action=add&extension_id=<?php
-                            echo $this->item->id ?>"
-                               class="btn btn-outline-success">
-                                <span class="fa fa-pencil" aria-hidden="true"></span>
-                                Write a review
-                            </a>
-                        </div>
-                    </div>
+            <dl class="col">
+                <dl class="row">
+                    <dt class="col-6">Version</dt>
+                    <dd class="col-6"><?php echo $this->item->extension_version; ?></dd>
+                    <dt class="col-6">Last updated</dt>
+                    <dd class="col-6"><?php echo HTMLHelper::_('date', $this->item->modified, 'M j Y'); ?></dd>
+                    <dt class="col-6">Date added</dt>
+                    <dd class="col-6"><?php echo HTMLHelper::_('date', $this->item->created, 'M j Y') ?></dd>
+                    <dt class="col-6">Includes</dt>
+                    <dd class="col-6"><?php echo JedtrophyHelper::getTrophyIncludesStringFull($this->item->extension_types) ?></dd>
+                    <dt class="col-6">Compatibility</dt>
+                    <dd class="col-6"><?php echo JedtrophyHelper::getTrophyVersionsStringFull($this->item->joomla_versions) ?></dd>
                 </dl>
+                <div class="d-flex align-items-center justify-content-center">
+                    <a href="<?php echo Route::_('index.php?option=com_jed&task=review.add&extension_id=' . $this->item->id); ?>"
+                       class="btn btn-outline-success">
+                        <span class="fa fa-pencil" aria-hidden="true"></span>
+                        Write a review
+                    </a>
+                </div>
             </div>
         </div>
 
-        <?php
-        echo HTMLHelper::_('uitab.startTabSet', 'supply_option_tabs') ?>
-        <?php
-        $varieddata = $this->item->varied_data;
-        $tabid              = 0;
-        foreach ($varieddata as $vr) {
-            //  echo "<pre>";print_r($vr);echo "</pre>";
-            echo HTMLHelper::_('uitab.addTab', 'supply_option_tabs', 'supply_tab_' . $vr->supply_type, $vr->supply_type);
-            $subItemId  = md5(serialize($vr));
-            ?>
         <div class="jed-wrapper jed-extension margin-bottom">
             <div class="jed-extension__image">
-                <?php if ($vr->logo) : ?>
-                    <img src=" <?php echo $this->item->logo ?>" alt=" <?php echo $this->escape($this->item->title) ?>"
+                <?php if ($this->item->logo) : ?>
+                    <img src=" <?php echo $this->item->logo_large ?>" alt=" <?php echo $this->escape($this->item->name) ?>"
                          class="rounded img-fluid mx-auto d-block" style="max-height: 525px">
                 <?php endif; ?>
             </div>
             <div class="jed-grid jed-grid--2-1 margin-bottom">
                 <div class="jed-grid__item">
                     <div class="jed-subitem-intro mb-2">
-                         <?php echo $vr->intro_text ?>
-                        <?php if (!empty(trim(strip_tags($vr->description)))) : ?>
-                            <?php HTMLHelper::_('bootstrap.collapse') ?>
-                            <button type="button" class="btn btn-sm btn-outline-secondary my-2"
-                                    data-bs-toggle="collapse" href="#description-<?php echo $subItemId ?>"
-                                    aria-expanded="false" aria-controls="description-<?php echo $subItemId ?>"
-                            >
-                                Show/hide
-                            </button>
-                        <?php endif ?>
+                         <?php echo $this->item->intro; ?>
                     </div>
 
-                    <div class="jed-subitem-description mb-2 collapse" id="description-<?php echo $subItemId ?>">
-                         <?php echo $vr->description ?>
+                    <div class="jed-subitem-description mb-2 collapse">
+                         <?php echo $this->item->description ?>
                     </div>
 
                     <p class="button-group">
-                        <a href=" <?php echo $vr->homepage_link ?>" class="button button--grey">Website</a>
-                        <a href=" <?php echo $vr->demo_link ?>" class="button button--grey">Demo</a>
-                        <a href=" <?php echo $vr->documentation_link ?>" class="button button--grey">Documentation</a>
-                        <a href=" <?php echo $vr->support_link ?>" class="button button--grey">Support</a>
-                        <a href=" <?php echo $vr->license_link ?>" class="button button--grey">License</a>
+                        <a href=" <?php echo $this->item->homepage_link ?>" class="button button--grey">Website</a>
+                        <a href=" <?php echo $this->item->demo_link ?>" class="button button--grey">Demo</a>
+                        <a href=" <?php echo $this->item->documentation_link ?>" class="button button--grey">Documentation</a>
+                        <a href=" <?php echo $this->item->support_link ?>" class="button button--grey">Support</a>
+                        <a href=" <?php echo $this->item->license_link ?>" class="button button--grey">License</a>
                     </p>
                 </div>
                 <div class="jed-grid__item">
@@ -197,7 +144,7 @@ $wa->useStyle('com_jed.jazstyle');
 
                             <?php
 
-                            $url =  Route::_('index.php?option=com_jed&view=ticketform&litem=2&lid=' . $this->item->id . '&vr=' . $vr->id)
+                            $url =  Route::_('index.php?option=com_tickets&view=ticketform&litem=2&lid=' . $this->item->id . '&vr=' . $this->item->id)
                             ?>
                             <a href="<?php echo $url; ?>" class="button button--grey">Report</a>
                             <a href="#" class="button button--grey">Share</a>
@@ -209,13 +156,11 @@ $wa->useStyle('com_jed.jazstyle');
 
             <div class="jed-grid jed-grid--1-2">
                 <div class="jed-grid__item">
-                    <h2 class="heading heading--m">Reviews for <?php echo $vr->supply_type; ?> version</h2>
+                    <h2 class="heading heading--m">Reviews</h2>
                     <hr>
                     <?php
-                    $slidesOptions = [];
-                    echo HTMLHelper::_('bootstrap.startAccordion', 'review_extension_group', $slidesOptions);
                     $slideid = 0;
-                    foreach ($this->item->reviews[$vr->supply_type] as $rev) {
+                    foreach ($this->item->reviews as $rev) {continue;
                         echo HTMLHelper::_(
                             'bootstrap.addSlide',
                             'review_extension_group',
@@ -230,9 +175,6 @@ $wa->useStyle('com_jed.jazstyle');
                         echo "<p>Value For Money (" . $rev->value_for_money . ") - " . $rev->value_for_money_comment . "</p>";
                         echo "<p>Used for - " . $rev->used_for . "</p>";
                         echo HTMLHelper::_('bootstrap.endSlide');
-                    }
-                    echo HTMLHelper::_('bootstrap.endAccordion');
-
                     ?>
                 </div>
 

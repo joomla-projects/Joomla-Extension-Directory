@@ -37,6 +37,10 @@ class HtmlView extends BaseHtmlView
 
     protected Registry $params;
 
+    public mixed $filterForm = null;
+
+    protected array $activeFilters = [];
+
     /**
      * Display the view
      *
@@ -60,6 +64,8 @@ class HtmlView extends BaseHtmlView
             $this->items         = $model->getItems();
             $this->params        = $app->getParams('com_jed');
             $this->pagination    = $model->getPagination();
+            $this->filterForm    = $model->getFilterForm();
+            $this->activeFilters = $model->getActiveFilters();
         } catch (\Exception $e) {
             throw new GenericDataException($e->getMessage(), 500, $e);
         }
