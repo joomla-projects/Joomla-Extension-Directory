@@ -2,20 +2,18 @@
 <extension type="plugin" group="finder" method="upgrade">
 	<name>plg_finder_jed</name>
 	<author>Joomla! Project</author>
-	<creationDate>2023-04</creationDate>
-	<copyright>(C) 2023 Open Source Matters, Inc.</copyright>
+	<creationDate>##DATE##</creationDate>
+	<copyright>(C) ##YEAR## Open Source Matters, Inc.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>admin@joomla.org</authorEmail>
 	<authorUrl>www.joomla.org</authorUrl>
-	<version>1.0.0</version>
+	<version>##VERSION##</version>
 	<description>PLG_FINDER_JED_XML_DESCRIPTION</description>
 	<namespace path="src">Joomla\Plugin\Finder\Jed</namespace>
 	<files>
-		<folder plugin="jed">services</folder>
-		<folder>src</folder>
+		##FILES##
 	</files>
 	<languages>
-		<language tag="en-GB">language/en-GB/plg_finder_jed.ini</language>
-		<language tag="en-GB">language/en-GB/plg_finder_jed.sys.ini</language>
+		##LANGUAGE_FILES##
 	</languages>
 </extension>

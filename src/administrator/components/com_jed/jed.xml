@@ -2,23 +2,23 @@
 <extension type="component" method="upgrade">
     <name>COM_JED</name>
     <author>Joomla! Project</author>
-    <creationDate>January 2022</creationDate>
-    <copyright>(C) 2022 Open Source Matters, Inc.</copyright>
+    <creationDate>##DATE##</creationDate>
+    <copyright>(C) ##YEAR## Open Source Matters, Inc.</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>admin@joomla.org</authorEmail>
     <authorUrl>www.joomla.org</authorUrl>
-    <version>4.0.0</version>
+    <version>##VERSION##</version>
     <description>COM_JED_XML_DESCRIPTION</description>
     <namespace path="src">Jed\Component\Jed</namespace>
     <scriptfile>script.php</scriptfile>
 
     <files folder="components/com_jed">
-        <folder>forms</folder>
-        <folder>language</folder>
-        <folder>layouts</folder>
-        <folder>src</folder>
-        <folder>tmpl</folder>
+	    ##FRONTEND_COMPONENT_FILES##
     </files>
+
+	<languages folder="language">
+		##FRONTEND_LANGUAGE_FILES##
+	</languages>
 
     <administration>
         <!-- Menu entries -->
@@ -48,30 +48,16 @@
         </submenu>
 
         <files folder="administrator/components/com_jed">
-            <folder>docker</folder>
-            <folder>forms</folder>
-            <folder>layouts</folder>
-            <folder>services</folder>
-            <folder>sql</folder>
-            <folder>src</folder>
-            <folder>tmpl</folder>
-            <folder>vendor</folder>
-            <file>access.xml</file>
-            <file>config.xml</file>
+	        ##BACKEND_COMPONENT_FILES##
         </files>
 
         <languages folder="administrator/components/com_jed/language">
-            <language tag="en-GB">en-GB/com_jed.ini</language>
-            <language tag="en-GB">en-GB/com_jed.sys.ini</language>
+	        ##BACKEND_LANGUAGE_FILES##
         </languages>
     </administration>
 
     <media destination="com_jed" folder="media/com_jed">
-        <folder>assets</folder>
-        <folder>css</folder>
-        <folder>js</folder>
-
-        <filename>joomla.asset.json</filename>
+	    ##MEDIA_FILES##
     </media>
 
     <install>

@@ -2,16 +2,17 @@
 <extension type="plugin" group="sampledata" method="upgrade">
 	<name>plg_sampledata_jed</name>
 	<author>Joomla! Project</author>
-	<creationDate>2023-05</creationDate>
-	<copyright>(C) 2023 Open Source Matters, Inc.</copyright>
+	<creationDate>##DATE##</creationDate>
+	<copyright>(C) ##YEAR## Open Source Matters, Inc.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>admin@joomla.org</authorEmail>
 	<authorUrl>www.joomla.org</authorUrl>
-	<version>4.0.0</version>
+	<version>##VERSION##</version>
 	<description>PLG_SAMPLEDATA_JED_XML_DESCRIPTION</description>
 	<files>
-		<folder>language</folder>
-		<folder>sql</folder>
-		<filename plugin="jed">jed.php</filename>
+		##FILES##
 	</files>
+	<languages>
+		##LANGUAGE_FILES##
+	</languages>
 </extension>

@@ -2,22 +2,22 @@
 <extension type="component" method="upgrade">
     <name>COM_VEL</name>
     <author>Joomla! Project</author>
-    <creationDate>January 2022</creationDate>
-    <copyright>(C) 2022 Open Source Matters, Inc.</copyright>
+    <creationDate>##DATE##</creationDate>
+    <copyright>(C) ##YEAR## Open Source Matters, Inc.</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>admin@joomla.org</authorEmail>
     <authorUrl>www.joomla.org</authorUrl>
-    <version>4.0.0</version>
+    <version>##VERSION##</version>
     <description>COM_VEL_XML_DESCRIPTION</description>
     <namespace path="src">Jed\Component\Vel</namespace>
 
     <files folder="components/com_vel">
-        <folder>forms</folder>
-        <folder>language</folder>
-        <folder>layouts</folder>
-        <folder>src</folder>
-        <folder>tmpl</folder>
+        ##FRONTEND_COMPONENT_FILES##
     </files>
+
+    <languages folder="language">
+        ##FRONTEND_LANGUAGE_FILES##
+    </languages>
 
     <administration>
         <menu view="vulnerableitems">COM_VEL</menu>
@@ -29,18 +29,11 @@
         </submenu>
 
         <files folder="administrator/components/com_vel">
-            <folder>forms</folder>
-            <folder>language</folder>
-            <folder>layouts</folder>
-            <folder>services</folder>
-            <folder>src</folder>
-            <folder>tmpl</folder>
-            <file>access.xml</file>
+            ##BACKEND_COMPONENT_FILES##
         </files>
 
         <languages folder="administrator/components/com_vel/language">
-            <language tag="en-GB">en-GB/com_vel.ini</language>
-            <language tag="en-GB">en-GB/com_vel.sys.ini</language>
+            ##BACKEND_LANGUAGE_FILES##
         </languages>
     </administration>
 	<install>
