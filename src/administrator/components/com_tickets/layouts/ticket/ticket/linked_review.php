@@ -45,7 +45,7 @@ JedHelper::lockFormFields($linked_form, ['published']);
     <div class="row ticket-header-row">
         <div class="col-md-3 ticket-header">
 
-            <h1>Extension - <strong><?php echo $linked_extension->title ?></strong></h1>
+            <h1>Extension - <strong><?php echo $linked_extension?->title ?></strong></h1>
 
         </div>
         <div class="col-md-3  ticket-header">
