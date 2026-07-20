@@ -88,7 +88,7 @@ class TicketsModel extends ListModel
 
             $oneItem->ticket_status = Text::_('COM_TICKETS_TICKETS_TICKET_STATUS_OPTION_' . strtoupper((string) $oneItem->ticket_status));
 
-            $linkedItemType                       = TicketType::tryFrom((int) $oneItem->linked_item_type);
+            $linkedItemType                        = TicketType::tryFrom((int) $oneItem->linked_item_type);
             $oneItem->ticketlinkeditemtypes_string = $linkedItemType !== null
                 ? Text::_('COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_OPTION_' . strtoupper($linkedItemType->name))
                 : Text::_('COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_OPTION_NONE');
