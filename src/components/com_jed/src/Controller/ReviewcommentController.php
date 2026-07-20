@@ -42,7 +42,7 @@ class ReviewcommentController extends BaseController
 
         // Get the previous edit id (if any) and the current edit id.
         $previousId = (int) $app->getUserState('com_jed.edit.reviewcomment.id');
-        $editId     = $app->input->getInt('id', 0);
+        $editId     = $app->getInput()->getInt('id', 0);
 
         // Set the user id for the user to edit in the session.
         $app->setUserState('com_jed.edit.reviewcomment.id', $editId);
@@ -85,8 +85,8 @@ class ReviewcommentController extends BaseController
             $model = $this->getModel('Reviewcomment', 'Site');
 
             // Get the user data.
-            $id    = $app->input->getInt('id');
-            $state = $app->input->getInt('state');
+            $id    = $app->getInput()->getInt('id');
+            $state = $app->getInput()->getInt('state');
 
             // Attempt to save the data.
             $return = $model->publish($id, $state);

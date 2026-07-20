@@ -14,18 +14,18 @@ namespace Jed\Component\Jed\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Filter\OutputFilter;
-use Joomla\Filesystem\File;
-use Joomla\Filesystem\Folder;
 
 /**
  * Extension class.
+ *
+ * This form only ever edits an existing extension (see ExtensionformModel::getItem()/save()),
+ * so the standard, inherited FormController::save() is used as-is - it already validates via the
+ * form and calls $model->save($data); there is no "create new" branch to special-case here.
+ * File uploads (logo/overview_image/images/files subforms) are handled inside
+ * ExtensionformModel::save() itself, reading $_FILES directly, same as the admin backend.
  *
  * @since 4.0.0
  */
@@ -50,7 +50,7 @@ class ExtensionformController extends FormController
 
         // Get the previous edit id (if any) and the current edit id.
         $previousId = (int) $app->getUserState('com_jed.edit.extension.id');
-        $editId     = $app->input->getInt('id', 0);
+        $editId     = $app->getInput()->getInt('id', 0);
 
         // Set the user id for the user to edit in the session.
         $app->setUserState('com_jed.edit.extension.id', $editId);
@@ -71,294 +71,6 @@ class ExtensionformController extends FormController
         // Redirect to the edit screen.
         $this->setRedirect(Route::_('index.php?option=com_jed&view=extensionform&layout=edit', false));
     }
-
-    /**
-     * Method to save data.
-     *
-     * @param null $key
-     * @param null $urlVar
-     *
-     * @return void
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function save($key = null, $urlVar = null): void
-    {
-        // Check for request forgeries.
-        $this->checkToken();
-        $isLoggedIn         = JedHelper::isLoggedIn();
-
-        if ($isLoggedIn) {
-            // Initialise variables.
-            $app   = Factory::getApplication();
-            $model = $this->getModel('Extensionform', 'Site');
-            $model->setUseExceptions(true);
-
-            // Raw payload (includes subforms)
-            $dataRaw = $app->input->get('jform', [], 'array');
-
-            // Keep the tabbed varied payload aside (main form validation doesn't know about it)
-            $supplyPayload = $dataRaw['supply'] ?? [];
-
-            // Translate/Fill out default values for the MAIN extension record
-            $dataRaw['joomla_versions'] = json_encode($dataRaw['joomla_versions'] ?? []);
-            $dataRaw['includes']        = json_encode($dataRaw['includes'] ?? []);
-
-            if (($dataRaw['download_integration_type'] ?? null) == 2) {
-                $dataRaw['requires_registration'] = 1;
-            } else {
-                $dataRaw['requires_registration'] = 0;
-            }
-
-            $dataRaw['can_update']  = $dataRaw['uses_updater'] ?? 0;
-            $dataRaw['popular']     = 0;
-            $dataRaw['approved']    = 0;
-            $dataRaw['jed_checked'] = 0;
-
-
-            // Handle main listing logo upload and set the stored relative path on the extension record.
-            $dataRaw = $this->processLogoUpload($dataRaw, $model);
-
-            // Handle supply-tab zip uploads and map stored names back into payload.
-            $uploadedExtensionFiles = $this->processSupplyFileUploads($supplyPayload);
-            try {
-                // Validate the posted data. (MAIN form only)
-                $form = $model->getForm();
-
-                $data = $model->validate($form, $dataRaw);
-            } catch (\Exception $e) {
-                throw new GenericDataException($e->getMessage(), 500, $e);
-            }
-            // Check for errors.
-            if ($data === false) {
-                $app->setUserState('com_jed.edit.extension.data', $dataRaw);
-
-                $id = (int) $app->getUserState('com_jed.edit.extension.id');
-                $this->setRedirect(Route::_('index.php?option=com_jed&view=extensionform&layout=edit&id=' . $id, false));
-                $this->redirect();
-            }
-
-            // Re-attach varied payload so the model can store it after saving the parent extension
-            $data['supply'] = $supplyPayload;
-
-            // Ensure the ID is set for edit operations
-            $editId = (int) $app->getUserState('com_jed.edit.extension.id');
-            if ($editId > 0) {
-                $data['id'] = $editId;
-            }
-
-            $return = $model->save($data);
-
-            if ($return === false) {
-                $app->setUserState('com_jed.edit.extension.data', $data);
-                $id = (int) $app->getUserState('com_jed.edit.extension.id');
-                $this->setMessage(Text::_('Save failed'), 'warning');
-                $this->setRedirect(Route::_('index.php?option=com_jed&view=extensionform&layout=edit&id=' . $id, false));
-                return;
-            }
-
-            if ($return) {
-                $model->storeExtensionFiles(
-                    (int) $return,
-                    $uploadedExtensionFiles,
-                    (int) Factory::getApplication()->getIdentity()->id
-                );
-                $model->checkin($return);
-            }
-
-            $app->setUserState('com_jed.edit.extension.id', null);
-            $this->setMessage(Text::_('COM_JED_GENERAL_ITEM_SAVED_SUCCESSFULLY_LABEL'));
-
-            $url  = 'index.php?option=com_jed&view=controlpanel';
-            $this->setRedirect(Route::_($url, false));
-
-            $app->setUserState('com_jed.edit.extension.data', null);
-            return;
-        }
-
-        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-    }
-
-    /**
-     * Save uploaded logo image into a dedicated images folder.
-     *
-     * @param array $dataRaw
-     * @param mixed $model
-     *
-     * @return array
-     *
-     * @throws Exception
-     * @since  4.0.0
-     */
-    private function processLogoUpload(array $dataRaw, mixed $model): array
-    {
-        $logoUpload  = $this->getJformUpload('logo');
-        $extensionId = (int) ($dataRaw['id'] ?? 0);
-
-        if (($logoUpload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
-            // Preserve current logo when editing and no new file is provided.
-            if ($extensionId > 0 && empty($dataRaw['logo'])) {
-                $item = $model->getItem($extensionId);
-                if (!empty($item->logo)) {
-                    $dataRaw['logo'] = $item->logo;
-                }
-            }
-
-            return $dataRaw;
-        }
-
-        if (($logoUpload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || empty($logoUpload['tmp_name'])) {
-            throw new Exception(Text::_('COM_JED_GENERAL_ITEM_SAVED_UNSUCCESSFULLY_LABEL'));
-        }
-
-        $stored = $this->storeUploadedFile(
-            $logoUpload,
-            'images/jed/extensions/logos',
-            ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'],
-            'logo'
-        );
-
-        if ($stored !== null) {
-            $dataRaw['logo'] = $stored;
-        }
-
-        return $dataRaw;
-    }
-
-    /**
-     * Save uploaded extension zip files from supply tabs.
-     *
-     * @param array $supplyPayload
-     *
-     * @return array
-     *
-     * @throws Exception
-     * @since  4.0.0
-     */
-    private function processSupplyFileUploads(array &$supplyPayload): array
-    {
-        $uploadedExtensionFiles = [];
-
-        foreach ($supplyPayload as $supplyKey => &$row) {
-            if (!is_array($row)) {
-                continue;
-            }
-
-            $upload = $this->getJformUpload('file', (string) $supplyKey);
-
-            if (($upload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
-                continue;
-            }
-
-            if (($upload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || empty($upload['tmp_name'])) {
-                throw new Exception(Text::_('COM_JED_GENERAL_ITEM_SAVED_UNSUCCESSFULLY_LABEL'));
-            }
-
-            $stored = $this->storeUploadedFile(
-                $upload,
-                'files/jed/extensions/zips',
-                ['zip'],
-                'extension'
-            );
-
-            if ($stored === null) {
-                continue;
-            }
-
-            $row['file'] = $stored;
-
-            $uploadedExtensionFiles[] = [
-                'supply_key'    => (string) $supplyKey,
-                'supply_option' => (int) ($row['supply_option_id'] ?? 0),
-                'file'          => $stored,
-                'originalFile'  => (string) ($upload['name'] ?? ''),
-                'size'          => (int) ($upload['size'] ?? 0),
-            ];
-        }
-        unset($row);
-
-        return $uploadedExtensionFiles;
-    }
-
-    /**
-     * Get one uploaded jform file from the nested $_FILES structure.
-     *
-     * @param string      $field
-     * @param string|null $supplyKey
-     *
-     * @return array|null
-     * @since  4.0.0
-     */
-    private function getJformUpload(string $field, ?string $supplyKey = null): ?array
-    {
-        if (empty($_FILES['jform']) || !is_array($_FILES['jform'])) {
-            return null;
-        }
-
-        $root = $_FILES['jform'];
-
-        if ($supplyKey === null) {
-            return [
-                'name'     => $root['name'][$field] ?? '',
-                'type'     => $root['type'][$field] ?? '',
-                'tmp_name' => $root['tmp_name'][$field] ?? '',
-                'error'    => $root['error'][$field] ?? UPLOAD_ERR_NO_FILE,
-                'size'     => $root['size'][$field] ?? 0,
-            ];
-        }
-
-        return [
-            'name'     => $root['name']['supply'][$supplyKey][$field] ?? '',
-            'type'     => $root['type']['supply'][$supplyKey][$field] ?? '',
-            'tmp_name' => $root['tmp_name']['supply'][$supplyKey][$field] ?? '',
-            'error'    => $root['error']['supply'][$supplyKey][$field] ?? UPLOAD_ERR_NO_FILE,
-            'size'     => $root['size']['supply'][$supplyKey][$field] ?? 0,
-        ];
-    }
-
-    /**
-     * Store a single uploaded file in a relative target folder.
-     *
-     * @param array  $upload
-     * @param string $targetRelativeDir
-     * @param array  $allowedExtensions
-     * @param string $prefix
-     *
-     * @return string|null
-     *
-     * @throws Exception
-     * @since  4.0.0
-     */
-    private function storeUploadedFile(array $upload, string $targetRelativeDir, array $allowedExtensions, string $prefix): ?string
-    {
-        $originalName = (string) ($upload['name'] ?? '');
-        $extension    = strtolower((string) pathinfo($originalName, PATHINFO_EXTENSION));
-
-        if (!in_array($extension, $allowedExtensions, true)) {
-            return null;
-        }
-
-        $targetDir = JPATH_ROOT . '/' . trim($targetRelativeDir, '/');
-
-        if (!Folder::exists($targetDir)) {
-            Folder::create($targetDir);
-        }
-
-        $safeBase = File::makeSafe((string) pathinfo($originalName, PATHINFO_FILENAME));
-        $safeBase = $safeBase !== '' ? OutputFilter::stringURLSafe($safeBase) : $prefix;
-        $unique   = date('YmdHis') . '_' . substr(md5(uniqid((string) mt_rand(), true)), 0, 8);
-        $fileName = $prefix . '_' . $safeBase . '_' . $unique . '.' . $extension;
-
-        $targetPath = $targetDir . '/' . $fileName;
-
-        if (!File::upload((string) $upload['tmp_name'], $targetPath)) {
-            throw new Exception(Text::_('COM_JED_GENERAL_ITEM_SAVED_UNSUCCESSFULLY_LABEL'));
-        }
-
-        return trim($targetRelativeDir, '/') . '/' . $fileName;
-    }
-
 
     /**
      * Method to abort current operation
@@ -390,5 +102,10 @@ class ExtensionformController extends FormController
         $item = $menu->getActive();
         $url  = (empty($item->link) ? 'index.php?option=com_jed&view=extensions' : $item->link);
         $this->setRedirect(Route::_($url, false));
+    }
+
+    protected function getRedirectUrlToList(): string
+    {
+        return Route::_('index.php?option=com_jed&view=dashboard');
     }
 }

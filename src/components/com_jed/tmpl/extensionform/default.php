@@ -1,15 +1,20 @@
 <?php
 
+/** @var \Jed\Component\Jed\Site\View\Extensionform\HtmlView $this */
 /**
  * @package JED
  *
  * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ *
+ * Edit-only form for an existing extension: one tab per fieldset of forms/extensionform.xml.
+ * ExtensionformModel::getItem() already enforces that only the owner, a maintainer, or an
+ * admin/superuser can reach this page (it throws otherwise), so there is no separate access
+ * check here.
  */
-
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 // phpcs:enable PSR1.Files.SideEffects
 
@@ -20,258 +25,69 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
 HTMLHelper::_('bootstrap.tooltip');
-HTMLHelper::_('jquery.framework');
 
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
-    ->useStyle('com_jed.kartikv_fileinput_style')
-    ->useScript('com_jed.kartikv_fileinput_buffer_js')
-    ->useScript('com_jed.kartikv_fileinput_filetype_js')
-    ->useScript('com_jed.kartikv_fileinput_piexif_js')
-    ->useScript('com_jed.kartikv_fileinput_sortable_js')
-    ->useScript('com_jed.kartikv_fileinput_fileinput_js')
-    ->useScript('com_jed.kartikv_fileinput_bs5_js')
-    //->useScript('com_jed.extensionTestUpload')
-    ->useStyle('com_jed.submitextension')
-    ->useScript('com_jed.extensionform')
-    ->useScript('keepalive')
-    ->useScript('form.validate');
-
-// Load admin language file
-$lang = Factory::getApplication()->getLanguage();
-$lang->load('com_jed', JPATH_SITE);
-
-$user    = $this->getCurrentUser();
-$canEdit = JedHelper::canUserEdit($this->item);
+    ->useScript('form.validate')
+    ->useScript('webcomponent.field-subform')
+    ->useStyle('com_jed.submitextension');
 
 $isLoggedIn  = JedHelper::isLoggedIn();
 $redirectURL = JedHelper::getLoginlink();
 
-if ($this->item->state == 1) {
-    $state_string = 'Publish';
-    $state_value  = 1;
-} else {
-    $state_string = 'Unpublish';
-    $state_value  = 0;
+if (!$isLoggedIn) {
+    /* @var $app \Joomla\CMS\Application\SiteApplication */
+    $app = Factory::getApplication();
+    $app->enqueueMessage(Text::_('COM_JED_EXTENSION_NO_ACCESS_LABEL'), 'warning');
+    $app->redirect($redirectURL);
+
+    return;
 }
-$canState = $this->getCurrentUser()->authorise('core.edit.state', 'com_jed');
 ?>
-<style>
- /*   #Free {
-        background-color:#9C9C9C;
-    }
-    #Paid {
-        background-color: #9c9c9c;
-    }*/
-    .extension-edit {
-        padding-left: 10px;
-        padding-right: 10px;
-       /* background-color: beige;*/
-    }
-
-    span.badge-com {
-        background-color: #00a500
-    }
-
-    span.badge-mod {
-        background-color: #ff4b39
-    }
-
-    span.badge-plugin {
-        background-color: #e20079
-    }
-
-    span.badge-search {
-        background-color: #ff8100
-    }
-
-    span.badge-ext {
-        background-color: #ffc40d;
-        color: #333
-    }
-
-    span.joomla_versionsbadge {
-        display: inline-block;
-        font-weight: bold;
-        color: white;
-        white-space: nowrap;
-        vertical-align: baseline;
-        box-sizing: border-box;
-        border-radius: 12px;
-        height: 24px;
-        padding: 6px 9px 6px 9px;
-        margin: 5px 0;
-        font-size: 12px;
-        line-height: 12px;
-        text-transform: uppercase;
-        text-align: center;
-        background-color: #5091cd;
-        width: auto;
-    }
-
-    fieldset#jform_includes.checkboxes div.form-check.form-check-inline {
-        display: block !important;
-
-    }
-</style>
 <div class="extension-edit front-end-edit">
 
-    <?php
+    <form id="form-extension" name="adminForm" class="form-validate"
+          action="<?php echo Route::_('index.php?option=com_jed&task=extensionform.save'); ?>"
+          method="post" enctype="multipart/form-data">
 
-    if (!$isLoggedIn) {
-        try {
-            /* @var $app \Joomla\CMS\Application\SiteApplication */
-            $app = Factory::getApplication();
-            $app->enqueueMessage(Text::_('COM_JED_EXTENSION_NO_ACCESS_LABEL'), 'success');
-            $app->redirect($redirectURL);
-        } catch (Exception $e) {
-            echo $e->getMessage();
-        }
-    } else {
-        ?>
-
-        <?php
-        if (!$canEdit) : ?>
-        <h3>
+        <div class="main-card">
             <?php
-                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403); ?>
-        </h3>
-        <?php else : ?>
-        <form id="form-extension"  class="form-validate"
-              action="<?php
-                  echo Route::_('index.php?option=com_jed&task=extensionform.save'); ?>"
-              method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
+            echo HTMLHelper::_('uitab.startTabSet', 'extensionformTab', ['active' => 'general', 'recall' => true, 'breakpoint' => 768]);
 
-                <?php
-                $fieldsets['overview']['title']       = Text::_('COM_JED_EXTENSION_ADD_EXTENSION_LABEL');
-                $fieldsets['overview']['description']     = Text::_('COM_JED_EXTENSION_ADD_EXTENSION_LABEL_DESCR') . '</br>' . '</br>';
-                $fieldsets['overview']['fields']          = ['id',['title','alias'],'version',['primary_category_id', 'tags']];
-                $fieldsets['overview']['hidden']          = ['id'];
-
-                $fieldsets['integration2']['title']       = '';
-                $fieldsets['integration2']['description'] = '';
-                $fieldsets['integration2']['fields']      = [['gpl_license_type','joomla_versions'],['includes','uses_third_party']];
-                $fieldsets['integration2']['hidden']      = [];
-
-                $fieldsets['media']['title']       = Text::_('COM_JED_EXTENSION_MEDIA_TITLE');
-                $fieldsets['media']['description'] = Text::_('COM_JED_EXTENSION_MEDIA_DESCR');
-                $fieldsets['media']['fields']      = ['video', 'logo', 'images'];
-                $fieldsets['media']['hidden']      = [];
-
-                JedHelper::outputFieldsets($fieldsets, $this->form);
-
-                // Show existing logo if editing
-                if (!empty($this->item->logo)) {
-                    echo '<div class="control-group">';
-                    echo '<div class="control-label"><label>Current Logo:</label></div>';
-                    echo '<div class="controls">';
-                    echo '<a href="' . htmlspecialchars(\Joomla\CMS\Uri\Uri::root() . $this->item->logo) . '" target="_blank">';
-                    echo htmlspecialchars(basename($this->item->logo));
-                    echo '</a>';
-                    echo '</div>';
-                    echo '</div>';
-                }
-
-
-                // echo '<div class="control-label"><label id="jform_logo-lbl" for="jform_logo">Supply Type<br/><span style="font-weight:normal"></span><small>Descriptive Text here.</small></span></label></div>';
-                //echo '<div class="controls">';
-                echo '<fieldset class="extensionvariedform"><legend>Extension Supply Versions</legend><div class="control-group control-wrapper-video">
-            <label id="jform_extension_supply_type-lbl" >
-    Every extension can be supplied in different forms including Free Versions and Paid Versions which can have unique information (i.e. Title, Download Link) and similar information (License Link, Demo Link). You can select one type as the default and just overwrite values where necessary.</label>
-
-        <div class="controls">';
-
-
-                echo $this->form->renderField('joomla_supply_type', null, null, ['class' => 'control-wrapper-joomla_supply_type']);
-
-                echo HTMLHelper::_('uitab.startTabSet', 'supplyTab', ['active' => '']);
-
-                $validate = true;
-                foreach ($this->supply_types as $st) {
-                    $tabId = 'supply-' . (int) $st->supply_id;
-
-                    echo HTMLHelper::_('uitab.addTab', 'supplyTab', $tabId, $st->supply_type);
-
-                    $varied_form                          = $this->supply_forms[$st->supply_id];
-                    $fieldsets                            = [];
-                    $fieldsets['overview']['supply_type'] = $st->supply_type;
-                    $fieldsets['overview']['title']       =  Text::sprintf('COM_JED_EXTENSION_VARIED_TITLE_LABEL', $st->supply_type);
-                    $fieldsets['overview']['description'] = '';//Text::_('COM_JED_EXTENSION_VARIED_TITLE_LABEL_DESCR');
-                    $fieldsets['overview']['fields']      = ['id', 'supply_option_id', ['title', 'is_default_data'],  'description'];
-                    $fieldsets['overview']['hidden']      = ['id', 'supply_option_id'];
-
-                    $fieldsets['extensionfile']['supply_type'] = $st->supply_type;
-                    $fieldsets['extensionfile']['title']       = '';
-                    $fieldsets['extensionfile']['description'] = Text::_('COM_JED_EXTENSION_EXTENSIONFILE_LABEL') . '<br/>' . Text::_('COM_JED_EXTENSION_EXTENSIONFILE_EXTRA');
-                    $fieldsets['extensionfile']['fields']      = ['file'];
-                    $fieldsets['extensionfile']['hidden']      = [];
-
-                    // Show existing file if available
-                    if (!empty($this->item->varied[$st->supply_id]->file)) {
-                        $fieldsets['extensionfile']['description'] .= '<div style="margin-top:10px;"><strong>Current file:</strong> ';
-                        $fieldsets['extensionfile']['description'] .= '<a href="' . htmlspecialchars(\Joomla\CMS\Uri\Uri::root() . $this->item->varied[$st->supply_id]->file) . '" target="_blank">';
-                        $fieldsets['extensionfile']['description'] .= htmlspecialchars(basename($this->item->varied[$st->supply_id]->file));
-                        $fieldsets['extensionfile']['description'] .= '</a></div>';
-                    }
-                    $fieldsets['links']['supply_type']         = $st->supply_type;
-                    $fieldsets['links']['title']               = Text::_('COM_JED_EXTENSION_LINKS_TITLE');
-                    $fieldsets['links']['description']         = Text::_('COM_JED_EXTENSION_LINKS_DESCR') . '<br/>';
-                    $fieldsets['links']['fields']              = [['homepage_link', 'download_link'], ['demo_link', 'support_link'], ['documentation_link', 'license_link'], ['translation_link', '']];
-                    $fieldsets['links']['hidden']              = [];
-
-                    $fieldsets['integration']['supply_type'] = $st->supply_type;
-                    $fieldsets['integration']['title']       = Text::_('COM_JED_EXTENSION_INTEGRATION_TITLE');
-                    $fieldsets['integration']['description'] = Text::_('COM_JED_EXTENSION_INTEGRATION_DESCR');
-                    $fieldsets['integration']['fields']      = [['download_integration_type', 'download_integration_url']];
-                    $fieldsets['integration']['hidden']      = [];
-
-                    JedHelper::outputFieldsets($fieldsets, $varied_form, $validate);
-                    $validate = false;
-                    $fieldsets = [];
-
-                    echo HTMLHelper::_('uitab.endTab');
-                }
-                echo HTMLHelper::_('uitab.endTabSet');
-
-                echo '</div></fieldset>';
-                $fieldsets['confirm']['title']           = '<br/>' . Text::_('COM_JED_GENERAL_CONFIRM_LABEL');
-                $fieldsets['confirm']['description'] = '';
-                $fieldsets['confirm']['fields']      = ['uses_updater'];
-                $fieldsets['confirm']['hidden']      = [];
-
-                JedHelper::outputFieldsets($fieldsets, $this->form);
+            foreach ($this->form->getFieldsets() as $fieldset) :
+                echo HTMLHelper::_('uitab.addTab', 'extensionformTab', $fieldset->name, Text::_($fieldset->label));
                 ?>
-            <div class="control-group">
-                <div class="controls">
-
-                    <?php
-                    if ($this->canSave) : ?>
-                        <button type="submit" class="validate btn btn-primary">
-                            <span class="fas fa-check" aria-hidden="true"></span>
-                                <?php
-                                echo Text::_('JSUBMIT'); ?>
-                        </button>
-                            <?php
-                    endif; ?>
-                    <a class="btn btn-danger"
-                       href="<?php
-                        echo Route::_('index.php?option=com_jed&task=extensionform.cancel'); ?>"
-                       title="<?php
-                        echo Text::_('JCANCEL'); ?>">
-                        <span class="fas fa-times" aria-hidden="true"></span>
-                        <?php
-                        echo Text::_('JCANCEL'); ?>
-                    </a>
+                <div class="row">
+                    <div class="col-12 col-lg-8">
+                        <?php echo $this->form->renderFieldset($fieldset->name); ?>
+                    </div>
                 </div>
-            </div>
+                <?php
+                echo HTMLHelper::_('uitab.endTab');
+            endforeach;
 
-            <input type="hidden" name="option" value="com_jed"/>
-            <input type="hidden" name="task"
-                   value="extensionform.save"/>
-                <?php
-                echo HTMLHelper::_('form.token'); ?>
-        </form>
-                <?php
-        endif;
-    }?>
+            echo HTMLHelper::_('uitab.endTabSet');
+            ?>
+        </div>
+
+        <div class="control-group mt-3">
+            <div class="controls">
+                <?php if ($this->canSave) : ?>
+                    <button type="submit" class="validate btn btn-primary">
+                        <span class="fas fa-check" aria-hidden="true"></span>
+                        <?php echo Text::_('JSUBMIT'); ?>
+                    </button>
+                <?php endif; ?>
+                <a class="btn btn-danger" href="<?php echo Route::_('index.php?option=com_jed&task=extensionform.cancel'); ?>"
+                   title="<?php echo Text::_('JCANCEL'); ?>">
+                    <span class="fas fa-times" aria-hidden="true"></span>
+                    <?php echo Text::_('JCANCEL'); ?>
+                </a>
+            </div>
+        </div>
+
+        <input type="hidden" name="option" value="com_jed"/>
+        <input type="hidden" name="task" value="extensionform.save"/>
+        <?php echo HTMLHelper::_('form.token'); ?>
+    </form>
 </div>

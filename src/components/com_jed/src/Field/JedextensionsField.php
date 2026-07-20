@@ -62,7 +62,7 @@ class JedextensionsField extends ListField
 
     private string $option_value_field;
 
-    private string $limit;
+    private readonly string $limit;
 
     /**
      * Method to get the field input markup.
@@ -232,7 +232,12 @@ class JedextensionsField extends ListField
         $options = [];
         $db      = Factory::getContainer()->get('DatabaseDriver');
         try {
-            $db->setQuery("select id as value,CONCAT(title,' (',IF(supply_option_id=1,'Free','Paid'),')') as text from #__jed_extension_varied_data order by title asc limit 500");
+            $query = $db->getQuery(true)
+                ->select("id as value, CONCAT(name,' (',type,')') as text")
+                ->from($db->quoteName('#__jed_extensions'))
+                ->order($db->quoteName('name') . ' ASC')
+                ->setLimit(500);
+            $db->setQuery($query);
             $results = $db->loadObjectList();
         } catch (ExecutionFailureException $e) {
             Factory::getApplication()->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED') . ' ' . $e->getMessage(), 'error');
@@ -275,8 +280,7 @@ class JedextensionsField extends ListField
     {
         if (!empty($this->element[$name])) {
             return $this->element[$name];
-        } else {
-            return $default;
         }
+        return $default;
     }
 }

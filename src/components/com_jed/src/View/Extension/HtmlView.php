@@ -55,21 +55,13 @@ class HtmlView extends BaseHtmlView
     public function display($tpl = null): void
     {
         $app          = Factory::getApplication();
-        $user         = Factory::getApplication()->getIdentity();
+        $user         = $this->getCurrentUser();
         $model        = $this->getModel();
         $model->setUseExceptions(true);
-        try {
-            $this->state  = $model->getState();
-            $this->item   = $model->getItem();
-
-            $this->params = $app->getParams('com_jed');
-
-            if (!empty($this->item)) {
-                $this->form = $model->getForm();
-            }
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
-        }
+        $this->state  = $model->getState();
+        $this->item   = $model->getItem();
+        $this->params = $app->getParams('com_jed');
+        //$this->form   = $model->getForm();
 
 
 

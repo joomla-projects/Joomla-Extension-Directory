@@ -89,8 +89,8 @@ class ExtensionscoreTable extends Table
         if (!empty($src['extension_id'])) {
             if (is_array($src['extension_id'])) {
                 $src['extension_id'] = implode(',', $src['extension_id']);
-            } elseif (strrpos($src['extension_id'], ',') != false) {
-                $src['extension_id'] = explode(',', $src['extension_id']);
+            } elseif (strrpos((string) $src['extension_id'], ',') != false) {
+                $src['extension_id'] = explode(',', (string) $src['extension_id']);
             }
         } else {
             $src['extension_id'] = 0;
@@ -100,8 +100,8 @@ class ExtensionscoreTable extends Table
         if (!empty($src['supply_option_id'])) {
             if (is_array($src['supply_option_id'])) {
                 $src['supply_option_id'] = implode(',', $src['supply_option_id']);
-            } elseif (strrpos($src['supply_option_id'], ',') != false) {
-                $src['supply_option_id'] = explode(',', $src['supply_option_id']);
+            } elseif (strrpos((string) $src['supply_option_id'], ',') != false) {
+                $src['supply_option_id'] = explode(',', (string) $src['supply_option_id']);
             }
         } else {
             $src['supply_option_id'] = 0;

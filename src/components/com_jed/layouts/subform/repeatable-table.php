@@ -62,7 +62,7 @@ if (!empty($groupByFieldset)) {
     $sublayout = 'section-byfieldsets';
 } else {
     foreach ($tmpl->getGroup('') as $field) {
-        $table_head .= '<th scope="col" style="width:45%">' . strip_tags($field->label);
+        $table_head .= '<th scope="col" style="width:45%">' . strip_tags((string) $field->label);
 
         if ($field->description) {
             $table_head .= '<span class="icon-info-circle" aria-hidden="true" tabindex="0"></span><div role="tooltip" id="tip-' . $field->id . '">' . Text::_($field->description) . '</div>';
@@ -117,7 +117,7 @@ if (!empty($groupByFieldset)) {
         </div>
         <?php if ($multiple) : ?>
         <template class="subform-repeatable-template-section hidden">
-            <?php echo trim($this->sublayout($sublayout, ['form' => $tmpl, 'basegroup' => $fieldname, 'group' => $fieldname . 'X', 'buttons' => $buttons])); ?>
+            <?php echo trim((string) $this->sublayout($sublayout, ['form' => $tmpl, 'basegroup' => $fieldname, 'group' => $fieldname . 'X', 'buttons' => $buttons])); ?>
         </template>
         <?php endif; ?>
     </joomla-field-subform>

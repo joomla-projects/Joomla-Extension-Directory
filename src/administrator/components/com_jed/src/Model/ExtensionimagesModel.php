@@ -74,7 +74,7 @@ class ExtensionimagesModel extends ListModel
 
         // Select the required fields from the table.
         $query->select($this->getState('list.select', 'DISTINCT a.*'));
-        $query->from('`#__jed_extension_images` AS a');
+        $query->from('`#__jed_extensions_images` AS a');
 
         // Join over the users for the checked out user
         $query->select("uc.name AS uEditor");
@@ -91,7 +91,7 @@ class ExtensionimagesModel extends ListModel
         $query->select('`modified_by`.name AS `modified_by`');
         $query->join('LEFT', '#__users AS `modified_by` ON `modified_by`.id = a.`modified_by`');
         // Join over the foreign key 'extension_id'
-        $query->select('`#__jed_extensions_3727704`.`title` AS extensions_fk_value_3727704');
+        $query->select('`#__jed_extensions_3727704`.`name` AS extensions_fk_value_3727704');
         $query->join('LEFT', '#__jed_extensions AS #__jed_extensions_3727704 ON #__jed_extensions_3727704.`id` = a.`extension_id`');
 
 
@@ -108,8 +108,8 @@ class ExtensionimagesModel extends ListModel
         $search = $this->getState('filter.search');
 
         if (!empty($search)) {
-            if (stripos($search, 'id:') === 0) {
-                $query->where('a.id = ' . (int) substr($search, 3));
+            if (stripos((string) $search, 'id:') === 0) {
+                $query->where('a.id = ' . (int) substr((string) $search, 3));
             } else {
                 $search = $db->Quote('%' . $db->escape($search, true) . '%');
                 //  $query->where('(a.title LIKE ' . $search . ') ');
