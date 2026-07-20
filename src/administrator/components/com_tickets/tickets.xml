@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" method="upgrade">
+    <name>COM_TICKETS</name>
+    <author>Joomla! Project</author>
+    <creationDate>2026</creationDate>
+    <copyright>(C) 2022 Open Source Matters, Inc.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>admin@joomla.org</authorEmail>
+    <authorUrl>www.joomla.org</authorUrl>
+    <version>1.0.0</version>
+    <description>COM_TICKETS_XML_DESCRIPTION</description>
+    <namespace path="src">Jed\Component\Tickets</namespace>
+    <scriptfile>script.php</scriptfile>
+
+    <files folder="components/com_tickets">
+        <folder>forms</folder>
+        <folder>language</folder>
+        <folder>src</folder>
+        <folder>tmpl</folder>
+    </files>
+
+    <administration>
+        <!-- Menu entries -->
+        <menu view="tickets">
+            COM_TICKETS
+        </menu>
+
+        <files folder="administrator/components/com_tickets">
+            <folder>forms</folder>
+            <folder>layouts</folder>
+            <folder>services</folder>
+            <folder>sql</folder>
+            <folder>src</folder>
+            <folder>tmpl</folder>
+            <file>access.xml</file>
+            <file>config.xml</file>
+        </files>
+
+        <languages folder="administrator/components/com_tickets/language">
+            <language tag="en-GB">en-GB/com_tickets.ini</language>
+            <language tag="en-GB">en-GB/com_tickets.sys.ini</language>
+        </languages>
+    </administration>
+
+    <media destination="com_tickets" folder="media/com_tickets">
+        <folder>css</folder>
+        <folder>js</folder>
+
+        <filename>joomla.asset.json</filename>
+    </media>
+
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+</extension>

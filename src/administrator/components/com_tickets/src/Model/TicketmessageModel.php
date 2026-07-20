@@ -3,14 +3,18 @@
 /**
  * @package JED
  *
- * @copyright (C) 2006-2026 Open Source Matters, Inc.  <https://www.joomla.org>
+ * @subpackage Tickets
+ *
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace Jed\Component\Jed\Administrator\Model;
+namespace Jed\Component\Tickets\Administrator\Model;
 
+// No direct access.
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
@@ -20,24 +24,24 @@ use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
 
 /**
- * SetupdemoModel model.
+ * JED Ticket Message model.
  *
  * @since 4.0.0
  */
-class SetupdemoModel extends AdminModel
+class TicketmessageModel extends AdminModel
 {
     /**
      * @var   string    Alias to manage history control
      * @since 4.0.0
      */
-    public $typeAlias = 'com_jed.Setupdemo';
+    public $typeAlias = 'com_jed.ticketmessage';
     /**
      * @var   string    The prefix to use with controller messages.
      * @since 4.0.0
      */
     protected $text_prefix = 'COM_JED';
     /**
-     * @var   null  Item data
+     * @var   mixed  Item data
      * @since 4.0.0
      */
     protected mixed $item = null;
@@ -48,23 +52,29 @@ class SetupdemoModel extends AdminModel
      * @param array $data     An optional array of data for the form to interogate.
      * @param bool  $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return Form  A Form object on success
+     * @return Form|bool  A Form object on success, false on failure
      *
      * @since 4.0.0
      *
-     * @throws Exception
+     * @throws
      */
-    public function getForm($data = [], $loadData = true, $formname = 'jform'): Form
+    public function getForm($data = [], $loadData = true, $formname = 'jform'): Form|bool
     {
-        // Get the form.
-        return  $this->loadForm(
-            'com_jed.setupdemo',
-            'setupdemo',
+        $form = $this->loadForm(
+            'com_jed.ticketmessage',
+            'ticketmessage',
             [
-                'control'   => $formname,
-                'load_data' => $loadData,
+            'control'   => $formname,
+            'load_data' => $loadData,
             ]
         );
+
+
+        if (empty($form)) {
+            return false;
+        }
+
+        return $form;
     }
 
     /**
@@ -72,30 +82,28 @@ class SetupdemoModel extends AdminModel
      *
      * @param int $pk The id of the primary key.
      *
-     * @return Object|bool    Object on success, false on failure.
+     * @return mixed    Object on success, false on failure.
      *
      * @since 4.0.0
-     *
-     * @throws Exception
      */
-    public function getItem($pk = null)
+    public function getItem($pk = null): mixed
     {
         return parent::getItem($pk);
     }
 
     /**
-     * Returns a reference to the Table object, always creating it.
+     * Returns a reference to the a Table object, always creating it.
      *
-     * @param string $name    The table type to instantiate
+     * @param string $name
      * @param string $prefix  A prefix for the table class name. Optional.
-     * @param array  $options Configuration array for model. Optional.
+     * @param array  $options
      *
      * @return Table    A database object
      *
      * @since  4.0.0
      * @throws Exception
      */
-    public function getTable($name = 'Extension', $prefix = 'Administrator', $options = []): Table
+    public function getTable($name = 'Ticketmessage', $prefix = 'Administrator', $options = []): Table
     {
         return parent::getTable($name, $prefix, $options);
     }
@@ -107,12 +115,12 @@ class SetupdemoModel extends AdminModel
      *
      * @since 4.0.0
      *
-     * @throws Exception
+     * @throws
      */
     protected function loadFormData(): mixed
     {
-        // Check the session for previously entered form data.
-        $data = Factory::getApplication()->getUserState('com_jed.edit.setupdemo.data', []);
+        $data = Factory::getApplication()->getUserState('com_jed.edit.ticketmessage.data', []);
+
         if (empty($data)) {
             if ($this->item === null) {
                 $this->item = $this->getItem();
