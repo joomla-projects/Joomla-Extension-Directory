@@ -1,0 +1,121 @@
+<?php
+
+/**
+ * @package VEL
+ *
+ * @subpackage VEL
+ *
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+namespace Jed\Component\Vel\Administrator\Controller;
+
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
+
+use Exception;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\Router\Route;
+use Joomla\Utilities\ArrayHelper;
+
+/**
+ * Velvulnerableitems class.
+ *
+ * @since 4.0.0
+ */
+class VulnerableitemsController extends AdminController
+{
+    /**
+     * Proxy for getModel.
+     *
+     * @param string $name   Optional. Model name
+     * @param string $prefix Optional. Class prefix
+     * @param array  $config Optional. Configuration array for model
+     *
+     * @return object    The Model
+     *
+     * @since 4.0.0
+     */
+    public function getModel($name = 'Vulnerableitem', $prefix = 'Administrator', $config = []): object
+    {
+
+        return parent::getModel($name, $prefix, ['ignore_request' => true]);
+    }
+
+    /**
+     * Publish/Unpublish Vulnerable Item
+     *
+     * @return void
+     *
+     * @since  4.0.0
+     * @throws Exception
+     */
+    public function publish(): void
+    {
+
+        // Checking if the user can remove object
+        $user = Factory::getApplication()->getIdentity();
+
+        if ($user->authorise('core.edit', 'com_vel') || $user->authorise('core.edit.state', 'com_vel')) {
+            $model = $this->getModel();
+            $model->setUseExceptions(true);
+
+            // Get the user data.
+
+            $id = $this->input->getInt('cid');
+
+            $values = ['publish' => 1, 'unpublish' => 0, 'deleteOverrideHistory' => -3];
+            $task   = $this->getTask();
+            $value  = ArrayHelper::getValue($values, $task, 0, 'int');
+            try {
+                $return = $model->publish($id, $value);
+            } catch (\Exception $e) {
+                throw new \RuntimeException(Text::sprintf('Save failed: %s', $e->getMessage()), 500, $e);
+            }
+
+
+
+            $this->setRedirect(Route::_('index.php?option=com_vel&view=vulnerableitems', false));
+        } else {
+            throw new Exception(500);
+        }
+    }
+
+    /**
+     * Method to save the submitted ordering values for records via AJAX.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     *
+     * @throws Exception
+     */
+    public function saveOrderAjax(): void
+    {
+        // Get the input
+        $input = Factory::getApplication()->input;
+        $pks   = $input->post->get('cid', [], 'array');
+        $order = $input->post->get('order', [], 'array');
+
+        // Sanitize the input
+        ArrayHelper::toInteger($pks);
+        ArrayHelper::toInteger($order);
+
+        // Get the model
+        $model = $this->getModel();
+
+        // Save the ordering
+        $return = $model->saveorder($pks, $order);
+
+        if ($return) {
+            echo "1";
+        }
+
+        // Close the application
+        Factory::getApplication()->close();
+    }
+}
