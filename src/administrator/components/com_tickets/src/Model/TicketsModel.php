@@ -17,6 +17,7 @@ namespace Jed\Component\Tickets\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
@@ -136,33 +137,12 @@ class TicketsModel extends ListModel
                 $oneItem->allocated_group = !empty($textValue) ? implode(', ', $textValue) : $oneItem->allocated_group;
             }*/
 
-            /*if (isset($oneItem->linked_item_type))
-            {
-                $values    = explode(',', $oneItem->linked_item_type);
-                $textValue = array();
-
-                foreach ($values as $value)
-                {
-                    $db = $this->getDatabase();
-
-                    $query = $db->getQuery(true);
-                    $query
-                        ->select('`jt_linked_item_types`.`title`')
-                        ->from($db->quoteName('#__jed_ticket_linked_item_types', 'jt_linked_item_types'))
-                        ->where($db->quoteName('jt_linked_item_types.id') . ' = ' . $db->quote($db->escape($value)));
-
-                    $db->setQuery($query);
-                    $results = $db->loadObject();
-
-                    if ($results)
-                    {
-                        $textValue[] = $results->title;
-                    }
-                }
-
-                $oneItem->linked_item_type = !empty($textValue) ? implode(', ', $textValue) : $oneItem->linked_item_type;
-            }*/
             $oneItem->ticket_status = Text::_('COM_TICKETS_TICKETS_TICKET_STATUS_OPTION_' . strtoupper((string) $oneItem->ticket_status));
+
+            $linkedItemType                       = TicketType::tryFrom((int) $oneItem->linked_item_type);
+            $oneItem->ticketlinkeditemtypes_string = $linkedItemType !== null
+                ? Text::_('COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_OPTION_' . strtoupper($linkedItemType->name))
+                : Text::_('COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_OPTION_NONE');
         }
 
         return $items;
@@ -205,9 +185,6 @@ class TicketsModel extends ListModel
         // Join over the user field 'allocated_to'
         $query->select('`allocated_to`.name AS `allocated_to`');
         $query->join('LEFT', '#__users AS `allocated_to` ON `allocated_to`.id = a.`allocated_to`');
-        // Join over the foreign key 'linked_item_type'
-        $query->select('`jt_linked_item_types`.`title` AS ticketlinkeditemtypes_string');
-        $query->join('LEFT', '#__jed_ticket_linked_item_types AS jt_linked_item_types ON jt_linked_item_types.`id` = a.`linked_item_type`');
 
         // Join over the user field 'created_by'
         $query->select('`created_by`.name AS `created_by`');

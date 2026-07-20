@@ -523,8 +523,8 @@ class ExtensionformModel extends FormModel
      */
     public function save(array $data): bool
     {
-        $app         = Factory::getApplication();
-        $id          = $app->getUserState('com_jed.edit.extension.id');
+        $app = Factory::getApplication();
+        $id = $app->getUserState('com_jed.edit.extension.id');
         $extensionId = (int) ($data['id'] ?? $this->getState('extension.id', $id));
         $extensionId = $id;
 

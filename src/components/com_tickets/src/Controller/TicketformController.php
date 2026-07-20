@@ -16,6 +16,7 @@ namespace Jed\Component\Tickets\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
@@ -175,11 +176,11 @@ class TicketformController extends FormController
         // Validate the posted data.
         $data = $model->validate($form, $data);
         if ($data['ticket_category_type'] == 2) { //Extension
-            $data['linked_item_type'] = 2;
+            $data['linked_item_type'] = TicketType::Extension->value;
             $data['linked_item_id']   = $data['myextension_varied_name'];
         }
         if ($data['ticket_category_type'] == 14) { //My Extension
-            $data['linked_item_type'] = 2;
+            $data['linked_item_type'] = TicketType::Extension->value;
             $data['linked_item_id']   = $data['reported_varied_name'];
         }
         // Check for errors.
