@@ -14,9 +14,12 @@ namespace Jed\Component\Jed\Administrator\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Administrator\Model\ExtensionModel;
+use Jed\Component\Jed\Administrator\Queue\QueueService;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Extension controller class.
@@ -89,6 +92,42 @@ class ExtensionController extends FormController
         $model->activateVersion($extensionId, $historyId);
 
         $this->setRedirect(Route::_('index.php?option=com_jed&view=extensions', false));
+
+        return true;
+    }
+
+    /**
+     * Enqueue a manual, one-off `extension.score_recalc` job for the extension
+     * currently open in the edit form. Recalculation is always triggered this way,
+     * per extension - never as a scheduled scan of the whole dataset.
+     *
+     * @return bool
+     *
+     * @since 4.1.0
+     */
+    public function recalculateScore(): bool
+    {
+        $this->checkToken();
+
+        $app = Factory::getApplication();
+
+        if (!$app->getIdentity()->authorise('core.edit', 'com_jed')) {
+            $app->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
+            $this->setRedirect(Route::_('index.php?option=com_jed&view=extensions', false));
+
+            return false;
+        }
+
+        $extensionId = (int) $app->getUserState('com_jed.edit.extension.id', 0);
+
+        if ($extensionId > 0) {
+            $queueService = new QueueService(Factory::getContainer()->get(DatabaseInterface::class));
+            $queueService->enqueue('extension.score_recalc', $extensionId, null, [], (int) $app->getIdentity()->id);
+
+            $app->enqueueMessage(Text::_('COM_JED_EXTENSION_SCORE_RECALC_QUEUED'), 'message');
+        }
+
+        $this->setRedirect(Route::_('index.php?option=com_jed&view=extension&layout=edit&id=' . $extensionId, false));
 
         return true;
     }
