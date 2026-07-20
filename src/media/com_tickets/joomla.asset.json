@@ -1,0 +1,34 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "assets": [
+    {
+      "name": "com_tickets.Tickets",
+      "type": "style",
+      "uri": "media/com_tickets/css/tickets.css"
+    },
+    {
+      "name": "com_tickets.ticketGetmessagetemplate",
+      "type": "script",
+      "uri": "media/com_tickets/js/ticketGetmessagetemplate.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "1.0.0"
+    },
+    {
+      "name": "com_tickets.ticketPublishUnPublishReview",
+      "type": "script",
+      "uri": "media/com_tickets/js/ticketPublishUnPublishReview.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "1.0.0"
+    }
+  ],
+  "description": "Ticket system for the Joomla Extension Directory",
+  "license": "GPL-2.0-or-later",
+  "name": "com_tickets",
+  "version": "1.0.0"
+}

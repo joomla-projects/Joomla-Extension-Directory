@@ -38,7 +38,7 @@ class HtmlView extends BaseHtmlView
     protected Pagination $pagination;
 
     protected Registry $state;
-    public ?Form $filterForm;
+    public ?Form $filterForm    = null;
     public array $activeFilters = [];
     public string $sidebar;
     /**
@@ -54,20 +54,14 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
-        /**
- * @var ReviewsModel $model
-*/
+        /** @var ReviewsModel $model */
         $model               = $this->getModel();
         $model->setUseExceptions(true);
-        try {
-            $this->state         = $model->getState();
-            $this->items         = $model->getItems();
-            $this->pagination    = $model->getPagination();
-            $this->filterForm    = $model->getFilterForm();
-            $this->activeFilters = $model->getActiveFilters();
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
-        }
+        $this->state         = $model->getState();
+        $this->items         = $model->getItems();
+        $this->pagination    = $model->getPagination();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
 
         $this->addToolbar();
 
@@ -85,19 +79,14 @@ class HtmlView extends BaseHtmlView
      */
     protected function addToolbar(): void
     {
-        $canDo = JedHelper::getActions();
+        $canDo = JedHelper::getActions('com_jed', 'review');
 
         ToolbarHelper::title(Text::_('COM_JED_TITLE_REVIEWS'), "generic");
 
         $toolbar = $this->getDocument()->getToolbar();
 
-        // Check if the form exists before showing the add/edit buttons
-        $formPath = JPATH_ADMINISTRATOR . '/components/com_jed/src/View/Reviews';
-
-        if (file_exists($formPath)) {
-            if ($canDo->get('core.create')) {
-                $toolbar->addNew('review.add');
-            }
+        if ($canDo->get('core.create')) {
+            $toolbar->addNew('review.add');
         }
 
         if ($canDo->get('core.edit.state')) {

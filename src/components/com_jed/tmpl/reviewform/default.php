@@ -1,12 +1,12 @@
 <?php
 
+/** @var \Jed\Component\Jed\Site\View\Reviewform\HtmlView $this */
 /**
  * @package JED
  *
  * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
-
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -47,7 +47,7 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
             try {
                 /* @var $app \Joomla\CMS\Application\SiteApplication */
                 $app = Factory::getApplication();
-            } catch (Exception $e) {
+            } catch (Exception) {
             }
 
             $app->enqueueMessage(Text::_('COM_JED_REVIEW_NO_ACCESS'), 'success');
@@ -78,7 +78,7 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
                     '<field name="supply_option_id" type="radio"         label="COM_JED_EXTENSION_SUPPLY_OPTION_ID_LABEL"           description="COM_JED_REVIEWS_SUPPLY_OPTION_ID_DESCR"
                default="' . $default . '" class="btn-group">      ' . $optionstr . '  </field>'
                 );
-            } catch (Exception $e) {
+            } catch (Exception) {
             }
 
             $field = $this->form->setField($xml);

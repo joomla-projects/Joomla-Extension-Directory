@@ -24,7 +24,7 @@ $i = 0;
     <?php foreach ($displayData['categories'] as $cat) : ?>
         <?php $i++ ?>
         <a href="<?php echo Route::_(sprintf('index.php?option=com_jed&view=extensions&id=%d&catid=%d', $cat->id, $cat->parent_id)) ?>">
-            <?php echo htmlentities($cat->title) ?>
+            <?php echo htmlentities((string) $cat->title) ?>
         </a>
         <?php if ($i != count($displayData['categories'])) : ?>
             <span class="text-muted">&bull;</span>

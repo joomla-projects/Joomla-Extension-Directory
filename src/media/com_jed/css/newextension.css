@@ -1,0 +1,91 @@
+/**
+ * @package JED
+ *
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ *
+ * Styles for the "create a new extension" wizard (tmpl/newextension/) and, since it uses the same
+ * class names, the drag & drop upload areas on the extension edit form
+ * (tmpl/extension/edit.php, media/com_jed/js/extensionUploadAreas.js).
+ */
+
+.newextension-blocks {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.newextension-block {
+    height: 100%;
+}
+
+.newextension-manual {
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+.jed-upload-dropzone {
+    border: 2px dashed #adb5bd;
+    border-radius: 0.5rem;
+    padding: 2rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    color: #6c757d;
+    transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+.jed-upload-dropzone:hover,
+.jed-upload-dropzone:focus {
+    border-color: #0d6efd;
+    outline: none;
+}
+
+.jed-upload-dropzone-active {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.jed-upload-dropzone .icon-upload {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.newextension-dropzone-text {
+    margin-bottom: 0;
+}
+
+.newextension-selected-filename {
+    font-weight: bold;
+    margin-top: 0.75rem;
+}
+
+#newextension-upload-read,
+#newextension-git-read {
+    margin-top: 0.75rem;
+}
+
+.newextension-result {
+    margin-top: 1rem;
+}
+
+.newextension-status {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.newextension-detected-data {
+    margin-bottom: 0;
+}
+
+.newextension-detected-data dt {
+    font-weight: bold;
+}
+
+.newextension-detected-data dd {
+    margin-bottom: 0.5rem;
+}
+
+#newextension-upload-continue,
+#newextension-git-continue {
+    margin-top: 1rem;
+}

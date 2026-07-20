@@ -1,12 +1,12 @@
 <?php
 
+/** @var \Jed\Component\Jed\Site\View\Reviews\HtmlView $this */
 /**
  * @package JED
  *
  * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
-
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -38,7 +38,7 @@ $canDelete  = $user->authorise('core.delete', 'com_jed');
 // Import CSS
 try {
     $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-} catch (Exception $e) {
+} catch (Exception) {
 }
 $wa->useStyle('com_jed.list');
 ?>
@@ -228,7 +228,7 @@ $wa->useStyle('com_jed.list');
                         <?php echo $item->created_on; ?>
                     </td>
                     <td>
-                                <?php echo $this->getCurrentUser($item->created_by)->name; ?>
+                                <?php echo $this->getCurrentUser()->name; ?>
                     </td>
                     <?php if ($canEdit || $canDelete) : ?>
                         <td class="center">

@@ -1,12 +1,12 @@
 <?php
 
+/** @var \Jed\Component\Jed\Site\View\Extensions\HtmlView $this */
 /**
  * @package JED
  *
  * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
-
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -37,19 +37,30 @@ $canDelete  = $user->authorise('core.delete', 'com_jed');
 */
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.jazstyle');
+
+// Only show a "<Category> Extensions" heading when this is actually a single-category browse
+// (catid URL param set); presets like Top Rated/Most Reviewed span every category, so they use
+// the page's own heading (menu title, or the global default) instead.
+$catid   = Factory::getApplication()->getInput()->getInt('id', 0);
+$heading = ($catid && !empty($this->items)) ? $this->items[0]->category_title . ' Extensions' : $this->params->get('page_heading');
 ?>
 
 <div class="jed-cards-wrapper margin-bottom-half">
     <div class="jed-container">
-        <h2 class="heading heading--m"><?php echo $this->items[0]->category_title; ?> Extensions</h2>
-        <p class="font-size-s"><?php echo $this->items[0]->category_hierarchy; ?></p>
+        <h2 class="heading heading--m"><?php echo $this->escape($heading); ?></h2>
+        <?php if ($catid && !empty($this->items)) : ?>
+            <p class="font-size-s"><?php echo $this->items[0]->category_hierarchy; ?></p>
+        <?php endif; ?>
+
+        <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
+
         <ul class="jed-grid jed-grid--1-1-1">
             <?php foreach ($this->items as $item) : ?>
                 <?php echo LayoutHelper::render(
                     'cards.extension',
                     [
                                                     'image'         => $item->logo,
-                                                    'title'         => $item->title,
+                                                    'title'         => $item->name,
                                                     'developer'     => $item->developer,
                                                     'score_string'  => $item->score_string,
                                                     'score'         => $item->score,
@@ -58,7 +69,7 @@ $wa->useStyle('com_jed.jazstyle');
                                                     'description'   => $item->description,
                                                     'type'          => $item->type,
                                                     'category'      => $item->category_title,
-                                                    'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->primary_category_id, $item->id)),
+                                                    'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->catid, $item->id)),
                                                     ]
                 ); ?>
             <?php endforeach; ?>

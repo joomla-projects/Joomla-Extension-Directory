@@ -102,11 +102,11 @@ class ReviewsModel extends ListModel
 
         $this->setState('list.limit', $value);
 
-        $value = $app->input->get('limitstart', 0, 'uint');
+        $value = $app->getInput()->get('limitstart', 0, 'uint');
         $this->setState('list.start', $value);
 
         $ordering  = $this->getUserStateFromRequest($this->context . '.filter_order', 'filter_order', 'a.id');
-        $direction = strtoupper($this->getUserStateFromRequest($this->context . '.filter_order_Dir', 'filter_order_Dir', 'DESC'));
+        $direction = strtoupper((string) $this->getUserStateFromRequest($this->context . '.filter_order_Dir', 'filter_order_Dir', 'DESC'));
 
         if (!empty($ordering) || !empty($direction)) {
             $list['fullordering'] = $ordering . ' ' . $direction;
@@ -155,7 +155,7 @@ class ReviewsModel extends ListModel
         $query->select('uc.name AS uEditor');
         $query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
         // Join over the foreign key 'extension_id'
-        $query->select('`#__jed_extensions_3715042`.`title` AS extensions_fk_value_3715042');
+        $query->select('`#__jed_extensions_3715042`.`name` AS extensions_fk_value_3715042');
         $query->join('LEFT', '#__jed_extensions AS #__jed_extensions_3715042 ON #__jed_extensions_3715042.`id` = a.`extension_id`');
         // Join over the foreign key 'supply_option_id'
         $query->select('`#__jed_extension_supply_options_3727708`.`title` AS extensionsupplyoptions_fk_value_3727708');
@@ -170,8 +170,8 @@ class ReviewsModel extends ListModel
         $search = $this->getState('filter.search');
 
         if (!empty($search)) {
-            if (stripos($search, 'id:') === 0) {
-                $query->where('a.id = ' . (int) substr($search, 3));
+            if (stripos((string) $search, 'id:') === 0) {
+                $query->where('a.id = ' . (int) substr((string) $search, 3));
             } else {
                 $search = $db->Quote('%' . $db->escape($search, true) . '%');
                 $query->where('( a.title LIKE ' . $search . ' )');
@@ -211,7 +211,7 @@ class ReviewsModel extends ListModel
                 foreach ($values as $value) {
                     $query = $db->getQuery(true);
                     $query
-                        ->select('`#__jed_extensions_3715042`.`title`')
+                        ->select('`#__jed_extensions_3715042`.`name`')
                         ->from($db->quoteName('#__jed_extensions', '#__jed_extensions_3715042'))
                         ->where($db->quoteName('#__jed_extensions_3715042.id') . ' = ' . $db->quote($db->escape($value)));
 
@@ -219,7 +219,7 @@ class ReviewsModel extends ListModel
                     $results = $db->loadObject();
 
                     if ($results) {
-                        $textValue[] = $results->title;
+                        $textValue[] = $results->name;
                     }
                 }
 
@@ -268,7 +268,7 @@ class ReviewsModel extends ListModel
         $error_dateformat = false;
 
         foreach ($filters as $key => $value) {
-            if (strpos($key, '_dateformat') && !empty($value) && $this->isValidDate($value) == null) {
+            if (strpos((string) $key, '_dateformat') && !empty($value) && $this->isValidDate($value) == null) {
                 $filters[$key]    = '';
                 $error_dateformat = true;
             }
