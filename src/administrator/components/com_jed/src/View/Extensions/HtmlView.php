@@ -14,7 +14,6 @@ namespace Jed\Component\Jed\Administrator\View\Extensions;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\Model\ExtensionsModel;
 use Joomla\CMS\Document\HtmlDocument;
@@ -22,7 +21,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Toolbar\ToolbarFactoryInterface;
 use Joomla\Registry\Registry;
@@ -68,15 +66,13 @@ class HtmlView extends BaseHtmlView
 */
         $model               = $this->getModel();
         $model->setUseExceptions(true);
-        try {
-            $this->state         = $model->getState();
-            $this->items         = $model->getItems();
-            $this->pagination    = $model->getPagination();
-            $this->filterForm    = $model->getFilterForm();
-            $this->activeFilters = $model->getActiveFilters();
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
-        }
+
+        $this->state         = $model->getState();
+        $this->items         = $model->getItems();
+        $this->pagination    = $model->getPagination();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
+
 
         $this->addToolbar();
 
@@ -95,14 +91,16 @@ class HtmlView extends BaseHtmlView
     protected function addToolbar(): void
     {
         /* @var HtmlDocument $doc */
-        $doc = $this->getDocument();
-        $canDo       = JedHelper::getActions('com_jed', 'extension');
+        $doc   = $this->getDocument();
+        $canDo = JedHelper::getActions('com_jed', 'extension');
 
         ToolbarHelper::title(Text::_('COM_JED_EXTENSIONS'), "generic");
 
         $toolbar = $doc->getToolbar();
 
-
+        if ($canDo->get('core.create')) {
+            $toolbar->addNew('extension.add');
+        }
 
         if ($canDo->get('core.edit.state')) {
             $dropdown = $toolbar->dropdownButton('status-group')

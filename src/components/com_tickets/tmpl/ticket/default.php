@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Tickets\Site\View\Ticket\HtmlView $this */
 /**
  * @package JED
  *
@@ -9,140 +8,93 @@
  * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
+
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
-$canEdit = $this->getCurrentUser()->authorise('core.edit', 'com_jed');
+/** @var \Jed\Component\Tickets\Site\View\Ticket\HtmlView $this */
 
-if (!$canEdit && $this->getCurrentUser()->authorise('core.edit.own', 'com_jed')) {
-    $canEdit = $this->getCurrentUser()->id == $this->item->created_by;
-}
-$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$canEdit = JedHelper::canUserEdit($this->item);
+$wa      = Factory::getApplication()->getDocument()->getWebAssetManager();
 
-$wa->getRegistry()->addExtensionRegistryFile('com_jed');
-$wa->useStyle('com_jed.oldjed');
+$wa->getRegistry()->addExtensionRegistryFile('com_tickets');
+$wa->useStyle('com_tickets.Tickets');
 HTMLHelper::_('bootstrap.tooltip');
+$headerlabeloptions = ['hiddenLabel' => true];
+$fieldhiddenoptions = ['hidden' => true];
+//echo "<pre>";print_r($this->item);echo "</pre>";exit();
+
+$isLoggedIn  = JedHelper::isLoggedIn();
+$redirectURL = JedHelper::getLoginlink();
+
+echo LayoutHelper::render('ticket.ticket_edit_header', $this->item);
 ?>
+<div class="ticket-edit front-end-edit">
+    <form id="form-ticket"
+        action="<?php echo Route::_('index.php?option=com_tickets&task=ticket.save'); ?>"
+        method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-12">
+                <div class="widget ticket-header-row">
+                    <h1 class="ticket-header-16">Message History</h1>
+                    <div class="container">
+                        <div class="row">
+                            <?php
+                            $slidesOptions = ["active" => 'ticket_messages_group_slide0'];
+                            echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_messages_group', $slidesOptions);
 
-<div class="item_fields">
+                            $slideid = 0;
+                            foreach ($this->messages as $ticketMessage) {
+                                if ($ticketMessage->message_direction == 0) {
+                                    $inout = "jed-ticket-message-out";
+                                } else {
+                                    $inout = "jed-ticket-message-in";
+                                }
 
-    <table class="table">
+                                echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' . $ticketMessage->subject . ' - ' . JedHelper::prettyDate($ticketMessage->created_on) . '</span>', 'ticket_messages_group' . '_slide' . ($slideid++), $ticketMessage->internal ? 'text-bg-danger' : '');
+                                echo  $ticketMessage->message ;
+                                echo HTMLHelper::_('bootstrap.endSlide');
+                            }
+                            echo HTMLHelper::_('bootstrap.endAccordion');
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="widget">
+                            <h1 class="ticket-header-16">Reply?</h1>
+                            <div class="container">
+                                <div class="row">
+                                    <?php echo $this->form->renderFieldset('message'); ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="submit" class="validate btn btn-primary">
+                            <span class="fas fa-check" aria-hidden="true"></span>
+                            <?php
+                            echo Text::_('JSUBMIT'); ?>
+                        </button>
+                    </div>
+                </div>
 
-        <tr>
-            <th><?php echo Text::_('JGLOBAL_FIELD_ID_LABEL'); ?></th>
-            <td><?php echo $this->item->id; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_TICKETS_TICKETS_TICKET_ORIGIN_LABEL'); ?></th>
-            <td><?php echo $this->item->ticket_origin; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_TICKETS_GENERAL_TYPE_LABEL'); ?></th>
-            <td><?php echo $this->item->ticket_category_type; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_TICKETS_GENERAL_SUBJECT_LABEL'); ?></th>
-            <td><?php echo $this->item->ticket_subject; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_TICKETS_TICKETS_TICKET_TEXT_LABEL'); ?></th>
-            <td><?php echo nl2br((string) $this->item->ticket_text); ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_TICKETS_TICKETS_INTERNAL_NOTES_LABEL'); ?></th>
-            <td><?php echo nl2br((string) $this->item->internal_notes); ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_TICKETS_TICKETS_UPLOADED_FILES_PREVIEW_LABEL'); ?></th>
-            <td><?php echo $this->item->uploaded_files_preview; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_TICKETS_TICKETS_UPLOADED_FILES_LOCATION_LABEL'); ?></th>
-            <td><?php echo $this->item->uploaded_files_location; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_TICKETS_TICKETS_ALLOCATED_GROUP_LABEL'); ?></th>
-            <td><?php echo $this->item->allocated_group; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_TICKETS_TICKETS_ALLOCATED_TO_LABEL'); ?></th>
-            <td><?php echo $this->item->allocated_to_name; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_LABEL'); ?></th>
-            <td><?php echo $this->item->linked_item_type; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_TICKETS_TICKETS_LINKED_ITEM_ID_LABEL'); ?></th>
-            <td><?php echo $this->item->linked_item_id; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('JSTATUS'); ?></th>
-            <td><?php echo $this->item->ticket_status; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_TICKETS_TICKETS_PARENT_ID_LABEL'); ?></th>
-            <td><?php echo $this->item->parent_id; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_TICKETS_GENERAL_STATE_LABEL'); ?></th>
-            <td>
-                <i class="icon-<?php echo ($this->item->state == 1) ? 'publish' : 'unpublish'; ?>"></i></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'); ?></th>
-            <td><?php echo $this->item->created_by_name; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_TICKETS_GENERAL_CREATED_ON_LABEL'); ?></th>
-            <td><?php echo $this->item->created_on; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('JGLOBAL_FIELD_MODIFIED_BY_LABEL'); ?></th>
-            <td><?php echo $this->item->modified_by_name; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_TICKETS_GENERAL_MODIFIED_ON_LABEL'); ?></th>
-            <td><?php echo $this->item->modified_on; ?></td>
-        </tr>
-
-    </table>
-
+                <input type="hidden" name="option" value="com_tickets"/>
+                <input type="hidden" name="task" value="ticket.save"/>
+                <input type="hidden" name="id" value="<?php echo $this->item->id; ?>"/>
+                <?php echo HTMLHelper::_('form.token'); ?>
+    </form>
 </div>
-
-<?php $canCheckin = $this->getCurrentUser()->authorise('core.manage', 'com_jed.' . $this->item->id) || $this->item->checked_out == $this->getCurrentUser()->id; ?>
-<?php if ($canEdit && $this->item->checked_out == 0) : ?>
-    <a class="btn btn-outline-primary"
-       href="<?php echo Route::_('index.php?option=com_tickets&task=ticket.edit&id=' . $this->item->id); ?>"><?php echo Text::_("JGLOBAL_EDIT"); ?></a>
-<?php elseif ($canCheckin && $this->item->checked_out > 0) : ?>
-    <a class="btn btn-outline-primary"
-       href="<?php echo Route::_('index.php?option=com_tickets&task=ticket.checkin&id=' . $this->item->id . '&' . Session::getFormToken() . '=1'); ?>"><?php echo Text::_("JLIB_HTML_CHECKIN"); ?></a>
-
-<?php endif; ?>

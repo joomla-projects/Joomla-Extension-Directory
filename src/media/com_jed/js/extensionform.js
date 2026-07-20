@@ -5,7 +5,7 @@
 // *
 // * @copyright     (C) 2022 Open Source Matters, Inc.  <https://www.joomla.org>
 // * @license       GNU General Public License version 2 or later; see LICENSE.txt
-// */jform_varied_data__varied_data0__title
+// */
 let variedform1 = document.getElementById("jform_supply__supply0__title");
 let variedform2 = document.getElementById("jform_supply__supply1__title");
 let varieddefault10 = document.getElementById("jform_supply__supply0__is_default_data0");

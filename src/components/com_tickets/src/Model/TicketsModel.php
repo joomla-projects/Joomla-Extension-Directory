@@ -16,13 +16,12 @@ namespace Jed\Component\Tickets\Site\Model;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
-use Jed\Component\Jed\Site\Helper\JedHelper;
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
-use stdClass;
+use Joomla\Database\ParameterType;
 
 /**
  * Methods supporting a list of Jed records.
@@ -38,7 +37,7 @@ class TicketsModel extends ListModel
      *
      * @see    ListModel
      * @since  4.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     public function __construct($config = [])
     {
@@ -86,6 +85,11 @@ class TicketsModel extends ListModel
 
 
             $oneItem->ticket_status = Text::_('COM_TICKETS_TICKETS_TICKET_STATUS_OPTION_' . strtoupper((string) $oneItem->ticket_status));
+
+            $linkedItemType                        = TicketType::tryFrom((int) $oneItem->linked_item_type);
+            $oneItem->ticketlinkeditemtypes_string = $linkedItemType !== null
+                ? Text::_('COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_OPTION_' . strtoupper($linkedItemType->name))
+                : Text::_('COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_OPTION_NONE');
         }
 
         return $items;
@@ -97,19 +101,20 @@ class TicketsModel extends ListModel
      * @return object  A \JDatabaseQuery object to retrieve the data set.
      *
      * @since  4.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     protected function getListQuery(): object
     {
+        $user  = $this->getCurrentUser();
         // Create a new query object.
-        $db    =  Factory::getContainer()->get('DatabaseDriver');
+        $db    =  $this->getDatabase();
         $query = $db->getQuery(true);
 
         // Select the required fields from the table.
         $query->select(
             $this->getState(
                 'list.select',
-                'DISTINCT a.*'
+                'a.*'
             )
         );
 
@@ -128,27 +133,37 @@ class TicketsModel extends ListModel
         // Join over the user field 'allocated_to'
         $query->select('`allocated_to`.name AS `allocated_to`');
         $query->join('LEFT', '#__users AS `allocated_to` ON `allocated_to`.id = a.`allocated_to`');
-        // Join over the foreign key 'linked_item_type'
-        $query->select('`jt_linked_item_types`.`title` AS ticketlinkeditemtypes_string');
-        $query->join('LEFT', '#__jed_ticket_linked_item_types AS jt_linked_item_types ON jt_linked_item_types.`id` = a.`linked_item_type`');
 
         // Join over the created by field 'created_by'
-        $query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
+        $query->leftJoin($db->qn('#__users', 'created_by'), 'created_by.id = a.created_by');
 
         // Join over the created by field 'modified_by'
         $query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
-        //if(JedHelper::isAdminOrSuperUser()){
-        $query->where("a.created_by = " . Factory::getApplication()->getIdentity()->id);
-        //}
 
-        /*if (!Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed'))
-        {
-            $query->where('a.state = 1');
+        if ($user->authorise('core.manage', 'com_tickets')) {
+            $published = (string) $this->getState('filter.state');
+
+            if ($published !== '' && is_numeric($published)) {
+                $state = (int) $published;
+                $query->where($db->quoteName('a.state') . ' = :state')
+                    ->bind(':state', $state, ParameterType::INTEGER);
+            } else {
+                $query->whereIn($db->quoteName('a.state'), [1,2]);
+            }
+        } else {
+            $query->where('a.created_by = ' . $user->id);
+
+            $published = (string) $this->getState('filter.state');
+            $states    = [0,1,2];
+
+            if ($published !== '' && is_numeric($published) && in_array($published, $states)) {
+                $state = (int) $published;
+                $query->where($db->quoteName('a.state') . ' = :state')
+                    ->bind(':state', $state, ParameterType::INTEGER);
+            } else {
+                $query->whereIn($db->quoteName('a.state'), [1,2]);
+            }
         }
-        else
-        {
-            $query->where('(a.state IN (0, 1))');
-        }*/
 
         // Filter by search in title
         $search = $this->getState('filter.search');
@@ -185,38 +200,8 @@ class TicketsModel extends ListModel
         if ($orderCol && $orderDirn) {
             $query->order($db->escape($orderCol . ' ' . $orderDirn));
         }
-        //echo($query->__toString());exit();
-        // echo $db->replacePrefix((string) $query);
+
         return $query;
-    }
-
-    /**
-     * Overrides the default function to check Date fields format, identified by
-     * "_dateformat" suffix, and erases the field if it's not correct.
-     *
-     * @return mixed
-     * @since  4.0.0
-     * @throws Exception
-     */
-    protected function loadFormData(): mixed
-    {
-        $app              = Factory::getApplication();
-        $filters          = $app->getUserState($this->context . '.filter', []);
-        $error_dateformat = false;
-
-        foreach ($filters as $key => $value) {
-            if (strpos((string) $key, '_dateformat') && !empty($value) && JedHelper::isValidDate($value) == null) {
-                $filters[$key]    = '';
-                $error_dateformat = true;
-            }
-        }
-
-        if ($error_dateformat) {
-            $app->enqueueMessage(Text::_("COM_TICKETS_VEL_GENERAL_DATE_FORMAT"), "warning");
-            $app->setUserState($this->context . '.filter', $filters);
-        }
-
-        return parent::loadFormData();
     }
 
     /**
@@ -230,7 +215,7 @@ class TicketsModel extends ListModel
      * @return void
      *
      * @since  4.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     protected function populateState($ordering = null, $direction = null): void
     {

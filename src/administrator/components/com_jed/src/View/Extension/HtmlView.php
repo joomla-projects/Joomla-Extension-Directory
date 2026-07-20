@@ -14,7 +14,6 @@ namespace Jed\Component\Jed\Administrator\View\Extension;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\Model\ExtensionModel;
 use Joomla\CMS\Factory;
@@ -22,7 +21,6 @@ use Joomla\Database\ParameterType;
 use stdClass;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -43,9 +41,7 @@ class HtmlView extends BaseHtmlView
     protected mixed $extensionscores;
     protected mixed $extensionimage;
     protected mixed $extensionscore;
-    protected mixed $extensionvarieddatum_form;
     protected mixed $extensionform;
-    protected mixed $varied_forms;
     protected ?stdClass $historyItem = null;
     protected array $images          = [];
     protected array $files           = [];
@@ -195,6 +191,17 @@ class HtmlView extends BaseHtmlView
         // If an existing item, can save to a copy.
         if (!$isNew && $canDo->get('core.create')) {
             ToolbarHelper::custom('extension.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+        }
+
+        // If an existing item, queue a manual, per-extension score recalculation job.
+        if (!$isNew && !$checkedOut && $canDo->get('core.edit')) {
+            ToolbarHelper::custom(
+                'extension.recalculateScore',
+                'refresh.png',
+                'refresh.png',
+                'COM_JED_TOOLBAR_RECALCULATE_SCORE',
+                false
+            );
         }
 
         if (empty($this->item->id)) {

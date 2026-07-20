@@ -14,9 +14,7 @@ namespace Jed\Component\Jed\Site\View\Reviewcommentform;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -37,7 +35,6 @@ class HtmlView extends BaseHtmlView
 
     protected Registry $params;
 
-
     protected bool $canSave;
 
     /**
@@ -57,17 +54,11 @@ class HtmlView extends BaseHtmlView
 
         $model = $this->getModel();
         $model->setUseExceptions(true);
-        try {
-            $this->state      = $model->getState();
-            $this->item       = $model->getItem();
-            $this->params     = $app->getParams('com_jed');
-            $this->canSave    = JedHelper::canSave();
-            $this->form       = $model->getForm();
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
-        }
-
-
+        $this->state      = $model->getState();
+        $this->item       = $model->getItem();
+        $this->params     = $app->getParams('com_jed');
+        $this->canSave    = JedHelper::canSave();
+        $this->form       = $model->getForm();
 
         $this->prepareDocument();
 
@@ -121,7 +112,6 @@ class HtmlView extends BaseHtmlView
         if ($this->params->get('robots')) {
             $this->getDocument()->setMetadata('robots', $this->params->get('robots'));
         }
-
 
         // Add Breadcrumbs
         $pathway        = $app->getPathway();
