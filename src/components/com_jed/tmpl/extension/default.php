@@ -15,12 +15,13 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
 use Jed\Component\Jed\Site\Helper\JedtrophyHelper;
 use Jed\Component\Jed\Site\View\Extension\HtmlView;
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
-/** @var \Jed\Component\Jed\Site\View\Extension\HtmlView $this */
+/** @var HtmlView $this */
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
@@ -144,7 +145,7 @@ $wa->useStyle('com_jed.jazstyle');
 
                             <?php
 
-                            $url =  Route::_('index.php?option=com_tickets&view=ticketform&litem=2&lid=' . $this->item->id . '&vr=' . $this->item->id)
+                            $url =  Route::_('index.php?option=com_tickets&view=ticketform&litem=' . TicketType::Extension->value . '&lid=' . $this->item->id . '&vr=' . $this->item->id)
                             ?>
                             <a href="<?php echo $url; ?>" class="button button--grey">Report</a>
                             <a href="#" class="button button--grey">Share</a>

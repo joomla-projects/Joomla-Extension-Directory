@@ -19,6 +19,7 @@ namespace Jed\Component\Tickets\Administrator\View\Ticket;
 
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\Model\ReviewModel;
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Jed\Component\Tickets\Administrator\Model\TicketModel;
 use Vel\Component\Vel\Administrator\Model\AbandonedreportModel;
 use Vel\Component\Vel\Administrator\Model\DeveloperupdateModel;
@@ -230,11 +231,14 @@ class HtmlView extends BaseHtmlView
 
                 //$this->linked_form->bind($this->linked_item_data);
             }
-            if ($this->linked_item_type === 2) { // Extension
-                $this->linked_item_Model     = null;
+            if ($this->linked_item_type === TicketType::Extension->value) {
+                $extension_model = new ExtensionModel();
+                $extension_model->setUseExceptions(true);
+
+                $extension_id                = $this->linked_item_id;
                 $this->related_object_string = "Extension is displayed in 'Linked Extensions' tab.";
             }
-            if ($this->linked_item_type === 3) { //Review
+            if ($this->linked_item_type === TicketType::Review->value) {
                 $this->linked_item_Model     = new ReviewModel();
                 $this->related_object_string = "Review is displayed in 'Linked Review' tab.";
 
@@ -248,7 +252,7 @@ class HtmlView extends BaseHtmlView
 
                 $this->linked_form->bind($this->linked_item_data);
             }
-            if ($this->linked_item_type === 4) { // VEL Report
+            if ($this->linked_item_type === TicketType::VELReport->value) {
                 $this->linked_item_Model = new ReportModel();
 
                 $this->linked_item_data = $model->getVelReportData();
@@ -263,7 +267,7 @@ class HtmlView extends BaseHtmlView
                     $this->related_object_string = "Awaiting creation of VEL Item";
                 }
             }
-            if ($this->linked_item_type === 5) { // VEL Developer Update
+            if ($this->linked_item_type === TicketType::VulnerableExtension->value) { // VEL Developer Update
                 $this->linked_item_Model = new DeveloperupdateModel();
 
                 $this->linked_item_data = $model->getVelDeveloperUpdateData();
@@ -278,7 +282,7 @@ class HtmlView extends BaseHtmlView
                     $this->related_object_string = "Awaiting Linking to VEL Item";
                 }
             }
-            if ($this->linked_item_type === 6) { // VEL Abandonware Report
+            if ($this->linked_item_type === TicketType::AbandonedExtension->value) { // VEL Abandonware Report
                 $this->linked_item_Model = new AbandonedreportModel();
                 $this->linked_item_data  = $model->getVelAbandonedReportData();
 

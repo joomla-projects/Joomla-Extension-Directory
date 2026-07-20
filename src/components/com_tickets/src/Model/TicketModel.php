@@ -19,6 +19,7 @@ namespace Jed\Component\Tickets\Site\Model;
 
 use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ItemModel;
@@ -267,19 +268,10 @@ class TicketModel extends ItemModel
             $textValue = [];
 
             foreach ($values as $value) {
-                $db    = Factory::getContainer()->get('DatabaseDriver');
-                $query = $db->getQuery(true);
+                $linkedItemType = TicketType::tryFrom((int) $value);
 
-                $query
-                    ->select('`#__jed_ticket_linked_item_types_3583670`.`title`')
-                    ->from($db->quoteName('#__jed_ticket_linked_item_types', '#__jed_ticket_linked_item_types_3583670'))
-                    ->where($db->quoteName('id') . ' = ' . $db->quote($value));
-
-                $db->setQuery($query);
-                $results = $db->loadObject();
-
-                if ($results) {
-                    $textValue[] = $results->title;
+                if ($linkedItemType !== null) {
+                    $textValue[] = Text::_('COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_OPTION_' . strtoupper($linkedItemType->name));
                 }
             }
 
