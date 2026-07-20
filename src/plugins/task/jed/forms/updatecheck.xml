@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+	<fields name="params">
+		<fieldset name="task_params">
+			<field
+				name="batch_size"
+				type="number"
+				label="PLG_TASK_JED_LABEL_BATCH_SIZE"
+				default="50"
+				min="1"
+				step="1"
+				filter="int"
+			/>
+			<field
+				name="force"
+				type="radio"
+				label="PLG_TASK_JED_LABEL_FORCE"
+				description="PLG_TASK_JED_LABEL_FORCE_DESC"
+				layout="joomla.form.field.radio.switcher"
+				default="0"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+		</fieldset>
+	</fields>
+</form>

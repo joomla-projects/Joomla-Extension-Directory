@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+	<fields name="params">
+		<fieldset name="task_params">
+			<field
+				name="batch_size"
+				type="number"
+				label="PLG_TASK_JED_LABEL_QUEUE_BATCH_SIZE"
+				default="2"
+				min="1"
+				step="1"
+				filter="int"
+			/>
+			<field
+				name="job_timeout"
+				type="number"
+				label="PLG_TASK_JED_LABEL_JOB_TIMEOUT"
+				description="PLG_TASK_JED_LABEL_JOB_TIMEOUT_DESC"
+				default="900"
+				min="30"
+				step="30"
+				filter="int"
+			/>
+		</fieldset>
+	</fields>
+</form>
