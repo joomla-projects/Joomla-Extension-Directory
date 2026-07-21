@@ -147,22 +147,22 @@ class HtmlView extends BaseHtmlView
         $linked_item   = $input->get('litem', -1, 'int');
         $vr            = $input->get('vr', -1, 'int');
 
-            $this->item->ticket_title = "Submit Ticket";
-            if ($linked_id <> -1) {
-                $this->item->linked_item_type = $linked_item;
-                $this->item->linked_item_id   = $linked_id;
-                $this->item->vr               = $vr;
-                $ticket_type                  = "Unknown";
-                if ($linked_item === TicketType::Extension->value) {
-                    $ticket_type = "Extension";
-                }
-
-                if ($linked_item === TicketType::Review->value) {
-                    $ticket_type = "Review";
-                }
-                $this->item->extension_title = JedHelper::getExtensionTitle($vr);
-                $this->item->ticket_title    = "Reporting " . $ticket_type . ' - ' . $this->item->extension_title;
+        $this->item->ticket_title = "Submit Ticket";
+        if ($linked_id <> -1) {
+            $this->item->linked_item_type = $linked_item;
+            $this->item->linked_item_id   = $linked_id;
+            $this->item->vr               = $vr;
+            $ticket_type                  = "Unknown";
+            if ($linked_item === TicketType::Extension->value) {
+                $ticket_type = "Extension";
             }
+
+            if ($linked_item === TicketType::Review->value) {
+                $ticket_type = "Review";
+            }
+            $this->item->extension_title = JedHelper::getExtensionTitle($vr);
+            $this->item->ticket_title    = "Reporting " . $ticket_type . ' - ' . $this->item->extension_title;
+        }
 
 
 
