@@ -78,14 +78,14 @@ class AbandoneditemController extends BaseController
         if (!$velItemId) {
             $table = new VulnerableitemTable($db);
             $table->bind([
-                'id'                   => 0,
-                'vulnerable_item_name' => $report->extension_name,
+                'id'                      => 0,
+                'vulnerable_item_name'    => $report->extension_name,
                 'vulnerable_item_version' => $report->extension_version,
-                'title'                => trim($report->extension_name . ', ' . $report->extension_version . ', Abandoned', ', '),
-                'status'               => 3, // COM_VEL_GENERAL_STATUS_OPTION_3 = Abandoned
-                'report_id'            => $reportId,
-                'exploit_type'         => 5,
-                'discovered_by'        => $report->reporter_fullname,
+                'title'                   => trim($report->extension_name . ', ' . $report->extension_version . ', Abandoned', ', '),
+                'status'                  => 3, // COM_VEL_GENERAL_STATUS_OPTION_3 = Abandoned
+                'report_id'               => $reportId,
+                'exploit_type'            => 5,
+                'discovered_by'           => $report->reporter_fullname,
             ]);
             $table->store();
             $velItemId = (int) $table->id;
