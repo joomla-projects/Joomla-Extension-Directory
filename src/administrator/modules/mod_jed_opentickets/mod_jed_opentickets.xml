@@ -9,7 +9,7 @@
     <authorUrl>www.joomla.org</authorUrl>
     <version>##VERSION##</version>
     <description>MOD_JED_OPENTICKETS_XML_DESCRIPTION</description>
-    <namespace path="src">Jed\Module\OpenTickets\Administrator</namespace>
+    <namespace path="src">Jed\Module\OpenTickets</namespace>
     <scriptfile>script.php</scriptfile>
 
     <files>
