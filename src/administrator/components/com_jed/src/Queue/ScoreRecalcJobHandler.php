@@ -18,6 +18,10 @@ use Jed\Component\Jed\Administrator\Service\ScoreCalculationService;
 /**
  * Handles `extension.score_recalc` queue jobs: recomputes one extension's score
  * columns. Always enqueued for a single extension, never as a dataset-wide scan.
+ * Enqueued both by the manual "Recalculate Score" admin action and automatically
+ * whenever a review's published state changes (see
+ * {@see \Jed\Component\Jed\Administrator\Model\ReviewModel::publish()} and
+ * {@see \Jed\Component\Jed\Administrator\Table\ReviewTable::store()}).
  *
  * @since 4.1.0
  */
@@ -39,6 +43,8 @@ class ScoreRecalcJobHandler implements JobHandlerInterface
      */
     public function handle(object $job): array
     {
-        return $this->scoreCalculationService->recalculateFor((int) $job->extension_id);
+        $extensionId = (int) $job->extension_id;
+
+        return $this->scoreCalculationService->recalculateFor($extensionId);
     }
 }

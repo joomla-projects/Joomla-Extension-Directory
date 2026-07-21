@@ -19,8 +19,8 @@ use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Event\SubscriberInterface;
 
 /**
- * Default extension scoring algorithm: an unweighted mean of
- * `#__jed_extension_scores` rows.
+ * Default extension scoring algorithm: an unweighted mean across an extension's
+ * published `#__jed_reviews` rows.
  *
  * Deliberately a placeholder - a "secret" replacement algorithm can be installed
  * as another `jed`-group plugin with a lower `ordering` (System > Plugins, filtered
@@ -97,14 +97,10 @@ final class ScoreAvg extends CMSPlugin implements SubscriberInterface
             $result[$resultKey] = $sum / \count($scores);
         }
 
-        $reviewCount = 0;
-
-        foreach ($scores as $row) {
-            $reviewCount += (int) $row->number_of_reviews;
-        }
-
+        // Each row in $scores is now one real review (not a rollup with its own
+        // counter column), so the review count is simply how many rows there are.
         $result['score_overall'] = array_sum($result) / \count($dimensions);
-        $result['score_count']   = $reviewCount;
+        $result['score_count']   = \count($scores);
 
         $event->setArgument('result', $result);
     }

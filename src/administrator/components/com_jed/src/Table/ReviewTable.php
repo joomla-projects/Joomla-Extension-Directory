@@ -15,10 +15,12 @@ namespace Jed\Component\Jed\Administrator\Table;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Queue\QueueService;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
+use Joomla\Database\ParameterType;
 
 /**
  * Review table
@@ -38,7 +40,6 @@ class ReviewTable extends Table
     {
         $this->typeAlias = 'com_jed.review';
         parent::__construct('#__jed_reviews', 'id', $db);
-        $this->setColumnAlias('published', 'state');
     }
 
     /**
@@ -81,15 +82,6 @@ class ReviewTable extends Table
             }
         } else {
             $src['extension_id'] = 0;
-        }
-
-        // Support for multiple or not foreign key field: supply_option_id
-        if (!empty($src['supply_option_id'])) {
-            if (is_array($src['supply_option_id'])) {
-                $src['supply_option_id'] = implode(',', $src['supply_option_id']);
-            }
-        } else {
-            $src['supply_option_id'] = 0;
         }
 
         // Support for alias field: alias
@@ -171,6 +163,12 @@ class ReviewTable extends Table
      * If a primary key value is set the row with that primary key value will be updated with the instance property values.
      * If no primary key value is set a new row will be inserted into the database with the properties from the Table instance.
      *
+     * Overridden to enqueue an `extension.score_recalc` job whenever this save changes
+     * the row's published-ness (e.g. an admin editing a single review's status field
+     * and clicking Save, rather than using the list "publish" toolbar action, which
+     * goes through {@see \Jed\Component\Jed\Administrator\Model\ReviewModel::publish()}
+     * instead and is not affected by this override).
+     *
      * @param bool $updateNulls True to update fields even if they are null.
      *
      * @return bool  True on success.
@@ -179,7 +177,31 @@ class ReviewTable extends Table
      */
     public function store($updateNulls = true): bool
     {
-        return parent::store($updateNulls);
+        $wasPublished = false;
+
+        if ($this->id) {
+            $db    = $this->getDatabase();
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('published'))
+                ->from($db->quoteName('#__jed_reviews'))
+                ->where($db->quoteName('id') . ' = :id')
+                ->bind(':id', $this->id, ParameterType::INTEGER);
+            $wasPublished = (int) $db->setQuery($query)->loadResult() === 1;
+        }
+
+        $result = parent::store($updateNulls);
+
+        if ($result) {
+            $nowPublished = (int) $this->published === 1;
+
+            if ($wasPublished !== $nowPublished) {
+                $queueService = new QueueService($this->getDatabase());
+                $userId       = (int) (Factory::getApplication()->getIdentity()->id ?? 0);
+                $queueService->enqueue('extension.score_recalc', (int) $this->extension_id, null, [], $userId);
+            }
+        }
+
+        return $result;
     }
 
     /**

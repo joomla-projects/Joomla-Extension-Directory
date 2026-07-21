@@ -22,7 +22,7 @@ use Joomla\CMS\Event\AbstractEvent;
  *
  * Arguments:
  * - `extensionId` (int) The extension being scored.
- * - `scores`      (object[]) Raw, unaveraged `#__jed_extension_scores` rows for the extension.
+ * - `scores`      (object[]) Raw, unaveraged published `#__jed_reviews` rows for the extension.
  * - `result`      (array|null) Starts null. The first listener to set it "wins" -
  *                  later listeners should check it is still null before acting.
  *
@@ -32,7 +32,7 @@ final class CalculateExtensionScoreEvent extends AbstractEvent
 {
     /**
      * @param int      $extensionId The extension being scored.
-     * @param object[] $scores      Raw, unaveraged `#__jed_extension_scores` rows for the extension.
+     * @param object[] $scores      Raw, unaveraged published `#__jed_reviews` rows for the extension.
      *
      * @since 4.1.0
      */

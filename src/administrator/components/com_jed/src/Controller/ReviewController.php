@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Administrator\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Model\ReviewModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\FormController;
 
@@ -32,25 +33,32 @@ class ReviewController extends FormController
      *
      * function for ajax setting a review's published status
      *
+     * Goes through {@see \Jed\Component\Jed\Administrator\Table\ReviewTable::store()}
+     * (rather than a raw UPDATE) so the automatic score-recalculation hook there fires
+     * when this changes the review's published-ness.
+     *
      * @since  4.0.0
      * @throws Exception
      */
     public function setPublished()
     {
-        //  Session::checkToken('post') or die;
-        $app       = Factory::getApplication();
-        $review_id = $app->getInput()->get('itemId', 0, 'int');
+        $this->checkToken();
 
-        $option_id = $app->getInput()->get('optionId', 0, 'int');
-        $db        = Factory::getContainer()->get('DatabaseDriver');
+        $app      = Factory::getApplication();
+        $reviewId = $app->getInput()->getInt('itemId', 0);
+        $optionId = $app->getInput()->getInt('optionId', 0);
 
-        $fields     = [$db->quoteName('published') . ' = ' . $db->quote($option_id)];
-        $conditions = [$db->quoteName('id') . ' = ' . $db->quote($review_id)];
+        if (!$reviewId) {
+            return;
+        }
 
+        /** @var ReviewModel $model */
+        $model = $this->getModel();
+        $table = $model->getTable();
 
-        $queryUpdate = $db->getQuery(true)
-            ->update($db->quoteName('#__jed_reviews'))->set($fields)->where($conditions);
-        $db->setQuery($queryUpdate);
-        $db->execute();
+        if ($table->load($reviewId)) {
+            $table->published = $optionId;
+            $table->store();
+        }
     }
 }

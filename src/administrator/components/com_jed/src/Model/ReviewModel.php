@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Queue\QueueService;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
@@ -121,6 +122,66 @@ class ReviewModel extends AdminModel
     public function getTable($name = 'Review', $prefix = 'Administrator', $options = []): Table
     {
         return parent::getTable($name, $prefix, $options);
+    }
+
+    /**
+     * Overridden to enqueue an `extension.score_recalc` job for every extension whose
+     * review published-ness actually changed - core `AdminModel::publish()` (via
+     * `Table::publish()`) updates `#__jed_reviews` directly and doesn't go through
+     * {@see \Jed\Component\Jed\Administrator\Table\ReviewTable::store()}, so this is
+     * the hook point for the bulk publish/unpublish toolbar actions (including the
+     * Review ticket's "Approve" action).
+     *
+     * @param array|int $pks   An array of, or a single, primary key to change.
+     * @param int       $value The value of the published state.
+     *
+     * @return bool True on success.
+     *
+     * @since 4.1.0
+     */
+    public function publish(&$pks, $value = 1): bool
+    {
+        $db  = $this->getDatabase();
+        $ids = array_map('intval', (array) $pks);
+        $before = [];
+
+        if ($ids !== []) {
+            $query = $db->getQuery(true)
+                ->select($db->quoteName(['id', 'extension_id', 'published']))
+                ->from($db->quoteName('#__jed_reviews'))
+                ->whereIn($db->quoteName('id'), $ids);
+            $before = $db->setQuery($query)->loadObjectList('id');
+        }
+
+        $result = parent::publish($pks, $value);
+
+        if ($result) {
+            $nowPublished = (int) $value === 1;
+            $extensionIds = [];
+
+            foreach ((array) $pks as $id) {
+                $old = $before[$id] ?? null;
+
+                if ($old === null) {
+                    continue;
+                }
+
+                $wasPublished = (int) $old->published === 1;
+
+                if ($wasPublished !== $nowPublished) {
+                    $extensionIds[(int) $old->extension_id] = true;
+                }
+            }
+
+            $queueService = new QueueService($db);
+            $userId       = (int) (Factory::getApplication()->getIdentity()->id ?? 0);
+
+            foreach (array_keys($extensionIds) as $extensionId) {
+                $queueService->enqueue('extension.score_recalc', $extensionId, null, [], $userId);
+            }
+        }
+
+        return $result;
     }
 
     /**

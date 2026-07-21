@@ -21,10 +21,13 @@ use Joomla\Database\ParameterType;
 use RuntimeException;
 
 /**
- * Recalculates one extension's score columns from `#__jed_extension_scores`.
+ * Recalculates one extension's score columns from its published
+ * `#__jed_reviews` rows.
  *
- * Always called for a single extension, triggered manually by an admin action
- * (never a scheduled scan of the whole dataset - see
+ * Triggered manually by an admin action, and automatically whenever a
+ * review's published state changes (see {@see \Jed\Component\Jed\Administrator\Model\ReviewModel::publish()}
+ * and {@see \Jed\Component\Jed\Administrator\Table\ReviewTable::store()}) -
+ * never a scheduled scan of the whole dataset (see
  * {@see \Jed\Component\Jed\Administrator\Queue\ScoreRecalcJobHandler}). The actual
  * averaging algorithm lives in a `jed`-group plugin
  * ({@see \Jed\Component\Jed\Administrator\Event\CalculateExtensionScoreEvent}), so
@@ -77,9 +80,10 @@ class ScoreCalculationService
         }
 
         $fields = $this->normaliseResult($result);
+        $obj = (object) $fields;
+        $obj->id = $extensionId;
 
-        $this->updateRow('#__jed_extensions', $extensionId, $fields);
-        $this->updateActiveHistoryRow($extensionId, $fields);
+        $this->db->updateObject('#__jed_extensions', $obj, 'id');
 
         return $fields;
     }
@@ -87,7 +91,9 @@ class ScoreCalculationService
     /**
      * @param int $extensionId The extension id.
      *
-     * @return object[] The published (`state = 1`) `#__jed_extension_scores` rows.
+     * @return object[] The published (`published = 1`) `#__jed_reviews` rows for this
+     *                   extension, with their score-dimension columns aliased to the
+     *                   `*_score` names the `onJedCalculateExtensionScore` contract expects.
      *
      * @since 4.1.0
      */
@@ -97,9 +103,18 @@ class ScoreCalculationService
 
         $query = $db->getQuery(true)
             ->select('*')
-            ->from($db->quoteName('#__jed_extension_scores'))
+            ->select(
+                [
+                    $db->quoteName('functionality', 'functionality_score'),
+                    $db->quoteName('ease_of_use', 'ease_of_use_score'),
+                    $db->quoteName('support', 'support_score'),
+                    $db->quoteName('documentation', 'documentation_score'),
+                    $db->quoteName('value_for_money', 'value_for_money_score'),
+                ]
+            )
+            ->from($db->quoteName('#__jed_reviews'))
             ->where($db->quoteName('extension_id') . ' = :id')
-            ->where($db->quoteName('state') . ' = 1')
+            ->where($db->quoteName('published') . ' = 1')
             ->bind(':id', $extensionId, ParameterType::INTEGER);
 
         return $db->setQuery($query)->loadObjectList();
@@ -133,68 +148,14 @@ class ScoreCalculationService
         $fields = [];
 
         foreach ($decimalColumns as $column) {
-            $fields[$column] = number_format((float) ($result[$column] ?? 0), 2, '.', '');
+            // Clamp to what the decimal(3,2) score_* columns can actually hold, in case an
+            // upstream plugin's scale doesn't match (defensive - avoids a hard SQL error).
+            $value = max(0.0, min(5.0, (float) ($result[$column] ?? 0)));
+            $fields[$column] = number_format($value, 2, '.', '');
         }
 
         $fields['score_count'] = (int) ($result['score_count'] ?? 0);
 
         return $fields;
-    }
-
-    /**
-     * @param int   $extensionId The extension id.
-     * @param array $fields      The normalised score fields.
-     *
-     * @return void
-     *
-     * @since 4.1.0
-     */
-    private function updateActiveHistoryRow(int $extensionId, array $fields): void
-    {
-        $db = $this->db;
-
-        $query = $db->getQuery(true)
-            ->select($db->quoteName('id'))
-            ->from($db->quoteName('#__jed_extensions_history'))
-            ->where($db->quoteName('extension_id') . ' = :id')
-            ->where($db->quoteName('active') . ' = 1')
-            ->bind(':id', $extensionId, ParameterType::INTEGER);
-        $historyId = $db->setQuery($query)->loadResult();
-
-        if ($historyId) {
-            $this->updateRow('#__jed_extensions_history', (int) $historyId, $fields);
-        }
-    }
-
-    /**
-     * @param string $table  The table name (with #__ prefix placeholder).
-     * @param int    $id     The row id.
-     * @param array  $fields Column => value pairs to write.
-     *
-     * @return void
-     *
-     * @since 4.1.0
-     */
-    private function updateRow(string $table, int $id, array $fields): void
-    {
-        $db = $this->db;
-
-        $bindValues = [];
-
-        foreach ($fields as $column => $value) {
-            $bindValues[$column] = (string) $value;
-        }
-
-        $query = $db->getQuery(true)->update($db->quoteName($table));
-
-        foreach ($bindValues as $column => $value) {
-            $query->set($db->quoteName($column) . ' = :' . $column)
-                ->bind(':' . $column, $bindValues[$column], ParameterType::STRING);
-        }
-
-        $query->where($db->quoteName('id') . ' = :rowId')
-            ->bind(':rowId', $id, ParameterType::INTEGER);
-
-        $db->setQuery($query)->execute();
     }
 }
