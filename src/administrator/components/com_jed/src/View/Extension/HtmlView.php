@@ -38,9 +38,7 @@ class HtmlView extends BaseHtmlView
     protected ?Form $form = null;
     protected mixed $forms;
     protected mixed $extensionimages;
-    protected mixed $extensionscores;
     protected mixed $extensionimage;
-    protected mixed $extensionscore;
     protected mixed $extensionform;
     protected ?stdClass $historyItem = null;
     protected array $images          = [];

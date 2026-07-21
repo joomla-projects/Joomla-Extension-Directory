@@ -63,16 +63,11 @@ class DisplayController extends BaseController
                 // We need to add extra views
                 // For the default layout, we need to also push the action logs model into the view
                 $extensionimagesModel      = $this->getModel('Extensionimages');
-                $extensionscoresModel      = $this->getModel('Extensionscores');
                 $extensionimageModel       = $this->getModel('Extensionimage');
-                $extensionscoreModel       = $this->getModel('Extensionscore');
-
 
                 // And push the model into the view
                 $view->setModel($extensionimagesModel, false);
-                $view->setModel($extensionscoresModel, false);
                 $view->setModel($extensionimageModel, false);
-                $view->setModel($extensionscoreModel, false);
             }
 
             $view->setLayout($lName);

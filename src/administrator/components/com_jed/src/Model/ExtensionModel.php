@@ -675,37 +675,6 @@ class ExtensionModel extends AdminModel
     }
 
     /**
-     * Get array of review scores for extension
-     *
-     * @param int $extension_id
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    public function getScores(int $extension_id): array
-    {
-        $db = $this->getDatabase();
-
-        $query = $db->getQuery(true);
-        $query->select('*')->from($db->quoteName('#__jed_extension_scores'))->where($db->quoteName('extension_id') . ' = ' . $db->quote($extension_id));
-
-        $db->setQuery($query);
-        $result = $db->loadObjectList();
-        $retval = [];
-        foreach ($result as $r) {
-            if ($r->supply_option_id == 1) {
-                $supply = 'Free';
-            } else {
-                $supply = 'Paid';
-            }
-            $retval[$supply] = $r;
-        }
-
-        return $retval;
-    }
-
-    /**
      * Method to get Developer Information
      *
      * @return stdClass
