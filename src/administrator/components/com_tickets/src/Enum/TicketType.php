@@ -25,7 +25,7 @@ enum TicketType: int
 {
     case Extension           = 1;
     case Review              = 2;
-    case Score               = 3;
+    // 3 was used for wrong scoring code
     case AbandonedExtension  = 4;
     case VELReport           = 5;
     case VulnerableExtension = 6;
