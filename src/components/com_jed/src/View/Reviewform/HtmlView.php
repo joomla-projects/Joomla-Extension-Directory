@@ -60,8 +60,6 @@ class HtmlView extends BaseHtmlView
 
     protected mixed $extension_details;
 
-    protected mixed $supplytypes;
-
     /**
      * Display the view
      *
@@ -86,12 +84,16 @@ class HtmlView extends BaseHtmlView
         $this->canSave    = JedHelper::canSave();
         $this->form       = $model->getForm();
 
+        // For an existing review, its own extension_id column is authoritative. For a brand
+        // new one, the query string won't survive ReviewformController::edit()'s redirect, so
+        // fall back to the session state that controller stashes it in.
         $input        = $app->getInput();
-        $extension_id = $input->get('extension_id', -1, 'int');
+        $extension_id = !empty($this->item->extension_id)
+            ? (int) $this->item->extension_id
+            : $input->getInt('extension_id', (int) $app->getUserState('com_jed.edit.review.extension_id', -1));
 
         $extension_model         = new ExtensionModel();
         $this->extension_details = $extension_model->getItem($extension_id);
-        $this->supplytypes       = $extension_model->getSupplyTypes($extension_id);
 
         $this->prepareDocument();
 

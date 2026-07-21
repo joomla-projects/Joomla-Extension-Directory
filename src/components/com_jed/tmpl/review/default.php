@@ -41,11 +41,6 @@ if (!$canEdit && $this->getCurrentUser()->authorise('core.edit.own', 'com_jed'))
         </tr>
 
         <tr>
-            <th><?php echo Text::_('COM_JED_EXTENSION_SUPPLY_OPTION_ID_LABEL'); ?></th>
-            <td><?php echo $this->item->supply_option_id; ?></td>
-        </tr>
-
-        <tr>
             <th><?php echo Text::_('COM_JED_GENERAL_TITLE_LABEL'); ?></th>
             <td><?php echo $this->item->title; ?></td>
         </tr>

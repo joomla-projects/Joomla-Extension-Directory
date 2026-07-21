@@ -62,10 +62,6 @@ $wa->useStyle('com_jed.list');
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_EXTENSION_SUPPLY_OPTION_ID_LABEL', 'a.supply_option_id', $listDirn, $listOrder); ?>
-                    </th>
-
-                    <th class=''>
                         <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_TITLE_LABEL', 'a.title', $listDirn, $listOrder); ?>
                     </th>
 
@@ -166,9 +162,6 @@ $wa->useStyle('com_jed.list');
                     </td>
                     <td>
                         <?php echo $item->extension_id; ?>
-                    </td>
-                    <td>
-                        <?php echo $item->supply_option_id; ?>
                     </td>
                     <td>
                         <?php $canCheckin = $this->getCurrentUser()->authorise('core.manage', 'com_jed.' . $item->id) || $item->checked_out == $this->getCurrentUser()->id; ?>

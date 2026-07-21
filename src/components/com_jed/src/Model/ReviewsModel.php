@@ -43,7 +43,6 @@ class ReviewsModel extends ListModel
             $config['filter_fields'] = [
                 'id', 'a.id',
                 'extension_id', 'a.extension_id',
-                'supply_option_id', 'a.supply_option_id',
                 'title', 'a.title',
                 'alias', 'a.alias',
                 'body', 'a.body',
@@ -157,9 +156,6 @@ class ReviewsModel extends ListModel
         // Join over the foreign key 'extension_id'
         $query->select('`#__jed_extensions_3715042`.`name` AS extensions_fk_value_3715042');
         $query->join('LEFT', '#__jed_extensions AS #__jed_extensions_3715042 ON #__jed_extensions_3715042.`id` = a.`extension_id`');
-        // Join over the foreign key 'supply_option_id'
-        $query->select('`#__jed_extension_supply_options_3727708`.`title` AS extensionsupplyoptions_fk_value_3727708');
-        $query->join('LEFT', '#__jed_extension_supply_options AS #__jed_extension_supply_options_3727708 ON #__jed_extension_supply_options_3727708.`id` = a.`supply_option_id`');
 
         // Join over the created by field 'created_by'
         $query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
@@ -224,29 +220,6 @@ class ReviewsModel extends ListModel
                 }
 
                 $item->extension_id = !empty($textValue) ? implode(', ', $textValue) : $item->extension_id;
-            }
-
-
-            if (isset($item->supply_option_id)) {
-                $values    = explode(',', $item->supply_option_id);
-                $textValue = [];
-
-                foreach ($values as $value) {
-                    $query = $db->getQuery(true);
-                    $query
-                        ->select('`#__jed_extension_supply_options_3727708`.`title`')
-                        ->from($db->quoteName('#__jed_extension_supply_options', '#__jed_extension_supply_options_3727708'))
-                        ->where($db->quoteName('#__jed_extension_supply_options_3727708.id') . ' = ' . $db->quote($db->escape($value)));
-
-                    $db->setQuery($query);
-                    $results = $db->loadObject();
-
-                    if ($results) {
-                        $textValue[] = $results->title;
-                    }
-                }
-
-                $item->supply_option_id = !empty($textValue) ? implode(', ', $textValue) : $item->supply_option_id;
             }
         }
 

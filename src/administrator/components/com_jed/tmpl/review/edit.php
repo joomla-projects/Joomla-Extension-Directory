@@ -36,7 +36,6 @@ HTMLHelper::_('bootstrap.tooltip');
                 <legend><?php echo Text::_('COM_JED_FIELDSET_REV'); ?></legend>
                 <?php echo $this->form->renderField('id'); ?>
                 <?php echo $this->form->renderField('extension_id'); ?>
-                <?php echo $this->form->renderField('supply_option_id'); ?>
                 <?php echo $this->form->renderField('title'); ?>
                 <?php echo $this->form->renderField('alias'); ?>
                 <?php echo $this->form->renderField('body'); ?>

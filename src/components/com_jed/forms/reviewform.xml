@@ -5,13 +5,6 @@
         <field name="extension_id" type="foreignkey" label="COM_JED_EXTENSION"
                description="COM_JED_REVIEWS_EXTENSION_ID_DESCR" default="0" input_type="list"
                table="#__jed_extensions" key_field="id" translate="true" value_field="title"/>
-        <field name="supply_option_id" type="list"
-               label="COM_JED_EXTENSION_SUPPLY_OPTION_ID_LABEL"
-               description="COM_JED_REVIEWS_SUPPLY_OPTION_ID_DESCR"
-               default="0" class="btn-group">
-            <option value="1">JYES</option>
-            <option value="0">JNO</option>
-        </field>
         <field name="title" required="true" filter="safehtml" type="text" label="JGLOBAL_TITLE" description="" hint=""/>
         <field name="alias" type="text" class="inputbox" generator="title" label="JFIELD_ALIAS_LABEL"
                description="JFIELD_ALIAS_DESC" hint=""/>

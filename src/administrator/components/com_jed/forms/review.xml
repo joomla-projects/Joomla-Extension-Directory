@@ -3,9 +3,6 @@
     <fieldset>
         <field name="id" type="text" readonly="true" class="readonly" default="0" description=""/>
         <field name="extension_id" type="text"/>
-        <field name="supply_option_id" type="foreignkey" label="COM_JED_EXTENSION_SUPPLY_OPTION_ID_LABEL"
-               default="0" input_type="list"
-               table="#__jed_extension_supply_options" key_field="id" translate="true" value_field="title"/>
         <field name="title" filter="safehtml" type="text" label="JGLOBAL_TITLE"/>
         <field name="alias" type="text" class="inputbox" generator="title" label="JFIELD_ALIAS_LABEL"
         />
@@ -56,11 +53,8 @@
             <option value="2">JARCHIVED</option>
             <option value="-2">JTRASHED</option>
         </field>
-        />
-        <field name="created_on" type="timecreated" label="COM_JED_GENERAL_CREATED_ON_LABEL"
-        />
-        <field name="created_by" type="createdby" label="JGLOBAL_FIELD_CREATED_BY_LABEL"
-        />
+        <field name="created_on" type="timecreated" label="COM_JED_GENERAL_CREATED_ON_LABEL" />
+        <field name="created_by" type="createdby" label="JGLOBAL_FIELD_CREATED_BY_LABEL" />
         <field name="ordering"/>
         <field name="checked_out" type="hidden" filter="unset"/>
         <field name="checked_out_time" default="0000-00-00 00:00:00" type="hidden" filter="unset"/>

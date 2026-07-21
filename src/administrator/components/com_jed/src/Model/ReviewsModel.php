@@ -42,7 +42,6 @@ class ReviewsModel extends ListModel
             $config['filter_fields'] = [
                 'id', 'a.id',
                 'extension_id', 'a.extension_id',
-                'supply_option_id', 'a.supply_option_id',
                 'title', 'a.title',
                 'alias', 'a.alias',
                 'body', 'a.body',

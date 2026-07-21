@@ -30,8 +30,6 @@
             <option value="a.id DESC">COM_JED_GENERAL_FILTER_SORT_ID_DESC</option>
             <option value="a.extension_id ASC">COM_JED_GENERAL_FILTER_SORT_EXTENSION_ID_ASC</option>
             <option value="a.extension_id DESC">COM_JED_GENERAL_FILTER_SORT_EXTENSION_ID_DESC</option>
-            <option value="a.supply_option_id ASC">COM_JED_REVIEWS_FILTER_SORT_SUPPLY_OPTION_ID_ASC</option>
-            <option value="a.supply_option_id DESC">COM_JED_REVIEWS_FILTER_SORT_SUPPLY_OPTION_ID_DESC</option>
             <option value="a.title ASC">COM_JED_TITLE_ASC</option>
             <option value="a.title DESC">COM_JED_TITLE_DESC</option>
             <option value="a.alias ASC">COM_JED_GENERAL_FILTER_SORT_ALIAS_ASC</option>

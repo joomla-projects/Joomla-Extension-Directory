@@ -75,9 +75,6 @@ if ($saveOrder) {
                             <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION', 'a.extension_id', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_EXTENSION_SUPPLY_OPTION_ID_LABEL', 'a.supply_option_id', $listDirn, $listOrder); ?>
-                        </th>
-                        <th class='left'>
                             <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
@@ -179,9 +176,6 @@ if ($saveOrder) {
                             </td>
                             <td>
                                 <?php echo $item->extension_id; ?>
-                            </td>
-                            <td>
-                                <?php echo $item->supply_option_id; ?>
                             </td>
                             <td>
                                 <?php if (isset($item->checked_out) && $item->checked_out && ($canEdit || $canChange)) : ?>

@@ -156,7 +156,6 @@ class HtmlView extends BaseHtmlView
         return [
             'a.`id`'                      => Text::_('JGRID_HEADING_ID'),
             'a.`extension_id`'            => Text::_('COM_JED_EXTENSION'),
-            'a.`supply_option_id`'        => Text::_('COM_JED_EXTENSION_SUPPLY_OPTION_ID_LABEL'),
             'a.`title`'                   => Text::_('COM_JED_GENERAL_TITLE_LABEL'),
             'a.`alias`'                   => Text::_('JALIAS'),
             'a.`body`'                    => Text::_('COM_JED_REVIEWS_BODY_LABEL'),

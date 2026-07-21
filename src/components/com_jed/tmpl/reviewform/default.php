@@ -62,27 +62,9 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
             $fieldsets['overview']['title']       = Text::_('COM_JED_REVIEW_OVERVIEW_TITLE') . $this->extension_details->title;
             $fieldsets['overview']['description'] = Text::_('COM_JED_REVIEW_OVERVIEW_DESCR');
             $fieldsets['overview']['fields']      = ['id',
-                'supply_option_id', 'version',
+                'version',
                 'extension_id', 'used_for'];
             $fieldsets['overview']['hidden']      = ['id', 'extension_id'];
-
-            /* Display Radios of Supply Options */
-            $optionstr = '';
-            $default   = 0;
-            foreach ($this->supplytypes as $s) {
-                $optionstr .= ' <option value="' . $s->supply_id . '">' . $s->supply_type . '</option> ';
-                $default = (int)$s->supply_id;
-            }
-            try {
-                $xml = new SimpleXMLElement(
-                    '<field name="supply_option_id" type="radio"         label="COM_JED_EXTENSION_SUPPLY_OPTION_ID_LABEL"           description="COM_JED_REVIEWS_SUPPLY_OPTION_ID_DESCR"
-               default="' . $default . '" class="btn-group">      ' . $optionstr . '  </field>'
-                );
-            } catch (Exception) {
-            }
-
-            $field = $this->form->setField($xml);
-
 
             $fieldsets['details']['title']       = Text::_('COM_JED_REVIEW_DETAILS_TITLE');
             $fieldsets['details']['description'] = Text::_('COM_JED_REVIEW_DETAILS_DESCR');
