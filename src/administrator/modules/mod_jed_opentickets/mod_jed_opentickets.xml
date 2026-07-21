@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<extension type="module" client="administrator" method="upgrade">
+    <name>MOD_JED_OPENTICKETS</name>
+    <author>Joomla! Project</author>
+    <creationDate>##DATE##</creationDate>
+    <copyright>(C) ##YEAR## Open Source Matters, Inc.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>admin@joomla.org</authorEmail>
+    <authorUrl>www.joomla.org</authorUrl>
+    <version>##VERSION##</version>
+    <description>MOD_JED_OPENTICKETS_XML_DESCRIPTION</description>
+    <namespace path="src">Jed\Module\OpenTickets\Administrator</namespace>
+    <scriptfile>script.php</scriptfile>
+
+    <files>
+        <folder module="mod_jed_opentickets">services</folder>
+        <folder>src</folder>
+        <folder>tmpl</folder>
+        <filename>script.php</filename>
+    </files>
+
+    <languages>
+        <language tag="en-GB">language/en-GB/mod_jed_opentickets.ini</language>
+        <language tag="en-GB">language/en-GB/mod_jed_opentickets.sys.ini</language>
+    </languages>
+
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field
+                    name="count"
+                    type="number"
+                    label="MOD_JED_OPENTICKETS_FIELD_COUNT_LABEL"
+                    description="MOD_JED_OPENTICKETS_FIELD_COUNT_DESC"
+                    default="20"
+                    filter="integer"
+                    min="1"
+                    max="100"
+                    validate="number"
+                />
+            </fieldset>
+            <fieldset name="advanced">
+                <field
+                    name="layout"
+                    type="modulelayout"
+                    label="JFIELD_ALT_LAYOUT_LABEL"
+                    class="form-select"
+                    validate="moduleLayout"
+                />
+
+                <field
+                    name="moduleclass_sfx"
+                    type="textarea"
+                    label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                    rows="3"
+                    validate="CssIdentifier"
+                />
+            </fieldset>
+        </fields>
+    </config>
+</extension>
