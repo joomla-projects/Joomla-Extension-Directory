@@ -30,7 +30,7 @@
             <option value="a.name ASC">COM_JED_TITLE_ASC</option>
             <option value="a.name DESC">COM_JED_TITLE_DESC</option>
             <option value="score_overall DESC">COM_JED_EXTENSIONS_FILTER_SORT_TOP_RATED</option>
-            <option value="reviewcount DESC">COM_JED_EXTENSIONS_FILTER_SORT_MOST_REVIEWED</option>
+            <option value="score_count DESC">COM_JED_EXTENSIONS_FILTER_SORT_MOST_REVIEWED</option>
             <option value="a.created DESC">COM_JED_EXTENSIONS_FILTER_SORT_NEW</option>
             <option value="a.modified DESC">COM_JED_EXTENSIONS_FILTER_SORT_RECENTLY_UPDATED</option>
         </field>

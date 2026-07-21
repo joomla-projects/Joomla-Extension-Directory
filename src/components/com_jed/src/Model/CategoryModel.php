@@ -301,26 +301,6 @@ class CategoryModel extends ListModel
     }
 
     /**
-     * Get array of review scores for extension
-     *
-     * @param int $extension_id
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    public function getScores(int $extension_id): array
-    {
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true);
-        $query->select('*')->from($db->quoteName('#__jed_extension_scores'))->where($db->quoteName('extension_id') . ' = ' . $db->quote($extension_id));
-
-        $db->setQuery($query);
-
-        return $db->loadObjectList();
-    }
-
-    /**
      * Method to get an array of data items
      *
      * @return mixed An array of data on success, false on failure.
@@ -338,41 +318,16 @@ class CategoryModel extends ListModel
                 $item->logo = JedHelper::formatImage($item->logo, ImageSize::SMALL);
             }
 
-            $item->scores            = $this->getScores($item->id);
-            $item->number_of_reviews = 0;
-            $score                   = 0;
-            $supplycounter           = 0;
-            $supplytype              = '';
-            foreach ($item->scores as $s) {
-                $supplycounter = $supplycounter + 1;
-                if ($s->supply_option_id == 1) {
-                    $supplytype .= 'Free';
-                }
-                if ($s->supply_option_id == 2) {
-                    $comma = '';
-                    if ($supplytype <> '') {
-                        $comma = ', ';
-                    }
-
-                    $supplytype .= $comma . 'Paid';
-                }
-                $score                   = $score + $s->functionality_score;
-                $score                   = $score + $s->ease_of_use_score;
-                $score                   = $score + $s->support_score;
-                $score                   = $score + $s->value_for_money_score;
-                $score                   = $score + $s->documentation_score;
-                $item->number_of_reviews = $item->number_of_reviews + $s->number_of_reviews;
-            }
-            $item->type         = $supplytype;
-            $score              = $supplycounter > 0 ? $score / $supplycounter : 0;
-            $item->score        = floor($score / 5);
+            $item->number_of_reviews = (int) $item->score_count;
+            $item->score             = (float) $item->score_overall;
+            // score_overall is a 0-5 value (decimal(3,2))
             $item->score_string = JedscoreHelper::getStars($item->score);
 
             if ($item->number_of_reviews == 0) {
                 $item->review_string = '';
             } elseif ($item->number_of_reviews == 1) {
                 $item->review_string = '<span>' . $item->number_of_reviews . ' review</span>';
-            } elseif ($item->number_of_reviews > 1) {
+            } else {
                 $item->review_string = '<span>' . $item->number_of_reviews . ' reviews</span>';
             }
 

@@ -69,9 +69,8 @@ class ExtensionsModel extends ListModel
                 'logo', 'a.logo',
                 'approved_notes', 'a.approved_notes',
                 'approved_reason', 'a.approved_reason',
-                // Computed sort presets (see getListQuery()), not real columns.
                 'score_overall',
-                'reviewcount',
+                'score_count',
             ];
         }
 
@@ -160,20 +159,6 @@ class ExtensionsModel extends ListModel
         // Join over the modified by field 'modified_by'
         $query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
 
-        // "Top Rated": average of the 5 sub-scores across all #__jed_extension_scores rows for
-        // this extension, mirroring the same math getItems() uses to compute $item->score.
-        $query->select(
-            '(SELECT COALESCE(AVG(('
-            . 's.functionality_score + s.ease_of_use_score + s.support_score'
-            . ' + s.value_for_money_score + s.documentation_score) / 5), 0)'
-            . ' FROM #__jed_extension_scores AS s WHERE s.extension_id = a.id) AS score_overall'
-        );
-
-        // "Most Reviewed": raw count of #__jed_reviews rows for this extension.
-        $query->select(
-            '(SELECT COUNT(*) FROM #__jed_reviews AS r WHERE r.extension_id = a.id) AS reviewcount'
-        );
-
         if (!Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed')) {
             $query->where('a.state = 1');
         } else {
@@ -217,28 +202,6 @@ class ExtensionsModel extends ListModel
     }
 
     /**
-     * Get array of review scores for extension
-     *
-     * @param int $extension_id
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    public function getScores(int $extension_id): array
-    {
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true);
-        $query->select('*')
-            ->from($db->quoteName('#__jed_extension_scores'))
-            ->where($db->quoteName('extension_id') . ' = ' . $db->quote($extension_id));
-
-        $db->setQuery($query);
-        return $db->loadObjectList();
-    }
-
-
-    /**
      * getMyItems
      *
      * Returns list of extensions created by the current user
@@ -280,44 +243,18 @@ class ExtensionsModel extends ListModel
                 $item->logo = JedHelper::formatImage($item->logo, ImageSize::SMALL);
             }
 
-            $item->scores            = $this->getScores($item->id);
-            $item->number_of_reviews = 0;
-            $score                   = 0;
-            $supplycounter           = 0;
-            $supplytype              = '';
-            foreach ($item->scores as $s) {
-                $supplycounter = $supplycounter + 1;
-                if ($s->supply_option_id == 1) {
-                    $supplytype .= 'Free';
-                }
-                if ($s->supply_option_id == 2) {
-                    $comma = '';
-                    if ($supplytype <> '') {
-                        $comma = ', ';
-                    }
-
-                    $supplytype .= $comma . 'Paid';
-                }
-                $score                   = $score + $s->functionality_score;
-                $score                   = $score + $s->ease_of_use_score;
-                $score                   = $score + $s->support_score;
-                $score                   = $score + $s->value_for_money_score;
-                $score                   = $score + $s->documentation_score;
-                $item->number_of_reviews = $item->number_of_reviews + $s->number_of_reviews;
-            }
-            $item->type  = $supplytype;
-            $score       = $supplycounter > 0 ? $score / $supplycounter : 0;
-            $item->score = floor($score / 5);
-            //echo "<pre>";print_r($item);echo "</pre>";exit();
+            $item->number_of_reviews = (int) $item->score_count;
+            $item->score             = (float) $item->score_overall;
+            // score_overall is a 0-5 value (decimal(3,2))
             $item->score_string = JedscoreHelper::getStars($item->score);
+
             if ($item->number_of_reviews == 0) {
                 $item->review_string = '';
             } elseif ($item->number_of_reviews == 1) {
                 $item->review_string = '<span>' . $item->number_of_reviews . ' review</span>';
-            } elseif ($item->number_of_reviews > 1) {
+            } else {
                 $item->review_string = '<span>' . $item->number_of_reviews . ' reviews</span>';
             }
-            //echo "<pre>";print_r($item);echo "</pre>";exit();
 
             // https://extensions.joomla.org/cache/fab_image/27824_resizeDown400px175px16.png
 
