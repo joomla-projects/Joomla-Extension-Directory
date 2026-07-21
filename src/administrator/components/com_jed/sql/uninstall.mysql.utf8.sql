@@ -8,7 +8,6 @@ DROP TABLE IF EXISTS `#__jed_reviews`;
 DROP TABLE IF EXISTS `#__jed_reviews_comments`;
 DROP TABLE IF EXISTS `#__jed_extensions`;
 DROP TABLE IF EXISTS `#__jed_extension_images`;
-DROP TABLE IF EXISTS `#__jed_extension_scores`;
 DROP TABLE IF EXISTS `#__jed_developers`;
 DROP TABLE IF EXISTS `#__jed_extensions_history`;
 DROP TABLE IF EXISTS `#__jed_joomla_versions`;

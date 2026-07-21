@@ -186,7 +186,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_reviews`
 (
 	`id`                      int unsigned NOT NULL AUTO_INCREMENT,
 	`extension_id`            int unsigned DEFAULT '0',
-	`supply_option_id`        int unsigned DEFAULT '0',
 	`title`                   varchar(400) DEFAULT '',
 	`alias`                   varchar(400) DEFAULT NULL,
 	`body`                    mediumtext,
@@ -212,12 +211,11 @@ CREATE TABLE IF NOT EXISTS `#__jed_reviews`
 	`checked_out`             int unsigned,
 	`checked_out_time`        datetime,
 	PRIMARY KEY (`id`),
+	UNIQUE KEY `UK_jed_reviews_ext_user` (`extension_id`, `created_by`),
 	KEY `FK_jed_reviews` (`extension_id`),
 	KEY `FK_jed_reviews_user` (`created_by`),
-	KEY `FK_jed_reviews_supply_option` (`supply_option_id`),
 	CONSTRAINT `FKC_jed_reviews` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `FKC_jed_reviews_user` FOREIGN KEY (`created_by`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `FKC_jed_reviews_supply_option` FOREIGN KEY (`supply_option_id`) REFERENCES `#__jed_extension_supply_options` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT `FKC_jed_reviews_user` FOREIGN KEY (`created_by`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `#__jed_reviews_comments`;
@@ -238,34 +236,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_reviews_comments`
 	CONSTRAINT `FKC_jed_reviews_comments` FOREIGN KEY (`review_id`) REFERENCES `#__new_jed_reviews` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `FKC_jed_reviews_comments_user` FOREIGN KEY (`created_by`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
-
-CREATE TABLE IF NOT EXISTS `#__jed_extension_scores`
-(
-	`id`                    int unsigned NOT NULL AUTO_INCREMENT,
-	`extension_id`          int unsigned DEFAULT '0',
-	`supply_option_id`      int unsigned DEFAULT '0',
-	`functionality_score`   int          DEFAULT '0',
-	`ease_of_use_score`     int          DEFAULT '0',
-	`support_score`         int          DEFAULT '0',
-	`value_for_money_score` int          DEFAULT '0',
-	`documentation_score`   int          DEFAULT '0',
-	`number_of_reviews`     int          DEFAULT '0',
-	`state`                 tinyint(1)   DEFAULT '1',
-	`ordering`              int          DEFAULT '0',
-	`checked_out`           int unsigned,
-	`checked_out_time`      datetime,
-	`created_by`            int          DEFAULT '0',
-	`modified_by`           int          DEFAULT '0',
-	PRIMARY KEY (`id`),
-	KEY `FK_jed_extension_scores` (`extension_id`),
-	KEY `FK_jed_extension_scores_user` (`created_by`),
-	KEY `FK_jed_extension_scores_moduser` (`modified_by`),
-	KEY `FK_jed_extension_scores_supply_option` (`supply_option_id`),
-	CONSTRAINT `FKC_jed_extension_scores_data_supply_option` FOREIGN KEY (`supply_option_id`) REFERENCES `#__jed_extension_supply_options` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
-
 
 
 CREATE TABLE IF NOT EXISTS `#__jed_developers`
