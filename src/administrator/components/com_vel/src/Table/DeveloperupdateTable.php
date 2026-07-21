@@ -38,7 +38,7 @@ class DeveloperupdateTable extends Table
     public function __construct(DatabaseDriver $db)
     {
         $this->typeAlias = 'com_vel.developerupdate';
-        parent::__construct('#__jed_vel_developer_update', 'id', $db);
+        parent::__construct('#__vel_developer_update', 'id', $db);
         $this->setColumnAlias('published', 'state');
     }
 

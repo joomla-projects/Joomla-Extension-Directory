@@ -38,7 +38,7 @@ class AbandonedreportTable extends Table
     public function __construct(DatabaseDriver $db)
     {
         $this->typeAlias = 'com_vel.abandonedreport';
-        parent::__construct('#__jed_vel_abandoned_report', 'id', $db);
+        parent::__construct('#__vel_abandoned', 'id', $db);
         $this->setColumnAlias('published', 'state');
     }
 

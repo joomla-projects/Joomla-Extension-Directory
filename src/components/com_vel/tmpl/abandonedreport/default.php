@@ -1,5 +1,6 @@
 <?php
 
+/** @var \Jed\Component\Vel\Site\View\Abandonedreport\HtmlView $this */
 /**
  * @package VEL
  *
@@ -8,124 +9,134 @@
  * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
-
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Site\Helper\JedHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 
-$canEdit = $this->getCurrentUser()->authorise('core.edit', 'com_vel');
+$wa = $this->document->getWebAssetManager();
+$wa->getRegistry()->addExtensionRegistryFile('com_vel');
+$wa->useScript('keepalive')
+    ->useScript('form.validate');
+HTMLHelper::_('bootstrap.tooltip');
 
-if (!$canEdit && $this->getCurrentUser()->authorise('core.edit.own', 'com_vel')) {
-    $canEdit = $this->getCurrentUser()->id == $this->item->created_by;
+// Many field/fieldset labels for this form are only translated in the admin language file;
+// load it here too so they don't render as raw, untranslated keys on the frontend.
+$lang = Factory::getApplication()->getLanguage();
+$lang->load('com_vel', JPATH_ADMINISTRATOR);
+$doc = $this->getDocument();
+$doc->addScript(Uri::base() . '/media/com_jed/js/form.js');
+
+$user    = $this->getCurrentUser();
+$canEdit = JedHelper::canUserEdit($this->item);
+
+$isLoggedIn  = JedHelper::isLoggedIn();
+$redirectURL = JedHelper::getLoginlink();
+
+if (!$isLoggedIn) {
+    try {
+        /* @var $app \Joomla\CMS\Application\SiteApplication */
+        $app = Factory::getApplication();
+    } catch (Exception) {
+    }
+
+    $app->enqueueMessage(Text::_('COM_VEL_ABANDONEDREPORTS_NO_ACCESS'), 'success');
+    $app->redirect($redirectURL);
+} else {
+    ?>
+
+    <div class="velabandonedreport-edit front-end-edit">
+        <?php if (!$canEdit) : ?>
+            <h3>
+                <?php throw new Exception(Text::_('COM_VEL_GENERAL_ERROR_MESSAGE_NOT_AUTHORISED'), 403); ?>
+            </h3>
+        <?php else : ?>
+            <form id="form-velabandonedreport"
+                  action="<?php echo Route::_('index.php?option=com_vel&task=abandonedreport.save'); ?>"
+                  method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
+
+
+                <?php
+
+                $fieldsets['overview']['title']       = Text::_('COM_VEL_ABANDONEDREPORTS_OVERVIEW_TITLE');
+                $fieldsets['overview']['description']     = Text::_('COM_VEL_ABANDONEDREPORTS_OVERVIEW_DESCRIPTION');
+                $fieldsets['overview']['fields']          = [];
+
+
+                $fieldsets['aboutyou']['title']       = Text::_('COM_VEL_GENERAL_ABOUT_YOU_LABEL');
+                $fieldsets['aboutyou']['description'] = "";
+                $fieldsets['aboutyou']['fields']      = [
+                'reporter_fullname',
+                'reporter_email',
+                'reporter_organisation'];
+
+                $fieldsets['extensiondetails']['title']       = Text::_('COM_VEL_ABANDONEDREPORTS_EXTENSION_TITLE');
+                $fieldsets['extensiondetails']['description'] = "";
+                $fieldsets['extensiondetails']['fields']      = [
+                'extension_name',
+                'developer_name',
+                'extension_version',
+                'extension_url',
+                'abandoned_reason',
+                'consent_to_process'];
+                $fscount                                      = 0;
+
+
+                foreach ($fieldsets as $fs) {
+                    $fscount = $fscount + 1;
+                    if ($fs['title'] <> '') {
+                        if ($fscount > 1) {
+                            echo '</fieldset>';
+                        }
+
+                        echo '<fieldset class="velabandonwareform"><legend>' . $fs['title'] . '</legend>';
+                    }
+                    if ($fs['description'] <> '') {
+                        echo $fs['description'];
+                    }
+                    $fields       = $fs['fields'];
+                    $hiddenFields = ['user_ip'];
+                    foreach ($fields as $field) {
+                        if (in_array($field, $hiddenFields)) {
+                            $this->form->setFieldAttribute($field, 'type', 'hidden');
+                        }
+                        echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+                    }
+                }
+
+
+                ?>
+
+                <div class="control-group">
+                    <div class="controls">
+
+                        <button type="submit" class="validate btn btn-primary">
+                            <span class="fas fa-check" aria-hidden="true"></span>
+                            <?php echo Text::_('JSUBMIT'); ?>
+                        </button>
+                        <a class="btn btn-danger"
+                           href="<?php echo Route::_('index.php?option=com_vel&task=abandonedreport.cancel'); ?>"
+                           title="<?php echo Text::_('JCANCEL'); ?>">
+                            <span class="fas fa-times" aria-hidden="true"></span>
+                            <?php echo Text::_('JCANCEL'); ?>
+                        </a>
+                    </div>
+                </div>
+
+                <input type="hidden" name="option" value="com_vel"/>
+                <input type="hidden" name="task"
+                       value="abandonedreport.save"/>
+                <?php echo HTMLHelper::_('form.token'); ?>
+            </form>
+        <?php endif; ?>
+    </div>
+    <?php
 }
 ?>
-
-<div class="item_fields">
-
-    <table class="table">
-
-
-        <tr>
-            <th><?php echo Text::_('JGLOBAL_FIELD_ID_LABEL'); ?></th>
-            <td><?php echo $this->item->id; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_VEL_GENERAL_CONTACT_FULLNAME_LABEL'); ?></th>
-            <td><?php echo $this->item->reporter_fullname; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_VEL_GENERAL_CONTACT_EMAIL_LABEL'); ?></th>
-            <td><?php echo $this->item->reporter_email; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_VEL_GENERAL_REPORTER_ORGANISATION_LABEL'); ?></th>
-            <td><?php echo $this->item->reporter_organisation; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_VEL_ABANDONEDREPORTS_EXTENSION_NAME_LABEL'); ?></th>
-            <td><?php echo $this->item->extension_name; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_VEL_GENERAL_DEVELOPER_NAME_LABEL'); ?></th>
-            <td><?php echo $this->item->developer_name; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_VEL_ABANDONEDREPORTS_EXTENSION_VERSION_LABEL'); ?></th>
-            <td><?php echo $this->item->extension_version; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_VEL_ABANDONEDREPORTS_EXTENSION_URL_LABEL'); ?></th>
-            <td><?php echo $this->item->extension_url; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_VEL_ABANDONEDREPORTS_ABANDONED_REASON_LABEL'); ?></th>
-            <td><?php echo nl2br($this->item->abandoned_reason); ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_VEL_GENERAL_CONSENT_TO_PROCESS_NOTIFICATION_LABEL'); ?></th>
-            <td><?php echo $this->item->consent_to_process; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_VEL_GENERAL_PASSED_TO_VEL_LABEL'); ?></th>
-            <td><?php echo $this->item->passed_to_vel; ?></td>
-        </tr>
-        <tr>
-            <th><?php echo Text::_('COM_VEL_GENERAL_DATE_SUBMITTED_LABEL'); ?></th>
-            <td><?php echo $this->item->date_submitted; ?></td>
-        </tr>
-        <?php /*
-        <tr>
-            <th><?php echo Text::_('COM_VEL_GENERAL_VEL_ITEM_ID_LABEL'); ?></th>
-            <td><?php echo $this->item->vel_item_id; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('COM_VEL_GENERAL_DATA_SOURCE_LABEL'); ?></th>
-            <td><?php echo $this->item->data_source; ?></td>
-        </tr>
-
-
-
-        <tr>
-            <th><?php echo Text::_('COM_VEL_REPORTS_USER_IP_LABEL'); ?></th>
-            <td><?php echo $this->item->user_ip; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('JGLOBAL_CREATED_BY'); ?></th>
-            <td><?php echo $this->item->created_by_name; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('JGLOBAL_MODIFIED_BY'); ?></th>
-            <td><?php echo $this->item->modified_by_name; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('JGLOBAL_CREATED'); ?></th>
-            <td><?php echo $this->item->created; ?></td>
-        </tr>
-
-        <tr>
-            <th><?php echo Text::_('JGLOBAL_MODIFIED'); ?></th>
-            <td><?php echo $this->item->modified; ?></td>
-        </tr> */ ?>
-
-    </table>
-
-</div>
-
-

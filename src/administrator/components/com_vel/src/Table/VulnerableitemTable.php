@@ -264,7 +264,7 @@ class VulnerableitemTable extends Table
     public function __construct(DatabaseDriver $db)
     {
         $this->typeAlias = 'com_vel.vulnerableitem';
-        parent::__construct('#__jed_vel_vulnerable_item', 'id', $db);
+        parent::__construct('#__vel_vulnerable_item', 'id', $db);
         $this->setColumnAlias('published', 'state');
     }
 }

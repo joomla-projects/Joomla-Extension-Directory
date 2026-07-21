@@ -63,11 +63,11 @@ class ReportController extends FormController
                     "0,CONCAT(`vulnerable_item_name`,', ',`vulnerable_item_version`,', ','" . $exploit_string . "') as title,'',0 AS 'status',`id`,`jed_url`,'' AS 'risk_level',`vulnerable_item_version`, `vulnerable_item_version`,'' AS 'patch_version','','',`exploit_type`,`exploit_other_description`,
 '' AS 'xml_manifest','' AS 'manifest_location', '' AS 'install_data', `reporter_fullname` AS 'discovered_by',''"
                 )
-                ->from('#__jed_vel_report')
+                ->from('#__vel_report')
                 ->where('id = ' . $reportId);
 
             $queryInsert = $db->getQuery(true)
-                ->insert('#__jed_vel_vulnerable_item')
+                ->insert('#__vel_vulnerable_item')
                 ->columns(
                     $db->qn(
                         ['id', 'title', 'internal_description', 'status', 'report_id', 'jed', 'risk_level', 'start_version', 'vulnerable_version', 'patch_version', 'recommendation',
@@ -82,7 +82,7 @@ class ReportController extends FormController
             $newVel = $db->insertid();
 
             $queryUpdate = $db->getQuery(true)
-                ->update('#__jed_vel_report')
+                ->update('#__vel_report')
                 ->set(
                     [$db->qn('passed_to_vel') . ' = 1',
                     ($db->qn('vel_item_id') . ' = ' . $newVel)]
@@ -91,16 +91,6 @@ class ReportController extends FormController
 
             $db->setQuery($queryUpdate);
             $db->execute();
-            $insertColumns                  = ['id', 'vel_item_id', 'communication_type', 'communication_id', 'developer_report_id', 'vel_report_id', 'created'];
-            $insertVals                     = [0, $newVel, 1, -1, -1, $reportId, $db->quote(Factory::getDate()->toSql())];
-            $queryInsertCommunicationRecord = $db->getQuery(true)
-                ->insert('#__jed_communications')
-                ->columns($db->qn($insertColumns))
-                ->values(implode(',', $insertVals));
-            $db->setQuery($queryInsertCommunicationRecord);
-
-            $db->execute();
-
 
             $this->setRedirect(Route::_('index.php?option=com_vel&view=vulnerableitem&task=vulnerableitem.edit&id=' . (int) $newVel, false));
         }

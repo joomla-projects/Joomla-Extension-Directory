@@ -108,7 +108,7 @@ class AbandonedreportsModel extends ListModel
                 'DISTINCT a.*'
             )
         );
-        $query->from('`#__jed_vel_abandoned_report` AS a');
+        $query->from('`#__vel_abandoned` AS a');
 
 
         // Join over the user field 'created_by'

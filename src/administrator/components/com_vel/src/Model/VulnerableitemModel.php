@@ -197,7 +197,7 @@ class VulnerableitemModel extends AdminModel
         $query->select('a.*');
 
         // From the vel_report table
-        $query->from($db->quoteName('#__jed_vel_abandoned_report', 'a'));
+        $query->from($db->quoteName('#__vel_abandoned', 'a'));
 
         $query->where('a.vel_item_id = ' . $vel_item_id);
 
@@ -232,7 +232,7 @@ class VulnerableitemModel extends AdminModel
         $query->select('a.*');
 
         // From the vel_report table
-        $query->from($db->quoteName('#__jed_vel_developer_update', 'a'));
+        $query->from($db->quoteName('#__vel_developer_update', 'a'));
 
 
         $query->where('a.vel_item_id = ' . $vel_item_id);
@@ -268,7 +268,7 @@ class VulnerableitemModel extends AdminModel
         $query->select('a.*');
 
         // From the vel_report table
-        $query->from($db->quoteName('#__jed_vel_report', 'a'));
+        $query->from($db->quoteName('#__vel_report', 'a'));
 
 
         $query->where('a.vel_item_id = ' . $vel_item_id);

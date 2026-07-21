@@ -1,7 +1,7 @@
 /* Vulnerable Extension Lists */
 
-DROP TABLE IF EXISTS `#__jed_vel_report`;
-CREATE TABLE IF NOT EXISTS `#__jed_vel_report`
+DROP TABLE IF EXISTS `#__vel_report`;
+CREATE TABLE IF NOT EXISTS `#__vel_report`
 (
 	`id`                               INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`reporter_fullname`                VARCHAR(255) NOT NULL DEFAULT '',
@@ -41,8 +41,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_vel_report`
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_vel_developer_update`;
-CREATE TABLE IF NOT EXISTS `#__jed_vel_developer_update`
+DROP TABLE IF EXISTS `#__vel_developer_update`;
+CREATE TABLE IF NOT EXISTS `#__vel_developer_update`
 (
 	`id`                      int unsigned NOT NULL AUTO_INCREMENT,
 	`contact_fullname`        varchar(255) NOT NULL DEFAULT '',
@@ -67,8 +67,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_vel_developer_update`
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_vel_abandoned_report`;
-CREATE TABLE IF NOT EXISTS `#__jed_vel_abandoned_report`
+DROP TABLE IF EXISTS `#__vel_abandoned`;
+CREATE TABLE IF NOT EXISTS `#__vel_abandoned`
 (
 	`id`                    int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`reporter_fullname`     VARCHAR(255)     NOT NULL,
@@ -85,6 +85,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_vel_abandoned_report`
 	`data_source`           VARCHAR(255)     NULL     DEFAULT '0',
 	`date_submitted`        DATETIME         NULL     DEFAULT CURRENT_TIMESTAMP,
 	`user_ip`               VARCHAR(20)      NULL     DEFAULT '',
+	`state`                 TINYINT(1)       NOT NULL DEFAULT 0,
 	`created_by`            INT(11)          NULL     DEFAULT 0,
 	`modified_by`           INT(11)          NULL     DEFAULT 0,
 	`created`               DATETIME,
@@ -92,8 +93,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_vel_abandoned_report`
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_vel_vulnerable_item`;
-CREATE TABLE IF NOT EXISTS `#__jed_vel_vulnerable_item`
+DROP TABLE IF EXISTS `#__vel_vulnerable_item`;
+CREATE TABLE IF NOT EXISTS `#__vel_vulnerable_item`
 (
 	`id`                        int unsigned  NOT NULL AUTO_INCREMENT,
 	`vulnerable_item_name`      varchar(255)  NOT NULL DEFAULT '',

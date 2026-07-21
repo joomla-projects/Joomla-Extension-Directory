@@ -20,7 +20,6 @@ use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 
@@ -128,17 +127,11 @@ class HtmlView extends BaseHtmlView
 
         $model = $this->getModel();
         $model->setUseExceptions(true);
-        try {
-            $this->state      = $model->getState();
-            $this->item       = $model->getItem();
-            $this->params     = $app->getParams('com_vel');
 
-            if (!empty($this->item)) {
-                $this->form = $model->getForm();
-            }
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
-        }
+        $this->state  = $model->getState();
+        $this->item   = $model->getItem();
+        $this->params = $app->getParams('com_vel');
+        $this->form   = $model->getForm();
 
         if ($this->_layout == 'edit') {
             $authorised = $user->authorise('core.create', 'com_vel');

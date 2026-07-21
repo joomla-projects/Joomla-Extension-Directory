@@ -21,7 +21,6 @@ use Jed\Component\Jed\Administrator\Model\VelvulnerableitemModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -132,14 +131,12 @@ class HtmlView extends BaseHtmlView
 */
         $model                  = $this->getModel();
         $model->setUseExceptions(true);
-        try {
-            $this->state            = $model->getState();
-            $this->item             = $model->getItem();
-            $this->form             = $model->getForm();
-            $this->VELLinkedReports = $model->getVELLinkedReports();
-        } catch (\Exception $e) {
-            throw new GenericDataException($e->getMessage(), 500, $e);
-        }
+
+        $this->state            = $model->getState();
+        $this->item             = $model->getItem();
+        $this->form             = $model->getForm();
+        $this->VELLinkedReports = $model->getVELLinkedReports();
+
 
         $this->addToolbar();
         parent::display($tpl);

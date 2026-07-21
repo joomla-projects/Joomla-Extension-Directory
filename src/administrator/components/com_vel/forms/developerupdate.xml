@@ -55,7 +55,7 @@
         <field name="vel_item_id" type="sql" default="-1" label="COM_VEL_GENERAL_VEL_ITEM_ID_LABEL"
                description=""
                hint="COM_VEL_GENERAL_VEL_ITEM_ID_LABEL"
-               query="SELECT -1 as id, 'Unknown' as title,'3000-01-01 23:59:59' as created union SELECT id, concat( title, ' (', created, ')') AS title, created FROM #__jed_vel_vulnerable_item  order by created desc"
+               query="SELECT -1 as id, 'Unknown' as title,'3000-01-01 23:59:59' as created union SELECT id, concat( title, ' (', created, ')') AS title, created FROM #__vel_vulnerable_item  order by created desc"
                key_field="id" value_field="title"/>
         <field name="update_data_source" default="0" type="list"
                label="COM_VEL_GENERAL_DATA_SOURCE_LABEL"

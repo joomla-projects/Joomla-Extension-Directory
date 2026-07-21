@@ -127,7 +127,7 @@ class ReportsModel extends ListModel
                 'DISTINCT a.*'
             )
         );
-        $query->from('`#__jed_vel_report` AS a');
+        $query->from('`#__vel_report` AS a');
 
 
         // Join over the user field 'created_by'

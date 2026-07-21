@@ -139,6 +139,6 @@ class ReportTable extends Table
     public function __construct(DatabaseDriver $db)
     {
         $this->typeAlias = 'com_vel.report';
-        parent::__construct('#__jed_vel_report', 'id', $db);
+        parent::__construct('#__vel_report', 'id', $db);
     }
 }

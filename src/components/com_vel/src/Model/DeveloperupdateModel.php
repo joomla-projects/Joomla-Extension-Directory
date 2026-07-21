@@ -22,7 +22,7 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\Model\ItemModel;
+use Joomla\CMS\MVC\Model\FormModel;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
 use stdClass;
@@ -32,7 +32,7 @@ use stdClass;
  *
  * @since 4.0.0
  */
-class DeveloperupdateModel extends ItemModel
+class DeveloperupdateModel extends FormModel
 {
     /**
      * The item object
@@ -47,7 +47,7 @@ class DeveloperupdateModel extends ItemModel
      *
      * @since 4.0.0
      **/
-    private string $dbtable = "#__jed_vel_developer_update";
+    private string $dbtable = "#__vel_developer_update";
 
     /**
      * Method to check in an item.
@@ -137,6 +137,11 @@ class DeveloperupdateModel extends ItemModel
 
             if (empty($pk)) {
                 $pk = $this->getState('developerupdate.id');
+            }
+
+            // No id to load: this is a blank "new developer update" submission, not an error.
+            if (empty($pk)) {
+                return null;
             }
 
             // Get a level row instance.
@@ -301,5 +306,60 @@ class DeveloperupdateModel extends ItemModel
         }
 
         return $form;
+    }
+
+    /**
+     * Method to get the data that should be injected in the form.
+     *
+     * @return mixed The default data is an empty array.
+     *
+     * @since  4.0.0
+     * @throws Exception
+     */
+    protected function loadFormData(): mixed
+    {
+        $data = Factory::getApplication()->getUserState('com_vel.edit.developerupdate.data', []);
+
+        if (empty($data)) {
+            $data = $this->getItem();
+        }
+
+        return $data ?: [];
+    }
+
+    /**
+     * Method to save the form data.
+     *
+     * @param array $data The form data
+     *
+     * @return int|bool The new developer update's id on success, false on failure.
+     *
+     * @since  4.0.0
+     * @throws Exception
+     */
+    public function save(array $data): int|bool
+    {
+        $id = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('developerupdate.id');
+
+        $data['update_user_ip']        = $_SERVER['REMOTE_ADDR'];
+        $data['update_data_source']    = 1;
+        $data['vel_item_id']           = (int) ($data['vel_item_id'] ?? 0);
+
+        $isLoggedIn = JedHelper::isLoggedIn();
+
+        if ((!$id || JedHelper::isAdminOrSuperUser()) && $isLoggedIn) {
+            /* Any logged-in user can submit a developer update */
+
+            $table = $this->getTable();
+
+            if ($table->save($data) === true) {
+                // Ticket creation (initial message + confirmation mail) is handled by
+                // DeveloperupdateController::save() via TicketHandlingTrait::triggerTicket()
+                // once this call returns successfully.
+                return $table->id;
+            }
+            return false;
+        }
+        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
     }
 }

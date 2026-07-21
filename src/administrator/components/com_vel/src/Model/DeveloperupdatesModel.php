@@ -107,7 +107,7 @@ class DeveloperupdatesModel extends ListModel
                 'DISTINCT a.*'
             )
         );
-        $query->from('`#__jed_vel_developer_update` AS a');
+        $query->from('`#__vel_developer_update` AS a');
 
 
         // Join over the user field 'created_by'

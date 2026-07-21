@@ -125,7 +125,7 @@ class VulnerableitemsModel extends ListModel
                 'DISTINCT a.*'
             )
         );
-        $query->from('`#__jed_vel_vulnerable_item` AS a');
+        $query->from('`#__vel_vulnerable_item` AS a');
 
         // Join over the users for the checked out user
         $query->select("uc.name AS uEditor");
@@ -133,7 +133,7 @@ class VulnerableitemsModel extends ListModel
 
         // Join over the foreign key 'report_id'
         $query->select('concat( `jvr`.`vulnerable_item_name`," - ", `jvr`.`vulnerable_item_version`, " (", `jvr`.`created`, ")") AS vel_report_title');
-        $query->join('LEFT', '#__jed_vel_report AS jvr ON jvr.`id` = a.`report_id`');
+        $query->join('LEFT', '#__vel_report AS jvr ON jvr.`id` = a.`report_id`');
 
         // Join over the user field 'created_by'
         $query->select('`created_by`.name AS `created_by`');

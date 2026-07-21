@@ -28,7 +28,7 @@
         </field>
         <field name="report_id" type="foreignkey" label="COM_VEL_GENERAL_FIELD_REPORT_ID_LABEL"
                description="COM_VEL_GENERAL_FIELD_REPORT_ID_DESCR" class="inputbox" input_type="list"
-               table="#__jed_vel_report" key_field="id" value_field="vulnerable_item_name" default="0"/>
+               table="#__vel_report" key_field="id" value_field="vulnerable_item_name" default="0"/>
         <field name="jed" validate="url" type="url" label="COM_VEL_GENERAL_JED_URL_LABEL"
                description="COM_VEL_GENERAL_FIELD_JED_DESCR" hint=""/>
         <field name="risk_level" type="list" required="true" message="Please make a selection"

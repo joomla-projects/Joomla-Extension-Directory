@@ -54,11 +54,11 @@ class AbandonedreportController extends FormController
 
             $querySelect = $db->getQuery(true)
                 ->select("0,CONCAT(`extension_name`,', ',`extension_version`,', ','Abandoned') AS title,'',3 AS 'status',`id`,'','' AS 'risk_level',   `extension_version`, `extension_version`,'' AS 'patch_version','','',9 AS 'exploit_type','Reported Abandoned' AS 'exploit_other_description','' AS 'xml_manifest','' AS 'manifest_location', '' AS 'install_data', `reporter_fullname` AS 'discovered_by',''")
-                ->from('#__jed_vel_abandoned_report')
+                ->from('#__vel_abandoned')
                 ->where('id = ' . $reportId);
 
             $queryInsert = $db->getQuery(true)
-                ->insert('#__jed_vel_vulnerable_item')
+                ->insert('#__vel_vulnerable_item')
                 ->columns(
                     $db->qn(
                         ['id', 'title', 'internal_description', 'status', 'report_id', 'jed', 'risk_level', 'start_version', 'vulnerable_version', 'patch_version', 'recommendation',
@@ -73,7 +73,7 @@ class AbandonedreportController extends FormController
             $newVel = $db->insertid();
 
             $queryUpdate = $db->getQuery(true)
-                ->update('#__jed_vel_abandoned_report')
+                ->update('#__vel_abandoned')
                 ->set(
                     [$db->qn('passed_to_vel') . ' = 1',
                     ($db->qn('vel_item_id') . ' = ' . $newVel)]
@@ -82,19 +82,6 @@ class AbandonedreportController extends FormController
 
             $db->setQuery($queryUpdate);
             $db->execute();
-
-
-            $insertColumns                  = ['id', 'vel_item_id', 'communication_type', 'communication_id', 'developer_report_id', 'vel_report_id', 'abandoned_report_id', 'created'];
-            $insertVals                     = [0, $newVel, 1, -1, -1, -1, $reportId, $db->quote(Factory::getDate()->toSql())];
-            $queryInsertCommunicationRecord = $db->getQuery(true)
-                ->insert('#__jed_communications')
-                ->columns($db->qn($insertColumns))
-                ->values(implode(',', $insertVals));
-
-
-            $db->setQuery($queryInsertCommunicationRecord);
-            $db->execute();
-
 
             $this->setRedirect(Route::_('index.php?option=com_vel&view=abandonedreport&task=abandonedreport.edit&id=' . (int) $newVel, false));
         }

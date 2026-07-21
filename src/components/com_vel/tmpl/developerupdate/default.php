@@ -1,6 +1,6 @@
 <?php
 
-/** @var \Jed\Component\Vel\Site\View\developerupdate\HtmlView $this */
+/** @var \Jed\Component\Vel\Site\View\Developerupdate\HtmlView $this */
 /**
  * @package VEL
  *
@@ -14,130 +14,140 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Site\Helper\JedHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
-if (!is_null($this->item)) {
+$wa = $this->document->getWebAssetManager();
+$wa->useScript('keepalive')
+    ->useScript('form.validate');
+HTMLHelper::_('bootstrap.tooltip');
+
+// Many field/fieldset labels for this form are only translated in the admin language file;
+// load it here too so they don't render as raw, untranslated keys on the frontend.
+$lang = Factory::getApplication()->getLanguage();
+$lang->load('com_vel', JPATH_ADMINISTRATOR);
+
+$user    = $this->getCurrentUser();
+$canEdit = JedHelper::canUserEdit($this->item);
+
+$isLoggedIn  = JedHelper::isLoggedIn();
+$redirectURL = JedHelper::getLoginlink();
+
+if ($user->guest) {
+    $app = Factory::getApplication();
+    $app->enqueueMessage(Text::_('COM_VEL_DEVELOPERUPDATES_NO_ACCESS'), 'success');
+    $app->redirect($redirectURL);
+} else {
     ?>
 
-    <div class="item_fields">
+    <div class="veldeveloperupdate-edit front-end-edit">
+        <?php if (!$canEdit) : ?>
+            <h3>
+                <?php throw new Exception(Text::_('COM_VEL_GENERAL_ERROR_MESSAGE_NOT_AUTHORISED'), 403); ?>
+            </h3>
+        <?php else : ?>
+            <form id="form-veldeveloperupdate"
+                  action="<?php echo Route::_('index.php?option=com_vel&task=developerupdate.save'); ?>"
+                  method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
+                <?php
+                $fieldsets['overview']['title']       = Text::_('COM_VEL_DEVELOPERUPDATES_FORM_OVERVIEW_TITLE');
+                $fieldsets['overview']['description']     = Text::_('COM_VEL_DEVELOPERUPDATES_FORM_OVERVIEW_DESCR');
+                $fieldsets['overview']['fields']          = [];
 
-        <table class="table">
+                $fieldsets['aboutyou']['title']       = Text::_('COM_VEL_GENERAL_ABOUT_YOU_LABEL');
+                $fieldsets['aboutyou']['description'] = "";
+                $fieldsets['aboutyou']['fields']      = [
+                'contact_fullname',
+                'contact_organisation',
+                'contact_email'];
 
+                $fieldsets['vulnerabilitydetails']['title']       = Text::_('COM_VEL_DEVELOPERUPDATES_FORM_VULNERABILITY_DETAILS_TITLE');
+                $fieldsets['vulnerabilitydetails']['description'] = "";
+                $fieldsets['vulnerabilitydetails']['fields']      = [
+                'vulnerable_item_name',
+                'vulnerable_item_version',
+                'extension_update',
+                'new_version_number'];
 
-            <tr>
-                <th><?php echo Text::_('JGLOBAL_FIELD_ID_LABEL'); ?></th>
-                <td><?php echo $this->item->id; ?></td>
-            </tr>
+                $fieldsets['vulnerabilitydetails2']['title']       = "";
+                $fieldsets['vulnerabilitydetails2']['description'] = Text::_('COM_VEL_DEVELOPERUPDATES_FORM_VULNERABILITY_DETAILS_2_DESCR');
+                $fieldsets['vulnerabilitydetails2']['fields']      = [
+                'update_notice_url',
+                'changelog_url'];
 
-            <tr>
-                <th><?php echo Text::_('COM_VEL_GENERAL_CONTACT_FULLNAME_LABEL'); ?></th>
-                <td><?php echo $this->item->contact_fullname; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('COM_VEL_DEVELOPERUPDATES_CONTACT_ORGANISATION_LABEL'); ?></th>
-                <td><?php echo $this->item->contact_organisation; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('COM_VEL_GENERAL_CONTACT_EMAIL_LABEL'); ?></th>
-                <td><?php echo $this->item->contact_email; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('COM_VEL_GENERAL_VULNERABLE_ITEM_NAME_LABEL'); ?></th>
-                <td><?php echo $this->item->vulnerable_item_name; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('COM_VEL_GENERAL_VULNERABLE_ITEM_VERSION_LABEL'); ?></th>
-                <td><?php echo $this->item->vulnerable_item_version; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('COM_VEL_GENERAL_EXTENSION_UPDATE_LABEL'); ?></th>
-                <td><?php echo $this->item->extension_update; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('COM_VEL_GENERAL_NEW_VERSION_NUMBER_LABEL'); ?></th>
-                <td><?php echo $this->item->new_version_number; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('COM_VEL_GENERAL_UPDATE_NOTICE_URL_LABEL'); ?></th>
-                <td><?php echo $this->item->update_notice_url; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('COM_VEL_GENERAL_CHANGELOG_URL_LABEL'); ?></th>
-                <td><?php echo $this->item->changelog_url; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('COM_VEL_EXTENSION_DOWNLOAD_INTEGRATION_URL_LABEL'); ?></th>
-                <td><?php echo $this->item->download_url; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('COM_VEL_GENERAL_CONSENT_TO_PROCESS_NOTIFICATION_LABEL'); ?></th>
-                <td><?php echo $this->item->consent_to_process; ?></td>
-            </tr>
+                $fieldsets['vulnerabilitydetails3']['title']       = "";
+                $fieldsets['vulnerabilitydetails3']['description'] = Text::_('COM_VEL_DEVELOPERUPDATES_FORM_VULNERABILITY_DETAILS_3_DESCR');
+                $fieldsets['vulnerabilitydetails3']['fields']      = [
+                'download_url',
+                'consent_to_process'];
 
 
-            <tr>
-                <th><?php echo Text::_('COM_VEL_GENERAL_DATE_SUBMITTED_LABEL'); ?></th>
-                <td><?php echo $this->item->update_date_submitted; ?></td>
-            </tr>
-            <?php /*
+                $fieldsets['final']['title']       = "";
+                $fieldsets['final']['description'] = Text::_('COM_VEL_DEVELOPERUPDATES_FINAL_DESCRIPTION');
+                $fieldsets['final']['fields']       = [];
 
-            <tr>
-                <th><?php echo Text::_('COM_VEL_GENERAL_VEL_ITEM_ID_LABEL'); ?></th>
-                <td><?php echo $this->item->vel_item_id; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('COM_VEL_GENERAL_DATA_SOURCE_LABEL'); ?></th>
-                <td><?php echo $this->item->update_data_source; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('COM_VEL_GENERAL_FIELD_UPDATE_USER_IP_LABEL'); ?></th>
-                <td><?php echo $this->item->update_user_ip; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'); ?></th>
-                <td><?php echo $this->item->created_by_name; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('JGLOBAL_FIELD_MODIFIED_BY_LABEL'); ?></th>
-                <td><?php echo $this->item->modified_by_name; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('JGLOBAL_CREATED'); ?></th>
-                <td><?php echo $this->item->created; ?></td>
-            </tr>
-
-            <tr>
-                <th><?php echo Text::_('JGLOBAL_MODIFIED'); ?></th>
-                <td><?php echo $this->item->modified; ?></td>
-            </tr>
-            */ ?>
-        </table>
-
-    </div>
+                $fscount = 0;
 
 
-    <?php
-} else { ?>
-    <div class="jed-error">
-        <?php echo Text::sprintf('COM_VEL_REDIRECT_TO_MY_LISTS', Text::_('COM_VEL_REDIRECT_DEVELOPERUPDATES')); ?>
-        <br/>
-        <a href="index.php?option=com_vel&view=developerupdates"
-           class="btn btn-primary"><?php echo Text::_('JYES'); ?></a>
+                foreach ($fieldsets as $fs) {
+                    $fscount = $fscount + 1;
+                    if ($fs['title'] <> '') {
+                        if ($fscount > 1) {
+                            echo '</fieldset>';
+                        }
+
+                        echo '<fieldset class="veldeveloperupdateform"><legend>' . $fs['title'] . '</legend>';
+                    }
+                    if ($fs['description'] <> '') {
+                        echo $fs['description'];
+                    }
+
+                    $fields = $fs['fields'];
+
+
+
+                    foreach ($fields as $field) {
+                        echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+                    }
+                }
+
+                $hiddenfields = ['vel_item_id',
+                'update_data_source',
+                'update_date_submitted',
+                'data_source',
+                'update_user_ip'];
+
+
+                foreach ($hiddenfields as $field) {
+                    $this->form->setFieldAttribute($field, 'type', 'hidden');
+                }
+                ?>
+
+                <div class="control-group">
+                    <div class="controls">
+
+                        <button type="submit" class="validate btn btn-primary">
+                            <span class="fas fa-check" aria-hidden="true"></span>
+                            <?php echo Text::_('JSUBMIT'); ?>
+                        </button>
+                        <a class="btn btn-danger"
+                           href="<?php echo Route::_('index.php?option=com_vel&task=developerupdate.cancel'); ?>"
+                           title="<?php echo Text::_('JCANCEL'); ?>">
+                            <span class="fas fa-times" aria-hidden="true"></span>
+                            <?php echo Text::_('JCANCEL'); ?>
+                        </a>
+                    </div>
+                </div>
+
+                <input type="hidden" name="option" value="com_vel"/>
+                <input type="hidden" name="task"
+                       value="developerupdate.save"/>
+                <?php echo HTMLHelper::_('form.token'); ?>
+            </form>
+        <?php endif; ?>
     </div>
     <?php
 }
