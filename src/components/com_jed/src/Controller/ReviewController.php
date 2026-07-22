@@ -120,6 +120,99 @@ class ReviewController extends BaseController
     }
 
     /**
+     * Soft-deletes a review the current user wrote (published = -2), so it stops showing up
+     * anywhere but the extension/user pair remains free for a fresh review later.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     * @throws Exception
+     */
+    public function remove(): void
+    {
+        $this->checkToken('request');
+
+        $app = Factory::getApplication();
+        $id  = $app->getInput()->getInt('id');
+        $model = $this->getModel('Review', 'Site');
+
+        try {
+            $model->softDeleteOwn($id);
+            $this->setMessage(Text::_('COM_JED_ITEM_DELETED_SUCCESSFULLY'));
+        } catch (Exception $e) {
+            $errorType = ($e->getCode() == '404') ? 'error' : 'warning';
+            $this->setMessage($e->getMessage(), $errorType);
+        }
+
+        // Redirect to the dashboard rather than back to the now-deleted review's own page -
+        // a regular user without core.edit/core.edit.state can't view a -2 (trashed) review.
+        $menu = $app->getMenu()->getActive();
+        $url  = (empty($menu->link) ? 'index.php?option=com_jed&view=dashboard' : $menu->link);
+        $this->setRedirect(Route::_($url, false));
+    }
+
+    /**
+     * Saves an extension owner's/maintainer's response to a review.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     * @throws Exception
+     */
+    public function saveResponse(): void
+    {
+        $this->checkToken();
+
+        $app  = Factory::getApplication();
+        $id   = $app->getInput()->getInt('id');
+        $text = $app->getInput()->get('developer_response', '', 'raw');
+
+        try {
+            if (trim($text) === '') {
+                throw new Exception(Text::_('COM_JED_REVIEW_DEVELOPER_RESPONSE_EMPTY'), 400);
+            }
+
+            $model = $this->getModel('Review', 'Site');
+            $model->saveResponse($id, $text);
+            $this->setMessage(Text::_('COM_JED_REVIEW_DEVELOPER_RESPONSE_SAVED'));
+        } catch (Exception $e) {
+            $errorType = ($e->getCode() == '404') ? 'error' : 'warning';
+            $this->setMessage($e->getMessage(), $errorType);
+        }
+
+        $this->setRedirect(Route::_('index.php?option=com_jed&view=review&id=' . $id, false));
+    }
+
+    /**
+     * Lets an extension owner/maintainer retract their own developer response.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     * @throws Exception
+     */
+    public function deleteResponse(): void
+    {
+        $this->checkToken('request');
+
+        $app = Factory::getApplication();
+        $id  = $app->getInput()->getInt('id');
+        $model = $this->getModel('Review', 'Site');
+
+        try {
+            $model->deleteOwnResponse($id);
+            $this->setMessage(Text::_('COM_JED_ITEM_DELETED_SUCCESSFULLY'));
+        } catch (Exception $e) {
+            $errorType = ($e->getCode() == '404') ? 'error' : 'warning';
+            $this->setMessage($e->getMessage(), $errorType);
+        }
+
+        $menu = $app->getMenu()->getActive();
+        $url  = (empty($menu->link) ? 'index.php?option=com_jed&view=dashboard' : $menu->link);
+        $this->setRedirect(Route::_($url, false));
+    }
+
+    /**
      * Check in record
      *
      * @return bool  True on success

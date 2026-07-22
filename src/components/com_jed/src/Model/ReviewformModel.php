@@ -16,9 +16,8 @@ namespace Jed\Component\Jed\Site\Model;
 
 use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
-use Jed\Component\Tickets\Site\Helper\TicketHelper;
-use Jed\Component\Tickets\Site\Model\TicketformModel;
-use Jed\Component\Tickets\Site\Model\TicketmessageformModel;
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
+use Jed\Component\Tickets\Administrator\Traits\TicketHandlingTrait;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
@@ -34,6 +33,7 @@ use stdClass;
  */
 class ReviewformModel extends FormModel
 {
+    use TicketHandlingTrait;
     /**
      * The item object
      *
@@ -148,20 +148,20 @@ class ReviewformModel extends FormModel
 
         // Load state from the request userState on edit or from the passed variable on default
         if (Factory::getApplication()->input->get('layout') == 'edit') {
-            $id = Factory::getApplication()->getUserState('com_jed.edit.review.id');
+            $id = Factory::getApplication()->getUserState('com_jed.edit.extension.id');
         } else {
             $id = Factory::getApplication()->input->get('id');
-            Factory::getApplication()->setUserState('com_jed.edit.review.id', $id);
+            Factory::getApplication()->setUserState('com_jed.edit.extension.id', $id);
         }
 
-        $this->setState('review.id', $id);
+        $this->setState('extension.id', $id);
 
         // Load the parameters.
         $params       = $app->getParams();
         $params_array = $params->toArray();
 
         if (isset($params_array['item_id'])) {
-            $this->setState('review.id', $params_array['item_id']);
+            $this->setState('extension.id', $params_array['item_id']);
         }
 
         $this->setState('params', $params);
@@ -183,8 +183,17 @@ class ReviewformModel extends FormModel
             $this->item = false;
 
             if (empty($id)) {
-                $id = $this->getState('review.id');
+                $id = $this->getState('extension.id');
             }
+
+            $user  = $this->getCurrentUser();
+            $db    = $this->getDatabase();
+            $query = $db->getQuery(true);
+            $query->select('id')->from($db->quoteName('#__jed_reviews'))->where($db->quoteName('extension_id') . ' = ' . $db->quote($id))
+            ->where($db->quoteName('created_by') . ' = ' . $user->id)
+            ->where($db->quoteName('published') . ' != -2');
+            $db->setQuery($query);
+            $id = $db->loadResult();
 
             // Get a level row instance.
             $table      = $this->getTable();
@@ -192,10 +201,10 @@ class ReviewformModel extends FormModel
 
             if ($table !== false && $table->load($id) && !empty($table->id)) {
                 $user = Factory::getApplication()->getIdentity();
-                $id   = $table->id;
-                if (empty($id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
+                if (empty($table->id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
                     // Convert the Table to a clean stdClass.
                     $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
+                    $this->item->extension_id = $id;
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
                         $this->item->category_id = ArrayHelper::fromObject($this->item->category_id);
@@ -208,10 +217,6 @@ class ReviewformModel extends FormModel
 
         return $this->item;
     }
-
-
-
-
 
     /**
      * Returns Review ID
@@ -238,10 +243,31 @@ class ReviewformModel extends FormModel
     public function save(array $data): bool
     {
 
-        $id                 = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('review.id');
+        $id                 = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('extension.id');
         $data['ip_address'] = $_SERVER['REMOTE_ADDR'];
         $isLoggedIn         = JedHelper::isLoggedIn();
-        $user               = Factory::getApplication()->getIdentity();
+
+        if ($id && $isLoggedIn) {
+            /* Editing an existing review - a user may only ever edit their own. */
+            $table = $this->getTable();
+            $table->load($id);
+
+            if ((int) $table->created_by !== (int) Factory::getApplication()->getIdentity()->id && !JedHelper::isAdminOrSuperUser()) {
+                throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+            }
+
+            $data['id'] = $id;
+            // An edited review re-enters moderation rather than silently keeping its
+            // previous approval.
+            $data['published'] = 0;
+
+            if ($table->save($data) === true) {
+                $this->id = $table->id;
+
+                return $table->id;
+            }
+            return false;
+        }
 
         if (!$id && $isLoggedIn) {
             /* Any logged-in user can make a new review */
@@ -249,38 +275,13 @@ class ReviewformModel extends FormModel
             $table = $this->getTable();
 
             if ($table->save($data) === true) {
-                $this->id                            = $table->id;
-                $ticket                              = TicketHelper::createReviewTicket($table->id);
-                $ticket_message                      = TicketHelper::createEmptyTicketMessage();
-                $ticket_message['subject']           = $ticket['ticket_subject'];
-                $ticket_message['message']           = $ticket['ticket_text'];
-                $ticket_message['message_direction'] = 1; /*  1 for coming in, 0 for going out */
+                $this->id = $table->id;
 
-
-                //$ticket_model = BaseDatabaseModel::getInstance('Ticketform', 'JedModel', ['ignore_request' => true]);
-                $ticket_model = new TicketformModel();
-                $ticket_model->save($ticket);
-
-                $ticket_id = $ticket_model->getId();
-                /* We need to store the incoming ticket message */
-                $ticket_message['ticket_id'] = $ticket_id;
-
-                //$ticket_message_model = BaseDatabaseModel::getInstance('Ticketmessageform', 'JedModel', ['ignore_request' => true]);
-                $ticket_message_model = new TicketmessageformModel();
-
-                $ticket_message_model->save($ticket_message);
-
-                /* We need to email standard message to user and store message in ticket */
-                $message_out = JedHelper::sendMailTemplate(TicketHelper::MAIL_TEMPLATE_TICKET_CONFIRMATION, $user);
-                if ($message_out !== null) {
-                    $ticket_message['id']                        = 0;
-                    $ticket_message['subject']                   = $message_out->subject;
-                    $ticket_message['message']                   = $message_out->htmlbody;
-                    $ticket_message['message_direction']         = 0; /* 1 for coming in, 0 for going out */
-                    $ticket_message['created_by']                = -1;
-                    $ticket_message['modified_by']               = -1;
-                    $ticket_message_model->save($ticket_message);
-                }
+                $this->triggerTicket(
+                    TicketType::Review,
+                    $table->id,
+                    Text::sprintf('COM_JED_TICKET_NEW_REVIEW_EVENT', $data['title'] ?? $table->id)
+                );
 
                 return $table->id;
             }

@@ -23,6 +23,7 @@ use Joomla\CMS\Log\Log;
 use Joomla\CMS\Mail\MailTemplate;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\User;
+use Joomla\Database\ParameterType;
 
 use function defined;
 
@@ -93,9 +94,9 @@ class JedHelper
             return null;
         }
 
-        (new MailTemplate($templateId, $language))
-            ->addRecipient($recipient->email, $recipient->name)
-            ->send();
+        $mailtemplate = new MailTemplate($templateId, $language);
+        $mailtemplate->addRecipient($recipient->email, $recipient->name);
+        $mailtemplate->send();
 
         return $mail;
     }
@@ -223,6 +224,50 @@ class JedHelper
         } catch (Exception $exc) {
             throw new Exception($exc->getMessage(), $exc->getCode());
         }
+    }
+
+    /**
+     * Checks whether the current user is the owner of the given extension (#__jed_extensions.owner)
+     * or listed as one of its maintainers (#__jed_extensions_maintainers) - the same check
+     * ExtensionformModel::isAuthorised() uses to decide who may edit an extension, factored out
+     * here so review/dashboard code can reuse it without duplicating the query.
+     *
+     * @param int $extensionId The extension PK in #__jed_extensions.
+     *
+     * @return bool
+     *
+     * @since  4.1.0
+     * @throws Exception
+     */
+    public static function isOwnerOrMaintainer(int $extensionId): bool
+    {
+        $userId = (int) self::getUser()->id;
+
+        if (!$userId) {
+            return false;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $ownerQuery = $db->getQuery(true)
+            ->select($db->quoteName('owner'))
+            ->from($db->quoteName('#__jed_extensions'))
+            ->where($db->quoteName('id') . ' = :eid')
+            ->bind(':eid', $extensionId, ParameterType::INTEGER);
+
+        if ((int) $db->setQuery($ownerQuery)->loadResult() === $userId) {
+            return true;
+        }
+
+        $maintainerQuery = $db->getQuery(true)
+            ->select('1')
+            ->from($db->quoteName('#__jed_extensions_maintainers'))
+            ->where($db->quoteName('extension_id') . ' = :eid')
+            ->where($db->quoteName('user_id') . ' = :uid')
+            ->bind(':eid', $extensionId, ParameterType::INTEGER)
+            ->bind(':uid', $userId, ParameterType::INTEGER);
+
+        return (bool) $db->setQuery($maintainerQuery)->loadResult();
     }
 
     /**

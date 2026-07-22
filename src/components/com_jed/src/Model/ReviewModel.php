@@ -17,6 +17,8 @@ namespace Jed\Component\Jed\Site\Model;
 
 use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
+use Jed\Component\Tickets\Administrator\Traits\TicketHandlingTrait;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ItemModel;
@@ -31,6 +33,8 @@ use Joomla\Utilities\ArrayHelper;
  */
 class ReviewModel extends ItemModel
 {
+    use TicketHandlingTrait;
+
     public const int PROCESSING_WINDOW = 30;
     /**
      * Log how the score is generated.
@@ -105,7 +109,7 @@ class ReviewModel extends ItemModel
      * @var   object
      * @since 4.0.0
      */
-    public mixed $item;
+    public $item;
 
     protected int $defaultLimit = 10;
 
@@ -117,74 +121,6 @@ class ReviewModel extends ItemModel
      * @since 4.0.0
      **/
     private string $dbtable = "#__jed_reviews";
-
-    /**
-     * Method to check in an item.
-     *
-     * @param int|null $id The id of the row to check out.
-     *
-     * @return bool True on success, false on failure.
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function checkin(int $id = null): bool
-    {
-        // Get the id.
-        $id = (!empty($id)) ? $id : (int)$this->getState('review.id');
-        if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-            if ($id) {
-                // Initialise the table
-                $table = $this->getTable();
-
-                // Attempt to check the row in.
-                if (method_exists($table, 'checkin')) {
-                    if (!$table->checkin($id)) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-    }
-
-    /**
-     * Method to check out an item for editing.
-     *
-     * @param int|null $id The id of the row to check out.
-     *
-     * @return bool True on success, false on failure.
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function checkout(int $id = null): bool
-    {
-        // Get the user id.
-        $id = (!empty($id)) ? $id : (int)$this->getState('review.id');
-
-        if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-            if ($id) {
-                // Initialise the table
-                $table = $this->getTable();
-
-                // Get the current user object.
-                $user = Factory::getApplication()->getIdentity();
-
-                // Attempt to check the row out.
-                if (method_exists($table, 'checkout')) {
-                    if (!$table->checkout($user->id, $id)) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-    }
 
     /**
      * Method to delete an item
@@ -203,6 +139,101 @@ class ReviewModel extends ItemModel
             return $table->delete($id);
         }
         throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+    }
+
+    /**
+     * Soft-deletes a review the current user wrote (or, for staff, any review) by setting
+     * `published = -2`, rather than removing the row - so the same extension/user pair remains
+     * available for a fresh review later on.
+     *
+     * @param int $id The review id
+     *
+     * @return bool
+     * @since  4.1.0
+     * @throws Exception
+     */
+    public function softDeleteOwn(int $id): bool
+    {
+        $table = $this->getTable();
+
+        if (!$table->load($id)) {
+            throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 404);
+        }
+
+        if ((int) $table->created_by !== (int) Factory::getApplication()->getIdentity()->id && !JedHelper::isAdminOrSuperUser()) {
+            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+        }
+
+        $table->published = -2;
+
+        return $table->store();
+    }
+
+    /**
+     * Lets an extension owner/maintainer retract their own developer response
+     * (developer_response_published = -2). The response text itself is kept, just hidden.
+     *
+     * @param int $id The review id
+     *
+     * @return bool
+     * @since  4.1.0
+     * @throws Exception
+     */
+    public function deleteOwnResponse(int $id): bool
+    {
+        $table = $this->getTable();
+
+        if (!$table->load($id)) {
+            throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 404);
+        }
+
+        if (!JedHelper::isOwnerOrMaintainer((int) $table->extension_id) && !JedHelper::isAdminOrSuperUser()) {
+            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+        }
+
+        $table->developer_response_published = -2;
+
+        return $table->store();
+    }
+
+    /**
+     * Saves an extension owner's/maintainer's response to a review, resetting it into
+     * moderation - mirrors how a new review itself always starts unpublished.
+     *
+     * @param int    $id   The review id
+     * @param string $text The response text
+     *
+     * @return bool
+     * @since  4.1.0
+     * @throws Exception
+     */
+    public function saveResponse(int $id, string $text): bool
+    {
+        $table = $this->getTable();
+
+        if (!$table->load($id)) {
+            throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 404);
+        }
+
+        if (!JedHelper::isOwnerOrMaintainer((int) $table->extension_id)) {
+            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+        }
+
+        $table->developer_response           = $text;
+        $table->developer_responded_on       = Factory::getDate()->toSql();
+        $table->developer_response_published = 0;
+
+        $result = $table->store();
+
+        if ($result) {
+            $this->triggerTicket(
+                TicketType::DeveloperResponse,
+                $id,
+                Text::sprintf('COM_JED_TICKET_NEW_DEVELOPER_RESPONSE_EVENT', $table->title ?? $id)
+            );
+        }
+
+        return $result;
     }
 
     /**
@@ -250,10 +281,6 @@ class ReviewModel extends ItemModel
                     throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
                 }
             }
-
-            if (empty($this->item)) {
-                throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 404);
-            }
         }
 
 
@@ -288,41 +315,6 @@ class ReviewModel extends ItemModel
 
             $this->item->extension_id = !empty($textValue) ? implode(', ', $textValue) : $this->item->extension_id;
         } */
-
-        /* if (isset($this->item->supply_option_id) && $this->item->supply_option_id != '') {
-            if (is_object($this->item->supply_option_id)) {
-                $this->item->supply_option_id = ArrayHelper::fromObject($this->item->supply_option_id);
-            }
-
-            $values = (is_array($this->item->supply_option_id)) ? $this->item->supply_option_id : explode(
-                ',',
-                $this->item->supply_option_id
-            );
-
-            $textValue = [];
-
-            $db = $this->getDatabase();
-
-            foreach ($values as $value) {
-                $query = $db->getQuery(true);
-                $query
-                    ->select('`jso`.`title`')
-                    ->from($db->quoteName('#__jed_extension_supply_options', 'jso'))
-                    ->where($db->quoteName('id') . ' = ' . $db->quote($value));
-
-                $db->setQuery($query);
-                $results = $db->loadObject();
-
-                if ($results) {
-                    $textValue[] = $results->title;
-                }
-            }
-
-            $this->item->supply_option_id = !empty($textValue) ? implode(
-                ', ',
-                $textValue
-            ) : $this->item->supply_option_id;
-        }*/
 
         if (isset($this->item->created_by)) {
             $this->item->created_by_name = JedHelper::getUserById($this->item->created_by)->name;

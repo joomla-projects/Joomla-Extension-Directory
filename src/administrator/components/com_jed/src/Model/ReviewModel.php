@@ -185,6 +185,63 @@ class ReviewModel extends AdminModel
     }
 
     /**
+     * Approves one or more pending developer responses (developer_response_published = 1) - the
+     * ticket-based counterpart to a new review's `reviews.publish` Approve action.
+     *
+     * @param array $pks The review ids whose developer_response should be published.
+     *
+     * @return bool True on success.
+     *
+     * @since 4.1.0
+     */
+    public function publishResponse(array $pks): bool
+    {
+        return $this->setDeveloperResponsePublished($pks, 1);
+    }
+
+    /**
+     * Rejects/deletes one or more developer responses (developer_response_published = -2) -
+     * the response text itself is left in place, just hidden from the extension page.
+     *
+     * @param array $pks The review ids whose developer_response should be rejected.
+     *
+     * @return bool True on success.
+     *
+     * @since 4.1.0
+     */
+    public function deleteResponse(array $pks): bool
+    {
+        return $this->setDeveloperResponsePublished($pks, -2);
+    }
+
+    /**
+     * @param array $pks   The review ids to update.
+     * @param int   $value The developer_response_published value to set.
+     *
+     * @return bool True on success.
+     *
+     * @since 4.1.0
+     */
+    private function setDeveloperResponsePublished(array $pks, int $value): bool
+    {
+        $ids = array_filter(array_map('intval', $pks));
+
+        if (empty($ids)) {
+            return false;
+        }
+
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__jed_reviews'))
+            ->set($db->quoteName('developer_response_published') . ' = ' . (int) $value)
+            ->whereIn($db->quoteName('id'), $ids);
+
+        $db->setQuery($query)->execute();
+
+        return true;
+    }
+
+    /**
      * Method to get the data that should be injected in the form.
      *
      * @return mixed  The data for the form.

@@ -8,35 +8,35 @@
         />
         <field name="body" filter="safehtml" type="textarea" label="COM_JED_REVIEWS_BODY_LABEL"
         />
-        <field name="functionality" type="range" min="0" max="100" label="COM_JED_REVIEWS_FUNCTIONALITY_LABEL"
+        <field name="functionality" type="range" min="0" max="5" step="0.5" label="COM_JED_REVIEWS_FUNCTIONALITY_LABEL"
         />
         <field name="functionality_comment" filter="safehtml" type="text"
                label="COM_JED_REVIEWS_FUNCTIONALITY_LABEL_COMMENT"
                description=""
         />
-        <field name="ease_of_use" type="range" min="0" max="100" label="COM_JED_REVIEWS_EASE_OF_USE_LABEL"
+        <field name="ease_of_use" type="range" min="0" max="5" step="0.5" label="COM_JED_REVIEWS_EASE_OF_USE_LABEL"
         />
         <field name="ease_of_use_comment" filter="safehtml" type="text"
                label="COM_JED_REVIEWS_EASE_OF_USE_LABEL_COMMENT"
                description=""
         />
-        <field name="support" type="range" min="0" max="100" label="COM_JED_GENERAL_SUPPORT_LABEL"
+        <field name="support" type="range" min="0" max="5" step="0.5" label="COM_JED_GENERAL_SUPPORT_LABEL"
         />
         <field name="support_comment" filter="safehtml" type="text" label="COM_JED_GENERAL_SUPPORT_LABEL_COMMENT"
         />
-        <field name="documentation" type="range" min="0" max="100" label="COM_JED_EXTENSION_DOCUMENTATION_LABEL"
+        <field name="documentation" type="range" min="0" max="5" step="0.5" label="COM_JED_EXTENSION_DOCUMENTATION_LABEL"
         />
         <field name="documentation_comment" filter="safehtml" type="text"
                label="COM_JED_EXTENSION_DOCUMENTATION_LABEL_COMMENT"
                description=""
         />
-        <field name="value_for_money" type="range" min="0" max="100" label="COM_JED_REVIEWS_VALUE_FOR_MONEY_LABEL"
+        <field name="value_for_money" type="range" min="0" max="5" step="0.5" label="COM_JED_REVIEWS_VALUE_FOR_MONEY_LABEL"
         />
         <field name="value_for_money_comment" filter="safehtml" type="text"
                label="COM_JED_REVIEWS_VALUE_FOR_MONEY_LABEL_COMMENT"
                description=""
         />
-        <field name="overall_score" type="range" min="0" max="100" label="COM_JED_REVIEWS_OVERALL_SCORE_LABEL"
+        <field name="overall_score" type="range" min="0" max="5" step="0.5" label="COM_JED_REVIEWS_OVERALL_SCORE_LABEL"
         />
         <field name="used_for" filter="safehtml" type="text" label="COM_JED_REVIEWS_USED_FOR_LABEL"
         />
@@ -55,6 +55,18 @@
         </field>
         <field name="created_on" type="timecreated" label="COM_JED_GENERAL_CREATED_ON_LABEL" />
         <field name="created_by" type="createdby" label="JGLOBAL_FIELD_CREATED_BY_LABEL" />
+        <field name="developer_response" filter="safehtml" type="textarea"
+               label="COM_JED_REVIEWS_DEVELOPER_RESPONSE_LABEL"
+               description="COM_JED_REVIEWS_DEVELOPER_RESPONSE_DESCR"/>
+        <field name="developer_responded_on" type="calendar" filter="user_utc" label="COM_JED_REVIEWS_DEVELOPER_RESPONDED_ON_LABEL"
+               description="COM_JED_REVIEWS_DEVELOPER_RESPONDED_ON_DESCR" format="%Y-%m-%d %H:%M:%S"/>
+        <field name="developer_response_published" type="list" label="COM_JED_REVIEWS_DEVELOPER_RESPONSE_PUBLISHED_LABEL"
+               description="COM_JED_REVIEWS_DEVELOPER_RESPONSE_PUBLISHED_DESCR" class="inputbox" size="1"
+               default="0">
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+            <option value="-2">JTRASHED</option>
+        </field>
         <field name="ordering"/>
         <field name="checked_out" type="hidden" filter="unset"/>
         <field name="checked_out_time" default="0000-00-00 00:00:00" type="hidden" filter="unset"/>

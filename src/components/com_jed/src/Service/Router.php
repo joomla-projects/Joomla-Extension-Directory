@@ -104,6 +104,7 @@ class Router extends RouterView
         $review->setKey('id')->setParent($reviews);
         $this->registerView($review);
         $reviewform = new RouterViewConfiguration('reviewform');
+        $reviewform->setParent($extension);
         $this->registerView($reviewform);
         $reviewscomments = new RouterViewConfiguration('reviewscomments');
         $this->registerView($reviewscomments);

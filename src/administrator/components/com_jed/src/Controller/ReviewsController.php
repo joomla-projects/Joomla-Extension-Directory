@@ -60,6 +60,58 @@ class ReviewsController extends AdminController
     }
 
     /**
+     * Approves the pending developer response(s) on the selected reviews.
+     *
+     * @return void
+     *
+     * @throws Exception
+     *
+     * @since 4.1.0
+     */
+    public function publishResponse(): void
+    {
+        $this->checkToken();
+
+        $pks = $this->input->post->get('cid', [], 'array');
+        ArrayHelper::toInteger($pks);
+
+        if (empty($pks)) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JED_NO_ELEMENT_SELECTED'), 'warning');
+        } else {
+            $this->getModel()->publishResponse($pks);
+            $this->setMessage(Text::_('COM_JED_ITEMS_SUCCESS_PUBLISHED'));
+        }
+
+        $this->setRedirect('index.php?option=com_jed&view=reviews');
+    }
+
+    /**
+     * Rejects/deletes the developer response(s) on the selected reviews.
+     *
+     * @return void
+     *
+     * @throws Exception
+     *
+     * @since 4.1.0
+     */
+    public function deleteResponse(): void
+    {
+        $this->checkToken();
+
+        $pks = $this->input->post->get('cid', [], 'array');
+        ArrayHelper::toInteger($pks);
+
+        if (empty($pks)) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JED_NO_ELEMENT_SELECTED'), 'warning');
+        } else {
+            $this->getModel()->deleteResponse($pks);
+            $this->setMessage(Text::_('COM_JED_ITEMS_SUCCESS_DELETED'));
+        }
+
+        $this->setRedirect('index.php?option=com_jed&view=reviews');
+    }
+
+    /**
      * Proxy for getModel.
      *
      * @param string $name   Optional. Model name
