@@ -62,8 +62,6 @@ class HtmlView extends BaseHtmlView
         $this->params = $app->getParams('com_jed');
         //$this->form   = $model->getForm();
 
-
-
         if ($this->_layout == 'edit') {
             $authorised = $user->authorise('core.create', 'com_jed');
 
