@@ -238,7 +238,6 @@ class TicketsModel extends ListModel
             $query->order($db->escape($orderCol . ' ' . $orderDirn));
         }
 
-        //echo($query->__toString());exit();
         return $query;
     }
 

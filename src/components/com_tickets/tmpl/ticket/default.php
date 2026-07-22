@@ -45,6 +45,25 @@ echo LayoutHelper::render('ticket.ticket_edit_header', $this->item);
         <div class="row">
             <div class="col-12">
                 <div class="widget ticket-header-row">
+                    <h1 class="ticket-header-16"><?php echo Text::_('COM_TICKETS_MASTERDATA_LABEL'); ?></h1>
+                    <div class="container">
+                        <?php
+                        /**
+                         * The master-data layouts (layouts/ticket/ticket/masterdata_*.php) live
+                         * under the admin com_tickets component - shared with the admin ticket
+                         * view rather than duplicated here, mirroring how this codebase already
+                         * reuses Administrator-namespace classes (e.g. ExtensionUtilities) from
+                         * Site code.
+                         */
+                        echo LayoutHelper::render(
+                            $this->linkedItemLayout,
+                            $this->linkedItemData,
+                            JPATH_ADMINISTRATOR . '/components/com_tickets/layouts'
+                        );
+                        ?>
+                    </div>
+                </div>
+                <div class="widget ticket-header-row">
                     <h1 class="ticket-header-16">Message History</h1>
                     <div class="container">
                         <div class="row">

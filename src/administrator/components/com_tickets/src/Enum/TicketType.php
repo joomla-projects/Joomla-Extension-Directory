@@ -30,4 +30,5 @@ enum TicketType: int
     case VELReport           = 5;
     case VulnerableExtension = 6;
     case Other               = 7;
+    case DeveloperResponse   = 8;
 }

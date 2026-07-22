@@ -16,6 +16,8 @@ namespace Jed\Component\Tickets\Site\View\Ticket;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
+use Jed\Component\Tickets\Administrator\Ticket\TicketTypeHandlerRegistry;
 use Jed\Component\Tickets\Site\Model\TicketModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
@@ -65,6 +67,27 @@ class HtmlView extends BaseHtmlView
      * @since 4.0.0
      */
     protected Registry $params;
+
+    /**
+     * The linked entity's read-only master data ("Stammdaten"), loaded via the
+     * same {@see TicketTypeHandlerRegistry} handlers the admin ticket view uses.
+     * No action buttons are ever loaded here - that's what makes this the
+     * "simpler" site-side view for the ticket's original submitter.
+     *
+     * @var object|null
+     *
+     * @since 4.1.0
+     */
+    protected ?object $linkedItemData = null;
+
+    /**
+     * The Joomla layout name that renders $linkedItemData.
+     *
+     * @var string
+     *
+     * @since 4.1.0
+     */
+    protected string $linkedItemLayout = 'ticket.masterdata_other';
 
     /**
      * Prepares the document
@@ -139,6 +162,13 @@ class HtmlView extends BaseHtmlView
         $this->messages = $model->getMessages();
         $this->form     = $model->getForm();
         $this->params   = $app->getParams('com_jed');
+
+        $registry = TicketTypeHandlerRegistry::createDefault($model->getDatabase());
+        $type     = TicketType::tryFrom((int) ($this->item->linked_item_type ?? 0)) ?? TicketType::Other;
+        $handler  = $registry->get($type);
+
+        $this->linkedItemData   = $handler->getMasterData((int) ($this->item->linked_item_id ?? 0));
+        $this->linkedItemLayout = $handler->getMasterDataLayout();
 
         if (!$user->id) {
             $return                = base64_encode(Uri::getInstance());

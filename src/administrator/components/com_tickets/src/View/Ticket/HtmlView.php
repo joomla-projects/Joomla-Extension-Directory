@@ -18,14 +18,11 @@ namespace Jed\Component\Tickets\Administrator\View\Ticket;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
-use Jed\Component\Jed\Administrator\Model\ReviewModel;
 use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Jed\Component\Tickets\Administrator\Model\TicketModel;
-use Vel\Component\Vel\Administrator\Model\AbandonedreportModel;
-use Vel\Component\Vel\Administrator\Model\DeveloperupdateModel;
-use Vel\Component\Vel\Administrator\Model\ReportModel;
+use Jed\Component\Tickets\Administrator\Ticket\TicketAction;
+use Jed\Component\Tickets\Administrator\Ticket\TicketTypeHandlerRegistry;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\Registry\Registry;
@@ -61,13 +58,14 @@ class HtmlView extends BaseHtmlView
     protected int $linked_item_id;
 
     /**
-     * The model of the linked item
+     * The resolved TicketType enum case name (e.g. "Extension", "Review") for the
+     * linked item, used to look up COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_OPTION_*.
      *
-     * @var mixed
+     * @var string
      *
-     * @since 4.0.0
+     * @since 4.1.0
      */
-    protected mixed $linked_item_Model;
+    protected string $linked_item_type_name = 'Other';
 
     /**
      * A list of messages sent / received for this ticket
@@ -79,56 +77,32 @@ class HtmlView extends BaseHtmlView
     protected mixed $ticket_messages;
 
     /**
-     * A string containing html linking ticket to remote object
+     * The linked entity's master data, as loaded by the ticket-type handler
+     * ({@see TicketTypeHandlerRegistry}). Null if the linked row no longer exists.
+     *
+     * @var object|null
+     *
+     * @since 4.1.0
+     */
+    protected ?object $linkedItemData = null;
+
+    /**
+     * The Joomla layout name that renders $linkedItemData.
      *
      * @var string
      *
-     * @since 4.0.0
+     * @since 4.1.0
      */
-    protected string $related_object_string;
+    protected string $linkedItemLayout = 'ticket.masterdata_other';
 
     /**
-     * The linked Form object
+     * Admin action buttons for the linked item (Approve, Delete, ...).
      *
-     * @var ?Form
+     * @var TicketAction[]
      *
-     * @since 4.0.0
+     * @since 4.1.0
      */
-    protected mixed $linked_form = null;
-
-    /**
-     * The linked Form data
-     *
-     * @var mixed
-     *
-     * @since 4.0.0
-     */
-    protected mixed $linked_item_data;
-    /**
-     * The linked extension form
-     *
-     * @var Form
-     *
-     * @since 4.0.0
-     */
-    protected mixed $linked_extension_form;
-    /**
-     * The linked extension
-     *
-     * @var mixed
-     *
-     * @since 4.0.0
-     */
-    protected mixed $linked_extension_data;
-
-    /**
-     * Ticket Help
-     *
-     * @var mixed
-     *
-     * @since 4.0.0
-     */
-    protected mixed $ticket_help;
+    protected array $linkedItemActions = [];
 
     /**
      * Add the page title and toolbar.
@@ -201,9 +175,7 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
-        /**
- * @var TicketModel $model
-*/
+        /** @var TicketModel $model */
         $model                  = $this->getModel();
         $model->setUseExceptions(true);
 
@@ -211,80 +183,17 @@ class HtmlView extends BaseHtmlView
         $this->item             = $model->getItem();
         $this->form             = $model->getForm();
         $this->ticket_messages  = $model->getTicketMessages();
-        $this->ticket_help      = $model->getTicketHelp();
         $this->linked_item_type = $this->item->linked_item_type;
         $this->linked_item_id   = $this->item->linked_item_id;
-        if ($this->linked_item_type === 0) { // Manual Tickets from User
-            $this->linked_item_Model     = null;
-            $this->related_object_string = "There is no linked item.";
 
-            //$this->linked_form->bind($this->linked_item_data);
-        }
-        if ($this->linked_item_type === TicketType::Extension->value) {
-            $extension_model = new ExtensionModel();
-            $extension_model->setUseExceptions(true);
+        $registry = TicketTypeHandlerRegistry::createDefault(Factory::getDbo());
+        $type     = TicketType::tryFrom((int) $this->linked_item_type) ?? TicketType::Other;
+        $handler  = $registry->get($type);
 
-            $extension_id                = $this->linked_item_id;
-            $this->related_object_string = "Extension is displayed in 'Linked Extensions' tab.";
-        }
-        if ($this->linked_item_type === TicketType::Review->value) {
-            $this->linked_item_Model     = new ReviewModel();
-            $this->related_object_string = "Review is displayed in 'Linked Review' tab.";
-
-            $this->linked_item_data = $model->getReviewData();
-
-            $this->linked_form      = $this->linked_item_Model->getForm(
-                $this->linked_item_data,
-                false,
-                'jf_linked_form'
-            );
-
-            $this->linked_form->bind($this->linked_item_data);
-        }
-        if ($this->linked_item_type === TicketType::VELReport->value) {
-            $this->linked_item_Model = new ReportModel();
-
-            $this->linked_item_data = $model->getVelReportData();
-
-            $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
-            $this->linked_form->bind($this->linked_item_data);
-            if ($this->linked_item_data[0]->vel_item_id > 0) {
-                $this->related_object_string = '<button type="button" class="btn btn-primary"  ' .
-                'onclick="Joomla.submitbutton(\'ticket.gotoVEL\')">View VEL Item ' .
-                $this->linked_item_data[0]->vel_item_id . '</button>';
-            } else {
-                $this->related_object_string = "Awaiting creation of VEL Item";
-            }
-        }
-        if ($this->linked_item_type === TicketType::VulnerableExtension->value) { // VEL Developer Update
-            $this->linked_item_Model = new DeveloperupdateModel();
-
-            $this->linked_item_data = $model->getVelDeveloperUpdateData();
-
-            $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
-            $this->linked_form->bind($this->linked_item_data);
-            if ($this->linked_item_data[0]->vel_item_id > 0) {
-                $this->related_object_string = '<button type="button" class="btn btn-primary" ' .
-                'onclick="Joomla.submitbutton(\'ticket.gotoVEL\')">View VEL Item ' .
-                $this->linked_item_data[0]->vel_item_id . '</button>';
-            } else {
-                $this->related_object_string = "Awaiting Linking to VEL Item";
-            }
-        }
-        if ($this->linked_item_type === TicketType::AbandonedExtension->value) { // VEL Abandonware Report
-            $this->linked_item_Model = new AbandonedreportModel();
-            $this->linked_item_data  = $model->getVelAbandonedReportData();
-
-            $this->linked_form = $this->linked_item_Model->getForm($this->linked_item_data, false);
-            $this->linked_form->bind($this->linked_item_data);
-
-            if ($this->linked_item_data[0]->vel_item_id > 0) {
-                $this->related_object_string = '<button type="button" class="btn btn-primary"  onclick="Joomla.submitbutton(\'ticket.gotoVEL\')">View VEL Item ' . $this->linked_item_data[0]->vel_item_id . '</button>';
-            } else {
-                $this->related_object_string = "Awaiting creation of VEL Item";
-            }
-        }
-
+        $this->linked_item_type_name = $type->name;
+        $this->linkedItemData         = $handler->getMasterData((int) $this->linked_item_id);
+        $this->linkedItemLayout       = $handler->getMasterDataLayout();
+        $this->linkedItemActions      = $handler->getActions((int) $this->linked_item_id, $this->getCurrentUser());
 
         $this->addToolbar();
 

@@ -57,7 +57,7 @@ class TicketController extends FormController
             $reportId    = $_POST["jform"]['linked_item_id'];
             $vel_item_id = $_POST["jform"]['vel_item_id'];
             $queryUpdate = $db->getQuery(true)
-                ->update('#__jed_vel_developer_update')
+                ->update('#__vel_developer_update')
                 ->set($db->qn('vel_item_id') . ' = ' . $vel_item_id)
                 ->where($db->qn('id') . ' = ' . $reportId);
 
@@ -92,11 +92,11 @@ class TicketController extends FormController
                 ->select(
                     "0,`extension_name` as vulnerable_item_name, `extension_version` as vulnerable_item_version, CONCAT(`extension_name`,', ',`extension_version`,', ','Abandoned') AS title,'',3 AS 'status'," . $reportId . ",'','' AS 'risk_level',   `extension_version`, `extension_version`,'' AS 'patch_version','','',5 AS 'exploit_type','' AS 'exploit_other_description','' AS 'xml_manifest','' AS 'manifest_location', '' AS 'install_data', `reporter_fullname` AS 'discovered_by',''"
                 )
-                ->from('#__jed_vel_abandoned_report')
+                ->from('#__vel_abandoned')
                 ->where('id = ' . $reportId);
 
             $queryInsert = $db->getQuery(true)
-                ->insert('#__jed_vel_vulnerable_item')
+                ->insert('#__vel_vulnerable_item')
                 ->columns(
                     $db->qn(
                         [
@@ -132,7 +132,7 @@ class TicketController extends FormController
             $newVel = $db->insertid();
 
             $queryUpdate = $db->getQuery(true)
-                ->update('#__jed_vel_abandoned_report')
+                ->update('#__vel_abandoned')
                 ->set(
                     [
                     $db->qn('passed_to_vel') . ' = 1',
@@ -178,7 +178,7 @@ class TicketController extends FormController
             `jira`, `cve_id`, `cwe_id`, `cvssthirty_base`, `cvssthirty_base_score`, `cvssthirty_temp`,
             `cvssthirty_temp_score`, `cvssthirty_env`, `cvssthirty_env_score`, `public_description`,
             `alias`, `created_by`, `modified_by`, `created`, `modified`, `checked_out`, `checked_out_time`,
-            `state` FROM  #__jed_vel_vulnerable_item` */
+            `state` FROM  #__vel_vulnerable_item` */
             $reportId = $_POST["jform"]['linked_item_id'];
 
             $exploit_string = Text::_(
@@ -191,11 +191,11 @@ class TicketController extends FormController
                     "0,vulnerable_item_name, vulnerable_item_version, CONCAT(`vulnerable_item_name`,', ',`vulnerable_item_version`,', ','" . $exploit_string . "') as title,'',0 AS 'status',`id`,`jed_url`,'' AS 'risk_level',`vulnerable_item_version`, `vulnerable_item_version`,'' AS 'patch_version','','',`exploit_type`,`exploit_other_description`,
 '' AS 'xml_manifest','' AS 'manifest_location', '' AS 'install_data', `reporter_fullname` AS 'discovered_by','',now()"
                 )
-                ->from('#__jed_vel_report')
+                ->from('#__vel_report')
                 ->where('id = ' . $reportId);
 
             $queryInsert = $db->getQuery(true)
-                ->insert('#__jed_vel_vulnerable_item')
+                ->insert('#__vel_vulnerable_item')
                 ->columns(
                     $db->qn(
                         [
@@ -232,7 +232,7 @@ class TicketController extends FormController
             $newVel = $db->insertid();
 
             $queryUpdate = $db->getQuery(true)
-                ->update('#__jed_vel_report')
+                ->update('#__vel_report')
                 ->set(
                     [
                     $db->qn('passed_to_vel') . ' = 1',
@@ -338,7 +338,7 @@ class TicketController extends FormController
             $vel_devupdateid = $jform['veldeveloperupdate_id'];
 
             $queryUpdate = $db->getQuery(true)
-                ->update('#__jed_vel_developer_update')
+                ->update('#__vel_developer_update')
                 ->set($db->qn('vel_item_id') . ' = ' . (int)$vel_id)
                 ->where($db->qn('id') . ' = ' . (int)$vel_devupdateid);
 

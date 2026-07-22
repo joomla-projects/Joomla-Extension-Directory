@@ -18,9 +18,6 @@
                label="COM_TICKETS_TICKETS_TICKET_TEXT_LABEL"
                description="COM_TICKETS_TICKETS_TICKET_TEXT_DESCR"
                hint="COM_TICKETS_TICKETS_TICKET_TEXT_LABEL"/>
-        <field name="summary" filter="safehtml" type="text" label="COM_TICKETS_TICKET_INTERNAL_NOTE_FIELD_SUMMARY_LABEL"
-               description="COM_TICKETS_TICKET_INTERNAL_NOTE_FIELD_SUMMARY_DESCR"
-               hint="COM_TICKETS_TICKET_INTERNAL_NOTE_FIELD_SUMMARY_LABEL"/>
         <field name="internal_notes" editor="tinymce" buttons="false" filter="JComponentHelper::filterText"
                type="editor"
                label="COM_TICKETS_TICKETS_INTERNAL_NOTES_LABEL"
@@ -62,12 +59,13 @@
         </field>
         <field name="parent_id" label="COM_TICKETS_TICKETS_PARENT_ID_LABEL"
                description="COM_TICKETS_TICKETS_PARENT_ID_DESCR" hint="COM_TICKETS_TICKETS_PARENT_ID_LABEL"/>
-        <field name="state" type="list" label="JSTATUS" description="JFIELD_PUBLISHED_DESC" class="inputbox" size="1"
+        <field name="state" type="list" label="JSTATUS" description="COM_TICKETS_TICKETS_STATE_DESCR" class="inputbox" size="1"
                default="1">
-            <option value="1">JPUBLISHED</option>
-            <option value="0">JUNPUBLISHED</option>
-            <option value="2">JARCHIVED</option>
-            <option value="-2">JTRASHED</option>
+            <option value="1">COM_TICKETS_TICKETS_STATE_OPTION_OPEN</option>
+            <option value="0">COM_TICKETS_TICKETS_STATE_OPTION_CLOSED</option>
+            <option value="2">COM_TICKETS_TICKETS_STATE_OPTION_SOLVED</option>
+            <option value="-2">COM_TICKETS_TICKETS_STATE_OPTION_SPAM</option>
+            <option value="-1">COM_TICKETS_TICKETS_STATE_OPTION_TRASHED</option>
         </field>
         <field name="ordering"/>
         <field name="created_by" type="createdby" label="JGLOBAL_FIELD_CREATED_BY_LABEL"/>

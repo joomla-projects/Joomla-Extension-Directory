@@ -16,6 +16,7 @@
 
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Tickets\Administrator\Enum\TicketType;
+use Jed\Component\Tickets\Administrator\Ticket\TicketAction;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -28,12 +29,12 @@ HTMLHelper::_('jquery.framework');
 
 $wa = $this->document->getWebAssetManager();
 
-$wa->useStyle('com_tickets.Tickets')
-    ->useStyle('com_jed.jquery_dataTables');
+$wa->useStyle('com_tickets.Tickets');
+    //->useStyle('com_jed.jquery_dataTables');
 $wa->useScript('keepalive')
     ->useScript('form.validate')
-    ->useScript('com_tickets.ticketGetmessagetemplate')
-    ->useScript('com_jed.jquery_dataTables');
+    ->useScript('com_tickets.ticketGetmessagetemplate');
+    //->useScript('com_jed.jquery_dataTables');
 if ($this->linked_item_type === TicketType::Review->value) {
     $wa->useScript('com_tickets.ticketPublishUnPublishReview');
 }
@@ -75,6 +76,20 @@ $userFactory = $container->get('user.factory');
     <div class="row">
         <div class="col-8">
 
+            <div class="widget jed-ticket-masterdata">
+                <h1><?php echo Text::_('COM_TICKETS_MASTERDATA_LABEL'); ?></h1>
+                <div class="container">
+                    <?php echo LayoutHelper::render($this->linkedItemLayout, $this->linkedItemData); ?>
+                    <?php if ($this->linkedItemActions) : ?>
+                        <div class="row jed-ticket-actions mt-2">
+                            <?php foreach ($this->linkedItemActions as $action) :
+                                /** @var TicketAction $action */
+                                echo LayoutHelper::render('ticket.action_button', ['action' => $action]);
+                            endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
 
             <div class="widget">
                 <h1>Message History</h1>
@@ -160,91 +175,15 @@ $userFactory = $container->get('user.factory');
 
             </div>
             <div class="widget">
-                <h1>Related Object</h1>
+                <h1><?php echo Text::_('COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_LABEL'); ?></h1>
                 <div class="container">
-                    <p><?php echo $this->related_object_string; ?></p>
+                    <p><?php echo Text::_('COM_TICKETS_TICKETS_LINKED_ITEM_TYPE_OPTION_' . strtoupper($this->linked_item_type_name)); ?></p>
                 </div>
             </div>
 
         </div>
     </div>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
-
-    <?php
-    $add_debug_tab     = false;
-    $add_extension_tab     = false;
-
-    if ($this->linked_item_type === TicketType::Other->value) { /* Unknown Type */
-        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedUnknown', 'Unknown');
-
-        echo LayoutHelper::render('ticket.linked_unknown', $this->linked_form);
-
-        echo HTMLHelper::_('uitab.endTab');
-    }
-    if ($this->linked_item_type === TicketType::Extension->value) {
-        $add_extension_tab = true;
-        $add_debug_tab     = true;
-        /*   echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension');
-
-           echo LayoutHelper::render('ticket.linked_extension', $this->linked_form);
-
-           echo HTMLHelper::_('uitab.endTab');*/
-    }
-    if ($this->linked_item_type === TicketType::Review->value) {
-        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedReview', 'Linked Review');
-
-        $passdata = ["linked_form" => $this->linked_form,
-          "linked_data"            => $this->linked_item_data,
-          "extension"              => $this->linked_extension_data];
-        echo LayoutHelper::render('ticket.linked_review', $passdata);
-
-        echo HTMLHelper::_('uitab.endTab');
-        $add_debug_tab     = true;
-        $add_extension_tab = true;
-    }
-    if ($this->linked_item_type === TicketType::VELReport->value) {
-        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedVELReport', 'Linked VEL Report');
-
-        echo LayoutHelper::render('ticket.linked_velreport', $this->linked_form);
-
-        echo HTMLHelper::_('uitab.endTab');
-    }
-    if ($this->linked_item_type === TicketType::VulnerableExtension->value) { /* VEL Developer Update */
-        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedDeveloperUpdate', 'Linked Developer Update');
-
-        echo LayoutHelper::render('ticket.linked_veldeveloperupdate', $this->linked_form);
-        echo HTMLHelper::_('uitab.endTab');
-    }
-    if ($this->linked_item_type === TicketType::AbandonedExtension->value) { /* VEL Abandonware */
-        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedAbandonedReport', 'Linked Abandonware Report');
-
-        echo LayoutHelper::render('ticket.linked_velabandonware', $this->linked_form);
-
-        echo HTMLHelper::_('uitab.endTab');
-    }
-    if ($add_extension_tab == true && !empty($this->linked_extension_data)) {
-        echo HTMLHelper::_('uitab.addTab', 'myTab', 'LinkedExtension', 'Linked Extension');
-
-        echo LayoutHelper::render('ticket.linked_extension', $this->linked_extension_data);
-
-        echo HTMLHelper::_('uitab.endTab');
-        echo HTMLHelper::_('uitab.addTab', 'myTab', 'JEDChecker', 'JED Checker');
-
-        echo LayoutHelper::render('ticket.jedchecker', $this->linked_extension_data);
-
-        echo HTMLHelper::_('uitab.endTab');
-    }
-    if ($add_debug_tab == true) {
-        echo HTMLHelper::_('uitab.addTab', 'myTab', 'TicketHelp', 'Ticket Help');
-
-        echo LayoutHelper::render('ticket.ticket_help', $this->ticket_help);
-
-        echo HTMLHelper::_('uitab.endTab');
-    }
-
-    ?>
-
-
 
     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Publishing', Text::_('COM_TICKETS_TAB_PUBLISHING', true)); ?>
     <div class="row-fluid">
