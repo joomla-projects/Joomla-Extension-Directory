@@ -285,64 +285,75 @@ class ExtensionModel extends ItemModel
     }
 
     /**
-     * Get array of review scores for extension
+     * Whether the given user has bookmarked this extension.
      *
      * @param int $extension_id
+     * @param int $user_id
      *
-     * @return array
+     * @return bool
      *
      * @since 4.0.0
      */
-    public function getScores(int $extension_id): array
+    public function isFavorited(int $extension_id, int $user_id): bool
     {
-        $retval = null;
-        $db     = $this->getDatabase();
-        $query  = $db->getQuery(true)
-            ->select('*')
-            ->from($db->quoteName('#__jed_extension_scores'))
-            ->where($db->quoteName('extension_id') . ' = :extension_id')
-            ->bind(':extension_id', $extension_id, ParameterType::INTEGER);
-
-        $result = $db->setQuery($query)->loadObjectList();
-
-        foreach ($result as $r) {
-            $supply          = match ($r->supply_option_id) {
-                1 => 'Free',
-                2 => 'Paid',
-                3 => 'Cloud',
-            };
-            $retval[$supply] = $r;
+        if (!$user_id) {
+            return false;
         }
 
-        return $retval;
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select('1')
+            ->from($db->quoteName('#__jed_favorites'))
+            ->where($db->quoteName('extension_id') . ' = :extension_id')
+            ->where($db->quoteName('user_id') . ' = :user_id')
+            ->bind(':extension_id', $extension_id, ParameterType::INTEGER)
+            ->bind(':user_id', $user_id, ParameterType::INTEGER);
+
+        return (bool) $db->setQuery($query)->loadResult();
     }
 
     /**
-     * Get array of supply types for extension
+     * Adds or removes a bookmark for the given user/extension pair, whichever applies.
      *
      * @param int $extension_id
+     * @param int $user_id
      *
-     * @return array
+     * @return bool The new favorited state (true = just added, false = just removed).
      *
      * @since 4.0.0
+     * @throws Exception
      */
-    public function getSupplyTypes(int $extension_id): array
+    public function toggleFavorite(int $extension_id, int $user_id): bool
     {
-        // #__jed_extensions no longer tracks which individual supply options a given extension
-        // offers (that per-extension list collapsed into the single "type" enum column), so this
-        // just returns every published supply option for the reviewer to choose from.
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true)
-            ->select(
-                [
-                    $db->quoteName('supply_options.id', 'supply_id'),
-                    $db->quoteName('supply_options.title', 'supply_type'),
-                ]
-            )
-            ->from($db->quoteName('#__jed_extension_supply_options', 'supply_options'))
-            ->where($db->quoteName('supply_options.state') . ' = 1');
+        if (!JedHelper::isLoggedIn() || !$user_id) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 401);
+        }
 
-        return $db->setQuery($query)->loadObjectList();
+        $db = $this->getDatabase();
+
+        if ($this->isFavorited($extension_id, $user_id)) {
+            $query = $db->getQuery(true)
+                ->delete($db->quoteName('#__jed_favorites'))
+                ->where($db->quoteName('extension_id') . ' = :extension_id')
+                ->where($db->quoteName('user_id') . ' = :user_id')
+                ->bind(':extension_id', $extension_id, ParameterType::INTEGER)
+                ->bind(':user_id', $user_id, ParameterType::INTEGER);
+            $db->setQuery($query)->execute();
+
+            return false;
+        }
+
+        $created = Factory::getDate()->toSql();
+        $query   = $db->getQuery(true)
+            ->insert($db->quoteName('#__jed_favorites'))
+            ->columns($db->quoteName(['user_id', 'extension_id', 'created']))
+            ->values(':user_id, :extension_id, :created')
+            ->bind(':user_id', $user_id, ParameterType::INTEGER)
+            ->bind(':extension_id', $extension_id, ParameterType::INTEGER)
+            ->bind(':created', $created, ParameterType::STRING);
+        $db->setQuery($query)->execute();
+
+        return true;
     }
 
     /**

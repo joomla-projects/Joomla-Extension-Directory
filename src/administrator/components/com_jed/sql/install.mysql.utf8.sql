@@ -218,23 +218,20 @@ CREATE TABLE IF NOT EXISTS `#__jed_reviews`
 	CONSTRAINT `FKC_jed_reviews_user` FOREIGN KEY (`created_by`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_reviews_comments`;
+DROP TABLE IF EXISTS `#__jed_favorites`;
 
-CREATE TABLE IF NOT EXISTS `#__jed_reviews_comments`
+CREATE TABLE IF NOT EXISTS `#__jed_favorites`
 (
-	`id`         int unsigned NOT NULL AUTO_INCREMENT,
-	`review_id`  int unsigned DEFAULT '0',
-	`comments`   text,
-	`ip_address` varchar(255) DEFAULT '',
-	`created_on` datetime     DEFAULT NULL,
-	`created_by` int          DEFAULT '0',
-	`ordering`   int          DEFAULT '0',
-	`state`      tinyint(1)   DEFAULT '0',
+	`id`           int unsigned NOT NULL AUTO_INCREMENT,
+	`user_id`      int          NOT NULL,
+	`extension_id` int          NOT NULL,
+	`created`      datetime     NOT NULL,
 	PRIMARY KEY (`id`),
-	KEY `FK_jed_reviews_comments` (`review_id`),
-	KEY `FKC_jed_reviews_comments_user` (`created_by`),
-	CONSTRAINT `FKC_jed_reviews_comments` FOREIGN KEY (`review_id`) REFERENCES `#__new_jed_reviews` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `FKC_jed_reviews_comments_user` FOREIGN KEY (`created_by`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+	UNIQUE KEY `UK_jed_favorites_user_extension` (`user_id`, `extension_id`),
+	KEY `FK_jed_favorites_user` (`user_id`),
+	KEY `FK_jed_favorites_extension` (`extension_id`),
+	CONSTRAINT `FKC_jed_favorites_user` FOREIGN KEY (`user_id`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT `FKC_jed_favorites_extension` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 

@@ -11,7 +11,11 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Site\Helper\JedHelper;
+use Joomla\CMS\Layout\LayoutHelper;
+
 /**
+ * @param int      $id             The extension id
  * @param string   $image          The url of the image location
  * @param string   $title          The title of the extension
  * @param string   $developer      The name of the developer
@@ -22,6 +26,7 @@
  * @param string   $type           The extension type (free/paid/cloud)
  * @param bool     $category       The main category of the extension
  * @param string   $link           The link to the extension
+ * @param bool     $isFavorited    Whether the current user has bookmarked this extension
  */
 
 /**
@@ -44,6 +49,12 @@ extract($displayData);
         </div>
         <div class="card__header">
             <a href="<?php echo $link; ?>" class="card__extension-title"><?php echo $title; ?></a>
+            <?php if (!empty($id) && JedHelper::isLoggedIn()) : ?>
+                <?php echo LayoutHelper::render('elements.favoritebutton', [
+                    'extensionId' => (int) $id,
+                    'isFavorited' => !empty($isFavorited),
+                ]); ?>
+            <?php endif; ?>
             <div class="card__extension-developer">By <?php echo $developer; ?></div>
             <div class="align-boxes">
                 <div class="stars-wrapper">

@@ -40,7 +40,16 @@ $canDelete  = $user->authorise('core.delete', 'com_jed');
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.jazstyle');
 
+if (JedHelper::isLoggedIn()) {
+    $wa->useScript('com_jed.favorite');
+}
+
 ?>
+<?php if (JedHelper::isLoggedIn()) : ?>
+    <div id="jed-favorite-i18n" class="d-none"
+         data-ajax-url="<?php echo Route::_('index.php?option=com_jed&format=raw'); ?>"
+         data-csrf-token="<?php echo Session::getFormToken(); ?>"></div>
+<?php endif; ?>
 <div class="jed-cards-wrapper">
     <article class="container mb-5">
         <header class="row gap-2">
@@ -48,6 +57,12 @@ $wa->useStyle('com_jed.jazstyle');
                 <h2 class="fs-1 m-0 d-flex flex-row gap-2 align-items-center">
                     <?php
                     echo $this->escape($this->item->name) ?>
+                    <?php if (JedHelper::isLoggedIn()) : ?>
+                        <?php echo LayoutHelper::render('elements.favoritebutton', [
+                            'extensionId' => (int) $this->item->id,
+                            'isFavorited' => (bool) $this->item->is_favorited,
+                        ]); ?>
+                    <?php endif; ?>
                 </h2>
                 <div class="d-flex flex-row gap-3">
                     <div class="jed-extension-header__developer">By <a

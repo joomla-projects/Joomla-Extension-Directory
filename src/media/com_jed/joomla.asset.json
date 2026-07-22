@@ -372,6 +372,16 @@
       "name": "com_jed.newextension",
       "type": "style",
       "uri": "media/com_jed/css/newextension.css"
+    },
+    {
+      "name": "com_jed.favorite",
+      "type": "script",
+      "uri": "media/com_jed/js/favorite.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
     }
   ],
   "description": "Joomla Extension Directory",

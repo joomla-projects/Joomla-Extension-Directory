@@ -12,10 +12,12 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Session\Session;
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');
@@ -38,12 +40,21 @@ $canDelete  = $user->authorise('core.delete', 'com_jed');
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.jazstyle');
 
+if (JedHelper::isLoggedIn()) {
+    $wa->useScript('com_jed.favorite');
+}
+
 // Only show a "<Category> Extensions" heading when this is actually a single-category browse
 // (catid URL param set); presets like Top Rated/Most Reviewed span every category, so they use
 // the page's own heading (menu title, or the global default) instead.
 $catid   = Factory::getApplication()->getInput()->getInt('id', 0);
 $heading = ($catid && !empty($this->items)) ? $this->items[0]->category_title . ' Extensions' : $this->params->get('page_heading');
 ?>
+<?php if (JedHelper::isLoggedIn()) : ?>
+    <div id="jed-favorite-i18n" class="d-none"
+         data-ajax-url="<?php echo Route::_('index.php?option=com_jed&format=raw'); ?>"
+         data-csrf-token="<?php echo Session::getFormToken(); ?>"></div>
+<?php endif; ?>
 
 <div class="jed-cards-wrapper margin-bottom-half">
     <div class="jed-container">
@@ -59,6 +70,7 @@ $heading = ($catid && !empty($this->items)) ? $this->items[0]->category_title . 
                 <?php echo LayoutHelper::render(
                     'cards.extension',
                     [
+                                                    'id'            => $item->id,
                                                     'image'         => $item->logo,
                                                     'title'         => $item->name,
                                                     'developer'     => $item->developer,
@@ -70,6 +82,7 @@ $heading = ($catid && !empty($this->items)) ? $this->items[0]->category_title . 
                                                     'type'          => $item->type,
                                                     'category'      => $item->category_title,
                                                     'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->catid, $item->id)),
+                                                    'isFavorited'   => !empty($item->is_favorited),
                                                     ]
                 ); ?>
             <?php endforeach; ?>

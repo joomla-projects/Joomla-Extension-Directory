@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS `#__jed_extensions_maintainers`;
 DROP TABLE IF EXISTS `#__jed_extensions_images`;
 DROP TABLE IF EXISTS `#__jed_extensions_files`;
 DROP TABLE IF EXISTS `#__jed_reviews`;
-DROP TABLE IF EXISTS `#__jed_reviews_comments`;
+DROP TABLE IF EXISTS `#__jed_favorites`;
 DROP TABLE IF EXISTS `#__jed_extensions`;
 DROP TABLE IF EXISTS `#__jed_extension_images`;
 DROP TABLE IF EXISTS `#__jed_developers`;
