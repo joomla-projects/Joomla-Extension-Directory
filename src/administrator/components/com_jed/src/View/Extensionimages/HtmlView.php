@@ -47,7 +47,7 @@ class HtmlView extends BaseHtmlView
      */
     protected function addToolbar(): void
     {
-        $canDo = JedHelper::getActions();
+        $canDo = JedHelper::getActions('com_jed');
 
         ToolbarHelper::title(Text::_('COM_JED_EXTENSIONIMAGES'), "generic");
 

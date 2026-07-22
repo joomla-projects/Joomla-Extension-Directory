@@ -142,7 +142,7 @@ class HtmlView extends BaseHtmlView
             ToolbarHelper::title(Text::_('COM_JED_EXTENSION_COMPARE_LABEL'), 'generic');
             ToolbarHelper::back('JTOOLBAR_BACK', Route::_('index.php?option=com_jed&view=extensions', false));
 
-            if ($this->compareApprovableId && JedHelper::getActions()->get('core.edit')) {
+            if ($this->compareApprovableId && JedHelper::getActions('com_jed')->get('core.edit')) {
                 ToolbarHelper::custom('extension.approve', 'publish.png', 'publish_f2.png', 'COM_JED_APPROVE_LABEL', false);
             }
 
@@ -153,7 +153,7 @@ class HtmlView extends BaseHtmlView
             ToolbarHelper::title(Text::_('COM_JED_EXTENSION_HISTORY_LABEL'), 'generic');
             ToolbarHelper::back('JTOOLBAR_BACK', Route::_('index.php?option=com_jed&view=extensions', false));
 
-            if (JedHelper::getActions()->get('core.edit')) {
+            if (JedHelper::getActions('com_jed')->get('core.edit')) {
                 // Not a list-check button: the checkbox selection isn't tracked via
                 // the standard cb/boxchecked convention - ExtensionController::
                 // compareHistory() validates the selection itself.
@@ -172,7 +172,7 @@ class HtmlView extends BaseHtmlView
             $checkedOut = false;
         }
 
-        $canDo = JedHelper::getActions();
+        $canDo = JedHelper::getActions('com_jed');
 
         ToolbarHelper::title(Text::_('COM_JED_EXTENSION'), "generic");
 

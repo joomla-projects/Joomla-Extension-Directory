@@ -79,7 +79,7 @@ class HtmlView extends BaseHtmlView
             $checkedOut = false;
         }
 
-        $canDo = JedHelper::getActions();
+        $canDo = JedHelper::getActions('com_vel');
 
         ToolbarHelper::title(Text::_('COM_VEL_TITLE_ABANDONEDREPORT'), "generic");
 

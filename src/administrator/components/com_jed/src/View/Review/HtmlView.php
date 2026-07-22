@@ -80,7 +80,7 @@ class HtmlView extends BaseHtmlView
             $checkedOut = false;
         }
 
-        $canDo = JedHelper::getActions();
+        $canDo = JedHelper::getActions('com_jed');
 
         ToolbarHelper::title(Text::_('COM_JED_TITLE_REVIEW'), "generic");
 
