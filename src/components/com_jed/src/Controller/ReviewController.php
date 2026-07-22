@@ -132,8 +132,8 @@ class ReviewController extends BaseController
     {
         $this->checkToken('request');
 
-        $app = Factory::getApplication();
-        $id  = $app->getInput()->getInt('id');
+        $app   = Factory::getApplication();
+        $id    = $app->getInput()->getInt('id');
         $model = $this->getModel('Review', 'Site');
 
         try {
@@ -195,8 +195,8 @@ class ReviewController extends BaseController
     {
         $this->checkToken('request');
 
-        $app = Factory::getApplication();
-        $id  = $app->getInput()->getInt('id');
+        $app   = Factory::getApplication();
+        $id    = $app->getInput()->getInt('id');
         $model = $this->getModel('Review', 'Site');
 
         try {

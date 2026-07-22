@@ -57,7 +57,7 @@ final class ExtensionTicketHandler implements TicketTypeHandlerInterface
      */
     public function getMasterData(int $linkedItemId): ?object
     {
-        $model = new ExtensionModel();
+        $model                               = new ExtensionModel();
         [$live, $pending, $pendingHistoryId] = $model->getCompareItems($linkedItemId, null, null);
 
         if (!$live && !$pending) {
@@ -95,7 +95,7 @@ final class ExtensionTicketHandler implements TicketTypeHandlerInterface
             return [];
         }
 
-        $model = new ExtensionModel();
+        $model                  = new ExtensionModel();
         [, , $pendingHistoryId] = $model->getCompareItems($linkedItemId, null, null);
 
         if (!$pendingHistoryId) {

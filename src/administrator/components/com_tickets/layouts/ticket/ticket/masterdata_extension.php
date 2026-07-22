@@ -25,15 +25,15 @@ use Joomla\CMS\Router\Route;
 
 $extension = $displayData->pending ?? $displayData->live ?? null;
 $fields    = [
-    'name'             => 'JGLOBAL_TITLE',
-    'catid'            => 'COM_JED_GENERAL_CATEGORY_ID_LABEL',
-    'type'             => 'COM_JED_GENERAL_TYPE_LABEL',
-    'state'            => 'JSTATUS',
+    'name'              => 'JGLOBAL_TITLE',
+    'catid'             => 'COM_JED_GENERAL_CATEGORY_ID_LABEL',
+    'type'              => 'COM_JED_GENERAL_TYPE_LABEL',
+    'state'             => 'JSTATUS',
     'extension_version' => 'COM_JED_GENERAL_VERSION_LABEL',
-    'developer_url'    => 'COM_JED_EXTENSION_DEVELOPER_URL_LABEL',
-    'download_url'     => 'COM_JED_EXTENSION_DOWNLOAD_LINK_LABEL',
-    'created_by'       => 'JGLOBAL_FIELD_CREATED_BY_LABEL',
-    'created'          => 'COM_JED_GENERAL_CREATED_ON_LABEL',
+    'developer_url'     => 'COM_JED_EXTENSION_DEVELOPER_URL_LABEL',
+    'download_url'      => 'COM_JED_EXTENSION_DOWNLOAD_LINK_LABEL',
+    'created_by'        => 'JGLOBAL_FIELD_CREATED_BY_LABEL',
+    'created'           => 'COM_JED_GENERAL_CREATED_ON_LABEL',
 ];
 ?>
 <?php if (!$extension) : ?>
