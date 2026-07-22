@@ -55,8 +55,7 @@ if (JedHelper::isLoggedIn()) {
         <header class="row gap-2">
             <div class="col d-flex flex-column gap-2 mb-3">
                 <h2 class="fs-1 m-0 d-flex flex-row gap-2 align-items-center">
-                    <?php
-                    echo $this->escape($this->item->name) ?>
+                    <?php echo $this->escape($this->item->name) ?>
                     <?php if (JedHelper::isLoggedIn()) : ?>
                         <?php echo LayoutHelper::render('elements.favoritebutton', [
                             'extensionId' => (int) $this->item->id,
