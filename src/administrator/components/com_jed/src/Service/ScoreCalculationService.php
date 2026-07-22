@@ -79,8 +79,8 @@ class ScoreCalculationService
             ));
         }
 
-        $fields = $this->normaliseResult($result);
-        $obj = (object) $fields;
+        $fields  = $this->normaliseResult($result);
+        $obj     = (object) $fields;
         $obj->id = $extensionId;
 
         $this->db->updateObject('#__jed_extensions', $obj, 'id');
@@ -150,7 +150,7 @@ class ScoreCalculationService
         foreach ($decimalColumns as $column) {
             // Clamp to what the decimal(3,2) score_* columns can actually hold, in case an
             // upstream plugin's scale doesn't match (defensive - avoids a hard SQL error).
-            $value = max(0.0, min(5.0, (float) ($result[$column] ?? 0)));
+            $value           = max(0.0, min(5.0, (float) ($result[$column] ?? 0)));
             $fields[$column] = number_format($value, 2, '.', '');
         }
 

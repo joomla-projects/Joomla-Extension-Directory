@@ -141,8 +141,8 @@ class ReviewModel extends AdminModel
      */
     public function publish(&$pks, $value = 1): bool
     {
-        $db  = $this->getDatabase();
-        $ids = array_map('intval', (array) $pks);
+        $db     = $this->getDatabase();
+        $ids    = array_map('intval', (array) $pks);
         $before = [];
 
         if ($ids !== []) {
