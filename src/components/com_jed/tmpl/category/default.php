@@ -12,10 +12,12 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 /**
 *
@@ -46,7 +48,16 @@ $canDelete  = $user->authorise('core.delete', 'com_jed');
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.jazstyle');
 
+if (JedHelper::isLoggedIn()) {
+    $wa->useScript('com_jed.favorite');
+}
+
 ?>
+<?php if (JedHelper::isLoggedIn()) : ?>
+    <div id="jed-favorite-i18n" class="d-none"
+         data-ajax-url="<?php echo Route::_('index.php?option=com_jed&format=raw'); ?>"
+         data-csrf-token="<?php echo Session::getFormToken(); ?>"></div>
+<?php endif; ?>
 <div class="jed-home-categories">
     <div class="container">
         <div class="row gx-5">
@@ -93,6 +104,7 @@ $wa->useStyle('com_jed.jazstyle');
                 <?php echo LayoutHelper::render(
                     'cards.extension',
                     [
+                    'id'            => $item->id,
                     'image'         => $item->logo,
                     'title'         => $item->name,
                     'developer'     => $item->developer,
@@ -104,6 +116,7 @@ $wa->useStyle('com_jed.jazstyle');
                     'type'          => $item->type,
                     'category'      => $item->category_title,
                     'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->catid, $item->id)),
+                    'isFavorited'   => !empty($item->is_favorited),
                     ]
                 ); ?>
             <?php endforeach; ?>
