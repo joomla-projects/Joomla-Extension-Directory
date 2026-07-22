@@ -13,7 +13,6 @@
 
 // phpcs:enable PSR1.Files.SideEffects
 
-use Jed\Component\Jed\Administrator\Model\ReviewModel;
 use Jed\Component\Jed\Administrator\View\Extension\HtmlView;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
@@ -21,6 +20,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
 /**
@@ -75,7 +75,6 @@ if (!function_exists('jedRenderExtensionUploadArea')) {
     }
 }
 
-$headerlabeloptions = ['hiddenLabel' => true, 'readonly' => true];
 $fieldhiddenoptions = ['hidden' => true];
 /**
  * $model->setUseExceptions(true)
@@ -219,142 +218,45 @@ $this->getDocument()
         <?php endforeach; ?>
 
         <?php
-        echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'viewextensionreviews', Text::_('Reviews', true));
+        echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'viewextensionreviews', Text::_('COM_JED_EXTENSION_REVIEWS_TAB_LABEL', true));
         ?>
 
             <div class="container">
                 <div class="row">
-                    <?php
-
-                    $slidesOptions = [//"active" => "slide0" // It is the ID of the active tab.
-                    ];
-
-
-                    $slideid = 0;
-
-                    foreach ($this->reviews as $review) {
-                        echo HTMLHelper::_('bootstrap.startAccordion', 'extension_' . $review->id . '_reviews_group', $slidesOptions);
-
-                        if ($review->published === 1) {
-                            $ico = '<span class="fas fa-bolt"></span>';
-                        } else {
-                            $ico = '';
-                        }
-                        echo HTMLHelper::_(
-                            'bootstrap.addSlide',
-                            'extension_' . $review->id . '_reviews_group',
-                            $review->suptype . ' ' . $review->id . ' - ' . $review->title . '&nbsp;' .
-                            JedHelper::prettyDate($review->created_on) . '&nbsp;',
-                            'extension_' . $review->suptype . '_reviews_group' . '_slide' . ($slideid++)
-                        );
-                            $review_model = new ReviewModel();
-                            $linked_form  = $review_model->getForm($review, false, 'review');
-                            $linked_form->bind($review);
-                            ?>
-                    <div class="row ticket-header-row">
-                        <div class="col-md-4 ticket-header">&nbsp;</div>
-                        <div class="col-md-4 ticket-header">&nbsp;</div>
-                            <div class="col-md-4 ticket-header">
-        <h1>Status - <?php echo $linked_form->renderField('published', null, null, $headerlabeloptions); ?>
-                    &nbsp;&nbsp;<button id="btn_save_published" type="button" class="">
-                        <span class="icon-save"></span>
-                    </button>
-                    </h1>
-                    <p id="jform_review_status_updated" style="display:none">Status Updated</p>
-
-                </div>
-                <div class="row ticket-header-row">
-
-                    <div class="col-md-4  ticket-header">
-
-                        <h1>Version - <?php echo $review->version; ?></h1>
-
-                    </div>
-                    <div class="col-md-4  ticket-header">
-
-                        <h1>Type - <?php echo $review->suptype; ?></h1>
-
-                    </div>
-                    <div class="col-md-4  ticket-header">
-
-                        <h1>Reviewer - <?php echo $review->created_by_name; ?></h1>
-
-                    </div>
-
-                </div>
-                <P>&nbsp;</P>
-                <div class="row ticket-header-row">
-                    <div class="col-md-6   ticket-header">
-                            <?php echo $linked_form->renderField('title', null, null); ?>
-                    </div>
-                    <div class="col-md-6   ticket-header">
-
-                            <?php echo $linked_form->renderField('alias', null, null); ?>
-                    </div>
-
-                </div>
-                <div class="row ticket-header-row">
-                    <div class="col-md-12   ticket-header">
-                            <?php echo $linked_form->renderField('body', null, null); ?>
-                    </div>
-                    <div class="col-md-12   ticket-header">
-                            <?php echo $linked_form->renderField('used_for', null, null); ?>
-                    </div>
-                </div>
-                <div class="row ticket-header-row">
-                    <div class="col-md-2   ticket-header">
-                        <h1><?php echo Text::_('COM_JED_REVIEWS_FUNCTIONALITY_LABEL') . ' - ' . $review->functionality; ?></h1>
-                    </div>
-                    <div class="col-md-10   ticket-header">
-                            <?php echo $linked_form->renderField('functionality_comment', null, null, $headerlabeloptions); ?>
-                    </div>
-                </div>
-                <div class="row ticket-header-row">
-                    <div class="col-md-2   ticket-header">
-                        <h1><?php echo Text::_('COM_JED_REVIEWS_EASE_OF_USE_LABEL') . ' - ' . $review->ease_of_use; ?></h1>
-                    </div>
-                    <div class="col-md-10   ticket-header">
-                            <?php echo $linked_form->renderField('ease_of_use_comment', null, null, $headerlabeloptions); ?>
-                    </div>
-                </div>
-                <div class="row ticket-header-row">
-                    <div class="col-md-2   ticket-header">
-                        <h1><?php echo Text::_('COM_JED_GENERAL_SUPPORT_LABEL') . ' - ' . $review->support; ?></h1>
-                    </div>
-                    <div class="col-md-10   ticket-header">
-                            <?php echo $linked_form->renderField('support_comment', null, null, $headerlabeloptions); ?>
-                    </div>
-                </div>
-                <div class="row ticket-header-row">
-                    <div class="col-md-2   ticket-header">
-                        <h1><?php echo Text::_('COM_JED_EXTENSION_DOCUMENTATION_LABEL') . ' - ' . $review->documentation; ?></h1>
-                    </div>
-                    <div class="col-md-10   ticket-header">
-                            <?php echo $linked_form->renderField('documentation_comment', null, null, $headerlabeloptions); ?>
-                    </div>
-                </div>
-                <div class="row ticket-header-row">
-                    <div class="col-md-2   ticket-header">
-                        <h1><?php echo Text::_('COM_JED_REVIEWS_VALUE_FOR_MONEY_LABEL') . ' - ' . $review->value_for_money; ?></h1>
-                    </div>
-                    <div class="col-md-10   ticket-header">
-                            <?php echo $linked_form->renderField('value_for_money_comment', null, null, $headerlabeloptions); ?>
-                    </div>
-                </div>
-                <div class="row ticket-header-row">
-                    <div class="col-md-2   ticket-header">
-                        <h1><?php echo Text::_('COM_JED_REVIEWS_OVERALL_SCORE_LABEL') . ' - ' . $review->overall_score; ?></h1>
-                    </div>
-                    <div class="col-md-10   ticket-header">
-                        <h1>Created on - <?php echo $review->created_on; ?>&nbsp;&nbsp;IP Address
-                            - <?php echo $review->ip_address; ?></h1>
-                    </div>
-                </div>
-                            <?php
-                            echo HTMLHelper::_('bootstrap.endSlide');
-                        echo HTMLHelper::_('bootstrap.endAccordion');
-                    }
-                    ?>
+                    <?php if (empty($this->reviews)) : ?>
+                        <div class="col-12">
+                            <p><?php echo Text::_('COM_JED_EXTENSION_NO_REVIEWS'); ?></p>
+                        </div>
+                    <?php else : ?>
+                        <div class="col-12">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th><?php echo Text::_('JGLOBAL_TITLE'); ?></th>
+                                        <th><?php echo Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'); ?></th>
+                                        <th><?php echo Text::_('COM_JED_REVIEWS_OVERALL_SCORE_LABEL'); ?></th>
+                                        <th><?php echo Text::_('COM_JED_GENERAL_CREATED_ON_LABEL'); ?></th>
+                                        <th><?php echo Text::_('JSTATUS'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($this->reviews as $review) : ?>
+                                    <tr>
+                                        <td>
+                                            <a href="<?php echo Route::_('index.php?option=com_jed&task=review.edit&id=' . (int) $review->id); ?>">
+                                                <?php echo htmlspecialchars($review->title !== '' ? $review->title : '#' . $review->id, ENT_QUOTES, 'UTF-8'); ?>
+                                            </a>
+                                        </td>
+                                        <td><?php echo htmlspecialchars(JedHelper::getUserById($review->created_by)->name, ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td><?php echo number_format((float) $review->overall_score, 1); ?> / 5</td>
+                                        <td><?php echo JedHelper::prettyDate($review->created_on); ?></td>
+                                        <td><?php echo (int) $review->published === 1 ? Text::_('JPUBLISHED') : Text::_('JUNPUBLISHED'); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
 

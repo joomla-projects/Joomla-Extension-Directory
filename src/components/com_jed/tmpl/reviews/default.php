@@ -179,31 +179,31 @@ $wa->useStyle('com_jed.list');
                         <?php echo $item->body; ?>
                     </td>
                     <td>
-                        <?php echo $item->functionality; ?>
+                        <?php echo number_format((float) $item->functionality, 1); ?>
                     </td>
                     <td>
-                        <?php echo $item->ease_of_use; ?>
+                        <?php echo number_format((float) $item->ease_of_use, 1); ?>
                     </td>
                     <td>
-                        <?php echo $item->support; ?>
+                        <?php echo number_format((float) $item->support, 1); ?>
                     </td>
                     <td>
                         <?php echo $item->support_comment; ?>
                     </td>
                     <td>
-                        <?php echo $item->documentation; ?>
+                        <?php echo number_format((float) $item->documentation, 1); ?>
                     </td>
                     <td>
                         <?php echo $item->documentation_comment; ?>
                     </td>
                     <td>
-                        <?php echo $item->value_for_money; ?>
+                        <?php echo number_format((float) $item->value_for_money, 1); ?>
                     </td>
                     <td>
                         <?php echo $item->value_for_money_comment; ?>
                     </td>
                     <td>
-                        <?php echo $item->overall_score; ?>
+                        <?php echo number_format((float) $item->overall_score, 1); ?>
                     </td>
                     <td>
                         <?php echo $item->used_for; ?>

@@ -97,46 +97,6 @@ class JedHelper extends ContentHelper
     }
 
     /**
-     * Gets a list of the actions that can be performed.
-     *
-     * @return registry
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public static function getActions($component = '', $section = '', $id = 0)
-    {
-        if ($component) {
-            return parent::getActions($component, $section, $id);
-        }
-        //$user   = Factory::getUser();
-
-        /* @var $app \Joomla\CMS\Application\SiteApplication */
-        $app = Factory::getApplication();
-
-        $user   = $app->getSession()->get('user');
-        $result = new Registry();
-
-        $assetName = 'com_jed';
-
-        $actions = [
-            'core.admin',
-            'core.manage',
-            'core.create',
-            'core.edit',
-            'core.edit.own',
-            'core.edit.state',
-            'core.delete',
-        ];
-
-        foreach ($actions as $action) {
-            $result->set($action, $user->authorise($action, $assetName));
-        }
-
-        return $result;
-    }
-
-    /**
      * Returns a span string containing an icon (and tooltip) denoting whether an
      * extension has been approved. `approved` is a plain 0/1 flag.
      *

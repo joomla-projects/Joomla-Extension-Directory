@@ -140,7 +140,7 @@ class PlgSampledataJed2 extends CMSPlugin
                 [
                     'title' => 'Most Reviewed',
                     'alias' => 'most-reviewed',
-                    'query' => 'list_fullordering=reviewcount+DESC',
+                    'query' => 'list_fullordering=score_count+DESC',
                 ],
                 [
                     'title' => 'New',

@@ -38,36 +38,6 @@ class ExtensionModel extends ItemModel
 {
     use ExtensionUtilities;
 
-    public const int UPDATE_STATUS_OLD = 1;
-
-    public const int UPDATE_STATUS_RECENTLY = 2;
-
-    public const int UPDATE_STATUS_WARNING = 3;
-
-    /**
-     * Interval during which an extension is considered new: 2 weeks
-     *
-     * @var   string (DateInterval argument)
-     * @since 4.0.0
-     */
-    protected string $isNewInterval = 'P2W';
-
-    /**
-     * Interval during which an extension is considered old: 4 years
-     *
-     * @var   string (DateInterval argument)
-     * @since 4.0.0
-     */
-    protected string $isOldInterval = 'P4Y';
-
-    /**
-     * Interval during which an extension is considered updated: 1 year
-     *
-     * @var   string (DateInterval argument)
-     * @since 4.0.0
-     */
-    protected string $isRecentlyUpdatedInterval = 'P1Y';
-
     /**
      * Data Table
      *
@@ -81,72 +51,6 @@ class ExtensionModel extends ItemModel
      * @since 4.0.0
      */
     protected mixed $item = null;
-
-    /**
-     * Method to check in an item.
-     *
-     * @param int|null $id The id of the row to check out.
-     *
-     * @return bool True on success, false on failure.
-     *
-     * @since 4.0.0
-     *
-     * @throws Exception
-     */
-    public function checkin(int $id = null): bool
-    {
-        $id = (!empty($id)) ? $id : (int)$this->getState('extension.id');
-        if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-            if ($id) {
-                // Initialise the table
-                $table = $this->getTable();
-
-                // Attempt to check the row in.
-                if (method_exists($table, 'checkin')) {
-                    if (!$table->checkin($id)) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-    }
-
-    /**
-     * Method to check out an item for editing.
-     *
-     * @param int|null $id The id of the row to check out.
-     *
-     * @return bool True on success, false on failure.
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function checkout(int $id = null): bool
-    {
-        $id = (!empty($id)) ? $id : (int)$this->getState('extension.id');
-
-        if (!$id && !JedHelper::userIDItem($id, $this->dbtable) && !JedHelper::isAdminOrSuperUser()) {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-        }
-
-        if ($id) {
-            // Initialise the table
-            $table = $this->getTable();
-
-            // Get the current user object.
-            $user = Factory::getApplication()->getIdentity();
-
-            // Attempt to check the row out.
-            if (method_exists($table, 'checkout') && !$table->checkout($user->id, $id)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 
     /**
      * Method to get an object.
@@ -188,7 +92,6 @@ class ExtensionModel extends ItemModel
             }
         }
 
-
         if (isset($this->item->created_by)) {
             $this->item->created_by_name = JedHelper::getUserById($this->item->created_by)->name;
         }
@@ -200,44 +103,28 @@ class ExtensionModel extends ItemModel
         // Load Category Hierarchy
         $this->item->category_hierarchy = $this->getCategoryHierarchy($this->item->catid);
 
-        // Load Scores
-        //$this->item->scores            = $this->getScores($this->item->id);
-        //        $this->item->number_of_reviews = 0;
-        //        $score                         = 0;
-        //        $supplycounter                 = 0;
-        //        $supplytype                    = '';
-        //
-        //        foreach ($this->item->scores as $s) {
-        //            $supplycounter = $supplycounter + 1;
-        //            $supplytype    = match ($s->supply_option_id) {
-        //                1 => 'Free',
-        //                2 => 'Paid',
-        //                3 => 'Cloud',
-        //            };
-        //            $score         = $score + $s->functionality_score;
-        //            $score         = $score + $s->ease_of_use_score;
-        //            $score         = $score + $s->support_score;
-        //            $score         = $score + $s->value_for_money_score;
-        //            $score         = $score + $s->documentation_score;
-        //
-        //            $this->item->number_of_reviews = $this->item->number_of_reviews + $s->number_of_reviews;
-        //        }
-
-        //        $this->item->type         = $supplytype;
-        //        $score                    = $score / $supplycounter;
-        //        $this->item->score        = floor($score / 5);
-        //        $this->item->score_string = JedscoreHelper::getStars($this->item->score);
-
-        if ($this->item->number_of_reviews == 0) {
+        // $this->item already carries the live score_overall/score_functionality/.../score_count
+        // columns straight off #__jed_extensions - kept up to date by ScoreCalculationService,
+        // no separate query needed here.
+        if ($this->item->score_count == 0) {
             $this->item->review_string = '';
-        } elseif ($this->item->number_of_reviews == 1) {
-            $this->item->review_string = '<span>' . $this->item->number_of_reviews . ' review</span>';
-        } elseif ($this->item->number_of_reviews > 1) {
-            $this->item->review_string = '<span>' . $this->item->number_of_reviews . ' reviews</span>';
+        } elseif ($this->item->score_count == 1) {
+            $this->item->review_string = '<span>' . $this->item->score_count . ' review</span>';
+        } else {
+            $this->item->review_string = '<span>' . $this->item->score_count . ' reviews</span>';
         }
 
         // Load Reviews
         $this->item->reviews = $this->getReviews($this->item->id);
+
+        // Does the current visitor already have a review for this extension? Used to decide
+        // whether the "Write a review" link should route to a blank form or their existing one.
+        $currentUserId             = (int) (Factory::getApplication()->getIdentity()->id ?? 0);
+        $this->item->user_review_id = $this->getUserReviewId($this->item->id, $currentUserId);
+
+        // Has the current visitor bookmarked this extension? Drives the bookmark icon's initial
+        // (server-rendered) state, before any AJAX toggle happens.
+        $this->item->is_favorited = $currentUserId ? $this->isFavorited($this->item->id, $currentUserId) : false;
 
         if (!empty($this->item->logo)) {
             $this->item->logo_large = JedHelper::formatImage($this->item->logo, ImageSize::LARGE);
@@ -261,27 +148,47 @@ class ExtensionModel extends ItemModel
      */
     public function getReviews(int $extension_id): array
     {
-        $ret = [
-            'Free'  => [],
-            'Paid'  => [],
-            'Cloud' => [],
-        ];
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select('*')
+            ->from($db->quoteName('#__jed_reviews'))
+            ->where($db->quoteName('extension_id') . ' = :extension_id')
+            ->where($db->quoteName('published') . ' = 1')
+            ->bind(':extension_id', $extension_id, ParameterType::INTEGER)
+            ->order($db->quoteName('created_on') . ' DESC');
 
-        $db = $this->getDatabase();
+        return $db->setQuery($query)->loadObjectList() ?: [];
+    }
 
-        foreach (['Free' => 1, 'Paid' => 2, 'Cloud' => 3] as $key => $supplyId) {
-            $query = $db->getQuery(true)
-                ->select('*')
-                ->from($db->quoteName('#__jed_reviews'))
-                ->where($db->quoteName('extension_id') . ' = :extension_id')
-                ->where($db->quoteName('supply_option_id') . ' = :supply_id')
-                ->bind(':supply_id', $supplyId, ParameterType::INTEGER)
-                ->bind(':extension_id', $extension_id, ParameterType::INTEGER);
-
-            $ret[$key] = $db->setQuery($query)->loadObjectList() ?: [];
+    /**
+     * Look up whether the given logged-in user already has a review for this extension.
+     *
+     * @param int $extension_id
+     * @param int $user_id
+     *
+     * @return int|null The user's existing review id, or null if they don't have one.
+     *
+     * @since 4.1.0
+     */
+    public function getUserReviewId(int $extension_id, int $user_id): ?int
+    {
+        if (!$user_id) {
+            return null;
         }
 
-        return $ret;
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__jed_reviews'))
+            ->where($db->quoteName('extension_id') . ' = :extension_id')
+            ->where($db->quoteName('created_by') . ' = :user_id')
+            ->where($db->quoteName('published') . ' != -2')
+            ->bind(':extension_id', $extension_id, ParameterType::INTEGER)
+            ->bind(':user_id', $user_id, ParameterType::INTEGER);
+
+        $id = $db->setQuery($query)->loadResult();
+
+        return $id !== null ? (int) $id : null;
     }
 
     /**
@@ -367,118 +274,9 @@ class ExtensionModel extends ItemModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getTable($name = "ExtensionHistory", $prefix = "Administrator", $options = [])
+    public function getTable($name = "Extension", $prefix = "Administrator", $options = [])
     {
         return parent::getTable($name, $prefix, $options);
-    }
-
-    /**
-     *
-     * @return string
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function getUpdateStatus(): string
-    {
-        if ($this->isOld()) {
-            return self::UPDATE_STATUS_OLD;
-        }
-
-        if ($this->isRecentlyUpdated()) {
-            return self::UPDATE_STATUS_RECENTLY;
-        }
-
-        return self::UPDATE_STATUS_WARNING;
-    }
-
-    /**
-     * @return bool
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function isOld(): bool
-    {
-        $item      = $this->getItem();
-        $dateLimit = Factory::getDate();
-        $dateLimit->sub(new DateInterval($this->isOldInterval));
-        $modified = Factory::getDate($item->modified);
-
-        return $modified < $dateLimit;
-    }
-
-    /**
-     * @return bool
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function isRecentlyUpdated(): bool
-    {
-        $item      = $this->getItem();
-        $dateLimit = Factory::getDate();
-        $dateLimit->sub(new DateInterval($this->isRecentlyUpdatedInterval));
-        $modified = Factory::getDate($item->modified);
-
-        return $modified > $dateLimit;
-    }
-
-    /**
-     * Our prefilters will stop unpublished/unapproved extensions from being shown in the list results
-     * But if the user accesses the URL directly then we want to show the correct message.  This could
-     * be either that it does not exist in the db, or that it is unpublished, if so we should show the
-     * correct unpublished message
-     *
-     * @return stdClass
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function noExtensionFoundMsg(): stdClass
-    {
-        $document = Factory::getApplication()->getDocument();
-        $db       = $this->getDatabase();
-        $query    = $db->getQuery(true)
-            ->select(
-                [
-                    $db->quoteName('id'),
-                    $db->quoteName('state'),
-                    $db->quoteName('name'),
-                    $db->quoteName('approved'),
-                    $db->quoteName('approved_reason'),
-                    $db->quoteName('approved_notes'),
-                ]
-            )
-            ->from($db->quoteName('#__jed_extensions'))
-            ->where($db->quoteName('id') . ' = :eid')
-            ->bind(':eid', $this->item->id, ParameterType::INTEGER);
-
-        $row = $db->setQuery($query)->loadObject();
-        $msg = [];
-
-        if ($row && (int) $row->state === 0) {
-            $document->setTitle($row->name . ' - Joomla! Extension Directory');
-            $msg[] = '<h2>' . $row->name . '</h2>';
-
-            if (!empty($row->approved_reason)) {
-                $msg[] = Text::_('COM_JED_ERROR_EXTENSION_UNPUBLISHED_REASON');
-                $msg[] = '<p>' . $row->approved_reason . '</p>';
-            } else {
-                $msg[] = Text::_('COM_JED_ERROR_EXTENSION_UNPUBLISHED');
-            }
-
-            if (!empty($row->approved_notes)) {
-                $msg[] = $row->approved_notes;
-            }
-
-            $level = 'warning';
-        } else {
-            $level = 'info';
-            $msg[] = Text::_('COM_JED_EXTENSION_NOT_FOUND_LABEL');
-        }
-
-        return (object)[
-            'msg'   => implode('', $msg),
-            'level' => $level,
-        ];
     }
 
     /**
@@ -522,30 +320,5 @@ class ExtensionModel extends ItemModel
         }
 
         $this->setState('params', $params);
-    }
-
-    /**
-     * Publish the element
-     *
-     * @param int $id    Item id
-     * @param int $state Publish state
-     *
-     * @return bool
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function publish(int $id, int $state): bool
-    {
-        $table = $this->getTable();
-
-        if (!$id && !JedHelper::userIDItem($id, $this->dbtable) && !JedHelper::isAdminOrSuperUser()) {
-            throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-        }
-
-        $table->load($id);
-        $table->state = $state;
-
-        return $table->store();
     }
 }

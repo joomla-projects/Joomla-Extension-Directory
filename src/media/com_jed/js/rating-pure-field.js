@@ -18,7 +18,7 @@
 			ratingSelectors[index] = raterJs( {
 
 				starSize: 32,
-				rating: input[0].value > 0 ? input[0].value/20 : 0,
+				rating: input[0].value > 0 ? parseFloat(input[0].value) : 0,
 				max: 5,
 				step: 0.5,
 				showToolTip: false,
@@ -28,7 +28,7 @@
 					this.setRating(rating);
 					noScore.style.display = "none";
 					const rated = rating > 0;
-					input[0].value = rated ? rating*20 : -1;
+					input[0].value = rated ? rating : -1;
 					emptyRating[0].value = rated ? 0 : 1;
 					liveRating.toggleClass('muted',false);
 					widget.toggleClass('rated',rated);

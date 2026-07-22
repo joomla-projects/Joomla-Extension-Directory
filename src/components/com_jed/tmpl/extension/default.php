@@ -19,7 +19,9 @@ use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 /** @var HtmlView $this */
 
@@ -64,48 +66,38 @@ if (JedHelper::isLoggedIn()) {
                     <?php endif; ?>
                 </h2>
                 <div class="d-flex flex-row gap-3">
-                    <div class="jed-extension-header__developer">By <a
-                                href="#"><?php
-                                echo $this->item->created_by_name ?></a></div>
+                    <div class="jed-extension-header__developer">
+                        By <a href="#"><?php echo $this->item->created_by_name ?></a>
+                    </div>
                     <div class="stars-wrapper">
                         <?php echo JedscoreHelper::getStars($this->item->score_overall); ?>
-                        <span class="text-muted">
-                    <?php
-                    echo $this->item->review_string ?>
-                </span>
+                        <span class="text-muted"><?php echo $this->item->review_string ?></span>
                     </div>
                 </div>
-                <?php
-                echo $this->item->category_hierarchy ?>
+                <?php echo $this->item->category_hierarchy ?>
             </div>
             <div class="col text-end">
                 <?php
-                $canCheckin = $this->getCurrentUser()->authorise('core.manage', 'com_jed.' . $this->item->id); ?>
-                <?php
+                $canCheckin = $this->getCurrentUser()->authorise('core.manage', 'com_jed.' . $this->item->id);
                 if ($canEdit) : ?>
                     <a class="btn btn-sm btn-outline-primary" role="button"
                        href="<?php
-                        echo Route::_('index.php?option=com_jed&task=extension.edit&id=' . $this->item->id) ?>">
+                        echo Route::_('index.php?option=com_jed&task=extensionform.edit&id=' . $this->item->id) ?>">
                         <span class="icon-pencil" aria-hidden="true"></span>
                         <?php
                         echo Text::_("JACTION_EDIT") ?>
                     </a>
-                    <?php
-                endif; ?>
+                <?php endif; ?>
             </div>
         </header>
 
-        <img src="<?php
-        echo $this->item->logo ?>" alt="<?php
-        echo $this->escape($this->item->name) ?>"
-             class="rounded img-fluid mx-auto d-block" style="max-height: 525px">
+        <img src="<?php echo $this->item->logo ?>" alt="<?php echo $this->escape($this->item->name) ?>" class="rounded img-fluid mx-auto d-block" style="max-height: 525px">
 
         <div class="row gap-2">
             <div class="col-8 ">
-                <?php
-                echo $this->item->intro; ?>
+                <?php echo $this->item->intro; ?>
             </div>
-            <dl class="col">
+            <div class="col">
                 <dl class="row">
                     <dt class="col-6">Version</dt>
                     <dd class="col-6"><?php echo $this->item->extension_version; ?></dd>
@@ -118,11 +110,27 @@ if (JedHelper::isLoggedIn()) {
                     <dt class="col-6">Compatibility</dt>
                     <dd class="col-6"><?php echo JedtrophyHelper::getTrophyVersionsStringFull($this->item->joomla_versions) ?></dd>
                 </dl>
+
+                <dl class="row">
+                    <dt class="col-6"><h2>Score:</h2></dt>
+                    <dd class="col-6 text-end"><?php echo JedscoreHelper::getStars($this->item->score_overall); ?></dd>
+                    <dt class="col-6">Functionality:</dt>
+                    <dd class="col-6 text-end"><?php echo JedscoreHelper::getStars($this->item->score_functionality); ?></dd>
+                    <dt class="col-6">Ease of use:</dt>
+                    <dd class="col-6 text-end"><?php echo JedscoreHelper::getStars($this->item->score_ease_of_use); ?></dd>
+                    <dt class="col-6">Support:</dt>
+                    <dd class="col-6 text-end"><?php echo JedscoreHelper::getStars($this->item->score_support); ?></dd>
+                    <dt class="col-6">Documentation:</dt>
+                    <dd class="col-6 text-end"><?php echo JedscoreHelper::getStars($this->item->score_documentation); ?></dd>
+                    <dt class="col-6">Value for Money:</dt>
+                    <dd class="col-6 text-end"><?php echo JedscoreHelper::getStars($this->item->score_value_for_money); ?></dd>
+                </dl>
+
                 <div class="d-flex align-items-center justify-content-center">
-                    <a href="<?php echo Route::_('index.php?option=com_jed&task=review.add&extension_id=' . $this->item->id); ?>"
+                    <a href="<?php echo Route::_('index.php?option=com_jed&view=reviewform&catid=' . $this->item->catid . '&id=' . (int) $this->item->id); ?>"
                        class="btn btn-outline-success">
                         <span class="fa fa-pencil" aria-hidden="true"></span>
-                        Write a review
+                        <?php if (!empty($this->item->user_review_id)) : ?>Edit my review<?php else: ?>Write a review<?php endif; ?>
                     </a>
                 </div>
             </div>
@@ -146,11 +154,11 @@ if (JedHelper::isLoggedIn()) {
                     </div>
 
                     <p class="button-group">
-                        <a href=" <?php echo $this->item->homepage_link ?>" class="button button--grey">Website</a>
-                        <a href=" <?php echo $this->item->demo_link ?>" class="button button--grey">Demo</a>
-                        <a href=" <?php echo $this->item->documentation_link ?>" class="button button--grey">Documentation</a>
-                        <a href=" <?php echo $this->item->support_link ?>" class="button button--grey">Support</a>
-                        <a href=" <?php echo $this->item->license_link ?>" class="button button--grey">License</a>
+                        <a href="<?php echo $this->item->homepage_link ?>" class="button button--grey">Website</a>
+                        <a href="<?php echo $this->item->demo_link ?>" class="button button--grey">Demo</a>
+                        <a href="<?php echo $this->item->documentation_link ?>" class="button button--grey">Documentation</a>
+                        <a href="<?php echo $this->item->support_link ?>" class="button button--grey">Support</a>
+                        <a href="<?php echo $this->item->license_link ?>" class="button button--grey">License</a>
                     </p>
                 </div>
                 <div class="jed-grid__item">
@@ -173,32 +181,59 @@ if (JedHelper::isLoggedIn()) {
                 <div class="jed-grid__item">
                     <h2 class="heading heading--m">Reviews</h2>
                     <hr>
-                    <?php
-                    $slideid = 0;
-                    foreach ($this->item->reviews as $rev) {continue;
-                        echo HTMLHelper::_(
-                            'bootstrap.addSlide',
-                            'review_extension_group',
-                            $rev->version . ' - ' .
-                            $rev->title . ' - ' . JedscoreHelper::getStars($rev->overall_score) . ' ' . JedHelper::prettyShortDate($rev->created_on),
-                            'review_extension_group' . '_slide' . ($slideid++)
-                        );
-                        echo "<p>" . $rev->body . "</p>";
-                        echo "<p>Functionality (" . $rev->functionality . ") - " . $rev->functionality_comment . "</p>";
-                        echo "<p>Ease of use (" . $rev->ease_of_use . ") - " . $rev->ease_of_use_comment . "</p>";
-                        echo "<p>Documentation (" . $rev->documentation . ") - " . $rev->documentation_comment . "</p>";
-                        echo "<p>Value For Money (" . $rev->value_for_money . ") - " . $rev->value_for_money_comment . "</p>";
-                        echo "<p>Used for - " . $rev->used_for . "</p>";
-                        echo HTMLHelper::_('bootstrap.endSlide');
-                    ?>
+                    <?php if (empty($this->item->reviews)) : ?>
+                        <p><?php echo Text::_('COM_JED_EXTENSION_NO_REVIEWS'); ?></p>
+                    <?php else :
+                        $slideid = 0;
+                        echo HTMLHelper::_('bootstrap.startAccordion', 'review_extension_group', ['active' => 'review_extension_group_slide0']);
+                        foreach ($this->item->reviews as $rev) :
+                            echo HTMLHelper::_(
+                                'bootstrap.addSlide',
+                                'review_extension_group',
+                                $rev->version . ' - ' .
+                                $rev->title . ' - ' . JedscoreHelper::getStars($rev->overall_score) . ' ' . JedHelper::prettyShortDate($rev->created_on),
+                                'review_extension_group_slide' . ($slideid++)
+                            );
+                            ?>
+                            <p><?php echo htmlspecialchars($rev->body ?? '', ENT_QUOTES, 'UTF-8'); ?></p>
+                            <p>
+                                <?php echo Text::_('COM_JED_REVIEWS_FUNCTIONALITY_LABEL'); ?>
+                                (<?php echo number_format((float) $rev->functionality, 1); ?>/5) -
+                                <?php echo htmlspecialchars($rev->functionality_comment ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                            </p>
+                            <p>
+                                <?php echo Text::_('COM_JED_REVIEWS_EASE_OF_USE_LABEL'); ?>
+                                (<?php echo number_format((float) $rev->ease_of_use, 1); ?>/5) -
+                                <?php echo htmlspecialchars($rev->ease_of_use_comment ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                            </p>
+                            <p>
+                                <?php echo Text::_('COM_JED_EXTENSION_DOCUMENTATION_LABEL'); ?>
+                                (<?php echo number_format((float) $rev->documentation, 1); ?>/5) -
+                                <?php echo htmlspecialchars($rev->documentation_comment ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                            </p>
+                            <p>
+                                <?php echo Text::_('COM_JED_REVIEWS_VALUE_FOR_MONEY_LABEL'); ?>
+                                (<?php echo number_format((float) $rev->value_for_money, 1); ?>/5) -
+                                <?php echo htmlspecialchars($rev->value_for_money_comment ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                            </p>
+                            <p>
+                                <?php echo Text::_('COM_JED_REVIEWS_USED_FOR_LABEL'); ?> -
+                                <?php echo htmlspecialchars($rev->used_for ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                            </p>
+                            <?php if ((int) ($rev->developer_response_published ?? 0) === 1 && !empty($rev->developer_response)) : ?>
+                                <div class="ms-4 border-start ps-3">
+                                    <h4><?php echo Text::sprintf('COM_JED_EXTENSION_DEVELOPER_RESPONSE_HEADING', JedHelper::prettyShortDate($rev->developer_responded_on)); ?></h4>
+                                    <p><?php echo nl2br(htmlspecialchars($rev->developer_response, ENT_QUOTES, 'UTF-8')); ?></p>
+                                </div>
+                            <?php endif; ?>
+                            <?php
+                            echo HTMLHelper::_('bootstrap.endSlide');
+                        endforeach;
+                        echo HTMLHelper::_('bootstrap.endAccordion');
+                    endif; ?>
                 </div>
-
             </div>
         </div>
-            <?php
-
-            echo HTMLHelper::_('uitab.endTab');
-        }?>
     </article>
 </div>
 

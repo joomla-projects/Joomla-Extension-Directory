@@ -17,7 +17,8 @@ namespace Jed\Component\Jed\Site\Model;
 
 use Exception;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
-use Jed\Component\Jed\Site\Helper\JedHelper;
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
+use Jed\Component\Tickets\Administrator\Traits\TicketHandlingTrait;
 use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
@@ -40,6 +41,7 @@ use stdClass;
 class ExtensionformModel extends FormModel
 {
     use ExtensionUtilities;
+    use TicketHandlingTrait;
 
     /**
      * The item object
@@ -461,8 +463,9 @@ class ExtensionformModel extends FormModel
     }
 
     /**
-     * Whether the current user may view/edit the given extension: its owner, one of its
-     * maintainers, or an admin/superuser.
+     * Whether the current user may view/edit the given extension: users with core.edit may edit
+     * any extension; users with only core.edit.own may edit it if they are the owner or one of
+     * its maintainers (#__jed_extensions_maintainers). Super Users always pass core.edit.
      *
      * @param int $extensionId The extension PK in #__jed_extensions.
      *
@@ -473,37 +476,17 @@ class ExtensionformModel extends FormModel
      */
     private function isAuthorised(int $extensionId): bool
     {
-        if (JedHelper::isAdminOrSuperUser()) {
+        $user = $this->getCurrentUser();
+
+        if ($user->authorise('core.edit', 'com_jed')) {
             return true;
         }
 
-        $userId = (int) Factory::getApplication()->getIdentity()->id;
-
-        if (!$userId) {
+        if (!$user->authorise('core.edit.own', 'com_jed')) {
             return false;
         }
 
-        $db = $this->getDatabase();
-
-        $ownerQuery = $db->getQuery(true)
-            ->select($db->quoteName('owner'))
-            ->from($db->quoteName('#__jed_extensions'))
-            ->where($db->quoteName('id') . ' = :eid')
-            ->bind(':eid', $extensionId, ParameterType::INTEGER);
-
-        if ((int) $db->setQuery($ownerQuery)->loadResult() === $userId) {
-            return true;
-        }
-
-        $maintainerQuery = $db->getQuery(true)
-            ->select('1')
-            ->from($db->quoteName('#__jed_extensions_maintainers'))
-            ->where($db->quoteName('extension_id') . ' = :eid')
-            ->where($db->quoteName('user_id') . ' = :uid')
-            ->bind(':eid', $extensionId, ParameterType::INTEGER)
-            ->bind(':uid', $userId, ParameterType::INTEGER);
-
-        return (bool) $db->setQuery($maintainerQuery)->loadResult();
+        return \Jed\Component\Jed\Site\Helper\JedHelper::isOwnerOrMaintainer($extensionId);
     }
 
     /**
@@ -575,8 +558,9 @@ class ExtensionformModel extends FormModel
             return false;
         }
 
-        // Point the live row at the history entry that was just created.
-        $this->updateEntryVersion($extensionId, (int) $table->id);
+        // The live row is intentionally NOT advanced here: every submission is a
+        // pending review, only the admin backend's ExtensionModel::approve() writes
+        // to #__jed_extensions.
 
         // deleteImages/deleteFiles are plain checkboxes, not declared form fields, so they were
         // stripped by Form::filter() in FormModel::validate() before $data reached us here.
@@ -592,6 +576,12 @@ class ExtensionformModel extends FormModel
 
         // Keep state pointing to the extension ID (not the new history entry's PK)
         $this->setState('extension.id', $extensionId);
+
+        $this->triggerTicket(
+            TicketType::Extension,
+            $extensionId,
+            Text::sprintf('COM_JED_TICKET_EXTENSION_EDITED_EVENT', $data['name'] ?? $extensionId)
+        );
 
         return true;
     }

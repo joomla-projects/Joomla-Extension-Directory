@@ -48,7 +48,6 @@ extract($displayData);
 <?php foreach ($form->getGroup('') as $field) : ?>
     <?php
     $f =  (array) $field->__get('data-colwidth');
-    var_dump($f);
     ?>
     <?php //var_dump($field);?>
     <?php echo $field->renderField(); ?>

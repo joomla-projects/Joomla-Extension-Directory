@@ -14,6 +14,8 @@ namespace Jed\Component\Jed\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Site\Helper\JedHelper;
+use Jed\Component\Jed\Site\Model\ExtensionModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
@@ -29,7 +31,11 @@ class ReviewformController extends FormController
     /**
      * edit
      *
-     * Comment
+     * Checks out the review for editing and redirects to the edit screen. If no
+     * `id` is given (the "Write a review" link) but the current user already has a
+     * review for the given `extension_id`, transparently edits that existing review
+     * instead of starting a blank one - a user may only ever have one review per
+     * extension.
      *
      * @param $key
      * @param $urlVar
@@ -43,11 +49,29 @@ class ReviewformController extends FormController
         $app = Factory::getApplication();
 
         // Get the previous edit id (if any) and the current edit id.
-        $previousId = (int) $app->getUserState('com_jed.edit.review.id');
-        $editId     = $app->getInput()->getInt('id', 0);
+        $previousId  = (int) $app->getUserState('com_jed.edit.review.id');
+        $editId      = $app->getInput()->getInt('id', 0);
+        $extensionId = $app->getInput()->getInt('extension_id', 0);
+
+        if (!$editId && $extensionId && JedHelper::isLoggedIn()) {
+            $extensionModel = new ExtensionModel();
+            $userId         = (int) Factory::getApplication()->getIdentity()->id;
+            $existingId     = $extensionModel->getUserReviewId($extensionId, $userId);
+
+            if ($existingId !== null) {
+                $editId = $existingId;
+            }
+        }
 
         // Set the user id for the user to edit in the session.
         $app->setUserState('com_jed.edit.review.id', $editId);
+
+        // extension_id doesn't survive the redirect below as a query param, so stash it in
+        // session state the same way - Reviewform's HtmlView falls back to this when adding
+        // a brand new review (an existing review's own extension_id comes from the loaded row).
+        if ($extensionId) {
+            $app->setUserState('com_jed.edit.review.extension_id', $extensionId);
+        }
 
         // Get the model.
         $model = $this->getModel('Reviewform', 'Site');
@@ -89,15 +113,8 @@ class ReviewformController extends FormController
         $model = $this->getModel('Reviewform', 'Site');
 
         // Get the user data.
-
         $data                    = $app->getInput()->get('jform', [], 'array');
-        $data['functionality']   = $data['func_num'];
-        $data['ease_of_use']     = $data['ease_num'];
-        $data['support']         = $data['support_num'];
-        $data['documentation']   = $data['doc_num'];
-        $data['value_for_money'] = $data['value_num'];
-        $data['overall_score']   =  ($data['func_num'] + $data['ease_num'] + $data['support_num'] + $data['doc_num'] + $data['value_num']) / 5;
-        //  print_r($data);exit();
+
         // Validate the posted data.
         $form = $model->getForm();
 
@@ -118,7 +135,7 @@ class ReviewformController extends FormController
 
             $this->redirect();
         }
-        //echo "Data OK";
+
         // Attempt to save the data.
         $return = $model->save($data);
 
@@ -130,12 +147,7 @@ class ReviewformController extends FormController
             // Redirect back to the edit screen.
             $id = (int) $app->getUserState('com_jed.edit.review.id');
             $this->setMessage(Text::_('Save failed'), 'warning');
-            $this->setRedirect(Route::_('index.php?option=com_jed&view=reviewform&layout=edit&id=' . $id, false));
-        }
-
-        // Check in the profile.
-        if ($return) {
-            $model->checkin($return);
+            $this->setRedirect(Route::_('index.php?option=com_jed&view=reviewform&id=' . $id, false));
         }
 
         // Clear the profile id from the session.

@@ -106,13 +106,6 @@ class Router extends RouterView
         $reviewform = new RouterViewConfiguration('reviewform');
         $reviewform->setParent($extension);
         $this->registerView($reviewform);
-        $reviewscomments = new RouterViewConfiguration('reviewscomments');
-        $this->registerView($reviewscomments);
-        $reviewcomment = new RouterViewConfiguration('reviewcomment');
-        $reviewcomment->setKey('id')->setParent($reviewscomments);
-        $this->registerView($reviewcomment);
-        $reviewcommentform = new RouterViewConfiguration('reviewcommentform');
-        $this->registerView($reviewcommentform);
 
         $this->attachRule(new MenuRules($this));
         $this->attachRule(new StandardRules($this));
@@ -301,18 +294,4 @@ class Router extends RouterView
     {
         return [$id];
     }
-
-
-    public function getReviewcommentId($segment, $query)
-    {
-        return $segment;
-    }
-
-
-    public function getReviewcommentSegment($id, $query)
-    {
-        return [$id];
-    }
-
-
 }

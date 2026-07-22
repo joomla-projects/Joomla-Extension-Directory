@@ -18,6 +18,7 @@ use Jed\Component\Jed\Site\Model\DashboardModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Pagination\Pagination;
 use Joomla\Registry\Registry;
 
 /**
@@ -30,6 +31,11 @@ class HtmlView extends BaseHtmlView
     protected array $reviews          = [];
     protected array $extensions       = [];
     protected array $tickets          = [];
+    protected array $favorites        = [];
+    protected Pagination $reviewsPagination;
+    protected Pagination $extensionsPagination;
+    protected Pagination $ticketsPagination;
+    protected Pagination $favoritesPagination;
     protected Registry $params;
     protected Registry $state;
 
@@ -50,11 +56,16 @@ class HtmlView extends BaseHtmlView
         $model = $this->getModel();
         $model->setUseExceptions(true);
 
-        $this->reviews         = $model->getReviews();
-        $this->extensions      = $model->getExtensions();
-        $this->tickets         = $model->getTickets();
-        $this->state           = $model->getState();
-        $this->params          = Factory::getApplication()->getParams();
+        $this->reviews              = $model->getReviews();
+        $this->reviewsPagination    = $model->getReviewsPagination();
+        $this->extensions           = $model->getExtensions();
+        $this->extensionsPagination = $model->getExtensionsPagination();
+        $this->tickets              = $model->getTickets();
+        $this->ticketsPagination    = $model->getTicketsPagination();
+        $this->favorites            = $model->getFavorites();
+        $this->favoritesPagination  = $model->getFavoritesPagination();
+        $this->state                = $model->getState();
+        $this->params               = Factory::getApplication()->getParams();
 
         $this->prepareDocument();
 

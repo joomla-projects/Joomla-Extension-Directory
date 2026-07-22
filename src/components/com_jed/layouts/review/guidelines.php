@@ -18,7 +18,7 @@
 */
 ?>
 
-<h1>Submit review - <?php echo $displayData->title; ?></h1>
+<h1>Submit review - <?php echo $displayData->name; ?></h1>
 
 <div id="guidelines">
     <h2>What are the guidelines for a review?</h2>

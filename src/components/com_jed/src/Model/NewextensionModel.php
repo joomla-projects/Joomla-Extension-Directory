@@ -20,6 +20,8 @@ use Jed\Component\Jed\Administrator\Parser\File as FileParser;
 use Jed\Component\Jed\Administrator\Parser\Github as GithubParser;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Jed\Site\Helper\JedHelper;
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
+use Jed\Component\Tickets\Administrator\Traits\TicketHandlingTrait;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
@@ -41,6 +43,7 @@ use RuntimeException;
 class NewextensionModel extends FormModel
 {
     use ExtensionUtilities;
+    use TicketHandlingTrait;
 
     /**
      * The session key the detected manifest data is stored under between layout=default and
@@ -139,7 +142,10 @@ class NewextensionModel extends FormModel
     /**
      * Creates the new extension: a #__jed_extensions row, followed by its first
      * #__jed_extensions_history entry (mirrors the admin backend's
-     * ExtensionModel::save()/createExtension()).
+     * ExtensionModel::save()/createExtension()). This is the only place on the site side that
+     * inserts into #__jed_extensions - it always creates a brand new row and never accepts an
+     * existing extension_id, so this view cannot be used to modify someone else's extension.
+     * Editing an existing extension is the (authorisation-checked) ExtensionformModel's job.
      *
      * @param array $data The validated form data
      *
@@ -154,11 +160,7 @@ class NewextensionModel extends FormModel
             throw new Exception(Text::_('COM_JED_EXTENSION_NO_ACCESS_LABEL'), 401);
         }
 
-        if (!isset($data['extension_id']) && !$data['extension_id']) {
-            $extensionId = $this->createExtension($data);
-        } else {
-            $extensionId = (int) $data['extension_id'];
-        }
+        $extensionId = $this->createExtension($data);
 
         Factory::getApplication()->setUserState('com_jed.edit.extension.id', $extensionId);
 
@@ -189,6 +191,12 @@ class NewextensionModel extends FormModel
         $this->deleteMarkedUploads($extensionId, (array) ($rawPost['deleteFiles'] ?? []), '#__jed_extensions_files');
         $this->storeUploadedImages($extensionId, (array) ($data['images'] ?? []));
         $this->storeUploadedFiles($extensionId, (array) ($data['files'] ?? []));
+
+        $this->triggerTicket(
+            TicketType::Extension,
+            $extensionId,
+            Text::sprintf('COM_JED_TICKET_NEW_EXTENSION_EVENT', $data['name'] ?? '')
+        );
 
         return $extensionId;
     }

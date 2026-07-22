@@ -16,9 +16,12 @@ namespace Jed\Component\Jed\Site\View\Reviewform;
 
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Model\ExtensionModel;
+use Jed\Component\Jed\Site\Model\ReviewformModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 
 /**
@@ -72,17 +75,25 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
-        /* @var $app \Joomla\CMS\Application\SiteApplication */
-        $app = Factory::getApplication();
+        $app  = Factory::getApplication();
+        $user = $this->getCurrentUser();
 
+        if ($user->guest) {
+            $return                = base64_encode(Uri::getInstance());
+            $login_url_with_return = Route::_('index.php?option=com_users&view=login&return=' . $return);
+            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'notice');
+            $app->redirect($login_url_with_return, 403);
+        }
+
+        /** @var ReviewformModel $model */
         $model = $this->getModel();
         $model->setUseExceptions(true);
 
-        $this->state      = $model->getState();
-        $this->item       = $model->getItem();
-        $this->params     = $app->getParams('com_jed');
-        $this->canSave    = JedHelper::canSave();
-        $this->form       = $model->getForm();
+        $this->state   = $model->getState();
+        $this->item    = $model->getItem();
+        $this->params  = $app->getParams('com_jed');
+        $this->canSave = JedHelper::canSave();
+        $this->form    = $model->getForm();
 
         // For an existing review, its own extension_id column is authoritative. For a brand
         // new one, the query string won't survive ReviewformController::edit()'s redirect, so
@@ -90,7 +101,7 @@ class HtmlView extends BaseHtmlView
         $input        = $app->getInput();
         $extension_id = !empty($this->item->extension_id)
             ? (int) $this->item->extension_id
-            : $input->getInt('extension_id', (int) $app->getUserState('com_jed.edit.review.extension_id', -1));
+            : $input->getInt('id', (int) $app->getUserState('com_jed.edit.review.extension_id', -1));
 
         $extension_model         = new ExtensionModel();
         $this->extension_details = $extension_model->getItem($extension_id);

@@ -33,28 +33,26 @@ class JedscoreHelper
         if ($score == 0) {
             return 'Not Rated';
         }
-        $star_score = self::getStarScore($score);
-        if (!is_numeric($star_score)) {
+
+        if (!is_numeric($score)) {
             return '';
         }
 
-
-        $whole = floor($star_score);
-        $half  = $star_score > $whole ? 1 : 0;
+        $whole = floor($score);
+        $half  = $score > $whole ? 1 : 0;
         $empty = 5 - $whole - $half;
 
-        $html = '<div class="stars stars-' . self::getClass($star_score) . '">';
+        $html = '<div class="stars stars-' . self::getClass($score) . '">';
         $html .= str_repeat('<span class="star star-full fa fa-star"></span>', $whole);
         $html .= str_repeat('<span class="star star-half fa fa-star-half"></span>', $half);
-        $html .= str_repeat('<span class="star star-empty fa fa-star-empty"></span>', $empty);
-        // $html .= '<span class="tooltiptext">Score of '.$star_score.'</span>';
+        $html .= str_repeat('<span class="star star-empty fa fa-star opacity-0"></span>', $empty);
         $html .= '</div>';
 
         return $html;
     }
 
     /**
-     * @param float $score
+     * @param float $score A rating from 0 to 5.
      *
      * @return string
      *
@@ -62,57 +60,36 @@ class JedscoreHelper
      */
     public static function getStarsShort(float $score = 0): string
     {
-        $star_score = self::getStarScore($score);
-
-        if (!is_numeric($star_score)) {
+        if (!$score) {
             return '';
         }
 
         $html = '<div class="stars-short stars-' . self::getClass($score) . '">';
         $html .= '<span class="fa fa-star"></span>';
-        $html .= $star_score;
+        $html .= $score;
         $html .= '</div>';
 
         return $html;
     }
 
     /**
-     * @param $score
-     *
-     * @return false|float|int
-     *
-     * @since 4.0.0
-     */
-    public static function getStarScore($score): false|float|int
-    {
-        if (!$score) {
-            return false;
-        }
-
-        // convert 1-100 score to 0 - 5 value
-        return round($score / 10) / 2;
-    }
-
-    /**
-     * @param $score
+     * @param float $score A rating from 0 to 5.
      *
      * @return string
      *
      * @since 4.0.0
      */
-    public static function getClass($score): string
+    public static function getClass(float $score): string
     {
-        $star_score = self::getStarScore($score);
-
-        if (!is_numeric($star_score)) {
+        if (!$score) {
             return 'none';
         }
 
-        if ($star_score <= 2) {
+        if ($score <= 2) {
             return 'low';
         }
 
-        if ($star_score <= 4) {
+        if ($score <= 4) {
             return 'medium';
         }
 

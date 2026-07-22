@@ -159,6 +159,11 @@ class ExtensionsModel extends ListModel
         // Join over the modified by field 'modified_by'
         $query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
 
+        // Flag whether the current user has bookmarked each extension, for the card's favorite icon.
+        $favUserId = (int) (Factory::getApplication()->getIdentity()->id ?? 0);
+        $query->select('(fav.id IS NOT NULL) AS is_favorited');
+        $query->join('LEFT', '#__jed_favorites AS fav ON fav.extension_id = a.id AND fav.user_id = ' . $db->quote($favUserId));
+
         if (!Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed')) {
             $query->where('a.state = 1');
         } else {
@@ -246,7 +251,7 @@ class ExtensionsModel extends ListModel
             $item->number_of_reviews = (int) $item->score_count;
             $item->score             = (float) $item->score_overall;
             // score_overall is a 0-5 value (decimal(3,2))
-            $item->score_string = JedscoreHelper::getStars($item->score);
+            $item->score_string = JedscoreHelper::getStars((float) $item->score_overall);
 
             if ($item->number_of_reviews == 0) {
                 $item->review_string = '';

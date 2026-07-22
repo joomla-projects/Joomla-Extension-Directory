@@ -15,45 +15,45 @@
 			emptyRating[0].value = input[0].value < 0.5 ? 1 : 0;
 
 			ratingSelectors[index] = raterJs( {
-				// starSize:screen.width > 435 ? 32 : 23, 
-				starSize: 32, 
-				rating: input[0].value > 0 ? input[0].value/20 : 0,
+				// starSize:screen.width > 435 ? 32 : 23,
+				starSize: 32,
+				rating: input[0].value > 0 ? parseFloat(input[0].value) : 0,
 				max: 5,
 				step: 0.5,
 				showToolTip: false,
-				element: el[0], 
+				element: el[0],
 				rateCallback:function rateCallback(rating, done) {
 					rating = rating == 0 ? -1 : rating;
 					this.setRating(rating);
 					noScore.hide();
-					const rated = rating > 0; 
-					input[0].value = rated ? rating*20 : -1;
+					const rated = rating > 0;
+					input[0].value = rated ? rating : -1;
 					emptyRating[0].value = rated ? 0 : 1;
 					liveRating.toggleClass('muted',false);
-					widget.toggleClass('rated',rated); 
+					widget.toggleClass('rated',rated);
 					el.closest('.control-group').removeClass('error');
-					done(); 
+					done();
 				},
 				onHover:function(currentIndex, currentRating) {
 					noScore.hide();
 					widget.toggleClass('rated',true);
 					liveRating[0].textContent = ratingText(currentIndex);
 					liveRating.toggleClass('muted',true);
-				}, 
+				},
 				onLeave:function(currentIndex, currentRating) {
 					liveRating.toggleClass('muted',false);
 					if ( emptyRating[0].value == 1 ) {
 						noScore.show();
 						liveRating[0].textContent = '';
-						widget.toggleClass('rated',false); 
+						widget.toggleClass('rated',false);
 					} else {
-						liveRating[0].textContent = ratingText(currentRating); 
+						liveRating[0].textContent = ratingText(currentRating);
 						widget.toggleClass('rated',true);
 						noScore.hide();
 					}
 				}
-			});		
-	
+			});
+
 			widget.find('.clear-rating').on('click',function(e) {
 				e.preventDefault();
 				ratingSelectors[index].clear();

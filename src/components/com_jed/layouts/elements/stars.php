@@ -12,7 +12,7 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * @param int  $rating  The rounded average rating for an extension
+ * @param float $score The 0-5 average rating for an extension
  */
 
 /**
@@ -23,7 +23,7 @@
 extract($displayData);
 
 // @TODO improve this later on to fill half stars as well
-$rating = round($score / 20);
+$rating = round($score);
 ?>
 
 <div class="stars">

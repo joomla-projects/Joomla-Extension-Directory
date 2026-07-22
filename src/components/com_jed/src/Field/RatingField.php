@@ -81,9 +81,8 @@ class RatingField extends ListField
             //  ->useScript('com_jed.rating-pure-field-js')
             ->useStyle('com_jed.raterJSstyle');
 
-        //  $value = $this->prepareInputValue();
-        $value = 0;
-        $value = $value == -1 ? 0 : $value;
+        $value = (float) $this->value;
+        $value = $value <= 0 ? 0 : $value;
 
         $attr = '';
 

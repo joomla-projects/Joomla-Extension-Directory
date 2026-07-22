@@ -265,6 +265,11 @@ class CategoryModel extends ListModel
         // Join over the created by field 'modified_by'
         $query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
 
+        // Flag whether the current user has bookmarked each extension, for the card's favorite icon.
+        $favUserId = (int) (Factory::getApplication()->getIdentity()->id ?? 0);
+        $query->select('(fav.id IS NOT NULL) AS is_favorited');
+        $query->join('LEFT', '#__jed_favorites AS fav ON fav.extension_id = a.id AND fav.user_id = ' . $db->quote($favUserId));
+
         if (!Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed')) {
             $query->where('a.state = 1');
         } else {
