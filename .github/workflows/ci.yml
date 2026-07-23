@@ -25,6 +25,7 @@ jobs:
       - uses: ./.github/actions/setup-dependencies
       - name: Run PHP CS Fixer and PHPCS
         run: |
+          set -e
           ./vendor/bin/php-cs-fixer fix -vvv --diff
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           if [ "$GITHUB_EVENT_NAME" = "push" ]; then
