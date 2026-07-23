@@ -203,7 +203,7 @@ class ReviewformModel extends FormModel
                 $user = Factory::getApplication()->getIdentity();
                 if (empty($table->id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
                     // Convert the Table to a clean stdClass.
-                    $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
+                    $this->item               = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
                     $this->item->extension_id = $id;
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {

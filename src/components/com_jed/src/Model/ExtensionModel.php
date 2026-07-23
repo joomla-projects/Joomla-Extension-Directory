@@ -119,7 +119,7 @@ class ExtensionModel extends ItemModel
 
         // Does the current visitor already have a review for this extension? Used to decide
         // whether the "Write a review" link should route to a blank form or their existing one.
-        $currentUserId             = (int) (Factory::getApplication()->getIdentity()->id ?? 0);
+        $currentUserId              = (int) (Factory::getApplication()->getIdentity()->id ?? 0);
         $this->item->user_review_id = $this->getUserReviewId($this->item->id, $currentUserId);
 
         // Has the current visitor bookmarked this extension? Drives the bookmark icon's initial

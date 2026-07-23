@@ -190,7 +190,7 @@ class HtmlView extends BaseHtmlView
         $type     = TicketType::tryFrom((int) $this->linked_item_type) ?? TicketType::Other;
         $handler  = $registry->get($type);
 
-        $this->linked_item_type_name = $type->name;
+        $this->linked_item_type_name  = $type->name;
         $this->linkedItemData         = $handler->getMasterData((int) $this->linked_item_id);
         $this->linkedItemLayout       = $handler->getMasterDataLayout();
         $this->linkedItemActions      = $handler->getActions((int) $this->linked_item_id, $this->getCurrentUser());

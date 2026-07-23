@@ -21,5 +21,6 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Language\Text;
+
 ?>
 <p class="text-muted"><?php echo Text::_('COM_TICKETS_MASTERDATA_NONE'); ?></p>
