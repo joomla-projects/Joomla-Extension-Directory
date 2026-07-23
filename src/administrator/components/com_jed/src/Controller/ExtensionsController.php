@@ -27,6 +27,13 @@ use Joomla\Utilities\ArrayHelper;
 class ExtensionsController extends AdminController
 {
     /**
+     * @var string
+     *
+     * @since 4.0.0
+     */
+    protected $text_prefix = 'COM_JED_EXTENSION';
+
+    /**
      * Method to clone existing Extensions
      *
      * @return void

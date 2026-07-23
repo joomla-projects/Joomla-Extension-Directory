@@ -539,24 +539,11 @@ class ExtensionformModel extends FormModel
         )->execute();
 
         $table = $this->getTable();
+        $table->setUseExceptions(true);
 
-        if (!$table->bind($data)) {
-            $this->setError($table->getError());
-
-            return false;
-        }
-
-        if (!$table->check()) {
-            $this->setError($table->getError());
-
-            return false;
-        }
-
-        if (!$table->store()) {
-            $this->setError($table->getError());
-
-            return false;
-        }
+        $table->bind($data);
+        $table->check();
+        $table->store();
 
         // The live row is intentionally NOT advanced here: every submission is a
         // pending review, only the admin backend's ExtensionModel::approve() writes

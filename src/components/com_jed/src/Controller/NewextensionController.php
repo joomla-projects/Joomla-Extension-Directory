@@ -103,11 +103,10 @@ class NewextensionController extends FormController
             return;
         }
 
-        $extensionId = $model->save($validatedData);
-
-        if (!$extensionId) {
-            $errors = $model->getErrors();
-            $this->setMessage(reset($errors) ?: Text::_('JGLOBAL_ERROR_SAVE_FAILED'), 'warning');
+        try {
+            $extensionId = $model->save($validatedData);
+        } catch (Exception $e) {
+            $this->setMessage($e->getMessage() ?: Text::_('JGLOBAL_ERROR_SAVE_FAILED'), 'warning');
             $this->setRedirect(Route::_('index.php?option=com_jed&view=newextension&layout=form', false));
 
             return;

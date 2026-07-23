@@ -245,10 +245,11 @@ class ExtensionModel extends AdminModel
 
         /** @var ExtensionTable $liveTable */
         $liveTable = $this->getTable('Extension');
+        $liveTable->setUseExceptions(true);
 
-        if (!$liveTable->bind($liveData) || !$liveTable->check() || !$liveTable->store()) {
-            throw new Exception($liveTable->getError());
-        }
+        $liveTable->bind($liveData);
+        $liveTable->check();
+        $liveTable->store();
 
         // Marks this history row active (deactivating the rest) - existing, tested logic.
         $this->activateVersion($extensionId, $historyId);
@@ -269,12 +270,15 @@ class ExtensionModel extends AdminModel
      *
      * @return bool
      *
+     * @throws Exception If the underlying table fails to save.
+     *
      * @since 4.1.0
      */
     public function publish(&$pks, $value = 1)
     {
         $user  = $this->getCurrentUser();
         $table = $this->getTable('Extension');
+        $table->setUseExceptions(true);
         $pks   = (array) $pks;
 
         foreach ($pks as $i => $pk) {
@@ -289,11 +293,7 @@ class ExtensionModel extends AdminModel
             return true;
         }
 
-        if (!$table->publish($pks, $value, $user->id)) {
-            $this->setError($table->getError());
-
-            return false;
-        }
+        $table->publish($pks, $value, $user->id);
 
         return true;
     }
@@ -599,21 +599,11 @@ class ExtensionModel extends AdminModel
         )->execute();
 
         $table = $this->getTable();
+        $table->setUseExceptions(true);
 
-        if (!$table->bind($data)) {
-            $this->setError($table->getError());
-            return false;
-        }
-
-        if (!$table->check()) {
-            $this->setError($table->getError());
-            return false;
-        }
-
-        if (!$table->store()) {
-            $this->setError($table->getError());
-            return false;
-        }
+        $table->bind($data);
+        $table->check();
+        $table->store();
 
         // The live row is intentionally NOT advanced here: every save is a pending
         // review, only ExtensionModel::approve() writes to #__jed_extensions.
@@ -651,6 +641,7 @@ class ExtensionModel extends AdminModel
 
         /** @var ExtensionTable $table */
         $table = $this->getTable('Extension');
+        $table->setUseExceptions(true);
 
         $liveData = [
             'id'    => 0,
@@ -661,11 +652,7 @@ class ExtensionModel extends AdminModel
             'state' => 0,
         ];
 
-        if (!$table->save($liveData)) {
-            $this->setError($table->getError());
-
-            return 0;
-        }
+        $table->save($liveData);
 
         $extensionId = (int) $table->id;
 

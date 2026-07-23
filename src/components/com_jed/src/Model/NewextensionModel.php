@@ -152,7 +152,7 @@ class NewextensionModel extends FormModel
      * @return int The new extension's #__jed_extensions.id, or 0 on failure (errors are set on the model)
      *
      * @since  1.0.0
-     * @throws Exception
+     * @throws Exception If the caller isn't logged in, or the underlying table fails to save.
      */
     public function save(array $data): int
     {
@@ -176,12 +176,11 @@ class NewextensionModel extends FormModel
         unset($data['created']);
 
         $table = $this->getTable();
+        $table->setUseExceptions(true);
 
-        if (!$table->bind($data) || !$table->check() || !$table->store()) {
-            $this->setError($table->getError());
-
-            return 0;
-        }
+        $table->bind($data);
+        $table->check();
+        $table->store();
 
         $rawPost = (array) Factory::getApplication()->getInput()->post->get('jform', [], 'array');
 
@@ -206,7 +205,9 @@ class NewextensionModel extends FormModel
      *
      * @param array $data The submitted form data.
      *
-     * @return int The new #__jed_extensions.id, or 0 on failure (an error is set on the model).
+     * @return int The new #__jed_extensions.id.
+     *
+     * @throws Exception If the underlying table fails to save.
      *
      * @since 1.0.0
      */
@@ -216,6 +217,7 @@ class NewextensionModel extends FormModel
 
         /** @var \Jed\Component\Jed\Administrator\Table\ExtensionTable $table */
         $table = $this->getTable('Extension');
+        $table->setUseExceptions(true);
 
         $liveData = [
             'id'    => 0,
@@ -226,11 +228,7 @@ class NewextensionModel extends FormModel
             'state' => 0,
         ];
 
-        if (!$table->save($liveData)) {
-            $this->setError($table->getError());
-
-            return 0;
-        }
+        $table->save($liveData);
 
         return (int) $table->id;
     }
