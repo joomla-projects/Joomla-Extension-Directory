@@ -416,7 +416,7 @@ class CategoryModel extends ListModel
      */
     public function getCategory(): array
     {
-        $db = $this->getDatabase();
+        $db         = $this->getDatabase();
         $id         = Factory::getApplication()->getInput()->getInt('id', -1);
         $extension  = 'com_jed';
         $categories = [];
