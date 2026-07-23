@@ -17,7 +17,7 @@ use Joomla\CMS\Router\Route;
 
 /** @var \Jed\Component\Jed\Administrator\View\Review\HtmlView $this */
 
-$wa = $this->document->getWebAssetManager();
+$wa = $this->getDocument()->getWebAssetManager();
 $wa->useScript('keepalive')
     ->useScript('form.validate');
 HTMLHelper::_('bootstrap.tooltip');

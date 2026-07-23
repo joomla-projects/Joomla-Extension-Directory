@@ -21,9 +21,9 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
-$wa = $this->document->getWebAssetManager();
 /** @var \Jed\Component\Vel\Site\View\Abandonedreport\HtmlView $this */
 
+$wa = $this->getDocument()->getWebAssetManager();
 $wa->getRegistry()->addExtensionRegistryFile('com_vel');
 $wa->useScript('keepalive')
     ->useScript('form.validate');

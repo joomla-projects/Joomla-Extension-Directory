@@ -28,7 +28,7 @@ use Joomla\CMS\Router\Route;
 HTMLHelper::_('bootstrap.framework');
 HTMLHelper::_('jquery.framework');
 
-$wa = $this->document->getWebAssetManager();
+$wa = $this->getDocument()->getWebAssetManager();
 
 $wa->useStyle('com_tickets.Tickets');
     //->useStyle('com_jed.jquery_dataTables');

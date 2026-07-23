@@ -27,7 +27,7 @@ use Joomla\CMS\Router\Route;
 
 HTMLHelper::_('bootstrap.tooltip');
 
-$wa = $this->document->getWebAssetManager();
+$wa = $this->getDocument()->getWebAssetManager();
 $wa->useScript('keepalive')
     ->useScript('form.validate')
     ->useScript('webcomponent.field-subform')

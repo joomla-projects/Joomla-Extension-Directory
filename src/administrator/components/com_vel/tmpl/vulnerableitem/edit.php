@@ -22,7 +22,7 @@ use Joomla\CMS\Uri\Uri;
 
 /** @var \Jed\Component\Vel\Administrator\View\Vulnerableitem\HtmlView $this */
 
-$wa = $this->document->getWebAssetManager();
+$wa = $this->getDocument()->getWebAssetManager();
 $wa->getRegistry()->addExtensionRegistryFile('com_vel');
 $wa->useStyle('com_jed.jedVel');
 $wa->useScript('keepalive')
@@ -177,4 +177,4 @@ $fieldhiddenoptions = ['hidden' => true];
     <input type="hidden" name="task" value=""/>
     <?php echo HTMLHelper::_('form.token'); ?>
 
-</form> 
+</form>

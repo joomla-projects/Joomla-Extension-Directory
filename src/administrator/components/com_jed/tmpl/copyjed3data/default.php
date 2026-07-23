@@ -16,7 +16,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 // phpcs:enable PSR1.Files.SideEffects
 
 
-$wa = $this->document->getWebAssetManager();
+$wa = $this->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.jedMigrate');
 $wa->useScript('keepalive')
     ->useScript('form.validate');

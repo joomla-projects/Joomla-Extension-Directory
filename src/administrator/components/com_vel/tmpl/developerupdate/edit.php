@@ -19,7 +19,7 @@ use Joomla\CMS\Router\Route;
 
 /** @var \Jed\Component\Vel\Administrator\View\Developerupdate\HtmlView $this */
 
-$wa = $this->document->getWebAssetManager();
+$wa = $this->getDocument()->getWebAssetManager();
 $wa->useScript('keepalive')
     ->useScript('form.validate');
 HTMLHelper::_('bootstrap.tooltip');

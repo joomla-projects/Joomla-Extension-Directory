@@ -18,7 +18,7 @@ use Joomla\CMS\Uri\Uri;
 
 /** @var \Jed\Component\Jed\Administrator\View\Extensionimage\HtmlView $this */
 
-$wa = $this->document->getWebAssetManager();
+$wa = $this->getDocument()->getWebAssetManager();
 $wa->useScript('keepalive')
     ->useScript('form.validate');
 HTMLHelper::_('bootstrap.tooltip');
@@ -28,7 +28,7 @@ HTMLHelper::_('bootstrap.tooltip');
     action="<?php echo Route::_('index.php?option=com_jed&layout=edit&id=' . (int) $this->item->id); ?>"
     method="post" enctype="multipart/form-data" name="adminForm" id="extensionimage-form" class="form-validate form-horizontal">
 
-    
+
     <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'extensionimage']); ?>
     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'extensionimage', Text::_('COM_JED_EXTENSIONIMAGE', true)); ?>
     <div class="row-fluid">
@@ -41,7 +41,7 @@ HTMLHelper::_('bootstrap.tooltip');
                     <?php $filenameFiles = []; ?>
                     <?php foreach ((array)$this->item->filename as $fileSingle) : ?>
                         <?php if (!is_array($fileSingle)) : ?>
-                            <a href="<?php echo Route::_(Uri::root() . '/tmp' . DIRECTORY_SEPARATOR . $fileSingle, false);?>"><?php echo $fileSingle; ?></a> | 
+                            <a href="<?php echo Route::_(Uri::root() . '/tmp' . DIRECTORY_SEPARATOR . $fileSingle, false);?>"><?php echo $fileSingle; ?></a> |
                             <?php $filenameFiles[] = $fileSingle; ?>
                         <?php endif; ?>
                     <?php endforeach; ?>
@@ -59,7 +59,7 @@ HTMLHelper::_('bootstrap.tooltip');
     <?php echo $this->form->renderField('created_by'); ?>
     <?php echo $this->form->renderField('modified_by'); ?>
 
-    
+
     <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
     <input type="hidden" name="task" value=""/>

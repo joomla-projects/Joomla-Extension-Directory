@@ -19,9 +19,9 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
-$wa = $this->document->getWebAssetManager();
 /** @var \Jed\Component\Vel\Site\View\Developerupdate\HtmlView $this */
 
+$wa = $this->getDocument()->getWebAssetManager();
 $wa->useScript('keepalive')
     ->useScript('form.validate');
 HTMLHelper::_('bootstrap.tooltip');
