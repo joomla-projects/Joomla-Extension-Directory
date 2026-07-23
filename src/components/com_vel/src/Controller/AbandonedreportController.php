@@ -45,17 +45,6 @@ class AbandonedreportController extends FormController
      */
     public function cancel($key = null): void
     {
-        // Get the current edit id.
-        $editId = (int) $this->app->getUserState('com_vel.edit.abandonedreport.id');
-
-        // Get the model.
-        $model = $this->getModel('Abandonedreport', 'Site');
-
-        // Check in the item
-        if ($editId) {
-            $model->checkin($editId);
-        }
-
         $menu = Factory::getApplication()->getMenu();
         $item = $menu->getActive();
         $url  = (empty($item->link) ? 'index.php?option=com_vel&view=abandoneditems' : $item->link);
@@ -76,26 +65,11 @@ class AbandonedreportController extends FormController
      */
     public function edit($key = null, $urlVar = null): void
     {
-
-        // Get the previous edit id (if any) and the current edit id.
-        $previousId = (int) $this->app->getUserState('com_vel.edit.abandonedreport.id');
-        $editId     = $this->input->getInt('id', 0);
+        // Get the current edit id.
+        $editId = $this->input->getInt('id', 0);
 
         // Set the user id for the user to edit in the session.
         $this->app->setUserState('com_vel.edit.abandonedreport.id', $editId);
-
-        // Get the model.
-        $model = $this->getModel('Abandonedreport', 'Site');
-
-        // Check out the item
-        if ($editId) {
-            $model->checkout($editId);
-        }
-
-        // Check in the previous user.
-        if ($previousId) {
-            $model->checkin($previousId);
-        }
 
         // Redirect to the edit screen.
         $this->setRedirect(Route::_('index.php?option=com_vel&view=abandonedreport&layout=edit', false));
@@ -163,11 +137,6 @@ class AbandonedreportController extends FormController
             $this->setMessage(Text::_('Save failed'), 'warning');
             $this->setRedirect(Route::_('index.php?option=com_vel&view=abandonedreport&layout=edit&id=' . $id, false));
             $this->redirect();
-        }
-
-        // Check in the profile.
-        if ($return) {
-            $model->checkin($return);
         }
 
         // Clear the profile id from the session.
