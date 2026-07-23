@@ -9,7 +9,7 @@
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace Jed\Component\Vel\Site\View\Liveitems;
+namespace Jed\Component\Vel\Site\View\Vulnerabilities;
 
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
