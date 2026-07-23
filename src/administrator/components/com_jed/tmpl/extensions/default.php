@@ -8,19 +8,18 @@
  */
 
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
-use Jed\Component\Jed\Administrator\View\Extensions\HtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
+/** @var \Jed\Component\Jed\Administrator\View\Extensions\HtmlView $this */
+
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
-
-/** @var HtmlView $this */
 
 $wa = $this->getDocument()->getWebAssetManager();
 $wa->getRegistry()

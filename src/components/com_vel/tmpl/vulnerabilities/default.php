@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Vel\Site\View\liveitems\HtmlView $this */
 /**
  * @package VEL
  *
@@ -20,6 +19,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
+
+/** @var \Jed\Component\Vel\Site\View\Vulnerabilities\HtmlView $this */
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');

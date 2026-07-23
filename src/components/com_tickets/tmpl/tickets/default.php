@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Tickets\Site\View\Tickets\HtmlView $this */
 /**
  * @package JED
  *
@@ -19,6 +18,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
+
+/** @var \Jed\Component\Tickets\Site\View\Tickets\HtmlView $this */
 
 $user        = $this->getCurrentUser();
 $userId      = $user->id;

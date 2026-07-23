@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Jed\Site\View\Newextension\HtmlView $this */
 /**
  * @package JED
  *
@@ -22,7 +21,9 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
-$wa = $this->document->getWebAssetManager();
+/** @var \Jed\Component\Jed\Site\View\Newextension\HtmlView $this */
+
+$wa = $this->getDocument()->getWebAssetManager();
 $wa->useScript('com_jed.newextension')
     ->useStyle('com_jed.newextension');
 

@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Jed\Administrator\View\Review\HtmlView $this */
 /**
  * @package JED
  *
@@ -16,6 +15,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
+/** @var \Jed\Component\Jed\Administrator\View\Review\HtmlView $this */
 
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')

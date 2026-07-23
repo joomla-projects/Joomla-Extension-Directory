@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Jed\Administrator\View\Extension\HtmlView $this */
 /**
  * @package JED
  *
@@ -12,6 +11,8 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Language\Text;
+
+/** @var \Jed\Component\Jed\Administrator\View\Extension\HtmlView $this */
 
 ?>
 <button type="button" class="btn" data-bs-dismiss="modal">

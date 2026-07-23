@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Tickets\Administrator\View\Tickets\HtmlView $this */
 /**
  * @package JED
  *
@@ -22,6 +21,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
+/** @var \Jed\Component\Tickets\Administrator\View\Tickets\HtmlView $this */
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');

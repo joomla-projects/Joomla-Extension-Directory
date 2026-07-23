@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Jed\Administrator\View\Velvulnerableitem\HtmlView $this */
 /**
  * @package VEL
  *
@@ -21,6 +20,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
+/** @var \Jed\Component\Vel\Administrator\View\Vulnerableitem\HtmlView $this */
 
 $wa = $this->document->getWebAssetManager();
 $wa->getRegistry()->addExtensionRegistryFile('com_vel');

@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Tickets\Site\View\Ticketform\HtmlView $this */
 /**
  * @package JED
  *
@@ -23,6 +22,8 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
 $wa = $this->document->getWebAssetManager();
+/** @var \Jed\Component\Tickets\Site\View\Ticketform\HtmlView $this */
+
 $wa->useScript('keepalive')->useScript('form.validate');
 HTMLHelper::_('bootstrap.tooltip');
 

@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Vel\Site\View\Abandonedreport\HtmlView $this */
 /**
  * @package VEL
  *
@@ -9,6 +8,7 @@
  * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
+
 // No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -22,6 +22,8 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
 $wa = $this->document->getWebAssetManager();
+/** @var \Jed\Component\Vel\Site\View\Abandonedreport\HtmlView $this */
+
 $wa->getRegistry()->addExtensionRegistryFile('com_vel');
 $wa->useScript('keepalive')
     ->useScript('form.validate');

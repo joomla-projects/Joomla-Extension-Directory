@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Jed\Site\View\Categories\HtmlView $this */
 /**
  * @package JED
  *
@@ -16,6 +15,8 @@
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+
+/** @var \Jed\Component\Jed\Site\View\Categories\HtmlView $this */
 
 $data = $displayData;
 

@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Vel\Site\View\Abandoneditem\HtmlView $this */
 /**
  * @package VEL
  *
@@ -15,6 +14,8 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\HTML\HTMLHelper;
+
+/** @var \Jed\Component\Vel\Site\View\Abandoneditem\HtmlView $this */
 
 ?>
 

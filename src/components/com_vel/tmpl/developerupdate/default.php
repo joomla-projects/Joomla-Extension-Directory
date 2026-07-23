@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Vel\Site\View\Developerupdate\HtmlView $this */
 /**
  * @package VEL
  *
@@ -21,6 +20,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
 $wa = $this->document->getWebAssetManager();
+/** @var \Jed\Component\Vel\Site\View\Developerupdate\HtmlView $this */
+
 $wa->useScript('keepalive')
     ->useScript('form.validate');
 HTMLHelper::_('bootstrap.tooltip');

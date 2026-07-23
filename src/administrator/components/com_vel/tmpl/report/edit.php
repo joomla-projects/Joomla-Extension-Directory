@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Jed\Administrator\View\Velreport\HtmlView $this */
 /**
  * @package VEL
  *
@@ -18,6 +17,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
+/** @var \Jed\Component\Vel\Administrator\View\Report\HtmlView $this */
 
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')

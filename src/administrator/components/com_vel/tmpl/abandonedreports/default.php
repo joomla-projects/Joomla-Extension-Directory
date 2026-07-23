@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Jed\Administrator\View\Velabandonedreports\HtmlView $this */
 /**
  * @package VEL
  *
@@ -23,6 +22,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 
+/** @var \Jed\Component\Vel\Administrator\View\Abandonedreports\HtmlView $this */
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');

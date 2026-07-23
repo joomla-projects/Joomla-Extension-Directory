@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Jed\Administrator\View\Extension\HtmlView $this */
 /**
  * @package JED
  *
@@ -22,6 +21,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
+
+/** @var \Jed\Component\Jed\Administrator\View\Extension\HtmlView $this */
 
 /**
  * Renders the "existing items + drag & drop upload" area used for the images and files

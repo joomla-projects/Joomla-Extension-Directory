@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Jed\Site\View\Categories\HtmlView $this */
 /**
  * @package JED
  *
@@ -15,6 +14,8 @@
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+
+/** @var \Jed\Component\Jed\Site\View\Categories\HtmlView $this */
 
 $wa = $this->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.t09_jed'); /*

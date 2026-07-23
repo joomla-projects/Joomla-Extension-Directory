@@ -14,7 +14,6 @@
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
 use Jed\Component\Jed\Site\Helper\JedtrophyHelper;
-use Jed\Component\Jed\Site\View\Extension\HtmlView;
 use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -23,7 +22,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
-/** @var HtmlView $this */
+/** @var \Jed\Component\Jed\Site\View\Extension\HtmlView $this */
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.multiselect');

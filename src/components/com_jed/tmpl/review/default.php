@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Jed\Site\View\Review\HtmlView $this */
 /**
  * @package JED
  *
@@ -18,6 +17,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
+
+/** @var \Jed\Component\Jed\Site\View\Review\HtmlView $this */
 
 $currentUserId = $this->getCurrentUser()->id;
 $isOwnReview   = $currentUserId == $this->item->created_by;

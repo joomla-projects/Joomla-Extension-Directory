@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Jed\Administrator\View\Extension\HtmlView $this */
 /**
  * @package JED
  *
@@ -21,6 +20,8 @@
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+
+/** @var \Jed\Component\Jed\Administrator\View\Extension\HtmlView $this */
 
 $extensionId = (int) ($this->item->extension_id ?: $this->item->id);
 ?>

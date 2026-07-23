@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Tickets\Administrator\View\Ticket\HtmlView $this */
 /**
  * @package JED
  *
@@ -22,6 +21,8 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
+
+/** @var \Jed\Component\Tickets\Administrator\View\Ticket\HtmlView $this */
 
 //var_dump($this);
 HTMLHelper::_('bootstrap.framework');

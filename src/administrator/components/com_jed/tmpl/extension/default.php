@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Jed\Administrator\View\Extension\HtmlView $this */
 /**
  * @package JED
  *
@@ -19,6 +18,8 @@ use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+
+/** @var \Jed\Component\Jed\Administrator\View\Extension\HtmlView $this */
 
 // Field types/names that should not get a plain label/value row (subforms have their own
 // dedicated read-only sections below; these others carry no meaningful display value).

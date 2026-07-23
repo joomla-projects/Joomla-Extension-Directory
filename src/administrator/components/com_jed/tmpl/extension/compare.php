@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Jed\Administrator\View\Extension\HtmlView $this */
 /**
  * @package JED
  *
@@ -19,6 +18,8 @@
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+
+/** @var \Jed\Component\Jed\Administrator\View\Extension\HtmlView $this */
 
 // Same skip list as tmpl/extension/default.php's read-only view - subforms/media
 // galleries and bookkeeping fields don't carry a meaningful single diff-able value.

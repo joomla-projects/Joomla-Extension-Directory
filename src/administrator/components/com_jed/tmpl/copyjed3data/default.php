@@ -1,6 +1,5 @@
 <?php
 
-/** @var \Jed\Component\Jed\Administrator\View\Copyjed3data\HtmlView $this */
 /**
  * @package JED
  *
@@ -9,6 +8,8 @@
  */
 use Jed\Component\Jed\Administrator\Helper\JedmigrateHelper;
 use Joomla\CMS\HTML\HTMLHelper;
+
+/** @var \Jed\Component\Jed\Administrator\View\Copyjed3data\HtmlView $this */
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
