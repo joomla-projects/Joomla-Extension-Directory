@@ -4,7 +4,17 @@ parameters:
   level: 0
   paths:
     - src
+  excludePaths:
+    - src/administrator/components/com_jed/vendor
   scanDirectories:
     - joomla
   ignoreErrors:
+    -
+      message: '#Call to protected method getDocument\(\) of class [a-zA-Z0-9\\_]+\\AbstractView\.#'
+    -
+      message: '#Call to protected method getCurrentUser\(\) of class [a-zA-Z0-9\\_]+\\HtmlView\.#'
+    -
+      message: '#Access to protected property [a-zA-Z0-9\\_]+\\HtmlView::\$[a-zA-Z0-9\\_]+.#'
+    -
+      message: '#Call to deprecated method setUseExceptions\(\) of class .*#'
   reportUnmatchedIgnoredErrors: false

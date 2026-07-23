@@ -25,7 +25,6 @@ jobs:
       - uses: ./.github/actions/setup-dependencies
       - name: Run PHP CS Fixer and PHPCS
         run: |
-          set -e
           ./vendor/bin/php-cs-fixer fix -vvv --diff
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           if [ "$GITHUB_EVENT_NAME" = "push" ]; then
@@ -125,7 +124,6 @@ jobs:
           name: build-artifacts-j${{ matrix.joomla-version }}
       - uses: ./.github/actions/setup-dependencies
       - name: Run PHPStan
-        continue-on-error: true
         run: |
           unzip -q joomla.zip -d joomla
           ./vendor/bin/phpstan --error-format=github
