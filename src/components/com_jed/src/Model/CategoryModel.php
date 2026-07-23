@@ -377,54 +377,6 @@ class CategoryModel extends ListModel
         return parent::loadFormData();
     }
 
-
-    /**
-     * Retrieve a list of developers matching a search query.
-     *
-     * @param string $search The string to filter on
-     *
-     * @return array List of developers.
-     *
-     * @since 4.0.0
-     */
-    public function getDevelopers(string $search): array
-    {
-        $db    = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true)->select(
-            $db->quoteName(
-                [
-                        'users.id',
-                        'users.name',
-                    ]
-            )
-        )->from($db->quoteName('#__users', 'users'))->leftJoin(
-            $db->quoteName('#__jed_extensions', 'extensions') . ' ON ' . $db->quoteName('extensions.created_by') . ' = ' . $db->quoteName('users.id')
-        )->where($db->quoteName('users.name') . ' LIKE ' . $db->quote('%' . $search . '%'))->group($db->quoteName('users.id'))->order($db->quoteName('users.name'));
-        $db->setQuery($query);
-
-        return $db->loadObjectList();
-    }
-
-    /**
-     * Get the used extension types.
-     *
-     * @param int $extensionId The extension ID to get the types for
-     *
-     * @return array  List of used extension types.
-     *
-     * @since 4.0.0
-     */
-    public function getExtensionTypes(int $extensionId): array
-    {
-        $db    = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true)->select($db->quoteName('extension_types'))->from($db->quoteName('#__jed_extensions'))->where($db->quoteName('id') . ' = ' . $extensionId);
-        $db->setQuery($query);
-
-        $types = json_decode((string) $db->loadResult(), true);
-
-        return is_array($types) ? $types : [];
-    }
-
     /**
      * Get the images.
      *
@@ -453,25 +405,6 @@ class CategoryModel extends ListModel
         return $images;
     }
 
-
-    /**
-     * Get the related categories.
-     *
-     * @param int $extensionId The extension ID to get the categories for
-     *
-     * @return array  List of related categories.
-     *
-     * @since 4.0.0
-     */
-    public function getRelatedCategories(int $extensionId): array
-    {
-        $db    = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true)->select($db->quoteName('catid'))->from($db->quoteName('#__jed_extensions_category_map'))->where($db->quoteName('extension_id') . ' = ' . $extensionId);
-        $db->setQuery($query);
-
-        return $db->loadColumn();
-    }
-
     /* Below code modified from com_content_category_model */
     /**
      * Method to get category data for the current category
@@ -483,12 +416,7 @@ class CategoryModel extends ListModel
      */
     public function getCategory(): array
     {
-        try {
-            $db = $this->getDatabase();
-        } catch (DatabaseNotFoundException $e) {
-            @trigger_error('Database must be set. ' . $e->getMessage(), E_USER_DEPRECATED);
-            $db = Factory::getContainer()->get(DatabaseInterface::class);
-        }
+        $db = $this->getDatabase();
         $id         = Factory::getApplication()->getInput()->getInt('id', -1);
         $extension  = 'com_jed';
         $categories = [];
