@@ -24,10 +24,7 @@ INSERT INTO `#__jed_ticket_categories`(`id`, `categorytype`, `ordering`, `state`
 (7, 'Site Technical Issues', 0, 1, NULL, NULL, 652, 652),
 (8, 'Unpublished Support', 0, 1, NULL, NULL, 652, 652),
 (9, 'Reported Review', 0, 1, NULL, NULL, 652, 652),
-(10, 'Reported Extension', 0, 1, NULL, NULL, 652, 652),
-(11, 'Vulnerable Item Report', 0, 1, NULL, NULL, 652, 652),
-(12, 'VEL Developer Update', 0, 1, NULL, NULL, 652, 652),
-(13, 'VEL Abandonware Report', 0, 1, NULL, NULL, 652, 652);
+(10, 'Reported Extension', 0, 1, NULL, NULL, 652, 652);
 
 /* Ticket Allocation Groups */
 DROP TABLE IF EXISTS `#__jed_ticket_groups`;
@@ -49,8 +46,7 @@ INSERT INTO `#__jed_ticket_groups`(`id`, `name`, `ordering`, `state`, `checked_o
 (2, 'Team Leadership', 0, 1, NULL, NULL, 652, 652),
 (3, 'Listing Specialist', 0, 1, NULL, NULL, 652, 652),
 (4, 'Review Specialist', 0, 1, NULL, NULL, 652, 652),
-(5, 'Support Speciailist', 0, 1, NULL, NULL, 652, 652),
-(6, 'VEL Specialist', 0, 1, NULL, NULL, 652, 652);
+(5, 'Support Speciailist', 0, 1, NULL, NULL, 652, 652);
 
 /* Ticket Linked Items */
 DROP TABLE IF EXISTS `#__jed_ticket_linked_item_types`;
@@ -71,10 +67,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_linked_item_types`
 INSERT INTO `#__jed_ticket_linked_item_types`(`id`, `title`, `model`, `ordering`, `state`, `checked_out`, `checked_out_time`, `created_by`, `modified_by`) VALUES
 (1, 'Unknown', 'unknown', 0, 1, NULL, NULL, 652, 652),
 (2, 'Extension', 'Extension', 1, 1, NULL, NULL, 652, 652),
-(3, 'Review', 'Review', 0, 1, NULL, NULL, 652, 652),
-(4, 'Vulnerable Item Initial Report', 'Velreport', 0, 1, NULL, NULL, 652, 652),
-(5, 'Vulnerable Item Developer Update', 'Veldeveloperupdate', 0, 1, NULL, NULL, 652, 652),
-(6, 'VEL Abandonware Report', 'Velabandonedreport', 0, 1, NULL, NULL, 652, 652);
+(3, 'Review', 'Review', 0, 1, NULL, NULL, 652, 652);
 
 /* JED Ticket Messages */
 DROP TABLE IF EXISTS `#__jed_ticket_messages`;

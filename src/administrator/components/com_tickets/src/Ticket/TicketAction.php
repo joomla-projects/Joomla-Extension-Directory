@@ -34,8 +34,8 @@ final class TicketAction
      *                                    (e.g. ['extension_id' => 12, 'history_id' => 42], or
      *                                    ['cid[]' => 5] for a bulk AdminController task) - the action
      *                                    button's mini-form renders exactly these, nothing implicit.
-     * @param string      $option         The component the task belongs to (e.g. "com_jed", "com_vel") -
-     *                                    ticket actions span multiple components, not just com_tickets.
+     * @param string      $option         The component the task belongs to (e.g. "com_jed") - ticket
+     *                                    actions can span multiple components, not just com_tickets.
      *
      * @since 4.1.0
      */

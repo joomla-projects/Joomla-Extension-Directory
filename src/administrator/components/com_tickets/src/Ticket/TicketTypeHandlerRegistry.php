@@ -52,9 +52,6 @@ final class TicketTypeHandlerRegistry
         $registry->register(new ExtensionTicketHandler($db));
         $registry->register(new ReviewTicketHandler($db));
         $registry->register(new DeveloperresponseTicketHandler($db));
-        $registry->register(new AbandonedreportTicketHandler($db));
-        $registry->register(new VulnerabilityreportTicketHandler($db));
-        $registry->register(new DeveloperupdateTicketHandler($db));
         $registry->register(new OtherTicketHandler($db));
 
         return $registry;

@@ -26,9 +26,7 @@ enum TicketType: int
     case Extension           = 1;
     case Review              = 2;
     // 3 was used for wrong scoring code
-    case AbandonedExtension  = 4;
-    case VELReport           = 5;
-    case VulnerableExtension = 6;
+    // 4, 5, 6 were used for VEL (com_vel) report types, removed along with com_vel
     case Other               = 7;
     case DeveloperResponse   = 8;
 }
