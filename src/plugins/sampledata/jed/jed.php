@@ -8,6 +8,8 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  * @phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
  */
+
+use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Event\SubscriberInterface;
 use Joomla\CMS\Table\Asset;
 use Joomla\CMS\Application\AdministratorApplication;
@@ -30,7 +32,7 @@ use Joomla\Database\DatabaseDriver;
  */
 class PlgSampledataJed extends CMSPlugin
 {
-    use \Joomla\Database\DatabaseAwareTrait;
+    use DatabaseAwareTrait;
 
     /**
      * Database object
@@ -89,13 +91,48 @@ class PlgSampledataJed extends CMSPlugin
             return;
         }
 
-        $this->importFile(__DIR__ . '/sql/step1.sql');
+        $this->moveCurrentUserToId5();
 
         $response            = [];
         $response['success'] = true;
         $response['message'] = Text::_('PLG_SAMPLEDATA_JED_STEP1_SUCCESS');
 
         return $response;
+    }
+
+    /**
+     * The sample data (extensions, reviews, tickets, ...) references user id 5 as its
+     * author/owner throughout, so the currently logged-in admin is moved there. This only
+     * runs when it's actually safe: a site can already have more than one Super User, and
+     * blindly renumbering based on "the" member of that group used to silently delete
+     * whichever other Super User account collided with id 5. Skip entirely rather than
+     * touch/lose an existing account.
+     *
+     * @return  void
+     *
+     * @since  4.0.0
+     */
+    private function moveCurrentUserToId5(): void
+    {
+        $db            = $this->getDatabase();
+        $currentUserId = (int) $this->getApplication()->getIdentity()->id;
+
+        if ($currentUserId === 5) {
+            return;
+        }
+
+        $db->setQuery('SELECT id FROM #__users WHERE id = 5');
+
+        if ($db->loadResult()) {
+            // id 5 already belongs to a different, pre-existing account - leave it alone.
+            return;
+        }
+
+        $db->setQuery('UPDATE #__users SET id = 5 WHERE id = ' . $currentUserId);
+        $db->execute();
+
+        $db->setQuery('UPDATE #__user_usergroup_map SET user_id = 5 WHERE user_id = ' . $currentUserId);
+        $db->execute();
     }
 
     /**
