@@ -361,7 +361,8 @@ class PlgSampledataJed2 extends CMSPlugin
      */
     private function createMenuItem(DatabaseDriver $db, array $data, int $parentId, array &$messages): int
     {
-        $menuItem                    = new MenuTable($db);
+        $menuItem = new MenuTable($db);
+        $menuItem->setUseExceptions(true);
         $menuItem->menutype          = 'mainmenu';
         $menuItem->title             = $data['title'];
         $menuItem->alias             = $data['alias'];
@@ -384,14 +385,16 @@ class PlgSampledataJed2 extends CMSPlugin
 
         $menuItem->setLocation($parentId, 'last-child');
 
-        if ($menuItem->store()) {
-            $messages[] = Text::sprintf('PLG_SAMPLEDATA_JED2_MENUITEM_CREATED', $data['title']);
+        try {
+            $menuItem->store();
+        } catch (Exception $e) {
+            $messages[] = Text::sprintf('PLG_SAMPLEDATA_JED2_MENUITEM_FAILED', $data['title'], $e->getMessage());
 
-            return (int) $menuItem->id;
+            return 0;
         }
 
-        $messages[] = Text::sprintf('PLG_SAMPLEDATA_JED2_MENUITEM_FAILED', $data['title'], $menuItem->getError());
+        $messages[] = Text::sprintf('PLG_SAMPLEDATA_JED2_MENUITEM_CREATED', $data['title']);
 
-        return 0;
+        return (int) $menuItem->id;
     }
 }
