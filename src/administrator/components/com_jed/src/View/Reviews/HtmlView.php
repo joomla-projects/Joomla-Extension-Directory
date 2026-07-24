@@ -98,7 +98,7 @@ class HtmlView extends BaseHtmlView
 
             $childBar = $dropdown->getChildToolbar();
 
-            if (isset($this->items[0]->state)) {
+            if (isset($this->items[0]->published)) {
                 $childBar->publish('reviews.publish')->listCheck(true);
                 $childBar->unpublish('reviews.unpublish')->listCheck(true);
                 $childBar->archive('reviews.archive')->listCheck(true);
@@ -120,7 +120,7 @@ class HtmlView extends BaseHtmlView
                 $childBar->checkin('reviews.checkin')->listCheck(true);
             }
 
-            if (isset($this->items[0]->state)) {
+            if (isset($this->items[0]->published)) {
                 $childBar->trash('reviews.trash')->listCheck(true);
             }
         }
@@ -128,7 +128,7 @@ class HtmlView extends BaseHtmlView
 
 
         // Show trash and delete for components that uses the state field
-        if (isset($this->items[0]->state)) {
+        if (isset($this->items[0]->published)) {
             if ($this->state->get('filter.state') == ContentComponent::CONDITION_TRASHED && $canDo->get('core.delete')) {
                 $toolbar->delete('reviews.delete')
                     ->text('JTOOLBAR_EMPTY_TRASH')

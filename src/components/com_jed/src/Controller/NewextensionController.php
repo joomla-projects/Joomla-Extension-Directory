@@ -141,7 +141,14 @@ class NewextensionController extends FormController
         /** @var NewextensionModel $model */
         $model = $this->getModel('Newextension');
 
-        $this->sendJson($model->parseUploadedFile($_FILES['extensionfile'] ?? []));
+        // Parsing runs third-party code (the manifest/zip readers) that can emit PHP warnings or
+        // deprecation notices; with display_errors on, those would print straight into this AJAX
+        // response and corrupt the JSON the front-end is about to parse. Buffer and discard them.
+        ob_start();
+        $result = $model->parseUploadedFile($_FILES['extensionfile'] ?? []);
+        ob_end_clean();
+
+        $this->sendJson($result);
     }
 
     /**
@@ -167,7 +174,13 @@ class NewextensionController extends FormController
         /** @var NewextensionModel $model */
         $model = $this->getModel('Newextension');
 
-        $this->sendJson($model->parseGithubUrl($url));
+        // See the same guard in uploadFile() above - the joomla/github client (and the zip/manifest
+        // readers) can print warnings straight into this AJAX response and break the JSON.
+        ob_start();
+        $result = $model->parseGithubUrl($url);
+        ob_end_clean();
+
+        $this->sendJson($result);
     }
 
     /**

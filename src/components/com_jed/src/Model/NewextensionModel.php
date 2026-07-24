@@ -149,7 +149,7 @@ class NewextensionModel extends FormModel
      *
      * @param array $data The validated form data
      *
-     * @return int The new extension's #__jed_extensions.id, or 0 on failure (errors are set on the model)
+     * @return int The new extension's #__jed_extensions.id.
      *
      * @since  1.0.0
      * @throws Exception If the caller isn't logged in, or the underlying table fails to save.
@@ -164,15 +164,16 @@ class NewextensionModel extends FormModel
 
         Factory::getApplication()->setUserState('com_jed.edit.extension.id', $extensionId);
 
-        if (!$extensionId) {
-            return 0;
-        }
-
         $categories = (array) ($data['categories'] ?? []);
 
         $data['id']           = 0;
         $data['extension_id'] = $extensionId;
         $data['active']       = 1;
+        // The "owner" field is readonly/filter="unset" on the form, so it never survives
+        // validation into $data - set it explicitly, same as createExtension() above. Without
+        // this, the history row (and everything approve() later copies from it onto the live
+        // row, clobbering createExtension()'s correct value) would carry a blank owner.
+        $data['owner'] = (int) Factory::getApplication()->getIdentity()->id;
         unset($data['created']);
 
         $table = $this->getTable();

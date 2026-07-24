@@ -269,13 +269,12 @@ class ReviewModel extends ItemModel
                     }
 
                     // Convert the Table to a clean stdClass.
-                    // Convert the Table to a clean stdClass.
-                    $properties = get_object_vars($table);
-                    $item       = ArrayHelper::toObject($properties);
+                    $properties     = get_object_vars($table);
+                    $this->item     = ArrayHelper::toObject($properties);
 
-                    if (property_exists($item, 'params')) {
-                        $registry     = new Registry($item->params);
-                        $item->params = $registry->toArray();
+                    if (property_exists($this->item, 'params')) {
+                        $registry           = new Registry($this->item->params);
+                        $this->item->params = $registry->toArray();
                     }
                 } else {
                     throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);

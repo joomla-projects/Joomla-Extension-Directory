@@ -186,6 +186,8 @@ class ReviewformModel extends FormModel
                 $id = $this->getState('extension.id');
             }
 
+            $extensionId = $id;
+
             $user  = $this->getCurrentUser();
             $db    = $this->getDatabase();
             $query = $db->getQuery(true);
@@ -193,18 +195,18 @@ class ReviewformModel extends FormModel
             ->where($db->quoteName('created_by') . ' = ' . $user->id)
             ->where($db->quoteName('published') . ' != -2');
             $db->setQuery($query);
-            $id = $db->loadResult();
+            $existingReviewId = $db->loadResult();
 
             // Get a level row instance.
             $table      = $this->getTable();
             $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
-            if ($table !== false && $table->load($id) && !empty($table->id)) {
+            if ($table !== false && $table->load($existingReviewId) && !empty($table->id)) {
                 $user = Factory::getApplication()->getIdentity();
                 if (empty($table->id) || JedHelper::isAdminOrSuperUser() || $table->created_by == $user->id) {
-                    // Convert the Table to a clean stdClass.
-                    $this->item               = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
-                    $this->item->extension_id = $id;
+                    // Convert the Table to a clean stdClass. extension_id comes from the loaded
+                    // row itself (the user is editing their own existing review).
+                    $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
                     if (isset($this->item->category_id) && is_object($this->item->category_id)) {
                         $this->item->category_id = ArrayHelper::fromObject($this->item->category_id);
@@ -212,6 +214,11 @@ class ReviewformModel extends FormModel
                 } else {
                     throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
                 }
+            } else {
+                // No existing review for this extension/user - defaults for a brand-new review,
+                // pinned to the extension the reviewform was opened for (from the "id" URL
+                // param/session state), not left at the table's own empty/zero default.
+                $this->item->extension_id = $extensionId;
             }
         }
 
