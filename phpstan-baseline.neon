@@ -1,0 +1,109 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '''
+				#^Call to method getDispatcher\(\) of deprecated interface Joomla\\CMS\\Application\\EventAwareInterface\:
+				4\.3 will be removed in 7\.0
+				             This interface will be removed without replacement as the Joomla 3\.x compatibility layer will be removed$#
+			'''
+			identifier: method.deprecatedInterface
+			count: 1
+			path: src/administrator/components/com_jed/src/Service/ScoreCalculationService.php
+
+		-
+			message: '''
+				#^Call to deprecated method getDbo\(\) of class Joomla\\CMS\\Factory\:
+				4\.3 will be removed in 7\.0
+				             Use the database service in the DI container
+				             Example\:
+				             Factory\:\:getContainer\(\)\-\>get\(DatabaseInterface\:\:class\);$#
+			'''
+			identifier: staticMethod.deprecated
+			count: 1
+			path: src/administrator/components/com_tickets/src/View/Ticket/HtmlView.php
+
+		-
+			message: '#^Class Jed\\Component\\Jed\\Site\\Field\\ForeignKeyField has an uninitialized readonly property \$limit\. Assign it in the constructor\.$#'
+			identifier: property.uninitializedReadonly
+			count: 1
+			path: src/components/com_jed/src/Field/ForeignkeyField.php
+
+		-
+			message: '''
+				#^Call to deprecated method getInstance\(\) of class Joomla\\CMS\\Categories\\Categories\:
+				4\.0 will be removed in 7\.0
+				             Use the ComponentInterface to get the categories
+				             Example\: Factory\:\:getApplication\(\)\-\>bootComponent\(\$component\)\-\>getCategory\(\$options, \$section\);$#
+			'''
+			identifier: staticMethod.deprecated
+			count: 1
+			path: src/components/com_jed/src/Model/CategoriesModel.php
+
+		-
+			message: '''
+				#^Call to deprecated method getDbo\(\) of class Joomla\\CMS\\Factory\:
+				4\.3 will be removed in 7\.0
+				             Use the database service in the DI container
+				             Example\:
+				             Factory\:\:getContainer\(\)\-\>get\(DatabaseInterface\:\:class\);$#
+			'''
+			identifier: staticMethod.deprecated
+			count: 1
+			path: src/components/com_tickets/src/Controller/TicketController.php
+
+		-
+			message: '''
+				#^Call to deprecated method getDbo\(\) of class Joomla\\CMS\\Factory\:
+				4\.3 will be removed in 7\.0
+				             Use the database service in the DI container
+				             Example\:
+				             Factory\:\:getContainer\(\)\-\>get\(DatabaseInterface\:\:class\);$#
+			'''
+			identifier: staticMethod.deprecated
+			count: 1
+			path: src/components/com_tickets/src/Service/Router.php
+
+		-
+			message: '''
+				#^Call to deprecated method addScript\(\) of class Joomla\\CMS\\Document\\Document\:
+				4\.3 will be removed in 7\.0
+				             Use WebAssetManager
+				             Example\: \$wa\-\>registerAndUseScript\(\.\.\.\);$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/components/com_vel/tmpl/abandonedreport/default.php
+
+		-
+			message: '''
+				#^Call to deprecated method getDbo\(\) of class Joomla\\CMS\\Factory\:
+				4\.3 will be removed in 7\.0
+				             Use the database service in the DI container
+				             Example\:
+				             Factory\:\:getContainer\(\)\-\>get\(DatabaseInterface\:\:class\);$#
+			'''
+			identifier: staticMethod.deprecated
+			count: 1
+			path: src/plugins/sampledata/jed/jed.php
+
+		-
+			message: '''
+				#^Call to deprecated method getDispatcher\(\) of class Joomla\\CMS\\Plugin\\CMSPlugin\:
+				5\.2 will be removed in 7\.0
+				             Plugin should implement DispatcherAwareInterface on its own, when it is needed\.$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/plugins/sampledata/jed/jed.php
+
+		-
+			message: '''
+				#^Call to deprecated method getDbo\(\) of class Joomla\\CMS\\Factory\:
+				4\.3 will be removed in 7\.0
+				             Use the database service in the DI container
+				             Example\:
+				             Factory\:\:getContainer\(\)\-\>get\(DatabaseInterface\:\:class\);$#
+			'''
+			identifier: staticMethod.deprecated
+			count: 1
+			path: src/plugins/sampledata/jed2/jed2.php
