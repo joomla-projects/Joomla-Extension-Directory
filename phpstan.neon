@@ -1,6 +1,6 @@
 includes:
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon
-    - phpstan-baseline.nein
+    - phpstan-baseline.neon
 parameters:
   level: 0
   paths:

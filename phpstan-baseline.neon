@@ -65,17 +65,6 @@ parameters:
 
 		-
 			message: '''
-				#^Call to deprecated method addScript\(\) of class Joomla\\CMS\\Document\\Document\:
-				4\.3 will be removed in 7\.0
-				             Use WebAssetManager
-				             Example\: \$wa\-\>registerAndUseScript\(\.\.\.\);$#
-			'''
-			identifier: method.deprecated
-			count: 1
-			path: src/components/com_vel/tmpl/abandonedreport/default.php
-
-		-
-			message: '''
 				#^Call to deprecated method getDbo\(\) of class Joomla\\CMS\\Factory\:
 				4\.3 will be removed in 7\.0
 				             Use the database service in the DI container
