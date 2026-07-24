@@ -62,8 +62,6 @@ class JedmyextensionsField extends ListField
 
     private string $option_value_field;
 
-    private readonly string $limit;
-
     /**
      * Method to get the field input markup.
      *

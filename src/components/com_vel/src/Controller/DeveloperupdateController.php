@@ -54,13 +54,14 @@ class DeveloperupdateController extends FormController
     /**
      * Method to check out an item for editing and redirect to the edit form.
      *
-     * @return void
-     *
-     * @since 4.0.0
+     * @param   null  $key
+     * @param   null  $urlVar  * @return void
      *
      * @throws Exception
+     *@since 4.0.0
+     *
      */
-    public function edit(): void
+    public function edit($key = null, $urlVar = null): void
     {
         /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();

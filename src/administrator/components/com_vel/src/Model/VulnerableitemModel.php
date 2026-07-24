@@ -134,8 +134,7 @@ class VulnerableitemModel extends AdminModel
      */
     public function getVELLinkedReports(): array
     {
-
-        $input = Factory::getApplication()->input;
+        $input = Factory::getApplication()->getInput();
 
         $vel_item_id = $input->get('id');
 
@@ -146,7 +145,7 @@ class VulnerableitemModel extends AdminModel
 
         $velReportData  = $this->getVelReportData($vel_item_id);
         //$velReportModel = BaseDatabaseModel::getInstance('Report', 'JedModel', ['ignore_request' => true]);
-        $velReportModel = new VelreportModel();
+        $velReportModel = new ReportModel();
         $velReportForm  = $velReportModel->getForm($velReportData, false);
         $velReportForm->bind($velReportData);
 
@@ -156,7 +155,7 @@ class VulnerableitemModel extends AdminModel
 
         $velDeveloperUpdateData  = $this->getvelDeveloperUpdateData($vel_item_id);
         //$velDeveloperUpdateModel = BaseDatabaseModel::getInstance('Developerupdate', 'JedModel', ['ignore_request' => true]);
-        $velDeveloperUpdateModel = new VeldeveloperupdateModel();
+        $velDeveloperUpdateModel = new DeveloperupdateModel();
         $velDeveloperUpdateForm  = $velDeveloperUpdateModel->getForm($velDeveloperUpdateData, false);
         $velDeveloperUpdateForm->bind($velDeveloperUpdateData);
 
@@ -166,7 +165,7 @@ class VulnerableitemModel extends AdminModel
 
         $velAbandonwareDataData  = $this->getvelAbandonwareData($vel_item_id);
         //$velAbandonwareDataModel = BaseDatabaseModel::getInstance('Abandonedreport', 'JedModel', ['ignore_request' => true]);
-        $velAbandonwareDataModel = new VelabandonedreportModel();
+        $velAbandonwareDataModel = new AbandonedreportModel();
         $velAbandonwareDataForm  = $velAbandonwareDataModel->getForm($velAbandonwareDataData, false);
         $velAbandonwareDataForm->bind($velAbandonwareDataData);
 

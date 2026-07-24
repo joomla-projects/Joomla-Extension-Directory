@@ -50,6 +50,8 @@ class HtmlView extends BaseHtmlView
      */
     protected mixed $item;
 
+    protected mixed $messages;
+
     /**
      * The Form object
      *

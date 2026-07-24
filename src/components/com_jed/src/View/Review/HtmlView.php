@@ -31,8 +31,6 @@ class HtmlView extends BaseHtmlView
 
     protected mixed $item;
 
-    protected mixed $form;
-
     protected Registry $params;
 
     /**
@@ -55,10 +53,6 @@ class HtmlView extends BaseHtmlView
         $this->state  = $model->getState();
         $this->item   = $model->getItem();
         $this->params = Factory::getApplication()->getParams('com_jed');
-
-        if (!empty($this->item)) {
-            $this->form = $model->getForm();
-        }
 
         if ($this->_layout == 'edit') {
             $authorised = $user->authorise('core.create', 'com_jed');

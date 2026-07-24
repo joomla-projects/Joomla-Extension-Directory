@@ -42,14 +42,14 @@ class TicketModel extends AdminModel
      */
     public function getItem($pk = null)
     {
-        $itemId = (int) (!empty($itemId)) ? $itemId : $this->getState('ticket.id');
+        $pk = (int) (!empty($pk)) ? $pk : $this->getState('ticket.id');
 
         // Get a row instance.
         $table = $this->getTable();
         $table->setUseExceptions(true);
 
         // Attempt to load the row.
-        $return = $table->load($itemId);
+        $return = $table->load($pk);
 
         $properties = $table->getProperties(1);
         $value      = ArrayHelper::toObject($properties);
