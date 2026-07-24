@@ -156,7 +156,7 @@ final class Jed extends CMSPlugin implements SubscriberInterface
         $jobs = $this->queueService->claimBatch($batchSize, $jobTimeout);
 
         if ($jobs === []) {
-            return TaskStatus::NO_RUN;
+            return TaskStatus::OK;
         }
 
         $failures = 0;
