@@ -7,11 +7,8 @@ DROP TABLE IF EXISTS `#__jed_extensions_files`;
 DROP TABLE IF EXISTS `#__jed_reviews`;
 DROP TABLE IF EXISTS `#__jed_favorites`;
 DROP TABLE IF EXISTS `#__jed_extensions`;
-DROP TABLE IF EXISTS `#__jed_extension_images`;
-DROP TABLE IF EXISTS `#__jed_developers`;
 DROP TABLE IF EXISTS `#__jed_extensions_history`;
 DROP TABLE IF EXISTS `#__jed_joomla_versions`;
-DROP TABLE IF EXISTS `#__jed_extensions_history`;
 DROP TABLE IF EXISTS `#__jed_queue_jobs`;
 
 DELETE FROM `#__mail_templates` WHERE `template_id` = 'com_jed.audit_report';

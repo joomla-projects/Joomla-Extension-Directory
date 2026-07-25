@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions`
 	`id`                     int unsigned    NOT NULL AUTO_INCREMENT,
 	`name`                   varchar(255)    NOT NULL DEFAULT '',
 	`alias`                  varchar(255)    NOT NULL DEFAULT '',
-	`catid`                  int             DEFAULT NULL,
-	`owner`                  int             DEFAULT NULL,
+	`catid`                  int unsigned    NOT NULL,
+	`owner`                  int unsigned    NOT NULL,
 	`state`                  tinyint(1)      NOT NULL DEFAULT '0',
 	`approved`               tinyint(1)      DEFAULT '0',
 	`approved_time`          datetime        DEFAULT NULL,
@@ -21,9 +21,9 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions`
 	`type`                   enum('free', 'paid', 'freemium', 'cloud') DEFAULT 'free',
 	`extension_types`        varchar(255)    DEFAULT '',
 	`created`                datetime,
-	`created_by`             int             DEFAULT '0',
+	`created_by`             int unsigned    NOT NULL,
 	`modified`               datetime        DEFAULT NULL,
-	`modified_by`            int             DEFAULT '0',
+	`modified_by`            int unsigned    NULL,
 	`checked_out`            int unsigned,
 	`checked_out_time`       datetime        DEFAULT NULL,
 	`extension_version`      varchar(50)     DEFAULT '',
@@ -67,12 +67,12 @@ DROP TABLE IF EXISTS `#__jed_extensions_history`;
 CREATE TABLE IF NOT EXISTS `#__jed_extensions_history`
 (
 	`id`                     int             NOT NULL AUTO_INCREMENT,
-	`extension_id`           int             NOT NULL,
+	`extension_id`           int unsigned    NOT NULL,
 	`active`                 tinyint(1)      NOT NULL DEFAULT '0',
 	`name`                   varchar(255)    NOT NULL DEFAULT '',
 	`alias`                  varchar(255)    NOT NULL DEFAULT '',
-	`catid`                  int             DEFAULT NULL,
-	`owner`                  int             DEFAULT NULL,
+	`catid`                  int unsigned    NOT NULL,
+	`owner`                  int unsigned    NOT NULL,
 	`state`                  tinyint(1)      NOT NULL DEFAULT '0',
 	`approved`               tinyint(1)      DEFAULT '0',
 	`approved_time`          datetime        DEFAULT NULL,
@@ -85,9 +85,9 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_history`
 	`type`                   enum('free', 'paid', 'freemium', 'cloud') DEFAULT 'free',
 	`extension_types`        varchar(255)    DEFAULT '',
 	`created`                datetime,
-	`created_by`             int             DEFAULT '0',
+	`created_by`             int unsigned    NOT NULL,
 	`modified`               datetime        DEFAULT NULL,
-	`modified_by`            int             DEFAULT '0',
+	`modified_by`            int unsigned    NULL,
 	`checked_out`            int unsigned,
 	`checked_out_time`       datetime        DEFAULT NULL,
 	`extension_version`      varchar(50)     DEFAULT '',
@@ -122,25 +122,25 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_history`
 	KEY `IDX_jed_extensions_state` (`state`),
 	KEY `IDX_jed_extensions_alias` (`alias`),
 	KEY `IDX_jed_extensions_history_extension_id` (`extension_id`),
-	KEY `IDX_jed_extensions_history_active` (`extension_id`, `active`)
+	KEY `IDX_jed_extensions_history_extension_id_active` (`extension_id`, `active`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `#__jed_extensions_category_map`;
 
 CREATE TABLE IF NOT EXISTS `#__jed_extensions_category_map`
 (
-	`extension_id` int NOT NULL,
-	`catid`        int NOT NULL,
+	`extension_id` int unsigned NOT NULL,
+	`catid`        int unsigned NOT NULL,
 	PRIMARY KEY (`extension_id`, `catid`),
-	KEY `IDX_jed_extension_category_map_catid` (`catid`)
+	KEY `IDX_jed_extensions_category_map_catid` (`catid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `#__jed_extensions_maintainers`;
 
 CREATE TABLE IF NOT EXISTS `#__jed_extensions_maintainers`
 (
-	`extension_id` int NOT NULL,
-	`user_id`      int NOT NULL,
+	`extension_id` int unsigned NOT NULL,
+	`user_id`      int unsigned NOT NULL,
 	PRIMARY KEY (`extension_id`, `user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
@@ -149,43 +149,43 @@ DROP TABLE IF EXISTS `#__jed_extensions_images`;
 CREATE TABLE IF NOT EXISTS `#__jed_extensions_images`
 (
 	`id`               int unsigned NOT NULL AUTO_INCREMENT,
-	`extension_id`     int unsigned DEFAULT '0',
+	`extension_id`     int unsigned NOT NULL,
 	`filename`         text,
 	`state`            tinyint(1)   DEFAULT '0',
 	`ordering`         int          DEFAULT '0',
 	`checked_out`      int unsigned,
 	`checked_out_time` datetime,
-	`created_by`       int          DEFAULT '0',
-	`modified_by`      int          DEFAULT '0',
+	`created_by`       int unsigned NOT NULL,
+	`modified_by`      int unsigned NULL,
 	PRIMARY KEY (`id`),
-	KEY `FK_jed_extension_images` (`extension_id`),
-	KEY `FK_jed_extension_images_user` (`created_by`),
-	KEY `FK_jed_extension_images_moduser` (`modified_by`),
-	CONSTRAINT `FKC_jed_extension_images` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `FKC_jed_extension_images_user` FOREIGN KEY (`created_by`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `FKC_jed_extension_images_moduser` FOREIGN KEY (`modified_by`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+	KEY `FK_jed_extensions_images_extension_id` (`extension_id`),
+	KEY `FK_jed_extensions_images_created_by` (`created_by`),
+	KEY `FK_jed_extensions_images_modified_by` (`modified_by`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `#__jed_extensions_files`;
 
-CREATE TABLE IF NOT EXISTS `#__jed_extensions_files` (
-	`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`extension_id` INT UNSIGNED NOT NULL   DEFAULT 0,
-	`file` VARCHAR(255)  NOT NULL  DEFAULT '',
-	`meta` TEXT,
-	`created_by` INT(11) NOT NULL  DEFAULT 0,
-	`originalFile` VARCHAR(255) NOT NULL DEFAULT '',
+CREATE TABLE IF NOT EXISTS `#__jed_extensions_files`
+(
+	`id`            int unsigned NOT NULL AUTO_INCREMENT,
+	`extension_id`  int unsigned NOT NULL,
+	`file`          varchar(255) NOT NULL DEFAULT '',
+	`meta`          text,
+	`created_by`    int unsigned NOT NULL,
+	`modified_by`   int unsigned NULL,
+	`originalFile`  varchar(255) NOT NULL DEFAULT '',
 	PRIMARY KEY (`id`),
-	KEY `jed_extensions_files_FK` (`extension_id`),
-	CONSTRAINT `jed_extensions_files_FK` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT COLLATE=utf8mb4_unicode_ci;
+	KEY `FK_jed_extensions_files_extension_id` (`extension_id`),
+	KEY `FK_jed_extensions_files_created_by` (`created_by`),
+	KEY `FK_jed_extensions_files_modified_by` (`modified_by`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `#__jed_reviews`;
 
 CREATE TABLE IF NOT EXISTS `#__jed_reviews`
 (
 	`id`                      int unsigned NOT NULL AUTO_INCREMENT,
-	`extension_id`            int unsigned DEFAULT '0',
+	`extension_id`            int unsigned NOT NULL,
 	`title`                   varchar(400) DEFAULT '',
 	`alias`                   varchar(400) DEFAULT NULL,
 	`body`                    mediumtext,
@@ -204,9 +204,9 @@ CREATE TABLE IF NOT EXISTS `#__jed_reviews`
 	`version`                 varchar(255) DEFAULT NULL,
 	`flagged`                 varchar(255) DEFAULT '0',
 	`ip_address`              varchar(255) DEFAULT '',
-	`published`               int DEFAULT '0',
+	`state`                   tinyint(1)   NOT NULL DEFAULT '0',
 	`created_on`              datetime     DEFAULT NULL,
-	`created_by`              int          DEFAULT '0',
+	`created_by`              int unsigned NOT NULL,
 	`ordering`                int          DEFAULT '0',
 	`checked_out`             int unsigned,
 	`checked_out_time`        datetime,
@@ -214,11 +214,9 @@ CREATE TABLE IF NOT EXISTS `#__jed_reviews`
 	`developer_responded_on`       datetime     DEFAULT NULL,
 	`developer_response_published` tinyint(1)   NOT NULL DEFAULT '0',
 	PRIMARY KEY (`id`),
-	KEY `IDX_jed_reviews_ext_user` (`extension_id`, `created_by`),
-	KEY `FK_jed_reviews` (`extension_id`),
-	KEY `FK_jed_reviews_user` (`created_by`),
-	CONSTRAINT `FKC_jed_reviews` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `FKC_jed_reviews_user` FOREIGN KEY (`created_by`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+	KEY `IDX_jed_reviews_extension_id_created_by` (`extension_id`, `created_by`),
+	KEY `FK_jed_reviews_extension_id` (`extension_id`),
+	KEY `FK_jed_reviews_created_by` (`created_by`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `#__jed_favorites`;
@@ -226,19 +224,19 @@ DROP TABLE IF EXISTS `#__jed_favorites`;
 CREATE TABLE IF NOT EXISTS `#__jed_favorites`
 (
 	`id`           int unsigned NOT NULL AUTO_INCREMENT,
-	`user_id`      int          NOT NULL,
-	`extension_id` int          NOT NULL,
+	`user_id`      int unsigned NOT NULL,
+	`extension_id` int unsigned NOT NULL,
 	`created`      datetime     NOT NULL,
 	PRIMARY KEY (`id`),
-	UNIQUE KEY `UK_jed_favorites_user_extension` (`user_id`, `extension_id`),
-	KEY `FK_jed_favorites_user` (`user_id`),
-	KEY `FK_jed_favorites_extension` (`extension_id`),
-	CONSTRAINT `FKC_jed_favorites_user` FOREIGN KEY (`user_id`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT `FKC_jed_favorites_extension` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+	UNIQUE KEY `UK_jed_favorites_user_id_extension_id` (`user_id`, `extension_id`),
+	KEY `FK_jed_favorites_user_id` (`user_id`),
+	KEY `FK_jed_favorites_extension_id` (`extension_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `#__jed_joomla_versions`;
 
 CREATE TABLE IF NOT EXISTS `#__jed_developers`
+CREATE TABLE IF NOT EXISTS `#__jed_joomla_versions`
 (
     `id`             int unsigned NOT NULL AUTO_INCREMENT,
     `user_id`        int          DEFAULT NULL,
@@ -249,15 +247,13 @@ CREATE TABLE IF NOT EXISTS `#__jed_developers`
 
 
 
-CREATE TABLE `#__jed_joomla_versions`
-(
-    `id`         int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `label`      varchar(255)     NOT NULL,
-    `long_label` varchar(50)      NOT NULL,
-    `published`  tinyint(4)       NOT NULL DEFAULT 1,
-    PRIMARY KEY (`id`),
-    KEY `inx_published` (`published`),
-    KEY `inx_label` (`label`)
+	`id`         int unsigned NOT NULL AUTO_INCREMENT,
+	`label`      varchar(255) NOT NULL,
+	`long_label` varchar(50)  NOT NULL,
+	`published`  tinyint(1)   NOT NULL DEFAULT '1',
+	PRIMARY KEY (`id`),
+	KEY `IDX_jed_joomla_versions_published` (`published`),
+	KEY `IDX_jed_joomla_versions_label` (`label`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('15','1.5','Joomla 1.5','0');
 INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('25','2.5','Joomla 2.5','0');
@@ -267,7 +263,6 @@ INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) 
 INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('51','5 (b/c)','Joomla 5 using B/C plugin','1');
 INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('60','6','Joomla 6','1');
 INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('61','6 (b/c)','Joomla 6 using B/C plugin','1');
-
 
 DROP TABLE IF EXISTS `#__jed_queue_jobs`;
 
@@ -289,7 +284,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_queue_jobs`
 	PRIMARY KEY (`id`),
 	KEY `IDX_jed_queue_jobs_status` (`status`),
 	KEY `IDX_jed_queue_jobs_type` (`type`),
-	KEY `IDX_jed_queue_jobs_extension` (`extension_id`)
+	KEY `IDX_jed_queue_jobs_extension_id` (`extension_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
