@@ -13,7 +13,8 @@ namespace Jed\Component\Jed\Administrator\Parser;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomla\CMS\Installer\Installer;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 use Joomla\Github\Github as GithubClient;
 use Joomla\Registry\Registry;
 use RuntimeException;
@@ -188,27 +189,81 @@ class Github extends Parser
     }
 
     /**
+     * Extension types in descending order of preference when multiple manifests are found.
+     *
+     * @var array<string, int>
+     */
+    private const TYPE_PRIORITY = [
+        'package'   => 0,
+        'component' => 1,
+        'plugin'    => 2,
+        'module'    => 3,
+        'template'  => 4,
+        'file'      => 5,
+    ];
+
+    /**
      * Locates and loads the Joomla manifest XML from the given directory.
+     *
+     * All XML files in the directory tree are searched for valid Joomla manifests. When more
+     * than one is found, the manifest is picked according to self::TYPE_PRIORITY, i.e. a package
+     * manifest is preferred over a component manifest, a component manifest over a plugin
+     * manifest, and so on down to module, template and file manifests.
      *
      * @throws RuntimeException
      */
     private function loadManifest(string $dir): void
     {
-        $installer = Installer::getInstance();
-        $installer->setPath('source', $dir);
+        $dir = Path::clean($dir);
 
-        if (!$installer->findManifest()) {
+        if (!is_dir($dir)) {
+            throw new RuntimeException(sprintf('Extracted source directory not found: %s', $dir));
+        }
+
+        $xmlFiles = Folder::files($dir, '.xml$', true, true);
+
+        $bestManifest = null;
+        $bestPriority = null;
+
+        foreach ($xmlFiles as $file) {
+            $manifest = $this->isManifest($file);
+
+            if ($manifest === null) {
+                continue;
+            }
+
+            $type     = (string) $manifest['type'];
+            $priority = self::TYPE_PRIORITY[$type] ?? count(self::TYPE_PRIORITY);
+
+            if ($bestPriority === null || $priority < $bestPriority) {
+                $bestManifest = $manifest;
+                $bestPriority = $priority;
+
+                if ($priority === 0) {
+                    break;
+                }
+            }
+        }
+
+        if ($bestManifest === null) {
             throw new RuntimeException(sprintf('No valid Joomla manifest found in: %s', $dir));
         }
 
-        $manifestPath = $installer->getPath('manifest');
-        $xml          = simplexml_load_file($manifestPath);
+        $this->xml = $bestManifest;
+    }
 
-        if ($xml === false) {
-            throw new RuntimeException(sprintf('Cannot parse manifest XML: %s', $manifestPath));
+    /**
+     * Determines whether the given XML file is a valid Joomla installation manifest file.
+     */
+    private function isManifest(string $file): ?SimpleXMLElement
+    {
+        $xml = simplexml_load_file($file);
+
+        if ($xml === false || $xml->getName() !== 'extension') {
+            return null;
         }
 
-        $this->xml = $xml;
+        return $xml;
     }
 
     private function removeDirectory(string $dir): void
