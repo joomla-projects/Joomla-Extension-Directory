@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_categories`
     `state`            tinyint(1)   DEFAULT '1',
     `checked_out`      int unsigned,
     `checked_out_time` datetime,
-    `created_by`       int          DEFAULT '0',
-    `modified_by`      int          DEFAULT '0',
+    `created_by`       int unsigned NOT NULL,
+    `modified_by`      int unsigned NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
@@ -39,8 +39,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_groups`
     `state`            tinyint(1)   DEFAULT '1',
     `checked_out`      int unsigned,
     `checked_out_time` datetime,
-    `created_by`       int          DEFAULT '0',
-    `modified_by`      int          DEFAULT '0',
+    `created_by`       int unsigned NOT NULL,
+    `modified_by`      int unsigned NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
@@ -63,8 +63,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_linked_item_types`
     `state`            tinyint(1)   DEFAULT '1',
     `checked_out`      int unsigned,
     `checked_out_time` datetime,
-    `created_by`       int          DEFAULT '0',
-    `modified_by`      int          DEFAULT '0',
+    `created_by`       int unsigned NOT NULL,
+    `modified_by`      int unsigned NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_messages`
     `message`           text,
     `message_direction` int          DEFAULT '0',
     `internal`          tinyint(1)   DEFAULT '0',
-    `created_by`        int          DEFAULT '0',
+    `created_by`        int unsigned NOT NULL,
     `created_on`        datetime     DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
@@ -95,26 +95,26 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_messages`
 DROP TABLE IF EXISTS `#__jed_tickets`;
 CREATE TABLE IF NOT EXISTS `#__jed_tickets`
 (
-    `id`                      INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `ticket_origin`           VARCHAR(255)     NULL DEFAULT '0',
-    `ticket_category_type`    INT(10)          NULL DEFAULT 0,
-    `ticket_subject`          VARCHAR(255)     NULL DEFAULT '',
-    `ticket_text`             TEXT             NULL,
-    `internal_notes`          TEXT             NULL,
-    `uploaded_files_preview`  BLOB             NULL,
-    `uploaded_files_location` VARCHAR(255)     NULL DEFAULT '',
-    `allocated_group`         INT(10)          NULL DEFAULT 0,
-    `allocated_to`            INT(11)          NULL DEFAULT 0,
-    `linked_item_type`        INT(10)          NULL DEFAULT 0,
-    `linked_item_id`          INT              NULL DEFAULT 0,
-    `ticket_status`           VARCHAR(255)     NULL DEFAULT '0',
-    `parent_id`               INT              NULL DEFAULT 0,
-    `state`                   INT              NULL DEFAULT 1,
-    `ordering`                INT              NULL DEFAULT 0,
-    `created_by`              INT(11)          NULL DEFAULT 0,
-    `created_on`              DATETIME,
-    `modified_by`             INT(11)          NULL DEFAULT 0,
-    `modified_on`             DATETIME,
+    `id`                      int unsigned NOT NULL AUTO_INCREMENT,
+    `ticket_origin`           varchar(255) NULL DEFAULT '0',
+    `ticket_category_type`    int          NULL DEFAULT 0,
+    `ticket_subject`          varchar(255) NULL DEFAULT '',
+    `ticket_text`             text         NULL,
+    `internal_notes`          text         NULL,
+    `uploaded_files_preview`  blob         NULL,
+    `uploaded_files_location` varchar(255) NULL DEFAULT '',
+    `allocated_group`         int          NULL DEFAULT 0,
+    `allocated_to`            int          NULL DEFAULT 0,
+    `linked_item_type`        int          NULL DEFAULT 0,
+    `linked_item_id`          int          NULL DEFAULT 0,
+    `ticket_status`           varchar(255) NULL DEFAULT '0',
+    `parent_id`               int          NULL DEFAULT 0,
+    `state`                   tinyint(1)   NOT NULL DEFAULT '1',
+    `ordering`                int          NULL DEFAULT 0,
+    `created_by`              int unsigned NOT NULL,
+    `created_on`              datetime,
+    `modified_by`             int unsigned NULL,
+    `modified_on`             datetime,
     `checked_out`             int unsigned,
     `checked_out_time`        datetime,
     PRIMARY KEY (`id`)
