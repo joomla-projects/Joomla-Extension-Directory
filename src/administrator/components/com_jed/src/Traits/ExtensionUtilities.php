@@ -20,7 +20,7 @@ use Joomla\Database\ParameterType;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
-use Michelf\Markdown;
+use League\CommonMark\CommonMarkConverter;
 use SimpleXMLElement;
 
 /**
@@ -46,7 +46,12 @@ trait ExtensionUtilities
         $d = preg_replace("/\!\[(.*)\]\((.*)\)/", '', $d);
         // Remove links
         $d = preg_replace("/\[(.*)\]\((.*)\)/", '', (string) $d);
-        $d = Markdown::defaultTransform($d);
+
+        $converter = new CommonMarkConverter([
+            'html_input'         => 'strip',
+            'allow_unsafe_links' => false,
+        ]);
+        $d = (string) $converter->convert($d);
 
         $clean = (stripslashes(trim($d)));
         $xml   = new SimpleXMLElement('<div>' . $clean . '</div>');
