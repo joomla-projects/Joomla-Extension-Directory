@@ -57,7 +57,7 @@ class ReviewController extends FormController
         $table = $model->getTable();
 
         if ($table->load($reviewId)) {
-            $table->published = $optionId;
+            $table->state = $optionId;
             $table->store();
         }
     }

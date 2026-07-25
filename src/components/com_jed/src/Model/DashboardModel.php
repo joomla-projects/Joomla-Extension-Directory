@@ -91,7 +91,7 @@ class DashboardModel extends ItemModel
         $query = $db->getQuery(true)
             ->select(
                 [
-                    'r.id', 'r.title', 'r.overall_score', 'r.published', 'r.created_on', 'r.extension_id',
+                    'r.id', 'r.title', 'r.overall_score', 'r.state', 'r.created_on', 'r.extension_id',
                     'r.created_by', 'r.developer_response', 'r.developer_response_published',
                     $db->quoteName('e.name', 'extension_title'),
                     'CASE WHEN ' . $db->quoteName('e.owner') . ' = ' . $db->quote($userId)
@@ -108,7 +108,7 @@ class DashboardModel extends ItemModel
             ->where(
                 '(' . $db->quoteName('r.created_by') . ' = ' . $db->quote($userId) . ')'
                 . ' OR ((' . $db->quoteName('e.owner') . ' = ' . $db->quote($userId)
-                . ' OR ' . $db->quoteName('m.user_id') . ' IS NOT NULL) AND ' . $db->quoteName('r.published') . ' = 1)'
+                . ' OR ' . $db->quoteName('m.user_id') . ' IS NOT NULL) AND ' . $db->quoteName('r.state') . ' = 1)'
             )
             ->order($db->quoteName('r.created_on') . ' DESC');
 

@@ -60,8 +60,8 @@
             <option value="a.flagged DESC">COM_JED_REVIEWS_FILTER_SORT_FLAGGED_DESC</option>
             <option value="a.ip_address ASC">COM_JED_REVIEWS_FILTER_SORT_IP_ADDRESS_ASC</option>
             <option value="a.ip_address DESC">COM_JED_REVIEWS_FILTER_SORT_IP_ADDRESS_DESC</option>
-            <option value="a.published ASC">COM_JED_GENERAL_FILTER_SORT_PUBLISHED_ASC</option>
-            <option value="a.published DESC">COM_JED_GENERAL_FILTER_SORT_PUBLISHED_DESC</option>
+            <option value="a.state ASC">COM_JED_GENERAL_FILTER_SORT_PUBLISHED_ASC</option>
+            <option value="a.state DESC">COM_JED_GENERAL_FILTER_SORT_PUBLISHED_DESC</option>
             <option value="a.created_on ASC">COM_JED_GENERAL_FILTER_SORT_CREATED_ON_ASC</option>
             <option value="a.created_on DESC">COM_JED_GENERAL_FILTER_SORT_CREATED_ON_DESC</option>
             <option value="a.created_by ASC">COM_JED_GENERAL_FILTER_SORT_CREATED_BY_ASC</option>

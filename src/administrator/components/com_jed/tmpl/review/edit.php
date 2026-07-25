@@ -53,7 +53,7 @@ HTMLHelper::_('bootstrap.tooltip');
                 <?php echo $this->form->renderField('used_for'); ?>
                 <?php echo $this->form->renderField('flagged'); ?>
                 <?php echo $this->form->renderField('ip_address'); ?>
-                <?php echo $this->form->renderField('published'); ?>
+                <?php echo $this->form->renderField('state'); ?>
                 <?php echo $this->form->renderField('created_on'); ?>
                 <?php echo $this->form->renderField('created_by'); ?>
             </fieldset>

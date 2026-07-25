@@ -40,6 +40,7 @@ class ReviewTable extends Table
     {
         $this->typeAlias = 'com_jed.review';
         parent::__construct('#__jed_reviews', 'id', $db);
+        $this->setColumnAlias('published', 'state');
     }
 
     /**
@@ -103,9 +104,9 @@ class ReviewTable extends Table
             $src['flagged'] = 0;
         }
 
-        // Support for checkbox field: published
-        if (!isset($src['published'])) {
-            $src['published'] = 0;
+        // Support for checkbox field: state
+        if (!isset($src['state'])) {
+            $src['state'] = 0;
         }
 
         if ($src['id'] == 0) {
@@ -182,7 +183,7 @@ class ReviewTable extends Table
         if ($this->id) {
             $db    = $this->getDatabase();
             $query = $db->getQuery(true)
-                ->select($db->quoteName('published'))
+                ->select($db->quoteName('state'))
                 ->from($db->quoteName('#__jed_reviews'))
                 ->where($db->quoteName('id') . ' = :id')
                 ->bind(':id', $this->id, ParameterType::INTEGER);
@@ -192,7 +193,7 @@ class ReviewTable extends Table
         $result = parent::store($updateNulls);
 
         if ($result) {
-            $nowPublished = (int) $this->published === 1;
+            $nowPublished = (int) $this->state === 1;
 
             if ($wasPublished !== $nowPublished) {
                 $queueService = new QueueService($this->getDatabase());

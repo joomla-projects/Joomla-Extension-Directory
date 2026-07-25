@@ -59,7 +59,7 @@ class ReviewsModel extends ListModel
                 'used_for', 'a.used_for',
                 'flagged', 'a.flagged',
                 'ip_address', 'a.ip_address',
-                'published', 'a.published',
+                'state', 'a.state',
                 'created_on', 'a.created_on',
                 'created_by', 'a.created_by',
                 'ordering', 'a.ordering',

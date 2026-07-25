@@ -193,7 +193,7 @@ class ReviewformModel extends FormModel
             $query = $db->getQuery(true);
             $query->select('id')->from($db->quoteName('#__jed_reviews'))->where($db->quoteName('extension_id') . ' = ' . $db->quote($id))
             ->where($db->quoteName('created_by') . ' = ' . $user->id)
-            ->where($db->quoteName('published') . ' != -2');
+            ->where($db->quoteName('state') . ' != -2');
             $db->setQuery($query);
             $existingReviewId = $db->loadResult();
 
@@ -266,7 +266,7 @@ class ReviewformModel extends FormModel
             $data['id'] = $id;
             // An edited review re-enters moderation rather than silently keeping its
             // previous approval.
-            $data['published'] = 0;
+            $data['state'] = 0;
 
             if ($table->save($data) === true) {
                 $this->id = $table->id;

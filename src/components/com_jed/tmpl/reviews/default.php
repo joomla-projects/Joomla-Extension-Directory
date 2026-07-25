@@ -122,7 +122,7 @@ $wa->useStyle('com_jed.list');
                     </th>
 
                     <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'JPUBLISHED', 'a.state', $listDirn, $listOrder); ?>
                     </th>
 
                     <th class=''>
@@ -215,7 +215,7 @@ $wa->useStyle('com_jed.list');
                         <?php echo $item->ip_address; ?>
                     </td>
                     <td>
-                        <?php echo $item->published; ?>
+                        <?php echo $item->state; ?>
                     </td>
                     <td>
                         <?php echo $item->created_on; ?>

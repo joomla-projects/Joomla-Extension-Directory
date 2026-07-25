@@ -134,7 +134,7 @@ $canRespond = JedHelper::isOwnerOrMaintainer((int) $this->item->extension_id);
 
         <tr>
             <th><?php echo Text::_('JPUBLISHED'); ?></th>
-            <td><?php echo $this->item->published; ?></td>
+            <td><?php echo $this->item->state; ?></td>
         </tr>
 
         <tr>
@@ -159,7 +159,7 @@ $canRespond = JedHelper::isOwnerOrMaintainer((int) $this->item->extension_id);
 
     <?php endif; ?>
 
-<?php if (($isOwnReview && $this->item->published != -2) || JedHelper::isAdminOrSuperUser()) : ?>
+<?php if (($isOwnReview && $this->item->state != -2) || JedHelper::isAdminOrSuperUser()) : ?>
     <a class="btn btn-danger" rel="noopener noreferrer" href="#deleteModal" role="button" data-bs-toggle="modal">
         <?php echo Text::_("JACTION_DELETE"); ?>
     </a>
@@ -181,7 +181,7 @@ $canRespond = JedHelper::isOwnerOrMaintainer((int) $this->item->extension_id);
 
 <?php endif; ?>
 
-<?php if ($isOwnReview && $this->item->published != 1 && $this->item->published != -2) : ?>
+<?php if ($isOwnReview && $this->item->state != 1 && $this->item->state != -2) : ?>
     <p class="alert alert-info mt-3"><?php echo Text::_('COM_JED_REVIEW_NOT_PUBLISHED_NOTICE'); ?></p>
 <?php endif; ?>
 

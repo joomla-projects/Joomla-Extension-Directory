@@ -98,7 +98,7 @@ class HtmlView extends BaseHtmlView
 
             $childBar = $dropdown->getChildToolbar();
 
-            if (isset($this->items[0]->published)) {
+            if (isset($this->items[0]->state)) {
                 $childBar->publish('reviews.publish')->listCheck(true);
                 $childBar->unpublish('reviews.unpublish')->listCheck(true);
                 $childBar->archive('reviews.archive')->listCheck(true);
@@ -120,7 +120,7 @@ class HtmlView extends BaseHtmlView
                 $childBar->checkin('reviews.checkin')->listCheck(true);
             }
 
-            if (isset($this->items[0]->published)) {
+            if (isset($this->items[0]->state)) {
                 $childBar->trash('reviews.trash')->listCheck(true);
             }
         }
@@ -128,7 +128,7 @@ class HtmlView extends BaseHtmlView
 
 
         // Show trash and delete for components that uses the state field
-        if (isset($this->items[0]->published)) {
+        if (isset($this->items[0]->state)) {
             if ($this->state->get('filter.state') == ContentComponent::CONDITION_TRASHED && $canDo->get('core.delete')) {
                 $toolbar->delete('reviews.delete')
                     ->text('JTOOLBAR_EMPTY_TRASH')
@@ -171,7 +171,7 @@ class HtmlView extends BaseHtmlView
             'a.`used_for`'                => Text::_('COM_JED_REVIEWS_USED_FOR_LABEL'),
             'a.`flagged`'                 => Text::_('COM_JED_REVIEWS_FLAGGED_LABEL'),
             'a.`ip_address`'              => Text::_('COM_JED_GENERAL_IPADDRESS_LABEL'),
-            'a.`published`'               => Text::_('JPUBLISHED'),
+            'a.`state`'                   => Text::_('JPUBLISHED'),
             'a.`created_on`'              => Text::_('COM_JED_GENERAL_CREATED_ON_LABEL'),
             'a.`created_by`'              => Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'),
             'a.`ordering`'                => Text::_('JGRID_HEADING_ORDERING'),

@@ -120,7 +120,7 @@ class ReviewController extends BaseController
     }
 
     /**
-     * Soft-deletes a review the current user wrote (published = -2), so it stops showing up
+     * Soft-deletes a review the current user wrote (state = -2), so it stops showing up
      * anywhere but the extension/user pair remains free for a fresh review later.
      *
      * @return void

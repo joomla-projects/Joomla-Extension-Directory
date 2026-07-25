@@ -196,7 +196,7 @@ echo HTMLHelper::_('uitab.addTab', 'viewHelpTab', 'viewhelpreviews', Text::_('Re
 
 $slideid = 0;
 foreach ($displayData['reviews'] as $review) {
-    if ($review->published === 1) {
+    if ($review->state === 1) {
         $ico = '<span class="fas fa-bolt"></span>';
     } else {
         $ico = '';

@@ -143,7 +143,7 @@ class ReviewModel extends ItemModel
 
     /**
      * Soft-deletes a review the current user wrote (or, for staff, any review) by setting
-     * `published = -2`, rather than removing the row - so the same extension/user pair remains
+     * `state = -2`, rather than removing the row - so the same extension/user pair remains
      * available for a fresh review later on.
      *
      * @param int $id The review id
@@ -164,7 +164,7 @@ class ReviewModel extends ItemModel
             throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
         }
 
-        $table->published = -2;
+        $table->state = -2;
 
         return $table->store();
     }

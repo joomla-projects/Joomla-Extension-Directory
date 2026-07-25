@@ -59,6 +59,6 @@ $review = $displayData;
         <dd class="col-sm-9"><?php echo nl2br(htmlspecialchars($review->body ?? '', ENT_QUOTES, 'UTF-8')); ?></dd>
 
         <dt class="col-sm-3"><?php echo Text::_('JSTATUS'); ?></dt>
-        <dd class="col-sm-9"><?php echo JedHelper::displayFieldValue('state', (int) ($review->published ?? 0) === 1 ? 1 : 0); ?></dd>
+        <dd class="col-sm-9"><?php echo JedHelper::displayFieldValue('state', (int) ($review->state ?? 0) === 1 ? 1 : 0); ?></dd>
     </dl>
 <?php endif; ?>

@@ -120,7 +120,7 @@ if ($saveOrder) {
                             <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_IPADDRESS_LABEL', 'a.ip_address', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
-                            <?php echo HTMLHelper::_('searchtools.sort', 'JPUBLISHED', 'a.published', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('searchtools.sort', 'JPUBLISHED', 'a.state', $listDirn, $listOrder); ?>
                         </th>
                         <th class='left'>
                             <?php echo HTMLHelper::_('searchtools.sort', 'COM_JED_GENERAL_CREATED_ON_LABEL', 'a.created_on', $listDirn, $listOrder); ?>
@@ -232,7 +232,7 @@ if ($saveOrder) {
                                 <?php echo $item->ip_address; ?>
                             </td>
                             <td>
-                                <?php echo $item->published; ?>
+                                <?php echo $item->state; ?>
                             </td>
                             <td>
                                 <?php echo $item->created_on; ?>

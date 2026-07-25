@@ -46,7 +46,7 @@
         />
         <field name="ip_address" filter="safehtml" type="text" label="COM_JED_GENERAL_IPADDRESS_LABEL"
         />
-        <field name="published" type="list" label="JPUBLISHED" description="" class="inputbox" size="1"
+        <field name="state" type="list" label="JPUBLISHED" description="" class="inputbox" size="1"
                default="1">
             <option value="1">JPUBLISHED</option>
             <option value="0">JUNPUBLISHED</option>

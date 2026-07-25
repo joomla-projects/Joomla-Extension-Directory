@@ -147,7 +147,7 @@ class ReviewModel extends AdminModel
 
         if ($ids !== []) {
             $query = $db->getQuery(true)
-                ->select($db->quoteName(['id', 'extension_id', 'published']))
+                ->select($db->quoteName(['id', 'extension_id', 'state']))
                 ->from($db->quoteName('#__jed_reviews'))
                 ->whereIn($db->quoteName('id'), $ids);
             $before = $db->setQuery($query)->loadObjectList('id');
@@ -166,7 +166,7 @@ class ReviewModel extends AdminModel
                     continue;
                 }
 
-                $wasPublished = (int) $old->published === 1;
+                $wasPublished = (int) $old->state === 1;
 
                 if ($wasPublished !== $nowPublished) {
                     $extensionIds[(int) $old->extension_id] = true;

@@ -91,7 +91,7 @@ class ScoreCalculationService
     /**
      * @param int $extensionId The extension id.
      *
-     * @return object[] The published (`published = 1`) `#__jed_reviews` rows for this
+     * @return object[] The published (`state = 1`) `#__jed_reviews` rows for this
      *                   extension, with their score-dimension columns aliased to the
      *                   `*_score` names the `onJedCalculateExtensionScore` contract expects.
      *
@@ -114,7 +114,7 @@ class ScoreCalculationService
             )
             ->from($db->quoteName('#__jed_reviews'))
             ->where($db->quoteName('extension_id') . ' = :id')
-            ->where($db->quoteName('published') . ' = 1')
+            ->where($db->quoteName('state') . ' = 1')
             ->bind(':id', $extensionId, ParameterType::INTEGER);
 
         return $db->setQuery($query)->loadObjectList();

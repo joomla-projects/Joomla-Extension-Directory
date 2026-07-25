@@ -26,7 +26,6 @@ use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
-use Michelf\Markdown;
 use stdClass;
 
 /**
@@ -153,7 +152,7 @@ class ExtensionModel extends ItemModel
             ->select('*')
             ->from($db->quoteName('#__jed_reviews'))
             ->where($db->quoteName('extension_id') . ' = :extension_id')
-            ->where($db->quoteName('published') . ' = 1')
+            ->where($db->quoteName('state') . ' = 1')
             ->bind(':extension_id', $extension_id, ParameterType::INTEGER)
             ->order($db->quoteName('created_on') . ' DESC');
 
@@ -182,7 +181,7 @@ class ExtensionModel extends ItemModel
             ->from($db->quoteName('#__jed_reviews'))
             ->where($db->quoteName('extension_id') . ' = :extension_id')
             ->where($db->quoteName('created_by') . ' = :user_id')
-            ->where($db->quoteName('published') . ' != -2')
+            ->where($db->quoteName('state') . ' != -2')
             ->bind(':extension_id', $extension_id, ParameterType::INTEGER)
             ->bind(':user_id', $user_id, ParameterType::INTEGER);
 

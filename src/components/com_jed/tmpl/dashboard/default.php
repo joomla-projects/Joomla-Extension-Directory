@@ -103,9 +103,9 @@ $wa->useScript('com_jed.favorite');
                                 </td>
                                 <td>
                                     <?php
-                                    if ((int) $item->published === -2) {
+                                    if ((int) $item->state === -2) {
                                         echo Text::_('JTRASHED');
-                                    } elseif ((int) $item->published === 1) {
+                                    } elseif ((int) $item->state === 1) {
                                         echo Text::_('JPUBLISHED');
                                     } else {
                                         echo Text::_('JUNPUBLISHED');
@@ -113,7 +113,7 @@ $wa->useScript('com_jed.favorite');
                                     ?>
                                 </td>
                                 <td class="text-nowrap">
-                                    <?php if ($isOwnReviewRow && (int) $item->published !== -2) : ?>
+                                    <?php if ($isOwnReviewRow && (int) $item->state !== -2) : ?>
                                         <a class="btn btn-danger btn-sm"
                                            href="<?php echo Route::_('index.php?option=com_jed&task=review.remove&id=' . (int) $item->id . '&' . Session::getFormToken() . '=1', false); ?>"
                                            onclick="return confirm('<?php echo htmlspecialchars(addslashes(Text::_('COM_JED_DASHBOARD_DELETE_REVIEW_CONFIRM')), ENT_QUOTES); ?>');">

@@ -51,7 +51,7 @@
                description="COM_JED_REVIEWS_FLAGGED_DESCR" hint=""/>
         <field name="ip_address" filter="safehtml" type="text" label="COM_JED_GENERAL_IPADDRESS_LABEL"
                description="COM_JED_REVIEWS_IP_ADDRESS_DESCR" hint=""/>
-        <field name="published" type="checkbox" checked="0" label="JPUBLISHED"
+        <field name="state" type="checkbox" checked="0" label="JPUBLISHED"
                description="COM_JED_REVIEWS_PUBLISHED_DESCR" hint=""/>
         <field name="created_on" type="timecreated" label="COM_JED_GENERAL_CREATED_ON_LABEL"
                description="COM_JED_REVIEWS_CREATED_ON_DESCR" hint=""/>
