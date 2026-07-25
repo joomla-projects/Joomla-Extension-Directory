@@ -8,7 +8,7 @@
 </instruction>
 <instruction>
  <description>Clearing Down old Data</description>
-    <sql>TRUNCATE #__jed_developers;TRUNCATE #__jed_extension_images;TRUNCATE #__jed_extension_scores;TRUNCATE #__jed_extensions_files;TRUNCATE #__jed_reviews</sql>
+    <sql>TRUNCATE #__jed_extensions_images;TRUNCATE #__jed_extensions_files;TRUNCATE #__jed_reviews</sql>
 </instruction>
 <instruction>
 <description>Create combination of UCM and JED_Extensions</description>
@@ -184,132 +184,36 @@ paid_logo VARCHAR(255) DEFAULT '',
  <sql>INSERT INTO combine_jed_extensions ( id,  core_content_id, core_title, core_alias, core_body, core_state, core_created_user_id , core_created_time, core_catid, core_checked_out_time, core_checked_out_user_id, core_modified_user_id,  core_modified_time, homepage_link, download_link, demo_link, support_link, documentation_link, license_link, versions, popular, requires_registration, type, related_free_paid_id, license, jed_note, update_url, update_url_ok, can_update, tags, language_code, video, version, uses_updater, includes, community_choice, score, approved, approved_time, extension_file, download_integration_type, download_integration_url, second_contact_email, currency, price, price_per, price_interval, language_body, backlink, non_gpl_css_js, parent_id, functionality, ease_of_use, support, documentation, value_for_money, num_reviews, jed_checked, extension_ext_libs ) SELECT   e.id, core_content_id, core_title, core_alias, core_body, core_state, core_created_user_id , core_created_time, core_catid, core_checked_out_time, core_checked_out_user_id, core_modified_user_id,   core_modified_time, homepage_link, download_link, demo_link, support_link, documentation_link, license_link, versions, popular, requires_registration, type, related_free_paid_id, license, jed_note, update_url, update_url_ok, can_update, tags, language_code, video, version, uses_updater, includes, community_choice, score, approved, approved_time, extension_file, download_integration_type, download_integration_url, second_contact_email, currency, price, price_per, price_interval, language_body, backlink, non_gpl_css_js, parent_id, functionality, ease_of_use, support, documentation, value_for_money, num_reviews, jed_checked, extension_ext_libs FROM wqyh6_jed_extensions e, wqyh6_ucm_content u WHERE  u.core_content_item_id = e.id AND u.core_type_alias = "com_jed.extension" ORDER BY e.id ASC </sql>
  </instruction>
 <instruction>
- <description>Attach Free Extensions</description>
-    <sql>UPDATE   combine_jed_extensions cj, wqyh6_jed_extensions je SET   cj.free_id = je.id, cj.free_homepage_link = je.homepage_link, cj.free_download_link = je.download_link, cj.free_demo_link = je.demo_link, cj.free_support_link = je.support_link, cj.free_documentation_link = je.documentation_link, cj.free_license_link = je.license_link, cj.free_versions = je.versions, cj.free_popular = je.popular, cj.free_requires_registration = je.requires_registration, cj.free_type = je.type, cj.free_related_free_paid_id = je.related_free_paid_id, cj.free_license = je.license, cj.free_jed_note = je.jed_note, cj.free_update_url = je.update_url, cj.free_update_url_ok = je.update_url_ok, cj.free_can_update = je.can_update, cj.free_tags = je.tags, cj.free_language_code = je.language_code, cj.free_video = je.video, cj.free_version = je.version, cj.free_uses_updater = je.uses_updater, cj.free_includes = je.includes, cj.free_community_choice = je.community_choice, cj.free_score = je.score, cj.free_approved = je.approved, cj.free_approved_time = je.approved_time, cj.free_extension_file = je.extension_file, cj.free_download_integration_type = je.download_integration_type, cj.free_download_integration_url = je.download_integration_url, cj.free_second_contact_email = je.second_contact_email, cj.free_currency = je.currency, cj.free_price = je.price, cj.free_price_per = je.price_per, cj.free_price_interval = je.price_interval, cj.free_language_body = je.language_body, cj.free_backlink = je.backlink, cj.free_non_gpl_css_js = je.non_gpl_css_js, cj.free_parent_id = je.parent_id, cj.free_functionality = je.functionality, cj.free_ease_of_use = je.ease_of_use, cj.free_support = je.support, cj.free_documentation = je.documentation, cj.free_value_for_money = je.value_for_money, cj.free_num_reviews = je.num_reviews, cj.free_jed_checked = je.jed_checked, cj.free_extension_ext_libs = je.extension_ext_libs WHERE je.type = "free"   AND cj.type = "free"   AND cj.id = je.id</sql>
-    
- </instruction>
- <instruction>
- <description>Attach Paid Extensions</description>   
-     <sql>UPDATE   combine_jed_extensions cj, wqyh6_jed_extensions je SET   cj.paid_id = je.id, cj.paid_homepage_link = je.homepage_link, cj.paid_download_link = je.download_link, cj.paid_demo_link = je.demo_link, cj.paid_support_link = je.support_link, cj.paid_documentation_link = je.documentation_link, cj.paid_license_link = je.license_link, cj.paid_versions = je.versions, cj.paid_popular = je.popular, cj.paid_requires_registration = je.requires_registration, cj.paid_type = je.type, cj.paid_related_free_paid_id = je.related_free_paid_id, cj.paid_license = je.license, cj.paid_jed_note = je.jed_note, cj.paid_update_url = je.update_url, cj.paid_update_url_ok = je.update_url_ok, cj.paid_can_update = je.can_update, cj.paid_tags = je.tags, cj.paid_language_code = je.language_code, cj.paid_video = je.video, cj.paid_version = je.version, cj.paid_uses_updater = je.uses_updater, cj.paid_includes = je.includes, cj.paid_community_choice = je.community_choice, cj.paid_score = je.score, cj.paid_approved = je.approved, cj.paid_approved_time = je.approved_time, cj.paid_extension_file = je.extension_file, cj.paid_download_integration_type = je.download_integration_type, cj.paid_download_integration_url = je.download_integration_url, cj.paid_second_contact_email = je.second_contact_email, cj.paid_currency = je.currency, cj.paid_price = je.price, cj.paid_price_per = je.price_per, cj.paid_price_interval = je.price_interval, cj.paid_language_body = je.language_body, cj.paid_backlink = je.backlink, cj.paid_non_gpl_css_js = je.non_gpl_css_js, cj.paid_parent_id = je.parent_id, cj.paid_functionality = je.functionality, cj.paid_ease_of_use = je.ease_of_use, cj.paid_support = je.support, cj.paid_documentation = je.documentation, cj.paid_value_for_money = je.value_for_money, cj.paid_num_reviews = je.num_reviews, cj.paid_jed_checked = je.jed_checked, cj.paid_extension_ext_libs = je.extension_ext_libs WHERE je.type = "paid"   AND cj.type = "paid"   AND cj.id = je.id</sql>
-      </instruction>
- <instruction>
-     <description>Add main logos</description> 
+     <description>Add logos</description>
      <sql>UPDATE combine_jed_extensions cj, wqyh6_jed_extension_logos jl SET cj.logo=jl.file WHERE jl.extension_id = cj.id</sql>
 </instruction>
      <instruction>
-     <description>Add Free logos</description> 
-     <sql>UPDATE combine_jed_extensions cj, wqyh6_jed_extension_logos jl SET cj.free_logo=jl.file WHERE jl.extension_id = cj.free_id</sql>
-</instruction>
-  <instruction>
-     <description>Add Paid logos</description> 
-     <sql>UPDATE combine_jed_extensions cj, wqyh6_jed_extension_logos jl SET cj.paid_logo=jl.file WHERE jl.extension_id = cj.paid_id</sql>
-</instruction>   
-   <instruction>
-     <description>Arranging Master fields - Free or Paid</description> 
-     <sql>UPDATE   combine_jed_extensions cj, wqyh6_jed_extensions je SET  cj.free_id = je.id, cj.free_homepage_link = je.homepage_link, cj.free_download_link = je.download_link, cj.free_demo_link = je.demo_link, cj.free_support_link = je.support_link, cj.free_documentation_link = je.documentation_link, cj.free_license_link = je.license_link, cj.free_versions = je.versions, cj.free_popular = je.popular, cj.free_requires_registration = je.requires_registration, cj.free_type = je.type, cj.free_related_free_paid_id = je.related_free_paid_id, cj.free_license = je.license, cj.free_jed_note = je.jed_note, cj.free_update_url = je.update_url, cj.free_update_url_ok = je.update_url_ok, cj.free_can_update = je.can_update, cj.free_tags = je.tags, cj.free_language_code = je.language_code, cj.free_video = je.video, cj.free_version = je.version, cj.free_uses_updater = je.uses_updater, cj.free_includes = je.includes, cj.free_community_choice = je.community_choice, cj.free_score = je.score, cj.free_approved = je.approved, cj.free_approved_time = je.approved_time, cj.free_extension_file = je.extension_file, cj.free_download_integration_type = je.download_integration_type, cj.free_download_integration_url = je.download_integration_url, cj.free_second_contact_email = je.second_contact_email, cj.free_currency = je.currency, cj.free_price = je.price, cj.free_price_per = je.price_per, cj.free_price_interval = je.price_interval, cj.free_language_body = je.language_body, cj.free_backlink = je.backlink, cj.free_non_gpl_css_js = je.non_gpl_css_js, cj.free_parent_id = je.parent_id, cj.free_functionality = je.functionality, cj.free_ease_of_use = je.ease_of_use, cj.free_support = je.support, cj.free_documentation = je.documentation, cj.free_value_for_money = je.value_for_money, cj.free_num_reviews = je.num_reviews, cj.free_jed_checked = je.jed_checked, cj.free_extension_ext_libs = je.extension_ext_libs WHERE je.id = cj.related_free_paid_id  AND je.type = "free"</sql>
-</instruction>   
-       <instruction>
-     <description>Arranging Master fields - Paid or Free</description> 
-     <sql>UPDATE   combine_jed_extensions cj, wqyh6_jed_extensions je SET   cj.paid_id = je.id, cj.paid_homepage_link = je.homepage_link, cj.paid_download_link = je.download_link, cj.paid_demo_link = je.demo_link, cj.paid_support_link = je.support_link, cj.paid_documentation_link = je.documentation_link, cj.paid_license_link = je.license_link, cj.paid_versions = je.versions, cj.paid_popular = je.popular, cj.paid_requires_registration = je.requires_registration, cj.paid_type = je.type, cj.paid_related_free_paid_id = je.related_free_paid_id, cj.paid_license = je.license, cj.paid_jed_note = je.jed_note, cj.paid_update_url = je.update_url, cj.paid_update_url_ok = je.update_url_ok, cj.paid_can_update = je.can_update, cj.paid_tags = je.tags, cj.paid_language_code = je.language_code, cj.paid_video = je.video, cj.paid_version = je.version, cj.paid_uses_updater = je.uses_updater, cj.paid_includes = je.includes, cj.paid_community_choice = je.community_choice, cj.paid_score = je.score, cj.paid_approved = je.approved, cj.paid_approved_time = je.approved_time, cj.paid_extension_file = je.extension_file, cj.paid_download_integration_type = je.download_integration_type, cj.paid_download_integration_url = je.download_integration_url, cj.paid_second_contact_email = je.second_contact_email, cj.paid_currency = je.currency, cj.paid_price = je.price, cj.paid_price_per = je.price_per, cj.paid_price_interval = je.price_interval, cj.paid_language_body = je.language_body, cj.paid_backlink = je.backlink, cj.paid_non_gpl_css_js = je.non_gpl_css_js, cj.paid_parent_id = je.parent_id, cj.paid_functionality = je.functionality, cj.paid_ease_of_use = je.ease_of_use, cj.paid_support = je.support, cj.paid_documentation = je.documentation, cj.paid_value_for_money = je.value_for_money, cj.paid_num_reviews = je.num_reviews, cj.paid_jed_checked = je.jed_checked, cj.paid_extension_ext_libs = je.extension_ext_libs WHERE je.id = cj.related_free_paid_id AND je.type = "paid"</sql>
-</instruction>   
-    <instruction>
-     <description>Arranging Master fields - which is the master row? Query 1</description> 
-        <sql>ALTER TABLE combine_jed_extensions ADD COLUMN master_row TINYINT DEFAULT 0 AFTER paid_extension_ext_libs;UPDATE combine_jed_extensions SET master_row = 0</sql>
-    </instruction>   
-    <instruction>
-     <description>Arranging Master fields - which is the master row? Query 2</description> 
-        <sql>UPDATE combine_jed_extensions SET master_row = 1 WHERE id = free_id AND paid_id = 0</sql>
-    </instruction>   
-    <instruction>
-     <description>Arranging Master fields - which is the master row? Query 3</description> 
-        <sql>UPDATE combine_jed_extensions SET master_row = 1 WHERE id = paid_id AND free_id = 0</sql>
-    </instruction>   
-    <instruction>
-     <description>Arranging Master fields - which is the master row? Drop if Exists master_row table</description> 
-        <sql>DROP TABLE IF EXISTS master_rows</sql>
-    </instruction>
- <instruction>
-     <description>Arranging Master fields - which is the master row? Create master_row table</description> 
-        <sql>CREATE TABLE master_rows SELECT id,free_id,paid_id FROM combine_jed_extensions WHERE master_row = 0 AND id = free_id AND free_id &lt; paid_id</sql>
-    </instruction>
- <instruction>
-     <description>Arranging Master fields - which is the master row? Adding to master_row table</description> 
-        <sql>INSERT INTO master_rows SELECT id,free_id,paid_id FROM combine_jed_extensions WHERE master_row = 0 AND id = paid_id AND paid_id &lt; free_id</sql>
-    </instruction>
-     <instruction>
-     <description>Arranging Master fields - Setting Master Rows</description> 
-        <sql>UPDATE combine_jed_extensions SET master_row = 1 WHERE id IN (SELECT id FROM master_rows)</sql>
-    </instruction>
-     <instruction>
-     <description>Fixing Imported Data - Category constraint fails without this - extension 2393 has 0 category but this sets it to Miscellaneous</description> 
+     <description>Fixing Imported Data - Category constraint fails without this - extension 2393 has 0 category but this sets it to Miscellaneous</description>
         <sql>UPDATE combine_jed_extensions SET core_catid=9 WHERE core_catid=0</sql>
     </instruction>
 <instruction>
-     <description>Fixing Imported Data - Empty checked_out_time fields</description> 
+     <description>Fixing Imported Data - Empty checked_out_time fields</description>
         <sql>UPDATE combine_jed_extensions SET core_checked_out_time="0000-00-00 00:00:00"  WHERE core_checked_out_time=""</sql>
     </instruction>
     <instruction>
-     <description>Empty current #__jed_extensions</description> 
+     <description>Empty current #__jed_extensions</description>
         <sql>DELETE FROM #__jed_extensions</sql>
     </instruction>
        <instruction>
-     <description>Insert Master Rows into #__jed_extensions</description> 
-        <sql>INSERT INTO #__jed_extensions (   id, joomla_versions, popular, requires_registration, gpl_license_type, jed_internal_note, can_update, video, version, uses_updater, includes, approved, approved_time, second_contact_email, jed_checked, uses_third_party, primary_category_id, logo, published, created_by, modified_by, checked_out_time, created_on, modified_on, state ) SELECT   id, versions, popular, requires_registration, license, jed_note, can_update, video, version, uses_updater, includes, approved, approved_time, second_contact_email, jed_checked, extension_ext_libs, core_catid, logo, core_state, core_created_user_id, core_modified_user_id, core_checked_out_time, core_created_time, core_modified_time, core_state FROM   combine_jed_extensions WHERE master_row = 1</sql>
+     <description>Insert into #__jed_extensions. JED3 modelled "free" and "paid" as two variants of one master extension (see the now-removed free/paid attach and master_row instructions); the current schema has no variant concept, so every JED3 extension row (combine_jed_extensions has one row per original wqyh6_jed_extensions.id) becomes its own #__jed_extensions row instead of being merged into a master row. homepage_link has no exact equivalent and is mapped to developer_url; extension_file and second_contact_email are mapped to internal_download_url and developer_email as the closest available columns. license_link, tags, language_code, includes, community_choice, download_integration_type/url, currency, price*, language_body, backlink, non_gpl_css_js, parent_id, jed_checked, extension_ext_libs, update_url_ok and can_update have no equivalent column in the new schema and are not migrated.</description>
+        <sql>INSERT INTO #__jed_extensions (   id, name, alias, catid, owner, state, approved, approved_time, description, license, requires_registration, type, created, created_by, modified, modified_by, checked_out, checked_out_time, extension_version, joomla_versions, download_url, support_url, demo_url, documentation_url, internal_download_url, uses_updater, update_url, developer_url, developer_email, score_overall, score_functionality, score_ease_of_use, score_support, score_documentation, score_value_for_money, score_count, popular, logo, video, internal_note ) SELECT   id, core_title, core_alias, core_catid, core_created_user_id, core_state, approved, approved_time, core_body, license, requires_registration, type, core_created_time, core_created_user_id, core_modified_time, core_modified_user_id, core_checked_out_user_id, core_checked_out_time, version, versions, download_link, support_link, demo_link, documentation_link, extension_file, uses_updater, update_url, homepage_link, second_contact_email, score, functionality, ease_of_use, support, documentation, value_for_money, num_reviews, popular, logo, video, jed_note FROM   combine_jed_extensions</sql>
     </instruction>
-    </task>
-    <task>
- <heading>Creating Supply Type Variant Data</heading>
-         <instruction>
-             <description>Empty Existing Data</description> 
-        <sql>DELETE FROM #__jed_extension_varied_data</sql>
-    </instruction>
-         <instruction>
-     <description>Insert Free Variant Master Data</description> 
-        <sql>INSERT INTO #__jed_extension_varied_data (   id, extension_id, supply_option_id,  title, alias, intro_text, description, homepage_link, download_link, demo_link, support_link, documentation_link, license_link, translation_link, tags, update_url, update_url_ok, download_integration_type, download_integration_url, logo, is_default_data, ordering, state, checked_out, checked_out_time, created_by )  SELECT   0, id AS 'extension_id', 1 AS 'supply_option_id', core_title, core_alias, '' AS 'intro_text', core_body AS 'description', homepage_link, download_link, demo_link, support_link, documentation_link, license_link, '' AS 'translation_link', tags, update_url, update_url_ok, download_integration_type, download_integration_url, logo, TRUE AS 'is_default_data', 0 AS 'ordering', core_state AS 'state', 0 AS 'checked_out', core_checked_out_time AS 'checked_out_time', core_created_user_id AS 'created_by' FROM   combine_jed_extensions WHERE type = 'free'   AND master_row = 1</sql>
-    </instruction>
-         <instruction>
-     <description>Insert Paid Variant Master Data</description> 
-        <sql>INSERT INTO #__jed_extension_varied_data (  id, extension_id, supply_option_id, title, alias, intro_text, description, homepage_link, download_link, demo_link, support_link, documentation_link, license_link, translation_link, tags, update_url, update_url_ok, download_integration_type, download_integration_url, logo, is_default_data, ordering, state, checked_out, checked_out_time, created_by ) SELECT   0, id AS 'extension_id', 2 AS 'supply_option_id', core_title, core_alias, '' AS 'intro_text', core_body AS 'description', homepage_link, download_link, demo_link, support_link, documentation_link, license_link, '' AS 'translation_link', tags, update_url, update_url_ok, download_integration_type, download_integration_url, logo, TRUE AS 'is_default_data', 0 AS 'ordering', core_state AS 'state', 0 AS 'checked_out', core_checked_out_time AS 'checked_out_time', core_created_user_id AS 'created_by' FROM combine_jed_extensions WHERE type = 'paid' AND master_row = 1</sql>
-    </instruction>
-             <instruction>
-     <description>Insert Free Variant Child Data</description> 
-        <sql> INSERT INTO #__jed_extension_varied_data (   id, extension_id, supply_option_id, title, alias, intro_text, description, homepage_link, download_link, demo_link, support_link, documentation_link, license_link, translation_link, tags, update_url, update_url_ok, download_integration_type, download_integration_url, logo, is_default_data, ordering, state, checked_out, checked_out_time, created_by ) SELECT   0, id AS 'extension_id', 1 AS 'supply_option_id',  core_title, core_alias, '' AS 'intro_text', core_body AS 'description', free_homepage_link, free_download_link, free_demo_link, free_support_link, free_documentation_link, free_license_link, '' AS 'translation_link', free_tags, free_update_url, free_update_url_ok, free_download_integration_type, free_download_integration_url, free_logo, TRUE AS 'is_default_data', 0, core_state AS 'state', 0 AS 'checked_out', core_checked_out_time AS 'checked_out_time', core_created_user_id AS 'created_by' FROM combine_jed_extensions WHERE type = 'paid'   AND master_row = 1   AND free_id &lt;&gt; 0</sql>
-    </instruction>
-         <instruction>
-     <description>Insert Paid Variant Child Data</description> 
-        <sql>INSERT INTO #__jed_extension_varied_data (  id,extension_id, supply_option_id, title, alias, intro_text, description, homepage_link, download_link, demo_link, support_link, documentation_link, license_link, translation_link,   tags, update_url, update_url_ok, download_integration_type, download_integration_url, logo, is_default_data, ordering, state, checked_out, checked_out_time, created_by ) SELECT   0, id AS 'extension_id', 2 AS 'supply_option_id', core_title, core_alias, '' AS 'intro_text', core_body AS 'description',   paid_homepage_link, paid_download_link, paid_demo_link, paid_support_link, paid_documentation_link, paid_license_link, '' AS 'translation_link',   paid_tags, paid_update_url, paid_update_url_ok, paid_download_integration_type, paid_download_integration_url, paid_logo, TRUE AS 'is_default_data',   0, core_state AS 'state', 0 AS 'checked_out', core_checked_out_time AS 'checked_out_time', core_created_user_id AS 'created_by' FROM  combine_jed_extensions WHERE type='free' AND master_row=1 AND paid_id &lt;&gt; 0</sql>
-    </instruction>
-    </task>
-    <task>
- <heading>Sorting Extensions Score Data</heading>
- <instruction>
-     <description>Empty Existing Data</description> 
-        <sql>DELETE FROM #__jed_extension_scores</sql>
-    </instruction>
-        <instruction>
-     <description>Insert Scores for Free Extensions</description> 
-        <sql>INSERT INTO #__jed_extension_scores (   id, extension_id, supply_option_id, functionality_score, ease_of_use_score, support_score, value_for_money_score, documentation_score, number_of_reviews) SELECT
-  0, id, 1, free_functionality, free_ease_of_use, free_support, free_value_for_money, free_documentation, free_num_reviews FROM   combine_jed_extensions WHERE master_row = 1   AND free_id &lt;&gt; 0</sql>
-    </instruction>
-        <instruction>
-            <description>Insert Scores for Paid Extensions</description>
-        <sql>INSERT INTO #__jed_extension_scores (   id, extension_id, supply_option_id, functionality_score, ease_of_use_score, support_score, value_for_money_score, documentation_score, number_of_reviews ) SELECT   0, id, 2, paid_functionality, paid_ease_of_use, paid_support, paid_value_for_money, paid_documentation, paid_num_reviews FROM   combine_jed_extensions WHERE master_row = 1   AND paid_id &lt;&gt; 0</sql>
-        </instruction>
     </task>
     <task>
  <heading>Sorting Extensions Images</heading>
         <instruction>
-     <description>Empty Existing Data</description> 
-        <sql>DELETE FROM #__jed_extension_images</sql>
+     <description>Empty Existing Data</description>
+        <sql>DELETE FROM #__jed_extensions_images</sql>
     </instruction>
          <instruction>
-     <description>Insert Images for Free Extensions</description> 
-        <sql>INSERT INTO #__jed_extension_images (   id, extension_id, supply_option_id, filename, created_by ) SELECT   0, cj.id, 1, jei.filename, created_by FROM   combine_jed_extensions cj, wqyh6_jed_extensions_images jei WHERE cj.master_row = 1   AND cj.free_id &lt;&gt; 0   AND jei.extension_id = cj.free_id</sql>
+     <description>Insert Images. Each JED3 free/paid variant is now its own #__jed_extensions row (see the "Porting Extensions Data" task), so images are matched directly on the original extension id instead of going through a free_id/paid_id lookup.</description>
+        <sql>INSERT INTO #__jed_extensions_images (   id, extension_id, filename, created_by ) SELECT   0, cj.id, jei.filename, jei.created_by FROM   combine_jed_extensions cj, wqyh6_jed_extensions_images jei WHERE jei.extension_id = cj.id</sql>
     </instruction>
-        <instruction>
-            <description>Insert Images for Paid Extensions</description>
-        <sql>INSERT INTO #__jed_extension_images (id,extension_id,supply_option_id, filename,created_by)    SELECT 0,cj.id,2 ,jei.filename,created_by FROM combine_jed_extensions cj, wqyh6_jed_extensions_images jei    WHERE cj.master_row=1 AND cj.paid_id &lt;&gt; 0 AND jei.extension_id = cj.paid_id  </sql>
-        </instruction>
     </task>
     <task>
  <heading>Porting Review Data</heading>
@@ -325,17 +229,17 @@ paid_logo VARCHAR(255) DEFAULT '',
      <description>Empty Existing Data</description> 
         <sql>DELETE FROM #__jed_reviews</sql>
     </instruction>
-        <instruction><description>Copying Free reviews to #__jed_reviews</description>
-            <sql>INSERT INTO #__jed_reviews (   id, extension_id, supply_option_id, title, alias, body, functionality, functionality_comment, ease_of_use, ease_of_use_comment,   support, support_comment, documentation, documentation_comment, value_for_money, value_for_money_comment, overall_score,   used_for, version,flagged, ip_address, published, created_on, created_by, ordering) SELECT   0, cj.id, 1,  cr.core_title, cr.core_alias, cr.core_body,   cr.functionality, '', cr.ease_of_use, '',   cr.support, '', cr.documentation, '', cr.value_for_money, '', ( cr.functionality+ cr.ease_of_use + cr.support + cr.documentation + cr.value_for_money) AS 'overall_score',   used_for, cr.version, flagged,ip_address, cr.core_state, cr.core_created_time, cr.core_created_user_id, 0 FROM   combine_jed_reviews cr, combine_jed_extensions cj      WHERE cj.master_row=1 AND cj.free_id &lt;&gt; 0 AND cr.extension_id = cj.free_id ORDER BY cj.id, cr.core_created_time ASC</sql>
+        <instruction><description>Copying reviews to #__jed_reviews. Each JED3 free/paid variant is now its own #__jed_extensions row (see the "Porting Extensions Data" task), so reviews are matched directly on the original extension id instead of being split into a free pass and a paid pass; #__jed_reviews also no longer has a supply_option_id column.</description>
+            <sql>INSERT INTO #__jed_reviews (   id, extension_id, title, alias, body, functionality, functionality_comment, ease_of_use, ease_of_use_comment,   support, support_comment, documentation, documentation_comment, value_for_money, value_for_money_comment, overall_score,   used_for, version,flagged, ip_address, state, created_on, created_by, ordering) SELECT   0, cj.id,  cr.core_title, cr.core_alias, cr.core_body,   cr.functionality, '', cr.ease_of_use, '',   cr.support, '', cr.documentation, '', cr.value_for_money, '', ( cr.functionality+ cr.ease_of_use + cr.support + cr.documentation + cr.value_for_money) AS 'overall_score',   used_for, cr.version, flagged,ip_address, cr.core_state, cr.core_created_time, cr.core_created_user_id, 0 FROM   combine_jed_reviews cr, combine_jed_extensions cj      WHERE cr.extension_id = cj.id ORDER BY cj.id, cr.core_created_time ASC</sql>
         </instruction>
-            <instruction><description>Copying Paid reviews to #__jed_reviews</description>
-            <sql> INSERT INTO #__jed_reviews (   id, extension_id, supply_option_id, title, alias, body, functionality, functionality_comment, ease_of_use, ease_of_use_comment,   support, support_comment, documentation, documentation_comment, value_for_money, value_for_money_comment, overall_score,    used_for, version,flagged, ip_address, published, created_on, created_by, ordering) SELECT   0, cj.id, 2,  cr.core_title, cr.core_alias, cr.core_body,   cr.functionality, '', cr.ease_of_use, '',   cr.support, '', cr.documentation, '', cr.value_for_money, '', ( cr.functionality+ cr.ease_of_use + cr.support + cr.documentation + cr.value_for_money) AS 'overall_score',   used_for, cr.version, flagged,ip_address, cr.core_state, cr.core_created_time, cr.core_created_user_id, 0 FROM  combine_jed_reviews cr, combine_jed_extensions cj      WHERE cj.master_row=1 AND cj.paid_id &lt;&gt; 0 AND cr.extension_id = cj.paid_id ORDER BY cj.id, cr.core_created_time ASC</sql>
+        <instruction><description>Copying the old per-extension aggregate scores (wqyh6_jed_extensions.functionality/ease_of_use/support/documentation/value_for_money/score) into #__jed_reviews as a synthetic review row, since #__jed_extension_scores no longer exists and the current schema has no separate scores table. Only extensions that actually had reviews in JED3 (num_reviews &gt; 0) get one of these rows.</description>
+            <sql>INSERT INTO #__jed_reviews (   id, extension_id, title, alias, body, functionality, ease_of_use, support, documentation, value_for_money, overall_score, state, created_on, created_by, ordering ) SELECT   0, id, 'Migrated JED3 extension score', '', '', functionality, ease_of_use, support, documentation, value_for_money, score, core_state, core_created_time, core_created_user_id, 0 FROM   combine_jed_extensions WHERE num_reviews &gt; 0</sql>
         </instruction>
         <instruction>
         <description>Extracting Comments from UCM_Body</description>
         <sql>DROP TABLE IF EXISTS combine_jed_review_texts;CREATE TABLE combine_jed_review_texts (
-  id INT UNSIGNED NOT NULL AUTO_INCREMENT, extension_id INT UNSIGNED DEFAULT '0', supply_option_id INT UNSIGNED DEFAULT '0', body MEDIUMTEXT COLLATE utf8mb4_unicode_ci, functionality_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, ease_of_use_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, support_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, documentation_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, value_for_money_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, PRIMARY KEY (id)
-) ENGINE = INNODB DEFAULT CHARSET = utf8mb4;INSERT INTO combine_jed_review_texts SELECT id,extension_id,supply_option_id,body,'','','','','' FROM #__jed_reviews WHERE body LIKE "%{%";UPDATE combine_jed_review_texts SET functionality_comment = REGEXP_SUBSTR(REPLACE(REPLACE(body, '\r', ''), '\n', ''),"[{]functionality[}].*[{]\/functionality[}]");
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT, extension_id INT UNSIGNED DEFAULT '0', body MEDIUMTEXT COLLATE utf8mb4_unicode_ci, functionality_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, ease_of_use_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, support_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, documentation_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, value_for_money_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, PRIMARY KEY (id)
+) ENGINE = INNODB DEFAULT CHARSET = utf8mb4;INSERT INTO combine_jed_review_texts SELECT id,extension_id,body,'','','','','' FROM #__jed_reviews WHERE body LIKE "%{%";UPDATE combine_jed_review_texts SET functionality_comment = REGEXP_SUBSTR(REPLACE(REPLACE(body, '\r', ''), '\n', ''),"[{]functionality[}].*[{]\/functionality[}]");
      UPDATE combine_jed_review_texts SET ease_of_use_comment = REGEXP_SUBSTR(REPLACE(REPLACE(body, '\r', ''), '\n', ''),"[{]ease_of_use[}].*[{]\/ease_of_use[}]");
       UPDATE combine_jed_review_texts SET support_comment = REGEXP_SUBSTR(REPLACE(REPLACE(body, '\r', ''), '\n', ''),"[{]support[}].*[{]\/support[}]");
       UPDATE combine_jed_review_texts SET documentation_comment = REGEXP_SUBSTR(REPLACE(REPLACE(body, '\r', ''), '\n', ''),"[{]documentation[}].*[{]\/documentation[}]");
@@ -559,8 +463,10 @@ UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValu
 
     <task>
         <heading>Copy Developers</heading>
-        <instruction><description>Create JED_Developers table from JED 3 data</description>
-            <sql>DELETE FROM #__jed_developers;insert into #__jed_developers select * from wqyh6_jed_users</sql>
+        <instruction><description>Copy JED 3 developer data into the "developer_name" and "suspicious" user custom fields</description>
+            <sql>DELETE fv FROM #__fields_values fv INNER JOIN #__fields f ON f.id = fv.field_id WHERE f.context = 'com_users.user' AND f.name IN ('developer_name','suspicious');
+INSERT INTO #__fields_values (field_id, item_id, value) SELECT (SELECT id FROM #__fields WHERE context = 'com_users.user' AND name = 'developer_name'), user_id, developer_name FROM wqyh6_jed_users WHERE developer_name IS NOT NULL AND developer_name != '';
+INSERT INTO #__fields_values (field_id, item_id, value) SELECT (SELECT id FROM #__fields WHERE context = 'com_users.user' AND name = 'suspicious'), user_id, '1' FROM wqyh6_jed_users WHERE suspicious = 1</sql>
         </instruction>
     </task>
 
