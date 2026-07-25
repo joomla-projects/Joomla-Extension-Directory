@@ -16,7 +16,7 @@
   },
   "require": {
     "php": "^8.3",
-    "michelf/php-markdown": "^2.0",
+    "league/commonmark": "^2.8",
     "joomla/github": "^4.0",
     "ext-simplexml": "*",
     "ext-dom": "*",

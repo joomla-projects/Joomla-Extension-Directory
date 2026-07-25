@@ -37,7 +37,6 @@ use Joomla\Component\Users\Administrator\Table\NoteTable;
 use Joomla\Database\ParameterType;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
-use Michelf\Markdown;
 use RuntimeException;
 use stdClass;
 
