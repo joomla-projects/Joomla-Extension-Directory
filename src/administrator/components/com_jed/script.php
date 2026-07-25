@@ -11,9 +11,12 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Installer\InstallerAdapter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
+use Joomla\Component\Fields\Administrator\Table\FieldTable;
+use Joomla\Database\DatabaseInterface;
 
 // TODO: Add TAG installation for Extension Tag field
 /**
@@ -69,9 +72,111 @@ class Com_JedInstallerScript
         string $type,
         InstallerAdapter $parent
     ): bool {
+        $this->addUserCustomFields();
+
         echo Text::_('COM_JED_INSTALLERSCRIPT_POSTFLIGHT');
 
         return true;
+    }
+
+    /**
+     * Adds the "developer_name" and "suspicious" custom fields to the user (com_users.user)
+     * context, if they don't already exist.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    private function addUserCustomFields(): void
+    {
+        $this->addCustomFieldIfMissing([
+            'context'       => 'com_users.user',
+            'title'         => 'Developer Name',
+            'name'          => 'developer_name',
+            'label'         => 'Developer Name',
+            'type'          => 'text',
+            'default_value' => '',
+            'state'         => 1,
+            'access'        => 1,
+            'required'      => 0,
+            'language'      => '*',
+            'params'        => [
+                // Editable in both site and administrator.
+                'show_on' => '',
+            ],
+        ]);
+
+        $this->addCustomFieldIfMissing([
+            'context'       => 'com_users.user',
+            'title'         => 'Suspicious',
+            'name'          => 'suspicious',
+            'label'         => 'Suspicious',
+            'type'          => 'checkboxes',
+            'default_value' => '',
+            'state'         => 1,
+            'access'        => 1,
+            'required'      => 0,
+            'language'      => '*',
+            'params'        => [
+                // Editable in the administrator only, i.e. not editable on the frontend.
+                'show_on' => '2',
+            ],
+            'fieldparams'   => [
+                'options' => [
+                    ['name' => 'JYES', 'value' => '1'],
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Creates the given custom field unless a field with the same context and name already exists.
+     *
+     * @param array $data The field data (see #__fields columns)
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    private function addCustomFieldIfMissing(array $data): void
+    {
+        $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__fields'))
+            ->where($db->quoteName('context') . ' = :context')
+            ->where($db->quoteName('name') . ' = :name')
+            ->bind(':context', $data['context'])
+            ->bind(':name', $data['name']);
+
+        if ($db->setQuery($query)->loadResult()) {
+            return;
+        }
+
+        $table = new FieldTable($db);
+
+        if (!$table->bind($data) || !$table->check()) {
+            Log::add(
+                sprintf('Could not create the "%s" custom field: %s', $data['name'], $table->getError()),
+                Log::WARNING,
+                'jerror'
+            );
+
+            return;
+        }
+
+        // FieldTable::check() runs the name through a URL-safe filter, which turns underscores
+        // into dashes. Restore the exact name we were asked to create.
+        $table->name = $data['name'];
+
+        if (!$table->store()) {
+            Log::add(
+                sprintf('Could not create the "%s" custom field: %s', $data['name'], $table->getError()),
+                Log::WARNING,
+                'jerror'
+            );
+        }
     }
 
     /**

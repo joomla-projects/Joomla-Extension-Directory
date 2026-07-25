@@ -235,18 +235,9 @@ CREATE TABLE IF NOT EXISTS `#__jed_favorites`
 
 DROP TABLE IF EXISTS `#__jed_joomla_versions`;
 
-CREATE TABLE IF NOT EXISTS `#__jed_developers`
+
 CREATE TABLE IF NOT EXISTS `#__jed_joomla_versions`
 (
-    `id`             int unsigned NOT NULL AUTO_INCREMENT,
-    `user_id`        int          DEFAULT NULL,
-    `developer_name` varchar(150) DEFAULT NULL,
-    `suspicious`     tinyint(1)   DEFAULT '0',
-	PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
-
-
 	`id`         int unsigned NOT NULL AUTO_INCREMENT,
 	`label`      varchar(255) NOT NULL,
 	`long_label` varchar(50)  NOT NULL,

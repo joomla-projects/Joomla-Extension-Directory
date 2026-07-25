@@ -426,11 +426,16 @@ final class Jed extends Adapter implements SubscriberInterface
             ->select('a.logo, a.overview_image, a.popular')
             ->select('c.title AS category, c.published AS cat_state, c.access AS cat_access')
             ->select('u.name AS author')
-            ->select('d.developer_name')
+            ->select('d.value AS developer_name')
             ->from('#__jed_extensions AS a')
             ->join('LEFT', '#__categories AS c ON c.id = a.catid')
             ->join('LEFT', '#__users AS u ON u.id = a.created_by')
-            ->join('LEFT', '#__jed_developers AS d ON d.user_id = a.created_by');
+            ->join(
+                'LEFT',
+                '#__fields AS f ON f.context = ' . $db->quote('com_users.user')
+                    . ' AND f.name = ' . $db->quote('developer_name')
+            )
+            ->join('LEFT', '#__fields_values AS d ON d.field_id = f.id AND d.item_id = a.created_by');
 
         return $query;
     }

@@ -126,19 +126,29 @@ trait ExtensionUtilities
     }
 
     /**
-     * Get Developer Name from jed_developers table
+     * Get the Developer Name from the user's "developer_name" custom field
      *
      * @since 4.0.0
      */
     public function getDeveloperName(int $uid): string
     {
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true)
-            ->select('a.developer_name')
-            ->from($db->quoteName('#__jed_developers', 'a'))
-            ->where('a.user_id = ' . $uid);
+        $db      = $this->getDatabase();
+        $context = 'com_users.user';
+        $name    = 'developer_name';
+        $itemId  = (string) $uid;
 
-        return $db->setQuery($query)->loadResult();
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('v.value'))
+            ->from($db->quoteName('#__fields', 'f'))
+            ->join('INNER', $db->quoteName('#__fields_values', 'v') . ' ON ' . $db->quoteName('v.field_id') . ' = ' . $db->quoteName('f.id'))
+            ->where($db->quoteName('f.context') . ' = :context')
+            ->where($db->quoteName('f.name') . ' = :name')
+            ->where($db->quoteName('v.item_id') . ' = :uid')
+            ->bind(':context', $context)
+            ->bind(':name', $name)
+            ->bind(':uid', $itemId, ParameterType::STRING);
+
+        return (string) $db->setQuery($query)->loadResult();
     }
 
     /**
