@@ -66,7 +66,9 @@ if (JedHelper::isLoggedIn()) {
                 </h2>
                 <div class="d-flex flex-row gap-3">
                     <div class="jed-extension-header__developer">
-                        By <a href="#"><?php echo $this->item->created_by_name ?></a>
+                        By <a href="<?php echo Route::_('index.php?option=com_jed&view=profile&id=' . (int) $this->item->owner); ?>">
+                            <?php echo $this->item->created_by_name ?>
+                        </a>
                     </div>
                     <div class="stars-wrapper">
                         <?php echo JedscoreHelper::getStars($this->item->score_overall); ?>

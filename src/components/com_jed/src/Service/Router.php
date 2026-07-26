@@ -97,6 +97,10 @@ class Router extends RouterView
         $dashboard = new RouterViewConfiguration('dashboard');
         $this->registerView($dashboard);
 
+        $profile = new RouterViewConfiguration('profile');
+        $profile->setKey('id');
+        $this->registerView($profile);
+
         // Reviews
         $reviews = new RouterViewConfiguration('reviews');
         $this->registerView($reviews);
@@ -291,6 +295,32 @@ class Router extends RouterView
 
 
     public function getReviewSegment($id, $query)
+    {
+        return [$id];
+    }
+
+    /**
+     * @param $segment
+     * @param $query
+     *
+     * @return int
+     *
+     * @since 4.1.0
+     */
+    public function getProfileId($segment, $query): int
+    {
+        return (int) $segment;
+    }
+
+    /**
+     * @param $id
+     * @param $query
+     *
+     * @return array
+     *
+     * @since 4.1.0
+     */
+    public function getProfileSegment($id, $query): array
     {
         return [$id];
     }
