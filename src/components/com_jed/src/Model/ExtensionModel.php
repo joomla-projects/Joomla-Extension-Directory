@@ -21,6 +21,7 @@ use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\TagsHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\CMS\Table\Table;
@@ -132,6 +133,8 @@ class ExtensionModel extends ItemModel
 
         $this->item->developer_email   = JedHelper::getUserById($this->item->created_by)->email;
         //$this->item->developer_company = $this->getDeveloperName($this->item->created_by);
+
+        $this->item->tags = (new TagsHelper())->getItemTags('com_jed.extension', $this->item->id);
 
         return $this->item;
     }

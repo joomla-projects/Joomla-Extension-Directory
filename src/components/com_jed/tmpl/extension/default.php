@@ -110,6 +110,10 @@ if (JedHelper::isLoggedIn()) {
                     <dd class="col-6"><?php echo JedtrophyHelper::getTrophyIncludesStringFull($this->item->extension_types) ?></dd>
                     <dt class="col-6">Compatibility</dt>
                     <dd class="col-6"><?php echo JedtrophyHelper::getTrophyVersionsStringFull($this->item->joomla_versions) ?></dd>
+                    <?php if (!empty($this->item->tags)) : ?>
+                        <dt class="col-6"><?php echo Text::_('JTAG'); ?></dt>
+                        <dd class="col-6"><?php echo LayoutHelper::render('joomla.content.tags', $this->item->tags); ?></dd>
+                    <?php endif; ?>
                 </dl>
 
                 <dl class="row">

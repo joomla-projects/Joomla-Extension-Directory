@@ -22,6 +22,7 @@ use Jed\Component\Tickets\Administrator\Traits\TicketHandlingTrait;
 use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
+use Joomla\CMS\Helper\TagsHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\FormModel;
 use Joomla\CMS\Table\Table;
@@ -364,6 +365,11 @@ class ExtensionformModel extends FormModel
             $db->setQuery($maintainerQuery)->loadColumn() ?: []
         );
 
+        // Pre-fill the "tags" field with the live extension's current Joomla tags - tags live on
+        // #__jed_extensions, not the history table, see ExtensionUtilities::storeTags().
+        $this->item->tags = new TagsHelper();
+        $this->item->tags->getTagIds($extensionId, 'com_jed.extension');
+
         return $this->item;
     }
 
@@ -565,6 +571,7 @@ class ExtensionformModel extends FormModel
 
         $this->storeCategories($extensionId, $categories);
         $this->storeMaintainers($extensionId, (array) ($data['maintainer'] ?? []));
+        $this->storeTags($extensionId, (array) ($data['tags'] ?? []));
         $this->deleteMarkedUploads($extensionId, (array) ($rawPost['deleteImages'] ?? []), '#__jed_extensions_images');
         $this->deleteMarkedUploads($extensionId, (array) ($rawPost['deleteFiles'] ?? []), '#__jed_extensions_files');
         $this->storeUploadedImages($extensionId, (array) ($data['images'] ?? []));

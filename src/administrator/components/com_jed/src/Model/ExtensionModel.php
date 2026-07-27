@@ -27,6 +27,7 @@ use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Form\FormFactoryInterface;
+use Joomla\CMS\Helper\TagsHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\AdminModel;
@@ -142,6 +143,11 @@ class ExtensionModel extends AdminModel
             static fn ($userId) => ['user_id' => (int) $userId],
             $db->setQuery($maintainerQuery)->loadColumn() ?: []
         );
+
+        // Pre-fill the "tags" field with the live extension's current Joomla tags - tags live on
+        // #__jed_extensions, not the history table, see ExtensionUtilities::storeTags().
+        $item->tags = new TagsHelper();
+        $item->tags->getTagIds($mapId, 'com_jed.extension');
 
         return $item;
     }
@@ -614,6 +620,7 @@ class ExtensionModel extends AdminModel
 
         $this->storeCategories($extensionId, $categories);
         $this->storeMaintainers($extensionId, (array) ($data['maintainer'] ?? []));
+        $this->storeTags($extensionId, (array) ($data['tags'] ?? []));
         $this->deleteMarkedUploads($extensionId, (array) ($rawPost['deleteImages'] ?? []), '#__jed_extensions_images');
         $this->deleteMarkedUploads($extensionId, (array) ($rawPost['deleteFiles'] ?? []), '#__jed_extensions_files');
         $this->storeUploadedImages($extensionId, (array) ($data['images'] ?? []));

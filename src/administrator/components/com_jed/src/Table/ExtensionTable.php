@@ -17,6 +17,8 @@ namespace Jed\Component\Jed\Administrator\Table;
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\Tag\TaggableTableInterface;
+use Joomla\CMS\Tag\TaggableTableTrait;
 use Joomla\Database\DatabaseDriver;
 
 /**
@@ -24,8 +26,10 @@ use Joomla\Database\DatabaseDriver;
  *
  * @since 4.0.0
  */
-class ExtensionTable extends Table
+class ExtensionTable extends Table implements TaggableTableInterface
 {
+    use TaggableTableTrait;
+
     /**
      * Constructor
      *

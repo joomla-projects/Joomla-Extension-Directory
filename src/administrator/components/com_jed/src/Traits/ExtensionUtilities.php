@@ -261,6 +261,38 @@ trait ExtensionUtilities
     }
 
     /**
+     * Apply the Joomla tags picked on the extension form to the live #__jed_extensions row.
+     *
+     * Like categories/maintainers, tags are treated as live metadata rather than part of the
+     * pending review: they're written straight to the live extension record's Joomla tag mapping
+     * on every save, regardless of the history/approval workflow that gates the rest of the
+     * extension's content. The actual tag mapping (#__contentitem_tag_map) is handled by core's
+     * "Taggable" behaviour plugin, triggered by ExtensionTable::store() below - see
+     * ExtensionTable's TaggableTableInterface and the "com_jed.extension" row script.php ensures
+     * exists in #__content_types.
+     *
+     * @param int   $extensionId The extension PK in #__jed_extensions.
+     * @param array $tags        The tag ids (and/or "#new#..." labels for new tags) from the form.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     */
+    private function storeTags(int $extensionId, array $tags): void
+    {
+        $table = Factory::getApplication()->bootComponent('com_jed')
+            ->getMVCFactory()->createTable('Extension', 'Administrator');
+        $table->setUseExceptions(true);
+
+        if (!$table->load($extensionId)) {
+            return;
+        }
+
+        $table->newTags = $tags;
+        $table->store();
+    }
+
+    /**
      * Delete extension images/files that were marked for removal on the edit form.
      *
      * @param int    $extensionId The extension ID the rows must belong to

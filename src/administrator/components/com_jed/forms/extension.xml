@@ -13,6 +13,7 @@
         <field name="categories" extension="com_jed" type="category" published="1" multiple="true"
                label="COM_JED_EXTENSION_CATEGORIES_LABEL"
                hint="COM_JED_EXTENSION_CATEGORIES_LABEL"/>
+        <field name="tags" type="tag" label="JTAG" multiple="true"/>
         <field name="owner" type="user" label="COM_JED_EXTENSION_OWNER_LABEL"
                hint="COM_JED_EXTENSION_OWNER_LABEL"/>
         <field name="state" type="list" label="JSTATUS" class="inputbox" size="1" default="0">

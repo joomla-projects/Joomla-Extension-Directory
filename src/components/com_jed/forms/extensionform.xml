@@ -11,6 +11,7 @@
         <field name="categories" extension="com_jed" type="category" published="1" multiple="true"
                label="COM_JED_EXTENSION_CATEGORIES_LABEL"
                hint="COM_JED_EXTENSION_CATEGORIES_LABEL"/>
+        <field name="tags" type="tag" label="JTAG" multiple="true"/>
         <field name="owner" type="hidden" readonly="true" filter="unset"/>
     </fieldset>
 

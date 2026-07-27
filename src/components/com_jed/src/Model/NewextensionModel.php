@@ -187,6 +187,7 @@ class NewextensionModel extends FormModel
 
         $this->storeCategories($extensionId, $categories);
         $this->storeMaintainers($extensionId, (array) ($data['maintainer'] ?? []));
+        $this->storeTags($extensionId, (array) ($data['tags'] ?? []));
         $this->deleteMarkedUploads($extensionId, (array) ($rawPost['deleteImages'] ?? []), '#__jed_extensions_images');
         $this->deleteMarkedUploads($extensionId, (array) ($rawPost['deleteFiles'] ?? []), '#__jed_extensions_files');
         $this->storeUploadedImages($extensionId, (array) ($data['images'] ?? []));
