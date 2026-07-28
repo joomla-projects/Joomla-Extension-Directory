@@ -3,9 +3,9 @@ Joomla! Extensions Directory
 
 Build Status
 ---------------------
-| Drone-CI                                                                                                                                                                  |  PHP           |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|  ------------- |
-| [![Build Status](http://ci.joomla.org/api/badges/joomla-projects/Joomla-Extension-Directory/status.svg)](http://ci.joomla.org/joomla-projects/Joomla-Extension-Directory) | [![PHP](https://img.shields.io/badge/PHP-V8.1.0-green)](https://www.php.net/) |
+| GitHub Actions                                                                                                                                                                                    |  PHP           |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|  ------------- |
+| [![CI](https://github.com/joomla-projects/Joomla-Extension-Directory/actions/workflows/ci.yml/badge.svg)](https://github.com/joomla-projects/Joomla-Extension-Directory/actions/workflows/ci.yml) | [![PHP](https://img.shields.io/badge/PHP-V8.1.0-green)](https://www.php.net/) |
 
 The component which powers the Joomla Extensions Directory (extensions.joomla.org).
 
