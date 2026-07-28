@@ -15,19 +15,8 @@ Now moved to Joomla 5 development - Installation on Joomla 4 will FAIL.
 
 Build Instructions
 ------------------
-**On Windows (making sure you have php and composer installed)**d:d
-
-In a command window run
-* Clean-Windows.bat
-* Build-Windows-a.bat
-* Build-Windows-b.bat
-* Build-Windows-c.bat
-
-**On Linux (making sure you have php and composer installed)**
-
-In shell run
-* sh clean-linux.sh
-* sh build-linux.sh
+Making sure you have PHP and Composer installed, you will need to apply the following patch to robo:
+https://github.com/consolidation/robo/pull/1185 . Subsequently, run `./vendor/bin/robo build`
 
 Look in the dist folder for pkg-jed-4.0.0.zip
 
