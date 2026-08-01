@@ -67,7 +67,7 @@ class AbandonedreportModel extends FormModel
         // Get the form.
         $form = $this->loadForm(
             'com_vel.abandonedreport',
-            'abandonedreportform',
+            'abandonedreport',
             [
                 'control'   => $formname,
                 'load_data' => $loadData,

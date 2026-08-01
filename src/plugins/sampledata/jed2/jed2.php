@@ -113,9 +113,9 @@ class PlgSampledataJed2 extends CMSPlugin
 
         // --- Home -----------------------------------------------------------------------
         $this->createMenuItem($db, [
-            'title'        => 'Home',
-            'alias'        => 'home2',
-            'path'         => 'home2',
+            'title'        => 'Show Categories',
+            'alias'        => 'show-categories',
+            'path'         => 'show-categories',
             'link'         => 'index.php?option=com_jed&view=categories&id=0',
             'component_id' => $componentIds['com_jed'],
         ], 1, $messages);

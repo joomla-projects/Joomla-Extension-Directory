@@ -37,7 +37,7 @@ class JedscoreHelper
         if (!is_numeric($score)) {
             return '';
         }
-
+$score = $score/20;
         $whole = floor($score);
         $half  = $score > $whole ? 1 : 0;
         $empty = 5 - $whole - $half;
