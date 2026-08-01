@@ -1,10 +1,6 @@
 DELETE FROM `#__jed_tickets`;
 INSERT INTO `#__jed_tickets` (`id`, `ticket_origin`, `ticket_category_type`, `ticket_subject`, `ticket_text`, `internal_notes`, `uploaded_files_preview`, `uploaded_files_location`, `allocated_group`, `allocated_to`, `linked_item_type`, `linked_item_id`, `ticket_status`, `parent_id`, `state`, `ordering`, `created_by`, `created_on`, `modified_by`, `modified_on`, `checked_out`, `checked_out_time`) VALUES
-	(1, '0', 13, 'A new VEL Abandonware Report', '<p>Please see linked report</p>', '', _binary '', '', 6, 0, 4, 1, '4', -1, 0, 0, 16, '2023-04-22 11:08:24', 15, '2023-04-22 11:28:12', 0, '0000-00-00 00:00:00'),
-	(2, '0', 11, 'A new Vulnerable Item Report', '<p>Please see linked report</p>', '', _binary '', '', 6, 0, 5, 1, '1', -1, 0, 0, 16, '2023-04-22 11:16:01', 15, '2023-04-22 11:29:41', 0, '0000-00-00 00:00:00'),
-	(3, '0', 12, 'A new VEL Developer Update', '<p>Please see linked report</p>', '', _binary '', '', 6, 0, 6, 1, '2', -1, 0, 0, 16, '2023-04-22 11:17:22', 15, '2023-04-22 11:30:20', 0, '0000-00-00 00:00:00'),
-	(4, '0', 3, 'A new Review', '<p>Please see linked review</p>', '', _binary '', '', 4, 0, 2, 4959, '0', -1, 0, 0, 16, '2023-04-22 15:47:55', 16, '2023-04-22 15:47:55', 0, '0000-00-00 00:00:00'),
-	(5, '0', 11, 'A new Vulnerable Item Report', '<p>Please see linked report</p>', '', _binary '', '', 6, 0, 5, 2, '1', -1, 0, 0, 16, '2023-12-31 15:39:02', 5, '2023-12-31 15:40:46', 0, '0000-00-00 00:00:00');
+	(4, '0', 3, 'A new Review', '<p>Please see linked review</p>', '', _binary '', '', 4, 0, 2, 4959, '0', -1, 0, 0, 16, '2023-04-22 15:47:55', 16, '2023-04-22 15:47:55', 0, '0000-00-00 00:00:00');
 
 DELETE FROM `#__jed_reviews`;
 INSERT INTO `#__jed_reviews` (`id`, `extension_id`, `title`, `alias`, `body`, `functionality`, `functionality_comment`, `ease_of_use`, `ease_of_use_comment`, `support`, `support_comment`, `documentation`, `documentation_comment`, `value_for_money`, `value_for_money_comment`, `overall_score`, `used_for`, `version`, `flagged`, `ip_address`, `state`, `created_on`, `created_by`, `ordering`, `checked_out`, `checked_out_time`) VALUES
