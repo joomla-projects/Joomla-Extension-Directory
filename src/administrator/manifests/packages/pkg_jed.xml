@@ -19,6 +19,7 @@
 		<file type="module" id="mod_jed_opentickets" client="administrator">mod_jed_opentickets.zip</file>
 		<file type="plugin" id="jed_sampledata" group="sampledata">plg_sampledata_jed.zip</file>
 		<file type="plugin" id="jed_sampledata2" group="sampledata">plg_sampledata_jed2.zip</file>
+		<file type="plugin" id="jed_migrate" group="sampledata">plg_sampledata_jed_migrate.zip</file>
 		<file type="plugin" id="jed_finder" group="finder">plg_finder_jed.zip</file>
 		<file type="plugin" id="jed_score_avg" group="jed">plg_jed_score_avg.zip</file>
 		<file type="plugin" id="jed_task" group="task">plg_task_jed.zip</file>

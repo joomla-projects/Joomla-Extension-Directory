@@ -1,267 +1,361 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    JED3 -> JED4 migration.
+
+    Source schema: docs/legacy_schema.txt (live JED3 dump, MariaDB, prefix wqyh6_).
+    Target schema: sql/install.mysql.utf8.sql.
+
+    How this file is executed (see View/Copyjed3data/HtmlView.php and
+    tmpl/copyjed3data/default.php):
+
+      * every <sql> block is split on ";" and each fragment is run as its own
+        query on the SAME connection, so session variables (SET @x = ...) do
+        persist between fragments;
+      * therefore NO semicolon may appear inside a string literal or comment,
+        and no <sql> block may end with a trailing semicolon;
+      * "wqyh6_" is rewritten to "<jed3 database>.<jed3 prefix>_", so the legacy
+        database must live on the same server as the target;
+      * the first failing query aborts the whole run.
+
+    Task order matters: users and categories are created before anything that
+    references them.
+-->
 <tasks>
-<task>
- <heading>Porting Extensions Data</heading>
-<instruction>
- <description>Making sure database is clean of temporary table</description>
- <sql>SET FOREIGN_KEY_CHECKS = 0;DROP TABLE IF EXISTS combine_jed_extensions</sql>
-</instruction>
-<instruction>
- <description>Clearing Down old Data</description>
-    <sql>TRUNCATE #__jed_extensions_images;TRUNCATE #__jed_extensions_files;TRUNCATE #__jed_reviews</sql>
-</instruction>
-<instruction>
-<description>Create combination of UCM and JED_Extensions</description>
- <sql>CREATE TABLE combine_jed_extensions (
-id	INT	UNSIGNED	NOT	NULL	DEFAULT	'0', 
-core_content_id INT UNSIGNED DEFAULT 0, 
-core_title VARCHAR(400), 
-core_alias VARCHAR(300), 
-core_body MEDIUMTEXT, 
-core_state TINYINT(1) DEFAULT 0, 
-core_created_user_id INT DEFAULT 0, 
-core_created_time DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00', 
-core_catid INT DEFAULT 0, 
-core_checked_out_time VARCHAR(255) DEFAULT '0000-00-00 00:00:00', 
-core_checked_out_user_id INT DEFAULT 0, 
-core_modified_user_id INT DEFAULT 0, 
-core_modified_time DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00', 
-homepage_link	VARCHAR(255)	DEFAULT	'', 			
-download_link	VARCHAR(255)	DEFAULT	'', 			
-demo_link	VARCHAR(255)	DEFAULT	'', 			
-support_link	VARCHAR(255)	DEFAULT	'', 			
-documentation_link	VARCHAR(255)	DEFAULT	'', 			
-license_link	VARCHAR(255)	DEFAULT	'', 			
-versions	VARCHAR(255)	DEFAULT	'', 			
-popular	TINYINT(1)	DEFAULT	NULL, 			
-requires_registration	TINYINT(1)	DEFAULT	'0', 			
-type	VARCHAR(8)	DEFAULT	'', 			
-related_free_paid_id	INT	DEFAULT	'0', 			
-license	VARCHAR(20)	DEFAULT	'', 			
-jed_note	TEXT	, 				
-update_url	VARCHAR(255)	DEFAULT	'', 			
-update_url_ok	TINYINT(1)	DEFAULT	'0', 			
-can_update	TINYINT(1)	DEFAULT	'0', 			
-tags	TEXT	, 				
-language_code	VARCHAR(100)	DEFAULT	'', 			
-video	VARCHAR(100)	DEFAULT	'', 			
-version	VARCHAR(255)	DEFAULT	'', 			
-uses_updater	TINYINT(1)	DEFAULT	'0', 			
-includes	VARCHAR(100)	DEFAULT	'', 			
-community_choice	TINYINT(1)	DEFAULT	'0', 			
-score	DOUBLE(6, 2)	DEFAULT	NULL, 			
-approved	INT	DEFAULT	'0', 			
-approved_time	DATETIME	DEFAULT	NULL, 			
-extension_file	VARCHAR(150)	DEFAULT	'', 			
-download_integration_type	VARCHAR(100)	DEFAULT	'', 			
-download_integration_url	VARCHAR(255)	DEFAULT	'', 			
-second_contact_email	VARCHAR(100)	DEFAULT	'', 			
-currency	VARCHAR(50)	DEFAULT	'', 			
-price	DOUBLE(6, 2)	DEFAULT	NULL, 			
-price_per	INT	DEFAULT	'0', 			
-price_interval	CHAR(6)	DEFAULT	'', 			
-language_body	TEXT	, 				
-backlink	TINYINT(1)	DEFAULT	'0', 			
-non_gpl_css_js	TINYINT(1)	DEFAULT	'0', 			
-parent_id	INT	DEFAULT	'0', 			
-functionality	INT	DEFAULT	'0', 			
-ease_of_use	INT	DEFAULT	'0', 			
-support	INT	DEFAULT	'0', 			
-documentation	INT	DEFAULT	'0', 			
-value_for_money	INT	DEFAULT	'0', 			
-num_reviews	INT	DEFAULT	'0', 			
-jed_checked	TINYINT(1)	DEFAULT	'0', 			
-extension_ext_libs	TINYINT(1)	DEFAULT	'0', 	
-logo VARCHAR(255) DEFAULT '', 		
-free_id	INT	UNSIGNED	NOT	NULL	DEFAULT	'0', 
-free_homepage_link	VARCHAR(255)	DEFAULT	'', 			
-free_download_link	VARCHAR(255)	DEFAULT	'', 			
-free_demo_link	VARCHAR(255)	DEFAULT	'', 			
-free_support_link	VARCHAR(255)	DEFAULT	'', 			
-free_documentation_link	VARCHAR(255)	DEFAULT	'', 			
-free_license_link	VARCHAR(255)	DEFAULT	'', 			
-free_versions	VARCHAR(255)	DEFAULT	'', 			
-free_popular	TINYINT(1)	DEFAULT	'0', 			
-free_requires_registration	TINYINT(1)	DEFAULT	'0', 			
-free_type	VARCHAR(8)	DEFAULT	'', 			
-free_related_free_paid_id	INT	DEFAULT	'0', 			
-free_license	VARCHAR(20)	DEFAULT	'', 			
-free_jed_note	TEXT	, 				
-free_update_url	VARCHAR(255)	DEFAULT	'', 			
-free_update_url_ok	TINYINT(1)	DEFAULT	'0', 			
-free_can_update	TINYINT(1)	DEFAULT	'0', 			
-free_tags	TEXT	, 				
-free_language_code	VARCHAR(100)	DEFAULT	'', 			
-free_video	VARCHAR(100)	DEFAULT	'', 			
-free_version	VARCHAR(255)	DEFAULT	'', 			
-free_uses_updater	TINYINT(1)	DEFAULT	'0', 			
-free_includes	VARCHAR(100)	DEFAULT	'', 			
-free_community_choice	TINYINT(1)	DEFAULT	'0', 			
-free_score	DOUBLE(6, 2)	DEFAULT	NULL, 			
-free_approved	INT	DEFAULT	'0', 			
-free_approved_time	DATETIME	DEFAULT	NULL, 			
-free_extension_file	VARCHAR(150)	DEFAULT	'', 			
-free_download_integration_type	VARCHAR(100)	DEFAULT	'', 			
-free_download_integration_url	VARCHAR(255)	DEFAULT	'', 			
-free_second_contact_email	VARCHAR(100)	DEFAULT	'', 			
-free_currency	VARCHAR(50)	DEFAULT	'', 			
-free_price	DOUBLE(6, 2)	DEFAULT	NULL, 			
-free_price_per	INT	DEFAULT	'0', 			
-free_price_interval	CHAR(6)	DEFAULT	'', 			
-free_language_body	TEXT	, 				
-free_backlink	TINYINT(1)	DEFAULT	'0', 			
-free_non_gpl_css_js	TINYINT(1)	DEFAULT	'0', 			
-free_parent_id	INT	DEFAULT	'0', 			
-free_functionality	INT	DEFAULT	'0', 			
-free_ease_of_use	INT	DEFAULT	'0', 			
-free_support	INT	DEFAULT	'0', 			
-free_documentation	INT	DEFAULT	'0', 			
-free_value_for_money	INT	DEFAULT	'0', 			
-free_num_reviews	INT	DEFAULT	'0', 			
-free_jed_checked	TINYINT(1)	DEFAULT	'0', 			
-free_extension_ext_libs	TINYINT(1)	DEFAULT	'0', 	
-free_logo VARCHAR(255) DEFAULT '', 		
-paid_id	INT	DEFAULT	'0', 			
-paid_homepage_link	VARCHAR(255)	DEFAULT	'', 			
-paid_download_link	VARCHAR(255)	DEFAULT	'', 			
-paid_demo_link	VARCHAR(255)	DEFAULT	'', 			
-paid_support_link	VARCHAR(255)	DEFAULT	'', 			
-paid_documentation_link	VARCHAR(255)	DEFAULT	'', 			
-paid_license_link	VARCHAR(255)	DEFAULT	'', 			
-paid_versions	VARCHAR(255)	DEFAULT	'', 			
-paid_popular	TINYINT(1)	DEFAULT	'0', 			
-paid_requires_registration	TINYINT(1)	DEFAULT	'0', 			
-paid_type	VARCHAR(8)	DEFAULT	'', 			
-paid_related_free_paid_id	INT	DEFAULT	'0', 			
-paid_license	VARCHAR(20)	DEFAULT	'', 			
-paid_jed_note	TEXT	, 				
-paid_update_url	VARCHAR(255)	DEFAULT	'', 			
-paid_update_url_ok	TINYINT(1)	DEFAULT	'0', 			
-paid_can_update	TINYINT(1)	DEFAULT	'1', 			
-paid_tags	TEXT	, 				
-paid_language_code	VARCHAR(100)	DEFAULT	'', 			
-paid_video	VARCHAR(100)	DEFAULT	'', 			
-paid_version	VARCHAR(255)	DEFAULT	'', 			
-paid_uses_updater	TINYINT(1)	DEFAULT	'0', 			
-paid_includes	VARCHAR(100)	DEFAULT	'', 			
-paid_community_choice	TINYINT(1)	DEFAULT	'0', 			
-paid_score	DOUBLE(6, 2)	DEFAULT	NULL, 			
-paid_approved	INT	DEFAULT	'0', 			
-paid_approved_time	DATETIME	DEFAULT	NULL, 			
-paid_extension_file	VARCHAR(150)	DEFAULT	'', 			
-paid_download_integration_type	VARCHAR(100)	DEFAULT	'', 			
-paid_download_integration_url	VARCHAR(255)	DEFAULT	'', 			
-paid_second_contact_email	VARCHAR(100)	DEFAULT	'', 			
-paid_currency	VARCHAR(50)	DEFAULT	'', 			
-paid_price	DOUBLE(6, 2)	DEFAULT	NULL, 			
-paid_price_per	INT	DEFAULT	'0', 			
-paid_price_interval	CHAR(6)	DEFAULT	'', 			
-paid_language_body	TEXT	, 				
-paid_backlink	TINYINT(1)	DEFAULT	'0', 			
-paid_non_gpl_css_js	TINYINT(1)	DEFAULT	'0', 			
-paid_parent_id	INT	DEFAULT	'0', 			
-paid_functionality	INT	DEFAULT	'0', 			
-paid_ease_of_use	INT	DEFAULT	'0', 			
-paid_support	INT	DEFAULT	'0', 			
-paid_documentation	INT	DEFAULT	'0', 			
-paid_value_for_money	INT	DEFAULT	'0', 			
-paid_num_reviews	INT	DEFAULT	'0', 			
-paid_jed_checked	TINYINT(1)	DEFAULT	'0', 			
-paid_extension_ext_libs	TINYINT(1)	DEFAULT	'0', 
-paid_logo VARCHAR(255) DEFAULT '', 			
 
+    <task>
+        <heading>Preparation</heading>
+        <instruction>
+            <description>Disable foreign key checks and drop leftover staging tables from an earlier run</description>
+            <sql>SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS combine_jed_extensions;
+DROP TABLE IF EXISTS combine_jed_review_texts</sql>
+        </instruction>
+    </task>
 
-  PRIMARY KEY (id)
- 
-) ENGINE=INNODB  DEFAULT CHARSET=utf8mb4</sql>
- </instruction>
-    <instruction>
-        <description>If the next query fails when inserting data, Manually run this query to find out which extensions have duplicate entries in the UCM table. Then manually remove them. The duplicates were caused by an issue in JED3 and VEL items. Query to run = SELECT core_content_item_id,COUNT(core_content_item_id) FROM #__ucm_content WHERE core_type_alias = "com_jed.extension" GROUP BY core_content_item_id</description>
-        <sql>select "Hello"</sql>
-    </instruction>
-<instruction>
- <description>Insert Data </description>
- <sql>INSERT INTO combine_jed_extensions ( id,  core_content_id, core_title, core_alias, core_body, core_state, core_created_user_id , core_created_time, core_catid, core_checked_out_time, core_checked_out_user_id, core_modified_user_id,  core_modified_time, homepage_link, download_link, demo_link, support_link, documentation_link, license_link, versions, popular, requires_registration, type, related_free_paid_id, license, jed_note, update_url, update_url_ok, can_update, tags, language_code, video, version, uses_updater, includes, community_choice, score, approved, approved_time, extension_file, download_integration_type, download_integration_url, second_contact_email, currency, price, price_per, price_interval, language_body, backlink, non_gpl_css_js, parent_id, functionality, ease_of_use, support, documentation, value_for_money, num_reviews, jed_checked, extension_ext_libs ) SELECT   e.id, core_content_id, core_title, core_alias, core_body, core_state, core_created_user_id , core_created_time, core_catid, core_checked_out_time, core_checked_out_user_id, core_modified_user_id,   core_modified_time, homepage_link, download_link, demo_link, support_link, documentation_link, license_link, versions, popular, requires_registration, type, related_free_paid_id, license, jed_note, update_url, update_url_ok, can_update, tags, language_code, video, version, uses_updater, includes, community_choice, score, approved, approved_time, extension_file, download_integration_type, download_integration_url, second_contact_email, currency, price, price_per, price_interval, language_body, backlink, non_gpl_css_js, parent_id, functionality, ease_of_use, support, documentation, value_for_money, num_reviews, jed_checked, extension_ext_libs FROM wqyh6_jed_extensions e, wqyh6_ucm_content u WHERE  u.core_content_item_id = e.id AND u.core_type_alias = "com_jed.extension" ORDER BY e.id ASC </sql>
- </instruction>
-<instruction>
-     <description>Add logos</description>
-     <sql>UPDATE combine_jed_extensions cj, wqyh6_jed_extension_logos jl SET cj.logo=jl.file WHERE jl.extension_id = cj.id</sql>
-</instruction>
-     <instruction>
-     <description>Fixing Imported Data - Category constraint fails without this - extension 2393 has 0 category but this sets it to Miscellaneous</description>
-        <sql>UPDATE combine_jed_extensions SET core_catid=9 WHERE core_catid=0</sql>
-    </instruction>
-<instruction>
-     <description>Fixing Imported Data - Empty checked_out_time fields</description>
-        <sql>UPDATE combine_jed_extensions SET core_checked_out_time="0000-00-00 00:00:00"  WHERE core_checked_out_time=""</sql>
-    </instruction>
-    <instruction>
-     <description>Empty current #__jed_extensions</description>
-        <sql>DELETE FROM #__jed_extensions</sql>
-    </instruction>
-       <instruction>
-     <description>Insert into #__jed_extensions. JED3 modelled "free" and "paid" as two variants of one master extension (see the now-removed free/paid attach and master_row instructions); the current schema has no variant concept, so every JED3 extension row (combine_jed_extensions has one row per original wqyh6_jed_extensions.id) becomes its own #__jed_extensions row instead of being merged into a master row. homepage_link has no exact equivalent and is mapped to developer_url; extension_file and second_contact_email are mapped to internal_download_url and developer_email as the closest available columns. license_link, tags, language_code, includes, community_choice, download_integration_type/url, currency, price*, language_body, backlink, non_gpl_css_js, parent_id, jed_checked, extension_ext_libs, update_url_ok and can_update have no equivalent column in the new schema and are not migrated.</description>
-        <sql>INSERT INTO #__jed_extensions (   id, name, alias, catid, owner, state, approved, approved_time, description, license, requires_registration, type, created, created_by, modified, modified_by, checked_out, checked_out_time, extension_version, joomla_versions, download_url, support_url, demo_url, documentation_url, internal_download_url, uses_updater, update_url, developer_url, developer_email, score_overall, score_functionality, score_ease_of_use, score_support, score_documentation, score_value_for_money, score_count, popular, logo, video, internal_note ) SELECT   id, core_title, core_alias, core_catid, core_created_user_id, core_state, approved, approved_time, core_body, license, requires_registration, type, core_created_time, core_created_user_id, core_modified_time, core_modified_user_id, core_checked_out_user_id, core_checked_out_time, version, versions, download_link, support_link, demo_link, documentation_link, extension_file, uses_updater, update_url, homepage_link, second_contact_email, score, functionality, ease_of_use, support, documentation, value_for_money, num_reviews, popular, logo, video, jed_note FROM   combine_jed_extensions</sql>
-    </instruction>
-    </task>
     <task>
- <heading>Sorting Extensions Images</heading>
+        <heading>Copy Users</heading>
         <instruction>
-     <description>Empty Existing Data</description>
-        <sql>DELETE FROM #__jed_extensions_images</sql>
-    </instruction>
-         <instruction>
-     <description>Insert Images. Each JED3 free/paid variant is now its own #__jed_extensions row (see the "Porting Extensions Data" task), so images are matched directly on the original extension id instead of going through a free_id/paid_id lookup.</description>
-        <sql>INSERT INTO #__jed_extensions_images (   id, extension_id, filename, created_by ) SELECT   0, cj.id, jei.filename, jei.created_by FROM   combine_jed_extensions cj, wqyh6_jed_extensions_images jei WHERE jei.extension_id = cj.id</sql>
-    </instruction>
-    </task>
-    <task>
- <heading>Porting Review Data</heading>
-<instruction>
- <description>Making sure database is clean of temporary table</description>
- <sql>DROP TABLE IF EXISTS combine_jed_reviews</sql>
- </instruction>
-<instruction>
- <description>Create combination of UCM and JED_Extensions</description>
-    <sql>CREATE TABLE combine_jed_reviews AS SELECT  ucm.*,jr.* FROM wqyh6_ucm_content ucm, wqyh6_jed_reviews jr WHERE core_type_alias="com_jed.review" AND jr.id = core_content_item_id</sql>
+            <description>Remember which local super user to keep, so the migration does not lock the current administrator out. The lowest-numbered member of the "Super Users" group is retained.</description>
+            <sql>SET @jed_super_group = (SELECT id FROM #__usergroups WHERE title = 'Super Users' ORDER BY id ASC LIMIT 1);
+SET @jed_keep_user = (SELECT MIN(user_id) FROM #__user_usergroup_map WHERE group_id = @jed_super_group)</sql>
         </instruction>
         <instruction>
-     <description>Empty Existing Data</description> 
-        <sql>DELETE FROM #__jed_reviews</sql>
-    </instruction>
-        <instruction><description>Copying reviews to #__jed_reviews. Each JED3 free/paid variant is now its own #__jed_extensions row (see the "Porting Extensions Data" task), so reviews are matched directly on the original extension id instead of being split into a free pass and a paid pass; #__jed_reviews also no longer has a supply_option_id column.</description>
-            <sql>INSERT INTO #__jed_reviews (   id, extension_id, title, alias, body, functionality, functionality_comment, ease_of_use, ease_of_use_comment,   support, support_comment, documentation, documentation_comment, value_for_money, value_for_money_comment, overall_score,   used_for, version,flagged, ip_address, state, created_on, created_by, ordering) SELECT   0, cj.id,  cr.core_title, cr.core_alias, cr.core_body,   cr.functionality, '', cr.ease_of_use, '',   cr.support, '', cr.documentation, '', cr.value_for_money, '', ( cr.functionality+ cr.ease_of_use + cr.support + cr.documentation + cr.value_for_money) AS 'overall_score',   used_for, cr.version, flagged,ip_address, cr.core_state, cr.core_created_time, cr.core_created_user_id, 0 FROM   combine_jed_reviews cr, combine_jed_extensions cj      WHERE cr.extension_id = cj.id ORDER BY cj.id, cr.core_created_time ASC</sql>
-        </instruction>
-        <instruction><description>Copying the old per-extension aggregate scores (wqyh6_jed_extensions.functionality/ease_of_use/support/documentation/value_for_money/score) into #__jed_reviews as a synthetic review row, since #__jed_extension_scores no longer exists and the current schema has no separate scores table. Only extensions that actually had reviews in JED3 (num_reviews &gt; 0) get one of these rows.</description>
-            <sql>INSERT INTO #__jed_reviews (   id, extension_id, title, alias, body, functionality, ease_of_use, support, documentation, value_for_money, overall_score, state, created_on, created_by, ordering ) SELECT   0, id, 'Migrated JED3 extension score', '', '', functionality, ease_of_use, support, documentation, value_for_money, score, core_state, core_created_time, core_created_user_id, 0 FROM   combine_jed_extensions WHERE num_reviews &gt; 0</sql>
+            <description>Clear local users and group assignments, except the retained administrator</description>
+            <sql>DELETE FROM #__user_usergroup_map WHERE user_id != IFNULL(@jed_keep_user, 0);
+DELETE FROM #__users WHERE id != IFNULL(@jed_keep_user, 0)</sql>
         </instruction>
         <instruction>
-        <description>Extracting Comments from UCM_Body</description>
-        <sql>DROP TABLE IF EXISTS combine_jed_review_texts;CREATE TABLE combine_jed_review_texts (
-  id INT UNSIGNED NOT NULL AUTO_INCREMENT, extension_id INT UNSIGNED DEFAULT '0', body MEDIUMTEXT COLLATE utf8mb4_unicode_ci, functionality_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, ease_of_use_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, support_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, documentation_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, value_for_money_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, PRIMARY KEY (id)
-) ENGINE = INNODB DEFAULT CHARSET = utf8mb4;INSERT INTO combine_jed_review_texts SELECT id,extension_id,body,'','','','','' FROM #__jed_reviews WHERE body LIKE "%{%";UPDATE combine_jed_review_texts SET functionality_comment = REGEXP_SUBSTR(REPLACE(REPLACE(body, '\r', ''), '\n', ''),"[{]functionality[}].*[{]\/functionality[}]");
-     UPDATE combine_jed_review_texts SET ease_of_use_comment = REGEXP_SUBSTR(REPLACE(REPLACE(body, '\r', ''), '\n', ''),"[{]ease_of_use[}].*[{]\/ease_of_use[}]");
-      UPDATE combine_jed_review_texts SET support_comment = REGEXP_SUBSTR(REPLACE(REPLACE(body, '\r', ''), '\n', ''),"[{]support[}].*[{]\/support[}]");
-      UPDATE combine_jed_review_texts SET documentation_comment = REGEXP_SUBSTR(REPLACE(REPLACE(body, '\r', ''), '\n', ''),"[{]documentation[}].*[{]\/documentation[}]");
-      UPDATE combine_jed_review_texts SET value_for_money_comment = REGEXP_SUBSTR(REPLACE(REPLACE(body, '\r', ''), '\n', ''),"[{]value_for_money[}].*[{]\/value_for_money[}]");
-      UPDATE combine_jed_review_texts SET functionality_comment = REPLACE(REPLACE(functionality_comment,"{functionality}",""),"{/functionality}","");
-     UPDATE combine_jed_review_texts SET ease_of_use_comment = REPLACE(REPLACE(ease_of_use_comment,"{ease_of_use}",""),"{/ease_of_use}","");
-     UPDATE combine_jed_review_texts SET support_comment = REPLACE(REPLACE(support_comment,"{support}",""),"{/support}","");
-     UPDATE combine_jed_review_texts SET documentation_comment = REPLACE(REPLACE(documentation_comment,"{documentation}",""),"{/documentation}","");
-     UPDATE combine_jed_review_texts SET value_for_money_comment = REPLACE(REPLACE(value_for_money_comment,"{value_for_money}",""),"{/value_for_money}",""); 
-     UPDATE #__jed_reviews njr, combine_jed_review_texts cjt
-     SET njr.functionality_comment = cjt.functionality_comment, njr.ease_of_use_comment = cjt.ease_of_use_comment, njr.support_comment = cjt.support_comment,
-     njr.documentation_comment = cjt.documentation_comment, njr.value_for_money_comment = cjt.value_for_money_comment WHERE njr.id = cjt.id;
-            update #__jed_reviews set body = "Old Review System - No overall field" where body like "%{functionality}%"</sql>
+            <description>Replace the user groups with the JED3 tree. Both sides are Joomla installations, so the standard groups keep their ids and the JED-specific groups come across with theirs - which is what makes the group map below meaningful.</description>
+            <sql>DELETE FROM #__usergroups;
+INSERT INTO #__usergroups (id, parent_id, lft, rgt, title) SELECT id, parent_id, lft, rgt, title FROM wqyh6_usergroups</sql>
+        </instruction>
+        <instruction>
+            <description>Copy the users. Zero dates are converted because Joomla 6 declares registerDate NOT NULL and lastvisitDate / lastResetTime nullable. INSERT IGNORE skips any row whose id or username collides with the retained administrator - normally exactly one row.</description>
+            <sql>INSERT IGNORE INTO #__users (id, name, username, email, password, block, sendEmail, registerDate, lastvisitDate, activation, params, lastResetTime, resetCount, otpKey, otep, requireReset, authProvider) SELECT id, name, username, email, password, block, sendEmail, IFNULL(NULLIF(registerDate, '0000-00-00 00:00:00'), '2000-01-01 00:00:00'), NULLIF(lastvisitDate, '0000-00-00 00:00:00'), activation, params, NULLIF(lastResetTime, '0000-00-00 00:00:00'), resetCount, otpKey, otep, requireReset, authProvider FROM wqyh6_users</sql>
+        </instruction>
+        <instruction>
+            <description>Copy the user/group assignments. This replaces the manual usergroup_map step the old script left as a TODO. Rows pointing at a user or group that did not survive the copy are skipped by the joins.</description>
+            <sql>INSERT IGNORE INTO #__user_usergroup_map (user_id, group_id) SELECT m.user_id, m.group_id FROM wqyh6_user_usergroup_map m INNER JOIN #__users u ON u.id = m.user_id INNER JOIN #__usergroups g ON g.id = m.group_id</sql>
+        </instruction>
+        <instruction>
+            <description>Make sure the retained administrator is still a Super User after the group tree was replaced</description>
+            <sql>INSERT IGNORE INTO #__user_usergroup_map (user_id, group_id) SELECT @jed_keep_user, g.id FROM #__usergroups g INNER JOIN #__users u ON u.id = @jed_keep_user WHERE g.title = 'Super Users'</sql>
         </instruction>
     </task>
+
     <task>
-    <heading>Convert JED3 RSForms into individual tables</heading>
-        <instruction><description>Delete old_rsform tables if Exist</description>
-        <sql>DROP TABLE IF EXISTS old_rsform5;DROP TABLE IF EXISTS  old_rsform7;DROP TABLE IF EXISTS  old_rsform9;DROP TABLE IF EXISTS  old_rsform10;DROP TABLE IF EXISTS  old_rsform11;DROP TABLE IF EXISTS  old_rsform12;DROP TABLE IF EXISTS  old_rsform13;DROP TABLE IF EXISTS  old_rsform14</sql>
+        <heading>Copy Developers</heading>
+        <instruction>
+            <description>Copy JED3 developer data (wqyh6_jed_users) into the "developer_name" and "suspicious" user custom fields. The fields themselves are created by the component's install script - joining #__fields means the step is skipped silently rather than failing if one of them is missing.</description>
+            <sql>DELETE fv FROM #__fields_values fv INNER JOIN #__fields f ON f.id = fv.field_id WHERE f.context = 'com_users.user' AND f.name IN ('developer_name', 'suspicious');
+INSERT INTO #__fields_values (field_id, item_id, value) SELECT f.id, CAST(ju.user_id AS CHAR), ju.developer_name FROM wqyh6_jed_users ju INNER JOIN #__users u ON u.id = ju.user_id INNER JOIN #__fields f ON f.context = 'com_users.user' AND f.name = 'developer_name' WHERE ju.user_id IS NOT NULL AND ju.developer_name IS NOT NULL AND TRIM(ju.developer_name) != '';
+INSERT INTO #__fields_values (field_id, item_id, value) SELECT f.id, CAST(ju.user_id AS CHAR), '1' FROM wqyh6_jed_users ju INNER JOIN #__users u ON u.id = ju.user_id INNER JOIN #__fields f ON f.context = 'com_users.user' AND f.name = 'suspicious' WHERE ju.user_id IS NOT NULL AND ju.suspicious = 1</sql>
         </instruction>
-        <instruction><description>Create structures to hold each form type</description>
-        <sql>CREATE TABLE old_rsform5 (   SubmissionId INT NOT NULL, DateSubmitted DATETIME, UserIP VARCHAR (255), Username VARCHAR (255), UserId TEXT, FullName TEXT, Email TEXT, Organization TEXT, passtodev TEXT, vulnType TEXT, vulExtnName TEXT, vulExtnVer TEXT, vulTemName TEXT, vulTemVer TEXT, exploittype TEXT, OtherExploitDescription TEXT, vuldescription TEXT, vulTools TEXT, IsActiveExploit TEXT, exploitInPublic TEXT, publicExploitUrl TEXT, vuiImpact TEXT, devradioselect TEXT, updateURL TEXT, devname TEXT, devEmail TEXT, jedurl TEXT, trackdb TEXT, trackDbID TEXT, devAddInfo TEXT, Downloadurl TEXT, consentuse TEXT, ReferenceNumber TEXT, formId TEXT);
+    </task>
+
+    <task>
+        <heading>Copy Categories</heading>
+        <instruction>
+            <description>Move the JED3 categories over. asset_id is reset to 0 because the legacy #__assets rows are not migrated, and the NOT NULL datetime columns get a substitute value where JED3 held a zero date.</description>
+            <sql>DELETE FROM #__categories WHERE extension = 'com_jed';
+INSERT INTO #__categories (id, asset_id, parent_id, lft, rgt, level, path, extension, title, alias, note, description, published, checked_out, checked_out_time, access, params, metadesc, metakey, metadata, created_user_id, created_time, modified_user_id, modified_time, hits, language, version) SELECT id, 0, parent_id, lft, rgt, level, LEFT(path, 400), extension, LEFT(title, 255), LEFT(alias, 400), LEFT(IFNULL(note, ''), 255), description, published, NULL, NULLIF(checked_out_time, '0000-00-00 00:00:00'), access, params, LEFT(IFNULL(metadesc, ''), 1024), LEFT(IFNULL(metakey, ''), 1024), LEFT(IFNULL(metadata, ''), 2048), created_user_id, IFNULL(NULLIF(created_time, '0000-00-00 00:00:00'), '2000-01-01 00:00:00'), modified_user_id, IFNULL(NULLIF(modified_time, '0000-00-00 00:00:00'), '2000-01-01 00:00:00'), hits, language, version FROM wqyh6_categories WHERE extension = 'com_jed'</sql>
+        </instruction>
+    </task>
+
+    <task>
+        <heading>Copy Joomla Version Master Data</heading>
+        <instruction>
+            <description>Merge the JED3 version list into #__jed_joomla_versions. Ids are preserved because #__jed_extensions.joomla_versions stores them as a comma separated list - remapping them would break every listing. Existing rows (in particular the Joomla 6 entries that JED3 does not know) are updated rather than deleted.</description>
+            <sql>INSERT INTO #__jed_joomla_versions (id, label, long_label, published) SELECT id, LEFT(label, 255), LEFT(long_label, 50), published FROM wqyh6_jed_joomla_versions ON DUPLICATE KEY UPDATE label = VALUES(label), long_label = VALUES(long_label), published = VALUES(published)</sql>
+        </instruction>
+    </task>
+
+    <task>
+        <heading>Porting Extensions Data</heading>
+        <instruction>
+            <description>Create the staging table. JED3 keeps the listing metadata in wqyh6_jed_extensions and the editorial content (title, alias, body, owner, category, state, timestamps) in wqyh6_ucm_content - this table joins the two. The free_/paid_ column families the previous version of this script carried are gone: the free/paid variant merge was dropped, so every JED3 extension row becomes its own listing.</description>
+            <sql>CREATE TABLE combine_jed_extensions (
+id INT UNSIGNED NOT NULL DEFAULT 0,
+core_content_id INT UNSIGNED DEFAULT 0,
+core_title VARCHAR(400),
+core_alias VARCHAR(400),
+core_body MEDIUMTEXT,
+core_state TINYINT(1) DEFAULT 0,
+core_created_user_id INT DEFAULT 0,
+core_created_time DATETIME NULL DEFAULT NULL,
+core_catid INT DEFAULT 0,
+core_checked_out_time VARCHAR(255) DEFAULT NULL,
+core_checked_out_user_id INT DEFAULT 0,
+core_modified_user_id INT DEFAULT 0,
+core_modified_time DATETIME NULL DEFAULT NULL,
+homepage_link VARCHAR(255) DEFAULT '',
+download_link VARCHAR(255) DEFAULT '',
+demo_link VARCHAR(255) DEFAULT '',
+support_link VARCHAR(255) DEFAULT '',
+documentation_link VARCHAR(255) DEFAULT '',
+license_link VARCHAR(255) DEFAULT '',
+versions VARCHAR(255) DEFAULT '',
+popular TINYINT(1) DEFAULT 0,
+requires_registration TINYINT(1) DEFAULT 0,
+type VARCHAR(8) DEFAULT '',
+license VARCHAR(20) DEFAULT '',
+jed_note TEXT,
+update_url VARCHAR(255) DEFAULT '',
+tags TEXT,
+language_code VARCHAR(100) DEFAULT '',
+video VARCHAR(100) DEFAULT '',
+version VARCHAR(255) DEFAULT '',
+uses_updater TINYINT(1) DEFAULT 0,
+includes VARCHAR(100) DEFAULT '',
+score DOUBLE(6, 2) DEFAULT NULL,
+approved INT DEFAULT 0,
+approval_label CHAR(5) DEFAULT NULL,
+approved_time DATETIME NULL DEFAULT NULL,
+extension_file VARCHAR(150) DEFAULT '',
+second_contact_email VARCHAR(100) DEFAULT '',
+functionality INT DEFAULT 0,
+ease_of_use INT DEFAULT 0,
+support INT DEFAULT 0,
+documentation INT DEFAULT 0,
+value_for_money INT DEFAULT 0,
+num_reviews INT DEFAULT 0,
+logo VARCHAR(255) DEFAULT '',
+PRIMARY KEY (id)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4</sql>
+        </instruction>
+        <instruction>
+            <description>
+                Remove duplicate UCM rows in the source database. JED3 can hold more than one wqyh6_ucm_content row per
+                extension or review (an old defect around JED and VEL items), and because the staging table below is
+                keyed on the extension id, a surplus row makes the whole migration abort on a duplicate key.
+
+                One row per (core_type_alias, core_content_item_id) survives, chosen in this order: a published row
+                first, then the most recently modified, then the highest core_content_id as the tie breaker. Published
+                is tested explicitly rather than sorting on core_state, because the Joomla state values are not a
+                ranking - archived is 2 and trashed is -2, so a plain descending sort would keep an archived row over
+                the live one.
+
+                Only the two JED type aliases are touched. Duplicates belonging to com_content and friends are left
+                alone: core_content_item_id is only unique within a type alias, so widening this would delete
+                unrelated rows.
+
+                WARNING - this is the only step in the whole migration that WRITES TO THE SOURCE DATABASE. Run the
+                migration against a copy of the JED3 database, never against the live one. To see what it would remove
+                before running it, execute the same statement with "DELETE FROM wqyh6_ucm_content WHERE core_content_id
+                IN (" replaced by "SELECT * FROM wqyh6_ucm_content WHERE core_content_id IN (".
+            </description>
+            <sql>DELETE FROM wqyh6_ucm_content WHERE core_content_id IN (SELECT core_content_id FROM (SELECT core_content_id, ROW_NUMBER() OVER (PARTITION BY core_type_alias, core_content_item_id ORDER BY (core_state = 1) DESC, core_modified_time DESC, core_content_id DESC) AS rn FROM wqyh6_ucm_content WHERE core_type_alias IN ('com_jed.extension', 'com_jed.review')) ranked WHERE ranked.rn &gt; 1)</sql>
+        </instruction>
+        <instruction>
+            <description>Join wqyh6_jed_extensions with its UCM content. Zero dates become NULL so the copy does not fail under strict SQL mode, and approved is resolved against wqyh6_jed_approval_status - in JED3 that column is a status id, not a boolean.</description>
+            <sql>INSERT INTO combine_jed_extensions (id, core_content_id, core_title, core_alias, core_body, core_state, core_created_user_id, core_created_time, core_catid, core_checked_out_time, core_checked_out_user_id, core_modified_user_id, core_modified_time, homepage_link, download_link, demo_link, support_link, documentation_link, license_link, versions, popular, requires_registration, type, license, jed_note, update_url, tags, language_code, video, version, uses_updater, includes, score, approved, approval_label, approved_time, extension_file, second_contact_email, functionality, ease_of_use, support, documentation, value_for_money, num_reviews) SELECT e.id, u.core_content_id, u.core_title, u.core_alias, u.core_body, u.core_state, u.core_created_user_id, NULLIF(u.core_created_time, '0000-00-00 00:00:00'), u.core_catid, u.core_checked_out_time, u.core_checked_out_user_id, u.core_modified_user_id, NULLIF(u.core_modified_time, '0000-00-00 00:00:00'), e.homepage_link, e.download_link, e.demo_link, e.support_link, e.documentation_link, e.license_link, e.versions, IFNULL(e.popular, 0), IFNULL(e.requires_registration, 0), e.type, e.license, e.jed_note, e.update_url, e.tags, e.language_code, e.video, e.version, IFNULL(e.uses_updater, 0), e.includes, e.score, IFNULL(e.approved, 0), a.label, NULLIF(e.approved_time, '0000-00-00 00:00:00'), e.extension_file, e.second_contact_email, IFNULL(e.functionality, 0), IFNULL(e.ease_of_use, 0), IFNULL(e.support, 0), IFNULL(e.documentation, 0), IFNULL(e.value_for_money, 0), IFNULL(e.num_reviews, 0) FROM wqyh6_jed_extensions e INNER JOIN wqyh6_ucm_content u ON u.core_content_item_id = e.id AND u.core_type_alias = 'com_jed.extension' LEFT JOIN wqyh6_jed_approval_status a ON a.id = e.approved ORDER BY e.id ASC</sql>
+        </instruction>
+        <instruction>
+            <description>Attach the logo file names from wqyh6_jed_extension_logos</description>
+            <sql>UPDATE combine_jed_extensions cj INNER JOIN wqyh6_jed_extension_logos jl ON jl.extension_id = cj.id SET cj.logo = jl.file</sql>
+        </instruction>
+        <instruction>
+            <description>Fixing imported data - listings without a category would violate the category reference, so they are moved to Miscellaneous (category 9)</description>
+            <sql>UPDATE combine_jed_extensions SET core_catid = 9 WHERE core_catid = 0 OR core_catid IS NULL OR core_catid NOT IN (SELECT id FROM #__categories WHERE extension = 'com_jed')</sql>
+        </instruction>
+        <instruction>
+            <description>Fixing imported data - empty or zero checked_out_time strings</description>
+            <sql>UPDATE combine_jed_extensions SET core_checked_out_time = NULL WHERE core_checked_out_time = '' OR core_checked_out_time = '0000-00-00 00:00:00'</sql>
+        </instruction>
+        <instruction>
+            <description>Clear the target tables</description>
+            <sql>DELETE FROM #__jed_extensions;
+DELETE FROM #__jed_extensions_history;
+DELETE FROM #__jed_extensions_category_map;
+DELETE FROM #__jed_extensions_maintainers</sql>
+        </instruction>
+        <instruction>
+            <description>
+                Insert into #__jed_extensions.
+
+                Mapped with a change of meaning: homepage_link -&gt; developer_url, extension_file -&gt; internal_download_url,
+                second_contact_email -&gt; developer_email (the secondary contact is lost), jed_note -&gt; internal_note.
+                includes -&gt; extension_types was missing from the previous version of this script and is now mapped, because
+                the trophy helper renders the component/module/plugin badges from it.
+
+                intro is generated from the first 300 characters of the tag-stripped body: JED3 has a single body field and
+                the new schema has intro plus description, and an empty intro would leave every card in the catalogue blank.
+
+                approved is derived from approved_time, since the JED3 column holds a wqyh6_jed_approval_status id. The
+                original id is kept in approved_notes and its label in approved_reason so nothing is lost - confirm the
+                label-to-boolean mapping against the data before relying on it.
+
+                Not migrated, because the new schema has no equivalent column: license_link, tags, language_code,
+                community_choice, download_integration_type/url, currency, price and its variants, language_body, backlink,
+                non_gpl_css_js, parent_id, related_free_paid_id, jed_checked, extension_ext_libs, update_url_ok, can_update.
+                tags is carried into the staging table so a later pass can create core tag records from it.
+            </description>
+            <sql>INSERT INTO #__jed_extensions (id, name, alias, catid, owner, state, approved, approved_time, approved_notes, approved_reason, intro, description, license, requires_registration, type, extension_types, created, created_by, modified, modified_by, checked_out, checked_out_time, extension_version, entry_version, joomla_versions, download_url, support_url, demo_url, documentation_url, git_url, internal_download_url, download_key, uses_updater, update_url, developer_url, developer_email, changelog_url, score_overall, score_functionality, score_ease_of_use, score_support, score_documentation, score_value_for_money, score_count, popular, logo, overview_image, video, internal_note) SELECT id, LEFT(IFNULL(core_title, ''), 255), LEFT(IFNULL(core_alias, ''), 255), core_catid, core_created_user_id, CASE WHEN core_state = 1 THEN 1 ELSE 0 END, CASE WHEN approved_time IS NOT NULL THEN 1 ELSE 0 END, approved_time, CONCAT('JED3 approval_status_id=', IFNULL(approved, 0)), LEFT(IFNULL(approval_label, ''), 255), LEFT(TRIM(REGEXP_REPLACE(REGEXP_REPLACE(IFNULL(core_body, ''), '&lt;[^&gt;]*&gt;', ' '), '[[:space:]]+', ' ')), 300), core_body, LEFT(IFNULL(license, ''), 255), IFNULL(requires_registration, 0), CASE LOWER(TRIM(IFNULL(type, ''))) WHEN 'paid' THEN 'paid' WHEN 'freemium' THEN 'freemium' WHEN 'cloud' THEN 'cloud' ELSE 'free' END, LEFT(IFNULL(includes, ''), 255), core_created_time, core_created_user_id, core_modified_time, core_modified_user_id, NULLIF(core_checked_out_user_id, 0), core_checked_out_time, LEFT(IFNULL(version, ''), 50), 1, LEFT(IFNULL(versions, ''), 255), LEFT(IFNULL(download_link, ''), 255), LEFT(IFNULL(support_link, ''), 255), LEFT(IFNULL(demo_link, ''), 255), LEFT(IFNULL(documentation_link, ''), 255), '', LEFT(IFNULL(extension_file, ''), 255), '', IFNULL(uses_updater, 0), LEFT(IFNULL(update_url, ''), 255), LEFT(IFNULL(homepage_link, ''), 255), LEFT(IFNULL(second_contact_email, ''), 255), '', LEAST(GREATEST(IFNULL(score, 0), 0), 9.99), LEAST(GREATEST(IFNULL(functionality, 0), 0), 9.99), LEAST(GREATEST(IFNULL(ease_of_use, 0), 0), 9.99), LEAST(GREATEST(IFNULL(support, 0), 0), 9.99), LEAST(GREATEST(IFNULL(documentation, 0), 0), 9.99), LEAST(GREATEST(IFNULL(value_for_money, 0), 0), 9.99), 0, IFNULL(popular, 0), LEFT(IFNULL(logo, ''), 255), '', LEFT(IFNULL(video, ''), 255), jed_note FROM combine_jed_extensions</sql>
+        </instruction>
+        <instruction>
+            <description>Populate #__jed_extensions_category_map. JED3 allowed exactly one category per listing, so each extension gets the single mapping row that matches its catid - the new multi-category queries then work against imported data too.</description>
+            <sql>INSERT IGNORE INTO #__jed_extensions_category_map (extension_id, catid) SELECT id, catid FROM #__jed_extensions</sql>
+        </instruction>
+    </task>
+
+    <task>
+        <heading>Sorting Extensions Images</heading>
+        <instruction>
+            <description>Copy the screenshots. The JED3 "order" column becomes "ordering", and every imported image is published, matching how JED3 displayed them.</description>
+            <sql>DELETE FROM #__jed_extensions_images;
+INSERT INTO #__jed_extensions_images (extension_id, filename, state, ordering, created_by) SELECT jei.extension_id, jei.filename, 1, IFNULL(jei.`order`, 0), IFNULL(jei.created_by, 0) FROM wqyh6_jed_extensions_images jei INNER JOIN #__jed_extensions e ON e.id = jei.extension_id</sql>
+        </instruction>
+    </task>
+
+    <task>
+        <heading>Porting Extension Files</heading>
+        <instruction>
+            <description>Copy the uploaded packages. The previous version of this script emptied #__jed_extensions_files but never filled it. wqyh6_jed_extension_files already carries extension_id, so the wqyh6_jed_extensions_jed_extension_files cross reference table is not needed.</description>
+            <sql>DELETE FROM #__jed_extensions_files;
+INSERT INTO #__jed_extensions_files (extension_id, file, meta, created_by, originalFile) SELECT jef.extension_id, LEFT(jef.file, 255), jef.meta, IFNULL(jef.created_by, 0), LEFT(IFNULL(jef.original_file, ''), 255) FROM wqyh6_jed_extension_files jef INNER JOIN #__jed_extensions e ON e.id = jef.extension_id</sql>
+        </instruction>
+    </task>
+
+    <task>
+        <heading>Porting Favourites</heading>
+        <instruction>
+            <description>Copy the watchlist from wqyh6_jed_extensions_favoured. Rows whose user or extension did not survive the migration are dropped by the joins.</description>
+            <sql>DELETE FROM #__jed_favorites;
+INSERT IGNORE INTO #__jed_favorites (user_id, extension_id, created) SELECT f.user_id, f.extension_id, IFNULL(NULLIF(f.created, '0000-00-00 00:00:00'), '2000-01-01 00:00:00') FROM wqyh6_jed_extensions_favoured f INNER JOIN #__jed_extensions e ON e.id = f.extension_id INNER JOIN #__users u ON u.id = f.user_id</sql>
+        </instruction>
+    </task>
+
+    <task>
+        <heading>Porting Review Data</heading>
+        <instruction>
+            <description>
+                Copy the reviews. Every JED3 review row carries the five criterion scores, and wqyh6_jed_reviews_users
+                says which account wrote it - that mapping is used for created_by, so each legacy score ends up as a
+                review belonging to the right user. Where the cross reference is missing the UCM author is used instead.
+
+                overall_score is the average of the criteria that were actually scored. The previous version of this
+                script summed them, which both misrepresented the rating and overflowed the decimal(2,1) column as soon
+                as more than two criteria were filled in.
+
+                The synthetic "migrated extension score" review the old script inserted per extension is gone: the
+                aggregate already lives on #__jed_extensions.score_*, and adding it as a review attributed the developer
+                a review they never wrote and inflated score_count.
+            </description>
+            <sql>DELETE FROM #__jed_reviews;
+INSERT INTO #__jed_reviews (extension_id, title, alias, body, functionality, functionality_comment, ease_of_use, ease_of_use_comment, support, support_comment, documentation, documentation_comment, value_for_money, value_for_money_comment, overall_score, used_for, version, flagged, ip_address, state, created_on, created_by, ordering) SELECT r.extension_id, LEFT(IFNULL(u.core_title, ''), 400), LEFT(IFNULL(u.core_alias, ''), 400), u.core_body, LEAST(GREATEST(IFNULL(r.functionality, 0), 0), 9.9), '', LEAST(GREATEST(IFNULL(r.ease_of_use, 0), 0), 9.9), '', LEAST(GREATEST(IFNULL(r.support, 0), 0), 9.9), '', LEAST(GREATEST(IFNULL(r.documentation, 0), 0), 9.9), '', LEAST(GREATEST(IFNULL(r.value_for_money, 0), 0), 9.9), '', LEAST(GREATEST(IFNULL(ROUND((IFNULL(r.functionality, 0) + IFNULL(r.ease_of_use, 0) + IFNULL(r.support, 0) + IFNULL(r.documentation, 0) + IFNULL(r.value_for_money, 0)) / NULLIF((r.functionality IS NOT NULL) + (r.ease_of_use IS NOT NULL) + (r.support IS NOT NULL) + (r.documentation IS NOT NULL) + (r.value_for_money IS NOT NULL), 0), 1), 0), 0), 9.9), LEFT(IFNULL(r.used_for, ''), 400), LEFT(IFNULL(r.version, ''), 255), CAST(IFNULL(r.flagged, 0) AS CHAR), LEFT(IFNULL(r.ip_address, ''), 255), CASE WHEN u.core_state = 1 THEN 1 ELSE 0 END, NULLIF(u.core_created_time, '0000-00-00 00:00:00'), IFNULL(ru.user_id, u.core_created_user_id), 0 FROM wqyh6_jed_reviews r INNER JOIN wqyh6_ucm_content u ON u.core_content_item_id = r.id AND u.core_type_alias = 'com_jed.review' INNER JOIN #__jed_extensions e ON e.id = r.extension_id LEFT JOIN (SELECT review_id, MIN(user_id) AS user_id FROM wqyh6_jed_reviews_users GROUP BY review_id) ru ON ru.review_id = r.id ORDER BY r.extension_id ASC, u.core_created_time ASC</sql>
+        </instruction>
+        <instruction>
+            <description>Extract the per-criterion comments that JED3 stored inline in the review body as {functionality}...{/functionality} markers</description>
+            <sql>CREATE TABLE combine_jed_review_texts (
+  id INT UNSIGNED NOT NULL, functionality_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, ease_of_use_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, support_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, documentation_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, value_for_money_comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, body MEDIUMTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, PRIMARY KEY (id)
+) ENGINE = INNODB DEFAULT CHARSET = utf8mb4;
+INSERT INTO combine_jed_review_texts (id, functionality_comment, ease_of_use_comment, support_comment, documentation_comment, value_for_money_comment, body) SELECT id, '', '', '', '', '', REPLACE(REPLACE(body, '\r', ''), '\n', '') FROM #__jed_reviews WHERE body LIKE '%{functionality}%' OR body LIKE '%{ease_of_use}%' OR body LIKE '%{support}%' OR body LIKE '%{documentation}%' OR body LIKE '%{value_for_money}%';
+UPDATE combine_jed_review_texts SET functionality_comment = REGEXP_SUBSTR(body, '[{]functionality[}].*[{]/functionality[}]');
+UPDATE combine_jed_review_texts SET ease_of_use_comment = REGEXP_SUBSTR(body, '[{]ease_of_use[}].*[{]/ease_of_use[}]');
+UPDATE combine_jed_review_texts SET support_comment = REGEXP_SUBSTR(body, '[{]support[}].*[{]/support[}]');
+UPDATE combine_jed_review_texts SET documentation_comment = REGEXP_SUBSTR(body, '[{]documentation[}].*[{]/documentation[}]');
+UPDATE combine_jed_review_texts SET value_for_money_comment = REGEXP_SUBSTR(body, '[{]value_for_money[}].*[{]/value_for_money[}]');
+UPDATE combine_jed_review_texts SET functionality_comment = REPLACE(REPLACE(IFNULL(functionality_comment, ''), '{functionality}', ''), '{/functionality}', '');
+UPDATE combine_jed_review_texts SET ease_of_use_comment = REPLACE(REPLACE(IFNULL(ease_of_use_comment, ''), '{ease_of_use}', ''), '{/ease_of_use}', '');
+UPDATE combine_jed_review_texts SET support_comment = REPLACE(REPLACE(IFNULL(support_comment, ''), '{support}', ''), '{/support}', '');
+UPDATE combine_jed_review_texts SET documentation_comment = REPLACE(REPLACE(IFNULL(documentation_comment, ''), '{documentation}', ''), '{/documentation}', '');
+UPDATE combine_jed_review_texts SET value_for_money_comment = REPLACE(REPLACE(IFNULL(value_for_money_comment, ''), '{value_for_money}', ''), '{/value_for_money}', '');
+UPDATE #__jed_reviews njr INNER JOIN combine_jed_review_texts cjt ON njr.id = cjt.id SET njr.functionality_comment = cjt.functionality_comment, njr.ease_of_use_comment = cjt.ease_of_use_comment, njr.support_comment = cjt.support_comment, njr.documentation_comment = cjt.documentation_comment, njr.value_for_money_comment = cjt.value_for_money_comment;
+UPDATE #__jed_reviews SET body = 'Old Review System - No overall field' WHERE body LIKE '%{functionality}%'</sql>
+        </instruction>
+        <instruction>
+            <description>Recompute score_count from the reviews that were actually imported, instead of trusting the JED3 num_reviews counter</description>
+            <sql>UPDATE #__jed_extensions e SET e.score_count = (SELECT COUNT(*) FROM #__jed_reviews r WHERE r.extension_id = e.id)</sql>
+        </instruction>
+    </task>
+
+    <task>
+        <heading>Building Extension History</heading>
+        <instruction>
+            <description>
+                Work out how wqyh6_ucm_history refers to a listing. Joomla stores ucm_item_id as the primary key of the
+                content type's own table, and for a Fabrik-backed type that is either wqyh6_jed_extensions.id or
+                wqyh6_ucm_content.core_content_id. The schema alone does not say which, so both are counted and the
+                interpretation with more matches wins. The result is materialised into a small mapping table so the
+                revision import below joins on an indexed column instead of an OR condition.
+            </description>
+            <sql>DELETE FROM #__jed_extensions_history;
+SET @jed_ext_type_id = (SELECT type_id FROM wqyh6_content_types WHERE type_alias = 'com_jed.extension' LIMIT 1);
+SET @jed_hist_by_ext = (SELECT COUNT(*) FROM wqyh6_ucm_history h INNER JOIN combine_jed_extensions cj ON cj.id = h.ucm_item_id WHERE h.ucm_type_id = @jed_ext_type_id);
+SET @jed_hist_by_ucm = (SELECT COUNT(*) FROM wqyh6_ucm_history h INNER JOIN combine_jed_extensions cj ON cj.core_content_id = h.ucm_item_id WHERE h.ucm_type_id = @jed_ext_type_id);
+DROP TABLE IF EXISTS combine_jed_history_map;
+CREATE TABLE combine_jed_history_map (ucm_item_id INT UNSIGNED NOT NULL, extension_id INT UNSIGNED NOT NULL, PRIMARY KEY (ucm_item_id)) ENGINE=INNODB;
+INSERT IGNORE INTO combine_jed_history_map (ucm_item_id, extension_id) SELECT cj.id, cj.id FROM combine_jed_extensions cj WHERE @jed_hist_by_ext &gt;= @jed_hist_by_ucm;
+INSERT IGNORE INTO combine_jed_history_map (ucm_item_id, extension_id) SELECT cj.core_content_id, cj.id FROM combine_jed_extensions cj WHERE @jed_hist_by_ext &lt; @jed_hist_by_ucm</sql>
+        </instruction>
+        <instruction>
+            <description>
+                Import the JED3 revisions from wqyh6_ucm_history as inactive history rows, oldest first, so the
+                generated ids run in chronological order.
+
+                #__jed_extensions_history holds a full copy of a listing, while a UCM revision only carries what was
+                versioned - version_data is a JSON blob of the content type's row. Each revision is therefore built by
+                overlaying the JSON onto the current listing: a field present in the revision wins, anything absent
+                inherits the value the listing has now. Without that the imported revisions would be mostly empty and
+                the edit workflow would diff against nonsense.
+
+                Both key spellings are tried for every versioned field (core_title and title, core_body and
+                description, and so on) because the key set depends on whether the content type was registered against
+                wqyh6_ucm_content or wqyh6_jed_extensions - the schema dump contains no rows, so this could not be
+                settled in advance. CONFIRM THE ACTUAL KEY SET against real data before trusting the result, and extend
+                the mapping if version_data turns out to carry more of the JED columns. Numeric targets only accept a
+                JSON value that actually looks numeric, so a stray string cannot silently become a 0 category id.
+
+                save_date and editor_user_id become modified and modified_by - they are the authoritative record of
+                when the revision was written and by whom. version_note, sha1_hash, character_count and keep_forever
+                have no target column and are dropped.
+
+                Rows whose version_data is not valid JSON are skipped rather than aborting the run.
+            </description>
+            <sql>INSERT INTO #__jed_extensions_history (extension_id, active, name, alias, catid, owner, state, approved, approved_time, approved_notes, approved_reason, intro, description, license, requires_registration, type, extension_types, created, created_by, modified, modified_by, checked_out, checked_out_time, extension_version, joomla_versions, download_url, support_url, demo_url, documentation_url, git_url, internal_download_url, download_key, uses_updater, update_url, developer_url, developer_email, changelog_url, score_overall, score_functionality, score_ease_of_use, score_support, score_documentation, score_value_for_money, score_count, popular, logo, overview_image, video, internal_note) SELECT m.extension_id, 0, LEFT(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.core_title')), 'null'), ''), NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.title')), 'null'), ''), e.name), 255), LEFT(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.core_alias')), 'null'), ''), NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.alias')), 'null'), ''), e.alias), 255), COALESCE(CASE WHEN NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.core_catid')), 'null'), '') REGEXP '^-?[0-9]+$' THEN CAST(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.core_catid')), 'null'), '') AS SIGNED) END, CASE WHEN NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.catid')), 'null'), '') REGEXP '^-?[0-9]+$' THEN CAST(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.catid')), 'null'), '') AS SIGNED) END, e.catid), COALESCE(CASE WHEN NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.core_created_user_id')), 'null'), '') REGEXP '^-?[0-9]+$' THEN CAST(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.core_created_user_id')), 'null'), '') AS SIGNED) END, CASE WHEN NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.created_by')), 'null'), '') REGEXP '^-?[0-9]+$' THEN CAST(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.created_by')), 'null'), '') AS SIGNED) END, e.owner), CASE WHEN COALESCE(CASE WHEN NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.core_state')), 'null'), '') REGEXP '^-?[0-9]+$' THEN CAST(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.core_state')), 'null'), '') AS SIGNED) END, CASE WHEN NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.state')), 'null'), '') REGEXP '^-?[0-9]+$' THEN CAST(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.state')), 'null'), '') AS SIGNED) END, e.state) = 1 THEN 1 ELSE 0 END, e.approved, e.approved_time, e.approved_notes, e.approved_reason, LEFT(TRIM(REGEXP_REPLACE(REGEXP_REPLACE(COALESCE(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.core_body')), 'null'), ''), NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.description')), 'null'), ''), e.description), ''), '&lt;[^&gt;]*&gt;', ' '), '[[:space:]]+', ' ')), 300), COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.core_body')), 'null'), ''), NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.description')), 'null'), ''), e.description), LEFT(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.license')), 'null'), ''), e.license), 255), COALESCE(CASE WHEN NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.requires_registration')), 'null'), '') REGEXP '^-?[0-9]+$' THEN CAST(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.requires_registration')), 'null'), '') AS SIGNED) END, e.requires_registration), e.type, LEFT(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.includes')), 'null'), ''), e.extension_types), 255), COALESCE(STR_TO_DATE(NULLIF(REGEXP_SUBSTR(IFNULL(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.core_created_time')), 'null'), ''), NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.created')), 'null'), '')), ''), '^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}([ ][0-9]{2}:[0-9]{2}:[0-9]{2})?'), ''), '%Y-%m-%d %H:%i:%s'), e.created), COALESCE(CASE WHEN NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.core_created_user_id')), 'null'), '') REGEXP '^-?[0-9]+$' THEN CAST(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.core_created_user_id')), 'null'), '') AS SIGNED) END, CASE WHEN NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.created_by')), 'null'), '') REGEXP '^-?[0-9]+$' THEN CAST(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.created_by')), 'null'), '') AS SIGNED) END, e.created_by), COALESCE(NULLIF(h.save_date, '0000-00-00 00:00:00'), e.modified), COALESCE(NULLIF(h.editor_user_id, 0), e.modified_by), NULL, NULL, LEFT(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.version')), 'null'), ''), e.extension_version), 50), LEFT(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.versions')), 'null'), ''), e.joomla_versions), 255), LEFT(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.download_link')), 'null'), ''), e.download_url), 255), LEFT(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.support_link')), 'null'), ''), e.support_url), 255), LEFT(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.demo_link')), 'null'), ''), e.demo_url), 255), LEFT(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.documentation_link')), 'null'), ''), e.documentation_url), 255), e.git_url, LEFT(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.extension_file')), 'null'), ''), e.internal_download_url), 255), e.download_key, COALESCE(CASE WHEN NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.uses_updater')), 'null'), '') REGEXP '^-?[0-9]+$' THEN CAST(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.uses_updater')), 'null'), '') AS SIGNED) END, e.uses_updater), LEFT(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.update_url')), 'null'), ''), e.update_url), 255), LEFT(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.homepage_link')), 'null'), ''), e.developer_url), 255), LEFT(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.second_contact_email')), 'null'), ''), e.developer_email), 255), e.changelog_url, e.score_overall, e.score_functionality, e.score_ease_of_use, e.score_support, e.score_documentation, e.score_value_for_money, e.score_count, COALESCE(CASE WHEN NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.popular')), 'null'), '') REGEXP '^-?[0-9]+$' THEN CAST(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.popular')), 'null'), '') AS SIGNED) END, e.popular), e.logo, e.overview_image, LEFT(COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.video')), 'null'), ''), e.video), 255), COALESCE(NULLIF(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(h.version_data, '$.jed_note')), 'null'), ''), e.internal_note) FROM wqyh6_ucm_history h INNER JOIN combine_jed_history_map m ON m.ucm_item_id = h.ucm_item_id INNER JOIN #__jed_extensions e ON e.id = m.extension_id WHERE h.ucm_type_id = @jed_ext_type_id AND JSON_VALID(h.version_data) ORDER BY h.save_date ASC, h.version_id ASC</sql>
+        </instruction>
+        <instruction>
+            <description>Add the current state of every listing as its one active revision, after the imported history so it carries the highest id. #__jed_extensions_history is what the edit workflow diffs against, so a listing without an active baseline cannot be edited cleanly after go-live. This runs last so the revision carries the recomputed score_count.</description>
+            <sql>INSERT INTO #__jed_extensions_history (extension_id, active, name, alias, catid, owner, state, approved, approved_time, approved_notes, approved_reason, intro, description, license, requires_registration, type, extension_types, created, created_by, modified, modified_by, checked_out, checked_out_time, extension_version, joomla_versions, download_url, support_url, demo_url, documentation_url, git_url, internal_download_url, download_key, uses_updater, update_url, developer_url, developer_email, changelog_url, score_overall, score_functionality, score_ease_of_use, score_support, score_documentation, score_value_for_money, score_count, popular, logo, overview_image, video, internal_note) SELECT id, 1, name, alias, catid, owner, state, approved, approved_time, approved_notes, approved_reason, intro, description, license, requires_registration, type, extension_types, created, created_by, modified, modified_by, checked_out, checked_out_time, extension_version, joomla_versions, download_url, support_url, demo_url, documentation_url, git_url, internal_download_url, download_key, uses_updater, update_url, developer_url, developer_email, changelog_url, score_overall, score_functionality, score_ease_of_use, score_support, score_documentation, score_value_for_money, score_count, popular, logo, overview_image, video, internal_note FROM #__jed_extensions</sql>
+        </instruction>
+    </task>
+
+    <task>
+        <heading>Convert JED3 RSForms into individual tables</heading>
+        <instruction>
+            <description>Flatten the RSForms submissions into one staging table per form. These were the VEL and abandonware report forms. com_vel has been removed from the package, so nothing consumes these tables yet - they are kept as staging data for the abandonware component.</description>
+            <sql>DROP TABLE IF EXISTS old_rsform5;
+DROP TABLE IF EXISTS old_rsform7;
+DROP TABLE IF EXISTS old_rsform9;
+DROP TABLE IF EXISTS old_rsform10;
+DROP TABLE IF EXISTS old_rsform11;
+DROP TABLE IF EXISTS old_rsform12;
+DROP TABLE IF EXISTS old_rsform13;
+DROP TABLE IF EXISTS old_rsform14</sql>
+        </instruction>
+        <instruction>
+            <description>Create structures to hold each form type</description>
+            <sql>CREATE TABLE old_rsform5 (   SubmissionId INT NOT NULL, DateSubmitted DATETIME, UserIP VARCHAR (255), Username VARCHAR (255), UserId TEXT, FullName TEXT, Email TEXT, Organization TEXT, passtodev TEXT, vulnType TEXT, vulExtnName TEXT, vulExtnVer TEXT, vulTemName TEXT, vulTemVer TEXT, exploittype TEXT, OtherExploitDescription TEXT, vuldescription TEXT, vulTools TEXT, IsActiveExploit TEXT, exploitInPublic TEXT, publicExploitUrl TEXT, vuiImpact TEXT, devradioselect TEXT, updateURL TEXT, devname TEXT, devEmail TEXT, jedurl TEXT, trackdb TEXT, trackDbID TEXT, devAddInfo TEXT, Downloadurl TEXT, consentuse TEXT, ReferenceNumber TEXT, formId TEXT);
 CREATE TABLE old_rsform7 (  SubmissionId INT NOT NULL, DateSubmitted DATETIME, UserIP VARCHAR (255), Username VARCHAR (255), UserId TEXT, fn TEXT, updateco TEXT, uMail TEXT, uExtension_ TEXT, oldvers TEXT, UDetails TEXT, newvers TEXT, UpdateNoticeURL TEXT, changelog TEXT, Download_url_ TEXT, consentuse TEXT, formId TEXT);
 CREATE TABLE old_rsform10 (  SubmissionId INT NOT NULL, DateSubmitted DATETIME, UserIP VARCHAR (255), Username VARCHAR (255), UserId TEXT, FullName TEXT, Email TEXT, Organization TEXT, vulJoomVer TEXT, vulJoomVersion TEXT, vul3ptyExt TEXT, vulExtnName TEXT, vulExtnVer TEXT, vul3ptyTem TEXT, vulTemName TEXT, vulTemVer TEXT, exploit_type TEXT, vuldescription TEXT, vulTools TEXT, IsActiveExploit TEXT, exploitInPublic TEXT, publicExploitUrl TEXT, vuiImpact TEXT, devradioselect TEXT, updateURL TEXT, devname TEXT, devEmail TEXT, trackdb TEXT, trackDbID TEXT, devAddInfo TEXT, securitycode TEXT, Submit TEXT, ReferenceNumber TEXT, formId TEXT, fileup TEXT, exploittype TEXT, OtherExploitDescription TEXT, jedurl TEXT, Downloadurl TEXT);
 CREATE TABLE old_rsform11 (  SubmissionId INT NOT NULL, DateSubmitted DATETIME, UserIP VARCHAR (255), Username VARCHAR (255), UserId TEXT, FullName TEXT, Email TEXT, Organization TEXT, vulnType TEXT, vulJoomVersion TEXT, vulExtnName TEXT, vulExtnVer TEXT, vulTemName TEXT, vulTemVer TEXT, exploittype TEXT, OtherExploitDescription TEXT, vuldescription TEXT, vulTools TEXT, IsActiveExploit TEXT, exploitInPublic TEXT, publicExploitUrl TEXT, vuiImpact TEXT, devradioselect TEXT, updateURL TEXT, devname TEXT, devEmail TEXT, jedurl TEXT, trackdb TEXT, trackDbID TEXT, devAddInfo TEXT, Downloadurl TEXT, ReferenceNumber TEXT, formId TEXT, passtodev TEXT, consentuse TEXT, v3 TEXT);
@@ -270,8 +364,9 @@ CREATE TABLE old_rsform13 (  SubmissionId INT NOT NULL, DateSubmitted DATETIME, 
 CREATE TABLE old_rsform14 (  SubmissionId INT NOT NULL, DateSubmitted DATETIME, UserIP VARCHAR (255), Username VARCHAR (255), UserId TEXT, NAME TEXT, Email TEXT, Extension_name TEXT, Developer TEXT, Last_known_version_number TEXT, url TEXT, Reason TEXT, Send TEXT, formId TEXT, consentuse TEXT, captcha TEXT);
 CREATE TABLE old_rsform9 (  SubmissionId INT NOT NULL, DateSubmitted DATETIME, UserIP VARCHAR (255), Username VARCHAR (255), UserId TEXT, NAME TEXT, Email TEXT, Extension_name TEXT, Developer TEXT, Last_known_version_number TEXT, url TEXT, Reason TEXT, consentuse TEXT, formId TEXT)</sql>
         </instruction>
-         <instruction><description>Grab Submission Id info from submissions</description>
-        <sql>INSERT INTO old_rsform5 (SubmissionId,DateSubmitted,UserIP,Username,UserId) SELECT DISTINCT SubmissionId,DateSubmitted,UserIP,Username,UserId FROM wqyh6_rsform_submissions WHERE FormId=5;
+        <instruction>
+            <description>Grab Submission Id info from submissions</description>
+            <sql>INSERT INTO old_rsform5 (SubmissionId,DateSubmitted,UserIP,Username,UserId) SELECT DISTINCT SubmissionId,DateSubmitted,UserIP,Username,UserId FROM wqyh6_rsform_submissions WHERE FormId=5;
 INSERT INTO old_rsform7 (SubmissionId,DateSubmitted,UserIP,Username,UserId) SELECT DISTINCT SubmissionId,DateSubmitted,UserIP,Username,UserId FROM wqyh6_rsform_submissions WHERE FormId=7;
 INSERT INTO old_rsform9 (SubmissionId,DateSubmitted,UserIP,Username,UserId) SELECT DISTINCT SubmissionId,DateSubmitted,UserIP,Username,UserId FROM wqyh6_rsform_submissions WHERE FormId=9;
 INSERT INTO old_rsform10 (SubmissionId,DateSubmitted,UserIP,Username,UserId) SELECT DISTINCT SubmissionId,DateSubmitted,UserIP,Username,UserId FROM wqyh6_rsform_submissions WHERE FormId=10;
@@ -280,8 +375,9 @@ INSERT INTO old_rsform12 (SubmissionId,DateSubmitted,UserIP,Username,UserId) SEL
 INSERT INTO old_rsform13 (SubmissionId,DateSubmitted,UserIP,Username,UserId) SELECT DISTINCT SubmissionId,DateSubmitted,UserIP,Username,UserId FROM wqyh6_rsform_submissions WHERE FormId=13;
 INSERT INTO old_rsform14 (SubmissionId,DateSubmitted,UserIP,Username,UserId) SELECT DISTINCT SubmissionId,DateSubmitted,UserIP,Username,UserId FROM wqyh6_rsform_submissions WHERE FormId=14</sql>
         </instruction>
-        <instruction><description>Convert RSForm rows of data into columns</description>
-        <sql>UPDATE old_rsform5 f, wqyh6_rsform_submission_values v SET f.FullName= v.FieldValue WHERE v.FieldName='FullName' AND v.SubmissionId=f.SubmissionId;
+        <instruction>
+            <description>Convert RSForm rows of data into columns</description>
+            <sql>UPDATE old_rsform5 f, wqyh6_rsform_submission_values v SET f.FullName= v.FieldValue WHERE v.FieldName='FullName' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform5 f, wqyh6_rsform_submission_values v SET f.Email= v.FieldValue WHERE v.FieldName='Email' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform5 f, wqyh6_rsform_submission_values v SET f.Organization= v.FieldValue WHERE v.FieldName='Organization' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform5 f, wqyh6_rsform_submission_values v SET f.passtodev= v.FieldValue WHERE v.FieldName='passtodev' AND v.SubmissionId=f.SubmissionId;
@@ -310,7 +406,6 @@ UPDATE old_rsform5 f, wqyh6_rsform_submission_values v SET f.Downloadurl= v.Fiel
 UPDATE old_rsform5 f, wqyh6_rsform_submission_values v SET f.consentuse= v.FieldValue WHERE v.FieldName='consentuse' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform5 f, wqyh6_rsform_submission_values v SET f.ReferenceNumber= v.FieldValue WHERE v.FieldName='ReferenceNumber' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform5 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId;
-
 UPDATE old_rsform7 f, wqyh6_rsform_submission_values v SET f.fn= v.FieldValue WHERE v.FieldName='fn' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform7 f, wqyh6_rsform_submission_values v SET f.updateco= v.FieldValue WHERE v.FieldName='updateco' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform7 f, wqyh6_rsform_submission_values v SET f.uMail= v.FieldValue WHERE v.FieldName='uMail' AND v.SubmissionId=f.SubmissionId;
@@ -323,124 +418,6 @@ UPDATE old_rsform7 f, wqyh6_rsform_submission_values v SET f.changelog= v.FieldV
 UPDATE old_rsform7 f, wqyh6_rsform_submission_values v SET f.Download_url_= v.FieldValue WHERE v.FieldName='Download_url_' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform7 f, wqyh6_rsform_submission_values v SET f.consentuse= v.FieldValue WHERE v.FieldName='consentuse' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform7 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId;
-
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.FullName= v.FieldValue WHERE v.FieldName='FullName' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.Email= v.FieldValue WHERE v.FieldName='Email' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.Organization= v.FieldValue WHERE v.FieldName='Organization' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.vulJoomVer= v.FieldValue WHERE v.FieldName='vulJoomVer' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.vulJoomVersion= v.FieldValue WHERE v.FieldName='vulJoomVersion' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.vul3ptyExt= v.FieldValue WHERE v.FieldName='vul3ptyExt' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.vulExtnName= v.FieldValue WHERE v.FieldName='vulExtnName' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.vulExtnVer= v.FieldValue WHERE v.FieldName='vulExtnVer' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.vul3ptyTem= v.FieldValue WHERE v.FieldName='vul3ptyTem' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.vulTemName= v.FieldValue WHERE v.FieldName='vulTemName' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.vulTemVer= v.FieldValue WHERE v.FieldName='vulTemVer' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.exploit_type= v.FieldValue WHERE v.FieldName='exploit_type' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.vuldescription= v.FieldValue WHERE v.FieldName='vuldescription' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.vulTools= v.FieldValue WHERE v.FieldName='vulTools' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.IsActiveExploit= v.FieldValue WHERE v.FieldName='IsActiveExploit' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.exploitInPublic= v.FieldValue WHERE v.FieldName='exploitInPublic' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.publicExploitUrl= v.FieldValue WHERE v.FieldName='publicExploitUrl' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.vuiImpact= v.FieldValue WHERE v.FieldName='vuiImpact' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.devradioselect= v.FieldValue WHERE v.FieldName='devradioselect' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.updateURL= v.FieldValue WHERE v.FieldName='updateURL' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.devname= v.FieldValue WHERE v.FieldName='devname' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.devEmail= v.FieldValue WHERE v.FieldName='devEmail' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.trackdb= v.FieldValue WHERE v.FieldName='trackdb' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.trackDbID= v.FieldValue WHERE v.FieldName='trackDbID' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.devAddInfo= v.FieldValue WHERE v.FieldName='devAddInfo' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.securitycode= v.FieldValue WHERE v.FieldName='securitycode' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.Submit= v.FieldValue WHERE v.FieldName='Submit' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.ReferenceNumber= v.FieldValue WHERE v.FieldName='ReferenceNumber' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.fileup= v.FieldValue WHERE v.FieldName='fileup' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.exploittype= v.FieldValue WHERE v.FieldName='exploittype' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.OtherExploitDescription= v.FieldValue WHERE v.FieldName='OtherExploitDescription' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.jedurl= v.FieldValue WHERE v.FieldName='jedurl' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.Downloadurl= v.FieldValue WHERE v.FieldName='Downloadurl' AND v.SubmissionId=f.SubmissionId;
-
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.FullName= v.FieldValue WHERE v.FieldName='FullName' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.Email= v.FieldValue WHERE v.FieldName='Email' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.Organization= v.FieldValue WHERE v.FieldName='Organization' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.vulnType= v.FieldValue WHERE v.FieldName='vulnType' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.vulJoomVersion= v.FieldValue WHERE v.FieldName='vulJoomVersion' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.vulExtnName= v.FieldValue WHERE v.FieldName='vulExtnName' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.vulExtnVer= v.FieldValue WHERE v.FieldName='vulExtnVer' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.vulTemName= v.FieldValue WHERE v.FieldName='vulTemName' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.vulTemVer= v.FieldValue WHERE v.FieldName='vulTemVer' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.exploittype= v.FieldValue WHERE v.FieldName='exploittype' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.OtherExploitDescription= v.FieldValue WHERE v.FieldName='OtherExploitDescription' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.vuldescription= v.FieldValue WHERE v.FieldName='vuldescription' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.vulTools= v.FieldValue WHERE v.FieldName='vulTools' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.IsActiveExploit= v.FieldValue WHERE v.FieldName='IsActiveExploit' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.exploitInPublic= v.FieldValue WHERE v.FieldName='exploitInPublic' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.publicExploitUrl= v.FieldValue WHERE v.FieldName='publicExploitUrl' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.vuiImpact= v.FieldValue WHERE v.FieldName='vuiImpact' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.devradioselect= v.FieldValue WHERE v.FieldName='devradioselect' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.updateURL= v.FieldValue WHERE v.FieldName='updateURL' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.devname= v.FieldValue WHERE v.FieldName='devname' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.devEmail= v.FieldValue WHERE v.FieldName='devEmail' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.jedurl= v.FieldValue WHERE v.FieldName='jedurl' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.trackdb= v.FieldValue WHERE v.FieldName='trackdb' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.trackDbID= v.FieldValue WHERE v.FieldName='trackDbID' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.devAddInfo= v.FieldValue WHERE v.FieldName='devAddInfo' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.Downloadurl= v.FieldValue WHERE v.FieldName='Downloadurl' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.ReferenceNumber= v.FieldValue WHERE v.FieldName='ReferenceNumber' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.passtodev= v.FieldValue WHERE v.FieldName='passtodev' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.consentuse= v.FieldValue WHERE v.FieldName='consentuse' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.v3= v.FieldValue WHERE v.FieldName='v3' AND v.SubmissionId=f.SubmissionId;
-
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.New_File= v.FieldValue WHERE v.FieldName='New_File' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.fn= v.FieldValue WHERE v.FieldName='fn' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.updateco= v.FieldValue WHERE v.FieldName='updateco' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.uMail= v.FieldValue WHERE v.FieldName='uMail' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.uExtension_= v.FieldValue WHERE v.FieldName='uExtension_' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.Extension_Update_Details= v.FieldValue WHERE v.FieldName='Extension_Update_Details' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.UpdateNotice_URL= v.FieldValue WHERE v.FieldName='UpdateNotice_URL' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.codebox= v.FieldValue WHERE v.FieldName='codebox' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.Update_confirmation= v.FieldValue WHERE v.FieldName='Update_confirmation' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.UpdateNoticeURL= v.FieldValue WHERE v.FieldName='UpdateNoticeURL' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.UDetails= v.FieldValue WHERE v.FieldName='UDetails' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.oldvers= v.FieldValue WHERE v.FieldName='oldvers' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.newvers= v.FieldValue WHERE v.FieldName='newvers' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.changelog= v.FieldValue WHERE v.FieldName='changelog' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.tf2= v.FieldValue WHERE v.FieldName='tf2' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.Download_url_= v.FieldValue WHERE v.FieldName='Download_url_' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.consentuse= v.FieldValue WHERE v.FieldName='consentuse' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.v3= v.FieldValue WHERE v.FieldName='v3' AND v.SubmissionId=f.SubmissionId;
-
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.Name= v.FieldValue WHERE v.FieldName='Name' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.Email= v.FieldValue WHERE v.FieldName='Email' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.website= v.FieldValue WHERE v.FieldName='website' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.experience= v.FieldValue WHERE v.FieldName='experience' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.extensiondev= v.FieldValue WHERE v.FieldName='extensiondev' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.jedurl= v.FieldValue WHERE v.FieldName='jedurl' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.socialinks= v.FieldValue WHERE v.FieldName='socialinks' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.fname= v.FieldValue WHERE v.FieldName='fname' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.vollink= v.FieldValue WHERE v.FieldName='vollink' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.summary= v.FieldValue WHERE v.FieldName='summary' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.warning= v.FieldValue WHERE v.FieldName='warning' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.reasons= v.FieldValue WHERE v.FieldName='reasons' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.Send= v.FieldValue WHERE v.FieldName='Send' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.warn= v.FieldValue WHERE v.FieldName='warn' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.possible= v.FieldValue WHERE v.FieldName='possible' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.consentuse= v.FieldValue WHERE v.FieldName='consentuse' AND v.SubmissionId=f.SubmissionId;
-
-UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Name= v.FieldValue WHERE v.FieldName='Name' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Email= v.FieldValue WHERE v.FieldName='Email' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Extension_name= v.FieldValue WHERE v.FieldName='Extension_name' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Developer= v.FieldValue WHERE v.FieldName='Developer' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Last_known_version_number= v.FieldValue WHERE v.FieldName='Last_known_version_number' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.url= v.FieldValue WHERE v.FieldName='url' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Reason= v.FieldValue WHERE v.FieldName='Reason' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Send= v.FieldValue WHERE v.FieldName='Send' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.consentuse= v.FieldValue WHERE v.FieldName='consentuse' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.captcha= v.FieldValue WHERE v.FieldName='captcha' AND v.SubmissionId=f.SubmissionId;
-
 UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.Name= v.FieldValue WHERE v.FieldName='Name' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.Email= v.FieldValue WHERE v.FieldName='Email' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.Extension_name= v.FieldValue WHERE v.FieldName='Extension_name' AND v.SubmissionId=f.SubmissionId;
@@ -449,34 +426,66 @@ UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.Last_known_version_
 UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.url= v.FieldValue WHERE v.FieldName='url' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.Reason= v.FieldValue WHERE v.FieldName='Reason' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.consentuse= v.FieldValue WHERE v.FieldName='consentuse' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId</sql>
+UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.FullName= v.FieldValue WHERE v.FieldName='FullName' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.Email= v.FieldValue WHERE v.FieldName='Email' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.vulExtnName= v.FieldValue WHERE v.FieldName='vulExtnName' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.vulExtnVer= v.FieldValue WHERE v.FieldName='vulExtnVer' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.vuldescription= v.FieldValue WHERE v.FieldName='vuldescription' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.devname= v.FieldValue WHERE v.FieldName='devname' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.devEmail= v.FieldValue WHERE v.FieldName='devEmail' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.jedurl= v.FieldValue WHERE v.FieldName='jedurl' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.Downloadurl= v.FieldValue WHERE v.FieldName='Downloadurl' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.ReferenceNumber= v.FieldValue WHERE v.FieldName='ReferenceNumber' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform10 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.FullName= v.FieldValue WHERE v.FieldName='FullName' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.Email= v.FieldValue WHERE v.FieldName='Email' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.vulExtnName= v.FieldValue WHERE v.FieldName='vulExtnName' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.vulExtnVer= v.FieldValue WHERE v.FieldName='vulExtnVer' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.vuldescription= v.FieldValue WHERE v.FieldName='vuldescription' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.devname= v.FieldValue WHERE v.FieldName='devname' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.devEmail= v.FieldValue WHERE v.FieldName='devEmail' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.jedurl= v.FieldValue WHERE v.FieldName='jedurl' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.Downloadurl= v.FieldValue WHERE v.FieldName='Downloadurl' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.ReferenceNumber= v.FieldValue WHERE v.FieldName='ReferenceNumber' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform11 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.fn= v.FieldValue WHERE v.FieldName='fn' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.uMail= v.FieldValue WHERE v.FieldName='uMail' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.uExtension_= v.FieldValue WHERE v.FieldName='uExtension_' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.oldvers= v.FieldValue WHERE v.FieldName='oldvers' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.newvers= v.FieldValue WHERE v.FieldName='newvers' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.UDetails= v.FieldValue WHERE v.FieldName='UDetails' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.changelog= v.FieldValue WHERE v.FieldName='changelog' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.Download_url_= v.FieldValue WHERE v.FieldName='Download_url_' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform12 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.Name= v.FieldValue WHERE v.FieldName='Name' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.Email= v.FieldValue WHERE v.FieldName='Email' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.website= v.FieldValue WHERE v.FieldName='website' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.jedurl= v.FieldValue WHERE v.FieldName='jedurl' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.summary= v.FieldValue WHERE v.FieldName='summary' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Name= v.FieldValue WHERE v.FieldName='Name' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Email= v.FieldValue WHERE v.FieldName='Email' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Extension_name= v.FieldValue WHERE v.FieldName='Extension_name' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Developer= v.FieldValue WHERE v.FieldName='Developer' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Last_known_version_number= v.FieldValue WHERE v.FieldName='Last_known_version_number' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.url= v.FieldValue WHERE v.FieldName='url' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Reason= v.FieldValue WHERE v.FieldName='Reason' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.consentuse= v.FieldValue WHERE v.FieldName='consentuse' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId</sql>
         </instruction>
     </task>
-    
-    <task>
-    <heading>Copy Categories</heading>
-        <instruction><description>Clean local categories and move JED3 categories over.</description>
-        <sql>DELETE FROM #__categories where extension='com_jed';insert into #__categories select * from wqyh6_categories where extension='com_jed' </sql>
-            </instruction>
-    </task>
-
 
     <task>
-        <heading>Copy Developers</heading>
-        <instruction><description>Copy JED 3 developer data into the "developer_name" and "suspicious" user custom fields</description>
-            <sql>DELETE fv FROM #__fields_values fv INNER JOIN #__fields f ON f.id = fv.field_id WHERE f.context = 'com_users.user' AND f.name IN ('developer_name','suspicious');
-INSERT INTO #__fields_values (field_id, item_id, value) SELECT (SELECT id FROM #__fields WHERE context = 'com_users.user' AND name = 'developer_name'), user_id, developer_name FROM wqyh6_jed_users WHERE developer_name IS NOT NULL AND developer_name != '';
-INSERT INTO #__fields_values (field_id, item_id, value) SELECT (SELECT id FROM #__fields WHERE context = 'com_users.user' AND name = 'suspicious'), user_id, '1' FROM wqyh6_jed_users WHERE suspicious = 1</sql>
+        <heading>Cleanup</heading>
+        <instruction>
+            <description>Drop the staging tables and re-enable foreign key checks. combine_jed_extensions is kept: it still holds the JED3 columns that have no target column yet (tags, price, currency, language_code, parent_id, related_free_paid_id), which the tag and linked-extension migrations will need.</description>
+            <sql>DROP TABLE IF EXISTS combine_jed_review_texts;
+SET FOREIGN_KEY_CHECKS = 1</sql>
         </instruction>
     </task>
 
-    
     <task>
-    <heading>Copy Users</heading>
-        <instruction><description>Clean local users and move JED3 users over. NOTE - NEED TO MANUALLY DO USERGROUP_MAP</description>
-        <sql>DELETE FROM #__users where id &gt;16;DELETE FROM #__users WHERE id=1;
-            insert into #__users (  `id`,   `name`,  `username`,  `email`,  `password`,  `block`,  `sendEmail`,  `registerDate`,  `lastvisitDate`,  `activation`,  `params`,  `lastResetTime`,  `resetCount`,  `otpKey`,  `otep`,  `requireReset`) select `id`,  `name`,  `username`,  `email`,  `password`,  `block`,  `sendEmail`,  `registerDate`,  `lastvisitDate`,  `activation`,  `params`,  `lastResetTime`,  `resetCount`,  `otpKey`,  `otep`,  `requireReset` from wqyh6_users;SET FOREIGN_KEY_CHECKS = 1 </sql>
-            </instruction>
+        <heading>All DONE!</heading>
     </task>
-    <task><heading>All DONE!</heading></task>
- </tasks>
+</tasks>

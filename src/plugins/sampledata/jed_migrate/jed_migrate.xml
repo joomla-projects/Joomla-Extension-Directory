@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="plugin" group="sampledata" method="upgrade">
+	<name>plg_sampledata_jed_migrate</name>
+	<author>Joomla! Project</author>
+	<creationDate>##DATE##</creationDate>
+	<copyright>(C) ##YEAR## Open Source Matters, Inc.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>admin@joomla.org</authorEmail>
+	<authorUrl>www.joomla.org</authorUrl>
+	<version>##VERSION##</version>
+	<description>PLG_SAMPLEDATA_JED_MIGRATE_XML_DESCRIPTION</description>
+	<files>
+		##FILES##
+	</files>
+	<languages>
+		##LANGUAGE_FILES##
+	</languages>
+</extension>
