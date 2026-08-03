@@ -32,6 +32,7 @@ use Joomla\CMS\User;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
 use Joomla\Registry\Registry;
+use League\CommonMark\CommonMarkConverter;
 
 /**
  * JED Helper
@@ -119,6 +120,72 @@ class JedHelper extends ContentHelper
     }
 
     /**
+     * Render a stored description or intro as HTML.
+     *
+     * Listing texts are Markdown. The JED3 stock they were imported from is plain text with
+     * blank lines between paragraphs, which is already valid Markdown, and the import strips
+     * the handful of rows that carried HTML - so there is exactly one format to render.
+     *
+     * Two settings matter:
+     *
+     *  - `html_input = strip` means raw HTML in a description is removed rather than passed
+     *    through. Descriptions are developer-supplied, so this is the boundary that keeps
+     *    them from injecting markup, and it holds even if HTML gets into the column later.
+     *  - `soft_break = <br>` keeps single newlines visible. About 1,100 of the imported
+     *    descriptions use single newlines for what are effectively bullet lines, and stock
+     *    Markdown would run them together into one paragraph.
+     *
+     * @param string|null $text The stored Markdown.
+     *
+     * @return string  Rendered HTML, safe to output.
+     *
+     * @since 4.1.0
+     */
+    public static function renderMarkdown(?string $text): string
+    {
+        if ($text === null || trim($text) === '') {
+            return '';
+        }
+
+        static $converter = null;
+
+        if ($converter === null) {
+            $converter = new CommonMarkConverter([
+                'html_input'         => 'strip',
+                'allow_unsafe_links' => false,
+                'renderer'           => ['soft_break' => "<br>\n"],
+            ]);
+        }
+
+        return (string) $converter->convert($text);
+    }
+
+    /**
+     * Reduce a stored description or intro to plain text.
+     *
+     * For places that need a short, unformatted excerpt - card summaries, meta descriptions -
+     * where rendered Markdown would inject block markup into an inline context.
+     *
+     * @param string|null $text   The stored Markdown.
+     * @param int         $length Maximum length, 0 for no limit.
+     *
+     * @return string
+     *
+     * @since 4.1.0
+     */
+    public static function markdownToText(?string $text, int $length = 0): string
+    {
+        $plain = trim(preg_replace('/\s+/', ' ', strip_tags(self::renderMarkdown($text))));
+
+        if ($length > 0 && mb_strlen($plain) > $length) {
+            $plain = mb_substr($plain, 0, $length);
+            $plain = rtrim(mb_substr($plain, 0, mb_strrpos($plain, ' ') ?: $length)) . '…';
+        }
+
+        return $plain;
+    }
+
+    /**
      * Format a single extension field's value as plain, read-only markup. Shared
      * between the read-only extension view (`tmpl/extension/default.php`) and the
      * history compare view (`tmpl/extension/compare.php`).
@@ -200,7 +267,7 @@ class JedHelper extends ContentHelper
 
             case 'intro':
             case 'description':
-                return '<div class="jed-view-html">' . (string) $value . '</div>';
+                return '<div class="jed-view-html">' . self::renderMarkdown((string) $value) . '</div>';
 
             case 'download_url':
             case 'support_url':

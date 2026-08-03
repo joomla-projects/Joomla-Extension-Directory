@@ -96,7 +96,7 @@ if (JedHelper::isLoggedIn()) {
 
         <div class="row gap-2">
             <div class="col-8 ">
-                <?php echo $this->item->intro; ?>
+                <?php echo JedHelper::renderMarkdown($this->item->intro); ?>
             </div>
             <div class="col">
                 <dl class="row">
@@ -151,11 +151,11 @@ if (JedHelper::isLoggedIn()) {
             <div class="jed-grid jed-grid--2-1 margin-bottom">
                 <div class="jed-grid__item">
                     <div class="jed-subitem-intro mb-2">
-                         <?php echo $this->item->intro; ?>
+                         <?php echo JedHelper::renderMarkdown($this->item->intro); ?>
                     </div>
 
                     <div class="jed-subitem-description mb-2 collapse">
-                         <?php echo $this->item->description ?>
+                         <?php echo JedHelper::renderMarkdown($this->item->description); ?>
                     </div>
 
                     <p class="button-group">

@@ -333,6 +333,21 @@ class JedHelper
     }
 
     /**
+     * Reduce a stored description or intro to plain text, optionally truncated.
+     *
+     * @param string|null $text   The stored Markdown.
+     * @param int         $length Maximum length, 0 for no limit.
+     *
+     * @return string
+     *
+     * @since 4.1.0
+     */
+    public static function markdownToText(?string $text, int $length = 0): string
+    {
+        return AdminJedHelper::markdownToText($text, $length);
+    }
+
+    /**
      * The single visibility rule for reviews in the frontend.
      *
      * A review is public once it has been through moderation (state = 1). On top of that its
