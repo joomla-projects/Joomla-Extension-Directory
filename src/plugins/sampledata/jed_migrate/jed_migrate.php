@@ -13,6 +13,7 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\Component\Categories\Administrator\Table\CategoryTable;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\DatabaseDriver;
 
@@ -303,6 +304,12 @@ class PlgSampledataJed_Migrate extends CMSPlugin
 
         for ($i = 1; $i <= 10; $i++) {
             $plan[$i] = ['file' => 'step' . $i . '.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_STEP' . $i . '_SUCCESS'];
+
+            // Step 4 copies the categories in with JED3's own lft/rgt values, which do not
+            // fit the target's shared nested set - rebuild it before anything reads the tree.
+            if ($i === 4) {
+                $plan[$i]['after'] = 'rebuildCategoryTree';
+            }
         }
 
         $plan[11] = ['file' => 'history_prepare.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_HISTORY_PREPARE_SUCCESS'];
@@ -410,12 +417,60 @@ class PlgSampledataJed_Migrate extends CMSPlugin
             }
         }
 
+        if (isset($spec['after']) && is_callable([$this, $spec['after']])) {
+            $error = $this->{$spec['after']}();
+
+            if ($error !== null) {
+                return ['success' => false, 'message' => $error];
+            }
+        }
+
         return [
             'success' => true,
             'message' => isset($spec['batch'])
                 ? Text::sprintf($spec['label'], $spec['batch'], self::HISTORY_BATCHES, $count)
                 : Text::sprintf($spec['label'], $count),
         ];
+    }
+
+    /**
+     * Rebuild the category nested set after the JED3 categories have been copied in.
+     *
+     * The copy takes the JED3 lft/rgt values verbatim, but Joomla keeps ONE nested set across
+     * every extension in #__categories - com_content, com_contact and com_jed all live in the
+     * same tree under a single ROOT row. The imported numbering therefore does not fit inside
+     * the target's existing ROOT, and any category landing outside its lft/rgt range becomes
+     * unreachable by tree traversal: no subcategory listing, no breadcrumb, no SEF path.
+     *
+     * Recomputing lft/rgt/level from parent_id puts every row back inside the tree. This has to
+     * happen in PHP - it is a recursive walk that the plain SQL steps cannot express.
+     *
+     * @return string|null  An error message, or null on success.
+     *
+     * @since 4.0.0
+     */
+    private function rebuildCategoryTree(): ?string
+    {
+        try {
+            // com_categories owns the table class, and its namespace is only registered once
+            // the component has been booted - instantiating the class directly fails outside a
+            // request that already loaded it.
+            $table = Factory::getApplication()
+                ->bootComponent('com_categories')
+                ->getMVCFactory()
+                ->createTable('Category', 'Administrator', ['dbo' => $this->getDatabase()]);
+
+            if (!$table->rebuild()) {
+                return Text::sprintf(
+                    'PLG_SAMPLEDATA_JED_MIGRATE_ERROR_CATEGORY_REBUILD',
+                    $table->getError() ?: 'unknown error'
+                );
+            }
+        } catch (\Throwable $e) {
+            return Text::sprintf('PLG_SAMPLEDATA_JED_MIGRATE_ERROR_CATEGORY_REBUILD', $e->getMessage());
+        }
+
+        return null;
     }
 
     /**
@@ -546,7 +601,7 @@ class PlgSampledataJed_Migrate extends CMSPlugin
 
         $queries[] = $current;
 
-        return array_values(array_filter(array_map('trim', $queries), static fn($q) => $q !== ''));
+        return array_values(array_filter(array_map('trim', $queries), static fn ($q) => $q !== ''));
     }
 
     /**
