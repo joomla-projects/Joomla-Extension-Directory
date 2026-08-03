@@ -15,6 +15,7 @@ defined('_JEXEC') or die;
 
 use DateTime;
 use Exception;
+use Jed\Component\Jed\Administrator\Helper\JedHelper as AdminJedHelper;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
