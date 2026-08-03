@@ -335,14 +335,21 @@ class JedHelper
      */
     public static function getReviewVisibilityCondition(DatabaseInterface $db, string $alias = 'a'): string
     {
+        // A review never outlives the visibility of what it reviews. Without this the reviews
+        // list exposed the title and body of reviews for listings that are not public, each
+        // linking to an extension page that answers 403.
+        $extension = 'EXISTS (SELECT 1 FROM ' . $db->quoteName('#__jed_extensions', 've')
+            . ' WHERE ' . $db->quoteName('ve.id') . ' = ' . $db->quoteName($alias . '.extension_id')
+            . ' AND ' . self::getExtensionVisibilityCondition($db, 've') . ')';
+
         $public = $db->quoteName($alias . '.state') . ' = 1';
         $userId = (int) self::getUser()->id;
 
-        if ($userId <= 0) {
-            return '(' . $public . ')';
+        if ($userId > 0) {
+            $public = '(' . $public . ' OR ' . $db->quoteName($alias . '.created_by') . ' = ' . $userId . ')';
         }
 
-        return '(' . $public . ' OR ' . $db->quoteName($alias . '.created_by') . ' = ' . $userId . ')';
+        return '(' . $extension . ' AND ' . $public . ')';
     }
 
     /**
@@ -359,13 +366,30 @@ class JedHelper
      */
     public static function canViewReview(object $item): bool
     {
-        if ((int) ($item->state ?? 0) === 1) {
-            return true;
+        $userId = (int) self::getUser()->id;
+        $isMine = $userId > 0 && (int) ($item->created_by ?? 0) === $userId;
+
+        if ((int) ($item->state ?? 0) !== 1 && !$isMine) {
+            return false;
         }
 
-        $userId = (int) self::getUser()->id;
+        // The review is only as visible as the listing it belongs to.
+        $extensionId = (int) ($item->extension_id ?? 0);
 
-        return $userId > 0 && (int) ($item->created_by ?? 0) === $userId;
+        if ($extensionId <= 0) {
+            return false;
+        }
+
+        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(['id', 'state', 'approved']))
+            ->from($db->quoteName('#__jed_extensions'))
+            ->where($db->quoteName('id') . ' = :eid')
+            ->bind(':eid', $extensionId, ParameterType::INTEGER);
+
+        $extension = $db->setQuery($query)->loadObject();
+
+        return $extension !== null && self::canViewExtension($extension);
     }
 
     /**

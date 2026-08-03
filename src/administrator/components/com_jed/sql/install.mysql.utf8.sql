@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions`
 	KEY `IDX_jed_extensions_catid` (`catid`),
 	KEY `IDX_jed_extensions_owner` (`owner`),
 	KEY `IDX_jed_extensions_state` (`state`),
+	KEY `IDX_jed_extensions_visibility` (`state`, `approved`),
 	KEY `IDX_jed_extensions_alias` (`alias`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
