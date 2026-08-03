@@ -26,6 +26,23 @@ use Joomla\CMS\Language\Text;
 class JedtrophyHelper
 {
     /**
+     * The `extension_types` tokens that appear in the JED3 data, in display order.
+     *
+     * Occurrences across the legacy stock: mod 7,874 · plugin 7,210 · com 3,593 · ext 1,042 ·
+     * esp 138 · lang 16. Labels come from the existing COM_JED_EXTENSION_INCLUDES__LABEL*
+     * keys, the same convention getTrophyIncludesString() already builds by hand.
+     *
+     * "ext" and "esp" are placeholders - their intended meaning is not confirmed, so their
+     * strings are provisional and expected to be renamed. A token not listed here still
+     * renders, as its raw value, rather than disappearing.
+     *
+     * @var string[]
+     *
+     * @since 4.1.0
+     */
+    private const INCLUDE_TOKENS = ['com', 'mod', 'plugin', 'ext', 'esp', 'lang'];
+
+    /**
      * @param $versionstr
      *
      * @return string
@@ -111,23 +128,24 @@ class JedtrophyHelper
      */
     public static function getTrophyIncludesStringFull($includestr): string
     {
-        $trophies = (array) json_decode($includestr);
+        $trophies = (array) json_decode((string) $includestr);
 
-        $output      = [];
+        $output = [];
 
         foreach ($trophies as $v) {
-            $str = "";
-            switch ($v) {
-                case "com":
-                    $output[] = "Component";
-                    break;
-                case "mod":
-                    $output[] = "Module";
-                    break;
-                case "plugin":
-                    $output[] = "Plugin";
-                    break;
+            $token = strtolower(trim((string) $v));
+
+            if ($token === '') {
+                continue;
             }
+
+            // An unrecognised token is shown as-is rather than dropped. The switch this
+            // replaced covered only com/mod/plugin, so the ~1,200 listings carrying "ext",
+            // "esp" or "lang" lost the entry silently - and a listing whose only token was
+            // one of those rendered an empty Includes field.
+            $output[] = in_array($token, self::INCLUDE_TOKENS, true)
+                ? Text::_('COM_JED_EXTENSION_INCLUDES__LABEL' . strtoupper($token))
+                : $token;
         }
 
         return implode(', ', $output);
