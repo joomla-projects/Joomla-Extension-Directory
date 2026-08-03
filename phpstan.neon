@@ -9,6 +9,7 @@ parameters:
     - src/administrator/components/com_jed/vendor
   scanDirectories:
     - joomla
+    - src/administrator/components/com_jed/vendor
   ignoreErrors:
     -
       message: '#Call to protected method getDocument\(\) of class [a-zA-Z0-9\\_]+\\AbstractView\.#'
