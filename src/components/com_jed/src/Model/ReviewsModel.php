@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
@@ -160,7 +161,9 @@ class ReviewsModel extends ListModel
         // Join over the created by field 'created_by'
         $query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
 
-
+        // Moderated reviews only, plus the current user's own. This model previously had no
+        // state filter at all, so unpublished reviews were listed publicly.
+        $query->where(JedHelper::getReviewVisibilityCondition($db));
 
         // Filter by search in title
         $search = $this->getState('filter.search');

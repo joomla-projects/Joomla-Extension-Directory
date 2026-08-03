@@ -75,11 +75,13 @@ class ExtensionModel extends ItemModel
             $table = $this->getTable();
 
             // Attempt to load the row.
-            if ($table && $table->load($pk)) { // Check published state.
-                if (
-                    ($published = $this->getState('filter.published')) && isset($table->state)
-                    && $table->state != $published
-                ) {
+            if ($table && $table->load($pk)) {
+                // Same visibility rule as the listings: approved by the JED team and online per
+                // the developer, or the current user owns/maintains it. This deliberately does
+                // not consult backend permissions - previously "filter.published" was only set
+                // for users without core.edit, so staff could open any unpublished listing on
+                // the public site.
+                if (!JedHelper::canViewExtension($table)) {
                     throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 403);
                 }
 
@@ -153,11 +155,13 @@ class ExtensionModel extends ItemModel
         $db    = $this->getDatabase();
         $query = $db->getQuery(true)
             ->select('*')
-            ->from($db->quoteName('#__jed_reviews'))
-            ->where($db->quoteName('extension_id') . ' = :extension_id')
-            ->where($db->quoteName('state') . ' = 1')
+            ->from($db->quoteName('#__jed_reviews', 'a'))
+            ->where($db->quoteName('a.extension_id') . ' = :extension_id')
+            // Moderated reviews, plus the current user's own so their pending review does not
+            // appear to have been lost. Same rule as the reviews list.
+            ->where(JedHelper::getReviewVisibilityCondition($db))
             ->bind(':extension_id', $extension_id, ParameterType::INTEGER)
-            ->order($db->quoteName('created_on') . ' DESC');
+            ->order($db->quoteName('a.created_on') . ' DESC');
 
         return $db->setQuery($query)->loadObjectList() ?: [];
     }

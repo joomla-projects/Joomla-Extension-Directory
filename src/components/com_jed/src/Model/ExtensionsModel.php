@@ -164,11 +164,9 @@ class ExtensionsModel extends ListModel
         $query->select('(fav.id IS NOT NULL) AS is_favorited');
         $query->join('LEFT', '#__jed_favorites AS fav ON fav.extension_id = a.id AND fav.user_id = ' . $db->quote($favUserId));
 
-        if (!Factory::getApplication()->getIdentity()->authorise('core.edit', 'com_jed')) {
-            $query->where('a.state = 1');
-        } else {
-            $query->where('(a.state IN (0, 1))'); //Published 0=unpublished, 1=published, 2=unpublished by author
-        }
+        // Approved by the JED team AND online per the developer, plus the current user's own
+        // listings. Backend permissions do not widen this - see JedHelper for the rule.
+        $query->where(JedHelper::getExtensionVisibilityCondition($db));
 
         // Filter by search in name
         $search = $this->getState('filter.search');

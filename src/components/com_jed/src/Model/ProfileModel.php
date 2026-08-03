@@ -115,7 +115,10 @@ class ProfileModel extends ListModel
 
         $ownerId = (int) $this->getState('profile.owner_id');
         $query->where('a.owner = ' . $db->quote($ownerId));
+        // A public profile shows the same listings to everyone, so only the public condition
+        // applies here - no owner/maintainer widening, deliberately (8.2: no moderation view).
         $query->where('a.state = 1');
+        $query->where('a.approved = 1');
 
         $orderCol  = $this->state->get('list.ordering', 'a.name');
         $orderDirn = $this->state->get('list.direction', 'ASC');
@@ -229,6 +232,7 @@ class ProfileModel extends ListModel
             ->from($db->quoteName('#__jed_extensions'))
             ->where($db->quoteName('owner') . ' = :ownerId')
             ->where($db->quoteName('state') . ' = 1')
+            ->where($db->quoteName('approved') . ' = 1')
             ->bind(':ownerId', $ownerId, ParameterType::INTEGER);
 
         return (bool) $db->setQuery($query)->loadResult();

@@ -261,11 +261,11 @@ class ReviewModel extends ItemModel
             // Attempt to load the row.
             if ($table && $table->load($pk)) {
                 if (empty($result) || JedHelper::isAdminOrSuperUser()) {
-                    // Check published state.
-                    if ($published = $this->getState('filter.published')) {
-                        if (isset($table->state) && $table->state != $published) {
-                            throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 403);
-                        }
+                    // Moderated, or the current user wrote it. Previously "filter.published" was
+                    // only set for users without core.edit, so staff could open any unpublished
+                    // review on the public site.
+                    if (!JedHelper::canViewReview($table)) {
+                        throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 403);
                     }
 
                     // Convert the Table to a clean stdClass.

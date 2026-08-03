@@ -23,6 +23,7 @@ use Joomla\CMS\Log\Log;
 use Joomla\CMS\Mail\MailTemplate;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\User;
+use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
 
 use function defined;
@@ -268,6 +269,125 @@ class JedHelper
             ->bind(':uid', $userId, ParameterType::INTEGER);
 
         return (bool) $db->setQuery($maintainerQuery)->loadResult();
+    }
+
+    /**
+     * The single visibility rule for extension listings in the frontend.
+     *
+     * A listing is public when the JED team has approved it AND the developer has it online.
+     * On top of that, owners and maintainers always see their own listings, so they can review
+     * a submission before it goes live - but nobody else does, whatever their permissions.
+     * Backend permissions deliberately do not widen this: the frontend is the public site, and
+     * `core.edit` used to leak every unpublished listing into it.
+     *
+     * Returned as a SQL fragment rather than applied directly, so the callers can add it to
+     * their own query. Defining it in one place is the point - a rule this easy to get subtly
+     * wrong must not be copied into four models.
+     *
+     * @param DatabaseInterface $db    The database driver, for quoting.
+     * @param string            $alias The table alias used for #__jed_extensions in the query.
+     *
+     * @return string  A parenthesised SQL condition.
+     *
+     * @since  4.1.0
+     * @throws Exception
+     */
+    public static function getExtensionVisibilityCondition(DatabaseInterface $db, string $alias = 'a'): string
+    {
+        $public = '(' . $db->quoteName($alias . '.state') . ' = 1 AND '
+            . $db->quoteName($alias . '.approved') . ' = 1)';
+
+        $userId = (int) self::getUser()->id;
+
+        if ($userId <= 0) {
+            return $public;
+        }
+
+        // Owner OR a maintainer row - never created_by, which does not follow an ownership
+        // transfer and would leave the previous owner able to see the listing.
+        $own = $db->quoteName($alias . '.owner') . ' = ' . $userId;
+
+        $maintained = 'EXISTS (SELECT 1 FROM ' . $db->quoteName('#__jed_extensions_maintainers', 'vm')
+            . ' WHERE ' . $db->quoteName('vm.extension_id') . ' = ' . $db->quoteName($alias . '.id')
+            . ' AND ' . $db->quoteName('vm.user_id') . ' = ' . $userId . ')';
+
+        return '(' . $public . ' OR ' . $own . ' OR ' . $maintained . ')';
+    }
+
+    /**
+     * The single visibility rule for reviews in the frontend.
+     *
+     * A review is public once it has been through moderation (state = 1). On top of that its
+     * author always sees their own, so a freshly submitted review does not simply vanish while
+     * it waits for approval. Backend permissions do not widen this.
+     *
+     * Note this keys on `created_by`, unlike the extension rule. That is correct here and not a
+     * breach of the owner/maintainer invariant: a review has no owner column, and authorship of
+     * the text is exactly what ownership means for a review.
+     *
+     * @param DatabaseInterface $db    The database driver, for quoting.
+     * @param string            $alias The table alias used for #__jed_reviews in the query.
+     *
+     * @return string  A parenthesised SQL condition.
+     *
+     * @since  4.1.0
+     * @throws Exception
+     */
+    public static function getReviewVisibilityCondition(DatabaseInterface $db, string $alias = 'a'): string
+    {
+        $public = $db->quoteName($alias . '.state') . ' = 1';
+        $userId = (int) self::getUser()->id;
+
+        if ($userId <= 0) {
+            return '(' . $public . ')';
+        }
+
+        return '(' . $public . ' OR ' . $db->quoteName($alias . '.created_by') . ' = ' . $userId . ')';
+    }
+
+    /**
+     * Whether the current user may see a single review row in the frontend.
+     *
+     * The row counterpart of getReviewVisibilityCondition().
+     *
+     * @param object $item The loaded review row.
+     *
+     * @return bool
+     *
+     * @since  4.1.0
+     * @throws Exception
+     */
+    public static function canViewReview(object $item): bool
+    {
+        if ((int) ($item->state ?? 0) === 1) {
+            return true;
+        }
+
+        $userId = (int) self::getUser()->id;
+
+        return $userId > 0 && (int) ($item->created_by ?? 0) === $userId;
+    }
+
+    /**
+     * Whether the current user may see a single extension row in the frontend.
+     *
+     * The row counterpart of getExtensionVisibilityCondition(), for the detail view where the
+     * record has already been loaded.
+     *
+     * @param object $item The loaded extension row.
+     *
+     * @return bool
+     *
+     * @since  4.1.0
+     * @throws Exception
+     */
+    public static function canViewExtension(object $item): bool
+    {
+        if ((int) ($item->state ?? 0) === 1 && (int) ($item->approved ?? 0) === 1) {
+            return true;
+        }
+
+        return isset($item->id) && self::isOwnerOrMaintainer((int) $item->id);
     }
 
     /**
