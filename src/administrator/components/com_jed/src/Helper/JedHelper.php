@@ -22,6 +22,7 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Helper\TagsHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
@@ -229,13 +230,209 @@ class JedHelper extends ContentHelper
             case 'internal_note':
                 return empty($value) ? '&#8212;' : nl2br(htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'));
 
+            case 'tags':
+                return self::displayTags($value);
+
             default:
-                if (is_array($value)) {
-                    $value = implode(', ', $value);
+                return self::displayScalar($value);
+        }
+    }
+
+    /**
+     * Render the tags of an extension as a plain, comma separated list of titles.
+     *
+     * The value arrives in whichever shape the caller happened to have: the admin
+     * `ExtensionModel` hands over a populated `TagsHelper` (whose public `$tags` property holds
+     * the ids), a form round-trip hands over an array of ids, and a raw table read hands over a
+     * comma separated string. All three are reduced to ids here and resolved to titles in one
+     * query. Ids that no longer resolve are shown as-is rather than dropped, so a dangling tag
+     * assignment stays visible instead of silently disappearing from the view.
+     *
+     * @param mixed $value A TagsHelper, an array of ids or tag objects, or a CSV string of ids.
+     *
+     * @return string
+     *
+     * @since 4.1.0
+     */
+    public static function displayTags(mixed $value): string
+    {
+        // A populated TagsHelper keeps the ids on its public "tags" property.
+        if ($value instanceof TagsHelper) {
+            $value = $value->tags;
+        }
+
+        if (is_string($value)) {
+            $value = array_filter(explode(',', $value), static fn ($v) => trim((string) $v) !== '');
+        }
+
+        $ids    = [];
+        $labels = [];
+
+        foreach ((array) $value as $entry) {
+            // A tag row from TagsHelper::getItemTags() carries its own title already.
+            if (is_object($entry)) {
+                if (isset($entry->title) && $entry->title !== '') {
+                    $labels[] = (string) $entry->title;
+                    continue;
                 }
 
-                return $value === null || $value === '' ? '&#8212;' : htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+                $entry = $entry->id ?? $entry->tag_id ?? null;
+            }
+
+            if (is_numeric($entry)) {
+                $ids[] = (int) $entry;
+            } elseif (is_string($entry) && $entry !== '') {
+                $labels[] = $entry;
+            }
         }
+
+        if ($ids) {
+            // The whole database interaction is guarded: this helper exists to render a row, and
+            // must never be the reason a read-only view fails to load.
+            try {
+                $db    = Factory::getContainer()->get(DatabaseInterface::class);
+                $query = $db->getQuery(true)
+                    ->select($db->quoteName('title'))
+                    ->from($db->quoteName('#__tags'))
+                    ->whereIn($db->quoteName('id'), $ids);
+
+                $titles = $db->setQuery($query)->loadColumn() ?: [];
+            } catch (\Throwable $e) {
+                Log::add('Unable to resolve tag titles: ' . $e->getMessage(), Log::WARNING, 'jerror');
+
+                $titles = [];
+            }
+
+            // Keep unresolved ids visible rather than pretending the assignment is not there.
+            $labels = array_merge($labels, $titles ?: array_map('strval', $ids));
+        }
+
+        if (!$labels) {
+            return '&#8212;';
+        }
+
+        return implode(', ', array_map(
+            static fn ($label) => htmlspecialchars($label, ENT_QUOTES, 'UTF-8'),
+            $labels
+        ));
+    }
+
+    /**
+     * Render any remaining field value as escaped text.
+     *
+     * This is the fallback for every column without an explicit case above, so it has to cope
+     * with whatever a field type puts on the item - including objects. Casting an object with no
+     * `__toString()` is a fatal `Error`, not a notice, so an unhandled one would take the whole
+     * read-only view down rather than spoiling a single row. Anything that cannot be rendered
+     * sensibly degrades to a dash.
+     *
+     * @param mixed $value The raw stored value.
+     *
+     * @return string
+     *
+     * @since 4.1.0
+     */
+    private static function displayScalar(mixed $value): string
+    {
+        if ($value === null || $value === '' || $value === []) {
+            return '&#8212;';
+        }
+
+        if (is_bool($value)) {
+            return Text::_($value ? 'JYES' : 'JNO');
+        }
+
+        if (is_array($value)) {
+            $parts = array_filter(
+                array_map(static fn ($item) => self::stringifyValue($item), $value),
+                static fn ($item) => $item !== ''
+            );
+
+            return $parts
+                ? htmlspecialchars(implode(', ', $parts), ENT_QUOTES, 'UTF-8')
+                : '&#8212;';
+        }
+
+        $string = self::stringifyValue($value);
+
+        return $string === '' ? '&#8212;' : htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
+    }
+
+    /**
+     * Reduce a single value to a string without ever throwing.
+     *
+     * Objects are tried in order of how likely they are to carry something meaningful for a
+     * human: an explicit string conversion, then the usual title/name/value properties, then a
+     * JSON encoding. Nested arrays and objects are flattened one level, which is as deep as any
+     * field value in this component goes.
+     *
+     * @param mixed $value A single value of any type.
+     *
+     * @return string  The rendered value, or an empty string when there is nothing to show.
+     *
+     * @since 4.1.0
+     */
+    private static function stringifyValue(mixed $value): string
+    {
+        if ($value === null || is_bool($value)) {
+            return $value === true ? '1' : '';
+        }
+
+        if (is_scalar($value)) {
+            return (string) $value;
+        }
+
+        if (is_object($value)) {
+            if ($value instanceof TagsHelper) {
+                return implode(', ', array_map('strval', (array) ($value->tags ?? [])));
+            }
+
+            if (method_exists($value, '__toString')) {
+                return (string) $value;
+            }
+
+            if ($value instanceof DateTime) {
+                return $value->format('Y-m-d H:i:s');
+            }
+
+            foreach (['title', 'name', 'value', 'label'] as $property) {
+                if (isset($value->$property) && is_scalar($value->$property)) {
+                    return (string) $value->$property;
+                }
+            }
+
+            if ($value instanceof Registry) {
+                return $value->toString('JSON');
+            }
+
+            $value = get_object_vars($value);
+        }
+
+        if (is_array($value)) {
+            $parts = array_filter(
+                array_map(
+                    static fn ($item) => is_scalar($item) ? (string) $item : '',
+                    $value
+                ),
+                static fn ($item) => $item !== ''
+            );
+
+            if ($parts) {
+                return implode(', ', $parts);
+            }
+
+            // Nothing scalar to show. A structure that still holds something is worth rendering as
+            // JSON for the admin; one that flattened to nothing becomes a dash upstream.
+            if (!$value) {
+                return '';
+            }
+
+            $encoded = json_encode($value);
+
+            return $encoded === false ? '' : $encoded;
+        }
+
+        return '';
     }
 
     /**
@@ -256,22 +453,46 @@ class JedHelper extends ContentHelper
             $value   = is_array($decoded) ? $decoded : array_filter(explode(',', $value));
         }
 
+        // An object here is a value shape this map cannot key on - reduce it to its own
+        // properties so the entries at least render, instead of failing on the implode below.
+        if (is_object($value)) {
+            $value = $value instanceof TagsHelper ? (array) ($value->tags ?? []) : get_object_vars($value);
+        }
+
         $value = (array) $value;
 
         if (empty($value)) {
             return '&#8212;';
         }
 
-        $labels = array_map(
-            static function ($v) use ($options, $translate) {
-                $label = $options[$v] ?? $v;
+        $labels = array_filter(
+            array_map(
+                static function ($v) use ($options, $translate) {
+                    // Only a scalar can index the option map. Anything else is stringified first,
+                    // so a stray object cannot reach implode() and fatal the whole view.
+                    $key = is_scalar($v) ? $v : self::stringifyValue($v);
 
-                return $translate ? Text::_($label) : $label;
-            },
-            $value
+                    if ($key === '') {
+                        return '';
+                    }
+
+                    $label = $options[$key] ?? $key;
+
+                    return $translate ? Text::_((string) $label) : (string) $label;
+                },
+                $value
+            ),
+            static fn ($label) => $label !== ''
         );
 
-        return implode(', ', $labels);
+        if (!$labels) {
+            return '&#8212;';
+        }
+
+        return implode(', ', array_map(
+            static fn ($label) => htmlspecialchars($label, ENT_QUOTES, 'UTF-8'),
+            $labels
+        ));
     }
 
     /**
