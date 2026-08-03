@@ -315,6 +315,24 @@ class JedHelper
     }
 
     /**
+     * Render a stored description or intro as HTML.
+     *
+     * Delegates to the Administrator helper so there is one converter configuration, not two
+     * that can drift apart. See that method for why raw HTML is stripped and why single
+     * newlines are kept as line breaks.
+     *
+     * @param string|null $text The stored Markdown.
+     *
+     * @return string  Rendered HTML, safe to output.
+     *
+     * @since 4.1.0
+     */
+    public static function renderMarkdown(?string $text): string
+    {
+        return AdminJedHelper::renderMarkdown($text);
+    }
+
+    /**
      * The single visibility rule for reviews in the frontend.
      *
      * A review is public once it has been through moderation (state = 1). On top of that its

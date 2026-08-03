@@ -28,9 +28,11 @@ class JedscoreHelper
      *
      * @since 4.0.0
      */
-    public static function getStars(float $score = 0): string
+    public static function getStars(?float $score = null): string
     {
-        if ($score == 0) {
+        // null means the criterion was never rated. Both that and a rated zero render as
+        // "not rated" rather than an empty star row.
+        if ($score === null || $score == 0) {
             return 'Not Rated';
         }
 
@@ -58,9 +60,9 @@ class JedscoreHelper
      *
      * @since 4.0.0
      */
-    public static function getStarsShort(float $score = 0): string
+    public static function getStarsShort(?float $score = null): string
     {
-        if (!$score) {
+        if ($score === null || !$score) {
             return '';
         }
 
@@ -79,7 +81,7 @@ class JedscoreHelper
      *
      * @since 4.0.0
      */
-    public static function getClass(float $score): string
+    public static function getClass(?float $score): string
     {
         if (!$score) {
             return 'none';

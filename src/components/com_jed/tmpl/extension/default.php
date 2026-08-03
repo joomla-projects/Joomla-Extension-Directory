@@ -203,22 +203,30 @@ if (JedHelper::isLoggedIn()) {
                             <p><?php echo htmlspecialchars($rev->body ?? '', ENT_QUOTES, 'UTF-8'); ?></p>
                             <p>
                                 <?php echo Text::_('COM_JED_REVIEWS_FUNCTIONALITY_LABEL'); ?>
-                                (<?php echo number_format((float) $rev->functionality, 1); ?>/5) -
+                                <?php echo $rev->functionality === null
+                                    ? Text::_('COM_JED_REVIEWS_NOT_RATED')
+                                    : '(' . number_format((float) $rev->functionality, 1) . '/5)'; ?> -
                                 <?php echo htmlspecialchars($rev->functionality_comment ?? '', ENT_QUOTES, 'UTF-8'); ?>
                             </p>
                             <p>
                                 <?php echo Text::_('COM_JED_REVIEWS_EASE_OF_USE_LABEL'); ?>
-                                (<?php echo number_format((float) $rev->ease_of_use, 1); ?>/5) -
+                                <?php echo $rev->ease_of_use === null
+                                    ? Text::_('COM_JED_REVIEWS_NOT_RATED')
+                                    : '(' . number_format((float) $rev->ease_of_use, 1) . '/5)'; ?> -
                                 <?php echo htmlspecialchars($rev->ease_of_use_comment ?? '', ENT_QUOTES, 'UTF-8'); ?>
                             </p>
                             <p>
                                 <?php echo Text::_('COM_JED_EXTENSION_DOCUMENTATION_LABEL'); ?>
-                                (<?php echo number_format((float) $rev->documentation, 1); ?>/5) -
+                                <?php echo $rev->documentation === null
+                                    ? Text::_('COM_JED_REVIEWS_NOT_RATED')
+                                    : '(' . number_format((float) $rev->documentation, 1) . '/5)'; ?> -
                                 <?php echo htmlspecialchars($rev->documentation_comment ?? '', ENT_QUOTES, 'UTF-8'); ?>
                             </p>
                             <p>
                                 <?php echo Text::_('COM_JED_REVIEWS_VALUE_FOR_MONEY_LABEL'); ?>
-                                (<?php echo number_format((float) $rev->value_for_money, 1); ?>/5) -
+                                <?php echo $rev->value_for_money === null
+                                    ? Text::_('COM_JED_REVIEWS_NOT_RATED')
+                                    : '(' . number_format((float) $rev->value_for_money, 1) . '/5)'; ?> -
                                 <?php echo htmlspecialchars($rev->value_for_money_comment ?? '', ENT_QUOTES, 'UTF-8'); ?>
                             </p>
                             <p>
