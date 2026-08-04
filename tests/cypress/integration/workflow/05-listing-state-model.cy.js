@@ -29,9 +29,7 @@ describe('Workflow part 5: listing state model', { testIsolation: false }, () =>
     cy.request({ url: detailUrl(), failOnStatusCode: false }).its('status').should('eq', expected)
 
   const openAdminExtension = () => {
-    // The display route, not task=extension.edit: that task goes through AdminModel::checkout(),
-    // which still calls the removed BaseModel::setError() and 500s on Joomla 6.
-    cy.visit(`administrator/index.php?option=com_jed&view=extension&layout=edit&id=${extension.extensionId}`)
+    cy.visit(`administrator/index.php?option=com_jed&task=extension.edit&id=${extension.extensionId}`)
   }
 
   before(() => {

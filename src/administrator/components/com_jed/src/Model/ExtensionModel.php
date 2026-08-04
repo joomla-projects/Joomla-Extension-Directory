@@ -312,11 +312,10 @@ class ExtensionModel extends AdminModel
      * Take or release the editing lock on a live extension row.
      *
      * @param int  $extensionId The extension id.
-     * @param bool $checkOut    True to check out for the current user, false to check back in.
+     * @param bool $checkOut    True to take the lock for the current user, false to release it.
      *
-     * @return bool  True when the lock was taken or released, false when it is held by someone else.
-     *
-     * @throws Exception If the extension does not exist.
+     * @return bool  True when the lock was taken or released; false when the listing does not
+     *               exist or the lock is held by someone else.
      *
      * @since 4.1.0
      */
@@ -328,17 +327,21 @@ class ExtensionModel extends AdminModel
 
         /** @var ExtensionTable $table */
         $table = $this->getTable('Extension');
-        $table->setUseExceptions(true);
 
+        // Deliberately not setUseExceptions(true) and deliberately not throwing: the callers in
+        // FormController treat false as "cannot edit this" and redirect with a message. A
+        // missing id is a stale link, not a server fault, and must not become a 500 - which is
+        // exactly what the inherited implementation did once Joomla 6 removed setError().
         if (!$table->load($extensionId)) {
-            throw new Exception(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
+            return false;
         }
 
         $userId = (int) $this->getCurrentUser()->id;
 
         // Someone else is already editing it. Reported as a plain false, the way the callers
-        // expect - not as an exception, which would be a 500 for a routine collision.
-        if (!$table->checkedOut($userId)) {
+        // expect - not as an exception, which would be a 500 for a routine collision. A row
+        // checked out by the current user does not count as checked out.
+        if ($table->isCheckedOut($userId)) {
             return false;
         }
 
