@@ -10,15 +10,18 @@
 
 namespace Jed\Component\Jed\Administrator\Traits;
 
+use Jed\Component\Jed\Administrator\MediaHandling\ImagePipeline;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Service\Category;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\Database\ParameterType;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
+use Throwable;
 
 /**
  * Utilities for working with extensions and extension categories
@@ -27,6 +30,13 @@ use Joomla\Filesystem\Path;
  */
 trait ExtensionUtilities
 {
+    /**
+     * Filename extensions accepted for an uploaded extension package.
+     *
+     * @since 4.1.0
+     */
+    private const PACKAGE_EXTENSIONS = ['zip', 'tar', 'gz', 'tgz', 'bz2'];
+
     /**
      * Gets current extension category and hierarchy of parents as string
      *
@@ -240,6 +250,10 @@ trait ExtensionUtilities
     /**
      * Delete extension images/files that were marked for removal on the edit form.
      *
+     * The stored files go with the rows. Leaving them behind was not merely untidy: an image
+     * removed from a listing stayed readable at its URL forever, which is the wrong answer for
+     * a screenshot a developer took down on purpose.
+     *
      * @param int    $extensionId The extension ID the rows must belong to
      * @param array  $ids         The primary keys to delete
      * @param string $table       The table to delete from (#__jed_extensions_images or _files)
@@ -256,13 +270,104 @@ trait ExtensionUtilities
             return;
         }
 
-        $db    = $this->getDatabase();
+        $db     = $this->getDatabase();
+        $column = $table === '#__jed_extensions_images' ? 'filename' : 'file';
+
+        $paths = $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName($column))
+                ->from($db->quoteName($table))
+                ->where($db->quoteName('extension_id') . ' = ' . $extensionId)
+                ->where($db->quoteName('id') . ' IN (' . implode(',', $ids) . ')')
+        )->loadColumn();
+
         $query = $db->getQuery(true)
             ->delete($db->quoteName($table))
             ->where($db->quoteName('extension_id') . ' = ' . $extensionId)
             ->where($db->quoteName('id') . ' IN (' . implode(',', $ids) . ')');
 
         $db->setQuery($query)->execute();
+
+        $this->deleteStoredUploads((array) $paths, $table === '#__jed_extensions_images');
+    }
+
+    /**
+     * Remove stored upload files from disk.
+     *
+     * Only paths this installation owns are touched - a bare JED3 filename refers to a file on
+     * the legacy CDN that is not ours to delete, and ImagePipeline refuses it for that reason.
+     *
+     * @param string[] $paths    Stored paths below the site root.
+     * @param bool     $isImage  Whether the paths are images, which also have variants on disk.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     */
+    private function deleteStoredUploads(array $paths, bool $isImage): void
+    {
+        $pipeline = new ImagePipeline();
+
+        foreach ($paths as $path) {
+            $path = (string) $path;
+
+            if ($path === '' || !str_contains($path, '/')) {
+                continue;
+            }
+
+            if ($isImage) {
+                $pipeline->delete($path);
+
+                continue;
+            }
+
+            $absolute = Path::clean(JPATH_ROOT . '/' . ltrim($path, '/\\'));
+
+            if (str_starts_with($absolute, Path::clean(JPATH_ROOT)) && is_file($absolute)) {
+                @unlink($absolute);
+            }
+        }
+    }
+
+    /**
+     * Delete every stored image and package of an extension, rows and files.
+     *
+     * This is the hard deletion, for the privacy removal in `P1-18`. It is deliberately not
+     * wired to the soft delete in `P1-01`: a soft-deleted listing is still readable in the
+     * backend, and a backend record whose screenshots 404 is a worse record.
+     *
+     * @param int $extensionId The extension ID.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     */
+    private function purgeExtensionUploads(int $extensionId): void
+    {
+        $db = $this->getDatabase();
+
+        foreach (['#__jed_extensions_images' => 'filename', '#__jed_extensions_files' => 'file'] as $table => $column) {
+            $paths = $db->setQuery(
+                $db->getQuery(true)
+                    ->select($db->quoteName($column))
+                    ->from($db->quoteName($table))
+                    ->where($db->quoteName('extension_id') . ' = ' . $extensionId)
+            )->loadColumn();
+
+            $db->setQuery(
+                $db->getQuery(true)
+                    ->delete($db->quoteName($table))
+                    ->where($db->quoteName('extension_id') . ' = ' . $extensionId)
+            )->execute();
+
+            $this->deleteStoredUploads((array) $paths, $table === '#__jed_extensions_images');
+        }
+
+        $directory = Path::clean(JPATH_ROOT . '/images/jed_extensions/' . $extensionId);
+
+        if (Folder::exists($directory)) {
+            Folder::delete($directory);
+        }
     }
 
     /**
@@ -292,7 +397,7 @@ trait ExtensionUtilities
                 continue;
             }
 
-            $storedName = $this->moveUploadedExtensionFile($upload, $extensionId, 'images');
+            $storedName = $this->moveUploadedExtensionImage($upload, $extensionId);
 
             if ($storedName === null) {
                 continue;
@@ -346,7 +451,7 @@ trait ExtensionUtilities
                 continue;
             }
 
-            $storedName = $this->moveUploadedExtensionFile($upload, $extensionId, 'files');
+            $storedName = $this->moveUploadedExtensionPackage($upload, $extensionId);
 
             if ($storedName === null) {
                 continue;
@@ -373,10 +478,16 @@ trait ExtensionUtilities
     }
 
     /**
-     * Pull a single uploaded file's info out of the reshuffled PHP $_FILES structure for a
-     * subform field, e.g. jform[images][images3][filename].
+     * Pull a single uploaded file's info out of the request for a subform field,
+     * e.g. jform[images][images3][filename].
      *
-     * @param array  $files   The raw $_FILES['jform'] structure (Input::files->get('jform', [], 'raw'))
+     * Input::files->get() does not hand back the PHP $_FILES layout. $_FILES groups by property
+     * first and by field path second - $_FILES['jform']['error']['images']['images3']['filename']
+     * - while Joomla's Files input decodes that into one array per file, keyed by the field path:
+     * $files['images']['images3']['filename']['error']. Reading it the $_FILES way finds nothing,
+     * always, which is why no image or package upload has ever been stored.
+     *
+     * @param array  $files   The decoded structure from Input::files->get('jform', [], 'raw')
      * @param string $subform The subform field name (e.g. "images")
      * @param string $rowKey  The subform row group name (e.g. "images3")
      * @param string $field   The inner file field name (e.g. "filename")
@@ -387,46 +498,111 @@ trait ExtensionUtilities
      */
     private function extractUploadedFile(array $files, string $subform, string $rowKey, string $field): ?array
     {
-        $error = $files['error'][$subform][$rowKey][$field] ?? UPLOAD_ERR_NO_FILE;
+        $upload = $files[$subform][$rowKey][$field] ?? null;
 
-        if ((int) $error !== UPLOAD_ERR_OK) {
+        if (!\is_array($upload) || (int) ($upload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+            return null;
+        }
+
+        $tmpName = (string) ($upload['tmp_name'] ?? '');
+
+        // The provenance gate. Everything downstream treats tmp_name as a path it may read and
+        // re-encode, so this is the one place that has to establish PHP put the file there.
+        // Joomla's Files input applies no safety check of its own, filter argument or not.
+        if ($tmpName === '' || !is_uploaded_file($tmpName)) {
             return null;
         }
 
         return [
-            'name'     => (string) ($files['name'][$subform][$rowKey][$field] ?? ''),
-            'tmp_name' => (string) ($files['tmp_name'][$subform][$rowKey][$field] ?? ''),
-            'size'     => (int) ($files['size'][$subform][$rowKey][$field] ?? 0),
+            'name'     => (string) ($upload['name'] ?? ''),
+            'tmp_name' => $tmpName,
+            'size'     => (int) ($upload['size'] ?? 0),
         ];
     }
 
     /**
-     * Move an uploaded file from PHP's temporary location into permanent storage for an extension.
+     * Store an uploaded image for an extension, with every variant.
+     *
+     * The name the browser sent is used for nothing but the log: the stored name is derived
+     * from the extension id and a timestamp, and the extension comes from the detected image
+     * type. That closes the hole the previous version left open - it kept the client's
+     * extension, so a PHP script uploaded as "shell.php" landed executable under the web root.
      *
      * @param array  $upload      Array with name/tmp_name/size (see extractUploadedFile())
      * @param int    $extensionId The extension ID the file belongs to
-     * @param string $kind        Either "images" or "files"
      *
-     * @return string|null The stored, web-relative filename, or null on failure
+     * @return string|null The stored path below the site root, or null when the upload was rejected
      *
      * @since 4.0.0
      */
-    private function moveUploadedExtensionFile(array $upload, int $extensionId, string $kind): ?string
+    private function moveUploadedExtensionImage(array $upload, int $extensionId): ?string
     {
         if (empty($upload['tmp_name']) || empty($upload['name']) || $upload['size'] <= 0) {
             return null;
         }
 
-        $relativeDirectory  = 'images/jed_extensions/' . $extensionId . '/' . $kind;
-        $directory          = JPATH_ROOT . '/' . $relativeDirectory;
+        $relativeDirectory = 'images/jed_extensions/' . $extensionId . '/images';
+
+        try {
+            $filename = (new ImagePipeline())->store(
+                $upload,
+                JPATH_ROOT . '/' . $relativeDirectory,
+                time() . '-' . bin2hex(random_bytes(4))
+            );
+        } catch (Throwable $e) {
+            // One unusable screenshot must not throw away the rest of the developer's edit,
+            // so the row is skipped and the reason is shown rather than swallowed.
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+
+            return null;
+        }
+
+        return $relativeDirectory . '/' . $filename;
+    }
+
+    /**
+     * Store an uploaded extension package for an extension.
+     *
+     * Packages are not images and do not go through ImagePipeline, but they land in the same
+     * web-readable tree, so the extension is checked against an allowlist rather than taken
+     * from the upload. Anything else is refused.
+     *
+     * @param array $upload      Array with name/tmp_name/size (see extractUploadedFile())
+     * @param int   $extensionId The extension ID the file belongs to
+     *
+     * @return string|null The stored path below the site root, or null when the upload was rejected
+     *
+     * @since 4.0.0
+     */
+    private function moveUploadedExtensionPackage(array $upload, int $extensionId): ?string
+    {
+        if (empty($upload['tmp_name']) || empty($upload['name']) || $upload['size'] <= 0) {
+            return null;
+        }
+
+        $extension = strtolower(pathinfo((string) $upload['name'], PATHINFO_EXTENSION));
+
+        if (!\in_array($extension, self::PACKAGE_EXTENSIONS, true)) {
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf(
+                    'COM_JED_FILE_ERROR_NOT_A_PACKAGE',
+                    htmlspecialchars((string) $upload['name'], ENT_QUOTES, 'UTF-8'),
+                    implode(', ', self::PACKAGE_EXTENSIONS)
+                ),
+                'warning'
+            );
+
+            return null;
+        }
+
+        $relativeDirectory = 'images/jed_extensions/' . $extensionId . '/files';
+        $directory         = JPATH_ROOT . '/' . $relativeDirectory;
 
         if (!Folder::exists($directory) && !Folder::create($directory)) {
             return null;
         }
 
-        $safeName = File::makeSafe($upload['name']);
-        $safeName = preg_replace('/[^A-Za-z0-9._-]/', '-', $safeName) ?: 'file';
-        $target   = Path::clean($directory . '/' . time() . '-' . $safeName);
+        $target = Path::clean($directory . '/' . time() . '-' . bin2hex(random_bytes(4)) . '.' . $extension);
 
         if (!File::upload($upload['tmp_name'], $target)) {
             return null;

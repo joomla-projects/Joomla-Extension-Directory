@@ -157,41 +157,21 @@ class JedHelper
     }
 
     /**
-     * Function to format JED Extension Images
+     * Resolve a stored image reference to a full, browsable URL.
      *
-     * Resolves a filename stored on #__jed_extensions.logo/overview_image or
-     * #__jed_extensions_images.filename to a full, browsable URL. Depending on the
-     * component's "use_cdn" setting, images are either served from the local
-     * images/extensions folder or from the configured CDN base URL.
+     * Delegates to the Administrator helper so there is one resolution rule, not two that can
+     * drift apart. See that method for the three shapes a stored reference can have.
      *
-     * @param string    $filename The image filename (or already-absolute URL)
-     * @param ImageSize $size     Size of image, small|large (currently informational only,
-     *                            no resized variants are generated)
+     * @param string    $filename The stored reference.
+     * @param ImageSize $size     The variant wanted.
      *
-     * @return string  Full image url
+     * @return string  Full image URL, or an empty string when nothing is stored.
      *
      * @since 4.0.0
      */
     public static function formatImage(string $filename, ImageSize $size = ImageSize::SMALL): string
     {
-        if (!$filename) {
-            return '';
-        }
-
-        if (str_starts_with($filename, 'http://') || str_starts_with($filename, 'https://')) {
-            return $filename;
-        }
-
-        $params   = ComponentHelper::getParams('com_jed');
-        $filename = ltrim($filename, '/\\');
-
-        if ($params->get('use_cdn', 0)) {
-            $cdnUrl = rtrim((string) $params->get('cdn_url', ''), '/');
-
-            return $cdnUrl . '/' . $filename;
-        }
-
-        return Uri::root() . 'images/extensions/' . $filename;
+        return AdminJedHelper::formatImage($filename, $size);
     }
 
     /**

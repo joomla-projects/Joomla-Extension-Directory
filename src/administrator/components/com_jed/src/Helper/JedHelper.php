@@ -61,18 +61,27 @@ class JedHelper extends ContentHelper
     }
 
     /**
-     * Function to format JED Extension Images
+     * Resolve a stored image reference to a full, browsable URL.
      *
-     * Resolves a filename stored on #__jed_extensions.logo/overview_image or
-     * #__jed_extensions_images.filename to a full, browsable URL. Depending on the
-     * component's "use_cdn" setting, images are either served from the local
-     * images/extensions folder or from the configured CDN base URL.
+     * The value on #__jed_extensions.logo / overview_image or #__jed_extensions_images.filename
+     * comes in one of three shapes, and each is served differently:
      *
-     * @param string    $filename The image filename (or already-absolute URL)
-     * @param ImageSize $size     Size of image, small|large (currently informational only,
-     *                            no resized variants are generated)
+     *  - An absolute URL, which is returned untouched.
+     *  - A path below the site root, e.g. "images/jed_extensions/7/images/1754-logo.png". This
+     *    is what ImagePipeline writes, so the requested variant exists as a sibling file and is
+     *    served when it is there. It is not there when the upload was already smaller than the
+     *    variant's box, in which case the original is the right answer anyway.
+     *  - A bare filename, e.g. "56e27fa7736c8.png". That is a JED3 reference: 13,149 logos and
+     *    33,873 screenshots came across as filenames with no path, and the files themselves
+     *    live on the JED3 CDN rather than in this installation. With "use_cdn" on they are
+     *    served from "cdn_url"; with it off, from the local images/extensions folder, which is
+     *    where a bulk copy would put them. There are no variants for these either way.
      *
-     * @return string  Full image url
+     * @param string    $filename The stored reference.
+     * @param ImageSize $size     The variant wanted. Falls back to the original when that
+     *                            variant was not generated.
+     *
+     * @return string  Full image URL, or an empty string when nothing is stored.
      *
      * @since 4.0.0
      */
@@ -86,13 +95,22 @@ class JedHelper extends ContentHelper
             return $filename;
         }
 
-        $params   = ComponentHelper::getParams('com_jed');
         $filename = ltrim($filename, '/\\');
 
-        if ($params->get('use_cdn', 0)) {
-            $cdnUrl = rtrim((string) $params->get('cdn_url', ''), '/');
+        if (str_contains($filename, '/')) {
+            $variant = $size->applyTo($filename);
 
-            return $cdnUrl . '/' . $filename;
+            if ($variant !== $filename && is_file(JPATH_ROOT . '/' . $variant)) {
+                return Uri::root() . $variant;
+            }
+
+            return Uri::root() . $filename;
+        }
+
+        $params = ComponentHelper::getParams('com_jed');
+
+        if ($params->get('use_cdn', 0)) {
+            return rtrim((string) $params->get('cdn_url', ''), '/') . '/' . $filename;
         }
 
         return Uri::root() . 'images/extensions/' . $filename;

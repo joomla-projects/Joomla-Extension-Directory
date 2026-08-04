@@ -44,6 +44,66 @@
             showon="use_cdn:1"
             filter="string"
             />
+
+        <field
+            name="image_max_kilobytes"
+            type="number"
+            default="2048"
+            min="16"
+            filter="integer"
+            label="COM_JED_CONFIG_IMAGE_MAX_KILOBYTES_LABEL"
+            description="COM_JED_CONFIG_IMAGE_MAX_KILOBYTES_DESC"
+            />
+
+        <field
+            name="image_max_pixels"
+            type="number"
+            default="4000"
+            min="100"
+            filter="integer"
+            label="COM_JED_CONFIG_IMAGE_MAX_PIXELS_LABEL"
+            description="COM_JED_CONFIG_IMAGE_MAX_PIXELS_DESC"
+            />
+
+        <field
+            name="image_small_width"
+            type="number"
+            default="360"
+            min="1"
+            filter="integer"
+            label="COM_JED_CONFIG_IMAGE_SMALL_WIDTH_LABEL"
+            description="COM_JED_CONFIG_IMAGE_VARIANT_DESC"
+            />
+
+        <field
+            name="image_small_height"
+            type="number"
+            default="188"
+            min="1"
+            filter="integer"
+            label="COM_JED_CONFIG_IMAGE_SMALL_HEIGHT_LABEL"
+            description="COM_JED_CONFIG_IMAGE_VARIANT_DESC"
+            />
+
+        <field
+            name="image_large_width"
+            type="number"
+            default="720"
+            min="1"
+            filter="integer"
+            label="COM_JED_CONFIG_IMAGE_LARGE_WIDTH_LABEL"
+            description="COM_JED_CONFIG_IMAGE_VARIANT_DESC"
+            />
+
+        <field
+            name="image_large_height"
+            type="number"
+            default="376"
+            min="1"
+            filter="integer"
+            label="COM_JED_CONFIG_IMAGE_LARGE_HEIGHT_LABEL"
+            description="COM_JED_CONFIG_IMAGE_VARIANT_DESC"
+            />
     </fieldset>
     <fieldset name="audit" label="COM_JED_CONFIG_AUDIT_FIELDSET_LABEL">
         <field
