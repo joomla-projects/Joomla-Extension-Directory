@@ -16,6 +16,7 @@ namespace Jed\Component\Jed\Site\Model;
 
 use DateInterval;
 use Exception;
+use Jed\Component\Jed\Administrator\Listing\ListingAccess;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Jed\Site\Helper\JedHelper;
@@ -76,17 +77,27 @@ class ExtensionModel extends ItemModel
 
             // Attempt to load the row.
             if ($table && $table->load($pk)) {
-                // Same visibility rule as the listings: approved by the JED team and online per
-                // the developer, or the current user owns/maintains it. This deliberately does
-                // not consult backend permissions - previously "filter.published" was only set
-                // for users without core.edit, so staff could open any unpublished listing on
-                // the public site.
-                if (!JedHelper::canViewExtension($table)) {
-                    throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 403);
+                // The four-carrier state model (4.8, P1-01) decides what this URL answers with.
+                // This deliberately does not consult backend permissions - previously
+                // "filter.published" was only set for users without core.edit, so staff could
+                // open any unpublished listing on the public site.
+                $access = JedHelper::resolveListingAccess($table);
+
+                if ($access === ListingAccess::GONE) {
+                    throw new Exception(Text::_('COM_JED_EXTENSION_DELETED'), 410);
+                }
+
+                if ($access === ListingAccess::NOT_FOUND) {
+                    throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 404);
                 }
 
                 // Convert the Table to a clean stdClass.
                 $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
+
+                // BLOCKED still renders, with the notice in place of the listing - the view
+                // reads these two. The reason text is not among them: it is internal (8.7).
+                $this->item->listing_access = $access;
+                $this->item->block_reason   = JedHelper::getPublicBlockReason($this->item);
             }
 
             if (empty($this->item)) {
@@ -267,6 +278,57 @@ class ExtensionModel extends ItemModel
         $db->setQuery($query)->execute();
 
         return true;
+    }
+
+    /**
+     * Take the developer's own listing online or offline.
+     *
+     * Updates `state` on the live row, and touches nothing else. In particular it does not read
+     * or write `blocked`: a blocked listing may still be taken offline and back online by its
+     * developer, and doing so leaves the block exactly where it was. That is the point of the two
+     * columns being separate (4.8) - if this wrote a single visibility flag, republishing would
+     * silently lift the JED team's block.
+     *
+     * A soft-deleted listing is excluded: the frontend is done with it.
+     *
+     * @param int $extensionId The extension id.
+     * @param int $online      1 for online, 0 for offline.
+     *
+     * @return void
+     *
+     * @throws Exception If the listing does not exist or is soft-deleted.
+     *
+     * @since 4.1.0
+     */
+    public function setOnlineState(int $extensionId, int $online): void
+    {
+        $db     = $this->getDatabase();
+        $online = $online === 1 ? 1 : 0;
+
+        // Checked separately rather than by counting affected rows: MySQL reports zero rows
+        // changed when the new value equals the old one, so "no rows affected" does not mean
+        // "no such listing".
+        $exists = $db->setQuery(
+            $db->getQuery(true)
+                ->select('1')
+                ->from($db->quoteName('#__jed_extensions'))
+                ->where($db->quoteName('id') . ' = :id')
+                ->where($db->quoteName('deleted') . ' = 0')
+                ->bind(':id', $extensionId, ParameterType::INTEGER)
+        )->loadResult();
+
+        if (!$exists) {
+            throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 404);
+        }
+
+        $db->setQuery(
+            $db->getQuery(true)
+                ->update($db->quoteName('#__jed_extensions'))
+                ->set($db->quoteName('state') . ' = :state')
+                ->where($db->quoteName('id') . ' = :id')
+                ->bind(':state', $online, ParameterType::INTEGER)
+                ->bind(':id', $extensionId, ParameterType::INTEGER)
+        )->execute();
     }
 
     /**

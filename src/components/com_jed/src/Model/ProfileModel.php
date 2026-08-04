@@ -114,10 +114,14 @@ class ProfileModel extends ListModel
 
         $ownerId = (int) $this->getState('profile.owner_id');
         $query->where('a.owner = ' . $db->quote($ownerId));
-        // A public profile shows the same listings to everyone, so only the public condition
-        // applies here - no owner/maintainer widening, deliberately (8.2: no moderation view).
-        $query->where('a.state = 1');
+        // A public profile shows the same listings to everyone, so only the public half of the
+        // rule applies here - no owner/maintainer widening, deliberately (8.2: no moderation
+        // view). Spelled out rather than delegated to getExtensionVisibilityCondition() for
+        // exactly that reason; the four carriers are the same four (4.8).
         $query->where('a.approved = 1');
+        $query->where('a.state = 1');
+        $query->where('a.blocked = 0');
+        $query->where('a.deleted = 0');
 
         $orderCol  = $this->state->get('list.ordering', 'a.name');
         $orderDirn = $this->state->get('list.direction', 'ASC');
@@ -233,8 +237,10 @@ class ProfileModel extends ListModel
             ->select('1')
             ->from($db->quoteName('#__jed_extensions'))
             ->where($db->quoteName('owner') . ' = :ownerId')
-            ->where($db->quoteName('state') . ' = 1')
             ->where($db->quoteName('approved') . ' = 1')
+            ->where($db->quoteName('state') . ' = 1')
+            ->where($db->quoteName('blocked') . ' = 0')
+            ->where($db->quoteName('deleted') . ' = 0')
             ->bind(':ownerId', $ownerId, ParameterType::INTEGER);
 
         return (bool) $db->setQuery($query)->loadResult();

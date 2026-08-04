@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Site\View\Extension;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Listing\ListingAccess;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -70,6 +71,15 @@ class HtmlView extends BaseHtmlView
             }
         }
 
+        // A blocked listing is answered with the notice in place of the listing, not with the
+        // listing plus a banner: none of the content - description, download links, reviews -
+        // should be reachable while the block stands. Swapping the layout keeps that decision
+        // in one line instead of threading a condition through the whole default template.
+        if (($this->item->listing_access ?? null) === ListingAccess::BLOCKED) {
+            $this->setLayout('blocked');
+            $tpl = null;
+        }
+
         $this->prepareDocument();
         parent::display($tpl);
     }
@@ -122,6 +132,12 @@ class HtmlView extends BaseHtmlView
             $this->getDocument()->setMetadata('robots', $this->params->get('robots'));
         }
 
+        // A blocked listing answers 200 so that visitors arriving from a search engine or an
+        // old link are told why it is unusable (4.8) - but it must not stay in the index while
+        // it says so, and this overrides whatever the menu item asked for.
+        if (($this->item->listing_access ?? null) === ListingAccess::BLOCKED) {
+            $this->getDocument()->setMetadata('robots', 'noindex, follow');
+        }
 
         // Add Breadcrumbs
         $pathway        = $app->getPathway();

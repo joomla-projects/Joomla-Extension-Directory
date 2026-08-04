@@ -111,7 +111,20 @@ class HtmlView extends BaseHtmlView
             return;
         }
 
-        $this->item        = $model->getItem();
+        $this->item = $model->getItem();
+
+        // A soft-deleted listing is shown through a view that has no form and no save task -
+        // read-only by absence rather than by a disabled input (8.8).
+        if ((int) ($this->item->deleted ?? 0) === 1) {
+            $this->setLayout('deleted');
+            $this->images      = $model->getImages();
+            $this->history     = $model->getHistory();
+            $this->addToolbar();
+            parent::display(null);
+
+            return;
+        }
+
         $this->form        = $model->getForm();
         $this->state       = $model->getState();
         $this->images      = $model->getImages();
@@ -176,10 +189,39 @@ class HtmlView extends BaseHtmlView
 
         ToolbarHelper::title(Text::_('COM_JED_EXTENSION'), "generic");
 
+        // 8.8 is explicit that a soft-deleted listing must be read-only because the save action
+        // is *absent*, not because a form was disabled while its controller stayed reachable.
+        // The 'deleted' layout has no form and therefore no save task to post to; the only
+        // action offered is Restore.
+        if ($this->getLayout() === 'deleted') {
+            ToolbarHelper::back('JTOOLBAR_BACK', Route::_('index.php?option=com_jed&view=extensions', false));
+
+            if ($canDo->get('core.delete')) {
+                ToolbarHelper::custom('extension.restore', 'undo-2', 'undo-2', 'COM_JED_EXTENSION_RESTORE_LABEL', false);
+            }
+
+            return;
+        }
+
         // If not checked out, can save the item.
         if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create')))) {
             ToolbarHelper::apply('extension.apply', 'JTOOLBAR_APPLY');
             ToolbarHelper::save('extension.save', 'JTOOLBAR_SAVE');
+        }
+
+        // Blocking never writes `state`, so these sit apart from the publish buttons on purpose
+        // (CLAUDE.md invariant, 4.8). Block posts the "blocking" fieldset with the form; the
+        // model refuses a block without a known reason code.
+        if (!$isNew && $canDo->get('core.edit.state')) {
+            if ((int) ($this->item->blocked ?? 0) === 1) {
+                ToolbarHelper::custom('extension.unblock', 'unlock', 'unlock', 'COM_JED_EXTENSION_UNBLOCK_LABEL', false);
+            } else {
+                ToolbarHelper::custom('extension.block', 'lock', 'lock', 'COM_JED_EXTENSION_BLOCK_LABEL', false);
+            }
+        }
+
+        if (!$isNew && $canDo->get('core.delete')) {
+            ToolbarHelper::custom('extension.softDelete', 'trash', 'trash', 'COM_JED_EXTENSION_SOFT_DELETE_LABEL', false);
         }
 
         if (!$checkedOut && ($canDo->get('core.create'))) {

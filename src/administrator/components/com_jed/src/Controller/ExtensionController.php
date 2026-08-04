@@ -163,6 +163,134 @@ class ExtensionController extends FormController
     }
 
     /**
+     * Block the listing currently open in the edit form, with a stated reason.
+     *
+     * The reason code arrives from the block modal and is mandatory - the model rejects an
+     * empty or unknown one, so a block can never end up without wording for the public notice.
+     *
+     * @return bool
+     *
+     * @since 4.1.0
+     */
+    public function block(): bool
+    {
+        $this->checkToken();
+
+        // The reason fields live in the edit form's "blocking" fieldset, so they arrive inside
+        // jform - the toolbar button submits the whole form rather than a separate dialog.
+        $form = (array) $this->input->post->get('jform', [], 'array');
+
+        return $this->runListingStateChange(
+            'core.edit.state',
+            static fn (ExtensionModel $model, int $extensionId) => $model->block(
+                $extensionId,
+                (string) ($form['block_reason_code'] ?? ''),
+                (string) ($form['block_reason_text'] ?? '')
+            ),
+            'COM_JED_EXTENSION_BLOCKED_MESSAGE'
+        );
+    }
+
+    /**
+     * Lift the block on the listing currently open in the edit form.
+     *
+     * @return bool
+     *
+     * @since 4.1.0
+     */
+    public function unblock(): bool
+    {
+        $this->checkToken();
+
+        return $this->runListingStateChange(
+            'core.edit.state',
+            static fn (ExtensionModel $model, int $extensionId) => $model->unblock($extensionId),
+            'COM_JED_EXTENSION_UNBLOCKED_MESSAGE'
+        );
+    }
+
+    /**
+     * Soft-delete the listing currently open in the edit form.
+     *
+     * @return bool
+     *
+     * @since 4.1.0
+     */
+    public function softDelete(): bool
+    {
+        $this->checkToken();
+
+        return $this->runListingStateChange(
+            'core.delete',
+            static fn (ExtensionModel $model, int $extensionId) => $model->softDelete($extensionId),
+            'COM_JED_EXTENSION_SOFT_DELETED_MESSAGE'
+        );
+    }
+
+    /**
+     * Undo a soft delete.
+     *
+     * @return bool
+     *
+     * @since 4.1.0
+     */
+    public function restore(): bool
+    {
+        $this->checkToken();
+
+        return $this->runListingStateChange(
+            'core.delete',
+            static fn (ExtensionModel $model, int $extensionId) => $model->restore($extensionId),
+            'COM_JED_EXTENSION_RESTORED_MESSAGE'
+        );
+    }
+
+    /**
+     * Shared plumbing for the four state transitions: permission, id, call, message, redirect.
+     *
+     * @param string   $action     The com_jed permission the transition needs.
+     * @param callable $transition fn(ExtensionModel, int $extensionId): void
+     * @param string   $successKey Language key for the success message.
+     *
+     * @return bool
+     *
+     * @since 4.1.0
+     */
+    private function runListingStateChange(string $action, callable $transition, string $successKey): bool
+    {
+        $app         = Factory::getApplication();
+        $extensionId = $this->input->getInt('id') ?: (int) $app->getUserState('com_jed.edit.extension.id', 0);
+
+        if (!$app->getIdentity()->authorise($action, 'com_jed')) {
+            $app->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
+            $this->setRedirect(Route::_('index.php?option=com_jed&view=extensions', false));
+
+            return false;
+        }
+
+        if ($extensionId <= 0) {
+            $app->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'), 'error');
+            $this->setRedirect(Route::_('index.php?option=com_jed&view=extensions', false));
+
+            return false;
+        }
+
+        /** @var ExtensionModel $model */
+        $model = $this->getModel();
+
+        try {
+            $transition($model, $extensionId);
+            $app->enqueueMessage(Text::_($successKey));
+        } catch (\Exception $e) {
+            $app->enqueueMessage($e->getMessage(), 'error');
+        }
+
+        $this->setRedirect(Route::_('index.php?option=com_jed&view=extensions', false));
+
+        return true;
+    }
+
+    /**
      * Enqueue a manual, one-off `extension.score_recalc` job for the extension
      * currently open in the edit form. Recalculation is always triggered this way,
      * per extension - never as a scheduled scan of the whole dataset.

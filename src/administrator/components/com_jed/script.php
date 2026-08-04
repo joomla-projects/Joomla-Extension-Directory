@@ -73,10 +73,69 @@ class Com_JedInstallerScript
     ): bool {
         $this->addUserCustomFields();
         $this->ensureExtensionContentType();
+        $this->seedBlockReasons();
 
         echo Text::_('COM_JED_INSTALLERSCRIPT_POSTFLIGHT');
 
         return true;
+    }
+
+    /**
+     * Fill #__jed_block_reasons with the JED3 submission error codes, if they are not there yet.
+     *
+     * Same vocabulary, same codes, one source: com_tickets/script.php already ships these as
+     * mail templates, and P0-05 established that the knowledge base articles are keyed by the
+     * same codes. Seeding rather than hard-coding means the JED team can add, retire or reorder
+     * a reason without a release - which is why existing rows are left alone here. Only the
+     * `title` is ever shown to the public; `article_id` is wired up by P1-20 once the knowledge
+     * base articles exist.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     */
+    private function seedBlockReasons(): void
+    {
+        $reasons = [
+            'ER1' => 'error_reporting(0) found',
+            'NM1' => 'Install name does not match listing name',
+            'NM2' => 'Extension-specific naming issue',
+            'NM3' => 'Non-permitted words in name',
+            'LK2' => 'Invalid download link',
+            'ZP1' => 'Zip file issues',
+            'TM2' => 'Use of the Joomla trademark',
+            'LC1' => 'Licensing violation',
+            'LC2' => 'Paid listing without licence link',
+            'LC3' => 'Licence link does not mention the extensions',
+            'LC4' => 'Invalid licence type',
+            'US1' => 'Update server requirement not met',
+            'PE1' => 'Under investigation',
+        ];
+
+        $db       = Factory::getContainer()->get(DatabaseInterface::class);
+        $existing = $db->setQuery(
+            $db->getQuery(true)->select($db->quoteName('code'))->from($db->quoteName('#__jed_block_reasons'))
+        )->loadColumn();
+
+        $ordering = 0;
+
+        foreach ($reasons as $code => $title) {
+            $ordering += 10;
+
+            if (\in_array($code, (array) $existing, true)) {
+                continue;
+            }
+
+            $row = (object) [
+                'code'       => $code,
+                'title'      => $title,
+                'article_id' => null,
+                'state'      => 1,
+                'ordering'   => $ordering,
+            ];
+
+            $db->insertObject('#__jed_block_reasons', $row);
+        }
     }
 
     /**

@@ -264,6 +264,88 @@ class ExtensionModel extends AdminModel
     }
 
     /**
+     * Check the live `#__jed_extensions` row out for editing.
+     *
+     * Overridden for the same reason as {@see publish()}: {@see getTable()} defaults to
+     * `ExtensionHistoryTable`, so the inherited `AdminModel::checkout()` looked for the
+     * *extension* id in the *history* table. History ids and extension ids are separate
+     * sequences, so the load simply failed - and Joomla's failure path then called
+     * `BaseModel::setError()`, which Joomla 6 removed, turning a wrong-table lookup into a
+     * fatal 500 on every `task=extension.edit`.
+     *
+     * The lock belongs on the live row in any case: that is what the edit form identifies
+     * itself by, and what a second editor has to be kept out of.
+     *
+     * @param int|null $pk The extension id.
+     *
+     * @return bool
+     *
+     * @throws Exception If the extension does not exist.
+     *
+     * @since 4.1.0
+     */
+    public function checkout($pk = null)
+    {
+        return $this->setLiveCheckout((int) ($pk ?: $this->getState($this->getName() . '.id')), true);
+    }
+
+    /**
+     * Check the live `#__jed_extensions` row back in.
+     *
+     * See {@see checkout()} - `FormController::cancel()` and the save tasks reach this with an
+     * extension id, and it has to land on the same table the checkout did.
+     *
+     * @param int|null $pk The extension id.
+     *
+     * @return bool
+     *
+     * @throws Exception If the extension does not exist.
+     *
+     * @since 4.1.0
+     */
+    public function checkin($pk = null)
+    {
+        return $this->setLiveCheckout((int) ($pk ?: $this->getState($this->getName() . '.id')), false);
+    }
+
+    /**
+     * Take or release the editing lock on a live extension row.
+     *
+     * @param int  $extensionId The extension id.
+     * @param bool $checkOut    True to check out for the current user, false to check back in.
+     *
+     * @return bool  True when the lock was taken or released, false when it is held by someone else.
+     *
+     * @throws Exception If the extension does not exist.
+     *
+     * @since 4.1.0
+     */
+    private function setLiveCheckout(int $extensionId, bool $checkOut): bool
+    {
+        if ($extensionId <= 0) {
+            return true;
+        }
+
+        /** @var ExtensionTable $table */
+        $table = $this->getTable('Extension');
+        $table->setUseExceptions(true);
+
+        if (!$table->load($extensionId)) {
+            throw new Exception(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
+        }
+
+        $userId = (int) $this->getCurrentUser()->id;
+
+        // Someone else is already editing it. Reported as a plain false, the way the callers
+        // expect - not as an exception, which would be a 500 for a routine collision.
+        if (!$table->checkedOut($userId)) {
+            return false;
+        }
+
+        return $checkOut ? $table->checkOut($userId, $extensionId) : $table->checkIn($extensionId);
+    }
+
+    /**
      * Publish/unpublish/archive/trash the live `#__jed_extensions` row(s).
      *
      * Overridden because {@see getTable()} defaults to `ExtensionHistoryTable`
@@ -457,6 +539,184 @@ class ExtensionModel extends AdminModel
             ->order($db->quoteName('h.id') . ' ASC');
 
         return $db->setQuery($query)->loadObjectList() ?: [];
+    }
+
+    /**
+     * Block a listing, with a stated reason.
+     *
+     * Writes `blocked` and never `state` - the invariant the whole state model rests on (4.8).
+     * If blocking touched `state`, the developer could lift the JED team's block simply by
+     * republishing their listing, and the two facts would be indistinguishable afterwards.
+     *
+     * The reason code is mandatory and is checked against `#__jed_block_reasons`, so a block
+     * always carries wording the public notice can show and the knowledge base can be keyed by.
+     * The free text is optional and **internal**: it goes into the revision and never onto the
+     * public site (8.7).
+     *
+     * @param int    $extensionId The extension id.
+     * @param string $reasonCode  A code from #__jed_block_reasons.
+     * @param string $reasonText  Optional internal note.
+     *
+     * @return void
+     *
+     * @throws Exception If the listing does not exist or the reason code is not a known one.
+     *
+     * @since 4.1.0
+     */
+    public function block(int $extensionId, string $reasonCode, string $reasonText = ''): void
+    {
+        $reasonCode = trim($reasonCode);
+
+        if ($reasonCode === '') {
+            throw new Exception(Text::_('COM_JED_BLOCK_ERROR_REASON_REQUIRED'));
+        }
+
+        if (!$this->blockReasonExists($reasonCode)) {
+            throw new Exception(Text::sprintf('COM_JED_BLOCK_ERROR_REASON_UNKNOWN', $reasonCode));
+        }
+
+        $this->applyListingState(
+            $extensionId,
+            [
+                'blocked'           => 1,
+                'block_reason_code' => $reasonCode,
+                // Optional unique-ish text fields are stored as NULL, never as '' (8.14).
+                'block_reason_text' => trim($reasonText) === '' ? null : trim($reasonText),
+                'blocked_by'        => (int) $this->getCurrentUser()->id,
+                'blocked_time'      => Factory::getDate()->toSql(),
+            ]
+        );
+    }
+
+    /**
+     * Lift a block.
+     *
+     * The reason fields are kept rather than cleared: the live row would otherwise be the only
+     * place that ever knew why the listing was blocked, and the revision written here is what
+     * makes the block history readable. `blocked` alone decides whether the block is in force.
+     *
+     * @param int $extensionId The extension id.
+     *
+     * @return void
+     *
+     * @throws Exception If the listing does not exist.
+     *
+     * @since 4.1.0
+     */
+    public function unblock(int $extensionId): void
+    {
+        $this->applyListingState($extensionId, ['blocked' => 0]);
+    }
+
+    /**
+     * Soft-delete a listing.
+     *
+     * Removes it from the frontend - the detail URL answers 410 from here on - while leaving the
+     * row and its uploads intact, so the backend can still read it. Hard deletion of the media
+     * belongs to the privacy removal in `P1-18`, not here.
+     *
+     * @param int $extensionId The extension id.
+     *
+     * @return void
+     *
+     * @throws Exception If the listing does not exist.
+     *
+     * @since 4.1.0
+     */
+    public function softDelete(int $extensionId): void
+    {
+        $this->applyListingState(
+            $extensionId,
+            [
+                'deleted'      => 1,
+                'deleted_by'   => (int) $this->getCurrentUser()->id,
+                'deleted_time' => Factory::getDate()->toSql(),
+            ]
+        );
+    }
+
+    /**
+     * Undo a soft delete.
+     *
+     * @param int $extensionId The extension id.
+     *
+     * @return void
+     *
+     * @throws Exception If the listing does not exist.
+     *
+     * @since 4.1.0
+     */
+    public function restore(int $extensionId): void
+    {
+        $this->applyListingState($extensionId, ['deleted' => 0, 'deleted_by' => null, 'deleted_time' => null]);
+    }
+
+    /**
+     * Write a set of state columns to the live row and record the result as a revision.
+     *
+     * The revision is what makes block and delete history answerable - who did what, when, under
+     * which code, with which internal note - without a dedicated log table, which is the shape
+     * the JED team asked for. It is written with `active = 0` on purpose: `active` marks the
+     * revision the moderation workflow (`P1-02`) is holding, and a block must not disturb a
+     * developer's pending edit. The live row stays authoritative for the current state.
+     *
+     * @param int   $extensionId The extension id.
+     * @param array $columns     Column => value pairs to write.
+     *
+     * @return void
+     *
+     * @throws Exception If the listing does not exist.
+     *
+     * @since 4.1.0
+     */
+    private function applyListingState(int $extensionId, array $columns): void
+    {
+        /** @var ExtensionTable $liveTable */
+        $liveTable = $this->getTable('Extension');
+        $liveTable->setUseExceptions(true);
+
+        if (!$liveTable->load($extensionId)) {
+            throw new Exception(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
+        }
+
+        $liveTable->bind($columns);
+        $liveTable->check();
+        $liveTable->store();
+
+        $revision = get_object_vars($liveTable);
+        unset($revision['id']);
+        $revision['extension_id'] = $extensionId;
+        $revision['active']       = 0;
+
+        /** @var ExtensionHistoryTable $historyTable */
+        $historyTable = $this->getTable('ExtensionHistory');
+        $historyTable->setUseExceptions(true);
+        $historyTable->bind($revision);
+        $historyTable->check();
+        $historyTable->store();
+    }
+
+    /**
+     * Whether a block reason code exists and is enabled.
+     *
+     * @param string $code The code to check.
+     *
+     * @return bool
+     *
+     * @since 4.1.0
+     */
+    private function blockReasonExists(string $code): bool
+    {
+        $db = $this->getDatabase();
+
+        return (bool) $db->setQuery(
+            $db->getQuery(true)
+                ->select('1')
+                ->from($db->quoteName('#__jed_block_reasons'))
+                ->where($db->quoteName('code') . ' = :code')
+                ->where($db->quoteName('state') . ' = 1')
+                ->bind(':code', $code)
+        )->loadResult();
     }
 
     /**

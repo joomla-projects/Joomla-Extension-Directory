@@ -141,7 +141,7 @@ class DashboardModel extends ItemModel
 
         $query = $db->getQuery(true)
             ->select('a.id, a.extension_version, a.state, a.created, a.owner')
-            ->select('a.name')
+            ->select('a.name, a.approved, a.blocked, a.block_reason_code')
             ->select('cat.title AS category_title')
             ->from($db->quoteName('#__jed_extensions', 'a'))
             ->leftJoin(
@@ -149,6 +149,10 @@ class DashboardModel extends ItemModel
                 . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('a.catid')
             )
             ->where($db->quoteName('a.owner') . ' = ' . $db->quote($userId))
+            // The dashboard is where a developer manages their own listings, so it deliberately
+            // shows the ones that are not public - pending approval, taken offline, blocked. Only
+            // soft-deleted rows are gone from the frontend entirely (4.8).
+            ->where($db->quoteName('a.deleted') . ' = 0')
             ->order($db->quoteName('a.id') . ' DESC');
 
         $this->extensionsTotal = $this->countTotal($query);

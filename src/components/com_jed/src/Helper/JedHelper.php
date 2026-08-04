@@ -16,6 +16,7 @@ defined('_JEXEC') or die;
 use DateTime;
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper as AdminJedHelper;
+use Jed\Component\Jed\Administrator\Listing\ListingAccess;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
@@ -255,15 +256,25 @@ class JedHelper
     /**
      * The single visibility rule for extension listings in the frontend.
      *
-     * A listing is public when the JED team has approved it AND the developer has it online.
-     * On top of that, owners and maintainers always see their own listings, so they can review
-     * a submission before it goes live - but nobody else does, whatever their permissions.
-     * Backend permissions deliberately do not widen this: the frontend is the public site, and
-     * `core.edit` used to leak every unpublished listing into it.
+     * Four independent carriers, all four required (4.8, `P1-01`):
+     *
+     *     visible ⟺ approved = 1 AND state = 1 AND blocked = 0 AND deleted = 0
+     *
+     * `approved` and `blocked` belong to the JED team, `state` to the developer, `deleted` to
+     * the owner or the team. They are separate columns precisely so that they cannot cancel each
+     * other out - mapped onto one column, a developer could republish and thereby lift a block.
+     *
+     * On top of that, owners and maintainers see their own listings whatever their approval or
+     * block status, so they can review a submission before it goes live and can find a blocked
+     * listing in order to fix it. Nobody else does, whatever their permissions: backend rights
+     * deliberately do not widen this, because `core.edit` used to leak every unpublished listing
+     * into the public site. Soft-deleted rows are excluded even from the owner - the frontend is
+     * done with them; the backend still shows them read-only.
      *
      * Returned as a SQL fragment rather than applied directly, so the callers can add it to
      * their own query. Defining it in one place is the point - a rule this easy to get subtly
-     * wrong must not be copied into four models.
+     * wrong must not be copied into six models. Drift here means a blocked extension staying
+     * visible in one listing.
      *
      * @param DatabaseInterface $db    The database driver, for quoting.
      * @param string            $alias The table alias used for #__jed_extensions in the query.
@@ -275,13 +286,16 @@ class JedHelper
      */
     public static function getExtensionVisibilityCondition(DatabaseInterface $db, string $alias = 'a'): string
     {
-        $public = '(' . $db->quoteName($alias . '.state') . ' = 1 AND '
-            . $db->quoteName($alias . '.approved') . ' = 1)';
+        $notDeleted = $db->quoteName($alias . '.deleted') . ' = 0';
+
+        $public = '(' . $db->quoteName($alias . '.approved') . ' = 1'
+            . ' AND ' . $db->quoteName($alias . '.state') . ' = 1'
+            . ' AND ' . $db->quoteName($alias . '.blocked') . ' = 0)';
 
         $userId = (int) self::getUser()->id;
 
         if ($userId <= 0) {
-            return $public;
+            return '(' . $notDeleted . ' AND ' . $public . ')';
         }
 
         // Owner OR a maintainer row - never created_by, which does not follow an ownership
@@ -292,7 +306,7 @@ class JedHelper
             . ' WHERE ' . $db->quoteName('vm.extension_id') . ' = ' . $db->quoteName($alias . '.id')
             . ' AND ' . $db->quoteName('vm.user_id') . ' = ' . $userId . ')';
 
-        return '(' . $public . ' OR ' . $own . ' OR ' . $maintained . ')';
+        return '(' . $notDeleted . ' AND (' . $public . ' OR ' . $own . ' OR ' . $maintained . '))';
     }
 
     /**
@@ -429,8 +443,10 @@ class JedHelper
     /**
      * Whether the current user may see a single extension row in the frontend.
      *
-     * The row counterpart of getExtensionVisibilityCondition(), for the detail view where the
-     * record has already been loaded.
+     * The row counterpart of getExtensionVisibilityCondition(), for places that only need a
+     * yes/no - a listing card, a link. The detail page needs more than yes/no, because a blocked
+     * listing is answered with a notice rather than hidden; that path uses
+     * {@see resolveListingAccess()} instead.
      *
      * @param object $item The loaded extension row.
      *
@@ -441,11 +457,84 @@ class JedHelper
      */
     public static function canViewExtension(object $item): bool
     {
-        if ((int) ($item->state ?? 0) === 1 && (int) ($item->approved ?? 0) === 1) {
+        if ((int) ($item->deleted ?? 0) === 1) {
+            return false;
+        }
+
+        if (
+            (int) ($item->approved ?? 0) === 1
+            && (int) ($item->state ?? 0) === 1
+            && (int) ($item->blocked ?? 0) === 0
+        ) {
             return true;
         }
 
         return isset($item->id) && self::isOwnerOrMaintainer((int) $item->id);
+    }
+
+    /**
+     * What the public detail page should do with this listing.
+     *
+     * Wraps {@see ListingAccess::forItem()} with the owner/maintainer lookup, so callers do not
+     * have to know that "privileged" here means owner or maintainer and never `core.edit`.
+     *
+     * @param object $item The loaded extension row.
+     *
+     * @return ListingAccess
+     *
+     * @since  4.1.0
+     * @throws Exception
+     */
+    public static function resolveListingAccess(object $item): ListingAccess
+    {
+        $isPrivileged = isset($item->id) && self::isOwnerOrMaintainer((int) $item->id);
+
+        return ListingAccess::forItem($item, $isPrivileged);
+    }
+
+    /**
+     * The public wording for a block, or null when the listing is not blocked.
+     *
+     * Only the reason code's title and its knowledge base article are public. `block_reason_text`
+     * is the JED team's internal note and is deliberately not returned here - it is written on
+     * the block form, kept in the revision history, and never rendered on the public site.
+     *
+     * @param object $item The loaded extension row.
+     *
+     * @return array{code: string, title: string, article_id: int|null}|null
+     *
+     * @since  4.1.0
+     */
+    public static function getPublicBlockReason(object $item): ?array
+    {
+        if ((int) ($item->blocked ?? 0) !== 1) {
+            return null;
+        }
+
+        $code = (string) ($item->block_reason_code ?? '');
+
+        if ($code === '') {
+            return null;
+        }
+
+        $db  = Factory::getContainer()->get('DatabaseDriver');
+        $row = $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(['code', 'title', 'article_id']))
+                ->from($db->quoteName('#__jed_block_reasons'))
+                ->where($db->quoteName('code') . ' = :code')
+                ->bind(':code', $code)
+        )->loadAssoc();
+
+        if ($row === null) {
+            return null;
+        }
+
+        return [
+            'code'       => (string) $row['code'],
+            'title'      => (string) $row['title'],
+            'article_id' => $row['article_id'] === null ? null : (int) $row['article_id'],
+        ];
     }
 
     /**

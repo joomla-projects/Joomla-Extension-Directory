@@ -318,6 +318,19 @@ final class Jed extends Adapter implements SubscriberInterface
         // Translate the state. Extensions should only be indexed as published if the category is published.
         $item->state = $this->translateState($item->state, $item->cat_state);
 
+        // The other three visibility carriers (4.8, P1-01). Smart Search only understands
+        // published/unpublished, so approval, blocking and soft deletion all have to collapse
+        // into that one flag - a listing failing any of them is indexed as unpublished and drops
+        // out of the results. It stays in #__finder_links rather than being deleted so that
+        // unblocking or restoring makes it findable again without a full reindex.
+        if (
+            (int) ($item->approved ?? 0) !== 1
+            || (int) ($item->blocked ?? 0) === 1
+            || (int) ($item->deleted ?? 0) === 1
+        ) {
+            $item->state = 0;
+        }
+
         // Add the category taxonomy data.
         $categories = $this->getApplication()->bootComponent('com_jed')->getCategory(['published' => false, 'access' => false]);
         $category   = $categories->get($item->catid);
@@ -421,7 +434,7 @@ final class Jed extends Adapter implements SubscriberInterface
 
         $query = $query instanceof QueryInterface ? $query : $db->createQuery()
             ->select('a.id, a.name AS title, a.intro AS summary, a.description AS body')
-            ->select('a.state, a.catid, a.created AS start_date, a.created_by, a.modified, a.modified_by')
+            ->select('a.state, a.approved, a.blocked, a.deleted, a.catid, a.created AS start_date, a.created_by, a.modified, a.modified_by')
             ->select('a.type, a.extension_types, a.joomla_versions, a.license')
             ->select('a.logo, a.overview_image, a.popular')
             ->select('c.title AS category, c.published AS cat_state, c.access AS cat_access')

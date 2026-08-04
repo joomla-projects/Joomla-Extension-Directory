@@ -268,6 +268,8 @@ class JedHelper extends ContentHelper
             case 'requires_registration':
             case 'uses_updater':
             case 'popular':
+            case 'blocked':
+            case 'deleted':
                 return Text::_($yesNoOptions[(int) $value] ?? 'JNO');
 
             case 'catid':
@@ -276,11 +278,15 @@ class JedHelper extends ContentHelper
             case 'owner':
             case 'created_by':
             case 'modified_by':
-                return self::displayUser((int) $value);
+            case 'blocked_by':
+            case 'deleted_by':
+                return $value === null ? '&#8212;' : self::displayUser((int) $value);
 
             case 'approved_time':
             case 'created':
             case 'modified':
+            case 'blocked_time':
+            case 'deleted_time':
                 return empty($value) ? '&#8212;' : HTMLHelper::_('date', $value, Text::_('COM_JED_GENERAL_DATETIME_FORMAT'));
 
             case 'intro':

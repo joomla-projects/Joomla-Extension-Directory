@@ -45,6 +45,26 @@
                hint="COM_JED_EXTENSION_APPROVED_REASON_LABEL"/>
     </fieldset>
 
+    <!--
+        Blocking is the JED team's carrier and is deliberately separate from `state`, which
+        belongs to the developer (4.8). The fields below are filled in here and acted on by the
+        Block/Unblock toolbar buttons - `blocked` itself is not an editable field, so an ordinary
+        Save can never set or clear a block by accident.
+    -->
+    <fieldset name="blocking" label="COM_JED_FIELDSET_BLOCKING_LABEL">
+        <field name="block_reason_code" type="blockreason" label="COM_JED_EXTENSION_BLOCK_REASON_CODE_LABEL"
+               description="COM_JED_EXTENSION_BLOCK_REASON_CODE_DESC"/>
+        <field name="block_reason_text" type="textarea" filter="string" rows="4"
+               label="COM_JED_EXTENSION_BLOCK_REASON_TEXT_LABEL"
+               description="COM_JED_EXTENSION_BLOCK_REASON_TEXT_DESC"/>
+        <field name="blocked_time" type="calendar" format="%Y-%m-%d %H:%M:%S" showtime="true" translateformat="true"
+               readonly="true" label="COM_JED_EXTENSION_BLOCKED_TIME_LABEL"/>
+        <field name="blocked_by" type="modifiedby" readonly="true" label="COM_JED_EXTENSION_BLOCKED_BY_LABEL"/>
+        <field name="deleted_time" type="calendar" format="%Y-%m-%d %H:%M:%S" showtime="true" translateformat="true"
+               readonly="true" label="COM_JED_EXTENSION_DELETED_TIME_LABEL"/>
+        <field name="deleted_by" type="modifiedby" readonly="true" label="COM_JED_EXTENSION_DELETED_BY_LABEL"/>
+    </fieldset>
+
     <fieldset name="info" label="COM_JED_FIELDSET_INFO_LABEL">
         <field name="intro" editor="tinymce" buttons="false" filter="Joomla\CMS\Component\ComponentHelper::filterText"
                type="editor" label="COM_JED_EXTENSION_INTRO_TEXT_LABEL"

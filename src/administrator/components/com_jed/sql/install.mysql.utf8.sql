@@ -55,11 +55,23 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions`
 	`overview_image`         varchar(255)    DEFAULT '',
 	`video`                  varchar(255)    DEFAULT '',
 	`internal_note`          mediumtext,
+	-- Blocking and soft delete are separate carriers from `state` on purpose (4.8, P1-01):
+	-- `state` belongs to the developer, `blocked` to the JED team. Mapped onto one column, a
+	-- developer could lift a block by republishing. block_reason_text is internal - only the
+	-- reason code's title is ever shown publicly.
+	`blocked`                tinyint(1)      NOT NULL DEFAULT '0',
+	`block_reason_code`      varchar(32)     DEFAULT NULL,
+	`block_reason_text`      text,
+	`blocked_by`             int unsigned    DEFAULT NULL,
+	`blocked_time`           datetime        DEFAULT NULL,
+	`deleted`                tinyint(1)      NOT NULL DEFAULT '0',
+	`deleted_by`             int unsigned    DEFAULT NULL,
+	`deleted_time`           datetime        DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	KEY `IDX_jed_extensions_catid` (`catid`),
 	KEY `IDX_jed_extensions_owner` (`owner`),
 	KEY `IDX_jed_extensions_state` (`state`),
-	KEY `IDX_jed_extensions_visibility` (`state`, `approved`),
+	KEY `IDX_jed_extensions_visibility` (`approved`, `state`, `blocked`, `deleted`),
 	KEY `IDX_jed_extensions_alias` (`alias`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
@@ -117,6 +129,17 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_history`
 	`overview_image`         varchar(255)    DEFAULT '',
 	`video`                  varchar(255)    DEFAULT '',
 	`internal_note`          mediumtext,
+	-- Mirrored from #__jed_extensions. This is where the block history lives: every block and
+	-- unblock writes a revision, so who blocked what, when, under which code and with which
+	-- internal note is answerable from the revision list without a dedicated log table.
+	`blocked`                tinyint(1)      NOT NULL DEFAULT '0',
+	`block_reason_code`      varchar(32)     DEFAULT NULL,
+	`block_reason_text`      text,
+	`blocked_by`             int unsigned    DEFAULT NULL,
+	`blocked_time`           datetime        DEFAULT NULL,
+	`deleted`                tinyint(1)      NOT NULL DEFAULT '0',
+	`deleted_by`             int unsigned    DEFAULT NULL,
+	`deleted_time`           datetime        DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	KEY `IDX_jed_extensions_catid` (`catid`),
 	KEY `IDX_jed_extensions_owner` (`owner`),
@@ -232,6 +255,25 @@ CREATE TABLE IF NOT EXISTS `#__jed_favorites`
 	UNIQUE KEY `UK_jed_favorites_user_id_extension_id` (`user_id`, `extension_id`),
 	KEY `FK_jed_favorites_user_id` (`user_id`),
 	KEY `FK_jed_favorites_extension_id` (`extension_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `#__jed_block_reasons`;
+
+-- The vocabulary a block is stated in. Codes are data, not code (4.8), so the JED team can add
+-- one without a release. `code` is the primary key because it is what #__jed_extensions and its
+-- history store, what the knowledge base articles are keyed by, and what the API will carry -
+-- a surrogate id would add a join and a second identity for the same thing. Seeded by
+-- script.php from the JED3 submission error codes (P0-05), which the com_tickets mail templates
+-- already speak.
+CREATE TABLE IF NOT EXISTS `#__jed_block_reasons`
+(
+	`code`       varchar(32)  NOT NULL,
+	`title`      varchar(255) NOT NULL,
+	`article_id` int unsigned DEFAULT NULL,
+	`state`      tinyint(1)   NOT NULL DEFAULT '1',
+	`ordering`   int          NOT NULL DEFAULT '0',
+	PRIMARY KEY (`code`),
+	KEY `IDX_jed_block_reasons_state` (`state`, `ordering`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `#__jed_joomla_versions`;

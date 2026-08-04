@@ -67,6 +67,45 @@ class ExtensionController extends BaseController
     }
 
     /**
+     * The developer's own online/offline switch for one of their listings.
+     *
+     * Writes `state` and nothing else. That is the invariant this whole plan rests on (4.8,
+     * CLAUDE.md): `state` belongs to the developer, `blocked` to the JED team. The switch stays
+     * available while a listing is blocked - going back online does not lift the block, and
+     * refusing the switch would only mean a developer could not take a blocked listing down.
+     *
+     * Owner or maintainer may use it; a soft-deleted listing may not be touched at all.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     */
+    public function setOnlineState(): void
+    {
+        $this->checkToken();
+
+        $app         = Factory::getApplication();
+        $extensionId = $app->getInput()->getInt('extension_id', 0);
+        $online      = $app->getInput()->getInt('online', 0) === 1 ? 1 : 0;
+
+        if (!JedHelper::isLoggedIn() || !$extensionId || !JedHelper::isOwnerOrMaintainer($extensionId)) {
+            $this->sendJson(['success' => false, 'message' => Text::_('COM_JED_EXTENSION_NO_ACCESS_LABEL')]);
+
+            return;
+        }
+
+        try {
+            /** @var ExtensionModel $model */
+            $model = $this->getModel('Extension', 'Site');
+            $model->setOnlineState($extensionId, $online);
+
+            $this->sendJson(['success' => true, 'data' => ['online' => $online]]);
+        } catch (Exception $e) {
+            $this->sendJson(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    /**
      * Sends a result array as a JSON response and terminates the request - same shape/idiom as
      * NewextensionController::sendJson().
      *
