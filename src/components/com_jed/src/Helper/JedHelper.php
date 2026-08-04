@@ -25,6 +25,7 @@ use Joomla\CMS\Log\Log;
 use Joomla\CMS\Mail\MailTemplate;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\User;
+use Joomla\Component\Mails\Administrator\Model\TemplateModel;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
 
@@ -90,8 +91,13 @@ class JedHelper
      */
     public static function sendMailTemplate(string $templateId, User\User $recipient): ?object
     {
-        $language = Factory::getApplication()->getLanguage()->getTag();
-        $mail     = MailTemplate::getTemplate($templateId, $language);
+        $app      = Factory::getApplication();
+        $language = $app->getLanguage()->getTag();
+        /** @var TemplateModel $model */
+        $model    = $app->bootComponent('com_mails')->getMVCFactory()->createModel('Template', 'Administrator');
+        $model->setState($model->getName() . '.template_id', $templateId);
+        $model->setState($model->getName() . '.language', $language);
+        $mail     = $model->getItem();
 
         if ($mail === null) {
             return null;
