@@ -254,10 +254,14 @@ class Com_JedInstallerScript
         }
 
         $table = new FieldTable($db);
+        $table->setUseExceptions(true);
 
-        if (!$table->bind($data) || !$table->check()) {
+        try {
+            $table->bind($data);
+            $table->check();
+        } catch (\Exception $e) {
             Log::add(
-                sprintf('Could not create the "%s" custom field: %s', $data['name'], $table->getError()),
+                sprintf('Could not create the "%s" custom field: %s', $data['name'], $e->getMessage()),
                 Log::WARNING,
                 'jerror'
             );
@@ -269,9 +273,11 @@ class Com_JedInstallerScript
         // into dashes. Restore the exact name we were asked to create.
         $table->name = $data['name'];
 
-        if (!$table->store()) {
+        try {
+            $table->store();
+        } catch (\Exception $e) {
             Log::add(
-                sprintf('Could not create the "%s" custom field: %s', $data['name'], $table->getError()),
+                sprintf('Could not create the "%s" custom field: %s', $data['name'], $e->getMessage()),
                 Log::WARNING,
                 'jerror'
             );
