@@ -22,7 +22,9 @@ use Joomla\CMS\Layout\LayoutHelper;
  * @param int  $score          The score of the extension
  * @param int  $reviews        The number of reviews for the extension
  * @param array    $compatibility  The compatible Joomla versions for the extensions
- * @param string   $description    A short description of the extension
+ * @param string   $description    The card's supporting text, as plain text with its entities
+ *                                 already encoded - build it with JedHelper::cardText(), which
+ *                                 prefers the listing's intro and flattens the Markdown
  * @param string   $type           The extension type (free/paid/cloud)
  * @param bool     $category       The main category of the extension
  * @param string   $link           The link to the extension

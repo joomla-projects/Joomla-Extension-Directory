@@ -21,7 +21,6 @@ use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
 use Jed\Component\Jed\Site\Helper\JedtrophyHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Uri\Uri;
@@ -162,7 +161,10 @@ class ProfileModel extends ListModel
             $item->includes_string = JedtrophyHelper::getTrophyIncludesStringFull((string) $item->extension_types);
             $item->version_string  = JedtrophyHelper::getTrophyVersionsStringFull((string) $item->joomla_versions);
 
-            $item->short_description = (string) HTMLHelper::_('string.truncate', (string) $item->description, 150);
+            // The card text: the intro, or a truncated description while a listing has none.
+            // string.truncate would cut the stored Markdown mid-token, so the text is rendered
+            // and flattened first.
+            $item->short_description = JedHelper::cardText($item->intro ?? null, $item->description ?? null);
         }
 
         return array_values($items);

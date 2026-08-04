@@ -10,7 +10,6 @@
 
 namespace Jed\Component\Jed\Administrator\Traits;
 
-use Exception;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Service\Category;
@@ -20,8 +19,6 @@ use Joomla\Database\ParameterType;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
-use League\CommonMark\CommonMarkConverter;
-use SimpleXMLElement;
 
 /**
  * Utilities for working with extensions and extension categories
@@ -30,58 +27,6 @@ use SimpleXMLElement;
  */
 trait ExtensionUtilities
 {
-    /**
-     * Gets first paragraph of description as intro text
-     *
-     * @param string $d
-     *
-     * @return array
-     *
-     * @throws Exception
-     * @since  4.0.0
-     */
-    public function splitDescription(string $d): array
-    {
-        // Remove images
-        $d = preg_replace("/\!\[(.*)\]\((.*)\)/", '', $d);
-        // Remove links
-        $d = preg_replace("/\[(.*)\]\((.*)\)/", '', (string) $d);
-
-        $converter = new CommonMarkConverter([
-            'html_input'         => 'strip',
-            'allow_unsafe_links' => false,
-        ]);
-        $d = (string) $converter->convert($d);
-
-        $clean = (stripslashes(trim($d)));
-        $xml   = new SimpleXMLElement('<div>' . $clean . '</div>');
-        $ps    = $xml->xpath('//p');
-
-        if (count($ps) > 0) {
-            $ret['intro'] = htmlspecialchars_decode($ps[0]->asXml());
-
-
-            if (count($ps) === 1) {
-                // No more text (but might contain non-paragraphed text see JDEV-628
-                $ret['body'] = str_replace($d, '', $d);
-            } else {
-                // Remove first paragraph from the text
-                $dom = dom_import_simplexml($ps[0]);
-                $dom->parentNode->removeChild($dom);
-                $ret['body'] = htmlspecialchars_decode(str_replace('<?xml version="1.0"?>', '', $xml->asXml()));
-            }
-        } else {
-            $seperator = stristr($d, '<br>') ? '<br>' : '<br />';
-            $bits      = explode($seperator, $d);
-
-            $o            = array_shift($bits);
-            $ret['intro'] = $o;
-            $ret['body']  = implode('<br />', $bits);
-        }
-
-        return $ret;
-    }
-
     /**
      * Gets current extension category and hierarchy of parents as string
      *

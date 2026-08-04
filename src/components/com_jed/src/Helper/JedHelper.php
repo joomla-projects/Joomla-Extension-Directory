@@ -349,6 +349,26 @@ class JedHelper
     }
 
     /**
+     * The supporting text of an extension card.
+     *
+     * `intro` is what the card shows, and the import fills it for every legacy listing - but a
+     * listing created through the submission form can leave it empty, and a blank card is worse
+     * than a truncated one, so the description stands in. Either way the card gets plain text:
+     * the slot is two clamped lines, and rendered Markdown would put block markup into it.
+     *
+     * @param string|null $intro       The listing's intro.
+     * @param string|null $description The listing's description, used when the intro is empty.
+     *
+     * @return string  Plain text with HTML entities encoded, safe to output.
+     *
+     * @since 4.1.0
+     */
+    public static function cardText(?string $intro, ?string $description = null): string
+    {
+        return self::markdownToText(trim((string) $intro) !== '' ? $intro : $description, 200);
+    }
+
+    /**
      * The single visibility rule for reviews in the frontend.
      *
      * A review is public once it has been through moderation (state = 1). On top of that its

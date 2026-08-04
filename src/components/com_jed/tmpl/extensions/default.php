@@ -79,7 +79,7 @@ $heading = ($catid && !empty($this->items)) ? $this->items[0]->category_title . 
                                                     'score'         => $item->score,
                                                     'reviews'       => $item->review_string,
                                                     'compatibility' => $item->version,
-                                                    'description'   => $item->description,
+                                                    'description'   => JedHelper::cardText($item->intro, $item->description),
                                                     'type'          => $item->type,
                                                     'category'      => $item->category_title,
                                                     'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->catid, $item->id)),

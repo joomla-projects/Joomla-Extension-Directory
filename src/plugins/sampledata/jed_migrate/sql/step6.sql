@@ -91,9 +91,8 @@ DELETE FROM #__jed_extensions_maintainers;
 -- Insert into #__jed_extensions. Mapped with a change of meaning: homepage_link -> developer_url, extension_file
 -- -> internal_download_url, second_contact_email -> developer_email (the secondary contact is lost), jed_note ->
 -- internal_note. includes -> extension_types was missing from the previous version of this script and is now
--- mapped, because the trophy helper renders the component/module/plugin badges from it. intro is generated from
--- the first 300 characters of the tag-stripped body: JED3 has a single body field and the new schema has intro
--- plus description, and an empty intro would leave every card in the catalogue blank. approved is derived from
+-- mapped, because the trophy helper renders the component/module/plugin badges from it. intro is left empty here
+-- and derived from the finished description further down, once that has been normalised. approved is derived from
 -- approved_time, since the JED3 column holds a wqyh6_jed_approval_status id. The original id is kept in
 -- approved_notes and its label in approved_reason so nothing is lost - confirm the label-to-boolean mapping
 -- against the data before relying on it. Not migrated, because the new schema has no equivalent column:
@@ -101,7 +100,44 @@ DELETE FROM #__jed_extensions_maintainers;
 -- variants, language_body, backlink, non_gpl_css_js, parent_id, related_free_paid_id, jed_checked,
 -- extension_ext_libs, update_url_ok, can_update. tags is carried into the staging table so a later pass can
 -- create core tag records from it.
-INSERT INTO #__jed_extensions (id, name, alias, catid, owner, state, approved, approved_time, approved_notes, approved_reason, intro, description, license, requires_registration, type, extension_types, created, created_by, modified, modified_by, checked_out, checked_out_time, extension_version, entry_version, joomla_versions, download_url, support_url, demo_url, documentation_url, git_url, internal_download_url, download_key, uses_updater, update_url, developer_url, developer_email, changelog_url, score_overall, score_functionality, score_ease_of_use, score_support, score_documentation, score_value_for_money, score_count, popular, logo, overview_image, video, internal_note) SELECT id, LEFT(IFNULL(core_title, ''), 255), LEFT(IFNULL(core_alias, ''), 255), core_catid, core_created_user_id, CASE WHEN core_state = 1 THEN 1 ELSE 0 END, CASE WHEN approved = 1 THEN 1 ELSE 0 END, approved_time, CONCAT('JED3 approval_status_id=', IFNULL(approved, 0)), LEFT(IFNULL(approval_label, ''), 255), LEFT(TRIM(REGEXP_REPLACE(REGEXP_REPLACE(IFNULL(core_body, ''), '<[^>]*>', ' '), '[[:space:]]+', ' ')), 300), REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REGEXP_REPLACE(IFNULL(core_body, ''), '<[^>]*>', ''), CONCAT('&nbsp', CHAR(59)), ' '), CONCAT('&lt', CHAR(59)), '<'), CONCAT('&gt', CHAR(59)), '>'), CONCAT('&quot', CHAR(59)), '"'), CONCAT('&amp', CHAR(59)), '&'), LEFT(IFNULL(license, ''), 255), IFNULL(requires_registration, 0), CASE LOWER(TRIM(IFNULL(type, ''))) WHEN 'paid' THEN 'paid' WHEN 'freemium' THEN 'freemium' WHEN 'cloud' THEN 'cloud' ELSE 'free' END, LEFT(IFNULL(includes, ''), 255), core_created_time, core_created_user_id, core_modified_time, core_modified_user_id, NULLIF(core_checked_out_user_id, 0), core_checked_out_time, LEFT(IFNULL(version, ''), 50), 1, LEFT(IFNULL(versions, ''), 255), LEFT(IFNULL(download_link, ''), 255), LEFT(IFNULL(support_link, ''), 255), LEFT(IFNULL(demo_link, ''), 255), LEFT(IFNULL(documentation_link, ''), 255), '', LEFT(IFNULL(extension_file, ''), 255), '', IFNULL(uses_updater, 0), LEFT(IFNULL(update_url, ''), 255), LEFT(IFNULL(homepage_link, ''), 255), LEFT(IFNULL(second_contact_email, ''), 255), '', LEAST(GREATEST(ROUND(IFNULL(score, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(functionality, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(ease_of_use, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(support, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(documentation, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(value_for_money, 0) / 10) / 2, 0), 5), 0, IFNULL(popular, 0), LEFT(IFNULL(logo, ''), 255), '', LEFT(IFNULL(video, ''), 255), jed_note FROM combine_jed_extensions;
+INSERT INTO #__jed_extensions (id, name, alias, catid, owner, state, approved, approved_time, approved_notes, approved_reason, intro, description, license, requires_registration, type, extension_types, created, created_by, modified, modified_by, checked_out, checked_out_time, extension_version, entry_version, joomla_versions, download_url, support_url, demo_url, documentation_url, git_url, internal_download_url, download_key, uses_updater, update_url, developer_url, developer_email, changelog_url, score_overall, score_functionality, score_ease_of_use, score_support, score_documentation, score_value_for_money, score_count, popular, logo, overview_image, video, internal_note) SELECT id, LEFT(IFNULL(core_title, ''), 255), LEFT(IFNULL(core_alias, ''), 255), core_catid, core_created_user_id, CASE WHEN core_state = 1 THEN 1 ELSE 0 END, CASE WHEN approved = 1 THEN 1 ELSE 0 END, approved_time, CONCAT('JED3 approval_status_id=', IFNULL(approved, 0)), LEFT(IFNULL(approval_label, ''), 255), '', REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REGEXP_REPLACE(IFNULL(core_body, ''), '<[^>]*>', ''), CONCAT('&nbsp', CHAR(59)), ' '), CONCAT('&lt', CHAR(59)), '<'), CONCAT('&gt', CHAR(59)), '>'), CONCAT('&quot', CHAR(59)), '"'), CONCAT('&amp', CHAR(59)), '&'), LEFT(IFNULL(license, ''), 255), IFNULL(requires_registration, 0), CASE LOWER(TRIM(IFNULL(type, ''))) WHEN 'paid' THEN 'paid' WHEN 'freemium' THEN 'freemium' WHEN 'cloud' THEN 'cloud' ELSE 'free' END, LEFT(IFNULL(includes, ''), 255), core_created_time, core_created_user_id, core_modified_time, core_modified_user_id, NULLIF(core_checked_out_user_id, 0), core_checked_out_time, LEFT(IFNULL(version, ''), 50), 1, LEFT(IFNULL(versions, ''), 255), LEFT(IFNULL(download_link, ''), 255), LEFT(IFNULL(support_link, ''), 255), LEFT(IFNULL(demo_link, ''), 255), LEFT(IFNULL(documentation_link, ''), 255), '', LEFT(IFNULL(extension_file, ''), 255), '', IFNULL(uses_updater, 0), LEFT(IFNULL(update_url, ''), 255), LEFT(IFNULL(homepage_link, ''), 255), LEFT(IFNULL(second_contact_email, ''), 255), '', LEAST(GREATEST(ROUND(IFNULL(score, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(functionality, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(ease_of_use, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(support, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(documentation, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(value_for_money, 0) / 10) / 2, 0), 5), 0, IFNULL(popular, 0), LEFT(IFNULL(logo, ''), 255), '', LEFT(IFNULL(video, ''), 255), jed_note FROM combine_jed_extensions;
+
+-- Normalise the imported descriptions for Markdown (P1-17). The JED3 stock is plain text, which is already valid
+-- Markdown, so there is no conversion to do - but two plain-text habits change meaning under a Markdown parser:
+--   * A line indented by four spaces or a tab is an indented code block. 1,211 of the imported descriptions
+--     indent their bullet lists that way and would render as grey code boxes, so leading whitespace is stripped
+--     from every line. The price is that a genuinely nested list is flattened to one level. Fenced code blocks
+--     (20 rows) do not depend on indentation and survive.
+--   * A line of dashes or equals signs directly under a line of text is a setext heading, which turns the
+--     paragraph above it into an <h1>/<h2>. 519 descriptions use such a line as a visual separator. A blank line
+--     in front of it makes it the horizontal rule it was meant to be and leaves the paragraph a paragraph.
+-- Paragraphs themselves need no help: 82 % of the descriptions already separate them with a blank line, 11 % are
+-- a single line, and the remaining 7 % use single newlines, which JedHelper::renderMarkdown() keeps visible
+-- through its soft_break setting. Line endings are folded to LF so the two rules above see one shape.
+UPDATE #__jed_extensions SET description = REGEXP_REPLACE(REGEXP_REPLACE(REPLACE(REPLACE(description, '\r\n', '\n'), '\r', '\n'), '(?m)^[ \t]+', ''), '(?m)^(-+|=+)[ \t]*$', '\n\\1');
+
+-- intro is the card text, and JED3 has no equivalent field - an empty intro would leave every card in the
+-- catalogue blank. Take the first paragraph, with its internal newlines collapsed, because the card gives it two
+-- clamped lines rather than a block of prose.
+UPDATE #__jed_extensions SET intro = TRIM(REGEXP_REPLACE(SUBSTRING_INDEX(description, '\n\n', 1), '[[:space:]]+', ' '));
+
+-- 212 descriptions open with a label rather than a sentence ("Features:", "Support:-") and 7 open with a blank
+-- line, which leaves a first paragraph too short to describe anything. Those fall back to the whole description,
+-- which the length rule below then cuts.
+UPDATE #__jed_extensions SET intro = TRIM(REGEXP_REPLACE(description, '[[:space:]]+', ' ')) WHERE CHAR_LENGTH(intro) < 30;
+
+-- 305 first paragraphs open with a bullet, a quote marker or a heading hash. Left in place the intro would render
+-- as a one-item list or a heading instead of a line of card text, so the marker is dropped and the text kept. A
+-- space after the marker is required, otherwise this would break the opening "*" of an emphasis pair.
+UPDATE #__jed_extensions SET intro = TRIM(REGEXP_REPLACE(intro, '^([*+>-]+|[0-9]+[.)]|#{1,6})[[:space:]]+', '')) WHERE intro REGEXP '^([*+>-]+|[0-9]+[.)]|#{1,6})[[:space:]]';
+
+-- Cap the intro at the last sentence end within the first 150 characters, or at the last word when the opening
+-- sentence is longer than that. P0-06 measured the card's supporting-text slot at roughly 95 characters over two
+-- clamped lines, so 150 stored leaves the clamp something to work with without the column carrying a paragraph.
+-- The sentence cut is only taken when it leaves at least 60 characters, one full card line: "!" and "." are not
+-- reliable sentence ends in this stock - without the floor, every listing whose opening words are "Joomla! ..."
+-- or "Version 1.2. ..." ends up with a two-word card text.
+UPDATE #__jed_extensions SET intro = CASE WHEN CHAR_LENGTH(IFNULL(REGEXP_SUBSTR(LEFT(intro, 150), '^.*[.!?]([[:space:]]|$)'), '')) >= 60 THEN TRIM(REGEXP_SUBSTR(LEFT(intro, 150), '^.*[.!?]([[:space:]]|$)')) ELSE CONCAT(TRIM(REGEXP_REPLACE(LEFT(intro, 150), '[[:space:]]+[^[:space:]]*$', '')), '…') END WHERE CHAR_LENGTH(intro) > 150;
 
 -- Populate #__jed_extensions_category_map. JED3 allowed exactly one category per listing, so each extension gets
 -- the single mapping row that matches its catid - the new multi-category queries then work against imported data

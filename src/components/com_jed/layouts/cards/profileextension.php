@@ -19,7 +19,9 @@ use Joomla\CMS\Layout\LayoutHelper;
  * @param int    $id          The extension id
  * @param string $image       The url of the logo image
  * @param string $title       The title of the extension
- * @param string $description A shortened version of the extension's description
+ * @param string $description The card's supporting text, as plain text with its entities already
+ *                            encoded - build it with JedHelper::cardText(), which prefers the
+ *                            listing's intro and flattens the Markdown
  * @param string $includes    The types of Joomla extensions this extension ships with (e.g. "Component, Plugin")
  * @param string $versions    The Joomla versions this extension supports
  * @param string $link        The link to the extension's own page
