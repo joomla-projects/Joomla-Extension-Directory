@@ -25,8 +25,8 @@ describe('Install Joomla and JED sample data', () => {
     // independent "Install" button) per enabled sample-data plugin.
     cy.visit('administrator/index.php?option=com_cpanel&view=cpanel')
 
-    // "Sample Data - JED" (plg_sampledata_jed) - a 7-step installer for extensions,
-    // categories, reviews, tickets, and VEL sample rows. The widget's own JS (mod_sampledata's
+    // "Sample Data - JED" (plg_sampledata_jed) - a 6-step installer for extensions,
+    // categories, reviews and tickets. The widget's own JS (mod_sampledata's
     // sampledata-process.js) chains every step automatically after a single click, gated by a
     // native confirm() dialog (Cypress auto-accepts those) - it never marks the row itself
     // "Success"; completion instead renders a "Sample data installed." system message once

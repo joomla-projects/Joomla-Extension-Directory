@@ -83,4 +83,4 @@ In the admin, JED exposes Tickets, Categories and Extensions.
 
 ### Front-end testing
 
-Sample-data installation creates a test user, **testuserj5final** (password **Who0CaresF0rPasswords**), which all sample front-end data (tickets, VEL entries, etc.) is tied to.
+Sample-data installation creates a test user, **testuserj5final** (password **Who0CaresF0rPasswords**), which all sample front-end data (extensions, reviews, tickets, etc.) is tied to.
