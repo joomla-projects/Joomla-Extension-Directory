@@ -141,7 +141,8 @@ class DashboardModel extends ItemModel
 
         $query = $db->getQuery(true)
             ->select('a.id, a.extension_version, a.state, a.created, a.owner')
-            ->select('a.name, a.approved, a.blocked, a.block_reason_code')
+            ->select('a.name, a.approved, a.approved_time, a.approved_reason, a.approved_notes')
+            ->select('a.blocked, a.block_reason_code, a.deleted')
             ->select('cat.title AS category_title')
             ->from($db->quoteName('#__jed_extensions', 'a'))
             ->leftJoin(

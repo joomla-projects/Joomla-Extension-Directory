@@ -98,6 +98,19 @@ final class ReviewTicketHandler implements TicketTypeHandlerInterface
             );
         }
 
+        if ($user->authorise('core.edit.state', 'com_jed')) {
+            // Rejection unpublishes rather than deletes, so the reviewer can be told (P1-02
+            // item 4) and so a moderation call stays reversible. Delete below is still there for
+            // content that has to go entirely - spam, abuse - and is deliberately separate.
+            $actions[] = new TicketAction(
+                label: 'COM_TICKETS_ACTION_REJECT',
+                task: 'reviews.unpublish',
+                icon: 'cancel-circle',
+                hiddenFields: ['cid[]' => $linkedItemId, 'boxchecked' => 1],
+                option: 'com_jed'
+            );
+        }
+
         if ($user->authorise('core.delete', 'com_jed')) {
             $actions[] = new TicketAction(
                 label: 'COM_TICKETS_ACTION_DELETE',

@@ -19,7 +19,10 @@ use Jed\Component\Jed\Administrator\Queue\QueueService;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\Mail\MailTemplate;
 use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Table\Table;
 
@@ -147,9 +150,11 @@ class ReviewModel extends AdminModel
 
         if ($ids !== []) {
             $query = $db->getQuery(true)
-                ->select($db->quoteName(['id', 'extension_id', 'state']))
-                ->from($db->quoteName('#__jed_reviews'))
-                ->whereIn($db->quoteName('id'), $ids);
+                ->select($db->quoteName(['r.id', 'r.extension_id', 'r.state', 'r.created_by']))
+                ->select($db->quoteName('e.name', 'extension_name'))
+                ->from($db->quoteName('#__jed_reviews', 'r'))
+                ->leftJoin($db->quoteName('#__jed_extensions', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('r.extension_id'))
+                ->whereIn($db->quoteName('r.id'), $ids);
             $before = $db->setQuery($query)->loadObjectList('id');
         }
 
@@ -170,6 +175,10 @@ class ReviewModel extends AdminModel
 
                 if ($wasPublished !== $nowPublished) {
                     $extensionIds[(int) $old->extension_id] = true;
+
+                    // 4.3: moderating a review told nobody. The reviewer wrote it and never heard
+                    // whether it was published, which is the one thing they wanted to know.
+                    $this->notifyReviewer($old, $nowPublished);
                 }
             }
 
@@ -182,6 +191,55 @@ class ReviewModel extends AdminModel
         }
 
         return $result;
+    }
+
+    /**
+     * Tell the reviewer what happened to their review.
+     *
+     * Sent on the transition only, not on every save, so re-publishing something already public
+     * does not mail anyone. A failure here is logged rather than raised: the moderation decision
+     * is already committed, and a mail server being down must not undo it.
+     *
+     * @param object $review    The review row as it was before the change.
+     * @param bool   $published Whether it is now published.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     */
+    private function notifyReviewer(object $review, bool $published): void
+    {
+        $userId = (int) ($review->created_by ?? 0);
+
+        if ($userId <= 0) {
+            return;
+        }
+
+        try {
+            $reviewer = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($userId);
+
+            if (empty($reviewer->email)) {
+                return;
+            }
+
+            $mailer = new MailTemplate(
+                $published ? 'com_jed.review_approved' : 'com_jed.review_rejected',
+                Factory::getApplication()->getLanguage()->getTag()
+            );
+            $mailer->addTemplateData([
+                'EXTENSIONNAME' => (string) ($review->extension_name ?? ''),
+                'REASONNOTES'   => '',
+                'SITENAME'      => (string) Factory::getApplication()->get('sitename'),
+            ]);
+            $mailer->addRecipient($reviewer->email, $reviewer->name);
+            $mailer->send();
+        } catch (\Throwable $e) {
+            Log::add(
+                sprintf('com_jed: could not notify the author of review %d: %s', (int) $review->id, $e->getMessage()),
+                Log::WARNING,
+                'com_jed'
+            );
+        }
     }
 
     /**

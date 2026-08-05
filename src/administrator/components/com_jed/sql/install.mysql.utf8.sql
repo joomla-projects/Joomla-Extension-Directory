@@ -12,6 +12,11 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions`
 	`state`                  tinyint(1)      NOT NULL DEFAULT '0',
 	`approved`               tinyint(1)      DEFAULT '0',
 	`approved_time`          datetime        DEFAULT NULL,
+	-- The moderation verdict (P1-02): approved_time NULL means "not decided yet", set together
+	-- with approved = 1 means approved, set together with approved = 0 means rejected.
+	-- approved_reason carries a code from #__jed_block_reasons - one vocabulary for rejections
+	-- and blocks - and approved_notes the free text sent to the developer with it.
+	`approved_by`            int unsigned    DEFAULT NULL,
 	`approved_notes`         text,
 	`approved_reason`        varchar(255)    DEFAULT '',
 	`intro`                  text,
@@ -89,6 +94,11 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_history`
 	`state`                  tinyint(1)      NOT NULL DEFAULT '0',
 	`approved`               tinyint(1)      DEFAULT '0',
 	`approved_time`          datetime        DEFAULT NULL,
+	-- The moderation verdict (P1-02): approved_time NULL means "not decided yet", set together
+	-- with approved = 1 means approved, set together with approved = 0 means rejected.
+	-- approved_reason carries a code from #__jed_block_reasons - one vocabulary for rejections
+	-- and blocks - and approved_notes the free text sent to the developer with it.
+	`approved_by`            int unsigned    DEFAULT NULL,
 	`approved_notes`         text,
 	`approved_reason`        varchar(255)    DEFAULT '',
 	`intro`                  text,
@@ -259,19 +269,26 @@ CREATE TABLE IF NOT EXISTS `#__jed_favorites`
 
 DROP TABLE IF EXISTS `#__jed_block_reasons`;
 
--- The vocabulary a block is stated in. Codes are data, not code (4.8), so the JED team can add
--- one without a release. `code` is the primary key because it is what #__jed_extensions and its
--- history store, what the knowledge base articles are keyed by, and what the API will carry -
--- a surrogate id would add a join and a second identity for the same thing. Seeded by
--- script.php from the JED3 submission error codes (P0-05), which the com_tickets mail templates
--- already speak.
+-- The vocabulary a moderation decision is stated in. Codes are data, not code (4.8), so the JED
+-- team can add one without a release. `code` is the primary key because it is what
+-- #__jed_extensions and its history store, what the knowledge base articles are keyed by, and
+-- what the API will carry - a surrogate id would add a join and a second identity for the same
+-- thing. Seeded by script.php from the JED3 submission error codes (P0-05), which the
+-- com_tickets mail templates already speak.
+--
+-- The table is named for blocking because `P1-01` introduced it, but `P1-02` deliberately reuses
+-- it for submission rejections: a rejection reason and a block reason say the same things to a
+-- developer and are keyed by the same knowledge base articles, so one vocabulary is the point.
+-- `mail_template` is the #__mail_templates id sent to the developer when a submission is
+-- rejected with this code.
 CREATE TABLE IF NOT EXISTS `#__jed_block_reasons`
 (
-	`code`       varchar(32)  NOT NULL,
-	`title`      varchar(255) NOT NULL,
-	`article_id` int unsigned DEFAULT NULL,
-	`state`      tinyint(1)   NOT NULL DEFAULT '1',
-	`ordering`   int          NOT NULL DEFAULT '0',
+	`code`          varchar(32)  NOT NULL,
+	`title`         varchar(255) NOT NULL,
+	`article_id`    int unsigned DEFAULT NULL,
+	`mail_template` varchar(128) DEFAULT NULL,
+	`state`         tinyint(1)   NOT NULL DEFAULT '1',
+	`ordering`      int          NOT NULL DEFAULT '0',
 	PRIMARY KEY (`code`),
 	KEY `IDX_jed_block_reasons_state` (`state`, `ordering`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;

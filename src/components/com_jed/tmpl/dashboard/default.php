@@ -12,6 +12,7 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Administrator\Listing\ListingStatus;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
@@ -262,7 +263,23 @@ $wa->useScript('com_jed.favorite');
                                     }
                                     ?>
                                 </td>
-                                <td><?php echo $item->state ? Text::_('JPUBLISHED') : Text::_('JUNPUBLISHED'); ?></td>
+                                <?php
+                                // Six states, not two. "Unpublished" used to cover waiting for
+                                // review, turned down, taken offline and blocked alike - 13.6
+                                // lists exactly that as a design gap, and it is the one thing a
+                                // developer opens this page to find out.
+                                $status = ListingStatus::forItem($item);
+                                ?>
+                                <td>
+                                    <span class="badge <?php echo $status->badgeClass(); ?>">
+                                        <?php echo Text::_($status->label()); ?>
+                                    </span>
+                                    <?php if ($status === ListingStatus::REJECTED && !empty($item->approved_notes)) : ?>
+                                        <div class="small text-muted mt-1">
+                                            <?php echo $this->escape($item->approved_notes); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>

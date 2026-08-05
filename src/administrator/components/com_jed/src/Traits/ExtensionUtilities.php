@@ -17,7 +17,11 @@ use Jed\Component\Jed\Site\Service\Category;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\Mail\MailTemplate;
+use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Database\ParameterType;
+use Joomla\Event\Event;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
@@ -245,6 +249,87 @@ trait ExtensionUtilities
 
         $table->newTags = $tags;
         $table->store();
+    }
+
+    /**
+     * Confirm a submission or an update to the developer, and open the door for the Quick Check.
+     *
+     * Two things happen here that did not happen before:
+     *
+     *  - The `com_jed.listing_submission_received` / `com_jed.listing_update_received` templates
+     *    have existed since the JED3 import and nothing ever sent them. A developer got the
+     *    generic ticket confirmation and nothing that named their listing.
+     *  - `onJedListingSubmitted` is dispatched with the extension and the revision just written.
+     *    That is the attachment point `P2-03` needs: a plugin can run the Quick Check against the
+     *    pending revision and hang findings off it without this workflow having to know that the
+     *    Quick Check exists. Listeners must not throw - failures here are logged, and a listing
+     *    is never lost because a checker misbehaved.
+     *
+     * @param int  $extensionId The extension id.
+     * @param int  $historyId   The revision just written, 0 when unknown.
+     * @param bool $isUpdate    False for a first submission, true for an edit.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     */
+    private function notifyListingSubmitted(int $extensionId, int $historyId, bool $isUpdate): void
+    {
+        $app = Factory::getApplication();
+
+        try {
+            $db      = $this->getDatabase();
+            $listing = $db->setQuery(
+                $db->getQuery(true)
+                    ->select($db->quoteName(['name', 'owner']))
+                    ->from($db->quoteName('#__jed_extensions'))
+                    ->where($db->quoteName('id') . ' = :id')
+                    ->bind(':id', $extensionId, ParameterType::INTEGER)
+            )->loadAssoc();
+
+            if ($listing !== null && (int) $listing['owner'] > 0) {
+                $owner = Factory::getContainer()->get(UserFactoryInterface::class)
+                    ->loadUserById((int) $listing['owner']);
+
+                if (!empty($owner->email)) {
+                    $mailer = new MailTemplate(
+                        $isUpdate ? 'com_jed.listing_update_received' : 'com_jed.listing_submission_received',
+                        $app->getLanguage()->getTag()
+                    );
+                    $mailer->addTemplateData([
+                        'EXTENSIONNAME' => (string) $listing['name'],
+                        'SITENAME'      => (string) $app->get('sitename'),
+                    ]);
+                    $mailer->addRecipient($owner->email, $owner->name);
+                    $mailer->send();
+                }
+            }
+        } catch (Throwable $e) {
+            Log::add(
+                sprintf('com_jed: could not confirm submission of extension %d: %s', $extensionId, $e->getMessage()),
+                Log::WARNING,
+                'com_jed'
+            );
+        }
+
+        try {
+            // The model's own dispatcher, not Application::triggerEvent()/getDispatcher() - both
+            // of those are on the Joomla 3 compatibility interface, deprecated for removal in 7.0.
+            $this->getDispatcher()->dispatch(
+                'onJedListingSubmitted',
+                new Event('onJedListingSubmitted', [
+                    'extensionId' => $extensionId,
+                    'historyId'   => $historyId,
+                    'isUpdate'    => $isUpdate,
+                ])
+            );
+        } catch (Throwable $e) {
+            Log::add(
+                sprintf('com_jed: onJedListingSubmitted listener failed for extension %d: %s', $extensionId, $e->getMessage()),
+                Log::WARNING,
+                'com_jed'
+            );
+        }
     }
 
     /**

@@ -221,6 +221,43 @@ class Com_TicketsInstallerScript
     private function getDefaultMailTemplates(): array
     {
         return [
+            // The four moderation outcome mails P1-02 adds. JED3 told a developer that their
+            // submission had arrived and, when it failed, which error code it failed on - but it
+            // never told anyone that something had been *approved*, and it never told a reviewer
+            // anything at all. These close that loop. The per-error-code rejection templates
+            // already exist further down; com_jed.listing_rejected is the fallback for a reason
+            // code that has no template of its own registered in #__jed_block_reasons.
+            'com_jed.listing_approved' => [
+                'subject' => 'Your extension {EXTENSIONNAME} is now listed',
+                'body'    => <<<'HTML'
+<p>Good news - <strong>{EXTENSIONNAME}</strong> has passed our review and is now listed on {SITENAME}.</p>
+<p>You can take it offline again at any time from your dashboard, and any change you make from now on goes through the same review before it becomes public.</p>
+HTML,
+            ],
+            'com_jed.listing_rejected' => [
+                'subject' => 'Your extension {EXTENSIONNAME} was not accepted',
+                'body'    => <<<'HTML'
+<p><strong>{EXTENSIONNAME}</strong> has been reviewed and cannot be listed in its current state.</p>
+<p><strong>Reason ({REASONCODE}):</strong></p>
+<p>{REASONNOTES}</p>
+<p>Your listing has not been deleted. Correct the point above in your dashboard and submit it again - we will look at it afresh.</p>
+HTML,
+            ],
+            'com_jed.review_approved' => [
+                'subject' => 'Your review has been published',
+                'body'    => <<<'HTML'
+<p>Thank you - your review of <strong>{EXTENSIONNAME}</strong> has been published on {SITENAME}.</p>
+HTML,
+            ],
+            'com_jed.review_rejected' => [
+                'subject' => 'Your review was not published',
+                'body'    => <<<'HTML'
+<p>Your review of <strong>{EXTENSIONNAME}</strong> has not been published.</p>
+<p><strong>Reason:</strong></p>
+<p>{REASONNOTES}</p>
+<p>If you think this was a mistake, reply to this mail and a team member will look at it again.</p>
+HTML,
+            ],
             'com_jed.review_report_received' => [
                 'subject' => 'Review Report Received',
                 'body'    => <<<'HTML'

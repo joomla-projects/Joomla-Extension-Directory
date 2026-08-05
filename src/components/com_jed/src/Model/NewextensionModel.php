@@ -199,6 +199,8 @@ class NewextensionModel extends FormModel
             Text::sprintf('COM_JED_TICKET_NEW_EXTENSION_EVENT', $data['name'] ?? '')
         );
 
+        $this->notifyListingSubmitted($extensionId, 0, false);
+
         return $extensionId;
     }
 

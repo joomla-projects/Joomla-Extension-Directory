@@ -163,6 +163,50 @@ class ExtensionController extends FormController
     }
 
     /**
+     * Reject a pending revision, with a reason from the shared vocabulary.
+     *
+     * The counterpart to approve(), offered from the same places. The reason is mandatory: a
+     * rejection the developer cannot act on is not a moderation decision, it is a dead end.
+     *
+     * @return bool
+     *
+     * @since 4.1.0
+     */
+    public function reject(): bool
+    {
+        $this->checkToken();
+
+        $app         = Factory::getApplication();
+        $extensionId = $this->input->getInt('extension_id');
+        $historyId   = $this->input->getInt('history_id');
+        $form        = (array) $this->input->post->get('jform', [], 'array');
+
+        $reasonCode = (string) ($this->input->getCmd('reject_reason_code', '') ?: ($form['approved_reason'] ?? ''));
+        $notes      = (string) ($this->input->getString('reject_reason_notes', '') ?: ($form['approved_notes'] ?? ''));
+
+        if (!$app->getIdentity()->authorise('core.edit', 'com_jed')) {
+            $app->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
+            $this->setRedirect(Route::_('index.php?option=com_jed&view=extensions', false));
+
+            return false;
+        }
+
+        /** @var ExtensionModel $model */
+        $model = $this->getModel();
+
+        try {
+            $model->reject($extensionId, $historyId, $reasonCode, $notes);
+            $app->enqueueMessage(Text::_('COM_JED_EXTENSION_REJECTED_MESSAGE'));
+        } catch (\Exception $e) {
+            $app->enqueueMessage($e->getMessage(), 'error');
+        }
+
+        $this->setRedirect(Route::_('index.php?option=com_jed&view=extensions', false));
+
+        return true;
+    }
+
+    /**
      * Block the listing currently open in the edit form, with a stated reason.
      *
      * The reason code arrives from the block modal and is mandatory - the model rejects an

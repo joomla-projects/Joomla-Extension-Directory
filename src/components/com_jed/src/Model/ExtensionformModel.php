@@ -586,6 +586,8 @@ class ExtensionformModel extends FormModel
             Text::sprintf('COM_JED_TICKET_EXTENSION_EDITED_EVENT', $data['name'] ?? $extensionId)
         );
 
+        $this->notifyListingSubmitted($extensionId, (int) $table->id, true);
+
         return true;
     }
 }

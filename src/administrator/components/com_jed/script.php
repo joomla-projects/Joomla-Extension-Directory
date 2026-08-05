@@ -96,20 +96,23 @@ class Com_JedInstallerScript
      */
     private function seedBlockReasons(): void
     {
+        // code => [public title, #__mail_templates id sent on a rejection with this code].
+        // The templates are the ones com_tickets/script.php already ships (P0-05) - the codes and
+        // the developer-facing wording come from one place, not two.
         $reasons = [
-            'ER1' => 'error_reporting(0) found',
-            'NM1' => 'Install name does not match listing name',
-            'NM2' => 'Extension-specific naming issue',
-            'NM3' => 'Non-permitted words in name',
-            'LK2' => 'Invalid download link',
-            'ZP1' => 'Zip file issues',
-            'TM2' => 'Use of the Joomla trademark',
-            'LC1' => 'Licensing violation',
-            'LC2' => 'Paid listing without licence link',
-            'LC3' => 'Licence link does not mention the extensions',
-            'LC4' => 'Invalid licence type',
-            'US1' => 'Update server requirement not met',
-            'PE1' => 'Under investigation',
+            'ER1' => ['error_reporting(0) found', 'com_jed.extension_er1_error_reporting_found'],
+            'NM1' => ['Install name does not match listing name', 'com_jed.extension_nm1_install_name_mismatch'],
+            'NM2' => ['Extension-specific naming issue', 'com_jed.extension_nm2_extension_specific_naming_issue'],
+            'NM3' => ['Non-permitted words in name', 'com_jed.extension_nm3_non_permitted_words_in_name'],
+            'LK2' => ['Invalid download link', 'com_jed.extension_lk2_invalid_download_link'],
+            'ZP1' => ['Zip file issues', 'com_jed.extension_zp1_zipfile_issues'],
+            'TM2' => ['Use of the Joomla trademark', 'com_jed.extension_tm2_joomla_trademark_use'],
+            'LC1' => ['Licensing violation', 'com_jed.extension_lc1_licensing_violation'],
+            'LC2' => ['Paid listing without licence link', 'com_jed.extension_lc2_paid_listing_without_license_link'],
+            'LC3' => ['Licence link does not mention the extensions', 'com_jed.extension_lc3_license_link_missing_extensions_mention'],
+            'LC4' => ['Invalid licence type', 'com_jed.extension_lc4_invalid_license_type'],
+            'US1' => ['Update server requirement not met', 'com_jed.extension_us1_update_server_requirement'],
+            'PE1' => ['Under investigation', 'com_jed.extension_pe1_under_investigation'],
         ];
 
         $db       = Factory::getContainer()->get(DatabaseInterface::class);
@@ -119,7 +122,7 @@ class Com_JedInstallerScript
 
         $ordering = 0;
 
-        foreach ($reasons as $code => $title) {
+        foreach ($reasons as $code => [$title, $mailTemplate]) {
             $ordering += 10;
 
             if (\in_array($code, (array) $existing, true)) {
@@ -127,11 +130,12 @@ class Com_JedInstallerScript
             }
 
             $row = (object) [
-                'code'       => $code,
-                'title'      => $title,
-                'article_id' => null,
-                'state'      => 1,
-                'ordering'   => $ordering,
+                'code'          => $code,
+                'title'         => $title,
+                'article_id'    => null,
+                'mail_template' => $mailTemplate,
+                'state'         => 1,
+                'ordering'      => $ordering,
             ];
 
             $db->insertObject('#__jed_block_reasons', $row);

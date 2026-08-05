@@ -29,6 +29,8 @@ use Joomla\CMS\Form\Form;
 use Joomla\CMS\Form\FormFactoryInterface;
 use Joomla\CMS\Helper\TagsHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\Mail\MailTemplate;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
@@ -237,10 +239,22 @@ class ExtensionModel extends AdminModel
     {
         /** @var ExtensionHistoryTable $historyTable */
         $historyTable = $this->getTable('ExtensionHistory');
+        $historyTable->setUseExceptions(true);
 
         if (!$historyTable->load(['id' => $historyId, 'extension_id' => $extensionId])) {
             throw new Exception(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
         }
+
+        $now    = Factory::getDate()->toSql();
+        $userId = (int) $this->getCurrentUser()->id;
+
+        // Record the verdict on the revision that was decided, so the decision is answerable per
+        // revision and not only for the listing as a whole - an edit to a listing that is already
+        // public is approved or rejected on its own.
+        $historyTable->approved      = 1;
+        $historyTable->approved_time = $now;
+        $historyTable->approved_by   = $userId;
+        $historyTable->store();
 
         // #__jed_extensions has no extension_id/active columns; #__jed_extensions_history
         // has no id-as-live-primary-key semantics - id is replaced with extension_id.
@@ -248,9 +262,32 @@ class ExtensionModel extends AdminModel
         unset($liveData['extension_id'], $liveData['active']);
         $liveData['id'] = $extensionId;
 
+        // The P1-01 carriers stay with the live row and are never promoted from a revision.
+        // Without this, approving a pending edit would copy the `blocked` value the revision was
+        // snapshotted with over the live one - so approving an edit made before a block would
+        // silently lift that block, which is exactly what the separate carriers exist to prevent.
+        // `state` goes the same way: online/offline is the developer's, not a moderation outcome.
+        unset(
+            $liveData['state'],
+            $liveData['blocked'],
+            $liveData['block_reason_code'],
+            $liveData['block_reason_text'],
+            $liveData['blocked_by'],
+            $liveData['blocked_time'],
+            $liveData['deleted'],
+            $liveData['deleted_by'],
+            $liveData['deleted_time'],
+            $liveData['checked_out'],
+            $liveData['checked_out_time']
+        );
+
         /** @var ExtensionTable $liveTable */
         $liveTable = $this->getTable('Extension');
         $liveTable->setUseExceptions(true);
+
+        if (!$liveTable->load($extensionId)) {
+            throw new Exception(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
+        }
 
         $liveTable->bind($liveData);
         $liveTable->check();
@@ -261,6 +298,188 @@ class ExtensionModel extends AdminModel
 
         // Point the live row at the now-approved history entry.
         $this->updateEntryVersion($extensionId, $historyId);
+
+        $this->notifyDeveloperOfDecision($extensionId, true, '', '');
+    }
+
+    /**
+     * Reject a pending revision, with a reason from the shared vocabulary.
+     *
+     * The revision is kept rather than discarded: the JED team settled that a rejected
+     * submission stays a record the developer can revise and resubmit, and throwing away what
+     * they wrote would make that impossible. The verdict is recorded on the revision, and
+     * mirrored onto the live row only when the listing has never been public - rejecting an edit
+     * to an approved listing must not mark the listing itself rejected.
+     *
+     * @param int    $extensionId The extension id.
+     * @param int    $historyId   The `#__jed_extensions_history` id being rejected.
+     * @param string $reasonCode  A code from #__jed_block_reasons.
+     * @param string $notes       Free text for the developer.
+     *
+     * @return void
+     *
+     * @throws Exception If the revision does not exist or the reason code is not a known one.
+     *
+     * @since 4.1.0
+     */
+    public function reject(int $extensionId, int $historyId, string $reasonCode, string $notes = ''): void
+    {
+        $reasonCode = trim($reasonCode);
+
+        if ($reasonCode === '') {
+            throw new Exception(Text::_('COM_JED_REJECT_ERROR_REASON_REQUIRED'));
+        }
+
+        if (!$this->blockReasonExists($reasonCode)) {
+            throw new Exception(Text::sprintf('COM_JED_BLOCK_ERROR_REASON_UNKNOWN', $reasonCode));
+        }
+
+        /** @var ExtensionHistoryTable $historyTable */
+        $historyTable = $this->getTable('ExtensionHistory');
+        $historyTable->setUseExceptions(true);
+
+        if (!$historyTable->load(['id' => $historyId, 'extension_id' => $extensionId])) {
+            throw new Exception(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
+        }
+
+        $now    = Factory::getDate()->toSql();
+        $userId = (int) $this->getCurrentUser()->id;
+        $notes  = trim($notes);
+
+        $historyTable->approved        = 0;
+        $historyTable->approved_time   = $now;
+        $historyTable->approved_by     = $userId;
+        $historyTable->approved_reason = $reasonCode;
+        $historyTable->approved_notes  = $notes;
+        $historyTable->store();
+
+        /** @var ExtensionTable $liveTable */
+        $liveTable = $this->getTable('Extension');
+        $liveTable->setUseExceptions(true);
+
+        if (!$liveTable->load($extensionId)) {
+            throw new Exception(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
+        }
+
+        // Only a listing that has never been public takes the verdict onto its live row. One that
+        // is already approved stays approved and stays online; what was rejected is the edit.
+        if ((int) $liveTable->approved !== 1) {
+            $liveTable->approved        = 0;
+            $liveTable->approved_time   = $now;
+            $liveTable->approved_by     = $userId;
+            $liveTable->approved_reason = $reasonCode;
+            $liveTable->approved_notes  = $notes;
+            $liveTable->store();
+        }
+
+        $this->notifyDeveloperOfDecision($extensionId, false, $reasonCode, $notes);
+    }
+
+    /**
+     * The revision waiting for a decision, or 0 when there is none.
+     *
+     * "Newest row" is not the same thing, and using it was a latent bug: since `P1-01` every
+     * block, unblock, soft delete and restore also writes a revision, so the newest row is
+     * routinely a state change rather than something a developer submitted. Those are written
+     * with `active = 0`, which is what separates them here.
+     *
+     * A revision is pending when the developer has submitted it (`active = 1`) and nobody has
+     * decided it yet (`approved_time IS NULL`).
+     *
+     * @param int $extensionId The extension id.
+     *
+     * @return int  The history id, or 0.
+     *
+     * @since 4.1.0
+     */
+    public function getPendingHistoryId(int $extensionId): int
+    {
+        $db = $this->getDatabase();
+
+        return (int) $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName('id'))
+                ->from($db->quoteName('#__jed_extensions_history'))
+                ->where($db->quoteName('extension_id') . ' = :eid')
+                ->where($db->quoteName('active') . ' = 1')
+                ->where($db->quoteName('approved_time') . ' IS NULL')
+                ->order($db->quoteName('id') . ' DESC')
+                ->bind(':eid', $extensionId, ParameterType::INTEGER),
+            0,
+            1
+        )->loadResult();
+    }
+
+    /**
+     * Tell the developer what was decided about their listing.
+     *
+     * A rejection uses the mail template registered for its reason code, so the developer gets
+     * the wording JED3 already used for that error rather than a generic "declined" - that
+     * mapping is data in `#__jed_block_reasons`, not a match statement here. A code with no
+     * template registered falls back to the generic one.
+     *
+     * @param int    $extensionId The extension id.
+     * @param bool   $approved    Whether the listing was approved.
+     * @param string $reasonCode  The rejection reason code, empty on approval.
+     * @param string $notes       Free text for the developer.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     */
+    private function notifyDeveloperOfDecision(int $extensionId, bool $approved, string $reasonCode, string $notes): void
+    {
+        $db = $this->getDatabase();
+
+        $listing = $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(['name', 'owner']))
+                ->from($db->quoteName('#__jed_extensions'))
+                ->where($db->quoteName('id') . ' = :id')
+                ->bind(':id', $extensionId, ParameterType::INTEGER)
+        )->loadAssoc();
+
+        if ($listing === null || (int) $listing['owner'] <= 0) {
+            return;
+        }
+
+        $template = 'com_jed.listing_approved';
+
+        if (!$approved) {
+            $template = (string) $db->setQuery(
+                $db->getQuery(true)
+                    ->select($db->quoteName('mail_template'))
+                    ->from($db->quoteName('#__jed_block_reasons'))
+                    ->where($db->quoteName('code') . ' = :code')
+                    ->bind(':code', $reasonCode)
+            )->loadResult() ?: 'com_jed.listing_rejected';
+        }
+
+        $owner = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById((int) $listing['owner']);
+
+        if (empty($owner->email)) {
+            return;
+        }
+
+        try {
+            $mailer = new MailTemplate($template, Factory::getApplication()->getLanguage()->getTag());
+            $mailer->addTemplateData([
+                'EXTENSIONNAME' => (string) $listing['name'],
+                'REASONCODE'    => $reasonCode,
+                'REASONNOTES'   => $notes,
+                'SITENAME'      => (string) Factory::getApplication()->get('sitename'),
+            ]);
+            $mailer->addRecipient($owner->email, $owner->name);
+            $mailer->send();
+        } catch (\Throwable $e) {
+            // A listing must not stay undecided because a mail server was down. The decision is
+            // already committed at this point; the failure is logged and the workflow continues.
+            Log::add(
+                sprintf('com_jed: could not notify the owner of extension %d: %s', $extensionId, $e->getMessage()),
+                Log::WARNING,
+                'com_jed'
+            );
+        }
     }
 
     /**

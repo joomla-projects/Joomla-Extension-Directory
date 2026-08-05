@@ -95,8 +95,13 @@ final class ExtensionTicketHandler implements TicketTypeHandlerInterface
             return [];
         }
 
-        $model                  = new ExtensionModel();
-        [, , $pendingHistoryId] = $model->getCompareItems($linkedItemId, null, null);
+        // Not getCompareItems(), which resolves to the newest revision of any kind. Since P1-01
+        // a block or a soft delete also writes a revision, so the newest one is regularly a state
+        // change - and offering "Approve" on it would promote a stale snapshot over the live row.
+        // getPendingHistoryId() answers the question actually being asked: is there something a
+        // developer submitted that nobody has decided yet?
+        $model            = new ExtensionModel();
+        $pendingHistoryId = $model->getPendingHistoryId($linkedItemId);
 
         if (!$pendingHistoryId) {
             return [];
@@ -107,6 +112,13 @@ final class ExtensionTicketHandler implements TicketTypeHandlerInterface
                 label: 'COM_TICKETS_ACTION_APPROVE',
                 task: 'extension.approve',
                 icon: 'publish',
+                hiddenFields: ['extension_id' => $linkedItemId, 'history_id' => $pendingHistoryId],
+                option: 'com_jed'
+            ),
+            new TicketAction(
+                label: 'COM_TICKETS_ACTION_REJECT',
+                task: 'extension.reject',
+                icon: 'cancel-circle',
                 hiddenFields: ['extension_id' => $linkedItemId, 'history_id' => $pendingHistoryId],
                 option: 'com_jed'
             ),
