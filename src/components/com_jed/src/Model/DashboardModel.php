@@ -231,6 +231,50 @@ class DashboardModel extends ItemModel
         return $rows;
     }
 
+    /**
+     * The listings the current user could hand over right now.
+     *
+     * Owned only, never maintained: the 8.8 matrix puts transfer in the owner-only column, and
+     * offering a maintainer a listing in this picker would be an invitation to an error the
+     * controller then has to refuse.
+     *
+     * Listings with a handover already under way are left out, because a second request would be
+     * refused anyway - they are shown in the open-transfers list above the form instead.
+     *
+     * @return array
+     *
+     * @since 4.1.0
+     */
+    public function getTransferableExtensions(): array
+    {
+        $userId = (int) (Factory::getApplication()->getIdentity()->id ?? 0);
+
+        if ($userId <= 0) {
+            return [];
+        }
+
+        $db   = $this->getDatabase();
+        $open = [
+            TransferState::PENDING->value,
+            TransferState::FROM_CONFIRMED->value,
+            TransferState::TO_CONFIRMED->value,
+        ];
+
+        $openTransfer = 'NOT EXISTS (SELECT 1 FROM ' . $db->quoteName('#__jed_extension_transfers', 'tr')
+            . ' WHERE ' . $db->quoteName('tr.extension_id') . ' = ' . $db->quoteName('a.id')
+            . ' AND ' . $db->quoteName('tr.state') . ' IN (' . implode(',', array_map([$db, 'quote'], $open)) . '))';
+
+        return (array) $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(['a.id', 'a.name']))
+                ->from($db->quoteName('#__jed_extensions', 'a'))
+                ->where($db->quoteName('a.owner') . ' = ' . $userId)
+                ->where($db->quoteName('a.deleted') . ' = 0')
+                ->where($openTransfer)
+                ->order($db->quoteName('a.name') . ' ASC')
+        )->loadObjectList();
+    }
+
     public function getExtensions(): array
     {
         $userId = Factory::getApplication()->getIdentity()->id;

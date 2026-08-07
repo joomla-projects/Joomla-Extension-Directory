@@ -54,41 +54,84 @@ $wa->useScript('com_jed.favorite');
 <div class="com-jed-dashboard">
 
     <?php /* ---- Ownership handovers ---- */ ?>
-    <?php if (!empty($this->transfers)) : ?>
+    <?php if (!empty($this->transfers) || !empty($this->transferable)) : ?>
         <?php
-        // 8.8.1 asks for the state to be visible so nobody is left guessing what a handover is
-        // waiting on. The other party is named by *name* - showing their address would disclose
-        // something they never shared with the person reading this page.
+        // Status and the form to start one live in the same card on purpose: the first question
+        // an owner has after sending a request is what it is waiting on (8.8.1), and the second
+        // is whether it went out at all. Splitting them across the page would answer neither.
+        //
+        // The other party is named by *name*. Showing their address here would disclose something
+        // they never shared with whoever is reading this page.
         ?>
         <div class="card mb-4 border-warning">
             <div class="card-header">
                 <h3 class="mb-0"><?php echo Text::_('COM_JED_TRANSFER_HEADING'); ?></h3>
             </div>
             <div class="card-body">
-                <ul class="list-group">
-                    <?php foreach ($this->transfers as $transfer) : ?>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>
-                                <strong><?php echo $this->escape($transfer->extension_name); ?></strong>
-                                <span class="text-muted small d-block">
-                                    <?php if ($transfer->awaiting_me) : ?>
-                                        <?php echo Text::_('COM_JED_TRANSFER_WAITING_FOR_YOU'); ?>
-                                    <?php else : ?>
-                                        <?php echo Text::sprintf('COM_JED_TRANSFER_WAITING_FOR_OTHER', $this->escape($transfer->other_name)); ?>
-                                    <?php endif; ?>
+                <?php if (!empty($this->transfers)) : ?>
+                    <ul class="list-group mb-3">
+                        <?php foreach ($this->transfers as $transfer) : ?>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>
+                                    <strong><?php echo $this->escape($transfer->extension_name); ?></strong>
+                                    <span class="text-muted small d-block">
+                                        <?php if ($transfer->awaiting_me) : ?>
+                                            <?php echo Text::_('COM_JED_TRANSFER_WAITING_FOR_YOU'); ?>
+                                        <?php else : ?>
+                                            <?php echo Text::sprintf('COM_JED_TRANSFER_WAITING_FOR_OTHER', $this->escape($transfer->other_name)); ?>
+                                        <?php endif; ?>
+                                    </span>
                                 </span>
-                            </span>
-                            <a class="btn btn-sm btn-outline-secondary"
-                               href="<?php echo Route::_(
-                                   'index.php?option=com_jed&task=transfer.cancel&id=' . (int) $transfer->id
-                                   . '&' . Session::getFormToken() . '=1',
-                                   false
-                               ); ?>">
-                                <?php echo Text::_('COM_JED_TRANSFER_CANCEL'); ?>
-                            </a>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+                                <a class="btn btn-sm btn-outline-secondary"
+                                   href="<?php echo Route::_(
+                                       'index.php?option=com_jed&task=transfer.cancel&id=' . (int) $transfer->id
+                                       . '&' . Session::getFormToken() . '=1',
+                                       false
+                                   ); ?>">
+                                    <?php echo Text::_('COM_JED_TRANSFER_CANCEL'); ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+
+                <?php if (!empty($this->transferable)) : ?>
+                    <form action="<?php echo Route::_('index.php?option=com_jed&task=transfer.request'); ?>"
+                          method="post" class="row g-2 align-items-end">
+                        <div class="col-12">
+                            <p class="text-muted small mb-2">
+                                <?php echo Text::_('COM_JED_TRANSFER_FORM_INTRO'); ?>
+                            </p>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label" for="jed-transfer-extension">
+                                <?php echo Text::_('COM_JED_TRANSFER_FORM_EXTENSION'); ?>
+                            </label>
+                            <select class="form-select" id="jed-transfer-extension" name="extension_id" required>
+                                <?php foreach ($this->transferable as $candidate) : ?>
+                                    <option value="<?php echo (int) $candidate->id; ?>">
+                                        <?php echo $this->escape($candidate->name); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label" for="jed-transfer-email">
+                                <?php echo Text::_('COM_JED_TRANSFER_FORM_EMAIL'); ?>
+                            </label>
+                            <?php // The account address of the new owner. They must already have one. ?>
+                            <input type="email" class="form-control" id="jed-transfer-email"
+                                   name="recipient_email" required
+                                   placeholder="<?php echo $this->escape(Text::_('COM_JED_TRANSFER_FORM_EMAIL_HINT')); ?>">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-warning w-100">
+                                <?php echo Text::_('COM_JED_TRANSFER_FORM_SUBMIT'); ?>
+                            </button>
+                        </div>
+                        <?php echo HTMLHelper::_('form.token'); ?>
+                    </form>
+                <?php endif; ?>
             </div>
         </div>
     <?php endif; ?>
