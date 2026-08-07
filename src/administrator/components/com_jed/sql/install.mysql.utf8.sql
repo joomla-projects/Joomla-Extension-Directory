@@ -281,6 +281,69 @@ CREATE TABLE IF NOT EXISTS `#__jed_favorites`
 	KEY `FK_jed_favorites_extension_id` (`extension_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `#__jed_user_access`;
+
+-- The abuse-prevention layer JED3 grew over years and this code had none of (7.1). Modelled on
+-- the legacy `jed_user_access`, plus the audit fields 4.8 asks for everywhere.
+--
+-- **An absent row means "default privileges, not banned".** There is deliberately no row per
+-- user: 14,000 rows that all say "yes to everything" would be a table nobody could read, and
+-- every new registration would need one. A row exists only where something was decided.
+--
+-- The ban is time-limited by design: `banned_from`/`banned_until` are compared against now, so
+-- a ban that has run out stops applying by itself. Making that depend on a cleanup job would
+-- mean a job that fails silently leaves people banned.
+CREATE TABLE IF NOT EXISTS `#__jed_user_access`
+(
+	`user_id`                 int unsigned NOT NULL,
+	`create_listing`          tinyint(1)   NOT NULL DEFAULT '1',
+	`edit_listing`            tinyint(1)   NOT NULL DEFAULT '1',
+	`update_xml`              tinyint(1)   NOT NULL DEFAULT '1',
+	`review`                  tinyint(1)   NOT NULL DEFAULT '1',
+	`report`                  tinyint(1)   NOT NULL DEFAULT '1',
+	`auto_approve_extensions` tinyint(1)   NOT NULL DEFAULT '0',
+	`auto_approve_reviews`    tinyint(1)   NOT NULL DEFAULT '0',
+	`banned`                  tinyint(1)   NOT NULL DEFAULT '0',
+	`banned_reason`           text,
+	`banned_from`             datetime     DEFAULT NULL,
+	`banned_until`            datetime     DEFAULT NULL,
+	`set_by`                  int unsigned DEFAULT NULL,
+	`set_time`                datetime     DEFAULT NULL,
+	PRIMARY KEY (`user_id`),
+	KEY `IDX_jed_user_access_banned` (`banned`, `banned_until`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `#__jed_user_review_bans`;
+
+-- Barred from reviewing a particular developer or anything in a particular category, rather than
+-- barred from reviewing at all. JED3 kept these as two mapping tables; one table with a target
+-- type says the same thing and keeps the check to a single query.
+CREATE TABLE IF NOT EXISTS `#__jed_user_review_bans`
+(
+	`user_id`     int unsigned                  NOT NULL,
+	`target_type` enum('developer','category')  NOT NULL,
+	`target_id`   int unsigned                  NOT NULL,
+	`set_by`      int unsigned                  DEFAULT NULL,
+	`set_time`    datetime                      DEFAULT NULL,
+	PRIMARY KEY (`user_id`, `target_type`, `target_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `#__jed_suspect_ip_ranges`;
+
+-- Advisory only (P1-05 item 8): a match flags, it never blocks. A shared NAT range is not
+-- evidence of anything, and treating it as such would lock out a whole office or country.
+-- varbinary(16) holds IPv4 and IPv6 alike through INET6_ATON, so one comparison covers both.
+CREATE TABLE IF NOT EXISTS `#__jed_suspect_ip_ranges`
+(
+	`id`          int unsigned  NOT NULL AUTO_INCREMENT,
+	`range_start` varbinary(16) NOT NULL,
+	`range_end`   varbinary(16) NOT NULL,
+	`note`        varchar(255)  DEFAULT NULL,
+	`state`       tinyint(1)    NOT NULL DEFAULT '1',
+	PRIMARY KEY (`id`),
+	KEY `IDX_jed_suspect_ip_state` (`state`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
 DROP TABLE IF EXISTS `#__jed_extension_transfers`;
 
 -- A transfer is a state over time, so it is a record of its own rather than columns on the

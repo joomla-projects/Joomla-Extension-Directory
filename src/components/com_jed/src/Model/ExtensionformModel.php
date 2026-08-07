@@ -16,6 +16,8 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Access\JedAccessHelper;
+use Jed\Component\Jed\Administrator\Access\Privilege;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Jed\Component\Tickets\Administrator\Traits\TicketHandlingTrait;
@@ -530,6 +532,10 @@ class ExtensionformModel extends FormModel
             throw new Exception(Text::_('COM_JED_EXTENSION_ID_MISSING'), 400);
         }
 
+        // Owning or maintaining the listing (P1-03) says *which* listings this person may touch;
+        // the per-user gate (P1-05) says whether they may edit anything at all right now.
+        JedAccessHelper::assertMay((int) $app->getIdentity()->id, Privilege::EDIT_LISTING);
+
         if (!$this->isAuthorised($extensionId)) {
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 401);
         }
@@ -587,6 +593,18 @@ class ExtensionformModel extends FormModel
         );
 
         $this->notifyListingSubmitted($extensionId, (int) $table->id, true);
+
+        // An edit by a trusted developer goes live without waiting for a moderator, on the
+        // *owner's* trust rather than the editor's - a maintainer edits on the owner's listing,
+        // and it is the owner the JED team decided to trust.
+        $ownerId = (int) $this->getDatabase()->setQuery(
+            $this->getDatabase()->getQuery(true)
+                ->select($this->getDatabase()->quoteName('owner'))
+                ->from($this->getDatabase()->quoteName('#__jed_extensions'))
+                ->where($this->getDatabase()->quoteName('id') . ' = ' . $extensionId)
+        )->loadResult();
+
+        $this->autoApproveIfTrusted($extensionId, $ownerId);
 
         return true;
     }

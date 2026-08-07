@@ -10,6 +10,7 @@
 
 namespace Jed\Component\Jed\Administrator\Traits;
 
+use Jed\Component\Jed\Administrator\Access\JedAccessHelper;
 use Jed\Component\Jed\Administrator\MediaHandling\ImagePipeline;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Site\Helper\JedHelper;
@@ -315,6 +316,60 @@ trait ExtensionUtilities
      *
      * @since 4.1.0
      */
+    /**
+     * Promote a submission straight to live when its owner is trusted.
+     *
+     * The trusted status from 7.1, wired into the `P1-02` moderation gate. This is not a
+     * convenience: at ~4,800 listings with continuous updates, "a known developer is approved
+     * automatically" is the difference between a moderation queue somebody can work through and
+     * one nobody can.
+     *
+     * An automatic approval is still an approval - it goes through `ExtensionModel::approve()`
+     * like any other, so it writes `approved`, `approved_time` and `approved_by`, records the
+     * verdict on the revision, and sends the developer the same mail. `approved_by` is the owner
+     * rather than a moderator, which together with the revision is how anyone finds out later
+     * that no person looked at it. `P1-22` will add the log line when it exists.
+     *
+     * @param int $extensionId The extension.
+     * @param int $ownerId     Whose trust decides.
+     *
+     * @return bool  Whether it was approved automatically.
+     *
+     * @since 4.1.0
+     */
+    private function autoApproveIfTrusted(int $extensionId, int $ownerId): bool
+    {
+        if (!JedAccessHelper::isTrusted($ownerId)) {
+            return false;
+        }
+
+        try {
+            /** @var \Jed\Component\Jed\Administrator\Model\ExtensionModel $model */
+            $model = Factory::getApplication()->bootComponent('com_jed')
+                ->getMVCFactory()->createModel('Extension', 'Administrator');
+
+            $pending = $model->getPendingHistoryId($extensionId);
+
+            if ($pending === 0) {
+                return false;
+            }
+
+            $model->approve($extensionId, $pending);
+
+            return true;
+        } catch (Throwable $e) {
+            // A failure here must leave the submission in the queue rather than lose it: not
+            // being auto-approved is a delay, and the moderator sees it as normal work.
+            Log::add(
+                sprintf('com_jed: auto-approval of extension %d failed: %s', $extensionId, $e->getMessage()),
+                Log::WARNING,
+                'com_jed'
+            );
+
+            return false;
+        }
+    }
+
     private function notifyListingSubmitted(int $extensionId, int $historyId, bool $isUpdate): void
     {
         $app = Factory::getApplication();

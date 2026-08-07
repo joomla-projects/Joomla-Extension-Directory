@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Access\JedAccessHelper;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Jed\Component\Tickets\Administrator\Traits\TicketHandlingTrait;
@@ -256,6 +257,17 @@ class ReviewformModel extends FormModel
         // because the ordinary save flow leaves extension.id null, but wrong either way.
         $id         = (int) ($data['id'] ?? 0);
         $isLoggedIn = JedHelper::isLoggedIn();
+
+        // The per-user gate (P1-05), asked before anything is written. Two questions in one: may
+        // this person review at all, and are they barred from this developer or this category in
+        // particular? The second is the point of targeted bans - somebody barred from reviewing
+        // one developer can still review everybody else.
+        if ($isLoggedIn) {
+            JedAccessHelper::assertMayReview(
+                (int) Factory::getApplication()->getIdentity()->id,
+                (int) ($data['extension_id'] ?? 0)
+            );
+        }
 
         // Moderation's fields, not the reviewer's. reviewform.xml drops them with filter="unset"
         // before the model is reached; this is the line that actually enforces it, and it holds

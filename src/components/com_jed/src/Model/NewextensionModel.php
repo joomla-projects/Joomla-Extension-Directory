@@ -16,6 +16,8 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Access\JedAccessHelper;
+use Jed\Component\Jed\Administrator\Access\Privilege;
 use Jed\Component\Jed\Administrator\Parser\File as FileParser;
 use Jed\Component\Jed\Administrator\Parser\Github as GithubParser;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
@@ -160,6 +162,11 @@ class NewextensionModel extends FormModel
             throw new Exception(Text::_('COM_JED_EXTENSION_NO_ACCESS_LABEL'), 401);
         }
 
+        // The per-user gate (P1-05). Being logged in is not the same as being allowed: a banned
+        // user, or one whose create_listing privilege was withdrawn, arrives here with a
+        // perfectly good session. The refusal names the reason rather than a generic error.
+        JedAccessHelper::assertMay((int) Factory::getApplication()->getIdentity()->id, Privilege::CREATE_LISTING);
+
         $extensionId = $this->createExtension($data);
 
         Factory::getApplication()->setUserState('com_jed.edit.extension.id', $extensionId);
@@ -200,6 +207,11 @@ class NewextensionModel extends FormModel
         );
 
         $this->notifyListingSubmitted($extensionId, 0, false);
+
+        // A trusted developer's submission skips the moderation queue (P1-05 item 5). Ordered
+        // after the confirmation deliberately: the developer is told their submission arrived
+        // either way, and the approval mail follows if it went straight through.
+        $this->autoApproveIfTrusted($extensionId, (int) Factory::getApplication()->getIdentity()->id);
 
         return $extensionId;
     }

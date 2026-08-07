@@ -45,6 +45,10 @@
             <menu view="reviews">
                 COM_JED_TITLE_REVIEWS
             </menu>
+
+            <menu view="useraccess">
+                COM_JED_USERACCESS_TITLE
+            </menu>
         </submenu>
 
         <files folder="administrator/components/com_jed">

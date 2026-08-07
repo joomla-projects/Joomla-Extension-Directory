@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field
+                name="search"
+                type="text"
+                label="JSEARCH_FILTER"
+                hint="COM_JED_USERACCESS_SEARCH_HINT"
+        />
+
+        <!--
+            "Banned" means a ban that is in force now, not the flag on its own - the list applies
+            the same rule the gate does, so a ban that has run out does not show up as one.
+        -->
+        <field
+                name="status"
+                type="list"
+                label="COM_JED_USERACCESS_FILTER_STATUS"
+                onchange="this.form.submit();"
+        >
+            <option value="">COM_JED_USERACCESS_FILTER_STATUS_ALL</option>
+            <option value="decided">COM_JED_USERACCESS_FILTER_STATUS_DECIDED</option>
+            <option value="banned">COM_JED_USERACCESS_FILTER_STATUS_BANNED</option>
+            <option value="trusted">COM_JED_USERACCESS_FILTER_STATUS_TRUSTED</option>
+            <option value="restricted">COM_JED_USERACCESS_FILTER_STATUS_RESTRICTED</option>
+        </field>
+    </fields>
+
+    <fields name="list">
+        <field
+                name="fullordering"
+                type="list"
+                label="JGLOBAL_SORT_BY"
+                default="u.name ASC"
+                onchange="this.form.submit();"
+        >
+            <option value="u.name ASC">COM_JED_USERACCESS_SORT_NAME_ASC</option>
+            <option value="u.name DESC">COM_JED_USERACCESS_SORT_NAME_DESC</option>
+            <option value="u.username ASC">COM_JED_USERACCESS_SORT_USERNAME_ASC</option>
+            <option value="u.username DESC">COM_JED_USERACCESS_SORT_USERNAME_DESC</option>
+            <option value="a.set_time DESC">COM_JED_USERACCESS_SORT_DECIDED_DESC</option>
+            <option value="u.id ASC">JGRID_HEADING_ID_ASC</option>
+            <option value="u.id DESC">JGRID_HEADING_ID_DESC</option>
+        </field>
+
+        <field
+                name="limit"
+                type="limitbox"
+                label="JGLOBAL_LIST_LIMIT"
+                default="25"
+                onchange="this.form.submit();"
+        />
+    </fields>
+</form>
