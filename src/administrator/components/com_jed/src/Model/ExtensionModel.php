@@ -22,6 +22,7 @@ use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Table\ExtensionHistoryTable;
 use Jed\Component\Jed\Administrator\Table\ExtensionTable;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
+use Jed\Component\Jed\Administrator\Transfer\TransferService;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
 use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
@@ -854,6 +855,14 @@ class ExtensionModel extends AdminModel
                 'deleted_by'   => (int) $this->getCurrentUser()->id,
                 'deleted_time' => Factory::getDate()->toSql(),
             ]
+        );
+
+        // A handover of a listing that no longer exists is meaningless, and leaving it open would
+        // let it complete later against a deleted record (8.8.1). Both parties are told.
+        (new TransferService($this->getDatabase()))->cancelOpenFor(
+            $extensionId,
+            (int) $this->getCurrentUser()->id,
+            Text::_('COM_JED_TRANSFER_CANCELLED_LISTING_DELETED')
         );
     }
 

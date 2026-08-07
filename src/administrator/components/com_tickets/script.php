@@ -258,6 +258,56 @@ HTML,
 <p>If you think this was a mistake, reply to this mail and a team member will look at it again.</p>
 HTML,
             ],
+            // Ownership transfer (P1-04). Each party is named by name, never by email address:
+            // a transfer must not disclose an address the other side did not share (8.8.1).
+            'com_jed.transfer_request_owner' => [
+                'subject' => 'Confirm handing over {EXTENSIONNAME}',
+                'body'    => <<<'HTML'
+<p>You asked to hand <strong>{EXTENSIONNAME}</strong> over to <strong>{OTHERPARTY}</strong>.</p>
+<p>Ownership moves only once you and they have both confirmed. Confirm your side here:</p>
+<p><a href="{CONFIRMLINK}">{CONFIRMLINK}</a></p>
+<p>You have to be logged in as yourself for this link to work, so forwarding it achieves nothing. If you did not ask for this, ignore this mail - nothing happens without your confirmation, and the request lapses on its own.</p>
+HTML,
+            ],
+            'com_jed.transfer_request_recipient' => [
+                'subject' => '{OTHERPARTY} would like to hand {EXTENSIONNAME} over to you',
+                'body'    => <<<'HTML'
+<p><strong>{OTHERPARTY}</strong> would like you to take over <strong>{EXTENSIONNAME}</strong> on {SITENAME}.</p>
+<p>Taking it over makes you responsible for the listing: keeping it up to date, answering reviews, and everything else that comes with it. Ownership moves only once you and they have both confirmed.</p>
+<p><a href="{CONFIRMLINK}">{CONFIRMLINK}</a></p>
+<p>You have to be logged in as yourself for this link to work. If you would rather not, simply do nothing - the request lapses on its own.</p>
+HTML,
+            ],
+            'com_jed.transfer_completed' => [
+                'subject' => '{EXTENSIONNAME} has changed hands',
+                'body'    => <<<'HTML'
+<p>Both sides have confirmed, so <strong>{EXTENSIONNAME}</strong> has changed hands between you and <strong>{OTHERPARTY}</strong>.</p>
+<p>The new owner manages the listing from their dashboard from now on. The previous owner no longer has access to it; reviews and developer responses they wrote stay as they are.</p>
+HTML,
+            ],
+            'com_jed.transfer_cancelled' => [
+                'subject' => 'The handover of {EXTENSIONNAME} was called off',
+                'body'    => <<<'HTML'
+<p>The handover of <strong>{EXTENSIONNAME}</strong> between you and <strong>{OTHERPARTY}</strong> has been called off. Nothing has changed.</p>
+<p>{REASONNOTES}</p>
+HTML,
+            ],
+            'com_jed.transfer_expired' => [
+                'subject' => 'The handover of {EXTENSIONNAME} has lapsed',
+                'body'    => <<<'HTML'
+<p>The handover of <strong>{EXTENSIONNAME}</strong> between you and <strong>{OTHERPARTY}</strong> was not confirmed by both sides in time, so it has lapsed. Nothing has changed.</p>
+<p>If you still want it to happen, start it again from your dashboard.</p>
+HTML,
+            ],
+            'com_jed.transfer_forced' => [
+                'subject' => '{EXTENSIONNAME} has been reassigned',
+                'body'    => <<<'HTML'
+<p>The {SITENAME} team has reassigned <strong>{EXTENSIONNAME}</strong> between you and <strong>{OTHERPARTY}</strong>.</p>
+<p><strong>Reason:</strong></p>
+<p>{REASONNOTES}</p>
+<p>This is a notification, not a request - the change has already been made. If you think it was a mistake, reply to this mail.</p>
+HTML,
+            ],
             'com_jed.review_report_received' => [
                 'subject' => 'Review Report Received',
                 'body'    => <<<'HTML'

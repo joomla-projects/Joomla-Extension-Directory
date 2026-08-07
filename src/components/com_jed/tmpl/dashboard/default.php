@@ -53,6 +53,46 @@ $wa->useScript('com_jed.favorite');
      data-msg-no-entries="<?php echo Text::_('COM_JED_DASHBOARD_NO_ENTRIES'); ?>"></div>
 <div class="com-jed-dashboard">
 
+    <?php /* ---- Ownership handovers ---- */ ?>
+    <?php if (!empty($this->transfers)) : ?>
+        <?php
+        // 8.8.1 asks for the state to be visible so nobody is left guessing what a handover is
+        // waiting on. The other party is named by *name* - showing their address would disclose
+        // something they never shared with the person reading this page.
+        ?>
+        <div class="card mb-4 border-warning">
+            <div class="card-header">
+                <h3 class="mb-0"><?php echo Text::_('COM_JED_TRANSFER_HEADING'); ?></h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    <?php foreach ($this->transfers as $transfer) : ?>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>
+                                <strong><?php echo $this->escape($transfer->extension_name); ?></strong>
+                                <span class="text-muted small d-block">
+                                    <?php if ($transfer->awaiting_me) : ?>
+                                        <?php echo Text::_('COM_JED_TRANSFER_WAITING_FOR_YOU'); ?>
+                                    <?php else : ?>
+                                        <?php echo Text::sprintf('COM_JED_TRANSFER_WAITING_FOR_OTHER', $this->escape($transfer->other_name)); ?>
+                                    <?php endif; ?>
+                                </span>
+                            </span>
+                            <a class="btn btn-sm btn-outline-secondary"
+                               href="<?php echo Route::_(
+                                   'index.php?option=com_jed&task=transfer.cancel&id=' . (int) $transfer->id
+                                   . '&' . Session::getFormToken() . '=1',
+                                   false
+                               ); ?>">
+                                <?php echo Text::_('COM_JED_TRANSFER_CANCEL'); ?>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <?php /* ---- Maintainer invitations ---- */ ?>
     <?php if (!empty($this->invitations)) : ?>
         <?php

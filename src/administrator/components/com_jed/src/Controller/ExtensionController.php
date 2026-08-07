@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Administrator\Controller;
 
 use Jed\Component\Jed\Administrator\Model\ExtensionModel;
 use Jed\Component\Jed\Administrator\Queue\QueueService;
+use Jed\Component\Jed\Administrator\Transfer\TransferService;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
@@ -207,6 +208,54 @@ class ExtensionController extends FormController
         try {
             $model->reject($extensionId, $historyId, $reasonCode, $notes);
             $app->enqueueMessage(Text::_('COM_JED_EXTENSION_REJECTED_MESSAGE'));
+        } catch (\Exception $e) {
+            $app->enqueueMessage($e->getMessage(), 'error');
+        }
+
+        $this->setRedirect(Route::_('index.php?option=com_jed&view=extensions', false));
+
+        return true;
+    }
+
+    /**
+     * Reassign a listing to another owner without the current owner's confirmation.
+     *
+     * The abandonware escape hatch (8.8.1). Guarded by its own permission - forcing a handover
+     * is not something anyone who may edit a listing should be able to do - and the reason is
+     * mandatory, because "the team moved it" without a why is not an answer a developer can
+     * argue with later.
+     *
+     * @return bool
+     *
+     * @since 4.1.0
+     */
+    public function forceTransfer(): bool
+    {
+        $this->checkToken();
+
+        $app         = Factory::getApplication();
+        $extensionId = $this->input->getInt('id') ?: (int) $app->getUserState('com_jed.edit.extension.id', 0);
+        $email       = (string) $this->input->getString('transfer_email', '');
+        $reason      = (string) $this->input->getString('transfer_reason', '');
+
+        if (!$app->getIdentity()->authorise('jed.transfer.force', 'com_jed')) {
+            $app->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
+            $this->setRedirect(Route::_('index.php?option=com_jed&view=extensions', false));
+
+            return false;
+        }
+
+        try {
+            $db      = Factory::getContainer()->get(DatabaseInterface::class);
+            $service = new TransferService($db);
+            $userId  = (int) $app->getIdentity()->id;
+
+            // The same bounded lookup the developer side uses, so a team member probing
+            // addresses is logged and rate-limited exactly as a developer would be.
+            $recipient = $service->findRecipient($email, $userId, $extensionId);
+
+            $service->force($extensionId, $recipient, $userId, $reason);
+            $app->enqueueMessage(Text::_('COM_JED_TRANSFER_FORCED_MESSAGE'));
         } catch (\Exception $e) {
             $app->enqueueMessage($e->getMessage(), 'error');
         }

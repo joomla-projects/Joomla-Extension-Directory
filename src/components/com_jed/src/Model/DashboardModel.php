@@ -14,11 +14,13 @@ namespace Jed\Component\Jed\Site\Model;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Administrator\Transfer\TransferState;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\CMS\Pagination\Pagination;
+use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
 
 /**
@@ -170,6 +172,63 @@ class DashboardModel extends ItemModel
                 ->where($db->quoteName('e.deleted') . ' = 0')
                 ->order($db->quoteName('m.invited_time') . ' DESC')
         )->loadObjectList();
+    }
+
+    /**
+     * Open ownership handovers the current user is part of, on either side.
+     *
+     * Shown on the dashboard so nobody has to guess what a handover is waiting on - 8.8.1 asks
+     * for exactly that, because the alternative is two people each assuming the other has not
+     * acted yet. The other party is named by name; their address is never shown.
+     *
+     * @return array
+     *
+     * @since 4.1.0
+     */
+    public function getTransfers(): array
+    {
+        $userId = (int) (Factory::getApplication()->getIdentity()->id ?? 0);
+
+        if ($userId <= 0) {
+            return [];
+        }
+
+        $db   = $this->getDatabase();
+        $open = [
+            TransferState::PENDING->value,
+            TransferState::FROM_CONFIRMED->value,
+            TransferState::TO_CONFIRMED->value,
+        ];
+
+        $rows = (array) $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(['t.id', 't.extension_id', 't.state', 't.expires', 't.from_user_id', 't.to_user_id']))
+                ->select($db->quoteName('e.name', 'extension_name'))
+                ->select($db->quoteName('uf.name', 'from_name'))
+                ->select($db->quoteName('ut.name', 'to_name'))
+                ->from($db->quoteName('#__jed_extension_transfers', 't'))
+                ->innerJoin($db->quoteName('#__jed_extensions', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('t.extension_id'))
+                ->leftJoin($db->quoteName('#__users', 'uf') . ' ON ' . $db->quoteName('uf.id') . ' = ' . $db->quoteName('t.from_user_id'))
+                ->leftJoin($db->quoteName('#__users', 'ut') . ' ON ' . $db->quoteName('ut.id') . ' = ' . $db->quoteName('t.to_user_id'))
+                ->whereIn($db->quoteName('t.state'), $open, ParameterType::STRING)
+                ->where('(' . $db->quoteName('t.from_user_id') . ' = ' . $userId
+                    . ' OR ' . $db->quoteName('t.to_user_id') . ' = ' . $userId . ')')
+                ->order($db->quoteName('t.id') . ' DESC')
+        )->loadObjectList();
+
+        foreach ($rows as $row) {
+            $isRecipient      = (int) $row->to_user_id === $userId;
+            $row->other_name  = $isRecipient ? $row->from_name : $row->to_name;
+            $state            = TransferState::from((string) $row->state);
+
+            // "Waiting for you" is the only thing the reader can act on, so work it out here
+            // rather than leaving the template to reason about the state machine.
+            $row->awaiting_me = $isRecipient
+                ? $state !== TransferState::TO_CONFIRMED
+                : $state !== TransferState::FROM_CONFIRMED;
+        }
+
+        return $rows;
     }
 
     public function getExtensions(): array

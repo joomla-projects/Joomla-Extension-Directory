@@ -281,6 +281,65 @@ CREATE TABLE IF NOT EXISTS `#__jed_favorites`
 	KEY `FK_jed_favorites_extension_id` (`extension_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `#__jed_extension_transfers`;
+
+-- A transfer is a state over time, so it is a record of its own rather than columns on the
+-- extension (8.8.1). The completed row stays: it is the traceability requirement, and it is the
+-- only place that records who handed what to whom.
+--
+-- States: pending -> from_confirmed / to_confirmed -> completed, plus expired, cancelled and
+-- forced. Ownership moves only when *both* parties have confirmed, in either order - which is
+-- why the two confirmations are two nullable timestamps rather than one flag.
+--
+-- The tokens are credentials and are stored **hashed only**. Reading this table must not enable
+-- a transfer. They are bound to the user id rather than the email address, so changing an
+-- address mid-flight does not break a transfer that is already under way.
+CREATE TABLE IF NOT EXISTS `#__jed_extension_transfers`
+(
+	`id`                  int unsigned NOT NULL AUTO_INCREMENT,
+	`extension_id`        int unsigned NOT NULL,
+	`from_user_id`        int unsigned NOT NULL,
+	`to_user_id`          int unsigned NOT NULL,
+	`initiated_by`        int unsigned NOT NULL,
+	`initiated_time`      datetime     NOT NULL,
+	`from_token_hash`     varchar(255) DEFAULT NULL,
+	`from_confirmed_time` datetime     DEFAULT NULL,
+	`to_token_hash`       varchar(255) DEFAULT NULL,
+	`to_confirmed_time`   datetime     DEFAULT NULL,
+	`state`               varchar(20)  NOT NULL DEFAULT 'pending',
+	`expires`             datetime     NOT NULL,
+	`completed_time`      datetime     DEFAULT NULL,
+	`cancelled_by`        int unsigned DEFAULT NULL,
+	`cancel_reason`       text,
+	PRIMARY KEY (`id`),
+	KEY `IDX_transfers_extension` (`extension_id`, `state`),
+	KEY `IDX_transfers_to_user` (`to_user_id`, `state`),
+	KEY `IDX_transfers_expiry` (`state`, `expires`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `#__jed_transfer_lookups`;
+
+-- Looking a recipient up by email address tells the person asking whether that address has an
+-- account. 8.8.1 weighed hiding that against making the feature unusable - an owner who cannot
+-- tell a typo from a missing account is stuck - and chose the clear answer, bounded. This table
+-- is the bound: every attempt is recorded with who made it, which turns an anonymous oracle into
+-- an attributable one, and the count per window is what the rate limit reads.
+--
+-- The address is stored hashed. The log has to answer "how many attempts did this user make"
+-- and "did they probe the same address repeatedly", and neither question needs the plaintext -
+-- keeping a list of addresses somebody guessed at would create the disclosure it exists to bound.
+CREATE TABLE IF NOT EXISTS `#__jed_transfer_lookups`
+(
+	`id`           int unsigned NOT NULL AUTO_INCREMENT,
+	`user_id`      int unsigned NOT NULL,
+	`email_hash`   varchar(64)  NOT NULL,
+	`found`        tinyint(1)   NOT NULL DEFAULT '0',
+	`extension_id` int unsigned DEFAULT NULL,
+	`created`      datetime     NOT NULL,
+	PRIMARY KEY (`id`),
+	KEY `IDX_transfer_lookups_user` (`user_id`, `created`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
 DROP TABLE IF EXISTS `#__jed_block_reasons`;
 
 -- The vocabulary a moderation decision is stated in. Codes are data, not code (4.8), so the JED

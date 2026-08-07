@@ -10,6 +10,8 @@ DROP TABLE IF EXISTS `#__jed_extensions`;
 DROP TABLE IF EXISTS `#__jed_extensions_history`;
 DROP TABLE IF EXISTS `#__jed_joomla_versions`;
 DROP TABLE IF EXISTS `#__jed_block_reasons`;
+DROP TABLE IF EXISTS `#__jed_extension_transfers`;
+DROP TABLE IF EXISTS `#__jed_transfer_lookups`;
 DROP TABLE IF EXISTS `#__jed_queue_jobs`;
 
 DELETE FROM `#__mail_templates` WHERE `template_id` = 'com_jed.audit_report';
