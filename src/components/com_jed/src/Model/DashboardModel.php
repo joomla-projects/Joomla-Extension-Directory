@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Site\Model;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ItemModel;
@@ -134,6 +135,43 @@ class DashboardModel extends ItemModel
      * @since  4.0.0
      * @throws \Exception
      */
+    /**
+     * The open maintainer invitations for the current user.
+     *
+     * The dashboard is the only place an invited person finds out they were named at all - the
+     * invitation grants nothing until they answer it, so without this the state column would
+     * just be a way to make maintainers never work.
+     *
+     * @return array
+     *
+     * @since 4.1.0
+     */
+    public function getMaintainerInvitations(): array
+    {
+        $userId = (int) (Factory::getApplication()->getIdentity()->id ?? 0);
+
+        if ($userId <= 0) {
+            return [];
+        }
+
+        $db      = $this->getDatabase();
+        $invited = JedHelper::MAINTAINER_INVITED;
+
+        return (array) $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(['m.extension_id', 'm.invited_time']))
+                ->select($db->quoteName('e.name', 'extension_name'))
+                ->select($db->quoteName('u.name', 'invited_by_name'))
+                ->from($db->quoteName('#__jed_extensions_maintainers', 'm'))
+                ->innerJoin($db->quoteName('#__jed_extensions', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('m.extension_id'))
+                ->leftJoin($db->quoteName('#__users', 'u') . ' ON ' . $db->quoteName('u.id') . ' = ' . $db->quoteName('m.invited_by'))
+                ->where($db->quoteName('m.user_id') . ' = ' . $userId)
+                ->where($db->quoteName('m.state') . ' = ' . $invited)
+                ->where($db->quoteName('e.deleted') . ' = 0')
+                ->order($db->quoteName('m.invited_time') . ' DESC')
+        )->loadObjectList();
+    }
+
     public function getExtensions(): array
     {
         $userId = Factory::getApplication()->getIdentity()->id;
@@ -149,8 +187,10 @@ class DashboardModel extends ItemModel
                 $db->quoteName('#__categories', 'cat')
                 . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('a.catid')
             )
-            ->where($db->quoteName('a.owner') . ' = ' . $db->quote($userId))
-            // The dashboard is where a developer manages their own listings, so it deliberately
+            // Owned *and* maintained (8.8) - a maintainer manages the listing from here too, so
+            // a plain owner filter left them without a way in.
+            ->where(JedHelper::getOwnedOrMaintainedCondition($db))
+            // The dashboard is where a developer manages their listings, so it deliberately
             // shows the ones that are not public - pending approval, taken offline, blocked. Only
             // soft-deleted rows are gone from the frontend entirely (4.8).
             ->where($db->quoteName('a.deleted') . ' = 0')

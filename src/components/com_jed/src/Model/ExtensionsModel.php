@@ -215,15 +215,19 @@ class ExtensionsModel extends ListModel
      */
     public function getMyItems(): mixed
     {
-        $user  = Factory::getApplication()->getIdentity();
-        $query = $this->getDatabase()->getQuery(true)
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
             ->select('a.id as ext_id,a.*,cat.title AS category_title')
             ->from('#__jed_extensions AS a')
             ->innerJoin('#__categories AS cat ON cat.id = a.catid')
-            ->where('a.created_by = ' . $user->id);
-        $this->getDatabase()->setQuery($query);
+            // "Mine" is what I own or maintain (8.8), not what I once created. Filtering on
+            // created_by missed every extension the user maintains, and kept listing the ones
+            // they had transferred away.
+            ->where(JedHelper::getOwnedOrMaintainedCondition($db))
+            ->where($db->quoteName('a.deleted') . ' = 0');
+        $db->setQuery($query);
 
-        return $this->getDatabase()->loadObjectList();
+        return $db->loadObjectList();
     }
 
     /**

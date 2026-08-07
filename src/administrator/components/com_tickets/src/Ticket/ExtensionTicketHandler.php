@@ -91,7 +91,7 @@ final class ExtensionTicketHandler implements TicketTypeHandlerInterface
      */
     public function getActions(int $linkedItemId, User $user): array
     {
-        if (!$user->authorise('core.edit', 'com_jed')) {
+        if (!$user->authorise('jed.approve', 'com_jed')) {
             return [];
         }
 

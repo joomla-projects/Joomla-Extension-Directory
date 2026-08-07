@@ -184,7 +184,10 @@ class ExtensionsModel extends ListModel
         $developerId = $this->getState('filter.developer_id');
 
         if (is_numeric($developerId)) {
-            $query->where($db->quoteName('a.created_by') . ' = ' . (int) $developerId);
+            // Filtering "by developer" means by the current owner, not by whoever first typed
+            // the listing in. After a transfer the two differ, and the old answer put the
+            // listing under the previous owner's name (8.8.1).
+            $query->where($db->quoteName('a.owner') . ' = ' . (int) $developerId);
         }
 
         $extensionTypes = $this->getState('filter.extension_types');

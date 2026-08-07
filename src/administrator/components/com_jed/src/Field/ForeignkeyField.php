@@ -18,6 +18,7 @@ namespace Jed\Component\Jed\Administrator\Field;
 
 use Exception;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Jed\Component\Jed\Site\Helper\JedHelper as SiteJedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\Language\Text;
@@ -246,17 +247,25 @@ class ForeignKeyField extends ListField
                     $fk_value,
                 ]
             )
-            ->from($this->table);
+            ->from($db->quoteName($this->table, 'fk'));
 
         if ($this->condition) {
             $query->where($this->condition);
         }
 
-        // Only join on data that the user has created
+        // Restrict the options to the user's own records, unless they are an administrator.
         $user = Factory::getApplication()->getIdentity();
-        // If the user is not an admin, then restrict the options to only be own
+
         if (!empty($user->id) && !in_array("8", $user->getAuthorisedGroups()) && !in_array("7", $user->getAuthorisedGroups())) {
-            $query->where("created_by = " . (int)$user->id);
+            // For extensions "own" means owned or maintained (8.8). Keyed on created_by, this
+            // picker hid every extension the user maintains and kept offering the ones they had
+            // transferred away. Other tables the field is pointed at are authored records, where
+            // created_by is the right column.
+            if (str_contains((string) $this->table, 'jed_extensions')) {
+                $query->where(SiteJedHelper::getOwnedOrMaintainedCondition($db, 'fk'));
+            } else {
+                $query->where($db->quoteName('fk.created_by') . ' = ' . (int) $user->id);
+            }
         }
 
         return $query;

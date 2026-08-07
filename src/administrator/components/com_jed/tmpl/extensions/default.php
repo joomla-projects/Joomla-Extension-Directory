@@ -8,6 +8,7 @@
  */
 
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Jed\Component\Jed\Site\Helper\JedHelper as SiteJedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -103,10 +104,13 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                             'core.manage',
                             'com_checkin'
                         ) || $item->checked_out === $userId || $item->checked_out === 0;
+                        // "Own" is owned or maintained (8.8), never created: created_by does not
+                        // follow an ownership transfer, so keying on it left the previous owner
+                        // with an edit button on a listing that is no longer theirs (8.8.1).
                         $canEditOwn = $user->authorise(
                             'core.edit.own',
                             'com_jed.extension.' . $item->id
-                        ) && $item->created_by === $userId;
+                        ) && SiteJedHelper::isOwnerOrMaintainer((int) $item->id);
                         $canChange = $user->authorise('core.edit.state', 'com_jed.extension.' . $item->id) && $canCheckin;
                         ?>
                         <tr>

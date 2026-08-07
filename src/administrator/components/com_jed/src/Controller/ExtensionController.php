@@ -144,8 +144,18 @@ class ExtensionController extends FormController
     {
         $this->checkToken();
 
+        $app         = Factory::getApplication();
         $extensionId = $this->input->getInt('extension_id');
         $historyId   = $this->input->getInt('history_id');
+
+        // Moderation is its own right (P1-03), not a by-product of core.edit - and this had no
+        // permission check at all, so any authenticated backend user could promote a revision.
+        if (!$app->getIdentity()->authorise('jed.approve', 'com_jed')) {
+            $app->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
+            $this->setRedirect(Route::_('index.php?option=com_jed&view=extensions', false));
+
+            return false;
+        }
 
         /** @var ExtensionModel $model */
         $model = $this->getModel();
@@ -184,7 +194,7 @@ class ExtensionController extends FormController
         $reasonCode = (string) ($this->input->getCmd('reject_reason_code', '') ?: ($form['approved_reason'] ?? ''));
         $notes      = (string) ($this->input->getString('reject_reason_notes', '') ?: ($form['approved_notes'] ?? ''));
 
-        if (!$app->getIdentity()->authorise('core.edit', 'com_jed')) {
+        if (!$app->getIdentity()->authorise('jed.approve', 'com_jed')) {
             $app->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
             $this->setRedirect(Route::_('index.php?option=com_jed&view=extensions', false));
 
@@ -225,7 +235,7 @@ class ExtensionController extends FormController
         $form = (array) $this->input->post->get('jform', [], 'array');
 
         return $this->runListingStateChange(
-            'core.edit.state',
+            'jed.block',
             static fn (ExtensionModel $model, int $extensionId) => $model->block(
                 $extensionId,
                 (string) ($form['block_reason_code'] ?? ''),
@@ -247,7 +257,7 @@ class ExtensionController extends FormController
         $this->checkToken();
 
         return $this->runListingStateChange(
-            'core.edit.state',
+            'jed.block',
             static fn (ExtensionModel $model, int $extensionId) => $model->unblock($extensionId),
             'COM_JED_EXTENSION_UNBLOCKED_MESSAGE'
         );

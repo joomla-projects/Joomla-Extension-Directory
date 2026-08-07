@@ -332,6 +332,105 @@ class ExtensionModel extends ItemModel
     }
 
     /**
+     * Answer a maintainer invitation.
+     *
+     * Accepting is what turns a named person into a maintainer - until then the row exists but
+     * grants nothing, which is the whole point of the state column (8.8, `P1-03` item 4).
+     * Declining keeps the row rather than deleting it, so an owner can see the invitation was
+     * refused instead of wondering whether it ever went out; re-inviting is a fresh save.
+     *
+     * The row is matched on the extension **and** the user, so possessing an extension id is
+     * never enough to answer somebody else's invitation.
+     *
+     * @param int  $extensionId The extension id.
+     * @param int  $userId      The invited user.
+     * @param bool $accept      True to accept, false to decline.
+     *
+     * @return bool  False when there is no open invitation for this user.
+     *
+     * @since 4.1.0
+     */
+    public function respondToMaintainerInvitation(int $extensionId, int $userId, bool $accept): bool
+    {
+        if ($extensionId <= 0 || $userId <= 0) {
+            return false;
+        }
+
+        $db      = $this->getDatabase();
+        $invited = JedHelper::MAINTAINER_INVITED;
+
+        $exists = (bool) $db->setQuery(
+            $db->getQuery(true)
+                ->select('1')
+                ->from($db->quoteName('#__jed_extensions_maintainers'))
+                ->where($db->quoteName('extension_id') . ' = :eid')
+                ->where($db->quoteName('user_id') . ' = :uid')
+                ->where($db->quoteName('state') . ' = :state')
+                ->bind(':eid', $extensionId, ParameterType::INTEGER)
+                ->bind(':uid', $userId, ParameterType::INTEGER)
+                ->bind(':state', $invited, ParameterType::INTEGER)
+        )->loadResult();
+
+        if (!$exists) {
+            return false;
+        }
+
+        $newState = $accept ? JedHelper::MAINTAINER_ACCEPTED : JedHelper::MAINTAINER_DECLINED;
+        $now      = Factory::getDate()->toSql();
+
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__jed_extensions_maintainers'))
+            ->set($db->quoteName('state') . ' = :state')
+            ->where($db->quoteName('extension_id') . ' = :eid')
+            ->where($db->quoteName('user_id') . ' = :uid')
+            ->bind(':state', $newState, ParameterType::INTEGER)
+            ->bind(':eid', $extensionId, ParameterType::INTEGER)
+            ->bind(':uid', $userId, ParameterType::INTEGER);
+
+        if ($accept) {
+            $query->set($db->quoteName('accepted_time') . ' = :now')->bind(':now', $now, ParameterType::STRING);
+        }
+
+        $db->setQuery($query)->execute();
+
+        return true;
+    }
+
+    /**
+     * The open maintainer invitations for a user.
+     *
+     * Feeds the dashboard, which is where an invited person finds out they were named at all.
+     *
+     * @param int $userId The user.
+     *
+     * @return array
+     *
+     * @since 4.1.0
+     */
+    public function getMaintainerInvitations(int $userId): array
+    {
+        if ($userId <= 0) {
+            return [];
+        }
+
+        $db      = $this->getDatabase();
+        $invited = JedHelper::MAINTAINER_INVITED;
+
+        return (array) $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(['m.extension_id', 'm.invited_time', 'm.invited_by']))
+                ->select($db->quoteName('e.name', 'extension_name'))
+                ->from($db->quoteName('#__jed_extensions_maintainers', 'm'))
+                ->innerJoin($db->quoteName('#__jed_extensions', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('m.extension_id'))
+                ->where($db->quoteName('m.user_id') . ' = :uid')
+                ->where($db->quoteName('m.state') . ' = :state')
+                ->where($db->quoteName('e.deleted') . ' = 0')
+                ->bind(':uid', $userId, ParameterType::INTEGER)
+                ->bind(':state', $invited, ParameterType::INTEGER)
+        )->loadObjectList();
+    }
+
+    /**
      * Get an instance of Table class
      *
      * @param string $name    Name of the Table class to get an instance of.

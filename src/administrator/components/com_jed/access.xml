@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Global roles and what they may do (8.8). Four groups are expected to map onto these actions:
+    Developer, JED team, VEL team, Super Admin. The mapping itself is per-installation data, set
+    in Global Configuration - this file only has to name every action so there is something to
+    map onto, which is what it was missing.
+
+    Two kinds of rule live in JED and only one of them is here. This file governs *global* rights
+    - may this group approve anything at all. Whether a given person may touch a given extension
+    is an object-level question answered by JedHelper::isOwner() / isOwnerOrMaintainer() against
+    #__jed_extensions.owner and #__jed_extensions_maintainers, and it is deliberately not
+    expressible as an ACL action: the owner of one listing has no rights over another.
+
+    The API consumers from 6.6 get one machine account each, scoped through these same actions -
+    not a shared key. That is what makes a consumer individually revocable and what lets the
+    action log record who acted.
+-->
 <access component="com_jed">
     <section name="component">
         <action name="core.admin" title="JACTION_ADMIN" description="JACTION_ADMIN"/>
@@ -8,6 +24,25 @@
         <action name="core.edit" title="JACTION_EDIT" description="JACTION_EDIT"/>
         <action name="core.edit.state" title="JACTION_EDITSTATE" description="JACTION_EDITSTATE"/>
         <action name="core.edit.own" title="JACTION_EDITOWN" description="JACTION_EDITOWN"/>
+
+        <!-- Moderation (P1-02): promoting a pending revision to the live listing, or refusing it. -->
+        <action name="jed.approve" title="COM_JED_ACTION_APPROVE" description="COM_JED_ACTION_APPROVE_DESC"/>
+
+        <!-- Blocking (P1-01). Separate from core.edit.state on purpose: `state` belongs to the
+             developer and `blocked` to the JED team, and the permissions must not be the same
+             one either, or the separation of the two columns buys nothing. -->
+        <action name="jed.block" title="COM_JED_ACTION_BLOCK" description="COM_JED_ACTION_BLOCK_DESC"/>
+
+        <!-- Moving a listing to a new owner without the current owner's confirmation (P1-04).
+             The ordinary transfer is dual-confirmed between the two developers; this is the
+             override for when an owner is gone, and it is a JED team power. -->
+        <action name="jed.transfer.force" title="COM_JED_ACTION_TRANSFER_FORCE" description="COM_JED_ACTION_TRANSFER_FORCE_DESC"/>
+
+        <!-- Audit results are never public (8.7). This is who may read them at all. -->
+        <action name="jed.audit.view" title="COM_JED_ACTION_AUDIT_VIEW" description="COM_JED_ACTION_AUDIT_VIEW_DESC"/>
+
+        <!-- Suspending a user account's ability to submit, review or report (P1-05). -->
+        <action name="jed.user.ban" title="COM_JED_ACTION_USER_BAN" description="COM_JED_ACTION_USER_BAN_DESC"/>
     </section>
     <section name="category">
         <action name="core.create" title="JACTION_CREATE" description="COM_CATEGORIES_ACCESS_CREATE_DESC"/>

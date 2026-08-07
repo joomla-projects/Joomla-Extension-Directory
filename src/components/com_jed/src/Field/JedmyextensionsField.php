@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Site\Field;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\Language\Text;
@@ -229,14 +230,16 @@ class JedmyextensionsField extends ListField
     {
         $options = [];
         $db      = Factory::getContainer()->get('DatabaseDriver');
-        $userId  = Factory::getApplication()->getIdentity()->id;
         try {
+            // Owned or maintained (8.8), not created. A maintainer opening a ticket has to be
+            // able to pick the extension it is about, and a former owner must not still find
+            // one they transferred away in this list.
             $query = $db->getQuery(true)
-                ->select("id as value, CONCAT(name,' (',type,')') as text")
-                ->from($db->quoteName('#__jed_extensions'))
-                ->where($db->quoteName('created_by') . ' = :userId')
-                ->bind(':userId', $userId, \Joomla\Database\ParameterType::INTEGER)
-                ->order($db->quoteName('name') . ' ASC')
+                ->select("a.id as value, CONCAT(a.name,' (',a.type,')') as text")
+                ->from($db->quoteName('#__jed_extensions', 'a'))
+                ->where(JedHelper::getOwnedOrMaintainedCondition($db))
+                ->where($db->quoteName('a.deleted') . ' = 0')
+                ->order($db->quoteName('a.name') . ' ASC')
                 ->setLimit(100);
             $db->setQuery($query);
             $results = $db->loadObjectList();

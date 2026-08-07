@@ -194,27 +194,69 @@ trait ExtensionUtilities
      */
     private function storeMaintainers(int $extensionId, array $rows): void
     {
-        $db = $this->getDatabase();
+        $db      = $this->getDatabase();
+        $userIds = array_values(array_unique(array_filter(array_map(
+            static fn ($row) => (int) ($row['user_id'] ?? 0),
+            $rows
+        ))));
 
-        $query = $db->getQuery(true)->delete($db->quoteName('#__jed_extensions_maintainers'))->where($db->quoteName('extension_id') . ' = ' . $extensionId);
-        $db->setQuery($query)->execute();
+        // Nobody is owner and maintainer of the same extension at the same time (8.8). It cannot
+        // be a database constraint because the two facts live in different tables, so it is
+        // enforced here and again when a transfer completes (P1-04). Silently dropping the owner
+        // is the right answer rather than an error: the form offers a user picker, and picking
+        // the owner is a plausible slip, not an attack.
+        $owner = (int) $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName('owner'))
+                ->from($db->quoteName('#__jed_extensions'))
+                ->where($db->quoteName('id') . ' = :eid')
+                ->bind(':eid', $extensionId, ParameterType::INTEGER)
+        )->loadResult();
 
-        $userIds = array_unique(array_filter(array_map(static fn ($row) => (int) ($row['user_id'] ?? 0), $rows)));
+        $userIds = array_values(array_filter($userIds, static fn (int $id) => $id !== $owner));
 
-        if (empty($userIds)) {
+        // Existing rows are kept rather than rebuilt, so an acceptance already given is not
+        // silently reset to "invited" every time the owner saves the form for another reason.
+        $existing = $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName('user_id'))
+                ->from($db->quoteName('#__jed_extensions_maintainers'))
+                ->where($db->quoteName('extension_id') . ' = :eid')
+                ->bind(':eid', $extensionId, ParameterType::INTEGER)
+        )->loadColumn();
+
+        $existing = array_map('intval', (array) $existing);
+        $removed  = array_diff($existing, $userIds);
+        $added    = array_diff($userIds, $existing);
+
+        if ($removed !== []) {
+            $db->setQuery(
+                $db->getQuery(true)
+                    ->delete($db->quoteName('#__jed_extensions_maintainers'))
+                    ->where($db->quoteName('extension_id') . ' = ' . $extensionId)
+                    ->whereIn($db->quoteName('user_id'), array_values($removed))
+            )->execute();
+        }
+
+        if ($added === []) {
             return;
         }
 
-        $query = $db->getQuery(true)->insert($db->quoteName('#__jed_extensions_maintainers'))->columns(
-            $db->quoteName(['extension_id', 'user_id'])
-        );
+        $invitedBy = (int) Factory::getApplication()->getIdentity()->id;
+        $now       = Factory::getDate()->toSql();
 
-        array_walk(
-            $userIds,
-            static function ($userId) use (&$query, $extensionId) {
-                $query->values($extensionId . ',' . $userId);
-            }
-        );
+        $query = $db->getQuery(true)
+            ->insert($db->quoteName('#__jed_extensions_maintainers'))
+            ->columns($db->quoteName(['extension_id', 'user_id', 'state', 'invited_by', 'invited_time']));
+
+        foreach ($added as $userId) {
+            // state = invited. The rights start when the person accepts, not when they are named
+            // (P1-03 item 4) - they reach far, and the name can appear on the public listing.
+            $query->values(
+                $extensionId . ', ' . (int) $userId . ', ' . JedHelper::MAINTAINER_INVITED
+                . ', ' . $invitedBy . ', ' . $db->quote($now)
+            );
+        }
 
         $db->setQuery($query)->execute();
     }

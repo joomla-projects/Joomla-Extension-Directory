@@ -145,22 +145,33 @@ class JedHelper
      */
     public static function canUserEdit(mixed $item): bool
     {
-        $permission = false;
-        $user       = Factory::getApplication()->getIdentity();
+        $user = Factory::getApplication()->getIdentity();
 
         if ($user->authorise('core.edit', 'com_jed')) {
-            $permission = true;
-        } else {
-            if (isset($item->created_by)) {
-                if ($item->created_by == $user->id) {
-                    $permission = true;
-                }
-            } else {
-                $permission = true;
-            }
+            return true;
         }
 
-        return $permission;
+        // An extension is owned, not authored. Refusing outright rather than falling through to
+        // the created_by test below is the point of 8.8.1: created_by does not follow an
+        // ownership transfer, so answering that question here would hand the previous owner
+        // permanent edit rights. Extensions go through isOwnerOrMaintainer().
+        if (\is_object($item) && property_exists($item, 'owner')) {
+            return false;
+        }
+
+        // A record that does not exist yet is being created, and creating is not editing.
+        if (!\is_object($item) || empty($item->id)) {
+            return true;
+        }
+
+        // An existing record with no authorship column cannot be attributed to anyone, so it is
+        // not the current user's. This used to return true - a fail-open on exactly the input
+        // the caller could not vouch for.
+        if (!isset($item->created_by)) {
+            return false;
+        }
+
+        return (int) $item->created_by === (int) $user->id;
     }
 
     /**
@@ -216,10 +227,61 @@ class JedHelper
     }
 
     /**
-     * Checks whether the current user is the owner of the given extension (#__jed_extensions.owner)
-     * or listed as one of its maintainers (#__jed_extensions_maintainers) - the same check
-     * ExtensionformModel::isAuthorised() uses to decide who may edit an extension, factored out
-     * here so review/dashboard code can reuse it without duplicating the query.
+     * The state of an accepted maintainer row. Anything else grants nothing.
+     *
+     * @since 4.1.0
+     */
+    public const MAINTAINER_INVITED  = 0;
+    public const MAINTAINER_ACCEPTED = 1;
+    public const MAINTAINER_DECLINED = -1;
+
+    /**
+     * Whether the current user owns the given extension.
+     *
+     * The owner-only half of the 8.8 matrix: soft delete and ownership transfer are the owner's
+     * and a maintainer must not reach them. Kept separate from isOwnerOrMaintainer() rather than
+     * expressed as a flag, so a call site cannot pick the laxer rule by leaving an argument out.
+     *
+     * Reads `owner`, never `created_by`. `created_by` is the authorship record and does not
+     * follow a transfer - a check keyed on it would leave the previous owner able to delete an
+     * extension they no longer own (8.8.1).
+     *
+     * @param int $extensionId The extension PK in #__jed_extensions.
+     *
+     * @return bool
+     *
+     * @since  4.1.0
+     * @throws Exception
+     */
+    public static function isOwner(int $extensionId): bool
+    {
+        $userId = (int) self::getUser()->id;
+
+        if (!$userId || $extensionId <= 0) {
+            return false;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $owner = (int) $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName('owner'))
+                ->from($db->quoteName('#__jed_extensions'))
+                ->where($db->quoteName('id') . ' = :eid')
+                ->bind(':eid', $extensionId, ParameterType::INTEGER)
+        )->loadResult();
+
+        return $owner === $userId;
+    }
+
+    /**
+     * Whether the current user owns or maintains the given extension.
+     *
+     * The rule for everything both roles may do: edit, publish, change images, answer reviews.
+     * Owner OR an **accepted** maintainer row - an invitation that has not been accepted grants
+     * nothing, which is the point of having a state on that table at all (P1-03 item 4).
+     *
+     * Never `created_by`. See isOwner() for why.
      *
      * @param int $extensionId The extension PK in #__jed_extensions.
      *
@@ -230,33 +292,62 @@ class JedHelper
      */
     public static function isOwnerOrMaintainer(int $extensionId): bool
     {
-        $userId = (int) self::getUser()->id;
-
-        if (!$userId) {
-            return false;
-        }
-
-        $db = Factory::getContainer()->get('DatabaseDriver');
-
-        $ownerQuery = $db->getQuery(true)
-            ->select($db->quoteName('owner'))
-            ->from($db->quoteName('#__jed_extensions'))
-            ->where($db->quoteName('id') . ' = :eid')
-            ->bind(':eid', $extensionId, ParameterType::INTEGER);
-
-        if ((int) $db->setQuery($ownerQuery)->loadResult() === $userId) {
+        if (self::isOwner($extensionId)) {
             return true;
         }
 
-        $maintainerQuery = $db->getQuery(true)
-            ->select('1')
-            ->from($db->quoteName('#__jed_extensions_maintainers'))
-            ->where($db->quoteName('extension_id') . ' = :eid')
-            ->where($db->quoteName('user_id') . ' = :uid')
-            ->bind(':eid', $extensionId, ParameterType::INTEGER)
-            ->bind(':uid', $userId, ParameterType::INTEGER);
+        $userId = (int) self::getUser()->id;
 
-        return (bool) $db->setQuery($maintainerQuery)->loadResult();
+        if (!$userId || $extensionId <= 0) {
+            return false;
+        }
+
+        $db       = Factory::getContainer()->get('DatabaseDriver');
+        $accepted = self::MAINTAINER_ACCEPTED;
+
+        return (bool) $db->setQuery(
+            $db->getQuery(true)
+                ->select('1')
+                ->from($db->quoteName('#__jed_extensions_maintainers'))
+                ->where($db->quoteName('extension_id') . ' = :eid')
+                ->where($db->quoteName('user_id') . ' = :uid')
+                ->where($db->quoteName('state') . ' = :state')
+                ->bind(':eid', $extensionId, ParameterType::INTEGER)
+                ->bind(':uid', $userId, ParameterType::INTEGER)
+                ->bind(':state', $accepted, ParameterType::INTEGER)
+        )->loadResult();
+    }
+
+    /**
+     * A SQL condition selecting the extensions the current user owns or maintains.
+     *
+     * The list counterpart of isOwnerOrMaintainer(), for the places that need the *set* rather
+     * than a yes/no - the dashboard, "my extensions" pickers. Those used to filter on
+     * `created_by = me`, which is wrong twice over: it misses everything the user maintains, and
+     * it keeps showing extensions they have transferred away.
+     *
+     * @param DatabaseInterface $db    The database driver, for quoting.
+     * @param string            $alias The table alias used for #__jed_extensions in the query.
+     *
+     * @return string  A parenthesised SQL condition, or a never-true one when logged out.
+     *
+     * @since  4.1.0
+     * @throws Exception
+     */
+    public static function getOwnedOrMaintainedCondition(DatabaseInterface $db, string $alias = 'a'): string
+    {
+        $userId = (int) self::getUser()->id;
+
+        if ($userId <= 0) {
+            return '0';
+        }
+
+        $maintained = 'EXISTS (SELECT 1 FROM ' . $db->quoteName('#__jed_extensions_maintainers', 'jm')
+            . ' WHERE ' . $db->quoteName('jm.extension_id') . ' = ' . $db->quoteName($alias . '.id')
+            . ' AND ' . $db->quoteName('jm.user_id') . ' = ' . $userId
+            . ' AND ' . $db->quoteName('jm.state') . ' = ' . self::MAINTAINER_ACCEPTED . ')';
+
+        return '(' . $db->quoteName($alias . '.owner') . ' = ' . $userId . ' OR ' . $maintained . ')';
     }
 
     /**
@@ -304,15 +395,11 @@ class JedHelper
             return '(' . $notDeleted . ' AND ' . $public . ')';
         }
 
-        // Owner OR a maintainer row - never created_by, which does not follow an ownership
-        // transfer and would leave the previous owner able to see the listing.
-        $own = $db->quoteName($alias . '.owner') . ' = ' . $userId;
-
-        $maintained = 'EXISTS (SELECT 1 FROM ' . $db->quoteName('#__jed_extensions_maintainers', 'vm')
-            . ' WHERE ' . $db->quoteName('vm.extension_id') . ' = ' . $db->quoteName($alias . '.id')
-            . ' AND ' . $db->quoteName('vm.user_id') . ' = ' . $userId . ')';
-
-        return '(' . $notDeleted . ' AND (' . $public . ' OR ' . $own . ' OR ' . $maintained . '))';
+        // Owner OR an accepted maintainer row - never created_by, which does not follow an
+        // ownership transfer and would leave the previous owner able to see the listing. An
+        // invitation that has not been accepted is not a maintainer yet and shows nothing.
+        return '(' . $notDeleted . ' AND (' . $public . ' OR '
+            . self::getOwnedOrMaintainedCondition($db, $alias) . '))';
     }
 
     /**
@@ -607,20 +694,38 @@ class JedHelper
      */
     public static function userIDItem(int $id, string $table): bool
     {
-        try {
-            $user = Factory::getApplication()->getIdentity();
-            $db   = Factory::getContainer()->get('DatabaseDriver');
+        // The helper answers "did the current user write this", and that is only a meaningful
+        // question for authored records - tickets, ticket messages, reviews. For an extension the
+        // question is ownership, which lives in a different column and follows transfers.
+        // Refusing the table outright is deliberate: a helper whose correctness depends on which
+        // table it is handed will eventually be handed the wrong one, and the failure would be
+        // silent - the previous owner keeps access after a transfer (8.8.1).
+        if (str_contains($table, 'jed_extensions')) {
+            throw new Exception(
+                'userIDItem() answers authorship and must not be used for extensions;'
+                . ' use JedHelper::isOwner() or isOwnerOrMaintainer() instead.',
+                500
+            );
+        }
 
-            $query = $db->getQuery(true);
-            $query->select("id")->from($db->quoteName($table))->where("id = " . $db->escape($id))->where("created_by = " . $user->id);
+        $userId = (int) self::getUser()->id;
 
-            $db->setQuery($query);
-
-            $results = $db->loadObject();
-            if ($results) {
-                return true;
-            }
+        if ($userId <= 0 || $id <= 0) {
             return false;
+        }
+
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+
+            return (bool) $db->setQuery(
+                $db->getQuery(true)
+                    ->select($db->quoteName('id'))
+                    ->from($db->quoteName($table))
+                    ->where($db->quoteName('id') . ' = :id')
+                    ->where($db->quoteName('created_by') . ' = :userId')
+                    ->bind(':id', $id, ParameterType::INTEGER)
+                    ->bind(':userId', $userId, ParameterType::INTEGER)
+            )->loadResult();
         } catch (Exception $exc) {
             throw new Exception($exc->getMessage(), $exc->getCode());
         }

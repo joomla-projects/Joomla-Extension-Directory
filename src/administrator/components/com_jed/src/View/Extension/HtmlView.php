@@ -155,7 +155,7 @@ class HtmlView extends BaseHtmlView
             ToolbarHelper::title(Text::_('COM_JED_EXTENSION_COMPARE_LABEL'), 'generic');
             ToolbarHelper::back('JTOOLBAR_BACK', Route::_('index.php?option=com_jed&view=extensions', false));
 
-            if ($this->compareApprovableId && JedHelper::getActions('com_jed')->get('core.edit')) {
+            if ($this->compareApprovableId && JedHelper::getActions('com_jed')->get('jed.approve')) {
                 ToolbarHelper::custom('extension.approve', 'publish.png', 'publish_f2.png', 'COM_JED_APPROVE_LABEL', false);
             }
 
@@ -212,7 +212,7 @@ class HtmlView extends BaseHtmlView
         // Blocking never writes `state`, so these sit apart from the publish buttons on purpose
         // (CLAUDE.md invariant, 4.8). Block posts the "blocking" fieldset with the form; the
         // model refuses a block without a known reason code.
-        if (!$isNew && $canDo->get('core.edit.state')) {
+        if (!$isNew && $canDo->get('jed.block')) {
             if ((int) ($this->item->blocked ?? 0) === 1) {
                 ToolbarHelper::custom('extension.unblock', 'unlock', 'unlock', 'COM_JED_EXTENSION_UNBLOCK_LABEL', false);
             } else {

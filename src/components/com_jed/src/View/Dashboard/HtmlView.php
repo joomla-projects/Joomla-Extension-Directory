@@ -32,6 +32,7 @@ class HtmlView extends BaseHtmlView
     protected array $extensions       = [];
     protected array $tickets          = [];
     protected array $favorites        = [];
+    protected array $invitations      = [];
     protected Pagination $reviewsPagination;
     protected Pagination $extensionsPagination;
     protected Pagination $ticketsPagination;
@@ -64,6 +65,7 @@ class HtmlView extends BaseHtmlView
         $this->ticketsPagination    = $model->getTicketsPagination();
         $this->favorites            = $model->getFavorites();
         $this->favoritesPagination  = $model->getFavoritesPagination();
+        $this->invitations          = $model->getMaintainerInvitations();
         $this->state                = $model->getState();
         $this->params               = Factory::getApplication()->getParams();
 

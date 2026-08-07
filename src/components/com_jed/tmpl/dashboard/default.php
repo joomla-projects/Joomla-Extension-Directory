@@ -53,6 +53,51 @@ $wa->useScript('com_jed.favorite');
      data-msg-no-entries="<?php echo Text::_('COM_JED_DASHBOARD_NO_ENTRIES'); ?>"></div>
 <div class="com-jed-dashboard">
 
+    <?php /* ---- Maintainer invitations ---- */ ?>
+    <?php if (!empty($this->invitations)) : ?>
+        <?php
+        // A maintainer invitation grants nothing until it is answered (8.8, P1-03 item 4), so
+        // this is where being named turns into actually being able to do something. Placed
+        // first on the page because it is the only item here that is waiting on the reader.
+        ?>
+        <div class="card mb-4 border-info">
+            <div class="card-header">
+                <h3 class="mb-0"><?php echo Text::_('COM_JED_MAINTAINER_INVITE_HEADING'); ?></h3>
+            </div>
+            <div class="card-body">
+                <p><?php echo Text::_('COM_JED_MAINTAINER_INVITE_INTRO'); ?></p>
+                <ul class="list-group">
+                    <?php foreach ($this->invitations as $invite) : ?>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>
+                                <strong><?php echo $this->escape($invite->extension_name); ?></strong>
+                                <?php if (!empty($invite->invited_by_name)) : ?>
+                                    <span class="text-muted small">
+                                        &mdash; <?php echo $this->escape($invite->invited_by_name); ?>
+                                    </span>
+                                <?php endif; ?>
+                            </span>
+                            <span class="btn-group btn-group-sm">
+                                <?php foreach ([1 => 'ACCEPT', 0 => 'DECLINE'] as $accept => $label) : ?>
+                                    <a class="btn <?php echo $accept ? 'btn-success' : 'btn-outline-secondary'; ?>"
+                                       href="<?php echo Route::_(
+                                           'index.php?option=com_jed&task=extension.respondToInvitation'
+                                           . '&extension_id=' . (int) $invite->extension_id
+                                           . '&accept=' . $accept
+                                           . '&' . Session::getFormToken() . '=1',
+                                           false
+                                       ); ?>">
+                                        <?php echo Text::_('COM_JED_MAINTAINER_INVITE_' . $label); ?>
+                                    </a>
+                                <?php endforeach; ?>
+                            </span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <?php /* ---- Reviews ---- */ ?>
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">

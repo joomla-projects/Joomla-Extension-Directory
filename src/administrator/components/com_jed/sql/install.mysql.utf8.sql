@@ -171,11 +171,25 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_category_map`
 
 DROP TABLE IF EXISTS `#__jed_extensions_maintainers`;
 
+-- Additional maintainers only. The owner lives in #__jed_extensions.owner and is never
+-- duplicated here (8.8) - "owner OR a row in this table" is the permission rule, so a person in
+-- both places would be a second, silently divergent record of the same fact. The application
+-- enforces it on write; a cross-table condition cannot be a MySQL constraint.
+--
+-- `state` is the invitation: 0 invited, 1 accepted, -1 declined. Only an accepted row grants
+-- anything. The privileges reach far - edit, publish, answer reviews - and the name can appear on
+-- the public listing, so being named by somebody else is not enough (P1-03 item 4). This is a
+-- single confirmation; the dual one is reserved for ownership transfer, where the stakes differ.
 CREATE TABLE IF NOT EXISTS `#__jed_extensions_maintainers`
 (
-	`extension_id` int unsigned NOT NULL,
-	`user_id`      int unsigned NOT NULL,
-	PRIMARY KEY (`extension_id`, `user_id`)
+	`extension_id`  int unsigned NOT NULL,
+	`user_id`       int unsigned NOT NULL,
+	`state`         tinyint(1)   NOT NULL DEFAULT '0',
+	`invited_by`    int unsigned DEFAULT NULL,
+	`invited_time`  datetime     DEFAULT NULL,
+	`accepted_time` datetime     DEFAULT NULL,
+	PRIMARY KEY (`extension_id`, `user_id`),
+	KEY `IDX_jed_maintainers_user_state` (`user_id`, `state`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `#__jed_extensions_images`;
