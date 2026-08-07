@@ -47,16 +47,37 @@
                label="COM_JED_REVIEWS_USED_FOR_LABEL" description="COM_JED_REVIEWS_USED_FOR_DESCR" hint=""/>
         <field name="version" required="true" filter="safehtml" type="text" label="COM_JED_REVIEWS_VERSION_LABEL"
                description="COM_JED_REVIEWS_VERSION_DESCR" hint=""/>
-        <field name="flagged" type="checkbox" checked="0" label="COM_JED_REVIEWS_FLAGGED_LABEL"
-               description="COM_JED_REVIEWS_FLAGGED_DESCR" hint=""/>
-        <field name="ip_address" filter="safehtml" type="text" label="COM_JED_GENERAL_IPADDRESS_LABEL"
-               description="COM_JED_REVIEWS_IP_ADDRESS_DESCR" hint=""/>
-        <field name="state" type="checkbox" checked="0" label="JPUBLISHED"
-               description="COM_JED_REVIEWS_PUBLISHED_DESCR" hint=""/>
         <field name="created_on" type="timecreated" label="COM_JED_GENERAL_CREATED_ON_LABEL"
                description="COM_JED_REVIEWS_CREATED_ON_DESCR" hint=""/>
         <field name="ordering"/>
         <field name="checked_out" type="hidden" filter="unset"/>
         <field name="checked_out_time" default="0000-00-00 00:00:00" type="hidden" filter="unset"/>
+    </fieldset>
+
+    <!--
+        Not the reviewer's to set. These three used to sit in the "review" fieldset above, which
+        the public template renders in full - so a reviewer could publish their own review past
+        moderation by posting jform[state]=1, and could clear a moderation flag the same way
+        (9.2, confirmed 1 Aug 2026).
+
+        They stay declared, because the model still binds against the form, but every one carries
+        filter="unset" so Form::filter() drops whatever was posted before the model ever sees it.
+        That is the same hardening forms/extensionform.xml already applies to `owner` and the
+        created_by/modified_by family - one mechanism, not two.
+
+        Keeping them in their own fieldset is the point: the boundary between what a reviewer may
+        set and what moderation owns is now visible in this file, rather than implied by which
+        fieldsets a template happens to loop over. The public template renders "review" only.
+
+        The administrator form (administrator/components/com_jed/forms/review.xml) is a separate
+        file and deliberately keeps these editable - that is where moderation happens.
+    -->
+    <fieldset name="moderation">
+        <field name="state" type="checkbox" checked="0" filter="unset" label="JPUBLISHED"
+               description="COM_JED_REVIEWS_PUBLISHED_DESCR" hint=""/>
+        <field name="flagged" type="checkbox" checked="0" filter="unset" label="COM_JED_REVIEWS_FLAGGED_LABEL"
+               description="COM_JED_REVIEWS_FLAGGED_DESCR" hint=""/>
+        <field name="ip_address" type="text" filter="unset" label="COM_JED_GENERAL_IPADDRESS_LABEL"
+               description="COM_JED_REVIEWS_IP_ADDRESS_DESCR" hint=""/>
     </fieldset>
 </form>

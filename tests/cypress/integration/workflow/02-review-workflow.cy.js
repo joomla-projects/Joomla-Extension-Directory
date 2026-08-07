@@ -100,6 +100,67 @@ describe('Workflow part 2: reviewer writes a review, admin moderates it', { test
     cy.doFrontendLogout()
   })
 
+  // P1-06. A reviewer could publish their own review past moderation by posting jform[state]=1,
+  // because state/flagged/ip_address were ordinary fields on the public form (9.2, confirmed).
+  it('does not let a reviewer publish their own review, and keeps it out of the public list', () => {
+    cy.doFrontendLogin(reviewer.username, reviewer.password, false)
+
+    cy.visit(`index.php?option=com_jed&view=reviewform&catid=${extension.extensionCatId}&id=${extension.extensionId}`)
+    cy.get('#reviewBtn').click()
+
+    // The moderation fields must not be on the page at all.
+    cy.get('#form-review').within(() => {
+      cy.get('[name="jform[state]"]').should('not.exist')
+      cy.get('[name="jform[flagged]"]').should('not.exist')
+      cy.get('[name="jform[ip_address]"]').should('not.exist')
+    })
+
+    // Post them anyway, the way an attacker would - the form filter is only the first line.
+    cy.get('#form-review').then(($form) => {
+      const add = (name, value) => {
+        Cypress.$('<input>').attr({ type: 'hidden', name, value }).appendTo($form)
+      }
+      add('jform[state]', '1')
+      add('jform[flagged]', '1')
+      add('jform[ip_address]', '203.0.113.99')
+    })
+
+    const probeTitle = `Bypass probe ${timestamp}`
+    cy.get('#jform_title').clear().type(probeTitle)
+    cy.get('#jform_used_for').clear().type('testing the moderation boundary')
+    cy.get('#jform_version').clear().type('1.0')
+    cy.get('#form-review button[type=submit]').click()
+
+    cy.doFrontendLogout()
+
+    // Logged out, the review must not appear: it is unmoderated, whatever was posted.
+    cy.visit('index.php?option=com_jed&view=reviews')
+    cy.contains(probeTitle).should('not.exist')
+  })
+
+  // The other half of P1-06: an ordinary reader could not report a review at all.
+  it('lets a logged-in reader report a review', () => {
+    cy.doFrontendLogin(Cypress.env('username'), Cypress.env('password'), false)
+
+    cy.then(() => {
+      cy.visit(`index.php?option=com_jed&view=review&id=${state.reviewId}`)
+    })
+
+    cy.contains('a', 'Report this review').click()
+
+    // The ticket form arrives prefilled and linked to the review, not to the extension.
+    cy.get('#jform_ticket_subject').invoke('val').should('match', /^Reporting Review - /)
+    cy.get('[name="jform[linked_item_type]"]').should('have.value', '2')
+    cy.get('[name="jform[linked_item_id]"]').should('have.value', String(state.reviewId))
+
+    cy.doFrontendLogout()
+  })
+
+  it('shows no report link to a logged-out reader', () => {
+    cy.visit('index.php?option=com_jed&view=reviews')
+    cy.contains('Report this review').should('not.exist')
+  })
+
   it('moderates and publishes the review as admin', () => {
     cy.doAdministratorLogin(Cypress.env('username'), Cypress.env('password'), false)
 

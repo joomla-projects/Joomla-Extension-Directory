@@ -249,24 +249,36 @@ class ReviewformModel extends FormModel
      */
     public function save(array $data): bool
     {
+        // An existing review is identified by a review id and by nothing else. This used to fall
+        // back to getState('extension.id') - an *extension* id used as a *review* id, which would
+        // have made the edit branch load an unrelated review on any request that populates that
+        // state (layout=edit, or the item_id menu parameter). Latent rather than exploited,
+        // because the ordinary save flow leaves extension.id null, but wrong either way.
+        $id         = (int) ($data['id'] ?? 0);
+        $isLoggedIn = JedHelper::isLoggedIn();
 
-        $id                 = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('extension.id');
-        $data['ip_address'] = $_SERVER['REMOTE_ADDR'];
-        $isLoggedIn         = JedHelper::isLoggedIn();
+        // Moderation's fields, not the reviewer's. reviewform.xml drops them with filter="unset"
+        // before the model is reached; this is the line that actually enforces it, and it holds
+        // for any caller - a future API endpoint included - not just for posts through that form.
+        // A review is published by moderation (P1-02) and flagged by staff; the address is
+        // recorded server-side, never taken from the request.
+        $data['state']      = 0;
+        $data['ip_address'] = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+        unset($data['flagged']);
 
         if ($id && $isLoggedIn) {
             /* Editing an existing review - a user may only ever edit their own. */
             $table = $this->getTable();
-            $table->load($id);
+
+            if (!$table->load($id)) {
+                throw new Exception(Text::_('COM_JED_ITEM_DOESNT_EXIST'), 404);
+            }
 
             if ((int) $table->created_by !== (int) Factory::getApplication()->getIdentity()->id && !JedHelper::isAdminOrSuperUser()) {
                 throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
             }
 
             $data['id'] = $id;
-            // An edited review re-enters moderation rather than silently keeping its
-            // previous approval.
-            $data['state'] = 0;
 
             if ($table->save($data) === true) {
                 $this->id = $table->id;

@@ -12,6 +12,7 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Site\Helper\JedHelper;
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
@@ -30,7 +31,31 @@ if (!$canEdit && $this->getCurrentUser()->authorise('core.edit.own', 'com_jed'))
 }
 
 $canRespond = JedHelper::isOwnerOrMaintainer((int) $this->item->extension_id);
+
+// Reporting a review was reachable only from the developer's dashboard, so a reader who found a
+// review abusive had no way to say so - a parity gap against JED3 (4.3). Login is required: an
+// anonymous report channel on a public directory is an abuse vector in its own right, and 7.1
+// shows JED3 kept a per-user `report` privilege for exactly that reason.
+//
+// litem/lid/vr are the same three parameters the extension detail page already passes; lid is
+// the review, vr stays the extension so the ticket lands on the right listing.
+$canReport = JedHelper::isLoggedIn() && !$isOwnReview;
+$reportUrl = Route::_(
+    'index.php?option=com_tickets&view=ticketform'
+    . '&litem=' . TicketType::Review->value
+    . '&lid=' . (int) $this->item->id
+    . '&vr=' . (int) $this->item->extension_id
+);
 ?>
+
+<?php if ($canReport) : ?>
+    <p class="text-end">
+        <a href="<?php echo $reportUrl; ?>" class="btn btn-sm btn-outline-secondary">
+            <span class="icon-flag" aria-hidden="true"></span>
+            <?php echo Text::_('COM_JED_REVIEW_REPORT_LABEL'); ?>
+        </a>
+    </p>
+<?php endif; ?>
 
 <div class="item_fields">
 

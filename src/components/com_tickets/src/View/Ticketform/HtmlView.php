@@ -160,8 +160,25 @@ class HtmlView extends BaseHtmlView
             if ($linked_item === TicketType::Review->value) {
                 $ticket_type = "Review";
             }
+
             $this->item->extension_title = JedHelper::getExtensionTitle($vr);
-            $this->item->ticket_title    = "Reporting " . $ticket_type . ' - ' . $this->item->extension_title;
+
+            // A review report names the review; `vr` still carries the extension so the ticket
+            // stays attached to the right listing. Without this, two reports about different
+            // reviews of the same extension arrive with identical subjects.
+            $subject = $linked_item === TicketType::Review->value
+                ? (JedHelper::getReviewTitle($linked_id) ?: $this->item->extension_title)
+                : $this->item->extension_title;
+
+            $this->item->ticket_title = "Reporting " . $ticket_type . ' - ' . $subject;
+
+            // ticket_title was computed here and consumed nowhere - the form rendered an empty
+            // subject box, so the ticket queue filled with untitled reports and a moderator had
+            // to open each one to see what it was about. Push it into the field the form
+            // actually renders, without overwriting anything the reporter has already typed.
+            if ($this->form instanceof Form && $this->form->getValue('ticket_subject') === null) {
+                $this->form->setValue('ticket_subject', null, $this->item->ticket_title);
+            }
         }
 
 

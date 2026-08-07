@@ -752,6 +752,32 @@ class JedHelper
      *
      * @since 4.0.0
      */
+    /**
+     * The title of a review, for the report ticket's subject line.
+     *
+     * The counterpart to getExtensionTitle(): a report about a review should name the review,
+     * not only the extension it belongs to, or a moderator reading the ticket queue cannot tell
+     * two reports of the same extension apart.
+     *
+     * @param int $reviewId The review id.
+     *
+     * @return string  Empty when the review does not exist.
+     *
+     * @since 4.1.0
+     */
+    public static function getReviewTitle(int $reviewId): string
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        return (string) $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName('title'))
+                ->from($db->quoteName('#__jed_reviews'))
+                ->where($db->quoteName('id') . ' = :id')
+                ->bind(':id', $reviewId, ParameterType::INTEGER)
+        )->loadResult();
+    }
+
     public static function getExtensionTitle(int $extensionId): string
     {
         // Create a new query object.

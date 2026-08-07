@@ -59,8 +59,10 @@ class ReviewsModel extends ListModel
                 'value_for_money_comment', 'a.value_for_money_comment',
                 'overall_score', 'a.overall_score',
                 'used_for', 'a.used_for',
-                'flagged', 'a.flagged',
-                'ip_address', 'a.ip_address',
+                // 'flagged' and 'ip_address' are deliberately absent. filter_fields is the
+                // allowlist ListModel validates "list_fullordering" against, so leaving them in
+                // would let anyone order the public review list by the moderation flag or by the
+                // reviewer's IP address with a hand-made URL, whatever the filter form offers.
                 'state', 'a.state',
                 'created_on', 'a.created_on',
                 'created_by', 'a.created_by',

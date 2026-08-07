@@ -46,10 +46,14 @@
             <option value="a.overall_score DESC">COM_JED_REVIEWS_FILTER_SORT_OVERALL_SCORE_DESC</option>
             <option value="a.used_for ASC">COM_JED_REVIEWS_FILTER_SORT_USED_FOR_ASC</option>
             <option value="a.used_for DESC">COM_JED_REVIEWS_FILTER_SORT_USED_FOR_DESC</option>
-            <option value="a.flagged ASC">COM_JED_REVIEWS_FILTER_SORT_FLAGGED_ASC</option>
-            <option value="a.flagged DESC">COM_JED_REVIEWS_FILTER_SORT_FLAGGED_DESC</option>
-            <option value="a.ip_address ASC">COM_JED_REVIEWS_FILTER_SORT_IP_ADDRESS_ASC</option>
-            <option value="a.ip_address DESC">COM_JED_REVIEWS_FILTER_SORT_IP_ADDRESS_DESC</option>
+            <!--
+                Sorting the public review list by the moderation flag or by the reviewer's IP
+                address was offered here. Removing the columns from the template was not enough
+                on its own: these options are a public control that orders reviews by data the
+                page is not allowed to show, and the labels advertise that the data exists.
+                Ordering by IP also groups a reviewer's postings together without ever printing
+                the value. The administrator list keeps both.
+            -->
             <option value="a.state ASC">COM_JED_GENERAL_FILTER_SORT_PUBLISHED_ASC</option>
             <option value="a.state DESC">COM_JED_GENERAL_FILTER_SORT_PUBLISHED_DESC</option>
             <option value="a.created_on ASC">COM_JED_GENERAL_FILTER_SORT_CREATED_ON_ASC</option>

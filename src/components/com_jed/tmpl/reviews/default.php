@@ -11,6 +11,8 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Site\Helper\JedHelper;
+use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
@@ -113,14 +115,14 @@ $wa->useStyle('com_jed.list');
                         <?php echo HTMLHelper::_('grid.sort', 'COM_JED_REVIEWS_USED_FOR_LABEL', 'a.used_for', $listDirn, $listOrder); ?>
                     </th>
 
-                    <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_REVIEWS_FLAGGED_LABEL', 'a.flagged', $listDirn, $listOrder); ?>
-                    </th>
-
-                    <th class=''>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JED_GENERAL_IPADDRESS_LABEL', 'a.ip_address', $listDirn, $listOrder); ?>
-                    </th>
-
+                    <?php
+                    // The flag and the reviewer's IP address used to be two more sortable columns
+                    // here. This is the public review list - no login required - so it published
+                    // the IP address of every reviewer in the directory, 36,171 of them in the
+                    // imported stock. They are moderation data, the same three fields
+                    // reviewform.xml now keeps in its own fieldset, and they belong in the
+                    // administrator's review list and nowhere else.
+                    ?>
                     <th class=''>
                         <?php echo HTMLHelper::_('grid.sort', 'JPUBLISHED', 'a.state', $listDirn, $listOrder); ?>
                     </th>
@@ -171,6 +173,22 @@ $wa->useStyle('com_jed.list');
                         <?php endif; ?>
                         <a href="<?php echo Route::_('index.php?option=com_jed&view=review&id=' . (int) $item->id); ?>">
                             <?php echo $this->escape($item->title); ?></a>
+                        <?php
+                        // Same report entry point as the single-review view, per row. Logged-in
+                        // readers only, and not on one's own review.
+                        if (JedHelper::isLoggedIn() && (int) $item->created_by !== (int) $user->id) :
+                            $reportUrl = Route::_(
+                                'index.php?option=com_tickets&view=ticketform'
+                                . '&litem=' . TicketType::Review->value
+                                . '&lid=' . (int) $item->id
+                                . '&vr=' . (int) $item->extension_id
+                            );
+                            ?>
+                            <a href="<?php echo $reportUrl; ?>" class="small text-muted ms-2">
+                                <span class="icon-flag" aria-hidden="true"></span>
+                                <?php echo Text::_('COM_JED_REVIEW_REPORT_LABEL'); ?>
+                            </a>
+                        <?php endif; ?>
                     </td>
                     <td>
                         <?php echo $item->alias; ?>
@@ -207,12 +225,6 @@ $wa->useStyle('com_jed.list');
                     </td>
                     <td>
                         <?php echo $item->used_for; ?>
-                    </td>
-                    <td>
-                        <?php echo $item->flagged; ?>
-                    </td>
-                    <td>
-                        <?php echo $item->ip_address; ?>
                     </td>
                     <td>
                         <?php echo $item->state; ?>

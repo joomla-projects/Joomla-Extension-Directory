@@ -45,9 +45,12 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
                       method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
 
                     <?php
-                    foreach ($this->form->getFieldsets() as $fieldset) {
-                        echo $this->form->renderFieldset($fieldset->name);
-                    }
+                    // The "review" fieldset only, never every fieldset the form declares.
+                    // reviewform.xml keeps state/flagged/ip_address in a separate "moderation"
+                    // fieldset, and rendering them here is what put a publish checkbox on the
+                    // public form in the first place (9.2). Naming the one fieldset means a
+                    // field added to "moderation" later cannot leak onto this page by default.
+                    echo $this->form->renderFieldset('review');
                     ?>
 
 
