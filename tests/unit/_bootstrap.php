@@ -96,3 +96,12 @@ require_once JPATH_PLATFORM . '/loader.php';
 
 // Setup the autoloaders.
 JLoader::setup();
+
+// The component's own namespaces. Joomla registers these from the installed manifest, which
+// only exists on a deployed site - this suite runs against the repository, so they are pointed
+// at src/ directly. Without this a test can only assert about source text; with it, it can call
+// the class it is testing.
+JLoader::registerNamespace('Jed\\Component\\Jed\\Administrator', dirname(JPATH_TESTS, 2) . '/src/administrator/components/com_jed/src');
+JLoader::registerNamespace('Jed\\Component\\Jed\\Site', dirname(JPATH_TESTS, 2) . '/src/components/com_jed/src');
+JLoader::registerNamespace('Jed\\Component\\Tickets\\Administrator', dirname(JPATH_TESTS, 2) . '/src/administrator/components/com_tickets/src');
+JLoader::registerNamespace('Jed\\Component\\Tickets\\Site', dirname(JPATH_TESTS, 2) . '/src/components/com_tickets/src');

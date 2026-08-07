@@ -9,6 +9,7 @@
  * @phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
  */
 
+use Jed\Component\Jed\Administrator\Parser\VideoParser;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -310,6 +311,12 @@ class PlgSampledataJed_Migrate extends CMSPlugin
             if ($i === 4) {
                 $plan[$i]['after'] = 'rebuildCategoryTree';
             }
+
+            // Step 6 is where #__jed_extensions is filled, so the videos it brought in are
+            // normalised straight afterwards - once, at import, never on render (8.4).
+            if ($i === 6) {
+                $plan[$i]['after'] = 'normaliseVideos';
+            }
         }
 
         $plan[11] = ['file' => 'history_prepare.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_HISTORY_PREPARE_SUCCESS'];
@@ -468,6 +475,71 @@ class PlgSampledataJed_Migrate extends CMSPlugin
             }
         } catch (\Throwable $e) {
             return Text::sprintf('PLG_SAMPLEDATA_JED_MIGRATE_ERROR_CATEGORY_REBUILD', $e->getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Normalise the imported `video` values into provider + id (`P1-11`).
+     *
+     * A PHP step rather than SQL because the parser is PHP: the patterns involved - a query
+     * string where `v` is not the first parameter, `{youtube}id|650{/youtube}`, a scheme that is
+     * simply missing - are not something a REGEXP_REPLACE should be asked to get right, and
+     * getting one of them subtly wrong across 1,258 rows is how a catalogue ends up full of
+     * embeds pointing at nothing.
+     *
+     * The raw column is left exactly as it was. It is what the developer typed, it is what the
+     * clean-up report has to quote back, and overwriting it would destroy the only evidence of
+     * what a value that failed to convert actually said.
+     *
+     * @return  string|null  An error message, or null on success.
+     *
+     * @since   4.1.0
+     */
+    private function normaliseVideos(): ?string
+    {
+        try {
+            $db = $this->getDatabase();
+
+            $rows = $db->setQuery(
+                $db->getQuery(true)
+                    ->select($db->quoteName(['id', 'video']))
+                    ->from($db->quoteName('#__jed_extensions'))
+                    ->where('TRIM(IFNULL(' . $db->quoteName('video') . ", '')) <> ''")
+            )->loadAssocList();
+
+            $converted = 0;
+
+            foreach ((array) $rows as $row) {
+                $video = VideoParser::parse((string) $row['video']);
+
+                if ($video === null) {
+                    // Left NULL on purpose. The row stays on the clean-up report rather than
+                    // being quietly stored as something it is not.
+                    continue;
+                }
+
+                $db->setQuery(
+                    $db->getQuery(true)
+                        ->update($db->quoteName('#__jed_extensions'))
+                        ->set($db->quoteName('video_provider') . ' = ' . $db->quote($video->provider))
+                        ->set($db->quoteName('video_id') . ' = ' . $db->quote($video->id))
+                        ->where($db->quoteName('id') . ' = ' . (int) $row['id'])
+                )->execute();
+
+                $converted++;
+            }
+
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf(
+                    'PLG_SAMPLEDATA_JED_MIGRATE_VIDEOS_NORMALISED',
+                    $converted,
+                    \count((array) $rows) - $converted
+                )
+            );
+        } catch (\Throwable $e) {
+            return Text::sprintf('PLG_SAMPLEDATA_JED_MIGRATE_ERROR_VIDEOS', $e->getMessage());
         }
 
         return null;

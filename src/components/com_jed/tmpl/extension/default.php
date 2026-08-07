@@ -45,6 +45,11 @@ if (JedHelper::isLoggedIn()) {
     $wa->useScript('com_jed.favorite');
 }
 
+// Only the click loads the embed, so the script is what makes the video playable at all.
+if (!empty($this->item->video_provider) && $this->item->video_provider !== 'file') {
+    $wa->useScript('com_jed.video');
+}
+
 ?>
 <?php if (JedHelper::isLoggedIn()) : ?>
     <div id="jed-favorite-i18n" class="d-none"
@@ -157,6 +162,14 @@ if (JedHelper::isLoggedIn()) {
                     <div class="jed-subitem-description mb-2 collapse">
                          <?php echo JedHelper::renderMarkdown($this->item->description); ?>
                     </div>
+
+                    <?php if (!empty($this->item->video_provider) && !empty($this->item->video_id)) : ?>
+                        <?php echo LayoutHelper::render('elements.video', [
+                            'provider' => $this->item->video_provider,
+                            'id'       => $this->item->video_id,
+                            'name'     => $this->item->name,
+                        ]); ?>
+                    <?php endif; ?>
 
                     <p class="button-group">
                         <a href="<?php echo $this->item->homepage_link ?>" class="button button--grey">Website</a>

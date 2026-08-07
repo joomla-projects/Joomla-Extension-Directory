@@ -15,11 +15,14 @@ namespace Jed\Component\Jed\Administrator\Table;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Parser\VideoParser;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Tag\TaggableTableInterface;
 use Joomla\CMS\Tag\TaggableTableTrait;
 use Joomla\Database\DatabaseDriver;
+use UnexpectedValueException;
 
 /**
  * Extension table
@@ -135,9 +138,51 @@ class ExtensionTable extends Table implements TaggableTableInterface
             $this->ordering = $this->getNextOrder();
         }
 
-
+        $this->normaliseVideo();
 
         return parent::check();
+    }
+
+    /**
+     * Keep `video_provider` and `video_id` in step with `video` (`P1-11`).
+     *
+     * On the table rather than in a model, because every save path leads through here - the
+     * backend form, the frontend form, the moderation copy - and the legacy column only grew
+     * into the mess `P0-03` measured because there was no single point that had to agree.
+     *
+     * A value the parser cannot recognise is rejected here rather than stored: the import had
+     * to accept whatever history handed it, but nothing new should be allowed to arrive in a
+     * shape the site cannot render. It throws rather than returning false, because every caller
+     * in this component ignores check()'s return value - a boolean nobody reads would have let
+     * the bad value straight through to store().
+     *
+     * @return void
+     *
+     * @throws UnexpectedValueException  When the value is not a usable video.
+     *
+     * @since 4.1.0
+     */
+    protected function normaliseVideo(): void
+    {
+        $raw = trim((string) ($this->video ?? ''));
+
+        $this->video = $raw;
+
+        if ($raw === '') {
+            $this->video_provider = null;
+            $this->video_id       = null;
+
+            return;
+        }
+
+        $video = VideoParser::parse($raw);
+
+        if ($video === null) {
+            throw new UnexpectedValueException(Text::_('COM_JED_EXTENSION_VIDEO_NOT_RECOGNISED'));
+        }
+
+        $this->video_provider = $video->provider;
+        $this->video_id       = $video->id;
     }
 
     /**

@@ -210,9 +210,20 @@ class ExtensionsModel extends ListModel
 
         $developer = $this->getState('filter.developer', '');
 
-        if ($developer !== '') {
-            $query->where($db->quoteName('users.name') . ' LIKE ' . $db->quote('%' . trim((string) $developer) . '%'));
+        // The P1-11 clean-up list. "Unrecognised" means the row has a video the parser could not
+        // make anything of - a channel, a playlist, a page that merely mentions a video, or a
+        // value truncated by the old varchar(100). Those are the rows somebody has to look at.
+        $video = $this->getState('filter.video', '');
+
+        if ($video === 'unrecognised') {
+            $query->where('TRIM(IFNULL(' . $db->quoteName('a.video') . ", '')) <> ''")
+                ->where($db->quoteName('a.video_id') . ' IS NULL');
+        } elseif ($video === 'recognised') {
+            $query->where($db->quoteName('a.video_id') . ' IS NOT NULL');
+        } elseif ($video === 'none') {
+            $query->where('TRIM(IFNULL(' . $db->quoteName('a.video') . ", '')) = ''");
         }
+
         $query->group($db->quoteName('a.id'));
 
         // Add the list ordering clause.
@@ -247,6 +258,7 @@ class ExtensionsModel extends ListModel
         // Compile the store id.
         $id .= ':' . $this->getState('filter.search');
         $id .= ':' . $this->getState('filter.state');
+        $id .= ':' . $this->getState('filter.video');
 
 
         return parent::getStoreId($id);

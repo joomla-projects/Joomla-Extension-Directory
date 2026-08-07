@@ -59,6 +59,13 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions`
 	`logo`                   varchar(255)    DEFAULT '',
 	`overview_image`         varchar(255)    DEFAULT '',
 	`video`                  varchar(255)    DEFAULT '',
+	-- The raw value above is kept as the developer typed it; these two are what P1-11's
+	-- parser made of it. Provider plus id rather than a ready-made embed URL: the card view
+	-- wants a thumbnail without an iframe, and that needs the id on its own. NULL means the
+	-- value could not be recognised as a video, which is a result and not a gap - those rows
+	-- are what the clean-up report lists.
+	`video_provider`         varchar(20)     DEFAULT NULL,
+	`video_id`               varchar(255)    DEFAULT NULL,
 	`internal_note`          mediumtext,
 	-- Blocking and soft delete are separate carriers from `state` on purpose (4.8, P1-01):
 	-- `state` belongs to the developer, `blocked` to the JED team. Mapped onto one column, a
@@ -138,6 +145,13 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_history`
 	`logo`                   varchar(255)    DEFAULT '',
 	`overview_image`         varchar(255)    DEFAULT '',
 	`video`                  varchar(255)    DEFAULT '',
+	-- The raw value above is kept as the developer typed it; these two are what P1-11's
+	-- parser made of it. Provider plus id rather than a ready-made embed URL: the card view
+	-- wants a thumbnail without an iframe, and that needs the id on its own. NULL means the
+	-- value could not be recognised as a video, which is a result and not a gap - those rows
+	-- are what the clean-up report lists.
+	`video_provider`         varchar(20)     DEFAULT NULL,
+	`video_id`               varchar(255)    DEFAULT NULL,
 	`internal_note`          mediumtext,
 	-- Mirrored from #__jed_extensions. This is where the block history lives: every block and
 	-- unblock writes a revision, so who blocked what, when, under which code and with which

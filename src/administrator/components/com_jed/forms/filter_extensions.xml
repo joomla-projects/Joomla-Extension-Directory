@@ -14,6 +14,22 @@
             <option value="">JOPTION_SELECT_PUBLISHED</option>
         </field>
 
+        <!--
+            The clean-up list P1-11 owes the JED team. A one-off report would be out of date the
+            first time somebody fixed a row; this stays true, and it is where the migration's
+            "%d could not be recognised" message points.
+        -->
+        <field name="video"
+               type="list"
+               label="COM_JED_EXTENSION_FILTER_VIDEO"
+               onchange="this.form.submit();"
+        >
+            <option value="">COM_JED_EXTENSION_FILTER_VIDEO_SELECT</option>
+            <option value="unrecognised">COM_JED_EXTENSION_FILTER_VIDEO_UNRECOGNISED</option>
+            <option value="recognised">COM_JED_EXTENSION_FILTER_VIDEO_RECOGNISED</option>
+            <option value="none">COM_JED_EXTENSION_FILTER_VIDEO_NONE</option>
+        </field>
+
     </fields>
 
     <fields name="list">

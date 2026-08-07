@@ -1062,7 +1062,7 @@ class ExtensionModel extends AdminModel
         // ExtensionformController/ExtensionformModel already use. Model::getState() alone isn't
         // reliable here because getTable() intentionally returns the history table rather than
         // the live #__jed_extensions table, so the framework's generic id bookkeeping doesn't apply.
-        $extensionId = (int) Factory::getApplication()->getUserState('com_jed.edit.extension.id');
+        $extensionId = (int) Factory::getApplication()->getUserState('com_jed.edit.extension.live_id');
 
         if (!$extensionId) {
             // No live row yet: create one first, so we have an id to attach the history entry to.
@@ -1072,7 +1072,7 @@ class ExtensionModel extends AdminModel
                 return false;
             }
 
-            Factory::getApplication()->setUserState('com_jed.edit.extension.id', $extensionId);
+            Factory::getApplication()->setUserState('com_jed.edit.extension.live_id', $extensionId);
         }
 
         $categories = (array) ($data['categories'] ?? []);

@@ -39,6 +39,14 @@ class ExtensionController extends FormController
      * AdminModel::populateState()/getState() bookkeeping isn't a reliable source for it. Stash it
      * explicitly in the session instead, the same way the site form already does.
      *
+     * The key is `…extension.live_id`, not `…extension.id`, and that is not cosmetic: this
+     * controller's edit context is `extension`, so `com_jed.edit.extension.id` is exactly the key
+     * FormController::holdEditId()/releaseEditId() keep their *array* of checked-out ids under.
+     * Sharing it meant the two overwrote each other - after any save that failed validation, the
+     * array `[74]` was read back here and cast to the integer 1, and the developer's next save was
+     * filed as a revision of extension 1. The site side does not have this problem because its
+     * context is `extensionform`.
+     *
      * @param string|null $key    The primary key of the item
      * @param string|null $urlVar The name of the "id" URL variable
      *
@@ -51,7 +59,7 @@ class ExtensionController extends FormController
         $result = parent::edit($key, $urlVar);
 
         $editId = $this->input->getInt('id', 0);
-        Factory::getApplication()->setUserState('com_jed.edit.extension.id', $editId);
+        Factory::getApplication()->setUserState('com_jed.edit.extension.live_id', $editId);
 
         return $result;
     }
@@ -66,7 +74,7 @@ class ExtensionController extends FormController
      */
     public function add()
     {
-        Factory::getApplication()->setUserState('com_jed.edit.extension.id', 0);
+        Factory::getApplication()->setUserState('com_jed.edit.extension.live_id', 0);
 
         return parent::add();
     }
@@ -234,7 +242,7 @@ class ExtensionController extends FormController
         $this->checkToken();
 
         $app         = Factory::getApplication();
-        $extensionId = $this->input->getInt('id') ?: (int) $app->getUserState('com_jed.edit.extension.id', 0);
+        $extensionId = $this->input->getInt('id') ?: (int) $app->getUserState('com_jed.edit.extension.live_id', 0);
         $email       = (string) $this->input->getString('transfer_email', '');
         $reason      = (string) $this->input->getString('transfer_reason', '');
 
@@ -362,7 +370,7 @@ class ExtensionController extends FormController
     private function runListingStateChange(string $action, callable $transition, string $successKey): bool
     {
         $app         = Factory::getApplication();
-        $extensionId = $this->input->getInt('id') ?: (int) $app->getUserState('com_jed.edit.extension.id', 0);
+        $extensionId = $this->input->getInt('id') ?: (int) $app->getUserState('com_jed.edit.extension.live_id', 0);
 
         if (!$app->getIdentity()->authorise($action, 'com_jed')) {
             $app->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
@@ -415,7 +423,7 @@ class ExtensionController extends FormController
             return false;
         }
 
-        $extensionId = (int) $app->getUserState('com_jed.edit.extension.id', 0);
+        $extensionId = (int) $app->getUserState('com_jed.edit.extension.live_id', 0);
 
         if ($extensionId > 0) {
             $queueService = new QueueService(Factory::getContainer()->get(DatabaseInterface::class));

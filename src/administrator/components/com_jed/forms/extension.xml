@@ -166,7 +166,7 @@
                 preview="true"
                 directory=""
         />
-        <field name="video" type="url" class="span12" label="COM_JED_EXTENSION_VIDEO_LABEL"/>
+        <field name="video" type="text" class="span12" label="COM_JED_EXTENSION_VIDEO_LABEL" description="COM_JED_EXTENSION_VIDEO_DESC"/>
 
         <field name="images"
                type="subform"

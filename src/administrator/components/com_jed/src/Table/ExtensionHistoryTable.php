@@ -15,10 +15,13 @@ namespace Jed\Component\Jed\Administrator\Table;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Parser\VideoParser;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
+use UnexpectedValueException;
 
 /**
  * ExtensionHistory table
@@ -147,8 +150,45 @@ class ExtensionHistoryTable extends Table
             }
         }
 
+        $this->normaliseVideo();
 
         return parent::check();
+    }
+
+    /**
+     * Keep `video_provider` and `video_id` in step with `video` (`P1-11`).
+     *
+     * The revision carries the normalised pair as well, not just the raw string. Approval copies
+     * a revision onto the live row column by column (`P1-02`), so a revision that only had the
+     * raw value would leave the live row with a video and no provider.
+     *
+     * @return void
+     *
+     * @throws UnexpectedValueException  When the value is not a usable video.
+     *
+     * @since 4.1.0
+     */
+    protected function normaliseVideo(): void
+    {
+        $raw = trim((string) ($this->video ?? ''));
+
+        $this->video = $raw;
+
+        if ($raw === '') {
+            $this->video_provider = null;
+            $this->video_id       = null;
+
+            return;
+        }
+
+        $video = VideoParser::parse($raw);
+
+        if ($video === null) {
+            throw new UnexpectedValueException(Text::_('COM_JED_EXTENSION_VIDEO_NOT_RECOGNISED'));
+        }
+
+        $this->video_provider = $video->provider;
+        $this->video_id       = $video->id;
     }
 
     /**
