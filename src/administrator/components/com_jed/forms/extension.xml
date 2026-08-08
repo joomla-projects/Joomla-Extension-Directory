@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<form addfieldprefix="Jed\Component\Jed\Administrator\Field">
+<form addfieldprefix="Jed\Component\Jed\Administrator\Field" addruleprefix="Jed\Component\Jed\Administrator\Rule">
 	<fieldset name="common" label="COM_JED_FIELDSET_COMMON_LABEL">
         <field name="id" type="text" readonly="true" class="readonly" default="0" filter="unset" description="JGLOBAL_FIELD_ID_DESC"/>
         <field name="extension_id" type="text" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"/>
@@ -74,7 +74,7 @@
                hint="COM_JED_EXTENSION_DESCRIPTION_LABEL"/>
         <field name="license" filter="safehtml" type="text" label="COM_JED_EXTENSION_LICENSE_LABEL"
                hint="COM_JED_EXTENSION_LICENSE_LABEL"/>
-        <field name="license_url" type="url" validate="url" label="COM_JED_EXTENSION_LICENSE_URL_LABEL"
+        <field name="license_url" type="jedurl" validate="jedurl" validator="reachable" label="COM_JED_EXTENSION_LICENSE_URL_LABEL"
                description="COM_JED_EXTENSION_LICENSE_URL_DESC"/>
         <field
                 name="requires_registration"
@@ -120,18 +120,18 @@
     </fieldset>
 
     <fieldset name="links" label="COM_JED_FIELDSET_LINKS_LABEL">
-        <field name="download_url" validate="url" type="url" label="COM_JED_EXTENSION_DOWNLOAD_LINK_LABEL"
+        <field name="download_url" type="jedurl" validate="jedurl" validator="download" label="COM_JED_EXTENSION_DOWNLOAD_LINK_LABEL"
                hint="COM_JED_EXTENSION_DOWNLOAD_LINK_LABEL"/>
-        <field name="support_url" validate="url" type="url" label="COM_JED_EXTENSION_SUPPORT_LINK_LABEL"
+        <field name="support_url" type="jedurl" validate="jedurl" validator="reachable" label="COM_JED_EXTENSION_SUPPORT_LINK_LABEL"
                hint="COM_JED_EXTENSION_SUPPORT_LINK_LABEL"/>
-        <field name="demo_url" validate="url" type="url" label="COM_JED_EXTENSION_DEMO_LINK_LABEL"
+        <field name="demo_url" type="jedurl" validate="jedurl" validator="reachable" label="COM_JED_EXTENSION_DEMO_LINK_LABEL"
                hint="COM_JED_EXTENSION_DEMO_LINK_LABEL"/>
-        <field name="documentation_url" validate="url" type="url"
+        <field name="documentation_url" type="jedurl" validate="jedurl" validator="reachable"
                label="COM_JED_EXTENSION_DOCUMENTATION_LINK_LABEL"
                hint="COM_JED_EXTENSION_DOCUMENTATION_LINK_LABEL"/>
-        <field name="git_url" validate="url" type="url" label="COM_JED_EXTENSION_GIT_URL_LABEL"
+        <field name="git_url" type="jedurl" validate="jedurl" validator="git" label="COM_JED_EXTENSION_GIT_URL_LABEL"
                hint="COM_JED_EXTENSION_GIT_URL_LABEL"/>
-        <field name="internal_download_url" validate="url" type="url"
+        <field name="internal_download_url" type="jedurl" validate="jedurl" validator="download"
                label="COM_JED_EXTENSION_INTERNAL_DOWNLOAD_URL_LABEL"
                hint="COM_JED_EXTENSION_INTERNAL_DOWNLOAD_URL_LABEL"/>
         <field name="download_key" filter="safehtml" type="text" label="COM_JED_EXTENSION_DOWNLOAD_KEY_LABEL"
@@ -141,13 +141,13 @@
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
-        <field name="update_url" validate="url" type="url" label="COM_JED_EXTENSION_UPDATE_URL_LABEL"
+        <field name="update_url" type="jedurl" validate="jedurl" validator="updateserver" label="COM_JED_EXTENSION_UPDATE_URL_LABEL"
                hint="COM_JED_EXTENSION_UPDATE_URL_LABEL"/>
-        <field name="developer_url" validate="url" type="url" label="COM_JED_EXTENSION_DEVELOPER_URL_LABEL"
+        <field name="developer_url" type="jedurl" validate="jedurl" validator="reachable" label="COM_JED_EXTENSION_DEVELOPER_URL_LABEL"
                hint="COM_JED_EXTENSION_DEVELOPER_URL_LABEL"/>
         <field name="developer_email" filter="string" type="email" label="COM_JED_EXTENSION_DEVELOPER_EMAIL_LABEL"
                hint="COM_JED_EXTENSION_DEVELOPER_EMAIL_LABEL"/>
-        <field name="changelog_url" validate="url" type="url" label="COM_JED_EXTENSION_CHANGELOG_URL_LABEL"
+        <field name="changelog_url" type="jedurl" validate="jedurl" validator="changelog" label="COM_JED_EXTENSION_CHANGELOG_URL_LABEL"
                hint="COM_JED_EXTENSION_CHANGELOG_URL_LABEL"/>
     </fieldset>
 

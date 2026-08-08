@@ -15,10 +15,10 @@ namespace Jed\Component\Jed\Administrator\Service;
 
 use Jed\Component\Jed\Administrator\Queue\QueueService;
 use Jed\Component\Jed\Administrator\Update\UpdateServerXmlParser;
+use Jed\Component\Jed\Administrator\Url\SafeHttpFetcher;
 use Joomla\CMS\Factory;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
-use Joomla\Http\Http;
 use RuntimeException;
 use Throwable;
 
@@ -33,7 +33,7 @@ class UpdateCheckService
 {
     /**
      * @param DatabaseInterface       $db             The database connector object.
-     * @param Http                    $http           The HTTP client used to fetch update feeds.
+     * @param SafeHttpFetcher         $fetcher        The guarded fetcher (P1-08).
      * @param UpdateServerXmlParser   $parser         Parses the update-site XML feed.
      * @param ExtensionVersionUpdater $versionUpdater Applies a detected version bump to the live row.
      * @param QueueService            $queueService   Enqueues the follow-up audit job.
@@ -42,7 +42,7 @@ class UpdateCheckService
      */
     public function __construct(
         private readonly DatabaseInterface $db,
-        private readonly Http $http,
+        private readonly SafeHttpFetcher $fetcher,
         private readonly UpdateServerXmlParser $parser,
         private readonly ExtensionVersionUpdater $versionUpdater,
         private readonly QueueService $queueService
@@ -96,13 +96,28 @@ class UpdateCheckService
     private function checkOne(object $row): bool
     {
         $extensionId = (int) $row->id;
-        $response    = $this->http->get($row->update_url, [], 15);
 
-        if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
-            throw new RuntimeException(\sprintf('Update server responded with HTTP %d', $response->getStatusCode()));
+        // Through SafeHttpFetcher, not the plain HTTP client this used to use (P1-08). The URL is
+        // whatever a developer typed into a form; fetching it unguarded from a scheduled task is
+        // the same server-side request forgery the AJAX endpoint is built to prevent, only
+        // without a person watching. It is arguably the worse of the two: the task runs as the
+        // site, on a schedule, and a redirect into private space would have been followed
+        // silently every time it ran.
+        $response = $this->fetcher->fetch((string) $row->update_url);
+
+        if ($response->refused) {
+            throw new RuntimeException(\sprintf('Update server URL refused: %s', $response->reason));
         }
 
-        $result = $this->parser->parse((string) $response->getBody());
+        if (!$response->isOk()) {
+            throw new RuntimeException(
+                $response->status === 0
+                    ? \sprintf('Update server could not be reached (%s)', $response->reason)
+                    : \sprintf('Update server responded with HTTP %d', $response->status)
+            );
+        }
+
+        $result = $this->parser->parse($response->body);
 
         if ($result === null) {
             $this->stampCheck($extensionId, 'Update feed contained no <update> entries.');

@@ -16,6 +16,7 @@ DROP TABLE IF EXISTS `#__jed_user_access`;
 DROP TABLE IF EXISTS `#__jed_user_review_bans`;
 DROP TABLE IF EXISTS `#__jed_suspect_ip_ranges`;
 DROP TABLE IF EXISTS `#__jed_queue_jobs`;
+DROP TABLE IF EXISTS `#__jed_url_checks`;
 
 DELETE FROM `#__mail_templates` WHERE `template_id` = 'com_jed.audit_report';
 

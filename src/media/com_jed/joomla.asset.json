@@ -317,6 +317,26 @@
       },
       "package": "jed",
       "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.jedurl",
+      "type": "script",
+      "uri": "media/com_jed/js/jedurl.js",
+      "attributes": {
+        "defer": true
+      },
+      "dependencies": [
+        "form.validate"
+      ],
+      "package": "jed",
+      "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.jedurl",
+      "type": "style",
+      "uri": "media/com_jed/css/jedurl.css",
+      "package": "jed",
+      "version": "4.0.0"
     }
   ],
   "description": "Joomla Extension Directory",

@@ -22,6 +22,7 @@ use Jed\Component\Jed\Administrator\Service\ExtensionVersionUpdater;
 use Jed\Component\Jed\Administrator\Service\ScoreCalculationService;
 use Jed\Component\Jed\Administrator\Service\UpdateCheckService;
 use Jed\Component\Jed\Administrator\Update\UpdateServerXmlParser;
+use Jed\Component\Jed\Administrator\Url\SafeHttpFetcher;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Extension\PluginInterface;
 use Joomla\CMS\Factory;
@@ -53,7 +54,16 @@ return new class () implements ServiceProviderInterface {
 
                 $queueService   = new QueueService($db);
                 $versionUpdater = new ExtensionVersionUpdater($db);
-                $updateCheck    = new UpdateCheckService($db, $http, new UpdateServerXmlParser(), $versionUpdater, $queueService);
+                // The update check fetches a URL a developer typed, so it goes through the
+                // guarded fetcher (P1-08) rather than the plain HTTP client. $http stays for the
+                // Anthropic call below, which talks to one fixed endpoint we control.
+                $updateCheck    = new UpdateCheckService(
+                    $db,
+                    new SafeHttpFetcher(),
+                    new UpdateServerXmlParser(),
+                    $versionUpdater,
+                    $queueService
+                );
 
                 $dockerRunner = new DockerRunner(
                     new ProcessRunner(),

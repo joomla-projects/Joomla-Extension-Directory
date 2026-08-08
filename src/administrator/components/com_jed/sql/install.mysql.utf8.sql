@@ -496,6 +496,44 @@ CREATE TABLE IF NOT EXISTS `#__jed_queue_jobs`
 	KEY `IDX_jed_queue_jobs_extension_id` (`extension_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `#__jed_url_checks`;
+
+-- The result of every URL check the JED has run (P1-08). Three jobs in one table, which is
+-- why it exists at all rather than the check being fire-and-forget:
+--
+--  * the cache. Typing in a form fires a check per field; without a freshness window the JED
+--    would hammer a developer's server on every keystroke that survives the debounce.
+--  * the record the JED team reads during moderation. "This download link has not answered
+--    since March" is a moderation fact, and it is not visible anywhere if the answer only
+--    ever reached the browser that asked.
+--  * the rate limit. One row per attempt per user is what the per-user bound counts.
+--
+-- url_hash rather than the URL as the lookup key: the same address is stored in several
+-- fields and several listings, and a hash indexes in a fixed width where a varchar(255) with
+-- a full index does not. The URL itself is kept next to it because the moderation view has to
+-- show what was checked. Results are never public (4.9).
+CREATE TABLE IF NOT EXISTS `#__jed_url_checks`
+(
+	`id`           int unsigned NOT NULL AUTO_INCREMENT,
+	`extension_id` int unsigned DEFAULT NULL,
+	`field`        varchar(64)  NOT NULL DEFAULT '',
+	`validator`    varchar(32)  NOT NULL DEFAULT '',
+	`url`          varchar(255) NOT NULL DEFAULT '',
+	`url_hash`     char(64)     NOT NULL,
+	-- ok | notice | error, per UrlCheckResult. Only `error` ever blocks a save, and only the
+	-- format rules produce one - a validator can never write `error` here.
+	`state`        varchar(10)  NOT NULL DEFAULT 'notice',
+	`http_status`  smallint unsigned NOT NULL DEFAULT '0',
+	`message`      varchar(255) NOT NULL DEFAULT '',
+	`detail`       varchar(255) DEFAULT NULL,
+	`checked_by`   int unsigned NOT NULL DEFAULT '0',
+	`checked`      datetime     NOT NULL,
+	PRIMARY KEY (`id`),
+	KEY `IDX_jed_url_checks_lookup` (`url_hash`, `validator`, `checked`),
+	KEY `IDX_jed_url_checks_user` (`checked_by`, `checked`),
+	KEY `IDX_jed_url_checks_extension` (`extension_id`, `field`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
 
 INSERT INTO `#__mail_templates` (`template_id`, `extension`, `language`, `subject`, `body`, `htmlbody`, `attachments`, `params`) VALUES
 ('com_jed.audit_report', 'com_jed', '', 'COM_JED_AUDIT_REPORT_EMAIL_SUBJECT', 'COM_JED_AUDIT_REPORT_EMAIL_BODY', '', '', '{"tags":["sitename","extensionname","extensionversion","phpstanreport","claudereport"]}');

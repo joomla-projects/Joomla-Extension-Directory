@@ -1,0 +1,64 @@
+/**
+ * @package JED
+ *
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ *
+ * The status line under a `jedurl` field.
+ *
+ * Every state carries a glyph as well as a colour. 13.8: colour alone is not feedback - about one
+ * man in twelve cannot separate the red from the green, and the three states here are exactly red,
+ * amber and green.
+ */
+.jedurl-status {
+    display: block;
+    margin-top: .25rem;
+    font-size: .875rem;
+    min-height: 1.25rem;
+}
+
+.jedurl-status:empty {
+    display: none;
+}
+
+.jedurl-status::before {
+    margin-right: .35rem;
+    font-weight: 700;
+}
+
+.jedurl-status--ok {
+    color: #1a7f37;
+}
+
+.jedurl-status--ok::before {
+    content: "\2713"; /* check mark */
+}
+
+.jedurl-status--notice {
+    color: #8a6100;
+}
+
+.jedurl-status--notice::before {
+    content: "\26A0"; /* warning sign */
+}
+
+.jedurl-status--error {
+    color: #b42318;
+}
+
+.jedurl-status--error::before {
+    content: "\2717"; /* ballot X */
+}
+
+.jedurl-status--checking {
+    color: #575757;
+}
+
+.jedurl-status--checking::before {
+    content: "\2026"; /* horizontal ellipsis */
+}
+
+.jedurl-recheck {
+    padding: 0;
+    font-size: .8125rem;
+}
