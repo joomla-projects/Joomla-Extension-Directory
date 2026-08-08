@@ -27,6 +27,22 @@ use Joomla\CMS\Language\Text;
 class HtmlView extends CategoryView
 {
     /**
+     * Title of the category being viewed.
+     *
+     * @var   string
+     * @since 4.0.0
+     */
+    protected string $categoryTitle = '';
+
+    /**
+     * Rendered breadcrumb trail from the root down to the category being viewed.
+     *
+     * @var   string
+     * @since 4.0.0
+     */
+    protected string $categoryHierarchy = '';
+
+    /**
      * Display the view
      *
      * @param string $tpl Template name
@@ -55,6 +71,12 @@ class HtmlView extends CategoryView
 
         $this->children = $model->getChildren();
 
+        // The heading used to be read from $this->items[0], which a category holding no listings
+        // of its own does not have - three warnings and an empty heading. Both come from the
+        // category itself now, which exists either way.
+        $category                = $model->getCurrentCategory();
+        $this->categoryTitle     = $category->title ?? Text::_('COM_JED_EXTENSIONS');
+        $this->categoryHierarchy = $category ? $model->getCategoryHierarchy((int) $category->id) : '';
 
         $this->params     = $app->getParams();
 

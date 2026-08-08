@@ -17,6 +17,7 @@ namespace Jed\Component\Jed\Site\Model;
 use Exception;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
+use Jed\Component\Jed\Site\Helper\JedcategoryHelper;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
 use Jed\Component\Jed\Site\Helper\JedtrophyHelper;
@@ -62,28 +63,14 @@ class CategoryModel extends ListModel
      * @since 4.0.0
      */
     protected CategoryNode|bool|null $l_category_parent = null;
-    /**
-     * Parent category of the current one
-     *
-     * @var   bool|CategoryNode|null
-     * @since 4.0.0
-     */
-    protected CategoryNode|bool|null $l_category_leftsibling = null;
-    /**
-     * Parent category of the current one
-     *
-     * @var   CategoryNode|null
-     * @since 4.0.0
-     */
-    protected ?CategoryNode $l_category_rightsibling = null;
 
     /**
      * Array of checked categories -- used to save values when _nodes are null
      *
-     * @var   bool
+     * @var   array
      * @since 1.6
      */
-    protected array $l_checkedCategories;
+    protected array $l_checkedCategories = [];
 
     /**
      * Constructor.
@@ -415,14 +402,11 @@ class CategoryModel extends ListModel
     public function getCategory(): array
     {
         $db         = $this->getDatabase();
-        $id         = Factory::getApplication()->getInput()->getInt('id', -1);
+        $id         = $this->getRequestedCategoryKey();
         $extension  = 'com_jed';
         $categories = [];
 
-        if ($id <> -1) {
-            if ($id === 0) {
-                $id = 'root';
-            }
+        if ($id !== null) {
 
             // Record that has this $id has been checked
             $this->l_checkedCategories[$id] = true;
@@ -490,19 +474,17 @@ class CategoryModel extends ListModel
                 $query->from($db->quoteName('#__categories', 'c'));
             }
 
-            // Note: i for item
-
-            $subQuery = $db->getQuery(true)->select('COUNT(' . $db->quoteName($db->escape('i.id')) . ')')->from($db->quoteName($db->escape('#__jed_extensions'), 'i'))->where($db->quoteName($db->escape('i.catid')) . ' = ' . $db->quoteName('c.id'));
-
-
-            $subQuery->where($db->quoteName($db->escape('i.state')) . ' = 1');
-
-
-
-            $query->select('(' . $subQuery . ') AS ' . $db->quoteName('numitems'));
-
             $db->setQuery($query);
             $results = $db->loadObjectList('id');
+
+            // Listing counts come from JedcategoryHelper, not from a subquery here: it applies
+            // the visibility rule (4.8) and counts the whole subtree, so a badge on this page
+            // means the same as the badge for the same category on the overview.
+            $counts = JedcategoryHelper::getCounts();
+
+            foreach ($results as $result) {
+                $result->numitems = $counts[(int) $result->id] ?? 0;
+            }
 
             $childrenLoaded = false;
 
@@ -573,56 +555,81 @@ class CategoryModel extends ListModel
     }
 
     /**
-     * Get the left sibling (adjacent) categories.
+     * The key the current request's category is stored under in {@see $l_category_item}.
      *
-     * @return CategoryNode|bool|null  An array of categories or false if an error occurs.
+     * The tree is keyed by category id with one exception: Joomla's root is stored as the string
+     * 'root'. Reading the raw request id therefore missed the entry for `id=0`, and missed it
+     * entirely when no id was given at all - which is how the four accessors below ended up
+     * dereferencing null and taking the page down with a 500.
      *
-     * @since  1.6
+     * @return int|string|null  The array key, or null when the request names no category.
+     *
+     * @since  4.0.0
      * @throws Exception
      */
-    public function &getLeftSibling(): CategoryNode|bool|null
+    private function getRequestedCategoryKey(): int|string|null
     {
-        if (!\is_object($this->l_category_item)) {
-            $this->getCategory();
+        $id = Factory::getApplication()->getInput()->getInt('id', -1);
+
+        if ($id === -1) {
+            return null;
         }
-        $id                           = Factory::getApplication()->getInput()->getInt('id', -1);
-        $this->l_category_leftsibling = $this->l_category_item[$id]->lft;
-        return $this->l_category_leftsibling;
+
+        return $id === 0 ? 'root' : $id;
     }
 
     /**
-     * Get the right sibling (adjacent) categories.
+     * The loaded node for the current request, or null when there is none.
      *
-     * @return CategoryNode|bool|null  An array of categories or false if an error occurs.
+     * @return CategoryNode|null
      *
-     * @since  1.6
+     * @since  4.0.0
      * @throws Exception
      */
-    public function &getRightSibling(): CategoryNode|bool|null
+    private function getCurrentNode(): ?CategoryNode
     {
-        if (!\is_object($this->l_category_item)) {
+        // The old guard here was `!is_object($this->l_category_item)`, and $l_category_item is
+        // typed array - so it was always true and the tree was reloaded on every accessor call.
+        if ($this->l_category_item === []) {
             $this->getCategory();
         }
-        $id                            = Factory::getApplication()->getInput()->getInt('id', -1);
-        $this->l_category_rightsibling = $this->l_category_item[$id]->rgt;
-        return $this->l_category_rightsibling ;
+
+        $key = $this->getRequestedCategoryKey();
+
+        if ($key === null) {
+            return null;
+        }
+
+        $node = $this->l_category_item[$key] ?? null;
+
+        return $node instanceof CategoryNode ? $node : null;
+    }
+
+    /**
+     * The category being viewed, or null when the request names no reachable one.
+     *
+     * @return CategoryNode|null
+     *
+     * @since  4.0.0
+     * @throws Exception
+     */
+    public function getCurrentCategory(): ?CategoryNode
+    {
+        return $this->getCurrentNode();
     }
 
     /**
      * Get the child categories.
      *
-     * @return array  An array of categories or false if an error occurs.
+     * @return array  The child categories, empty when the request names no reachable category.
      *
      * @since  1.6
      * @throws Exception
      */
     public function &getChildren(): array
     {
-        if (!\is_object($this->l_category_item)) {
-            $this->getCategory();
-        }
-        $id                        = Factory::getApplication()->getInput()->getInt('id', -1);
-        $this->l_category_children = $this->l_category_item[$id]->getChildren();
+        $node                      = $this->getCurrentNode();
+        $this->l_category_children = $node ? $node->getChildren() : [];
 
         return $this->l_category_children;
     }
@@ -630,19 +637,16 @@ class CategoryModel extends ListModel
     /**
      * Get the parent category.
      *
-     * @return CategoryNode An array of categories or false if an error occurs.
+     * @return CategoryNode|null  The parent, or null when the request names no reachable category.
      *
      * @since  4.0.0
      * @throws Exception
      */
-    public function getParent(): CategoryNode
+    public function getParent(): ?CategoryNode
     {
-        if (!\is_object($this->l_category_item)) {
-            $this->getCategory();
-        }
-        $id                      = Factory::getApplication()->getInput()->getInt('id', -1);
-        $category_parent_id      = $this->l_category_item[$id]->parent_id;
-        $this->l_category_parent = $this->l_category_item[$category_parent_id];
-        return $this->l_category_parent;
+        $node                    = $this->getCurrentNode();
+        $this->l_category_parent = $node?->getParent();
+
+        return $this->l_category_parent instanceof CategoryNode ? $this->l_category_parent : null;
     }
 }

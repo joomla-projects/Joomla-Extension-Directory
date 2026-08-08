@@ -15,10 +15,9 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Site\Helper\JedHelper;
+use Jed\Component\Jed\Site\Helper\JedcategoryHelper;
 use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Categories\CategoryNode;
-use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use stdClass;
 
@@ -65,39 +64,6 @@ class CategoriesModel extends ListModel
     }
 
     /**
-     * How many listings each category holds that a visitor can actually open.
-     *
-     * One query for the whole tree rather than one per category: the JED has several hundred
-     * categories and the alternative is a query per badge on a page that is mostly badges.
-     *
-     * The condition comes from {@see JedHelper::getExtensionVisibilityCondition()} - the same
-     * function the browse lists and the detail page use - so a counter and the list it links to
-     * cannot disagree. That is the whole reason this exists instead of Joomla's counter.
-     *
-     * @return array<int, int>  Category id => number of listings.
-     *
-     * @since 4.0.0
-     */
-    protected function countVisiblePerCategory(): array
-    {
-        $db    = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true)
-            ->select($db->quoteName('a.catid'))
-            ->select('COUNT(*) AS ' . $db->quoteName('numitems'))
-            ->from($db->quoteName('#__jed_extensions', 'a'))
-            ->where(JedHelper::getExtensionVisibilityCondition($db))
-            ->group($db->quoteName('a.catid'));
-
-        $counts = [];
-
-        foreach ($db->setQuery($query)->loadObjectList() ?: [] as $row) {
-            $counts[(int) $row->catid] = (int) $row->numitems;
-        }
-
-        return $counts;
-    }
-
-    /**
      * Build query and where for protected _getList function and return a list
      *
      * @param int|null $limitStart Where to start looking up records
@@ -138,7 +104,10 @@ class CategoriesModel extends ListModel
         // agree (4.8): approved by the team, online per the developer, not blocked, not deleted.
         // Against the imported stock that is 6,398 counted against 5,583 actually openable - 815
         // listings a category badge would advertise and a visitor could not reach.
-        $visible = $this->countVisiblePerCategory();
+        //
+        // The counts include each category's subtree, so a parent badge describes the branch
+        // rather than only the listings filed directly against it.
+        $visible = JedcategoryHelper::getCounts();
 
         foreach ($this->_items as $item) {
             $row = $this->nodeToObject($item);

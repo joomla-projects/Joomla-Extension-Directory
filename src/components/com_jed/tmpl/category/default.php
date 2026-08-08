@@ -15,6 +15,7 @@
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
@@ -58,53 +59,65 @@ if (JedHelper::isLoggedIn()) {
          data-ajax-url="<?php echo Route::_('index.php?option=com_jed&format=raw'); ?>"
          data-csrf-token="<?php echo Session::getFormToken(); ?>"></div>
 <?php endif; ?>
-<div class="jed-home-categories">
-    <div class="container">
-        <div class="row gx-5">
-            <?php
-
-            foreach ($this->items->children as $c) {
-                ?>
-                <div class="col-lg-4 mb-3 card jed-home-category">
-                    <div class="card-header jed-home-item-view">
-                        <span class="jed-home-category-icon fa fa-camera rounded-circle bg-warning p-2 text-white d-inline-block"></span>
-                        <h4 class="jed-home-category-title d-inline-block">
-                            <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $c->id); ?>">
-                                <?php echo $c->title; ?>
-                            </a>
-                        </h4>
-                        <span class="badge rounded-pill float-end"><?php echo $c->getNumItems(true); ?></span>
+<?php // The subcategories of the category being viewed. $this->items holds extensions, not the
+      // category tree - reading ->children off it was what produced two warnings per page load
+      // and left this whole block empty. ?>
+<?php if ($this->children) : ?>
+    <div class="jed-home-categories">
+        <div class="container">
+            <div class="row gx-5">
+                <?php foreach ($this->children as $c) : ?>
+                    <div class="col-lg-4 mb-3 card jed-home-category">
+                        <div class="card-header jed-home-item-view">
+                            <span class="jed-home-category-icon fa fa-camera rounded-circle bg-warning p-2 text-white d-inline-block"></span>
+                            <h4 class="jed-home-category-title d-inline-block">
+                                <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $c->id); ?>">
+                                    <?php echo $this->escape($c->title); ?>
+                                </a>
+                            </h4>
+                            <?php // getNumItems() without the recursive flag: numitems already covers the
+                                  // subtree (JedcategoryHelper), so recursing again would double-count. ?>
+                            <span class="badge rounded-pill float-end"><?php echo (int) $c->getNumItems(); ?></span>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <?php foreach ($c->getChildren() as $sc) : ?>
+                                    <?php if ($sc->getNumItems() > 0) : ?>
+                                        <li class="list-group-item">
+                                            <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $sc->id); ?>">
+                                                <?php echo $this->escape($sc->title); ?>
+                                            </a>
+                                            <span class="badge rounded-pill float-end badge-info-cat">  <?php echo (int) $sc->getNumItems(); ?></span>
+                                        </li>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <?php foreach ($c->getChildren() as $sc) {
-                                if ($sc->getNumItems(true) > 0) { ?>
-                                    <li class="list-group-item">
-                                        <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $sc->id); ?>">
-                                            <?php echo $sc->title; ?>
-                                        </a>
-                                        <span class="badge rounded-pill float-end badge-info-cat">  <?php echo $sc->getNumItems(true); ?></span>
-                                    </li>
-                                <?php }
-                            } ?>
-                        </ul>
-                    </div>
-                </div>
-            <?php } ?>
+                <?php endforeach; ?>
+            </div>
         </div>
     </div>
-</div>
+<?php endif; ?>
 
 <div class="jed-cards-wrapper margin-bottom-half">
     <div class="jed-container">
-        <h2 class="heading heading--m"><?php echo $this->items[0]->category_title; ?> Extensions</h2>
-        <p class="font-size-s"><?php echo $this->items[0]->category_hierarchy; ?></p>
-        <ul class="jed-grid jed-grid--1-1-1">
-            <?php foreach ($this->items as $item) : ?>
-                <?php // One card, one mapping (P1-14). See JedHelper::cardData(). ?>
-                <?php echo LayoutHelper::render('cards.extension', JedHelper::cardData($item)); ?>
-            <?php endforeach; ?>
-        </ul>
+        <?php // A category can legitimately hold no listings of its own while its children do,
+              // so the heading is taken from the category rather than from the first extension. ?>
+        <h2 class="heading heading--m"><?php echo $this->escape($this->categoryTitle); ?> Extensions</h2>
+        <?php if ($this->categoryHierarchy !== '') : ?>
+            <p class="font-size-s"><?php echo $this->categoryHierarchy; ?></p>
+        <?php endif; ?>
+        <?php if ($this->items) : ?>
+            <ul class="jed-grid jed-grid--1-1-1">
+                <?php foreach ($this->items as $item) : ?>
+                    <?php // One card, one mapping (P1-14). See JedHelper::cardData(). ?>
+                    <?php echo LayoutHelper::render('cards.extension', JedHelper::cardData($item)); ?>
+                <?php endforeach; ?>
+            </ul>
+        <?php else : ?>
+            <p><?php echo Text::_('COM_JED_CATEGORY_NO_EXTENSIONS'); ?></p>
+        <?php endif; ?>
     </div>
 </div>
 
