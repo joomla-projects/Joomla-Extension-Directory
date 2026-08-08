@@ -9,6 +9,7 @@
  * @phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
  */
 
+use Jed\Component\Jed\Administrator\Helper\ContentTypeHelper;
 use Jed\Component\Jed\Administrator\Parser\VideoParser;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
@@ -90,14 +91,45 @@ class PlgSampledataJed_Migrate extends CMSPlugin
     private const HISTORY_BATCHES = 16;
 
     /**
+     * How many steps the #__ucm_content half of the tag import is spread over.
+     *
+     * Same reasoning as HISTORY_BATCHES, different table: the tag import has to write one
+     * #__ucm_content row per tagged extension, and against the real data that is 17 MB of listing
+     * descriptions across 13,860 rows into a core table with twelve secondary indexes - ~28
+     * seconds as a single statement, which is not a safe size for one request on a host with a
+     * 30 second limit. Six batches put it at roughly five seconds each. Raise this if a batch
+     * still exceeds the limit; nothing else needs changing.
+     *
+     * @var    integer
+     *
+     * @since  4.1.0
+     */
+    private const TAG_UCM_BATCHES = 6;
+
+    /**
      * Total number of steps: ten fixed migration steps, the history prepare step, one step per
-     * history batch, then the baseline revision, the RSForms staging and the cleanup.
+     * history batch, then the baseline revision, the RSForms staging, the three-part tag import
+     * (vocabulary, one step per UCM batch, assignments) and the cleanup.
      *
      * @var    integer
      *
      * @since  4.0.0
      */
-    private const STEP_COUNT = 14 + self::HISTORY_BATCHES;
+    private const STEP_COUNT = 16 + self::HISTORY_BATCHES + self::TAG_UCM_BATCHES;
+
+    /**
+     * How many surviving assignments a legacy tag needs before it is imported (`P1-16`).
+     *
+     * "A tag used once is noise" is the plan's wording; a tag used zero times is not a vocabulary
+     * entry at all. On the real data this drops 20 of the 528 legacy tags and 10 of the 38,687
+     * assignments, and it happens to remove every alias-less duplicate row in one go - see the
+     * commentary in sql/tags.sql. The dropped tags are named on the run's report.
+     *
+     * @var    integer
+     *
+     * @since  4.1.0
+     */
+    private const TAG_MIN_USES = 2;
 
     /**
      * Constructor.
@@ -288,14 +320,55 @@ class PlgSampledataJed_Migrate extends CMSPlugin
         return $this->applyStep(30);
     }
 
+    public function onAjaxSampledataApplyStep31()
+    {
+        return $this->applyStep(31);
+    }
+
+    public function onAjaxSampledataApplyStep32()
+    {
+        return $this->applyStep(32);
+    }
+
+    public function onAjaxSampledataApplyStep33()
+    {
+        return $this->applyStep(33);
+    }
+
+    public function onAjaxSampledataApplyStep34()
+    {
+        return $this->applyStep(34);
+    }
+
+    public function onAjaxSampledataApplyStep35()
+    {
+        return $this->applyStep(35);
+    }
+
+    public function onAjaxSampledataApplyStep36()
+    {
+        return $this->applyStep(36);
+    }
+
+    public function onAjaxSampledataApplyStep37()
+    {
+        return $this->applyStep(37);
+    }
+
+    public function onAjaxSampledataApplyStep38()
+    {
+        return $this->applyStep(38);
+    }
+
     /**
      * Map every step number onto the SQL file that implements it.
      *
-     * Steps 1-10 are the fixed migration tasks. Step 11 prepares the history import, the next
-     * HISTORY_BATCHES steps each import one batch from the same parameterised file, and the
-     * final three add the baseline revision, stage the RSForms data and clean up.
+     * Steps 1-10 are the fixed migration tasks. Step 11 prepares the history import and the next
+     * HISTORY_BATCHES steps each import one batch from the same parameterised file. Then come the
+     * baseline revision and the RSForms staging, the tag import - one vocabulary step,
+     * TAG_UCM_BATCHES batch steps and one assignment step - and finally the cleanup.
      *
-     * @return  array<int, array{file: string, batch?: int, label: string}>
+     * @return  array<int, array{file: string, batch?: int, tagBatch?: int, label: string, before?: string|string[], after?: string|string[]}>
      *
      * @since   4.0.0
      */
@@ -333,6 +406,35 @@ class PlgSampledataJed_Migrate extends CMSPlugin
 
         $plan[++$next] = ['file' => 'history_baseline.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_HISTORY_BASELINE_SUCCESS'];
         $plan[++$next] = ['file' => 'rsforms.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_RSFORMS_SUCCESS'];
+
+        // Tags come last before the cleanup because they depend on both the categories (step 4)
+        // and the extensions (step 6) already being there. The content type row has to exist
+        // before anything is written - it supplies the type_id every mapping row carries - and the
+        // tag nested set has to be rebuilt once the records are in, for the same reason step 4
+        // rebuilds the category tree.
+        $plan[++$next] = [
+            'file'   => 'tags_vocab.sql',
+            'label'  => 'PLG_SAMPLEDATA_JED_MIGRATE_TAGS_VOCAB_SUCCESS',
+            'before' => 'ensureExtensionContentType',
+            'after'  => 'rebuildTagTree',
+        ];
+
+        for ($batch = 1; $batch <= self::TAG_UCM_BATCHES; $batch++) {
+            $plan[++$next] = [
+                'file'     => 'tags_ucm_batch.sql',
+                'tagBatch' => $batch,
+                'label'    => 'PLG_SAMPLEDATA_JED_MIGRATE_TAGS_UCM_BATCH_SUCCESS',
+            ];
+        }
+
+        // The report is written here rather than after the vocabulary step, because until the
+        // assignments exist there is nothing to count.
+        $plan[++$next] = [
+            'file'  => 'tags_map.sql',
+            'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_TAGS_MAP_SUCCESS',
+            'after' => 'reportTagCuration',
+        ];
+
         $plan[++$next] = ['file' => 'cleanup.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_CLEANUP_SUCCESS'];
 
         return $plan;
@@ -389,13 +491,33 @@ class PlgSampledataJed_Migrate extends CMSPlugin
             ];
         }
 
-        // {{BATCH}} selects the slice of wqyh6_ucm_history this step imports, {{BATCHES}} tells
-        // the prepare step how many slices to cut. Both are plugin constants, never user input.
+        // {{BATCH}} selects the slice of wqyh6_ucm_history this step imports and {{BATCHES}} tells
+        // the prepare step how many slices to cut; {{TAG_BATCH}}/{{TAG_BATCHES}} do the same for
+        // the tag UCM import, and {{TAG_MIN_USES}} is the tag import threshold. All of them are
+        // plugin constants or step numbers, never user input.
         $sql = str_replace(
-            ['{{BATCH}}', '{{BATCHES}}'],
-            [(string) ($spec['batch'] ?? 0), (string) self::HISTORY_BATCHES],
+            ['{{BATCH}}', '{{BATCHES}}', '{{TAG_BATCH}}', '{{TAG_BATCHES}}', '{{TAG_MIN_USES}}'],
+            [
+                (string) ($spec['batch'] ?? 0),
+                (string) self::HISTORY_BATCHES,
+                // MOD(id, batches) yields 0..batches-1, but the batches are numbered from 1 so
+                // that the progress message reads "1 of 6" rather than "0 of 6".
+                (string) (($spec['tagBatch'] ?? 1) - 1),
+                (string) self::TAG_UCM_BATCHES,
+                (string) self::TAG_MIN_USES,
+            ],
             $sql
         );
+
+        // A "before" hook prepares state the SQL cannot create for itself. Unlike "after" it must
+        // succeed, because the statements that follow depend on what it wrote.
+        foreach ((array) ($spec['before'] ?? []) as $hook) {
+            $error = $this->{$hook}();
+
+            if ($error !== null) {
+                return ['success' => false, 'message' => $error];
+            }
+        }
 
         $db      = $this->getDatabase();
         $queries = $this->splitQueries($this->applySourcePrefix($sql));
@@ -424,20 +546,23 @@ class PlgSampledataJed_Migrate extends CMSPlugin
             }
         }
 
-        if (isset($spec['after']) && is_callable([$this, $spec['after']])) {
-            $error = $this->{$spec['after']}();
+        foreach ((array) ($spec['after'] ?? []) as $hook) {
+            $error = $this->{$hook}();
 
             if ($error !== null) {
                 return ['success' => false, 'message' => $error];
             }
         }
 
-        return [
-            'success' => true,
-            'message' => isset($spec['batch'])
-                ? Text::sprintf($spec['label'], $spec['batch'], self::HISTORY_BATCHES, $count)
-                : Text::sprintf($spec['label'], $count),
-        ];
+        if (isset($spec['batch'])) {
+            $message = Text::sprintf($spec['label'], $spec['batch'], self::HISTORY_BATCHES, $count);
+        } elseif (isset($spec['tagBatch'])) {
+            $message = Text::sprintf($spec['label'], $spec['tagBatch'], self::TAG_UCM_BATCHES, $count);
+        } else {
+            $message = Text::sprintf($spec['label'], $count);
+        }
+
+        return ['success' => true, 'message' => $message];
     }
 
     /**
@@ -543,6 +668,262 @@ class PlgSampledataJed_Migrate extends CMSPlugin
         }
 
         return null;
+    }
+
+    /**
+     * Make sure the `com_jed.extension` content type exists before the tag import runs (`P1-16`).
+     *
+     * Every row of #__contentitem_tag_map carries the type_id of that content type, and
+     * TagsHelper::getTagItemsQuery() INNER JOINs #__content_types - so without the row the import
+     * would write mappings with type_id 0 and every tag page would be empty.
+     *
+     * The row is normally written by com_jed's installer. It is ensured again here because an
+     * installation that predates the tags work (27 July) does not have it, and a migration that
+     * fails on that is a migration the JED team has to debug rather than run. Both callers share
+     * ContentTypeHelper, so there is still only one definition of the row.
+     *
+     * @return  string|null  An error message, or null on success.
+     *
+     * @since   4.1.0
+     */
+    private function ensureExtensionContentType(): ?string
+    {
+        try {
+            // Booted for the same reason rebuildCategoryTree() boots com_categories: the helper
+            // lives in com_jed's namespace, and that namespace is only guaranteed to resolve once
+            // the component has been booted in this request.
+            Factory::getApplication()->bootComponent('com_jed');
+
+            ContentTypeHelper::ensureExtensionContentType($this->getDatabase());
+        } catch (\Throwable $e) {
+            return Text::sprintf('PLG_SAMPLEDATA_JED_MIGRATE_ERROR_CONTENT_TYPE', $e->getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Rebuild the tag nested set after the legacy tags have been copied in.
+     *
+     * Same problem as the categories in step 4, same reason: #__tags is ONE nested set shared by
+     * every component, the import writes lft/rgt/level as zeroes, and a tag outside ROOT's
+     * lft/rgt range is invisible to every tree query - including the one com_tags' router uses to
+     * resolve a /tags/<slug> segment. Recomputing from parent_id also fills in `path`, which the
+     * import cannot know before the tree is laid out.
+     *
+     * @return  string|null  An error message, or null on success.
+     *
+     * @since   4.1.0
+     */
+    private function rebuildTagTree(): ?string
+    {
+        try {
+            $table = Factory::getApplication()
+                ->bootComponent('com_tags')
+                ->getMVCFactory()
+                ->createTable('Tag', 'Administrator', ['dbo' => $this->getDatabase()]);
+
+            if (!$table->rebuild()) {
+                return Text::sprintf(
+                    'PLG_SAMPLEDATA_JED_MIGRATE_ERROR_TAG_REBUILD',
+                    $table->getError() ?: 'unknown error'
+                );
+            }
+        } catch (\Throwable $e) {
+            return Text::sprintf('PLG_SAMPLEDATA_JED_MIGRATE_ERROR_TAG_REBUILD', $e->getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Write the tag curation report the plan asks for, and summarise it on screen.
+     *
+     * The point of the report is that nothing about this import should have to be discovered later
+     * in the tag cloud. Four things are worth knowing and none of them are visible from the result:
+     *
+     *  - which tags the usage threshold dropped, by name;
+     *  - which imported tags duplicate a com_jed category title, because that is the curation
+     *    decision the plan leaves to the JED team and it is 60 % of the vocabulary;
+     *  - which tags arrived unpublished, because that is the JED3 state carried over verbatim and
+     *    it is where the "function layer" vocabulary of 13.4/`P2-12` actually lives;
+     *  - how many assignments were dropped because their extension or their tag did not survive.
+     *
+     * The full lists go to a file rather than the message queue: 300-odd titles in a Joomla alert
+     * is not a report anyone reads.
+     *
+     * @return  string|null  An error message, or null on success. A report that cannot be written
+     *                       is not a reason to fail the step - the import itself is done by then.
+     *
+     * @since   4.1.0
+     */
+    private function reportTagCuration(): ?string
+    {
+        try {
+            $db = $this->getDatabase();
+
+            // These read the source as well as the target, so they go through the same placeholder
+            // rewrite the step files get - "wqyh6_" is not a table name anywhere but in this file.
+            $imported = $db->setQuery($this->applySourcePrefix(
+                'SELECT t.id, t.title, t.alias, t.published,'
+                . ' (SELECT COUNT(*) FROM ' . $db->quoteName('#__contentitem_tag_map') . ' m'
+                . '  WHERE m.tag_id = t.id) AS uses,'
+                . ' EXISTS (SELECT 1 FROM ' . $db->quoteName('#__categories') . ' c'
+                . "  WHERE c.extension = 'com_jed' AND c.title = t.title) AS is_category_title"
+                . ' FROM ' . $db->quoteName('#__tags') . ' t'
+                // id 1 is ROOT, which exists in both tag tables and is not an imported tag.
+                . ' WHERE t.id > 1 AND t.id IN (SELECT id FROM ' . self::SOURCE_PLACEHOLDER . 'tags)'
+                . ' ORDER BY uses DESC, t.title'
+            ))->loadAssocList();
+
+            // Everything the source offered that did not end up in #__tags, with the reason.
+            $skipped = $db->setQuery($this->applySourcePrefix(
+                'SELECT s.id, s.title, s.alias,'
+                . ' (SELECT COUNT(*) FROM ' . self::SOURCE_PLACEHOLDER . 'contentitem_tag_map m'
+                . '  INNER JOIN ' . $db->quoteName('#__jed_extensions') . ' e ON e.id = m.content_item_id'
+                . "  WHERE m.tag_id = s.id AND m.type_alias = 'com_jed.extension') AS uses"
+                . ' FROM ' . self::SOURCE_PLACEHOLDER . 'tags s'
+                . ' WHERE s.id > 1'
+                . ' AND s.id NOT IN (SELECT id FROM ' . $db->quoteName('#__tags') . ')'
+                . ' ORDER BY s.title'
+            ))->loadAssocList();
+
+            $droppedAssignments = $db->setQuery($this->applySourcePrefix(
+                'SELECT'
+                . ' SUM(e.id IS NULL) AS extension_gone,'
+                . ' SUM(e.id IS NOT NULL AND t.id IS NULL) AS tag_not_imported'
+                . ' FROM ' . self::SOURCE_PLACEHOLDER . 'contentitem_tag_map m'
+                . ' LEFT JOIN ' . $db->quoteName('#__jed_extensions') . ' e ON e.id = m.content_item_id'
+                . ' LEFT JOIN ' . $db->quoteName('#__tags') . ' t ON t.id = m.tag_id'
+                . " WHERE m.type_alias = 'com_jed.extension'"
+            ))->loadAssoc();
+
+            $taggedItems = (int) $db->setQuery(
+                'SELECT COUNT(*) FROM ' . $db->quoteName('#__ucm_content')
+                . " WHERE core_type_alias = 'com_jed.extension'"
+            )->loadResult();
+
+            $categoryTitled = array_filter($imported, static fn ($t) => (int) $t['is_category_title'] === 1);
+            $unpublished    = array_filter($imported, static fn ($t) => (int) $t['published'] !== 1);
+
+            $path = $this->writeTagReport($imported, $skipped, $categoryTitled, $unpublished, $droppedAssignments, $taggedItems);
+
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf(
+                    'PLG_SAMPLEDATA_JED_MIGRATE_TAGS_REPORT',
+                    \count($imported),
+                    \count($imported) - \count($unpublished),
+                    \count($categoryTitled),
+                    \count($skipped),
+                    (int) ($droppedAssignments['extension_gone'] ?? 0),
+                    (int) ($droppedAssignments['tag_not_imported'] ?? 0),
+                    $taggedItems,
+                    $path
+                )
+            );
+        } catch (\Throwable $e) {
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf('PLG_SAMPLEDATA_JED_MIGRATE_ERROR_TAG_REPORT', $e->getMessage()),
+                'warning'
+            );
+        }
+
+        return null;
+    }
+
+    /**
+     * Write the tag curation report to the site's log directory.
+     *
+     * @param   array  $imported            The imported tags, with their use count.
+     * @param   array  $skipped             The source tags that were not imported.
+     * @param   array  $categoryTitled      Those imported tags whose title is also a category title.
+     * @param   array  $unpublished         Those imported tags that arrived unpublished.
+     * @param   array  $droppedAssignments  Counts of assignments that could not be mapped.
+     * @param   int    $taggedItems         How many extensions ended up with at least one tag.
+     *
+     * @return  string  The path the report was written to, or an empty string on failure.
+     *
+     * @since   4.1.0
+     */
+    private function writeTagReport(
+        array $imported,
+        array $skipped,
+        array $categoryTitled,
+        array $unpublished,
+        array $droppedAssignments,
+        int $taggedItems
+    ): string {
+        $logPath = Factory::getApplication()->get('log_path', JPATH_ADMINISTRATOR . '/logs');
+        $file    = rtrim((string) $logPath, '/\\') . '/jed_tag_migration_report.txt';
+
+        $lines = [
+            'JED tag migration report (P1-16)',
+            str_repeat('=', 60),
+            '',
+            'Tags imported ................ ' . \count($imported),
+            '  published .................. ' . (\count($imported) - \count($unpublished)),
+            '  unpublished ................ ' . \count($unpublished),
+            '  title duplicates a category  ' . \count($categoryTitled),
+            'Tags not imported ............ ' . \count($skipped),
+            'Extensions with >= 1 tag ..... ' . $taggedItems,
+            'Assignments dropped:',
+            '  extension did not survive .. ' . (int) ($droppedAssignments['extension_gone'] ?? 0),
+            '  tag not imported ........... ' . (int) ($droppedAssignments['tag_not_imported'] ?? 0),
+            '',
+            'The import carries the JED3 published state over verbatim, so each tag behaves here',
+            'exactly as it does on the old site. The three lists below are what the JED team has to',
+            'decide about - none of it is decided by this import.',
+            '',
+            'Before deciding, note what "unpublished" means in core com_tags, because it is not what',
+            'it sounds like: /tags/<slug> of an UNPUBLISHED tag still answers 200 and still lists the',
+            'tag\'s extensions. Only the tag\'s own title and description are withheld',
+            '(TagModel::getItem() filters on the tag state, getListQuery() does not). Unpublishing a',
+            'tag therefore does not take it off the web - only deleting the record does.',
+            '',
+        ];
+
+        $lines[] = 'NOT IMPORTED - fewer than ' . self::TAG_MIN_USES . ' surviving assignments';
+        $lines[] = str_repeat('-', 60);
+
+        foreach ($skipped as $tag) {
+            $lines[] = sprintf(
+                '  %-50s id %-5d %d use(s)%s',
+                $tag['title'],
+                (int) $tag['id'],
+                (int) $tag['uses'],
+                trim((string) $tag['alias']) === '' ? '  [no alias]' : ''
+            );
+        }
+
+        $lines[] = '';
+        $lines[] = 'IMPORTED, BUT THE TITLE IS ALSO A com_jed CATEGORY TITLE';
+        $lines[] = 'These say what the listing\'s category already says. Retiring them is a curation';
+        $lines[] = 'decision; they are imported so that the decision can be made in the admin.';
+        $lines[] = str_repeat('-', 60);
+
+        foreach ($categoryTitled as $tag) {
+            $lines[] = sprintf(
+                '  %-50s id %-5d %6d use(s)  %s',
+                $tag['title'],
+                (int) $tag['id'],
+                (int) $tag['uses'],
+                (int) $tag['published'] === 1 ? 'published' : 'unpublished'
+            );
+        }
+
+        $lines[] = '';
+        $lines[] = 'IMPORTED UNPUBLISHED (the JED3 state, carried over)';
+        $lines[] = 'This is the functional vocabulary the "function layer" question of 13.4 / P2-12';
+        $lines[] = 'is about. It is not visible on the site until somebody publishes it.';
+        $lines[] = str_repeat('-', 60);
+
+        foreach ($unpublished as $tag) {
+            $lines[] = sprintf('  %-50s id %-5d %6d use(s)', $tag['title'], (int) $tag['id'], (int) $tag['uses']);
+        }
+
+        $lines[] = '';
+
+        return file_put_contents($file, implode("\n", $lines)) === false ? '' : $file;
     }
 
     /**

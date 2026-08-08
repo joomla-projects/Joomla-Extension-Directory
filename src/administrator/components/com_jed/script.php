@@ -11,6 +11,7 @@
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Administrator\Helper\ContentTypeHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Installer\InstallerAdapter;
 use Joomla\CMS\Language\Text;
@@ -156,87 +157,23 @@ class Com_JedInstallerScript
      */
     private function ensureExtensionContentType(): void
     {
-        $db = Factory::getContainer()->get(DatabaseInterface::class);
+        // The definition itself lives in ContentTypeHelper, because the JED3 migration needs the
+        // same row before it can import the legacy tag assignments (P1-16). Loaded by path rather
+        // than through the autoloader: on a fresh install the component's namespace map is not
+        // necessarily rebuilt yet when postflight runs, but the files have been copied by then.
+        if (!class_exists(ContentTypeHelper::class)) {
+            $helper = JPATH_ADMINISTRATOR . '/components/com_jed/src/Helper/ContentTypeHelper.php';
 
-        $alias = 'com_jed.extension';
+            if (!is_file($helper)) {
+                return;
+            }
 
-        $query = $db->getQuery(true)
-            ->select($db->quoteName('type_id'))
-            ->from($db->quoteName('#__content_types'))
-            ->where($db->quoteName('type_alias') . ' = :alias')
-            ->bind(':alias', $alias);
-
-        $typeId = $db->setQuery($query)->loadResult();
-
-        // These two mirror the exact shape Joomla's own content types use (see
-        // #__content_types rows for e.g. com_content.article/com_contact.contact) - "table"
-        // describes the component's own table class plus the generic Corecontent table used to
-        // store the UCM row; "field_mappings" maps #__jed_extensions columns onto the generic
-        // "core_*" UCM fields (unmapped ones are "null" - #__jed_extensions has no equivalent).
-        $table = [
-            'special' => [
-                'dbtable' => '#__jed_extensions',
-                'key'     => 'id',
-                'type'    => 'ExtensionTable',
-                'prefix'  => 'Jed\\Component\\Jed\\Administrator\\Table\\',
-                'config'  => 'array()',
-            ],
-            'common'  => [
-                'dbtable' => '#__ucm_content',
-                'key'     => 'ucm_id',
-                'type'    => 'Corecontent',
-                'prefix'  => 'Joomla\\CMS\\Table\\',
-                'config'  => 'array()',
-            ],
-        ];
-
-        $fieldMappings = [
-            'common'  => [
-                'core_content_item_id' => 'id',
-                'core_title'           => 'name',
-                'core_state'           => 'state',
-                'core_alias'           => 'alias',
-                'core_created_time'    => 'created',
-                'core_modified_time'   => 'modified',
-                'core_body'            => 'description',
-                'core_hits'            => 'null',
-                'core_publish_up'      => 'null',
-                'core_publish_down'    => 'null',
-                'core_access'          => 'null',
-                'core_params'          => 'null',
-                'core_featured'        => 'null',
-                'core_metadata'        => 'null',
-                'core_language'        => 'null',
-                'core_images'          => 'logo',
-                'core_urls'            => 'null',
-                'core_version'         => 'null',
-                'core_ordering'        => 'null',
-                'core_metakey'         => 'null',
-                'core_metadesc'        => 'null',
-                'core_catid'           => 'catid',
-                'asset_id'             => 'null',
-            ],
-            'special' => new stdClass(),
-        ];
-
-        $row = (object) [
-            'type_title'              => 'Extension',
-            'type_alias'              => $alias,
-            'table'                   => json_encode($table),
-            'rules'                   => '',
-            'field_mappings'          => json_encode($fieldMappings),
-            'router'                  => 'Jed\\Component\\Jed\\Site\\Helper\\RouteHelper::getArticleRoute',
-            'content_history_options' => '',
-        ];
-
-        if ($typeId) {
-            $row->type_id = (int) $typeId;
-            $db->updateObject('#__content_types', $row, 'type_id');
-
-            return;
+            require_once $helper;
         }
 
-        $db->insertObject('#__content_types', $row);
+        ContentTypeHelper::ensureExtensionContentType(
+            Factory::getContainer()->get(DatabaseInterface::class)
+        );
     }
 
     /**
