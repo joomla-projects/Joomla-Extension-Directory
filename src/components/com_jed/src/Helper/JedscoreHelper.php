@@ -40,6 +40,9 @@ class JedscoreHelper
             return '';
         }
 
+        // @TODO Half stars are all the precision there is: any fractional remainder yields
+        // exactly one half star, so 4.1 and 4.9 render identically. Either finer granularity
+        // or a numeric value next to the stars would fix that. See P3-01.
         $whole = floor($score);
         $half  = $score > $whole ? 1 : 0;
         $empty = 5 - $whole - $half;
