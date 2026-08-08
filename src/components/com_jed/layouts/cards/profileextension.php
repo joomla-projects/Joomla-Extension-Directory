@@ -12,7 +12,6 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Site\Helper\JedHelper;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 
 /**
@@ -66,8 +65,12 @@ extract($displayData);
                 <div class="card__extension-versions"><?php echo $versions; ?></div>
             <?php endif; ?>
         </div>
-        <div class="card__actions">
-            <a href="#" class="button button--grey"><?php echo Text::_('COM_JED_PROFILE_EXTENSION_SHARE'); ?></a>
-        </div>
+        <?php
+        /*
+         * The Share button was a dead href="#". Sharing is P3 (4.2), and P1-07's rule is that a
+         * page must not render an anchor that goes nowhere - half a share button is worse than
+         * none, because a visitor who clicks it learns only that the site is broken.
+         */
+        ?>
     </div>
 </li>

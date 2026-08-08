@@ -309,7 +309,6 @@ class JedHelper extends ContentHelper
                     . htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8') . '</a>';
 
             case 'logo':
-            case 'overview_image':
                 if (empty($value)) {
                     return '&#8212;';
                 }

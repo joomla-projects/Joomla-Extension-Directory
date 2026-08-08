@@ -21,6 +21,7 @@ use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
+use Jed\Component\Jed\Site\Helper\JedtrophyHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\TagsHelper;
 use Joomla\CMS\Language\Text;
@@ -149,7 +150,153 @@ class ExtensionModel extends ItemModel
 
         $this->item->tags = (new TagsHelper())->getItemTags('com_jed.extension', $this->item->id);
 
+        // The detail page's outbound buttons, built from the columns that actually carry them.
+        // Until P1-07 the template read five properties - homepage_link, demo_link,
+        // documentation_link, support_link, license_link - that no query ever produced, so every
+        // one of those buttons was a dead anchor on the site's most-visited page.
+        $this->item->links = $this->getOutboundLinks($this->item);
+
+        $this->item->screenshots = $this->getScreenshots((int) $this->item->id);
+
+        $this->item->more_by_developer = $this->getMoreByDeveloper(
+            (int) $this->item->owner,
+            (int) $this->item->id
+        );
+
         return $this->item;
+    }
+
+    /**
+     * The outbound links a listing offers, in display order, skipping the ones it has no URL for.
+     *
+     * Returned as a list rather than as individual properties so the template cannot render a
+     * button for a column that is empty: a link with no URL is simply not in the array.
+     *
+     * @param object $item The loaded listing.
+     *
+     * @return array<int, array{key: string, url: string, label: string}>
+     *
+     * @since 4.1.0
+     */
+    private function getOutboundLinks(object $item): array
+    {
+        // `developer_url` is the developer's own site, which is what the "Website" button always
+        // meant - the template's `homepage_link` was the JED3 column name, and the migration maps
+        // JED3 `homepage_link` onto `developer_url`.
+        $map = [
+            'website'       => ['developer_url', 'COM_JED_EXTENSION_LINK_WEBSITE'],
+            'demo'          => ['demo_url', 'COM_JED_EXTENSION_LINK_DEMO'],
+            'documentation' => ['documentation_url', 'COM_JED_EXTENSION_LINK_DOCUMENTATION'],
+            'support'       => ['support_url', 'COM_JED_EXTENSION_LINK_SUPPORT'],
+            'changelog'     => ['changelog_url', 'COM_JED_EXTENSION_LINK_CHANGELOG'],
+            'git'           => ['git_url', 'COM_JED_EXTENSION_LINK_GIT'],
+            'license'       => ['license_url', 'COM_JED_EXTENSION_LINK_LICENSE'],
+        ];
+
+        $links = [];
+
+        foreach ($map as $key => [$column, $label]) {
+            $url = trim((string) ($item->$column ?? ''));
+
+            if ($url === '') {
+                continue;
+            }
+
+            $links[] = ['key' => $key, 'url' => $url, 'label' => $label];
+        }
+
+        return $links;
+    }
+
+    /**
+     * The listing's screenshots, in the order the developer arranged them.
+     *
+     * `state` is honoured: an image the JED team has unpublished stays off the page. The table,
+     * the admin views and the developer's own upload form have all existed since 4.0 - only the
+     * rendering was missing.
+     *
+     * @param int $extensionId
+     *
+     * @return array<int, object>
+     *
+     * @since 4.1.0
+     */
+    public function getScreenshots(int $extensionId): array
+    {
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(['id', 'filename']))
+            ->from($db->quoteName('#__jed_extensions_images'))
+            ->where($db->quoteName('extension_id') . ' = :extension_id')
+            ->where($db->quoteName('state') . ' = 1')
+            ->bind(':extension_id', $extensionId, ParameterType::INTEGER)
+            ->order($db->quoteName('ordering') . ' ASC')
+            ->order($db->quoteName('id') . ' ASC');
+
+        $rows = $db->setQuery($query)->loadObjectList() ?: [];
+
+        foreach ($rows as $row) {
+            $row->thumbnail = JedHelper::formatImage((string) $row->filename, ImageSize::SMALL);
+            $row->full      = JedHelper::formatImage((string) $row->filename, ImageSize::LARGE);
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Other listings by the same developer.
+     *
+     * Keyed on `owner`, which is the same rule the developer's public profile uses - so the two
+     * pages cannot disagree about what "by this developer" means. Maintainership deliberately
+     * does not widen it (P1-03): a maintainer helps look after a listing, they did not publish it.
+     *
+     * @param int $ownerId     The listing's owner.
+     * @param int $excludeId   The listing being viewed.
+     * @param int $limit       How many to show.
+     *
+     * @return array<int, object>
+     *
+     * @since 4.1.0
+     */
+    public function getMoreByDeveloper(int $ownerId, int $excludeId, int $limit = 4): array
+    {
+        if (!$ownerId) {
+            return [];
+        }
+
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select($db->quoteName([
+                'id', 'name', 'alias', 'catid', 'intro', 'description', 'logo',
+                'extension_types', 'joomla_versions', 'score_count',
+            ]))
+            ->from($db->quoteName('#__jed_extensions'))
+            ->where($db->quoteName('owner') . ' = :owner')
+            ->where($db->quoteName('id') . ' <> :exclude')
+            // The public half of the four-carrier rule (4.8), spelled out for the same reason the
+            // profile page spells it out: this is not a moderation view.
+            ->where($db->quoteName('approved') . ' = 1')
+            ->where($db->quoteName('state') . ' = 1')
+            ->where($db->quoteName('blocked') . ' = 0')
+            ->where($db->quoteName('deleted') . ' = 0')
+            ->bind(':owner', $ownerId, ParameterType::INTEGER)
+            ->bind(':exclude', $excludeId, ParameterType::INTEGER)
+            ->order($db->quoteName('score_count') . ' DESC')
+            ->order($db->quoteName('name') . ' ASC');
+
+        $rows = $db->setQuery($query, 0, $limit)->loadObjectList() ?: [];
+
+        // The same shape the profile page's cards.profileextension layout expects, so both pages
+        // show a developer's extensions identically.
+        foreach ($rows as $row) {
+            $row->logo_url         = $row->logo ? JedHelper::formatImage((string) $row->logo, ImageSize::SMALL) : '';
+            $row->card_text        = JedHelper::cardText($row->intro ?? null, $row->description ?? null);
+            $row->includes_string  = JedtrophyHelper::getTrophyIncludesStringFull((string) $row->extension_types);
+            $row->version_string   = JedtrophyHelper::getTrophyVersionsStringFull((string) $row->joomla_versions);
+            $row->is_favorited     = $this->isFavorited((int) $row->id, (int) (Factory::getApplication()->getIdentity()->id ?? 0));
+        }
+
+        return $rows;
     }
 
     /**

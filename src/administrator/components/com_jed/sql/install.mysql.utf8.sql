@@ -22,6 +22,11 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions`
 	`intro`                  text,
 	`description`            mediumtext,
 	`license`                varchar(255)    DEFAULT '',
+	-- The developer's own licence/terms page. `license` above is the licence *name*
+	-- ("GPLv2", "Commercial"); this is where it can be read. 11,223 JED3 rows carry one,
+	-- which is why the detail page's Licence button gets a real column rather than being
+	-- dropped (P1-07).
+	`license_url`            varchar(255)    DEFAULT '',
 	`requires_registration`  tinyint(1)      NOT NULL DEFAULT '0',
 	`type`                   enum('free', 'paid', 'freemium', 'cloud') DEFAULT 'free',
 	`extension_types`        varchar(255)    DEFAULT '',
@@ -57,7 +62,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions`
 	`score_count`            int unsigned    NOT NULL DEFAULT '0',
 	`popular`                tinyint(1)      NOT NULL DEFAULT '0',
 	`logo`                   varchar(255)    DEFAULT '',
-	`overview_image`         varchar(255)    DEFAULT '',
 	`video`                  varchar(255)    DEFAULT '',
 	-- The raw value above is kept as the developer typed it; these two are what P1-11's
 	-- parser made of it. Provider plus id rather than a ready-made embed URL: the card view
@@ -111,6 +115,11 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_history`
 	`intro`                  text,
 	`description`            mediumtext,
 	`license`                varchar(255)    DEFAULT '',
+	-- The developer's own licence/terms page. `license` above is the licence *name*
+	-- ("GPLv2", "Commercial"); this is where it can be read. 11,223 JED3 rows carry one,
+	-- which is why the detail page's Licence button gets a real column rather than being
+	-- dropped (P1-07).
+	`license_url`            varchar(255)    DEFAULT '',
 	`requires_registration`  tinyint(1)      NOT NULL DEFAULT '0',
 	`type`                   enum('free', 'paid', 'freemium', 'cloud') DEFAULT 'free',
 	`extension_types`        varchar(255)    DEFAULT '',
@@ -143,7 +152,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_history`
 	`score_count`            int unsigned    NOT NULL DEFAULT '0',
 	`popular`                tinyint(1)      NOT NULL DEFAULT '0',
 	`logo`                   varchar(255)    DEFAULT '',
-	`overview_image`         varchar(255)    DEFAULT '',
 	`video`                  varchar(255)    DEFAULT '',
 	-- The raw value above is kept as the developer typed it; these two are what P1-11's
 	-- parser made of it. Provider plus id rather than a ready-made embed URL: the card view

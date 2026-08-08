@@ -16,9 +16,12 @@ namespace Jed\Component\Jed\Site\View\Extension;
 
 use Exception;
 use Jed\Component\Jed\Administrator\Listing\ListingAccess;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 
 /**
@@ -137,6 +140,8 @@ class HtmlView extends BaseHtmlView
         // it says so, and this overrides whatever the menu item asked for.
         if (($this->item->listing_access ?? null) === ListingAccess::BLOCKED) {
             $this->getDocument()->setMetadata('robots', 'noindex, follow');
+        } else {
+            $this->addSocialMetadata();
         }
 
         // Add Breadcrumbs
@@ -150,6 +155,83 @@ class HtmlView extends BaseHtmlView
 
         if (!in_array($breadcrumbTitle, $pathway->getPathwayNames())) {
             $pathway->addItem($breadcrumbTitle);
+        }
+    }
+
+    /**
+     * OpenGraph and Twitter Card tags for the listing.
+     *
+     * The legacy site emits these and the JED gets heavy organic traffic, so a listing shared on
+     * a social network or pasted into a chat has to arrive with its name, its summary and its
+     * logo rather than as a bare URL. `<meta name="description">` is set from the same summary,
+     * because the page previously had none of its own at all - it inherited whatever the menu
+     * item said, which is the same text for every extension in the catalogue.
+     *
+     * Deliberately not emitted for a blocked listing: that page is `noindex` and says only that
+     * the listing is unavailable. There is nothing there worth a rich preview.
+     *
+     * @return void
+     *
+     * @throws Exception
+     *
+     * @since 4.1.0
+     */
+    protected function addSocialMetadata(): void
+    {
+        $document = $this->getDocument();
+        $name     = (string) ($this->item->name ?? '');
+
+        if ($name === '') {
+            return;
+        }
+
+        // The card summary, as plain text: the stored value is Markdown, and a card preview that
+        // shows raw asterisks reads as broken.
+        $summary = JedHelper::cardText($this->item->intro ?? null, $this->item->description ?? null);
+
+        $document->setDescription($summary);
+
+        $tags = [
+            'og:type'         => 'website',
+            'og:site_name'    => (string) Factory::getApplication()->get('sitename'),
+            'og:title'        => $name,
+            'og:description'  => $summary,
+            // The listing's own route, made absolute - not the requested URL. Otherwise a share
+            // from a link carrying campaign parameters advertises that URL as the canonical one,
+            // and the same listing ends up with as many og:urls as there are inbound links.
+            // Route::_() already returns a root-relative path that includes the site's subfolder,
+            // so only scheme/host/port are prefixed - Uri::root() would repeat the subfolder.
+            'og:url'          => Uri::getInstance()->toString(['scheme', 'host', 'port'])
+                . Route::_(
+                    'index.php?option=com_jed&view=extension&catid=' . (int) $this->item->catid
+                    . '&id=' . (int) $this->item->id,
+                    false
+                ),
+            'twitter:card'    => 'summary',
+            'twitter:title'   => $name,
+            'twitter:description' => $summary,
+        ];
+
+        // The logo is the only image a listing has. Absolute, because a relative path in an
+        // OpenGraph tag is not resolved by the consumers that matter.
+        $logo = (string) ($this->item->logo_large ?? $this->item->logo ?? '');
+
+        if ($logo !== '') {
+            $tags['og:image']      = $logo;
+            $tags['twitter:image'] = $logo;
+            $tags['og:image:alt']  = $name;
+            $tags['twitter:card']  = 'summary_large_image';
+        }
+
+        foreach ($tags as $property => $content) {
+            if ($content === '') {
+                continue;
+            }
+
+            // OpenGraph uses `property`, Twitter uses `name`. Joomla's setMetadata() writes
+            // `name` unless told otherwise, and a consumer looking for og:title will not find
+            // one written as a name attribute.
+            $document->setMetaData($property, $content, str_starts_with($property, 'og:') ? 'property' : 'name');
         }
     }
 }

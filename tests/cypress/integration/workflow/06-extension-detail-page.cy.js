@@ -1,0 +1,131 @@
+/// <reference types="cypress" />
+
+/**
+ * Workflow part 6: the extension detail page (`P1-07`).
+ *
+ * The acceptance criterion this file exists for is the link one: *"a case per link that asserts
+ * the anchor is absent when the column is empty and points at the column value when it is not."*
+ * Before `P1-07` the template read five properties - `homepage_link`, `demo_link`,
+ * `documentation_link`, `support_link`, `license_link` - that no query ever produced, so all five
+ * buttons rendered with a dead `href`. A test that only checked "is there a Website button" would
+ * have passed the whole time; each case here therefore asserts the *value*.
+ *
+ * Runs against the extension part 1 submitted, filling the URL columns through the developer's
+ * own edit form so the test exercises the real save path rather than writing to the database.
+ */
+
+describe('Workflow part 6: extension detail page', { testIsolation: false }, () => {
+  let extension
+
+  const urls = {
+    developer_url: 'https://example.test/website',
+    demo_url: 'https://example.test/demo',
+    documentation_url: 'https://example.test/docs',
+    support_url: 'https://example.test/support',
+    license_url: 'https://example.test/licence',
+  }
+
+  // Each link's CSS hook and the column that feeds it.
+  const links = [
+    { key: 'website', column: 'developer_url' },
+    { key: 'demo', column: 'demo_url' },
+    { key: 'documentation', column: 'documentation_url' },
+    { key: 'support', column: 'support_url' },
+    { key: 'license', column: 'license_url' },
+  ]
+
+  const detailUrl = () =>
+    `index.php?option=com_jed&view=extension&catid=${extension.extensionCatId}&id=${extension.extensionId}`
+
+  const openDetail = () => cy.visit(detailUrl())
+
+  // A save is a pending revision (P1-02); it reaches the live row only through approval. This is
+  // the same compare screen the Pending column on the Extensions list links to.
+  const approvePendingRevision = () => {
+    cy.visit(`administrator/index.php?option=com_jed&view=extension&layout=compare&id=${extension.extensionId}`)
+    cy.contains('button, a', 'Approve').click()
+    cy.get('#system-message-container .alert-message').should('be.visible')
+  }
+
+  before(() => {
+    cy.loadJsonState('extension-submission').then((savedState) => {
+      extension = savedState
+    })
+  })
+
+  it('renders no outbound button while every URL column is empty', () => {
+    openDetail()
+
+    links.forEach(({ key }) => {
+      cy.get(`.jed-link--${key}`).should('not.exist')
+    })
+
+    // And nothing anywhere on the page is an anchor that goes nowhere.
+    cy.get('article a[href=""]').should('not.exist')
+    cy.get('article a[href="#"]').should('not.exist')
+  })
+
+  it('lets the developer fill the URLs in, and shows exactly those', () => {
+    cy.doAdministratorLogin()
+    cy.visit(`administrator/index.php?option=com_jed&task=extension.edit&id=${extension.extensionId}`)
+
+    Object.entries(urls).forEach(([field, value]) => {
+      cy.get(`#jform_${field}`).clear().type(value)
+    })
+
+    cy.clickToolbarButton('Save & Close')
+    cy.get('joomla-alert').should('not.contain.text', 'error')
+
+    approvePendingRevision()
+
+    openDetail()
+
+    links.forEach(({ key, column }) => {
+      cy.get(`.jed-link--${key}`)
+        .should('exist')
+        .and('have.attr', 'href', urls[column])
+        .and('have.attr', 'rel')
+        .and('contain', 'nofollow')
+    })
+  })
+
+  it('drops a single button again when its column is emptied', () => {
+    cy.visit(`administrator/index.php?option=com_jed&task=extension.edit&id=${extension.extensionId}`)
+    cy.get('#jform_demo_url').clear()
+    cy.clickToolbarButton('Save & Close')
+    approvePendingRevision()
+
+    openDetail()
+
+    cy.get('.jed-link--demo').should('not.exist')
+    cy.get('.jed-link--website').should('have.attr', 'href', urls.developer_url)
+    cy.get('article a[href=""]').should('not.exist')
+  })
+
+  it('emits OpenGraph and Twitter Card tags for the listing', () => {
+    openDetail()
+
+    cy.get('head meta[property="og:title"]').should('have.attr', 'content', extension.extensionName)
+    cy.get('head meta[property="og:type"]').should('have.attr', 'content', 'website')
+    cy.get('head meta[property="og:url"]').invoke('attr', 'content').should('match', /^https?:\/\//)
+    cy.get('head meta[name="twitter:title"]').should('have.attr', 'content', extension.extensionName)
+
+    // The page must carry its own description, not the menu item's.
+    cy.get('head meta[name="description"]').invoke('attr', 'content').should('not.be.empty')
+  })
+
+  it('keeps the listing alias stable across repeated saves', () => {
+    // ExtensionHistoryTable::isUnique() compared a listing's revisions against each other, so
+    // every save renamed the alias - and approval copied the new one onto the live row, changing
+    // the listing's public URL under it. Two saves in a row is all it took.
+    cy.visit(`administrator/index.php?option=com_jed&task=extension.edit&id=${extension.extensionId}`)
+    cy.clickToolbarButton('Save & Close')
+    cy.visit(`administrator/index.php?option=com_jed&task=extension.edit&id=${extension.extensionId}`)
+    cy.clickToolbarButton('Save & Close')
+    approvePendingRevision()
+
+    cy.request({ url: detailUrl(), failOnStatusCode: false }).its('status').should('eq', 200)
+    cy.visit(`administrator/index.php?option=com_jed&task=extension.edit&id=${extension.extensionId}`)
+    cy.get('#jform_alias').invoke('val').should('not.match', /-\d+$/)
+  })
+})

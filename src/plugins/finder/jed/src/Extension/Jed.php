@@ -266,11 +266,9 @@ final class Jed extends Adapter implements SubscriberInterface
             $item->title = $title;
         }
 
-        // Add the image - prefer the overview image, fall back to the logo.
-        if (!empty($item->overview_image)) {
-            $item->imageUrl = $item->overview_image;
-            $item->imageAlt = $item->title ?? '';
-        } elseif (!empty($item->logo)) {
+        // Add the image. The logo is the only one a listing has - `overview_image` was a column
+        // that never had a source and is gone (P1-07).
+        if (!empty($item->logo)) {
             $item->imageUrl = $item->logo;
             $item->imageAlt = $item->title ?? '';
         }
@@ -436,7 +434,7 @@ final class Jed extends Adapter implements SubscriberInterface
             ->select('a.id, a.name AS title, a.intro AS summary, a.description AS body')
             ->select('a.state, a.approved, a.blocked, a.deleted, a.catid, a.created AS start_date, a.created_by, a.modified, a.modified_by')
             ->select('a.type, a.extension_types, a.joomla_versions, a.license')
-            ->select('a.logo, a.overview_image, a.popular')
+            ->select('a.logo, a.popular')
             ->select('c.title AS category, c.published AS cat_state, c.access AS cat_access')
             ->select('u.name AS author')
             ->select('d.value AS developer_name')

@@ -236,7 +236,18 @@ class ExtensionHistoryTable extends Table
     }
 
     /**
-     * Check if a field is unique
+     * Check if a field is unique across *other* extensions.
+     *
+     * The row being compared against is every revision that does not belong to this extension.
+     * A listing's own revisions all carry the same alias by design - that is what a revision is.
+     *
+     * This read `$this->{$this->extension_id}`, a variable property: with extension_id 74 it
+     * asked for `$this->{74}`, which does not exist, so the comparison became `extension_id <> 0`
+     * and excluded nothing. Every earlier revision of the listing itself counted as a clash, so
+     * check() renamed the alias on every single save - `chronoforms`, `chronoforms-0`,
+     * `chronoforms-1` - and moderation copied the renamed alias onto the live row. A developer
+     * who saved twice ended up with a different public URL and every inbound link to the old one
+     * broken, with nothing anywhere saying so.
      *
      * @param string $field Name of the field
      *
@@ -252,7 +263,7 @@ class ExtensionHistoryTable extends Table
             ->select($db->quoteName($field))
             ->from($db->quoteName($this->_tbl))
             ->where($db->quoteName($field) . ' = ' . $db->quote($this->$field))
-            ->where($db->quoteName('extension_id') . ' <> ' . (int) $this->{$this->extension_id});
+            ->where($db->quoteName('extension_id') . ' <> ' . (int) $this->extension_id);
 
         if (!empty($this->catid)) {
             $query->where($db->quoteName('catid') . ' = ' . (int) $this->catid);

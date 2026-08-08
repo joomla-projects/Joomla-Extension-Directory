@@ -24,6 +24,8 @@
                hint="COM_JED_EXTENSION_DESCRIPTION_LABEL"/>
         <field name="license" filter="safehtml" type="text" label="COM_JED_EXTENSION_LICENSE_LABEL"
                hint="COM_JED_EXTENSION_LICENSE_LABEL"/>
+        <field name="license_url" type="url" validate="url" label="COM_JED_EXTENSION_LICENSE_URL_LABEL"
+               description="COM_JED_EXTENSION_LICENSE_URL_DESC"/>
         <field
                 name="requires_registration"
                 type="radio"
@@ -104,14 +106,6 @@
                 name="logo"
                 type="media"
                 label="COM_JED_EXTENSION_LOGO_LABEL"
-                class="input-xxlarge"
-                preview="true"
-                directory=""
-        />
-        <field
-                name="overview_image"
-                type="media"
-                label="COM_JED_EXTENSION_OVERVIEW_IMAGE_LABEL"
                 class="input-xxlarge"
                 preview="true"
                 directory=""
