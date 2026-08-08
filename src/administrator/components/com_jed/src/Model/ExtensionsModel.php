@@ -224,6 +224,37 @@ class ExtensionsModel extends ListModel
             $query->where('TRIM(IFNULL(' . $db->quoteName('a.video') . ", '')) = ''");
         }
 
+        // Link health (P1-09). An EXISTS rather than a join, because a listing has up to nine
+        // checked links and joining would multiply its row out - the question here is "does this
+        // listing have any link in that state", not "which ones".
+        $links = $this->getState('filter.links', '');
+
+        if (\in_array($links, ['broken', 'escalated', 'ticket'], true)) {
+            $condition = match ($links) {
+                'broken'    => $db->quoteName('lc.status') . " <> 'ok'",
+                'escalated' => $db->quoteName('lc.escalated') . ' = 1',
+                'ticket'    => $db->quoteName('lc.ticket_id') . ' IS NOT NULL',
+            };
+
+            $query->where(
+                'EXISTS (SELECT 1 FROM ' . $db->quoteName('#__jed_extension_linkchecks', 'lc')
+                . ' WHERE ' . $db->quoteName('lc.extension_id') . ' = ' . $db->quoteName('a.id')
+                . ' AND ' . $condition . ')'
+            );
+        } elseif ($links === 'ok') {
+            // Checked at least once, and nothing wrong with any of them. A listing nobody has
+            // looked at yet is not "all links working", it is unknown - and lumping the two
+            // together would make the filter useless on the day it is switched on.
+            $query->where(
+                'EXISTS (SELECT 1 FROM ' . $db->quoteName('#__jed_extension_linkchecks', 'lc')
+                . ' WHERE ' . $db->quoteName('lc.extension_id') . ' = ' . $db->quoteName('a.id') . ')'
+            )->where(
+                'NOT EXISTS (SELECT 1 FROM ' . $db->quoteName('#__jed_extension_linkchecks', 'lc2')
+                . ' WHERE ' . $db->quoteName('lc2.extension_id') . ' = ' . $db->quoteName('a.id')
+                . ' AND ' . $db->quoteName('lc2.status') . " <> 'ok')"
+            );
+        }
+
         $query->group($db->quoteName('a.id'));
 
         // Add the list ordering clause.
@@ -259,6 +290,7 @@ class ExtensionsModel extends ListModel
         $id .= ':' . $this->getState('filter.search');
         $id .= ':' . $this->getState('filter.state');
         $id .= ':' . $this->getState('filter.video');
+        $id .= ':' . $this->getState('filter.links');
 
 
         return parent::getStoreId($id);

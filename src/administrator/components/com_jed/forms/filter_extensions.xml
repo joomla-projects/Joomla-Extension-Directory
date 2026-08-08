@@ -30,6 +30,23 @@
             <option value="none">COM_JED_EXTENSION_FILTER_VIDEO_NONE</option>
         </field>
 
+        <!--
+            Link health during moderation (P1-09 item 8). "Left unattended" is the one that
+            matters: it is the set where the developer was told and nothing happened, which is
+            what the abandonware case in P1-19 will be built from.
+        -->
+        <field name="links"
+               type="list"
+               label="COM_JED_EXTENSION_FILTER_LINKS"
+               onchange="this.form.submit();"
+        >
+            <option value="">COM_JED_EXTENSION_FILTER_LINKS_SELECT</option>
+            <option value="broken">COM_JED_EXTENSION_FILTER_LINKS_BROKEN</option>
+            <option value="escalated">COM_JED_EXTENSION_FILTER_LINKS_ESCALATED</option>
+            <option value="ticket">COM_JED_EXTENSION_FILTER_LINKS_TICKET</option>
+            <option value="ok">COM_JED_EXTENSION_FILTER_LINKS_OK</option>
+        </field>
+
     </fields>
 
     <fields name="list">

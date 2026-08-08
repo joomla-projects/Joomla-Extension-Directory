@@ -14,8 +14,10 @@ use Jed\Component\Jed\Administrator\Audit\AuditPipeline;
 use Jed\Component\Jed\Administrator\Audit\ClaudeAuditor;
 use Jed\Component\Jed\Administrator\Audit\DockerRunner;
 use Jed\Component\Jed\Administrator\Audit\ProcessRunner;
+use Jed\Component\Jed\Administrator\Link\LinkCheckService;
 use Jed\Component\Jed\Administrator\Queue\AuditJobHandler;
 use Jed\Component\Jed\Administrator\Queue\JobHandlerRegistry;
+use Jed\Component\Jed\Administrator\Queue\LinkCheckJobHandler;
 use Jed\Component\Jed\Administrator\Queue\QueueService;
 use Jed\Component\Jed\Administrator\Queue\ScoreRecalcJobHandler;
 use Jed\Component\Jed\Administrator\Service\ExtensionVersionUpdater;
@@ -23,6 +25,7 @@ use Jed\Component\Jed\Administrator\Service\ScoreCalculationService;
 use Jed\Component\Jed\Administrator\Service\UpdateCheckService;
 use Jed\Component\Jed\Administrator\Update\UpdateServerXmlParser;
 use Jed\Component\Jed\Administrator\Url\SafeHttpFetcher;
+use Jed\Component\Jed\Administrator\Url\UrlValidatorRegistry;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Extension\PluginInterface;
 use Joomla\CMS\Factory;
@@ -87,15 +90,24 @@ return new class () implements ServiceProviderInterface {
 
                 $scoreCalculationService = new ScoreCalculationService($db);
 
+                // One fetcher and one validator registry for both the periodic pass and the
+                // on-demand job - the same ones the form uses (P1-08). P1-09 owns no validators.
+                $linkCheckService = new LinkCheckService(
+                    $db,
+                    UrlValidatorRegistry::withDefaults(new SafeHttpFetcher(), new UpdateServerXmlParser())
+                );
+
                 $jobHandlerRegistry = new JobHandlerRegistry();
                 $jobHandlerRegistry->register('extension.audit', new AuditJobHandler($auditPipeline));
                 $jobHandlerRegistry->register('extension.score_recalc', new ScoreRecalcJobHandler($scoreCalculationService));
+                $jobHandlerRegistry->register('extension.linkcheck', new LinkCheckJobHandler($linkCheckService));
 
                 $plugin = new Jed(
                     (array) PluginHelper::getPlugin('task', 'jed'),
                     $updateCheck,
                     $queueService,
-                    $jobHandlerRegistry
+                    $jobHandlerRegistry,
+                    $linkCheckService
                 );
                 $plugin->setApplication(Factory::getApplication());
 

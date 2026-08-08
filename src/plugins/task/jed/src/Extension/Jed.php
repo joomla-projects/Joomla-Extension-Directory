@@ -14,6 +14,7 @@ namespace Joomla\Plugin\Task\Jed\Extension;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Administrator\Link\LinkCheckService;
 use Jed\Component\Jed\Administrator\Queue\JobHandlerRegistry;
 use Jed\Component\Jed\Administrator\Queue\QueueService;
 use Jed\Component\Jed\Administrator\Service\UpdateCheckService;
@@ -59,6 +60,11 @@ final class Jed extends CMSPlugin implements SubscriberInterface
             'form'            => 'queueworker',
             'method'          => 'drainQueue',
         ],
+        'jed.linkcheck' => [
+            'langConstPrefix' => 'PLG_TASK_JED_LINKCHECK',
+            'form'            => 'linkcheck',
+            'method'          => 'checkLinks',
+        ],
     ];
 
     /**
@@ -80,7 +86,8 @@ final class Jed extends CMSPlugin implements SubscriberInterface
         array $config,
         private readonly UpdateCheckService $updateCheckService,
         private readonly QueueService $queueService,
-        private readonly JobHandlerRegistry $jobHandlerRegistry
+        private readonly JobHandlerRegistry $jobHandlerRegistry,
+        private readonly LinkCheckService $linkCheckService
     ) {
         parent::__construct($config);
     }
@@ -176,5 +183,49 @@ final class Jed extends CMSPlugin implements SubscriberInterface
         $this->logTask(\sprintf('jed.queueworker: processed %d, failed %d.', \count($jobs), $failures));
 
         return $failures > 0 && $failures === \count($jobs) ? TaskStatus::KNOCKOUT : TaskStatus::OK;
+    }
+
+    /**
+     * `jed.linkcheck` routine: check a batch of the links that are due.
+     *
+     * The default batch of 200 with the routine running every 30 minutes is roughly 9,600 checks
+     * a day, which rotates the ~29,000 live URLs in about three days - the interval the state
+     * table is written against. Raising the batch shortens the cycle and raises the load on the
+     * sites being checked in equal measure; both ends are deliberately in the task's parameters
+     * rather than in the code.
+     *
+     * @param ExecuteTaskEvent $event The `onExecuteTask` event.
+     *
+     * @return int The routine exit code.
+     *
+     * @since 4.1.0
+     */
+    protected function checkLinks(ExecuteTaskEvent $event): int
+    {
+        $params    = $event->getArgument('params');
+        $batchSize = max(1, (int) ($params->batch_size ?? 200));
+        $force     = !empty($params->force);
+
+        try {
+            $result = $this->linkCheckService->run($batchSize, $force);
+        } catch (Throwable $e) {
+            $this->logTask('jed.linkcheck failed: ' . $e->getMessage(), 'error');
+
+            return TaskStatus::KNOCKOUT;
+        }
+
+        $this->logTask(\sprintf(
+            'jed.linkcheck: checked %d (ok %d, hard %d, soft %d, semantic %d), %d developer tickets, %d escalated, %d recovered.',
+            $result['checked'],
+            $result['ok'],
+            $result['hard'],
+            $result['soft'],
+            $result['semantic'],
+            $result['notified'],
+            $result['escalated'],
+            $result['recovered']
+        ));
+
+        return TaskStatus::OK;
     }
 }

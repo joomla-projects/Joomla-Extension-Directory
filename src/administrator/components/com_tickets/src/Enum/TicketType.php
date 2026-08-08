@@ -29,4 +29,9 @@ enum TicketType: int
     // 4, 5, 6 were used for VEL (com_vel) report types, removed along with com_vel
     case Other               = 7;
     case DeveloperResponse   = 8;
+    // Opened by the periodic link check for the developer whose link has stopped answering
+    // (P1-09). A new value rather than recycling 3: it is not yet established whether legacy
+    // rows still carry that one, and a ticket type that quietly means two things is worse than
+    // a gap in the numbering. `linked_item_id` is the extension, as for Extension above.
+    case LinkCheck           = 9;
 }

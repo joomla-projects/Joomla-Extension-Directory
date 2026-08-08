@@ -534,9 +534,51 @@ CREATE TABLE IF NOT EXISTS `#__jed_url_checks`
 	KEY `IDX_jed_url_checks_extension` (`extension_id`, `field`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `#__jed_extension_linkchecks`;
+
+-- One row per listing and URL field, carrying the *current* state of that link (P1-09). Modelled
+-- on JED3's `jed_extension_linkcheck_log`, which is why this is parity rather than an idea.
+--
+-- It is a state table, not a log. A pass over the live stock is roughly 29,000 checks, and
+-- writing history for each would produce a table nobody could read and an action log nobody could
+-- use (8.15 boundary 2). Only *transitions* - reachable to broken, broken to reachable - reach
+-- the action log; the running state and the counter live here.
+--
+-- fail_count counts *consecutive* failures and resets to 0 on any success. Without that reset an
+-- extension accumulates isolated outages over years and eventually alarms for nothing.
+CREATE TABLE IF NOT EXISTS `#__jed_extension_linkchecks`
+(
+	`id`           int unsigned NOT NULL AUTO_INCREMENT,
+	`extension_id` int unsigned NOT NULL,
+	`link_type`    varchar(32)  NOT NULL,
+	`url`          varchar(255) NOT NULL DEFAULT '',
+	`last_checked` datetime     DEFAULT NULL,
+	-- ok | hard | soft | semantic. The three failure classes are weighted differently on
+	-- purpose: a 403 from bot protection is not the same fact as a domain that no longer
+	-- resolves, and treating them alike is how a team learns to ignore an alert.
+	`status`       varchar(20)  NOT NULL DEFAULT 'ok',
+	`http_code`    smallint unsigned DEFAULT NULL,
+	`message`      varchar(255) NOT NULL DEFAULT '',
+	`fail_count`   int unsigned NOT NULL DEFAULT '0',
+	`first_failed` datetime     DEFAULT NULL,
+	-- The ticket opened for the *developer* at threshold N. There is no team ticket: at
+	-- threshold M this row is flagged instead, and P1-19's abandonware case reads the flag.
+	-- Three symptoms of one thing - dead links, a dead update server, long inactivity - must
+	-- feed one case, not three ticket streams (4.9, 12.3).
+	`ticket_id`    int unsigned DEFAULT NULL,
+	`escalated`    tinyint(1)   NOT NULL DEFAULT '0',
+	`escalated_time` datetime   DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `UQ_jed_linkcheck` (`extension_id`, `link_type`),
+	KEY `IDX_jed_linkcheck_due` (`last_checked`),
+	KEY `IDX_jed_linkcheck_state` (`status`, `fail_count`),
+	KEY `IDX_jed_linkcheck_escalated` (`escalated`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
 
 INSERT INTO `#__mail_templates` (`template_id`, `extension`, `language`, `subject`, `body`, `htmlbody`, `attachments`, `params`) VALUES
-('com_jed.audit_report', 'com_jed', '', 'COM_JED_AUDIT_REPORT_EMAIL_SUBJECT', 'COM_JED_AUDIT_REPORT_EMAIL_BODY', '', '', '{"tags":["sitename","extensionname","extensionversion","phpstanreport","claudereport"]}');
+('com_jed.audit_report', 'com_jed', '', 'COM_JED_AUDIT_REPORT_EMAIL_SUBJECT', 'COM_JED_AUDIT_REPORT_EMAIL_BODY', '', '', '{"tags":["sitename","extensionname","extensionversion","phpstanreport","claudereport"]}'),
+('com_jed.link_broken', 'com_jed', '', 'COM_JED_LINKCHECK_EMAIL_SUBJECT', 'COM_JED_LINKCHECK_EMAIL_BODY', '', '', '{"tags":["sitename","extensionname","linktype","url","reason","since","ticketlink"]}');
 
 
 SET FOREIGN_KEY_CHECKS = 1;
