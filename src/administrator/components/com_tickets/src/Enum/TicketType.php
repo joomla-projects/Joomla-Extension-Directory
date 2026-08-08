@@ -34,4 +34,14 @@ enum TicketType: int
     // rows still carry that one, and a ticket type that quietly means two things is worse than
     // a gap in the numbering. `linked_item_id` is the extension, as for Extension above.
     case LinkCheck           = 9;
+    // The JED team's ticket for an abandonware case (P1-19). `linked_item_id` is the **case**,
+    // not the extension: a case can exist for something the JED never listed, and what the team
+    // needs in front of them is the case with all its signals.
+    //
+    // P1-19 was written expecting to reuse `AbandonedreportTicketHandler`'s value 4. That is
+    // stale - P0-04 decision 6 removed 4, 5 and 6 with com_vel and settled that they stay
+    // removed. A new value for the same reason value 9 was new: a ticket type that quietly means
+    // two things is worse than a gap in the numbering, and here the old meaning was a *VEL*
+    // report, which this deliberately is not.
+    case Abandonware         = 10;
 }

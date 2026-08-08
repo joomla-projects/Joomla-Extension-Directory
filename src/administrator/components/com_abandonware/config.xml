@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Every number in here is a policy number, not a technical constant. 4.10 says so of the
+    inactivity threshold in as many words - "a policy number with commercial consequences" - and
+    the same is true of the grace period and the update-server tolerance. None of them belongs in
+    a class constant where changing it needs a release.
+-->
+<config>
+    <fieldset name="workflow" label="COM_ABANDONWARE_CONFIG_WORKFLOW_FIELDSET_LABEL">
+        <field
+            name="grace_days"
+            type="number"
+            default="30"
+            min="1"
+            max="365"
+            filter="integer"
+            label="COM_ABANDONWARE_CONFIG_GRACE_DAYS_LABEL"
+            description="COM_ABANDONWARE_CONFIG_GRACE_DAYS_DESC"
+            />
+
+        <field
+            name="auto_contact"
+            type="radio"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_ABANDONWARE_CONFIG_AUTO_CONTACT_LABEL"
+            description="COM_ABANDONWARE_CONFIG_AUTO_CONTACT_DESC"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field
+            name="auto_publish"
+            type="radio"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_ABANDONWARE_CONFIG_AUTO_PUBLISH_LABEL"
+            description="COM_ABANDONWARE_CONFIG_AUTO_PUBLISH_DESC"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+    </fieldset>
+
+    <fieldset name="signals" label="COM_ABANDONWARE_CONFIG_SIGNALS_FIELDSET_LABEL">
+        <field
+            name="signal_linkcheck"
+            type="radio"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_ABANDONWARE_CONFIG_SIGNAL_LINKCHECK_LABEL"
+            description="COM_ABANDONWARE_CONFIG_SIGNAL_LINKCHECK_DESC"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field
+            name="signal_updatecheck"
+            type="radio"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_ABANDONWARE_CONFIG_SIGNAL_UPDATECHECK_LABEL"
+            description="COM_ABANDONWARE_CONFIG_SIGNAL_UPDATECHECK_DESC"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field
+            name="updatecheck_days"
+            type="number"
+            default="60"
+            min="7"
+            max="730"
+            filter="integer"
+            showon="signal_updatecheck:1"
+            label="COM_ABANDONWARE_CONFIG_UPDATECHECK_DAYS_LABEL"
+            description="COM_ABANDONWARE_CONFIG_UPDATECHECK_DAYS_DESC"
+            />
+
+        <!-- Off by default, and that is the recommendation rather than an oversight. Inactivity is
+             the weakest of the three signals: an extension with no release for three years may
+             simply be finished, and on a catalogue of ~15,000 listings switching this on without
+             choosing the threshold first produces more cases than the team can read. -->
+        <field
+            name="signal_inactivity"
+            type="radio"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_ABANDONWARE_CONFIG_SIGNAL_INACTIVITY_LABEL"
+            description="COM_ABANDONWARE_CONFIG_SIGNAL_INACTIVITY_DESC"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field
+            name="inactivity_days"
+            type="number"
+            default="1095"
+            min="180"
+            max="3650"
+            filter="integer"
+            showon="signal_inactivity:1"
+            label="COM_ABANDONWARE_CONFIG_INACTIVITY_DAYS_LABEL"
+            description="COM_ABANDONWARE_CONFIG_INACTIVITY_DAYS_DESC"
+            />
+
+        <field
+            name="scan_batch"
+            type="number"
+            default="50"
+            min="1"
+            max="500"
+            filter="integer"
+            label="COM_ABANDONWARE_CONFIG_SCAN_BATCH_LABEL"
+            description="COM_ABANDONWARE_CONFIG_SCAN_BATCH_DESC"
+            />
+    </fieldset>
+
+    <fieldset name="permissions" label="JCONFIG_PERMISSIONS_LABEL" description="JCONFIG_PERMISSIONS_DESC">
+        <field
+            name="rules"
+            type="rules"
+            label="JCONFIG_PERMISSIONS_LABEL"
+            filter="rules"
+            validate="rules"
+            class="inputbox"
+            component="com_abandonware"
+            section="component"
+            />
+    </fieldset>
+</config>

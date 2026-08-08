@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Three actions beyond the core set, and the split between them is the point.
+
+    Working a case - triage, notes, assignment, contacting the owner - is ordinary team work and
+    rides on core.edit. Concluding one is not: `abandonware.mark` puts a public statement about a
+    developer's product on the site, and 4.10 weighs that explicitly against the commercial effect
+    of a misjudgement. Same reasoning as jed.block being separate from core.edit.state in com_jed.
+-->
+<access component="com_abandonware">
+    <section name="component">
+        <action name="core.admin" title="JACTION_ADMIN" description="JACTION_ADMIN"/>
+        <action name="core.manage" title="JACTION_MANAGE" description="JACTION_MANAGE"/>
+        <action name="core.create" title="JACTION_CREATE" description="JACTION_CREATE"/>
+        <action name="core.delete" title="JACTION_DELETE" description="JACTION_DELETE"/>
+        <action name="core.edit" title="JACTION_EDIT" description="JACTION_EDIT"/>
+        <action name="core.edit.state" title="JACTION_EDITSTATE" description="JACTION_EDITSTATE"/>
+
+        <!-- Writing to the developer and starting the grace period (step 3). -->
+        <action name="abandonware.contact" title="COM_ABANDONWARE_ACTION_CONTACT" description="COM_ABANDONWARE_ACTION_CONTACT_DESC"/>
+
+        <!-- Concluding that an extension is abandoned, which is what makes the case public. -->
+        <action name="abandonware.mark" title="COM_ABANDONWARE_ACTION_MARK" description="COM_ABANDONWARE_ACTION_MARK_DESC"/>
+
+        <!-- Closing a case with an outcome, including dismissing a report as abuse. -->
+        <action name="abandonware.resolve" title="COM_ABANDONWARE_ACTION_RESOLVE" description="COM_ABANDONWARE_ACTION_RESOLVE_DESC"/>
+    </section>
+</access>

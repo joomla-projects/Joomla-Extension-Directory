@@ -109,7 +109,9 @@ class PlgSampledataJed_Migrate extends CMSPlugin
     /**
      * Total number of steps: ten fixed migration steps, the history prepare step, one step per
      * history batch, then the baseline revision, the RSForms staging, the three-part tag import
-     * (vocabulary, one step per UCM batch, assignments) and the cleanup.
+     * (vocabulary, one step per UCM batch, assignments) history batch, then the baseline
+     * revision, the hit aggregate, the RSForms staging, the
+     * abandonware import and the cleanup.
      *
      * @var    integer
      *
@@ -438,6 +440,9 @@ class PlgSampledataJed_Migrate extends CMSPlugin
             'after' => 'reportTagCuration',
         ];
 
+        // After rsforms.sql, which stages forms 9 and 14, and after the listings exist, because it
+        // resolves each report's free-text extension name against #__jed_extensions (P1-19).
+        $plan[++$next] = ['file' => 'abandonware.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_ABANDONWARE_SUCCESS'];
         $plan[++$next] = ['file' => 'cleanup.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_CLEANUP_SUCCESS'];
 
         return $plan;

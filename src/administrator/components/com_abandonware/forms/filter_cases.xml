@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field
+                name="search"
+                type="text"
+                label="JSEARCH_FILTER"
+                hint="COM_ABANDONWARE_CASES_SEARCH_HINT"
+        />
+
+        <!--
+            Defaults to "open", not "all". The team's question on any given morning is what is
+            outstanding, and after a year the closed cases outnumber the open ones.
+
+            "Awaiting contact" is the filter worth having above the others: 4.10 names step 3 as
+            the one most likely to be skipped, and this is the list of cases where it has been.
+        -->
+        <field
+                name="status"
+                type="list"
+                label="COM_ABANDONWARE_CASES_FILTER_STATUS"
+                default="open"
+                onchange="this.form.submit();"
+        >
+            <option value="open">COM_ABANDONWARE_CASES_FILTER_STATUS_OPEN</option>
+            <option value="awaiting_contact">COM_ABANDONWARE_CASES_FILTER_STATUS_AWAITING_CONTACT</option>
+            <option value="received">COM_ABANDONWARE_STATUS_RECEIVED</option>
+            <option value="reviewing">COM_ABANDONWARE_STATUS_REVIEWING</option>
+            <option value="owner_contacted">COM_ABANDONWARE_STATUS_OWNER_CONTACTED</option>
+            <option value="grace_expired">COM_ABANDONWARE_STATUS_GRACE_EXPIRED</option>
+            <option value="abandoned">COM_ABANDONWARE_STATUS_ABANDONED</option>
+            <option value="closed">COM_ABANDONWARE_CASES_FILTER_STATUS_CLOSED</option>
+            <option value="all">JALL</option>
+        </field>
+
+        <field
+                name="source"
+                type="list"
+                label="COM_ABANDONWARE_CASES_FILTER_SOURCE"
+                onchange="this.form.submit();"
+        >
+            <option value="">COM_ABANDONWARE_CASES_FILTER_SOURCE_ALL</option>
+            <option value="report">COM_ABANDONWARE_SOURCE_REPORT</option>
+            <option value="linkcheck">COM_ABANDONWARE_SOURCE_LINKCHECK</option>
+            <option value="updatecheck">COM_ABANDONWARE_SOURCE_UPDATECHECK</option>
+            <option value="inactivity">COM_ABANDONWARE_SOURCE_INACTIVITY</option>
+            <option value="manual">COM_ABANDONWARE_SOURCE_MANUAL</option>
+        </field>
+
+        <field
+                name="assigned"
+                type="list"
+                label="COM_ABANDONWARE_CASES_FILTER_ASSIGNED"
+                onchange="this.form.submit();"
+        >
+            <option value="">COM_ABANDONWARE_CASES_FILTER_ASSIGNED_ANY</option>
+            <option value="none">COM_ABANDONWARE_CASES_FILTER_ASSIGNED_NONE</option>
+        </field>
+    </fields>
+
+    <fields name="list">
+        <field
+                name="fullordering"
+                type="list"
+                label="JGLOBAL_SORT_BY"
+                default="a.created DESC"
+                onchange="this.form.submit();"
+        >
+            <option value="a.created DESC">COM_ABANDONWARE_CASES_SORT_CREATED_DESC</option>
+            <option value="a.created ASC">COM_ABANDONWARE_CASES_SORT_CREATED_ASC</option>
+            <option value="a.extension_name ASC">COM_ABANDONWARE_CASES_SORT_NAME_ASC</option>
+            <option value="a.extension_name DESC">COM_ABANDONWARE_CASES_SORT_NAME_DESC</option>
+            <option value="a.grace_until ASC">COM_ABANDONWARE_CASES_SORT_GRACE_ASC</option>
+            <option value="a.status ASC">COM_ABANDONWARE_CASES_SORT_STATUS_ASC</option>
+            <option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
+            <option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
+        </field>
+
+        <field
+                name="limit"
+                type="limitbox"
+                label="JGLOBAL_LIST_LIMIT"
+                default="25"
+                onchange="this.form.submit();"
+        />
+    </fields>
+</form>

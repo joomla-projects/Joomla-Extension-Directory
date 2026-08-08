@@ -14,6 +14,7 @@ namespace Joomla\Plugin\Task\Jed\Extension;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Abandonware\Administrator\Service\SignalScanner;
 use Jed\Component\Jed\Administrator\Hit\HitAggregator;
 use Jed\Component\Jed\Administrator\Link\LinkCheckService;
 use Jed\Component\Jed\Administrator\Privacy\PrivacyRetentionService;
@@ -77,6 +78,11 @@ final class Jed extends CMSPlugin implements SubscriberInterface
             'form'            => 'privacyprune',
             'method'          => 'pruneExpiredData',
         ],
+        'jed.abandonware' => [
+            'langConstPrefix' => 'PLG_TASK_JED_ABANDONWARE',
+            'form'            => 'abandonware',
+            'method'          => 'scanAbandonware',
+        ],
     ];
 
     /**
@@ -91,6 +97,9 @@ final class Jed extends CMSPlugin implements SubscriberInterface
      * @param UpdateCheckService  $updateCheckService  Checks extensions' update servers.
      * @param QueueService        $queueService        Drains and completes/fails jobs from #__jed_queue_jobs.
      * @param JobHandlerRegistry  $jobHandlerRegistry  Maps a job's `type` to the handler that processes it.
+     * @param LinkCheckService    $linkCheckService    The periodic half of link checking (P1-09).
+     * @param HitAggregator       $hitAggregator       Rolls the raw hit log into daily buckets (P1-12).
+     * @param SignalScanner       $signalScanner       Collects the three abandonware signals into cases (P1-19).
      *
      * @since 4.1.0
      */
@@ -101,6 +110,7 @@ final class Jed extends CMSPlugin implements SubscriberInterface
         private readonly JobHandlerRegistry $jobHandlerRegistry,
         private readonly LinkCheckService $linkCheckService,
         private readonly HitAggregator $hitAggregator,
+        private readonly SignalScanner $signalScanner,
         private readonly PrivacyRetentionService $retentionService
     ) {
         parent::__construct($config);
@@ -315,6 +325,53 @@ final class Jed extends CMSPlugin implements SubscriberInterface
             $result['review_ips'],
             $result['transfer_lookups'],
             $result['url_checks']
+        ));
+
+        return TaskStatus::OK;
+    }
+
+    /**
+     * `jed.abandonware` routine: collect the automated signals into cases, and age the open ones.
+     *
+     * Meant to run daily. The three signals it reads all change on a scale of weeks - a link that
+     * has been dead long enough for `P1-09` to escalate it, an update server failing for two
+     * months, a listing untouched for three years - so a faster cadence buys nothing and only
+     * makes a batch that finds nothing new run more often.
+     *
+     * It is deliberately incapable of concluding anything. Every signal opens or joins a case for
+     * a person to work, and the marker at the end of that process is a decision a human takes with
+     * `abandonware.mark`. That is what makes running this unattended over ~15,000 listings
+     * acceptable: the worst outcome is a queue that is too long.
+     *
+     * @param ExecuteTaskEvent $event The `onExecuteTask` event.
+     *
+     * @return int The routine exit code.
+     *
+     * @since 4.1.0
+     */
+    protected function scanAbandonware(ExecuteTaskEvent $event): int
+    {
+        $params    = $event->getArgument('params');
+        $batchSize = max(1, (int) ($params->batch_size ?? 50));
+
+        try {
+            $result       = $this->signalScanner->run($batchSize);
+            $transferred  = $this->signalScanner->closeTransferredCases();
+        } catch (Throwable $e) {
+            $this->logTask('jed.abandonware failed: ' . $e->getMessage(), 'error');
+
+            return TaskStatus::KNOCKOUT;
+        }
+
+        $this->logTask(\sprintf(
+            'jed.abandonware: %d from link checks, %d from update checks, %d from inactivity, '
+            . '%d grace periods expired, %d closed by transfer, %d errors.',
+            $result['linkcheck'],
+            $result['updatecheck'],
+            $result['inactivity'],
+            $result['expired'],
+            $transferred,
+            $result['errors']
         ));
 
         return TaskStatus::OK;
