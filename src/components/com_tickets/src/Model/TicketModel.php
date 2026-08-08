@@ -152,7 +152,7 @@ class TicketModel extends AdminModel
 
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);
-        $query->select('*')->from('#__jed_ticket_messages')->where($db->quoteName('ticket_id') . ' = ' . $db->quote($pk));
+        $query->select('*')->from($db->quoteName('#__jed_ticket_messages'))->where($db->quoteName('ticket_id') . ' = ' . $db->quote($pk));
 
         if (!$this->getCurrentUser()->authorise('core.manage', 'com_tickets')) {
             $query->where($db->quoteName('internal') . ' = 0');

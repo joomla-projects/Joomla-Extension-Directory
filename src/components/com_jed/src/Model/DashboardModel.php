@@ -102,12 +102,9 @@ class DashboardModel extends ItemModel
                 ]
             )
             ->from($db->quoteName('#__jed_reviews', 'r'))
-            ->innerJoin($db->quoteName('#__jed_extensions', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('r.extension_id'))
-            ->leftJoin(
-                $db->quoteName('#__jed_extensions_maintainers', 'm')
-                . ' ON ' . $db->quoteName('m.extension_id') . ' = ' . $db->quoteName('r.extension_id')
-                . ' AND ' . $db->quoteName('m.user_id') . ' = ' . $db->quote($userId)
-            )
+            ->innerJoin($db->quoteName('#__jed_extensions', 'e'), $db->quoteName('e.id') . ' = ' . $db->quoteName('r.extension_id'))
+            ->leftJoin($db->quoteName('#__jed_extensions_maintainers', 'm'), $db->quoteName('m.extension_id') . ' = ' . $db->quoteName('r.extension_id')
+                . ' AND ' . $db->quoteName('m.user_id') . ' = ' . $db->quote($userId))
             ->where(
                 '(' . $db->quoteName('r.created_by') . ' = ' . $db->quote($userId) . ')'
                 . ' OR ((' . $db->quoteName('e.owner') . ' = ' . $db->quote($userId)
@@ -165,8 +162,8 @@ class DashboardModel extends ItemModel
                 ->select($db->quoteName('e.name', 'extension_name'))
                 ->select($db->quoteName('u.name', 'invited_by_name'))
                 ->from($db->quoteName('#__jed_extensions_maintainers', 'm'))
-                ->innerJoin($db->quoteName('#__jed_extensions', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('m.extension_id'))
-                ->leftJoin($db->quoteName('#__users', 'u') . ' ON ' . $db->quoteName('u.id') . ' = ' . $db->quoteName('m.invited_by'))
+                ->innerJoin($db->quoteName('#__jed_extensions', 'e'), $db->quoteName('e.id') . ' = ' . $db->quoteName('m.extension_id'))
+                ->leftJoin($db->quoteName('#__users', 'u'), $db->quoteName('u.id') . ' = ' . $db->quoteName('m.invited_by'))
                 ->where($db->quoteName('m.user_id') . ' = ' . $userId)
                 ->where($db->quoteName('m.state') . ' = ' . $invited)
                 ->where($db->quoteName('e.deleted') . ' = 0')
@@ -207,9 +204,9 @@ class DashboardModel extends ItemModel
                 ->select($db->quoteName('uf.name', 'from_name'))
                 ->select($db->quoteName('ut.name', 'to_name'))
                 ->from($db->quoteName('#__jed_extension_transfers', 't'))
-                ->innerJoin($db->quoteName('#__jed_extensions', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('t.extension_id'))
-                ->leftJoin($db->quoteName('#__users', 'uf') . ' ON ' . $db->quoteName('uf.id') . ' = ' . $db->quoteName('t.from_user_id'))
-                ->leftJoin($db->quoteName('#__users', 'ut') . ' ON ' . $db->quoteName('ut.id') . ' = ' . $db->quoteName('t.to_user_id'))
+                ->innerJoin($db->quoteName('#__jed_extensions', 'e'), $db->quoteName('e.id') . ' = ' . $db->quoteName('t.extension_id'))
+                ->leftJoin($db->quoteName('#__users', 'uf'), $db->quoteName('uf.id') . ' = ' . $db->quoteName('t.from_user_id'))
+                ->leftJoin($db->quoteName('#__users', 'ut'), $db->quoteName('ut.id') . ' = ' . $db->quoteName('t.to_user_id'))
                 ->whereIn($db->quoteName('t.state'), $open, ParameterType::STRING)
                 ->where('(' . $db->quoteName('t.from_user_id') . ' = ' . $userId
                     . ' OR ' . $db->quoteName('t.to_user_id') . ' = ' . $userId . ')')
@@ -286,10 +283,7 @@ class DashboardModel extends ItemModel
             ->select('a.blocked, a.block_reason_code, a.deleted')
             ->select('cat.title AS category_title')
             ->from($db->quoteName('#__jed_extensions', 'a'))
-            ->leftJoin(
-                $db->quoteName('#__categories', 'cat')
-                . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('a.catid')
-            )
+            ->leftJoin($db->quoteName('#__categories', 'cat'), $db->quoteName('cat.id') . ' = ' . $db->quoteName('a.catid'))
             // Owned *and* maintained (8.8) - a maintainer manages the listing from here too, so
             // a plain owner filter left them without a way in.
             ->where(JedHelper::getOwnedOrMaintainedCondition($db))
@@ -330,10 +324,7 @@ class DashboardModel extends ItemModel
             ->select('a.id, a.ticket_subject, a.ticket_status, a.ticket_origin, a.created_on')
             ->select('jtc.categorytype AS categorytype_string')
             ->from($db->quoteName('#__jed_tickets', 'a'))
-            ->leftJoin(
-                $db->quoteName('#__jed_ticket_categories', 'jtc')
-                . ' ON ' . $db->quoteName('jtc.id') . ' = ' . $db->quoteName('a.ticket_category_type')
-            )
+            ->leftJoin($db->quoteName('#__jed_ticket_categories', 'jtc'), $db->quoteName('jtc.id') . ' = ' . $db->quoteName('a.ticket_category_type'))
             ->where($db->quoteName('a.created_by') . ' = ' . $db->quote($userId))
             ->order($db->quoteName('a.created_on') . ' DESC');
 
@@ -374,11 +365,8 @@ class DashboardModel extends ItemModel
             ->select('f.id, f.created, e.id AS extension_id, e.name, e.logo')
             ->select('cat.title AS category_title')
             ->from($db->quoteName('#__jed_favorites', 'f'))
-            ->innerJoin($db->quoteName('#__jed_extensions', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('f.extension_id'))
-            ->leftJoin(
-                $db->quoteName('#__categories', 'cat')
-                . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('e.catid')
-            )
+            ->innerJoin($db->quoteName('#__jed_extensions', 'e'), $db->quoteName('e.id') . ' = ' . $db->quoteName('f.extension_id'))
+            ->leftJoin($db->quoteName('#__categories', 'cat'), $db->quoteName('cat.id') . ' = ' . $db->quoteName('e.catid'))
             ->where($db->quoteName('f.user_id') . ' = ' . $db->quote($userId))
             ->order($db->quoteName('f.created') . ' DESC');
 
@@ -420,9 +408,11 @@ class DashboardModel extends ItemModel
     private function countTotal(QueryInterface $query): int
     {
         $db         = $this->getDatabase();
+        // A derived table: the "table" is the wrapped query, so only its alias is a name that
+        // quoteName() can take.
         $countQuery = $db->getQuery(true)
             ->select('COUNT(*)')
-            ->from('(' . (string) $query . ') AS count_subquery');
+            ->from('(' . (string) $query . ') AS ' . $db->quoteName('count_subquery'));
 
         return (int) $db->setQuery($countQuery)->loadResult();
     }

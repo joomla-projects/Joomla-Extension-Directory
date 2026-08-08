@@ -74,25 +74,25 @@ class ExtensionimagesModel extends ListModel
 
         // Select the required fields from the table.
         $query->select($this->getState('list.select', 'DISTINCT a.*'));
-        $query->from('`#__jed_extensions_images` AS a');
+        $query->from($db->quoteName('#__jed_extensions_images', 'a'));
 
         // Join over the users for the checked out user
         $query->select("uc.name AS uEditor");
-        $query->join("LEFT", "#__users AS uc ON uc.id=a.checked_out");
+        $query->leftJoin($db->quoteName("#__users", "uc"), "uc.id=a.checked_out");
         if (jedHelper::isAdminOrSuperUser()) {
             $query->where("a.created_by = " . Factory::getApplication()->getIdentity()->id);
         }
 
         // Join over the user field 'created_by'
         $query->select('`created_by`.name AS `created_by`');
-        $query->join('LEFT', '#__users AS `created_by` ON `created_by`.id = a.`created_by`');
+        $query->leftJoin($db->quoteName('#__users', 'created_by'), '`created_by`.id = a.`created_by`');
 
         // Join over the user field 'modified_by'
         $query->select('`modified_by`.name AS `modified_by`');
-        $query->join('LEFT', '#__users AS `modified_by` ON `modified_by`.id = a.`modified_by`');
+        $query->leftJoin($db->quoteName('#__users', 'modified_by'), '`modified_by`.id = a.`modified_by`');
         // Join over the foreign key 'extension_id'
         $query->select('`#__jed_extensions_3727704`.`name` AS extensions_fk_value_3727704');
-        $query->join('LEFT', '#__jed_extensions AS #__jed_extensions_3727704 ON #__jed_extensions_3727704.`id` = a.`extension_id`');
+        $query->leftJoin($db->quoteName('#__jed_extensions', '#__jed_extensions_3727704'), '#__jed_extensions_3727704.`id` = a.`extension_id`');
 
 
         // Filter by published state

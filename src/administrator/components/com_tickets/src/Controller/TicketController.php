@@ -59,7 +59,7 @@ class TicketController extends FormController
 
         $querySelect = $db->getQuery(true)
             ->select($db->qn(['subject', 'htmlbody', 'params']))
-            ->from('#__mail_templates')
+            ->from($db->quoteName('#__mail_templates'))
             ->where($db->qn('template_id') . ' = ' . $db->quote($templateId))
             ->where($db->qn('extension') . ' = ' . $db->quote('com_tickets'));
         $db->setQuery($querySelect);

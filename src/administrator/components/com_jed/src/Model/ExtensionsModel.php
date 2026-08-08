@@ -125,18 +125,9 @@ class ExtensionsModel extends ListModel
                 )
             )
             ->from($db->quoteName('#__jed_extensions', 'a'))
-            ->leftJoin(
-                $db->quoteName('#__categories', 'categories')
-                . ' ON ' . $db->quoteName('categories.id') . ' = ' . $db->quoteName('a.catid')
-            )
-            ->leftJoin(
-                $db->quoteName('#__users', 'users')
-                . ' ON ' . $db->quoteName('users.id') . ' = ' . $db->quoteName('a.created_by')
-            )
-            ->leftJoin(
-                $db->quoteName('#__users', 'staff')
-                . ' ON ' . $db->quoteName('staff.id') . ' = ' . $db->quoteName('a.checked_out')
-            )
+            ->leftJoin($db->quoteName('#__categories', 'categories'), $db->quoteName('categories.id') . ' = ' . $db->quoteName('a.catid'))
+            ->leftJoin($db->quoteName('#__users', 'users'), $db->quoteName('users.id') . ' = ' . $db->quoteName('a.created_by'))
+            ->leftJoin($db->quoteName('#__users', 'staff'), $db->quoteName('staff.id') . ' = ' . $db->quoteName('a.checked_out'))
             ->select(
                 '(SELECT COUNT(*) FROM ' . $db->quoteName('#__jed_extensions_history') . ' h'
                 . ' WHERE ' . $db->quoteName('h.extension_id') . ' = ' . $db->quoteName('a.id') . ') AS '
@@ -276,12 +267,16 @@ class ExtensionsModel extends ListModel
             // favour of whatever has existed longest.
             $since = Factory::getDate('-90 days')->format('Y-m-d');
 
+            // A derived table, so the "table" is the subquery itself and there is no name for
+            // quoteName() to wrap - only its alias. The join condition is passed separately, as
+            // for any other join.
             $query->select('COALESCE(hits.views, 0) AS ' . $db->quoteName('popularity'))
                 ->leftJoin(
                     '(SELECT ' . $db->quoteName('extension_id') . ', SUM(' . $db->quoteName('views') . ') AS '
                     . $db->quoteName('views') . ' FROM ' . $db->quoteName('#__jed_hit_stats')
                     . ' WHERE ' . $db->quoteName('period') . ' >= ' . $db->quote($since)
-                    . ' GROUP BY ' . $db->quoteName('extension_id') . ') AS hits ON hits.extension_id = a.id'
+                    . ' GROUP BY ' . $db->quoteName('extension_id') . ') AS ' . $db->quoteName('hits'),
+                    $db->quoteName('hits.extension_id') . ' = ' . $db->quoteName('a.id')
                 )
                 ->order($db->quoteName('popularity') . ' ' . $orderDirn);
         } elseif ($orderCol && in_array($orderCol, $this->filter_fields, true)) {

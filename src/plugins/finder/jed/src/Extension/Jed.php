@@ -438,15 +438,15 @@ final class Jed extends Adapter implements SubscriberInterface
             ->select('c.title AS category, c.published AS cat_state, c.access AS cat_access')
             ->select('u.name AS author')
             ->select('d.value AS developer_name')
-            ->from('#__jed_extensions AS a')
-            ->join('LEFT', '#__categories AS c ON c.id = a.catid')
-            ->join('LEFT', '#__users AS u ON u.id = a.created_by')
-            ->join(
-                'LEFT',
-                '#__fields AS f ON f.context = ' . $db->quote('com_users.user')
+            ->from($db->quoteName('#__jed_extensions', 'a'))
+            ->leftJoin($db->quoteName('#__categories', 'c'), 'c.id = a.catid')
+            ->leftJoin($db->quoteName('#__users', 'u'), 'u.id = a.created_by')
+            ->leftJoin(
+                $db->quoteName('#__fields', 'f'),
+                'f.context = ' . $db->quote('com_users.user')
                     . ' AND f.name = ' . $db->quote('developer_name')
             )
-            ->join('LEFT', '#__fields_values AS d ON d.field_id = f.id AND d.item_id = a.created_by');
+            ->leftJoin($db->quoteName('#__fields_values', 'd'), 'd.field_id = f.id AND d.item_id = a.created_by');
 
         return $query;
     }
@@ -467,8 +467,8 @@ final class Jed extends Adapter implements SubscriberInterface
         $query->select('a.id')
             ->select('a.' . $this->state_field . ' AS state, c.published AS cat_state')
             ->select('1 AS access, c.access AS cat_access')
-            ->from($this->table . ' AS a')
-            ->join('LEFT', '#__categories AS c ON c.id = a.catid');
+            ->from($this->db->quoteName($this->table, 'a'))
+            ->leftJoin($this->db->quoteName('#__categories', 'c'), 'c.id = a.catid');
 
         return $query;
     }

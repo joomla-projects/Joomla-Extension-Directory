@@ -86,7 +86,7 @@ class CaseModel extends ItemModel
                     ]
                 )
                 ->from($db->quoteName('#__jed_abandonware_cases', 'a'))
-                ->leftJoin($db->quoteName('#__jed_extensions', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('a.extension_id'))
+                ->leftJoin($db->quoteName('#__jed_extensions', 'e'), $db->quoteName('e.id') . ' = ' . $db->quoteName('a.extension_id'))
                 ->where($db->quoteName('a.id') . ' = :id')
                 ->where($db->quoteName('a.published') . ' = 1')
                 ->where($db->quoteName('a.status') . ' = :marked')

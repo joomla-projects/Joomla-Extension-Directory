@@ -56,12 +56,21 @@ final class SchemaUpdatePathTest extends TestCase
      * listing's content, so a rollback must not resurrect a stale one and a probe must not create
      * a revision. `ExtensionVersionUpdater::applyUpdate()` unsets exactly these three.
      *
+     * `parent_confirmed` is the JED team's verdict on a developer's parent claim (`P1-23`).
+     * `ExtensionModel::approve()` copies every history column onto the live row, so a column
+     * present in the revision table is by definition a column a developer can set - and this one
+     * decides whether their add-on appears on somebody else's listing, which at 268 listings
+     * pointing at VirtueMart alone is a spam lever. Keeping it out of the revision is the primary
+     * control; the `unset()` in `approve()` is the second line. The same separation as `blocked`
+     * against `state` (4.8).
+     *
      * @since 4.0.0
      */
     private const HISTORY_EXEMPT = [
         'entry_version',
         'last_update_check',
         'last_update_check_error',
+        'parent_confirmed',
     ];
 
     /**

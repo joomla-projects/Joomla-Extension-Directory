@@ -664,7 +664,7 @@ class JedHelper extends ContentHelper
         $db    = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
 
-        $query->select($field)->from($table)->where('id = ' . $pk);
+        $query->select($field)->from($db->quoteName($table))->where('id = ' . $pk);
 
         $db->setQuery($query);
 

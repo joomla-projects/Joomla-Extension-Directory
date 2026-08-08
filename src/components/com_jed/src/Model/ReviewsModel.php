@@ -151,17 +151,17 @@ class ReviewsModel extends ListModel
             )
         );
 
-        $query->from('`#__jed_reviews` AS a');
+        $query->from($db->quoteName('#__jed_reviews', 'a'));
 
         // Join over the users for the checked out user.
         $query->select('uc.name AS uEditor');
-        $query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
+        $query->leftJoin($db->quoteName('#__users', 'uc'), 'uc.id=a.checked_out');
         // Join over the foreign key 'extension_id'
         $query->select('`#__jed_extensions_3715042`.`name` AS extensions_fk_value_3715042');
-        $query->join('LEFT', '#__jed_extensions AS #__jed_extensions_3715042 ON #__jed_extensions_3715042.`id` = a.`extension_id`');
+        $query->leftJoin($db->quoteName('#__jed_extensions', '#__jed_extensions_3715042'), '#__jed_extensions_3715042.`id` = a.`extension_id`');
 
         // Join over the created by field 'created_by'
-        $query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
+        $query->leftJoin($db->quoteName('#__users', 'created_by'), 'created_by.id = a.created_by');
 
         // Moderated reviews only, plus the current user's own. This model previously had no
         // state filter at all, so unpublished reviews were listed publicly.

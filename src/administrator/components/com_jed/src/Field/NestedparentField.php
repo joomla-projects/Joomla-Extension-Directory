@@ -49,12 +49,12 @@ class NestedparentField extends ListField
         $db    = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
             ->select('DISTINCT(a.id) AS value, a.title AS text, a.level, a.lft')
-            ->from($table . ' AS a');
+            ->from($db->quoteName($table, 'a'));
 
 
         // Prevent parenting to children of this item.
         if ($id = $this->form->getValue('id')) {
-            $query->join('LEFT', $db->quoteName($table) . ' AS p ON p.id = ' . (int) $id)
+            $query->leftJoin($db->quoteName($table, 'p'), 'p.id =' . (int) $id)
                 ->where('NOT(a.lft >= p.lft AND a.rgt <= p.rgt)');
         }
 

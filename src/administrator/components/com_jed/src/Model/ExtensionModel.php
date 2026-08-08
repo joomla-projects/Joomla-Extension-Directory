@@ -712,10 +712,7 @@ class ExtensionModel extends AdminModel
         $query = $db->getQuery(true)
             ->select($db->quoteName(['map.catid', 'c.title']))
             ->from($db->quoteName('#__jed_extensions_category_map', 'map'))
-            ->leftJoin(
-                $db->quoteName('#__categories', 'c')
-                . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('map.catid')
-            )
+            ->leftJoin($db->quoteName('#__categories', 'c'), $db->quoteName('c.id') . ' = ' . $db->quoteName('map.catid'))
             ->where($db->quoteName('map.extension_id') . ' = :extensionId')
             ->bind(':extensionId', $extensionId, ParameterType::INTEGER)
             ->order($db->quoteName('c.title') . ' ASC');
@@ -740,10 +737,7 @@ class ExtensionModel extends AdminModel
         $query = $db->getQuery(true)
             ->select($db->quoteName(['m.user_id', 'u.name', 'u.username']))
             ->from($db->quoteName('#__jed_extensions_maintainers', 'm'))
-            ->leftJoin(
-                $db->quoteName('#__users', 'u')
-                . ' ON ' . $db->quoteName('u.id') . ' = ' . $db->quoteName('m.user_id')
-            )
+            ->leftJoin($db->quoteName('#__users', 'u'), $db->quoteName('u.id') . ' = ' . $db->quoteName('m.user_id'))
             ->where($db->quoteName('m.extension_id') . ' = :extensionId')
             ->bind(':extensionId', $extensionId, ParameterType::INTEGER)
             ->order($db->quoteName('u.name') . ' ASC');
@@ -769,10 +763,7 @@ class ExtensionModel extends AdminModel
             ->select($db->quoteName('h') . '.*')
             ->select($db->quoteName('u.name', 'editor_name'))
             ->from($db->quoteName('#__jed_extensions_history', 'h'))
-            ->leftJoin(
-                $db->quoteName('#__users', 'u')
-                . ' ON ' . $db->quoteName('u.id') . ' = ' . $db->quoteName('h.modified_by')
-            )
+            ->leftJoin($db->quoteName('#__users', 'u'), $db->quoteName('u.id') . ' = ' . $db->quoteName('h.modified_by'))
             ->where($db->quoteName('h.extension_id') . ' = :extensionId')
             ->bind(':extensionId', $extensionId, ParameterType::INTEGER)
             ->order($db->quoteName('h.id') . ' ASC');

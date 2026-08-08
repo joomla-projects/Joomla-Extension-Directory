@@ -125,7 +125,7 @@ class ReportsModel extends ListModel
             ]
         )
             ->from($db->quoteName('#__jed_abandonware_reports', 'a'))
-            ->leftJoin($db->quoteName('#__jed_abandonware_cases', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('a.case_id'));
+            ->leftJoin($db->quoteName('#__jed_abandonware_cases', 'c'), $db->quoteName('c.id') . ' = ' . $db->quoteName('a.case_id'));
 
         $search = (string) $this->getState('filter.search');
 

@@ -113,8 +113,8 @@ class UseraccessModel extends ListModel
             ]
         )
             ->from($db->quoteName('#__users', 'u'))
-            ->leftJoin($db->quoteName('#__jed_user_access', 'a') . ' ON ' . $db->quoteName('a.user_id') . ' = ' . $db->quoteName('u.id'))
-            ->leftJoin($db->quoteName('#__users', 'setter') . ' ON ' . $db->quoteName('setter.id') . ' = ' . $db->quoteName('a.set_by'));
+            ->leftJoin($db->quoteName('#__jed_user_access', 'a'), $db->quoteName('a.user_id') . ' = ' . $db->quoteName('u.id'))
+            ->leftJoin($db->quoteName('#__users', 'setter'), $db->quoteName('setter.id') . ' = ' . $db->quoteName('a.set_by'));
 
         $search = (string) $this->getState('filter.search');
 

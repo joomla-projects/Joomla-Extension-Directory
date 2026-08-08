@@ -136,8 +136,8 @@ class CasesModel extends ListModel
             ]
         )
             ->from($db->quoteName('#__jed_abandonware_cases', 'a'))
-            ->leftJoin($db->quoteName('#__users', 'assignee') . ' ON ' . $db->quoteName('assignee.id') . ' = ' . $db->quoteName('a.assigned_to'))
-            ->leftJoin($db->quoteName('#__jed_extensions', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('a.extension_id'));
+            ->leftJoin($db->quoteName('#__users', 'assignee'), $db->quoteName('assignee.id') . ' = ' . $db->quoteName('a.assigned_to'))
+            ->leftJoin($db->quoteName('#__jed_extensions', 'e'), $db->quoteName('e.id') . ' = ' . $db->quoteName('a.extension_id'));
 
         $search = (string) $this->getState('filter.search');
 

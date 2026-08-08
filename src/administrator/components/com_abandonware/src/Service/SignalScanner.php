@@ -203,8 +203,7 @@ class SignalScanner
             $this->db->getQuery(true)
                 ->select($this->db->quoteName(['c.extension_id', 'c.link_type', 'c.url', 'c.status', 'c.fail_count', 'c.first_failed']))
                 ->from($this->db->quoteName('#__jed_extension_linkchecks', 'c'))
-                ->join(
-                    'INNER',
+                ->innerJoin(
                     $this->db->quoteName('#__jed_extensions', 'e'),
                     $this->db->quoteName('e.id') . ' = ' . $this->db->quoteName('c.extension_id')
                 )
@@ -383,8 +382,7 @@ class SignalScanner
             $this->db->getQuery(true)
                 ->select($this->db->quoteName(['a.id']))
                 ->from($this->db->quoteName('#__jed_abandonware_cases', 'a'))
-                ->join(
-                    'INNER',
+                ->innerJoin(
                     $this->db->quoteName('#__jed_extension_transfers', 't'),
                     $this->db->quoteName('t.extension_id') . ' = ' . $this->db->quoteName('a.open_extension_id')
                 )

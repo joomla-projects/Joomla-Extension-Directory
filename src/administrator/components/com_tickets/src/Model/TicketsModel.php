@@ -169,30 +169,30 @@ class TicketsModel extends ListModel
                 'DISTINCT a.*'
             )
         );
-        $query->from('`#__jed_tickets` AS a');
+        $query->from($db->quoteName('#__jed_tickets', 'a'));
         $query->select("unix_timestamp(a.created_on) as created_time");
         // Join over the users for the checked out user
         $query->select("uc.name AS uEditor");
-        $query->join("LEFT", "#__users AS uc ON uc.id=a.checked_out");
+        $query->leftJoin($db->quoteName('#__users', 'uc'), 'uc.id = a.checked_out');
 
         // Join over the foreign key 'ticket_category_type'
         $query->select('`jtc`.`categorytype` AS categorytype_string');
-        $query->join('LEFT', '#__jed_ticket_categories AS jtc ON jtc.`id` = a.`ticket_category_type`');
+        $query->leftJoin($db->quoteName('#__jed_ticket_categories', 'jtc'), 'jtc.`id` = a.`ticket_category_type`');
         // Join over the foreign key 'allocated_group'
         $query->select('`jtg`.`name` AS ticketallocatedgroup_string');
-        $query->join('LEFT', '#__jed_ticket_groups AS jtg ON jtg.`id` = a.`allocated_group`');
+        $query->leftJoin($db->quoteName('#__jed_ticket_groups', 'jtg'), 'jtg.`id` = a.`allocated_group`');
 
         // Join over the user field 'allocated_to'
         $query->select('`allocated_to`.name AS `allocated_to`');
-        $query->join('LEFT', '#__users AS `allocated_to` ON `allocated_to`.id = a.`allocated_to`');
+        $query->leftJoin($db->quoteName('#__users', 'allocated_to'), '`allocated_to`.id = a.`allocated_to`');
 
         // Join over the user field 'created_by'
         $query->select('`created_by`.name AS `created_by`');
-        $query->join('LEFT', '#__users AS `created_by` ON `created_by`.id = a.`created_by`');
+        $query->leftJoin($db->quoteName('#__users', 'created_by'), '`created_by`.id = a.`created_by`');
 
         // Join over the user field 'modified_by'
         $query->select('`modified_by`.name AS `modified_by`');
-        $query->join('LEFT', '#__users AS `modified_by` ON `modified_by`.id = a.`modified_by`');
+        $query->leftJoin($db->quoteName('#__users', 'modified_by'), '`modified_by`.id = a.`modified_by`');
 
 
         // Filter by published state

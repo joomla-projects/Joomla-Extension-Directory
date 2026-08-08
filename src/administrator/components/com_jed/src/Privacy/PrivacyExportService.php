@@ -172,8 +172,7 @@ final class PrivacyExportService
         $query = $this->db->getQuery(true)
             ->select(['m.*', $this->db->quoteName('e.name', 'extension_name')])
             ->from($this->db->quoteName('#__jed_extensions_maintainers', 'm'))
-            ->join(
-                'LEFT',
+            ->leftJoin(
                 $this->db->quoteName('#__jed_extensions', 'e'),
                 $this->db->quoteName('e.id') . ' = ' . $this->db->quoteName('m.extension_id')
             )
@@ -250,8 +249,7 @@ final class PrivacyExportService
         $query = $this->db->getQuery(true)
             ->select(['r.*', $this->db->quoteName('e.name', 'extension_name')])
             ->from($this->db->quoteName('#__jed_reviews', 'r'))
-            ->join(
-                'LEFT',
+            ->leftJoin(
                 $this->db->quoteName('#__jed_extensions', 'e'),
                 $this->db->quoteName('e.id') . ' = ' . $this->db->quoteName('r.extension_id')
             )
@@ -287,8 +285,7 @@ final class PrivacyExportService
                 $this->db->quoteName('r.developer_response_published'),
             ])
             ->from($this->db->quoteName('#__jed_reviews', 'r'))
-            ->join(
-                'INNER',
+            ->innerJoin(
                 $this->db->quoteName('#__jed_extensions', 'e'),
                 $this->db->quoteName('e.id') . ' = ' . $this->db->quoteName('r.extension_id')
             )
@@ -315,8 +312,7 @@ final class PrivacyExportService
         $query = $this->db->getQuery(true)
             ->select(['f.*', $this->db->quoteName('e.name', 'extension_name')])
             ->from($this->db->quoteName('#__jed_favorites', 'f'))
-            ->join(
-                'LEFT',
+            ->leftJoin(
                 $this->db->quoteName('#__jed_extensions', 'e'),
                 $this->db->quoteName('e.id') . ' = ' . $this->db->quoteName('f.extension_id')
             )
@@ -385,8 +381,7 @@ final class PrivacyExportService
         $query = $this->db->getQuery(true)
             ->select(['t.*', $this->db->quoteName('e.name', 'extension_name')])
             ->from($this->db->quoteName('#__jed_extension_transfers', 't'))
-            ->join(
-                'LEFT',
+            ->leftJoin(
                 $this->db->quoteName('#__jed_extensions', 'e'),
                 $this->db->quoteName('e.id') . ' = ' . $this->db->quoteName('t.extension_id')
             )

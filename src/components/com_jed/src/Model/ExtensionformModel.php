@@ -117,7 +117,7 @@ class ExtensionformModel extends FormModel
         $query = $db->getQuery(true)
             ->select($db->quoteName('v.value'))
             ->from($db->quoteName('#__fields', 'f'))
-            ->join('INNER', $db->quoteName('#__fields_values', 'v') . ' ON ' . $db->quoteName('v.field_id') . ' = ' . $db->quoteName('f.id'))
+            ->innerJoin($db->quoteName('#__fields_values', 'v'), $db->quoteName('v.field_id') . ' = ' . $db->quoteName('f.id'))
             ->where($db->quoteName('f.context') . ' = :context')
             ->where($db->quoteName('f.name') . ' = :name')
             ->where($db->quoteName('v.item_id') . ' = :uid')
@@ -440,10 +440,7 @@ class ExtensionformModel extends FormModel
         $query = $db->getQuery(true)
             ->select($db->quoteName(['map.catid', 'c.title']))
             ->from($db->quoteName('#__jed_extensions_category_map', 'map'))
-            ->leftJoin(
-                $db->quoteName('#__categories', 'c')
-                . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('map.catid')
-            )
+            ->leftJoin($db->quoteName('#__categories', 'c'), $db->quoteName('c.id') . ' = ' . $db->quoteName('map.catid'))
             ->where($db->quoteName('map.extension_id') . ' = :extensionId')
             ->bind(':extensionId', $extensionId, ParameterType::INTEGER)
             ->order($db->quoteName('c.title') . ' ASC');
@@ -468,10 +465,7 @@ class ExtensionformModel extends FormModel
         $query = $db->getQuery(true)
             ->select($db->quoteName(['m.user_id', 'u.name', 'u.username']))
             ->from($db->quoteName('#__jed_extensions_maintainers', 'm'))
-            ->leftJoin(
-                $db->quoteName('#__users', 'u')
-                . ' ON ' . $db->quoteName('u.id') . ' = ' . $db->quoteName('m.user_id')
-            )
+            ->leftJoin($db->quoteName('#__users', 'u'), $db->quoteName('u.id') . ' = ' . $db->quoteName('m.user_id'))
             ->where($db->quoteName('m.extension_id') . ' = :extensionId')
             ->bind(':extensionId', $extensionId, ParameterType::INTEGER)
             ->order($db->quoteName('u.name') . ' ASC');

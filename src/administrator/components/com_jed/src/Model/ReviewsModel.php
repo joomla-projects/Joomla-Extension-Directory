@@ -130,11 +130,11 @@ class ReviewsModel extends ListModel
                 'DISTINCT a.*'
             )
         );
-        $query->from('`#__jed_reviews` AS a');
+        $query->from($db->quoteName('#__jed_reviews', 'a'));
 
         // Join over the users for the checked out user
         $query->select("uc.name AS uEditor");
-        $query->join("LEFT", "#__users AS uc ON uc.id=a.checked_out");
+        $query->leftJoin($db->quoteName('#__users', 'uc'), 'uc.id = a.checked_out');
 
         // Join over the foreign key 'extension_id'
         $query->select($db->quoteName('e.name', 'extension_name'));
@@ -142,7 +142,7 @@ class ReviewsModel extends ListModel
 
         // Join over the user field 'created_by'
         $query->select('`created_by`.name AS `created_by`');
-        $query->leftJoin('#__users AS `created_by` ON `created_by`.id = a.`created_by`');
+        $query->leftJoin($db->quoteName('#__users', 'created_by'), '`created_by`.id = a.`created_by`');
 
 
         // Filter by search in title

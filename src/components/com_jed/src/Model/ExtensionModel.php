@@ -280,8 +280,8 @@ class ExtensionModel extends ItemModel
             ->select($db->quoteName('cat.title', 'category_title'))
             ->select($db->quoteName('u.name', 'developer'))
             ->from($db->quoteName('#__jed_extensions', 'a'))
-            ->join('INNER', $db->quoteName('#__categories', 'cat'), 'cat.id = a.catid')
-            ->join('LEFT', $db->quoteName('#__users', 'u'), 'u.id = a.created_by')
+            ->innerJoin($db->quoteName('#__categories', 'cat'), 'cat.id = a.catid')
+            ->leftJoin($db->quoteName('#__users', 'u'), 'u.id = a.created_by')
             ->where($db->quoteName('a.owner') . ' = :owner')
             ->where($db->quoteName('a.id') . ' <> :exclude')
             // The public half of the four-carrier rule (4.8), spelled out for the same reason the
@@ -361,8 +361,8 @@ class ExtensionModel extends ItemModel
                 ->select($db->quoteName('cat.title', 'category_title'))
                 ->select($db->quoteName('u.name', 'developer'))
                 ->from($db->quoteName('#__jed_extensions', 'a'))
-                ->join('INNER', $db->quoteName('#__categories', 'cat'), 'cat.id = a.catid')
-                ->join('LEFT', $db->quoteName('#__users', 'u'), 'u.id = a.created_by');
+                ->innerJoin($db->quoteName('#__categories', 'cat'), 'cat.id = a.catid')
+                ->leftJoin($db->quoteName('#__users', 'u'), 'u.id = a.created_by');
         };
 
         // The parent: a single hop through this listing's own parent_id.
@@ -710,7 +710,7 @@ class ExtensionModel extends ItemModel
                 ->select($db->quoteName(['m.extension_id', 'm.invited_time', 'm.invited_by']))
                 ->select($db->quoteName('e.name', 'extension_name'))
                 ->from($db->quoteName('#__jed_extensions_maintainers', 'm'))
-                ->innerJoin($db->quoteName('#__jed_extensions', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('m.extension_id'))
+                ->innerJoin($db->quoteName('#__jed_extensions', 'e'), $db->quoteName('e.id') . ' = ' . $db->quoteName('m.extension_id'))
                 ->where($db->quoteName('m.user_id') . ' = :uid')
                 ->where($db->quoteName('m.state') . ' = :state')
                 ->where($db->quoteName('e.deleted') . ' = 0')

@@ -61,7 +61,7 @@ final class DeveloperresponseTicketHandler implements TicketTypeHandlerInterface
             ->select('a.*')
             ->select($db->quoteName('uc.name', 'review_creator'))
             ->from($db->quoteName('#__jed_reviews', 'a'))
-            ->join('LEFT', $db->quoteName('#__users', 'uc') . ' ON ' . $db->quoteName('uc.id') . ' = ' . $db->quoteName('a.created_by'))
+            ->leftJoin($db->quoteName('#__users', 'uc'), $db->quoteName('uc.id') . ' = ' . $db->quoteName('a.created_by'))
             ->where($db->quoteName('a.id') . ' = :id')
             ->bind(':id', $linkedItemId, ParameterType::INTEGER);
 

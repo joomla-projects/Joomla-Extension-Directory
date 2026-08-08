@@ -510,8 +510,7 @@ class CaseService
             $this->db->getQuery(true)
                 ->select('DISTINCT ' . $this->db->quoteName('u.id'))
                 ->from($this->db->quoteName('#__users', 'u'))
-                ->join(
-                    'INNER',
+                ->innerJoin(
                     $this->db->quoteName('#__jed_extensions', 'e'),
                     $this->db->quoteName('e.owner') . ' = ' . $this->db->quoteName('u.id')
                 )

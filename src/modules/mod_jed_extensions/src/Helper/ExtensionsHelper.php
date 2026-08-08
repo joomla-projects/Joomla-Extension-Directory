@@ -69,8 +69,8 @@ class ExtensionsHelper
             ->select($db->quoteName('cat.title', 'category_title'))
             ->select($db->quoteName('u.name', 'developer'))
             ->from($db->quoteName('#__jed_extensions', 'a'))
-            ->join('INNER', $db->quoteName('#__categories', 'cat'), 'cat.id = a.catid')
-            ->join('LEFT', $db->quoteName('#__users', 'u'), 'u.id = a.created_by');
+            ->innerJoin($db->quoteName('#__categories', 'cat'), 'cat.id = a.catid')
+            ->leftJoin($db->quoteName('#__users', 'u'), 'u.id = a.created_by');
 
         // The same rule the pages use. A module is not a moderation view and must not become a
         // way to see a listing that is blocked, unapproved or offline (4.8).
@@ -87,14 +87,17 @@ class ExtensionsHelper
             // aggregate. INNER JOIN, because a listing nobody viewed is not noteworthy.
             $since = Factory::getDate('-' . BrowseList::NOTEWORTHY_DAYS . ' days')->format('Y-m-d');
 
+            // A derived table, so the "table" is the subquery itself and there is no name for
+            // quoteName() to wrap - only its alias. The join condition is passed separately, as
+            // for any other join.
             $query->select('hits.views AS noteworthy')
-                ->join(
-                    'INNER',
+                ->innerJoin(
                     '(SELECT ' . $db->quoteName('extension_id') . ', SUM(' . $db->quoteName('views') . ') AS '
                     . $db->quoteName('views') . ' FROM ' . $db->quoteName('#__jed_hit_stats')
                     . ' WHERE ' . $db->quoteName('period') . ' >= ' . $db->quote($since)
                     . ' GROUP BY ' . $db->quoteName('extension_id')
-                    . ' HAVING SUM(' . $db->quoteName('views') . ') > 0) AS hits ON hits.extension_id = a.id'
+                    . ' HAVING SUM(' . $db->quoteName('views') . ') > 0) AS ' . $db->quoteName('hits'),
+                    $db->quoteName('hits.extension_id') . ' = ' . $db->quoteName('a.id')
                 )
                 ->order($db->quoteName('noteworthy') . ' DESC');
         } else {

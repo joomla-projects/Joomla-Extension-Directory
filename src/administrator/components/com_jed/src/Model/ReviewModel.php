@@ -154,7 +154,7 @@ class ReviewModel extends AdminModel
                 ->select($db->quoteName(['r.id', 'r.extension_id', 'r.state', 'r.created_by', 'r.title']))
                 ->select($db->quoteName('e.name', 'extension_name'))
                 ->from($db->quoteName('#__jed_reviews', 'r'))
-                ->leftJoin($db->quoteName('#__jed_extensions', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('r.extension_id'))
+                ->leftJoin($db->quoteName('#__jed_extensions', 'e'), $db->quoteName('e.id') . ' = ' . $db->quoteName('r.extension_id'))
                 ->whereIn($db->quoteName('r.id'), $ids);
             $before = $db->setQuery($query)->loadObjectList('id');
         }
@@ -303,10 +303,7 @@ class ReviewModel extends AdminModel
                 ->select($db->quoteName(['r.id', 'r.title', 'r.developer_response_published']))
                 ->select($db->quoteName('e.name', 'extension_name'))
                 ->from($db->quoteName('#__jed_reviews', 'r'))
-                ->leftJoin(
-                    $db->quoteName('#__jed_extensions', 'e')
-                    . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('r.extension_id')
-                )
+                ->leftJoin($db->quoteName('#__jed_extensions', 'e'), $db->quoteName('e.id') . ' = ' . $db->quoteName('r.extension_id'))
                 ->whereIn($db->quoteName('r.id'), $ids)
         )->loadObjectList('id');
 

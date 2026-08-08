@@ -149,7 +149,7 @@ class JedmyextensionsField extends ListField
                     $fk_value,
                 ]
             )
-            ->from($table);
+            ->from($db->quoteName($table));
 
         if ($hideTrashed) {
             $query->where($db->quoteName('state') . ' != -2');

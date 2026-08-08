@@ -179,20 +179,20 @@ class ExtensionsModel extends ListModel
             )
         );
 
-        $query->from('#__jed_extensions AS a');
+        $query->from($db->quoteName('#__jed_extensions', 'a'));
 
         $query->select('cat.title AS category_title');
-        $query->join('INNER', '#__categories AS cat ON cat.id=a.catid');
+        $query->innerJoin($db->quoteName('#__categories', 'cat'), 'cat.id = a.catid');
         // Join over the users for the checked out user.
         $query->select('uc.name AS uEditor');
-        $query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
+        $query->leftJoin($db->quoteName('#__users', 'uc'), 'uc.id = a.checked_out');
 
         // Join over the created by field 'created_by'
         $query->select('created_by.name AS developer');
-        $query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
+        $query->leftJoin($db->quoteName('#__users', 'created_by'), 'created_by.id = a.created_by');
 
         // Join over the modified by field 'modified_by'
-        $query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
+        $query->leftJoin($db->quoteName('#__users', 'modified_by'), 'modified_by.id = a.modified_by');
 
         /*
          * The bookmark flag is deliberately NOT joined here any more (P1-13).
@@ -257,14 +257,17 @@ class ExtensionsModel extends ListModel
         if ($orderCol === 'noteworthy') {
             $since = Factory::getDate('-' . BrowseList::NOTEWORTHY_DAYS . ' days')->format('Y-m-d');
 
+            // A derived table, so the "table" is the subquery itself and there is no name for
+            // quoteName() to wrap - only its alias. The join condition is passed separately, as
+            // for any other join.
             $query->select('hits.views AS noteworthy')
-                ->join(
-                    'INNER',
+                ->innerJoin(
                     '(SELECT ' . $db->quoteName('extension_id') . ', SUM(' . $db->quoteName('views') . ') AS '
                     . $db->quoteName('views') . ' FROM ' . $db->quoteName('#__jed_hit_stats')
                     . ' WHERE ' . $db->quoteName('period') . ' >= ' . $db->quote($since)
                     . ' GROUP BY ' . $db->quoteName('extension_id')
-                    . ' HAVING SUM(' . $db->quoteName('views') . ') > 0) AS hits ON hits.extension_id = a.id'
+                    . ' HAVING SUM(' . $db->quoteName('views') . ') > 0) AS ' . $db->quoteName('hits'),
+                    $db->quoteName('hits.extension_id') . ' = ' . $db->quoteName('a.id')
                 );
 
             $query->order($db->quoteName('noteworthy') . ' ' . ($orderDirn === 'ASC' ? 'ASC' : 'DESC'))
@@ -303,8 +306,8 @@ class ExtensionsModel extends ListModel
         $db    = $this->getDatabase();
         $query = $db->getQuery(true)
             ->select('a.id as ext_id,a.*,cat.title AS category_title')
-            ->from('#__jed_extensions AS a')
-            ->innerJoin('#__categories AS cat ON cat.id = a.catid')
+            ->from($db->quoteName('#__jed_extensions', 'a'))
+            ->innerJoin($db->quoteName('#__categories', 'cat'), 'cat.id = a.catid')
             // "Mine" is what I own or maintain (8.8), not what I once created. Filtering on
             // created_by missed every extension the user maintains, and kept listing the ones
             // they had transferred away.
@@ -416,8 +419,8 @@ class ExtensionsModel extends ListModel
             )
             ->from($db->quoteName('#__users', 'users'))
             ->leftJoin(
-                $db->quoteName('#__jed_extensions', 'extensions')
-                . ' ON ' . $db->quoteName('extensions.created_by') . ' = ' . $db->quoteName('users.id')
+                $db->quoteName('#__jed_extensions', 'extensions'),
+                $db->quoteName('extensions.created_by') . ' = ' . $db->quoteName('users.id')
             )
             ->where($db->quoteName('users.name') . ' LIKE ' . $db->quote('%' . $search . '%'))
             ->group($db->quoteName('users.id'))

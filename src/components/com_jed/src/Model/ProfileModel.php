@@ -101,16 +101,16 @@ class ProfileModel extends ListModel
         $query = $db->getQuery(true);
 
         $query->select('a.*');
-        $query->from('#__jed_extensions AS a');
+        $query->from($db->quoteName('#__jed_extensions', 'a'));
 
         $query->select('cat.title AS category_title');
-        $query->join('INNER', '#__categories AS cat ON cat.id = a.catid');
+        $query->innerJoin($db->quoteName('#__categories', 'cat'), 'cat.id = a.catid');
 
         // Flag whether the current visitor has bookmarked each extension, for the card's
         // favorite icon.
         $favUserId = (int) (Factory::getApplication()->getIdentity()->id ?? 0);
         $query->select('(fav.id IS NOT NULL) AS is_favorited');
-        $query->join('LEFT', '#__jed_favorites AS fav ON fav.extension_id = a.id AND fav.user_id = ' . $db->quote($favUserId));
+        $query->leftJoin($db->quoteName('#__jed_favorites', 'fav'), 'fav.extension_id = a.id AND fav.user_id =' . $db->quote($favUserId));
 
         $ownerId = (int) $this->getState('profile.owner_id');
         $query->where('a.owner = ' . $db->quote($ownerId));

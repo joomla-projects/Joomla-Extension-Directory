@@ -244,7 +244,7 @@ class TicketformModel extends FormModel
     {
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);
-        $query->select('*')->from('#__jed_ticket_messages')->where('ticket_id = ' . $db->quote($ticketId));
+        $query->select('*')->from($db->quoteName('#__jed_ticket_messages'))->where('ticket_id = ' . $db->quote($ticketId));
 
         return $db->setQuery($query)->loadObjectList();
     }
@@ -430,7 +430,7 @@ class TicketformModel extends FormModel
     {
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);
-        $query->select('categorytype')->from('#__jed_ticket_categories')->where('id = ' . $db->quote($categoryId));
+        $query->select('categorytype')->from($db->quoteName('#__jed_ticket_categories'))->where('id = ' . $db->quote($categoryId));
 
         return $db->setQuery($query)->loadResult();
     }

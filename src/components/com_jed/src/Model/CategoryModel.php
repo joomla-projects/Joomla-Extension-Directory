@@ -237,25 +237,25 @@ class CategoryModel extends ListModel
             )
         );
 
-        $query->from('#__jed_extensions AS a');
+        $query->from($db->quoteName('#__jed_extensions', 'a'));
 
         $query->select('cat.title AS category_title');
-        $query->join('INNER', '#__categories AS cat ON cat.id=a.catid');
+        $query->innerJoin($db->quoteName('#__categories', 'cat'), 'cat.id=a.catid');
         // Join over the users for the checked out user.
         $query->select('uc.name AS uEditor');
-        $query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
+        $query->leftJoin($db->quoteName('#__users', 'uc'), 'uc.id=a.checked_out');
 
         // Join over the created by field 'created_by'
         $query->select('created_by.name AS developer');
-        $query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
+        $query->leftJoin($db->quoteName('#__users', 'created_by'), 'created_by.id = a.created_by');
 
         // Join over the created by field 'modified_by'
-        $query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
+        $query->leftJoin($db->quoteName('#__users', 'modified_by'), 'modified_by.id = a.modified_by');
 
         // Flag whether the current user has bookmarked each extension, for the card's favorite icon.
         $favUserId = (int) (Factory::getApplication()->getIdentity()->id ?? 0);
         $query->select('(fav.id IS NOT NULL) AS is_favorited');
-        $query->join('LEFT', '#__jed_favorites AS fav ON fav.extension_id = a.id AND fav.user_id = ' . $db->quote($favUserId));
+        $query->leftJoin($db->quoteName('#__jed_favorites', 'fav'), 'fav.extension_id = a.id AND fav.user_id =' . $db->quote($favUserId));
 
         // Approved by the JED team AND online per the developer, plus the current user's own
         // listings. Backend permissions do not widen this - see JedHelper for the rule.
@@ -465,8 +465,7 @@ class CategoryModel extends ListModel
                 $query->from($db->quoteName('#__categories', 's'))->where($db->quoteName('s.id') . ' = :id')->bind(':id', $id, ParameterType::INTEGER);
 
 
-                $query->join(
-                    'INNER',
+                $query->innerJoin(
                     $db->quoteName('#__categories', 'c'),
                     '(' . $db->quoteName('s.lft') . ' <= ' . $db->quoteName('c.lft') . ' AND ' . $db->quoteName('c.lft') . ' < ' . $db->quoteName('s.rgt') . ')' . ' OR (' . $db->quoteName('c.lft') . ' < ' . $db->quoteName('s.lft') . ' AND ' . $db->quoteName('s.rgt') . ' < ' . $db->quoteName('c.rgt') . ')'
                 );
