@@ -10,6 +10,11 @@
 
 defined('_JEXEC') or die;
 
+/**
+ * Override is based on the version in 6.1 - but hides the page numbers (except the active page) on mobiles so that
+ * long pagination bars do not overflow.
+ */
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 

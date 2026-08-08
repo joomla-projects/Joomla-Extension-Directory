@@ -8,12 +8,14 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Cache\CacheControllerFactoryInterface;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Http\HttpFactory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Version;
+use Joomla\Http\HttpFactory;
 
 /**
  * Helper class for the Joomla template
@@ -357,21 +359,23 @@ class JoomlaTemplateHelper
 			return 'index.php?Itemid=' . $itemid;
 		}
 
-		// New URL Routing in J4 means we don't need to retrieve the item id though the route helper which has been removed
-		if (version_compare(JVERSION, '4.0.0', 'ge'))
-		{
-			return 'index.php?option=com_users&view=login';
-		}
+		// URL routing since Joomla 4 means we don't need to retrieve the item id through the route helper, which was removed
+		return 'index.php?option=com_users&view=login';
+	}
 
-		// Load the com_users route helper
-		JLoader::register('UsersHelperRoute', JPATH_SITE . '/components/com_users/helpers/route.php');
+	/**
+	 * Check whether the current user is a guest.
+	 *
+	 * The identity is not necessarily set yet when the error document is rendered, so a missing identity is treated
+	 * as a guest rather than dereferenced.
+	 *
+	 * @return  boolean
+	 */
+	private static function isGuest()
+	{
+		$identity = Factory::getApplication()->getIdentity();
 
-		// Look for a menu item for this route
-		$itemid = (Factory::getUser()->guest) ? UsersHelperRoute::getLoginRoute() : self::getLogoutRoute();
-		$itemid = $itemid !== null ? '&Itemid=' . $itemid : '';
-
-		// Return the base route plus menu item ID if available
-		return 'index.php?option=com_users&view=login' . $itemid;
+		return $identity === null || $identity->guest;
 	}
 
 	/**
@@ -398,7 +402,7 @@ class JoomlaTemplateHelper
 			[
 				'%reportroute%' => static::getIssueLink(Uri::getInstance()->toString(['host'])),
 				'%loginroute%'  => Route::_(static::getLoginRoute()),
-				'%logintext%'   => Factory::getUser()->guest ? Text::_('TPL_JOOMLA_FOOTER_LINK_LOG_IN') : Text::_('TPL_JOOMLA_FOOTER_LINK_LOG_OUT'),
+				'%logintext%'   => self::isGuest() ? Text::_('TPL_JOOMLA_FOOTER_LINK_LOG_IN') : Text::_('TPL_JOOMLA_FOOTER_LINK_LOG_OUT'),
 				'%currentyear%' => date('Y'),
 			]
 		);
@@ -441,7 +445,9 @@ class JoomlaTemplateHelper
 		}
 
 		/** @var \Joomla\CMS\Cache\Controller\CallbackController $cache */
-		$cache = Factory::getCache('tpl_joomla', 'callback');
+		$cache = Factory::getContainer()
+			->get(CacheControllerFactoryInterface::class)
+			->createCacheController('callback', ['defaultgroup' => 'tpl_joomla']);
 
 		// This is always cached regardless of the site's global setting
 		$cache->setCaching(true);
@@ -457,15 +463,19 @@ class JoomlaTemplateHelper
 			return $cache->get(
 				function ($url)
 				{
-					// Set a very short timeout to try and not bring the site down
-					$response = HttpFactory::getHttp()->get($url, [], 2);
+					// The framework factory does not set a user agent for us, so mirror what the CMS one used to send
+					$options = ['userAgent' => (new Version)->getUserAgent('Joomla', true, false)];
 
-					if ($response->code !== 200)
+					// Set a very short timeout to try and not bring the site down
+					$response = (new HttpFactory)->getHttp($options)->get($url, [], 2);
+
+					// Joomla\Http\Response is a plain PSR-7 response, it has no 'code'/'body' magic properties
+					if ($response->getStatusCode() !== 200)
 					{
 						throw new RuntimeException('Could not load template section.');
 					}
 
-					return $response->body;
+					return (string) $response->getBody();
 				},
 				[$url],
 				md5(__METHOD__ . $section . $lang)
@@ -475,28 +485,6 @@ class JoomlaTemplateHelper
 		{
 			return 'Could not load template section.';
 		}
-	}
-
-	/**
-	 * Method to get a route configuration for the logout view.
-	 *
-	 * @return  mixed    Integer menu id on success, null on failure.
-	 */
-	public static function getLogoutRoute()
-	{
-		// Get the items.
-		$items = UsersHelperRoute::getItems();
-
-		// Search for a suitable menu id.
-		foreach ($items as $item)
-		{
-			if (isset($item->query['view']) && $item->query['view'] === 'login' && (!empty($item->query['layout']) && $item->query['layout'] === 'logout'))
-			{
-				return $item->id;
-			}
-		}
-
-		return null;
 	}
 
 	/**
@@ -510,7 +498,7 @@ class JoomlaTemplateHelper
 	{
 		// Get the items.
 		$items = Factory::getApplication()->getMenu()->getItems('component_id', $componentId);
-		$view  = Factory::getUser()->guest ? 'login' : 'logout';
+		$view  = self::isGuest() ? 'login' : 'logout';
 
 		// Search for a suitable menu id.
 		foreach ($items as $item)

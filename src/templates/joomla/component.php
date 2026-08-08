@@ -12,9 +12,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 /** @var \Joomla\CMS\Document\HtmlDocument $this */
 
-// Declare the template as HTML5
-$this->setHtml5(true);
-
 $wa = $this->getWebAssetManager();
 
 // Add Bootstrap Javascript Frameworks

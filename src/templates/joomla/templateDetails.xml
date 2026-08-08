@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE extension PUBLIC "-//Joomla! 2.5//DTD template 1.0//EN" "https://developer.joomla.org/xsd/v1/templateDetails.xsd">
 <extension type="template" client="site" method="upgrade">
 	<name>joomla</name>
-	<version>4.0.9</version>
+	<version>6.0.0</version>
 	<creationDate>30-Aug-2016</creationDate>
 	<author>Joomla Project</author>
 	<authorEmail>admin@joomla.org</authorEmail>
-	<copyright>Copyright (C) 2005 - 2023 Open Source Matters, Inc. All rights reserved.</copyright>
+	<copyright>Copyright (C) 2005 - 2026 Open Source Matters, Inc. All rights reserved.</copyright>
 	<description>TPL_JOOMLA_XML_DESCRIPTION</description>
 	<scriptfile>script.php</scriptfile>
 	<inheritable>1</inheritable>
@@ -167,16 +166,16 @@
 					default=""
 				/>
 
+				<!-- mod_search was removed in Joomla 4, mod_finder is the only remaining core search module -->
 				<field
 					name="searchModule"
 					type="radio"
 					label="TPL_JOOMLA_SEARCH_MODULE_LABEL"
 					description="TPL_JOOMLA_SEARCH_MODULE_DESC"
 					class="btn-group"
-					default="search"
+					default="finder"
 					>
 					<option value="finder">TPL_JOOMLA_FINDER</option>
-					<option value="search">TPL_JOOMLA_SEARCH</option>
 				</field>
 			</fieldset>
 		</fields>

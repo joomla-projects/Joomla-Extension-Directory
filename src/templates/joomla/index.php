@@ -16,10 +16,8 @@ use Joomla\CMS\Uri\Uri;
 /** @var \Joomla\CMS\Document\HtmlDocument $this */
 
 // Load the template helper
-JLoader::register('JoomlaTemplateHelper', __DIR__ . '/helpers/template.php');
+require_once __DIR__ . '/helpers/template.php';
 
-// Declare the template as HTML5
-$this->setHtml5(true);
 $this->addScriptOptions(
     'skipto-settings',
     [
@@ -31,14 +29,15 @@ $this->addScriptOptions(
     ]
 );
 
-$app = Factory::getApplication();
+$app   = Factory::getApplication();
+$input = $app->getInput();
 
 // Detecting Active Variables
-$option   = $app->input->getCmd('option', '');
-$view     = $app->input->getCmd('view', '');
-$layout   = $app->input->getCmd('layout', 'default');
-$task     = $app->input->getCmd('task', 'display');
-$itemid   = $app->input->getUint('Itemid', 0);
+$option   = $input->getCmd('option', '');
+$view     = $input->getCmd('view', '');
+$layout   = $input->getCmd('layout', 'default');
+$task     = $input->getCmd('task', 'display');
+$itemid   = $input->getUint('Itemid', 0);
 $sitename = $app->get('sitename');
 $wa       = $this->getWebAssetManager();
 
@@ -205,7 +204,7 @@ if ($gtmId) : ?>
                         <a href="https://downloads.joomla.org/" class="btn btn-lg btn-warning"><?php echo Text::_('TPL_JOOMLA_DOWNLOAD_BUTTON'); ?></a>
                     </div>
                     <div class="btn-group col-6">
-                        <a href="https://launch.joomla.org" class="btn btn-lg btn-primary"><?php echo Text::_('TPL_JOOMLA_DEMO_BUTTON'); ?><span aria-hidden="true" class="icon-rocket"></span></a>
+                        <a href="https://launch.joomla.org" class="btn btn-lg btn-primary"><?php echo Text::_('TPL_JOOMLA_DEMO_BUTTON'); ?><span aria-hidden="true" class="fa-solid fa-rocket ms-2"></span></a>
                     </div>
                 </div>
             </div>
@@ -326,20 +325,20 @@ if ($gtmId) : ?>
 <!-- Body -->
 <div class="body">
     <div class="container<?php echo $this->params->get('fluidContainer') ? '-fluid g-0' : ''; ?>">
-        <jdoc:include type="modules" name="banner" style="xhtml" />
+        <jdoc:include type="modules" name="banner" style="html5" />
         <div class="row">
             <?php if ($this->countModules($leftPosition)): ?>
                 <!-- Begin Sidebar -->
                 <div id="sidebar" class="<?php echo "col-md-$leftColumnWidth"; ?> sidebar-left">
                     <div class="sidebar-nav">
-                        <jdoc:include type="modules" name="position-8" style="xhtml" />
+                        <jdoc:include type="modules" name="position-8" style="html5" />
                     </div>
                 </div>
                 <!-- End Sidebar -->
             <?php endif; ?>
             <main id="content" class="<?php echo $span;?>">
                 <!-- Begin Content -->
-                <jdoc:include type="modules" name="position-3" style="xhtml" />
+                <jdoc:include type="modules" name="position-3" style="html5" />
                 <jdoc:include type="message" />
                 <jdoc:include type="component" />
                 <jdoc:include type="modules" name="position-2" style="none" />
@@ -355,7 +354,7 @@ if ($gtmId) : ?>
         </div>
         <?php if ($this->countModules('position-5')) : ?>
             <div class="row">
-                <jdoc:include type="modules" name="position-5" style="xhtml" />
+                <jdoc:include type="modules" name="position-5" style="html5" />
             </div>
         <?php endif; ?>
     </div>

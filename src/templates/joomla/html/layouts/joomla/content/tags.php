@@ -11,7 +11,7 @@
 defined('_JEXEC') or die;
 
 /**
- * Override is based on the version in 4.3.2 - but additionally replaces the button styling of tags with the rounded
+ * Override is based on the version in 6.1 - but additionally replaces the button styling of tags with the rounded
  * pills effect
  */
 
@@ -20,7 +20,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\Component\Tags\Site\Helper\RouteHelper;
 use Joomla\Registry\Registry;
 
-$authorised = Factory::getUser()->getAuthorisedViewLevels();
+$authorised = Factory::getApplication()->getIdentity()->getAuthorisedViewLevels();
 
 ?>
 <?php if (!empty($displayData)) : ?>
