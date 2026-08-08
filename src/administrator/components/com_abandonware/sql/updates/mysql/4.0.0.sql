@@ -1,0 +1,8 @@
+-- Baseline schema anchor for com_abandonware 4.0.0 (P1-30).
+--
+-- Deliberately empty of statements. Its existence is what makes Joomla write a #__schemas row for
+-- this component on install; that row is what the first post-go-live update compares against. The
+-- 4.0.0 schema itself lives in install.mysql.utf8.sql.
+--
+-- The next schema change goes in a new file named after the version that ships it, and is
+-- mirrored into install.mysql.utf8.sql.

@@ -1,26 +1,18 @@
-SET FOREIGN_KEY_CHECKS = 0;
-
-DROP TABLE IF EXISTS `#__jed_extensions_category_map`;
-DROP TABLE IF EXISTS `#__jed_extensions_maintainers`;
-DROP TABLE IF EXISTS `#__jed_extensions_images`;
-DROP TABLE IF EXISTS `#__jed_extensions_files`;
-DROP TABLE IF EXISTS `#__jed_reviews`;
-DROP TABLE IF EXISTS `#__jed_favorites`;
-DROP TABLE IF EXISTS `#__jed_extensions`;
-DROP TABLE IF EXISTS `#__jed_extensions_history`;
-DROP TABLE IF EXISTS `#__jed_joomla_versions`;
-DROP TABLE IF EXISTS `#__jed_block_reasons`;
-DROP TABLE IF EXISTS `#__jed_extension_transfers`;
-DROP TABLE IF EXISTS `#__jed_transfer_lookups`;
-DROP TABLE IF EXISTS `#__jed_user_access`;
-DROP TABLE IF EXISTS `#__jed_user_review_bans`;
-DROP TABLE IF EXISTS `#__jed_suspect_ip_ranges`;
-DROP TABLE IF EXISTS `#__jed_queue_jobs`;
-DROP TABLE IF EXISTS `#__jed_url_checks`;
-DROP TABLE IF EXISTS `#__jed_extension_linkchecks`;
-DROP TABLE IF EXISTS `#__jed_hit_log`;
-DROP TABLE IF EXISTS `#__jed_hit_stats`;
+-- Uninstalling com_jed does NOT drop the catalogue (P1-30).
+--
+-- For an ordinary component, dropping its tables on uninstall is correct. For this one it is
+-- catastrophic: the tables below are the Joomla Extension Directory. Two clicks in the backend -
+-- or one failed install, because Joomla pushes this file as the rollback step for a failed
+-- install (InstallerAdapter::doDatabaseTransactions) - would end fifteen years of listings,
+-- reviews and moderation history.
+--
+-- So this file removes only what is genuinely owned by the extension and is recreated on the next
+-- install: the mail templates. The data tables are left standing. A reinstall finds them and
+-- adopts them; install.mysql.utf8.sql is written to make that work.
+--
+-- To actually drop the tables, use the developer reset: `vendor/bin/robo schema:reset <path>`,
+-- gated on `allow_schema_reset = 1` in the [dev] section of jorobo.ini. That is a deliberate act
+-- on a development machine, not something reachable from a backend anyone on the JED team can
+-- get to. The statements it runs are in reset.mysql.utf8.sql.
 
 DELETE FROM `#__mail_templates` WHERE `template_id` IN ('com_jed.audit_report', 'com_jed.link_broken');
-
-SET FOREIGN_KEY_CHECKS = 1;

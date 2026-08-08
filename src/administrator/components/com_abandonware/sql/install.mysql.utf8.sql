@@ -10,9 +10,11 @@
 -- inactivity (12.3) - are all symptoms of one thing, and 4.9 and 12.3 both insist they feed one
 -- case rather than three ticket streams. That case has to be able to exist without anybody having
 -- filled in a form.
-
-DROP TABLE IF EXISTS `#__jed_abandonware_reports`;
-DROP TABLE IF EXISTS `#__jed_abandonware_cases`;
+--
+-- Safe to run twice (P1-30): CREATE TABLE IF NOT EXISTS, INSERT IGNORE for the mail template, and
+-- no DROP - those moved to reset.mysql.utf8.sql, which no manifest references. Schema changes
+-- after go-live belong in sql/updates/mysql/<version>.sql; this file is kept in step so that a
+-- fresh install ends up with the same schema.
 
 -- The case: one process, from the first signal to a resolution.
 CREATE TABLE IF NOT EXISTS `#__jed_abandonware_cases`
@@ -184,5 +186,5 @@ CREATE TABLE IF NOT EXISTS `#__jed_abandonware_reports`
 
 -- The owner contact of step 3. The grace period is a tag rather than prose in the body so the
 -- date the team set is the date the developer reads.
-INSERT INTO `#__mail_templates` (`template_id`, `extension`, `language`, `subject`, `body`, `htmlbody`, `attachments`, `params`) VALUES
+INSERT IGNORE INTO `#__mail_templates` (`template_id`, `extension`, `language`, `subject`, `body`, `htmlbody`, `attachments`, `params`) VALUES
 ('com_abandonware.owner_contact', 'com_abandonware', '', 'COM_ABANDONWARE_OWNER_CONTACT_EMAIL_SUBJECT', 'COM_ABANDONWARE_OWNER_CONTACT_EMAIL_BODY', '', '', '{"tags":["sitename","extensionname","reason","graceuntil","listinglink","ticketlink"]}');

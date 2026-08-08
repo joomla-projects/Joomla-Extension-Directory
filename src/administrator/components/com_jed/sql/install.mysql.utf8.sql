@@ -1,6 +1,17 @@
+-- This file must be safe to run twice (P1-30). Joomla only runs it on the `install` route, but
+-- that route is reached again after an uninstall, and after an uninstall the tables are still
+-- there - uninstall.mysql.utf8.sql no longer drops them. So: CREATE TABLE IF NOT EXISTS, and
+-- INSERT IGNORE for the seed rows. Nothing here may destroy data.
+--
+-- The DROP TABLE statements that used to precede every CREATE now live in reset.mysql.utf8.sql,
+-- which no manifest references. See that file for the developer reset workflow.
+--
+-- Schema changes after go-live do NOT belong in this file. They belong in
+-- sql/updates/mysql/<version>.sql, which is what Joomla runs on the `update` route; this file is
+-- then updated to match so a fresh install produces the same schema.
+
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS `#__jed_extensions`;
 
 CREATE TABLE IF NOT EXISTS `#__jed_extensions`
 (
@@ -117,8 +128,26 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions`
 	KEY `IDX_jed_extensions_parent` (`parent_id`, `parent_confirmed`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_extensions_history`;
 
+-- A revision of a listing: a full copy of the #__jed_extensions row as it stood, plus the two
+-- columns that make it a revision (`extension_id`, `active`).
+--
+-- "Full copy" has three deliberate exceptions, and this is the record of that decision (P1-30,
+-- Validation Report 3.4). They are asserted by tests/unit/Schema/SchemaUpdatePathTest.php, so
+-- any *other* column added to #__jed_extensions from here on has to be mirrored below or CI
+-- fails - which is the point: a column that is not mirrored is a column a rollback silently
+-- reverts to a wrong value.
+--
+--   entry_version            A pointer from the live row *into this table* - the id of the
+--                            revision currently shown. Copying it into a revision would be a
+--                            self-reference, and restoring an old one would point the listing
+--                            at a revision that is not the one being restored.
+--   last_update_check        Results of the automated update probe (P1-08). They describe the
+--   last_update_check_error  developer's update server at a moment in time, not the listing's
+--                            content. A rollback must not resurrect a stale probe result, and a
+--                            probe must not create a revision.
+--
+-- ExtensionVersionUpdater::applyUpdate() unsets exactly these three when it copies a row.
 CREATE TABLE IF NOT EXISTS `#__jed_extensions_history`
 (
 	`id`                     int             NOT NULL AUTO_INCREMENT,
@@ -213,7 +242,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_history`
 	KEY `IDX_jed_extensions_history_extension_id_active` (`extension_id`, `active`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_extensions_category_map`;
 
 CREATE TABLE IF NOT EXISTS `#__jed_extensions_category_map`
 (
@@ -223,7 +251,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_category_map`
 	KEY `IDX_jed_extensions_category_map_catid` (`catid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_extensions_maintainers`;
 
 -- Additional maintainers only. The owner lives in #__jed_extensions.owner and is never
 -- duplicated here (8.8) - "owner OR a row in this table" is the permission rule, so a person in
@@ -246,7 +273,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_maintainers`
 	KEY `IDX_jed_maintainers_user_state` (`user_id`, `state`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_extensions_images`;
 
 CREATE TABLE IF NOT EXISTS `#__jed_extensions_images`
 (
@@ -265,7 +291,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_images`
 	KEY `FK_jed_extensions_images_modified_by` (`modified_by`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_extensions_files`;
 
 CREATE TABLE IF NOT EXISTS `#__jed_extensions_files`
 (
@@ -282,7 +307,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_files`
 	KEY `FK_jed_extensions_files_modified_by` (`modified_by`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_reviews`;
 
 CREATE TABLE IF NOT EXISTS `#__jed_reviews`
 (
@@ -321,7 +345,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_reviews`
 	KEY `FK_jed_reviews_created_by` (`created_by`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_favorites`;
 
 CREATE TABLE IF NOT EXISTS `#__jed_favorites`
 (
@@ -335,7 +358,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_favorites`
 	KEY `FK_jed_favorites_extension_id` (`extension_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_user_access`;
 
 -- The abuse-prevention layer JED3 grew over years and this code had none of (7.1). Modelled on
 -- the legacy `jed_user_access`, plus the audit fields 4.8 asks for everywhere.
@@ -367,7 +389,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_user_access`
 	KEY `IDX_jed_user_access_banned` (`banned`, `banned_until`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_user_review_bans`;
 
 -- Barred from reviewing a particular developer or anything in a particular category, rather than
 -- barred from reviewing at all. JED3 kept these as two mapping tables; one table with a target
@@ -382,7 +403,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_user_review_bans`
 	PRIMARY KEY (`user_id`, `target_type`, `target_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_suspect_ip_ranges`;
 
 -- Advisory only (P1-05 item 8): a match flags, it never blocks. A shared NAT range is not
 -- evidence of anything, and treating it as such would lock out a whole office or country.
@@ -398,7 +418,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_suspect_ip_ranges`
 	KEY `IDX_jed_suspect_ip_state` (`state`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_extension_transfers`;
 
 -- A transfer is a state over time, so it is a record of its own rather than columns on the
 -- extension (8.8.1). The completed row stays: it is the traceability requirement, and it is the
@@ -434,7 +453,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_extension_transfers`
 	KEY `IDX_transfers_expiry` (`state`, `expires`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_transfer_lookups`;
 
 -- Looking a recipient up by email address tells the person asking whether that address has an
 -- account. 8.8.1 weighed hiding that against making the feature unusable - an owner who cannot
@@ -457,7 +475,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_transfer_lookups`
 	KEY `IDX_transfer_lookups_user` (`user_id`, `created`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_block_reasons`;
 
 -- The vocabulary a moderation decision is stated in. Codes are data, not code (4.8), so the JED
 -- team can add one without a release. `code` is the primary key because it is what
@@ -483,8 +500,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_block_reasons`
 	KEY `IDX_jed_block_reasons_state` (`state`, `ordering`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_joomla_versions`;
-
 
 CREATE TABLE IF NOT EXISTS `#__jed_joomla_versions`
 (
@@ -496,16 +511,15 @@ CREATE TABLE IF NOT EXISTS `#__jed_joomla_versions`
 	KEY `IDX_jed_joomla_versions_published` (`published`),
 	KEY `IDX_jed_joomla_versions_label` (`label`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('15','1.5','Joomla 1.5','0');
-INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('25','2.5','Joomla 2.5','0');
-INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('30','3','Joomla 3','1');
-INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('40','4','Joomla 4','1');
-INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('50','5','Joomla 5','1');
-INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('51','5 (b/c)','Joomla 5 using B/C plugin','1');
-INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('60','6','Joomla 6','1');
-INSERT INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('61','6 (b/c)','Joomla 6 using B/C plugin','1');
+INSERT IGNORE INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('15','1.5','Joomla 1.5','0');
+INSERT IGNORE INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('25','2.5','Joomla 2.5','0');
+INSERT IGNORE INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('30','3','Joomla 3','1');
+INSERT IGNORE INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('40','4','Joomla 4','1');
+INSERT IGNORE INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('50','5','Joomla 5','1');
+INSERT IGNORE INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('51','5 (b/c)','Joomla 5 using B/C plugin','1');
+INSERT IGNORE INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('60','6','Joomla 6','1');
+INSERT IGNORE INTO `#__jed_joomla_versions` (`id`, `label`, `long_label`, `published`) VALUES('61','6 (b/c)','Joomla 6 using B/C plugin','1');
 
-DROP TABLE IF EXISTS `#__jed_queue_jobs`;
 
 CREATE TABLE IF NOT EXISTS `#__jed_queue_jobs`
 (
@@ -528,7 +542,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_queue_jobs`
 	KEY `IDX_jed_queue_jobs_extension_id` (`extension_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_url_checks`;
 
 -- The result of every URL check the JED has run (P1-08). Three jobs in one table, which is
 -- why it exists at all rather than the check being fire-and-forget:
@@ -566,7 +579,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_url_checks`
 	KEY `IDX_jed_url_checks_extension` (`extension_id`, `field`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_extension_linkchecks`;
 
 -- One row per listing and URL field, carrying the *current* state of that link (P1-09). Modelled
 -- on JED3's `jed_extension_linkcheck_log`, which is why this is parity rather than an idea.
@@ -607,7 +619,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_extension_linkchecks`
 	KEY `IDX_jed_linkcheck_escalated` (`escalated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_hit_log`;
 
 -- Raw hits (P1-12). The fastest-growing table on the site by a wide margin: JED3's equivalent
 -- holds 2,158,587 rows for a single month, which is where the 30-day retention below comes from -
@@ -639,7 +650,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_hit_log`
 	KEY `IDX_jed_hitlog_rate` (`ip_hash`, `hit_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `#__jed_hit_stats`;
 
 -- The daily aggregate. Separate from the log because the two answer different questions and have
 -- opposite lifetimes: the log is evidence for a few weeks, this is the record that stays.
@@ -659,7 +669,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_hit_stats`
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
-INSERT INTO `#__mail_templates` (`template_id`, `extension`, `language`, `subject`, `body`, `htmlbody`, `attachments`, `params`) VALUES
+INSERT IGNORE INTO `#__mail_templates` (`template_id`, `extension`, `language`, `subject`, `body`, `htmlbody`, `attachments`, `params`) VALUES
 ('com_jed.audit_report', 'com_jed', '', 'COM_JED_AUDIT_REPORT_EMAIL_SUBJECT', 'COM_JED_AUDIT_REPORT_EMAIL_BODY', '', '', '{"tags":["sitename","extensionname","extensionversion","phpstanreport","claudereport"]}'),
 ('com_jed.link_broken', 'com_jed', '', 'COM_JED_LINKCHECK_EMAIL_SUBJECT', 'COM_JED_LINKCHECK_EMAIL_BODY', '', '', '{"tags":["sitename","extensionname","linktype","url","reason","since","ticketlink"]}');
 

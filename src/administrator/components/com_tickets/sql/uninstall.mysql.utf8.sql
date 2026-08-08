@@ -1,9 +1,13 @@
-SET FOREIGN_KEY_CHECKS = 0;
-
-DROP TABLE IF EXISTS `#__jed_ticket_categories`;
-DROP TABLE IF EXISTS `#__jed_ticket_groups`;
-DROP TABLE IF EXISTS `#__jed_ticket_linked_item_types`;
-DROP TABLE IF EXISTS `#__jed_ticket_messages`;
-DROP TABLE IF EXISTS `#__jed_tickets`;
-
-SET FOREIGN_KEY_CHECKS = 1;
+-- Uninstalling com_tickets does NOT drop its tables (P1-30).
+--
+-- Tickets carry the moderation correspondence with developers - the record of why a listing was
+-- blocked, rejected or restored. Joomla also uses this file as the rollback step for a failed
+-- install, so a dropped connection during an upgrade would be enough to lose it.
+--
+-- Nothing here is owned exclusively by the extension in the way a mail template is, so this file
+-- has nothing left to do. It exists because the manifest references it, and because an empty
+-- uninstall is the decision, not an oversight.
+--
+-- To actually drop the tables, use the developer reset: `vendor/bin/robo schema:reset <path>`,
+-- gated on `allow_schema_reset = 1` in the [dev] section of jorobo.ini. The statements it runs
+-- are in reset.mysql.utf8.sql.
