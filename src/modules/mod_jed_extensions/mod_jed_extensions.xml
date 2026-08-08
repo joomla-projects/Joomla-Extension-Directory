@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" client="site" method="upgrade">
+	<name>MOD_JED_EXTENSIONS</name>
+	<author>Open Source Matters, Inc.</author>
+	<creationDate>2026-08</creationDate>
+	<copyright>(C) 2006-2026 Open Source Matters, Inc.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>admin@joomla.org</authorEmail>
+	<authorUrl>https://www.joomla.org</authorUrl>
+	<version>4.1.0</version>
+	<description>MOD_JED_EXTENSIONS_XML_DESCRIPTION</description>
+	<namespace path="src">Jed\Module\Extensions</namespace>
+
+	<files>
+		<folder module="mod_jed_extensions">services</folder>
+		<folder>src</folder>
+		<folder>tmpl</folder>
+		<filename>mod_jed_extensions.xml</filename>
+	</files>
+
+	<languages>
+		<language tag="en-GB">language/en-GB/mod_jed_extensions.ini</language>
+		<language tag="en-GB">language/en-GB/mod_jed_extensions.sys.ini</language>
+	</languages>
+
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<!--
+					One module, several instances - not one module per list. The five lists are
+					the same five the browse pages offer, from the same definition, so a sidebar
+					and a page called "Top Rated" can never come to mean different things.
+				-->
+				<field
+					name="browse_list"
+					type="list"
+					label="MOD_JED_EXTENSIONS_LIST_LABEL"
+					description="MOD_JED_EXTENSIONS_LIST_DESC"
+					default="top-rated"
+					validate="options"
+				>
+					<option value="top-rated">COM_JED_BROWSE_TOP_RATED</option>
+					<option value="most-reviewed">COM_JED_BROWSE_MOST_REVIEWED</option>
+					<option value="recently-added">COM_JED_BROWSE_RECENTLY_ADDED</option>
+					<option value="recently-updated">COM_JED_BROWSE_RECENTLY_UPDATED</option>
+					<option value="new-noteworthy">COM_JED_BROWSE_NEW_NOTEWORTHY</option>
+				</field>
+
+				<field
+					name="count"
+					type="number"
+					label="MOD_JED_EXTENSIONS_COUNT_LABEL"
+					default="6"
+					min="1"
+					max="24"
+					step="1"
+					filter="int"
+				/>
+
+				<field
+					name="catid"
+					type="category"
+					label="MOD_JED_EXTENSIONS_CATEGORY_LABEL"
+					description="MOD_JED_EXTENSIONS_CATEGORY_DESC"
+					extension="com_jed.extensions"
+					show_root="false"
+					published="1"
+					default="0"
+				>
+					<option value="0">MOD_JED_EXTENSIONS_CATEGORY_ALL</option>
+				</field>
+
+				<field
+					name="show_description"
+					type="radio"
+					label="MOD_JED_EXTENSIONS_SHOW_DESCRIPTION_LABEL"
+					layout="joomla.form.field.radio.switcher"
+					default="1"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field
+					name="show_all_link"
+					type="radio"
+					label="MOD_JED_EXTENSIONS_SHOW_ALL_LINK_LABEL"
+					layout="joomla.form.field.radio.switcher"
+					default="1"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<!--
+					A menu item id rather than a built URL: the browse pages are menu items
+					(P1-13), so the "see all" link has to point at one to stay routable.
+				-->
+				<field
+					name="all_link_itemid"
+					type="menuitem"
+					label="MOD_JED_EXTENSIONS_ALL_LINK_ITEMID_LABEL"
+					description="MOD_JED_EXTENSIONS_ALL_LINK_ITEMID_DESC"
+					default="0"
+					filter="int"
+					showon="show_all_link:1"
+				/>
+			</fieldset>
+
+			<fieldset name="advanced">
+				<field
+					name="layout"
+					type="modulelayout"
+					label="JFIELD_ALT_LAYOUT_LABEL"
+					class="form-select"
+					validate="moduleLayout"
+				/>
+				<field
+					name="moduleclass_sfx"
+					type="textarea"
+					label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+					rows="3"
+					validate="CssIdentifier"
+				/>
+				<field
+					name="cache"
+					type="list"
+					label="COM_MODULES_FIELD_CACHING_LABEL"
+					default="1"
+					filter="integer"
+					validate="options"
+				>
+					<option value="1">JGLOBAL_USE_GLOBAL</option>
+					<option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+				</field>
+				<field
+					name="cache_time"
+					type="number"
+					label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+					default="900"
+					filter="integer"
+				/>
+			</fieldset>
+		</fields>
+	</config>
+</extension>

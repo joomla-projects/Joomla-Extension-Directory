@@ -20,6 +20,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Router\Route;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Database\ParameterType;
 
 /**
  * Controller for single-extension AJAX actions.
@@ -28,6 +30,60 @@ use Joomla\CMS\Router\Route;
  */
 class ExtensionController extends BaseController
 {
+    /**
+     * AJAX task: which of the given extensions the current visitor has bookmarked.
+     *
+     * The counterpart to taking the bookmark flag out of the browse query (`P1-13`). That flag
+     * was the one per-visitor thing in an otherwise identical page, and it alone made every
+     * browse list uncacheable; asking for it separately afterwards costs signed-in visitors one
+     * small request and makes the pages cacheable for everyone else.
+     *
+     * Answers about the caller's own bookmarks and nobody else's - it takes no user id, and a
+     * guest gets an empty list rather than an error, because a page that is not logged in simply
+     * has no icons to fill in.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     */
+    public function favoriteState(): void
+    {
+        if (!JedHelper::isLoggedIn()) {
+            $this->sendJson(['success' => true, 'data' => ['favorited' => []]]);
+
+            return;
+        }
+
+        $app    = Factory::getApplication();
+        $userId = (int) $app->getIdentity()->id;
+
+        // Bounded: the caller names the ids on its page, and a page holds at most 72 cards.
+        $ids = array_slice(
+            array_filter(array_map('intval', (array) $app->getInput()->get('ids', [], 'array'))),
+            0,
+            100
+        );
+
+        if ($ids === []) {
+            $this->sendJson(['success' => true, 'data' => ['favorited' => []]]);
+
+            return;
+        }
+
+        $db    = Factory::getContainer()->get(DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('extension_id'))
+            ->from($db->quoteName('#__jed_favorites'))
+            ->where($db->quoteName('user_id') . ' = :user')
+            ->whereIn($db->quoteName('extension_id'), $ids)
+            ->bind(':user', $userId, ParameterType::INTEGER);
+
+        $this->sendJson([
+            'success' => true,
+            'data'    => ['favorited' => array_map('intval', $db->setQuery($query)->loadColumn() ?: [])],
+        ]);
+    }
+
     /**
      * AJAX task: toggles the current user's bookmark on an extension (adds it if not already
      * bookmarked, removes it otherwise) and returns the new state as JSON.

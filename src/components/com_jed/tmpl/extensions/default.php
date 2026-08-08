@@ -43,6 +43,9 @@ $wa->useStyle('com_jed.jazstyle');
 
 if (JedHelper::isLoggedIn()) {
     $wa->useScript('com_jed.favorite');
+    // The cards render identically for everyone so the page can be cached; this fills the
+    // visitor's own bookmarks in afterwards (P1-13).
+    $wa->useScript('com_jed.favoritestate');
 }
 
 // Only show a "<Category> Extensions" heading when this is actually a single-category browse
@@ -83,7 +86,11 @@ $heading = ($catid && !empty($this->items)) ? $this->items[0]->category_title . 
                                                     'type'          => $item->type,
                                                     'category'      => $item->category_title,
                                                     'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->catid, $item->id)),
-                                                    'isFavorited'   => !empty($item->is_favorited),
+                                                    // Always false here on purpose: the query no
+                                                    // longer knows who is asking, so the page is
+                                                    // the same document for everyone and can be
+                                                    // cached. favoritestate.js sets the icons.
+                                                    'isFavorited'   => false,
                                                     ]
                 ); ?>
             <?php endforeach; ?>

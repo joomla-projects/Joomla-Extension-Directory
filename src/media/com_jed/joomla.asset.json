@@ -337,6 +337,16 @@
       "uri": "media/com_jed/css/jedurl.css",
       "package": "jed",
       "version": "4.0.0"
+    },
+    {
+      "name": "com_jed.favoritestate",
+      "type": "script",
+      "uri": "media/com_jed/js/favoritestate.js",
+      "attributes": {
+        "defer": true
+      },
+      "package": "jed",
+      "version": "4.0.0"
     }
   ],
   "description": "Joomla Extension Directory",

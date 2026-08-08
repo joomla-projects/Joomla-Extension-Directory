@@ -5,7 +5,7 @@
                         <![CDATA[COM_JED_GENERAL_EXTENSIONS_LABEL_DESC]]>
         </message>
 	</layout>
-	
+
 			<fields name="request">
 				<fieldset name="request"
 					addfieldpath="/administrator/components/com_categories/models/fields"
@@ -21,5 +21,31 @@
 					/>
 				</fieldset>
 			</fields>
-			
+
+			<!--
+				The browse lists (P1-13). A preset belongs to the *menu item*, not to the URL:
+				"Top Rated" is then one stable, routable, cacheable address rather than a sort
+				order somebody can be linked into halfway through. The sample data used to build
+				these as list_fullordering query strings, which is also how "New" ended up
+				meaning two different things depending on where you clicked.
+			-->
+			<fields name="params">
+				<fieldset name="basic" label="COM_JED_BROWSE_FIELDSET">
+					<field
+						name="browse_list"
+						type="list"
+						label="COM_JED_BROWSE_LIST_LABEL"
+						description="COM_JED_BROWSE_LIST_DESC"
+						default=""
+					>
+						<option value="">COM_JED_BROWSE_NONE</option>
+						<option value="top-rated">COM_JED_BROWSE_TOP_RATED</option>
+						<option value="most-reviewed">COM_JED_BROWSE_MOST_REVIEWED</option>
+						<option value="recently-added">COM_JED_BROWSE_RECENTLY_ADDED</option>
+						<option value="recently-updated">COM_JED_BROWSE_RECENTLY_UPDATED</option>
+						<option value="new-noteworthy">COM_JED_BROWSE_NEW_NOTEWORTHY</option>
+					</field>
+				</fieldset>
+			</fields>
+
 </metadata>

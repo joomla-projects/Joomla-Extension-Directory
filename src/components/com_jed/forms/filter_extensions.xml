@@ -35,13 +35,24 @@
             <option value="a.modified DESC">COM_JED_EXTENSIONS_FILTER_SORT_RECENTLY_UPDATED</option>
         </field>
 
+        <!--
+            18 / 36 / 54 / 72, which is the legacy set and also what the card grid wants: every
+            one of them divides by 2 and by 3, so the last row is full at every breakpoint the
+            design uses. Joomla's default limitbox offers 5/10/15/20/25/30/50/100, none of which
+            do (4.1).
+        -->
         <field name="limit"
-               type="limitbox"
+               type="list"
                label="COM_JED_LIST_LIMIT"
                description="COM_JED_LIST_LIMIT_DESC"
                class="input-mini"
-               default="25"
+               default="36"
                onchange="this.form.submit();"
-        />
+        >
+            <option value="18">18</option>
+            <option value="36">36</option>
+            <option value="54">54</option>
+            <option value="72">72</option>
+        </field>
     </fields>
 </form>

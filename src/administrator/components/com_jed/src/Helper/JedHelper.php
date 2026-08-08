@@ -168,6 +168,17 @@ class JedHelper extends ContentHelper
         static $converter = null;
 
         if ($converter === null) {
+            // CommonMark lives in com_jed's own vendor directory, which JedComponent includes
+            // when the component boots. This helper is called from places where that has not
+            // happened: a module on a com_content page, a CLI harness, a task plugin. Each of
+            // those got a fatal `Class "League\CommonMark\CommonMarkConverter" not found` - and
+            // in the module's case that meant the site's home page returned a 500 as soon as the
+            // module was published. Loading it here makes the helper self-sufficient, which is
+            // what a static helper has to be; the autoloader is idempotent.
+            if (!class_exists(CommonMarkConverter::class)) {
+                include_once __DIR__ . '/../../vendor/autoload.php';
+            }
+
             $converter = new CommonMarkConverter([
                 'html_input'         => 'strip',
                 'allow_unsafe_links' => false,

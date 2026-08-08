@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Categories\CategoryNode;
 use Joomla\CMS\Factory;
@@ -64,6 +65,39 @@ class CategoriesModel extends ListModel
     }
 
     /**
+     * How many listings each category holds that a visitor can actually open.
+     *
+     * One query for the whole tree rather than one per category: the JED has several hundred
+     * categories and the alternative is a query per badge on a page that is mostly badges.
+     *
+     * The condition comes from {@see JedHelper::getExtensionVisibilityCondition()} - the same
+     * function the browse lists and the detail page use - so a counter and the list it links to
+     * cannot disagree. That is the whole reason this exists instead of Joomla's counter.
+     *
+     * @return array<int, int>  Category id => number of listings.
+     *
+     * @since 4.1.0
+     */
+    protected function countVisiblePerCategory(): array
+    {
+        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('a.catid'))
+            ->select('COUNT(*) AS ' . $db->quoteName('numitems'))
+            ->from($db->quoteName('#__jed_extensions', 'a'))
+            ->where(JedHelper::getExtensionVisibilityCondition($db))
+            ->group($db->quoteName('a.catid'));
+
+        $counts = [];
+
+        foreach ($db->setQuery($query)->loadObjectList() ?: [] as $row) {
+            $counts[(int) $row->catid] = (int) $row->numitems;
+        }
+
+        return $counts;
+    }
+
+    /**
      * Build query and where for protected _getList function and return a list
      *
      * @param int|null $limitStart Where to start looking up records
@@ -99,17 +133,24 @@ class CategoriesModel extends ListModel
 
         $this->_total = 0;
 
+        // Joomla's own counter is not usable here (P1-13 item 5). Categories::_load() counts
+        // `state = 1` and nothing else, but a listing is only visible when all four carriers
+        // agree (4.8): approved by the team, online per the developer, not blocked, not deleted.
+        // Against the imported stock that is 6,398 counted against 5,583 actually openable - 815
+        // listings a category badge would advertise and a visitor could not reach.
+        $visible = $this->countVisiblePerCategory();
+
         foreach ($this->_items as $item) {
             $row = $this->nodeToObject($item);
 
-            $row->numitems = $item->numitems;
+            $row->numitems = $visible[(int) $item->id] ?? 0;
             $children      = $item->getChildren();
             //    $parentCount   = 0;
 
             foreach ($children as $child) {
                 //var_dump($child);exit();
                 $i                        = $this->nodeToObject($child);
-                $i->numitems              = $child->numitems;
+                $i->numitems              = $visible[(int) $child->id] ?? 0;
                 $row->children[$i->title] = $i;
                 //$parentCount += $i->numitems;
                 //$this->_total += $i->numitems;

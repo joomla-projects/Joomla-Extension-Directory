@@ -130,26 +130,35 @@ class PlgSampledataJed2 extends CMSPlugin
         ], 1, $messages);
 
         if ($browseExtensionsId) {
+            // The browse lists are menu item *parameters*, not query strings (P1-13). A preset in
+            // the URL is a sort somebody can be linked into halfway, is not cacheable as its own
+            // address, and - as the "New" item showed - lets two menu items with almost the same
+            // name mean different things without anything noticing.
             $presets = [
                 [
-                    'title' => 'Top Rated',
-                    'alias' => 'top-rated',
-                    'query' => 'list_fullordering=score_overall+DESC',
+                    'title'  => 'Top Rated',
+                    'alias'  => 'top-rated',
+                    'browse' => 'top-rated',
                 ],
                 [
-                    'title' => 'Most Reviewed',
-                    'alias' => 'most-reviewed',
-                    'query' => 'list_fullordering=score_count+DESC',
+                    'title'  => 'Most Reviewed',
+                    'alias'  => 'most-reviewed',
+                    'browse' => 'most-reviewed',
                 ],
                 [
-                    'title' => 'New',
-                    'alias' => 'new',
-                    'query' => 'list_fullordering=a.created+DESC',
+                    'title'  => 'Recently Added',
+                    'alias'  => 'recently-added',
+                    'browse' => 'recently-added',
                 ],
                 [
-                    'title' => 'Recently updated',
-                    'alias' => 'recently-updated',
-                    'query' => 'list_fullordering=a.modified+DESC',
+                    'title'  => 'New & Noteworthy',
+                    'alias'  => 'new-noteworthy',
+                    'browse' => 'new-noteworthy',
+                ],
+                [
+                    'title'  => 'Recently updated',
+                    'alias'  => 'recently-updated',
+                    'browse' => 'recently-updated',
                 ],
                 [
                     'title' => 'Compatible with J4',
@@ -162,20 +171,43 @@ class PlgSampledataJed2 extends CMSPlugin
                     'query' => 'filter_joomla_version=50',
                 ],
                 [
+                    'title' => 'Compatible with J5 (B/C plugin)',
+                    'alias' => 'compatible-with-j5-bc',
+                    'query' => 'filter_joomla_version=51',
+                ],
+                [
                     'title' => 'Compatible with J6',
                     'alias' => 'compatible-with-j6',
                     'query' => 'filter_joomla_version=60',
                 ],
+                // The master data carries 51 and 61 - "compatible only with the B/C plugin" - and
+                // the legacy site had entry pages for them. Without these the ids exist in the
+                // data and nothing ever links to them (P1-13 item 7).
+                [
+                    'title' => 'Compatible with J6 (B/C plugin)',
+                    'alias' => 'compatible-with-j6-bc',
+                    'query' => 'filter_joomla_version=61',
+                ],
             ];
 
             foreach ($presets as $preset) {
-                $this->createMenuItem($db, [
+                // A browse list rides in the menu item's params; a version filter stays a request
+                // variable, because that is a filter of the ordinary list rather than a list of
+                // its own.
+                $item = [
                     'title'        => $preset['title'],
                     'alias'        => $preset['alias'],
                     'path'         => 'browse-extensions/' . $preset['alias'],
-                    'link'         => 'index.php?option=com_jed&view=extensions&' . $preset['query'],
+                    'link'         => 'index.php?option=com_jed&view=extensions'
+                        . (isset($preset['query']) ? '&' . $preset['query'] : ''),
                     'component_id' => $componentIds['com_jed'],
-                ], $browseExtensionsId, $messages);
+                ];
+
+                if (isset($preset['browse'])) {
+                    $item['params'] = json_encode(['browse_list' => $preset['browse']]);
+                }
+
+                $this->createMenuItem($db, $item, $browseExtensionsId, $messages);
             }
         }
 
@@ -330,9 +362,25 @@ class PlgSampledataJed2 extends CMSPlugin
         $menuItem->browserNav        = 0;
         $menuItem->template_style_id = 0;
         $menuItem->home              = 0;
-        $menuItem->params            = '{"menu-anchor_title":"","menu-anchor_css":"","menu_image":"",'
-            . '"menu_image_css":"","menu_text":1,"menu_show":1,"page_title":"","show_page_heading":"",'
-            . '"page_heading":"","pageclass_sfx":"","menu-meta_description":"","robots":""}';
+        // The standard menu parameters, plus anything the caller asked for - which is how a
+        // browse-list preset reaches the menu item rather than the URL (P1-13).
+        $menuItem->params = json_encode(array_merge(
+            [
+                'menu-anchor_title'    => '',
+                'menu-anchor_css'      => '',
+                'menu_image'           => '',
+                'menu_image_css'       => '',
+                'menu_text'            => 1,
+                'menu_show'            => 1,
+                'page_title'           => '',
+                'show_page_heading'    => '',
+                'page_heading'         => '',
+                'pageclass_sfx'        => '',
+                'menu-meta_description' => '',
+                'robots'               => '',
+            ],
+            isset($data['params']) ? (array) json_decode((string) $data['params'], true) : []
+        ));
 
         $menuItem->setLocation($parentId, 'last-child');
 

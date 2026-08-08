@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Browse\BrowseList;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Jed\Site\Helper\JedHelper;
@@ -120,6 +121,33 @@ class ExtensionsModel extends ListModel
         // "score_overall DESC") and validates it against $this->filter_fields, falling back to
         // the $ordering/$direction defaults above.
         parent::populateState($ordering, $direction);
+
+        // A browse list is a property of the *menu item*, not of the URL (P1-13). Read after
+        // parent::populateState() so it wins: the whole point of these being menu items rather
+        // than list_fullordering query strings is that "Top Rated" is a stable, routable,
+        // cacheable address instead of a sort somebody can be linked into halfway.
+        // 18 / 36 / 54 / 72, and 36 by default (P1-13 item 6). Joomla's global `list_limit` is 20,
+        // which is not one of the offered sizes and leaves the last row of the card grid ragged
+        // at every breakpoint - and because the offered sizes come from the filter form while the
+        // *applied* limit comes from global configuration, the two silently disagreed.
+        //
+        // Read straight off the registry, not through getState(): this method's own docblock says
+        // getState() here recurses, and it does - it re-enters populateState(), reads a limit that
+        // is not set yet, and the list ends up unbounded. The first attempt at this rendered all
+        // 5,583 listings into a 172 MB page.
+        if (!\in_array((int) $this->state->get('list.limit'), [18, 36, 54, 72], true)) {
+            $this->state->set('list.limit', 36);
+        }
+
+        $browse = BrowseList::fromKey((string) $app->getParams()->get('browse_list', ''));
+
+        if ($browse !== null) {
+            [$column, $dirn] = array_pad(explode(' ', $browse->ordering(), 2), 2, 'DESC');
+
+            $this->setState('list.browse', $browse->value);
+            $this->setState('list.ordering', $column);
+            $this->setState('list.direction', strtoupper($dirn) === 'ASC' ? 'ASC' : 'DESC');
+        }
     }
 
     /**
@@ -159,10 +187,19 @@ class ExtensionsModel extends ListModel
         // Join over the modified by field 'modified_by'
         $query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
 
-        // Flag whether the current user has bookmarked each extension, for the card's favorite icon.
-        $favUserId = (int) (Factory::getApplication()->getIdentity()->id ?? 0);
-        $query->select('(fav.id IS NOT NULL) AS is_favorited');
-        $query->join('LEFT', '#__jed_favorites AS fav ON fav.extension_id = a.id AND fav.user_id = ' . $db->quote($favUserId));
+        /*
+         * The bookmark flag is deliberately NOT joined here any more (P1-13).
+         *
+         * It was the only thing in this query that depended on who was asking, and that one
+         * column made every browse page a different document per visitor - so Joomla's page cache
+         * could never serve any of them, on the busiest pages of the site, at roughly a second
+         * each over 5,583 listings. The list is now identical for everyone and therefore
+         * cacheable; `com_jed.favoritestate` fetches the visitor's own bookmarks afterwards and
+         * fills the icons in.
+         *
+         * The cost is one small request for signed-in visitors, who are a small minority of the
+         * traffic. The gain applies to everybody else.
+         */
 
         // Approved by the JED team AND online per the developer, plus the current user's own
         // listings. Backend permissions do not widen this - see JedHelper for the rule.
@@ -197,8 +234,39 @@ class ExtensionsModel extends ListModel
         $orderCol  = $this->state->get('list.ordering', 'a.id');
         $orderDirn = $this->state->get('list.direction', 'DESC');
 
+        // "New & Noteworthy" is not a sort of this table at all - it is what people have been
+        // looking at in the last fortnight, so it joins P1-12's aggregate. An INNER JOIN, because
+        // a listing nobody has viewed is not noteworthy; that is the definition, not an omission.
+        if ($orderCol === 'noteworthy') {
+            $since = Factory::getDate('-' . BrowseList::NOTEWORTHY_DAYS . ' days')->format('Y-m-d');
+
+            $query->select('hits.views AS noteworthy')
+                ->join(
+                    'INNER',
+                    '(SELECT ' . $db->quoteName('extension_id') . ', SUM(' . $db->quoteName('views') . ') AS '
+                    . $db->quoteName('views') . ' FROM ' . $db->quoteName('#__jed_hit_stats')
+                    . ' WHERE ' . $db->quoteName('period') . ' >= ' . $db->quote($since)
+                    . ' GROUP BY ' . $db->quoteName('extension_id')
+                    . ' HAVING SUM(' . $db->quoteName('views') . ') > 0) AS hits ON hits.extension_id = a.id'
+                );
+
+            $query->order($db->quoteName('noteworthy') . ' ' . ($orderDirn === 'ASC' ? 'ASC' : 'DESC'))
+                ->order($db->quoteName('a.id') . ' ASC');
+
+            return $query;
+        }
+
         if ($orderCol && $orderDirn) {
             $query->order($db->escape($orderCol . ' ' . $orderDirn));
+        }
+
+        // A browse list has to answer the same way twice, and the same way as the module of the
+        // same name. Several hundred listings share a score_overall of 5.00, and without this the
+        // page and the sidebar showed different "Top Rated" extensions.
+        $browse = BrowseList::fromKey((string) $this->getState('list.browse', ''));
+
+        if ($browse !== null) {
+            $query->order($browse->tieBreak());
         }
 
         return $query;
