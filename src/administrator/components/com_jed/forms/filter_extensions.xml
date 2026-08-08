@@ -83,6 +83,8 @@
             <option value="a.approved_time DESC">COM_JED_EXTENSION_FILTER_SORT_APPROVED_TIME_DESC</option>
             <option value="a.catid ASC">COM_JED_EXTENSION_FILTER_SORT_PRIMARY_CATEGORY_ID_ASC</option>
             <option value="a.catid DESC">COM_JED_EXTENSION_FILTER_SORT_PRIMARY_CATEGORY_ID_DESC</option>
+            <option value="popularity ASC">COM_JED_EXTENSION_FILTER_SORT_POPULARITY_ASC</option>
+            <option value="popularity DESC">COM_JED_EXTENSION_FILTER_SORT_POPULARITY_DESC</option>
 
         </field>
 

@@ -18,6 +18,8 @@ DROP TABLE IF EXISTS `#__jed_suspect_ip_ranges`;
 DROP TABLE IF EXISTS `#__jed_queue_jobs`;
 DROP TABLE IF EXISTS `#__jed_url_checks`;
 DROP TABLE IF EXISTS `#__jed_extension_linkchecks`;
+DROP TABLE IF EXISTS `#__jed_hit_log`;
+DROP TABLE IF EXISTS `#__jed_hit_stats`;
 
 DELETE FROM `#__mail_templates` WHERE `template_id` IN ('com_jed.audit_report', 'com_jed.link_broken');
 

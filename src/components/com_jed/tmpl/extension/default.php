@@ -134,6 +134,30 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
                     'name'        => $item->name,
                 ]); ?>
 
+                <?php if (!empty($item->download_url)) : ?>
+                    <p class="jed-download">
+                        <a class="btn btn-primary btn-lg jed-download__button"
+                           href="<?php echo Route::_('index.php?option=com_jed&task=download.go&id=' . (int) $item->id); ?>"
+                           rel="nofollow noopener">
+                            <span class="fa fa-download" aria-hidden="true"></span>
+                            <?php echo Text::_('COM_JED_EXTENSION_DOWNLOAD'); ?>
+                        </a>
+                        <?php
+                        /*
+                         * The note JED3 gave a whole interstitial page to. It says the same thing
+                         * where the visitor already is, instead of costing them a click and losing
+                         * a share of them on the way (P1-12).
+                         */
+                        ?>
+                        <small class="jed-download__note d-block text-muted mt-1">
+                            <?php echo Text::_('COM_JED_EXTENSION_DOWNLOAD_NOTE'); ?>
+                            <?php if (!empty($item->requires_registration)) : ?>
+                                <?php echo Text::_('COM_JED_EXTENSION_DOWNLOAD_NOTE_REGISTRATION'); ?>
+                            <?php endif; ?>
+                        </small>
+                    </p>
+                <?php endif; ?>
+
                 <?php if (!empty($item->links)) : ?>
                     <p class="button-group">
                         <?php foreach ($item->links as $link) : ?>

@@ -14,8 +14,10 @@ use Jed\Component\Jed\Administrator\Audit\AuditPipeline;
 use Jed\Component\Jed\Administrator\Audit\ClaudeAuditor;
 use Jed\Component\Jed\Administrator\Audit\DockerRunner;
 use Jed\Component\Jed\Administrator\Audit\ProcessRunner;
+use Jed\Component\Jed\Administrator\Hit\HitAggregator;
 use Jed\Component\Jed\Administrator\Link\LinkCheckService;
 use Jed\Component\Jed\Administrator\Queue\AuditJobHandler;
+use Jed\Component\Jed\Administrator\Queue\HitAggregateJobHandler;
 use Jed\Component\Jed\Administrator\Queue\JobHandlerRegistry;
 use Jed\Component\Jed\Administrator\Queue\LinkCheckJobHandler;
 use Jed\Component\Jed\Administrator\Queue\QueueService;
@@ -92,6 +94,8 @@ return new class () implements ServiceProviderInterface {
 
                 // One fetcher and one validator registry for both the periodic pass and the
                 // on-demand job - the same ones the form uses (P1-08). P1-09 owns no validators.
+                $hitAggregator = new HitAggregator($db);
+
                 $linkCheckService = new LinkCheckService(
                     $db,
                     UrlValidatorRegistry::withDefaults(new SafeHttpFetcher(), new UpdateServerXmlParser())
@@ -101,13 +105,15 @@ return new class () implements ServiceProviderInterface {
                 $jobHandlerRegistry->register('extension.audit', new AuditJobHandler($auditPipeline));
                 $jobHandlerRegistry->register('extension.score_recalc', new ScoreRecalcJobHandler($scoreCalculationService));
                 $jobHandlerRegistry->register('extension.linkcheck', new LinkCheckJobHandler($linkCheckService));
+                $jobHandlerRegistry->register('hits.aggregate', new HitAggregateJobHandler($hitAggregator));
 
                 $plugin = new Jed(
                     (array) PluginHelper::getPlugin('task', 'jed'),
                     $updateCheck,
                     $queueService,
                     $jobHandlerRegistry,
-                    $linkCheckService
+                    $linkCheckService,
+                    $hitAggregator
                 );
                 $plugin->setApplication(Factory::getApplication());
 

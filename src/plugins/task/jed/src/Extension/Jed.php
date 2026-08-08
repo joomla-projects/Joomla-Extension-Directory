@@ -14,6 +14,7 @@ namespace Joomla\Plugin\Task\Jed\Extension;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Administrator\Hit\HitAggregator;
 use Jed\Component\Jed\Administrator\Link\LinkCheckService;
 use Jed\Component\Jed\Administrator\Queue\JobHandlerRegistry;
 use Jed\Component\Jed\Administrator\Queue\QueueService;
@@ -65,6 +66,11 @@ final class Jed extends CMSPlugin implements SubscriberInterface
             'form'            => 'linkcheck',
             'method'          => 'checkLinks',
         ],
+        'jed.hitaggregate' => [
+            'langConstPrefix' => 'PLG_TASK_JED_HITAGGREGATE',
+            'form'            => 'hitaggregate',
+            'method'          => 'aggregateHits',
+        ],
     ];
 
     /**
@@ -87,7 +93,8 @@ final class Jed extends CMSPlugin implements SubscriberInterface
         private readonly UpdateCheckService $updateCheckService,
         private readonly QueueService $queueService,
         private readonly JobHandlerRegistry $jobHandlerRegistry,
-        private readonly LinkCheckService $linkCheckService
+        private readonly LinkCheckService $linkCheckService,
+        private readonly HitAggregator $hitAggregator
     ) {
         parent::__construct($config);
     }
@@ -224,6 +231,43 @@ final class Jed extends CMSPlugin implements SubscriberInterface
             $result['notified'],
             $result['escalated'],
             $result['recovered']
+        ));
+
+        return TaskStatus::OK;
+    }
+
+    /**
+     * `jed.hitaggregate` routine: roll the raw hit log into daily buckets, then prune it.
+     *
+     * Meant to run once a day, after midnight. It recomputes the last couple of days rather than
+     * only yesterday, so a run that was missed repairs itself on the next one and a day that was
+     * still receiving hits when it ran is completed afterwards. That is only safe because the
+     * aggregation replaces a day rather than adding to it.
+     *
+     * @param ExecuteTaskEvent $event The `onExecuteTask` event.
+     *
+     * @return int The routine exit code.
+     *
+     * @since 4.1.0
+     */
+    protected function aggregateHits(ExecuteTaskEvent $event): int
+    {
+        $params = $event->getArgument('params');
+        $days   = max(1, (int) ($params->days ?? 2));
+
+        try {
+            $result = $this->hitAggregator->run($days);
+        } catch (Throwable $e) {
+            $this->logTask('jed.hitaggregate failed: ' . $e->getMessage(), 'error');
+
+            return TaskStatus::KNOCKOUT;
+        }
+
+        $this->logTask(\sprintf(
+            'jed.hitaggregate: %d day(s) recomputed, %d listing buckets written, %d raw rows pruned.',
+            $result['days'],
+            $result['rows'],
+            $result['pruned']
         ));
 
         return TaskStatus::OK;

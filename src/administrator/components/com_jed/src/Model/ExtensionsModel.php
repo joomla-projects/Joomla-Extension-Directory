@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
 use Joomla\Database\QueryInterface;
@@ -62,6 +63,10 @@ class ExtensionsModel extends ListModel
                 'approved_time', 'a.approved_time',
                 'approved_notes', 'a.approved_notes',
                 'approved_reason', 'a.approved_reason',
+                // P1-12. Not a column on a.*, but a computed one - it is in the allowlist so the
+                // list can be ordered by it, and getListQuery() only joins the aggregate when it
+                // is actually asked for.
+                'popularity',
             ];
         }
 
@@ -261,7 +266,25 @@ class ExtensionsModel extends ListModel
         $orderCol  = $this->state->get('list.ordering', 'a.id');
         $orderDirn = strtoupper((string) $this->state->get('list.direction', 'DESC')) === 'ASC' ? 'ASC' : 'DESC';
 
-        if ($orderCol && in_array($orderCol, $this->filter_fields, true)) {
+        if ($orderCol === 'popularity') {
+            // P1-12's ranking signal, joined only when it is the sort - the aggregate is a row per
+            // listing *per day*, so joining it unconditionally would put a 90-row-per-listing
+            // subquery under every page of this list for nothing.
+            //
+            // Views over a 90-day window rather than all time: a listing that was popular in 2014
+            // is not popular, and an all-time total would freeze the ordering permanently in
+            // favour of whatever has existed longest.
+            $since = Factory::getDate('-90 days')->format('Y-m-d');
+
+            $query->select('COALESCE(hits.views, 0) AS ' . $db->quoteName('popularity'))
+                ->leftJoin(
+                    '(SELECT ' . $db->quoteName('extension_id') . ', SUM(' . $db->quoteName('views') . ') AS '
+                    . $db->quoteName('views') . ' FROM ' . $db->quoteName('#__jed_hit_stats')
+                    . ' WHERE ' . $db->quoteName('period') . ' >= ' . $db->quote($since)
+                    . ' GROUP BY ' . $db->quoteName('extension_id') . ') AS hits ON hits.extension_id = a.id'
+                )
+                ->order($db->quoteName('popularity') . ' ' . $orderDirn);
+        } elseif ($orderCol && in_array($orderCol, $this->filter_fields, true)) {
             $query->order($db->quoteName($orderCol) . ' ' . $orderDirn);
         } else {
             $query->order($db->quoteName('a.id') . ' DESC');

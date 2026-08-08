@@ -575,6 +575,57 @@ CREATE TABLE IF NOT EXISTS `#__jed_extension_linkchecks`
 	KEY `IDX_jed_linkcheck_escalated` (`escalated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `#__jed_hit_log`;
+
+-- Raw hits (P1-12). The fastest-growing table on the site by a wide margin: JED3's equivalent
+-- holds 2,158,587 rows for a single month, which is where the 30-day retention below comes from -
+-- it is not a guess, it is what the legacy system settled on and kept.
+--
+-- `ip_hash` and not the address. JED3 stores `ip_address char(45)` in clear and there is no reason
+-- to repeat that: a salted hash still deduplicates and still supports the abuse work in P1-05,
+-- while not being an address. That is also what keeps this table out of P1-18's export and
+-- deletion path - with no IP and no user id there is nothing here to hand back or erase.
+--
+-- No `user_id` column at all, deliberately. 3,905 of JED3's 2.1 million rows were from a
+-- logged-in visitor, so it would identify almost nobody while making the table personal data for
+-- everybody.
+CREATE TABLE IF NOT EXISTS `#__jed_hit_log`
+(
+	`id`           bigint unsigned NOT NULL AUTO_INCREMENT,
+	`extension_id` int unsigned    NOT NULL,
+	`hit_type`     enum('view', 'download_click') NOT NULL DEFAULT 'view',
+	`hit_time`     datetime        NOT NULL,
+	`ip_hash`      varbinary(32)   DEFAULT NULL,
+	`user_agent`   varchar(255)    DEFAULT NULL,
+	-- Marked, never blocked. A false positive that blocks costs a real visitor their download;
+	-- one that mislabels costs a row in an aggregate nobody would have noticed.
+	`is_robot`     tinyint(1)      NOT NULL DEFAULT '0',
+	`suspicious`   tinyint(1)      NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`),
+	KEY `IDX_jed_hitlog_ext_time` (`extension_id`, `hit_time`),
+	KEY `IDX_jed_hitlog_time` (`hit_time`),
+	KEY `IDX_jed_hitlog_rate` (`ip_hash`, `hit_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `#__jed_hit_stats`;
+
+-- The daily aggregate. Separate from the log because the two answer different questions and have
+-- opposite lifetimes: the log is evidence for a few weeks, this is the record that stays.
+--
+-- Robots and suspicious hits are counted *out* of views and download_clicks and kept in their own
+-- columns rather than discarded, so "12% of our traffic is bots" stays answerable after the raw
+-- rows are gone.
+CREATE TABLE IF NOT EXISTS `#__jed_hit_stats`
+(
+	`extension_id`    int unsigned NOT NULL,
+	`period`          date         NOT NULL,
+	`views`           int unsigned NOT NULL DEFAULT '0',
+	`download_clicks` int unsigned NOT NULL DEFAULT '0',
+	`robot_hits`      int unsigned NOT NULL DEFAULT '0',
+	PRIMARY KEY (`extension_id`, `period`),
+	KEY `IDX_jed_hitstats_period` (`period`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
 
 INSERT INTO `#__mail_templates` (`template_id`, `extension`, `language`, `subject`, `body`, `htmlbody`, `attachments`, `params`) VALUES
 ('com_jed.audit_report', 'com_jed', '', 'COM_JED_AUDIT_REPORT_EMAIL_SUBJECT', 'COM_JED_AUDIT_REPORT_EMAIL_BODY', '', '', '{"tags":["sitename","extensionname","extensionversion","phpstanreport","claudereport"]}'),

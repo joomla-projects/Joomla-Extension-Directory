@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+	<fields name="params">
+		<fieldset name="task_params">
+			<!--
+				Recomputing more than one day is not waste, it is the repair mechanism: the
+				aggregation replaces a day rather than adding to it, so re-running over yesterday
+				and the day before fixes a missed run and completes a day that was still
+				receiving hits when the job went past it.
+			-->
+			<field
+				name="days"
+				type="number"
+				label="PLG_TASK_JED_LABEL_DAYS"
+				description="PLG_TASK_JED_HITAGGREGATE_DAYS_DESC"
+				default="2"
+				min="1"
+				max="31"
+				step="1"
+				filter="int"
+			/>
+		</fieldset>
+	</fields>
+</form>

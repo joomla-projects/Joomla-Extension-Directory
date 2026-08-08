@@ -15,8 +15,11 @@ namespace Jed\Component\Jed\Site\View\Extension;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Hit\HitRecorder;
+use Jed\Component\Jed\Administrator\Hit\HitType;
 use Jed\Component\Jed\Administrator\Listing\ListingAccess;
 use Jed\Component\Jed\Site\Helper\JedHelper;
+use Joomla\Database\DatabaseInterface;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -143,6 +146,13 @@ class HtmlView extends BaseHtmlView
         } else {
             $this->addSocialMetadata();
         }
+
+        // Counted here rather than in the model, because the model is also what the download
+        // redirect and the moderation views load an item through - and a view is something a
+        // visitor did on this page, not something anybody who reads the row did. Blocked and
+        // deleted listings are excluded by sitting in the other branch (P1-01).
+        (new HitRecorder(Factory::getContainer()->get(DatabaseInterface::class)))
+            ->record((int) ($this->item->id ?? 0), HitType::VIEW);
 
         // Add Breadcrumbs
         $pathway        = $app->getPathway();

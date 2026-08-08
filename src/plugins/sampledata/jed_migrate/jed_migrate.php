@@ -332,6 +332,9 @@ class PlgSampledataJed_Migrate extends CMSPlugin
         $next = 11 + self::HISTORY_BATCHES;
 
         $plan[++$next] = ['file' => 'history_baseline.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_HISTORY_BASELINE_SUCCESS'];
+        // After the listings exist, because the aggregate joins them to drop hits for extensions
+        // that never came across (P1-12 item 7).
+        $plan[++$next] = ['file' => 'hits.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_HITS_SUCCESS'];
         $plan[++$next] = ['file' => 'rsforms.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_RSFORMS_SUCCESS'];
         $plan[++$next] = ['file' => 'cleanup.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_CLEANUP_SUCCESS'];
 
