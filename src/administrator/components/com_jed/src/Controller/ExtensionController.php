@@ -21,6 +21,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
 use Joomla\Database\DatabaseInterface;
+use Joomla\Database\ParameterType;
 
 /**
  * Extension controller class.
@@ -47,6 +48,13 @@ class ExtensionController extends FormController
      * filed as a revision of extension 1. The site side does not have this problem because its
      * context is `extensionform`.
      *
+     * A listing that does not exist is turned away here rather than left to the framework. Core
+     * redirects a failed checkout *to the item* (`FormController::attemptCheckout()`), and the edit
+     * view then throws on the row it cannot load - so a stale bookmark to a purged listing answered
+     * with an HTTP 500 and Joomla's raw error page. It is a dead link, not a server fault: say so
+     * and go back to the list. Core components avoid this by accident, because their `allowEdit()`
+     * has to load the record for its category and fails first.
+     *
      * @param string|null $key    The primary key of the item
      * @param string|null $urlVar The name of the "id" URL variable
      *
@@ -56,12 +64,44 @@ class ExtensionController extends FormController
      */
     public function edit($key = null, $urlVar = null)
     {
+        $editId = $this->input->getInt('id', 0);
+
+        if ($editId > 0 && !$this->extensionExists($editId)) {
+            $this->setMessage(Text::sprintf('COM_JED_EXTENSION_NOT_FOUND', $editId), 'error');
+            $this->setRedirect($this->getRedirectUrlToList());
+
+            return false;
+        }
+
         $result = parent::edit($key, $urlVar);
 
-        $editId = $this->input->getInt('id', 0);
         Factory::getApplication()->setUserState('com_jed.edit.extension.live_id', $editId);
 
         return $result;
+    }
+
+    /**
+     * Whether a live `#__jed_extensions` row with this id is there at all.
+     *
+     * Deliberately not `ExtensionModel::getItem()`: that one is pointed at `ExtensionHistoryTable`
+     * (see {@see edit()}) and would answer a different question.
+     *
+     * @param int $extensionId The extension id from the request.
+     *
+     * @return bool
+     *
+     * @since 4.1.0
+     */
+    private function extensionExists(int $extensionId): bool
+    {
+        $db    = Factory::getContainer()->get(DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__jed_extensions'))
+            ->where($db->quoteName('id') . ' = :id')
+            ->bind(':id', $extensionId, ParameterType::INTEGER);
+
+        return (int) $db->setQuery($query, 0, 1)->loadResult() > 0;
     }
 
     /**

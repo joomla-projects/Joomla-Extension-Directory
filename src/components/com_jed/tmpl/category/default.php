@@ -101,24 +101,8 @@ if (JedHelper::isLoggedIn()) {
         <p class="font-size-s"><?php echo $this->items[0]->category_hierarchy; ?></p>
         <ul class="jed-grid jed-grid--1-1-1">
             <?php foreach ($this->items as $item) : ?>
-                <?php echo LayoutHelper::render(
-                    'cards.extension',
-                    [
-                    'id'            => $item->id,
-                    'image'         => $item->logo,
-                    'title'         => $item->name,
-                    'developer'     => $item->developer,
-                    'score_string'  => $item->score_string,
-                    'score'         => $item->score,
-                    'reviews'       => $item->review_string,
-                    'compatibility' => $item->version,
-                    'description'   => JedHelper::cardText($item->intro, $item->description),
-                    'type'          => $item->type,
-                    'category'      => $item->category_title,
-                    'link'          => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->catid, $item->id)),
-                    'isFavorited'   => !empty($item->is_favorited),
-                    ]
-                ); ?>
+                <?php // One card, one mapping (P1-14). See JedHelper::cardData(). ?>
+                <?php echo LayoutHelper::render('cards.extension', JedHelper::cardData($item)); ?>
             <?php endforeach; ?>
         </ul>
     </div>

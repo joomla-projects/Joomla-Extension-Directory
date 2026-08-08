@@ -57,11 +57,20 @@ class ExtensionsHelper
 
         $db    = Factory::getContainer()->get(DatabaseInterface::class);
         $query = $db->getQuery(true)
+            // Everything JedHelper::cardData() reads. Selecting less is how the module ended up
+            // rendering the shared card with four of its five signals blank (P1-14): the layout
+            // was right, the row simply did not carry `type`, `modified`, the category or the
+            // developer.
             ->select($db->quoteName([
                 'a.id', 'a.name', 'a.alias', 'a.catid', 'a.intro', 'a.description', 'a.logo',
                 'a.extension_types', 'a.joomla_versions', 'a.score_overall', 'a.score_count',
+                'a.type', 'a.modified',
             ]))
-            ->from($db->quoteName('#__jed_extensions', 'a'));
+            ->select($db->quoteName('cat.title', 'category_title'))
+            ->select($db->quoteName('u.name', 'developer'))
+            ->from($db->quoteName('#__jed_extensions', 'a'))
+            ->join('INNER', $db->quoteName('#__categories', 'cat'), 'cat.id = a.catid')
+            ->join('LEFT', $db->quoteName('#__users', 'u'), 'u.id = a.created_by');
 
         // The same rule the pages use. A module is not a moderation view and must not become a
         // way to see a listing that is blocked, unapproved or offline (4.8).

@@ -12,7 +12,6 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Site\Helper\JedHelper;
-use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
@@ -57,19 +56,14 @@ if (JedHelper::isLoggedIn()) {
 
         <ul class="jed-grid jed-grid--1-1-1">
             <?php foreach ($this->items as $item) : ?>
-                <?php echo LayoutHelper::render(
-                    'cards.profileextension',
-                    [
-                        'id'          => $item->id,
-                        'image'       => $item->logo,
-                        'title'       => $item->name,
-                        'description' => $item->short_description,
-                        'includes'    => $item->includes_string,
-                        'versions'    => $item->version_string,
-                        'link'        => Route::_(sprintf('index.php?option=com_jed&view=extension&catid=%s&id=%s', $item->catid, $item->id)),
-                        'isFavorited' => !empty($item->is_favorited),
-                    ]
-                ); ?>
+                <?php
+                /*
+                 * The same card as everywhere else (P1-14). This page used to have one of its
+                 * own that showed the Joomla versions but no rating and no last-updated date -
+                 * two cards for one thing, disagreeing about what a visitor needs to know.
+                 */
+                ?>
+                <?php echo LayoutHelper::render('cards.extension', JedHelper::cardData($item)); ?>
             <?php endforeach; ?>
         </ul>
     </div>

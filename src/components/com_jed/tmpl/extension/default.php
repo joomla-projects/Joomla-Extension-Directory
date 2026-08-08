@@ -310,16 +310,8 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
                 </h2>
                 <ul class="jed-grid jed-grid--1-1-1">
                     <?php foreach ($item->more_by_developer as $other) : ?>
-                        <?php echo LayoutHelper::render('cards.profileextension', [
-                            'id'          => (int) $other->id,
-                            'image'       => $other->logo_url,
-                            'title'       => $this->escape($other->name),
-                            'description' => $other->card_text,
-                            'includes'    => $other->includes_string,
-                            'versions'    => $other->version_string,
-                            'link'        => Route::_('index.php?option=com_jed&view=extension&catid=' . (int) $other->catid . '&id=' . (int) $other->id),
-                            'isFavorited' => !empty($other->is_favorited),
-                        ]); ?>
+                        <?php // One card, one mapping (P1-14). See JedHelper::cardData(). ?>
+                        <?php echo LayoutHelper::render('cards.extension', JedHelper::cardData($other)); ?>
                     <?php endforeach; ?>
                 </ul>
                 <p>

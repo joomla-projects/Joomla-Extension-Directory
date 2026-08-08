@@ -21,8 +21,11 @@ use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Mail\MailTemplate;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\User;
 use Joomla\Component\Mails\Administrator\Model\TemplateModel;
@@ -453,6 +456,246 @@ class JedHelper
     public static function cardText(?string $intro, ?string $description = null): string
     {
         return self::markdownToText(trim((string) $intro) !== '' ? $intro : $description, 200);
+    }
+
+    /**
+     * Everything one extension card needs, from one listing row.
+     *
+     * `P1-14` asks for five decision signals on every card and for **one** card layout to carry
+     * them. One layout is only half of that: before this, four views each assembled their own
+     * argument list from whatever their model happened to have prepared, so the profile page's
+     * cards showed the Joomla versions and the browse list's showed a rating, and neither showed
+     * both. The layout was shared; the data was not.
+     *
+     * So the mapping lives here, once. A caller hands over a row and gets a card - which also
+     * means a view can no longer quietly omit a signal by not passing it.
+     *
+     * The study behind this (13.2) found that decision-relevant details surface too late: 65% of
+     * respondents had evaluated an extension and only then discovered a limitation - version,
+     * missing feature, or cost. All five signals below are already in the row.
+     *
+     * @param object      $item The listing row, as any of the list models prepare it.
+     * @param string|null $link The routed link to the listing; built from the row when omitted.
+     *
+     * @return array<string, mixed>  Display data for the `cards.extension` layout.
+     *
+     * @since 4.1.0
+     */
+    public static function cardData(object $item, ?string $link = null): array
+    {
+        $versions = (string) ($item->joomla_versions ?? '');
+        $includes = (string) ($item->extension_types ?? '');
+        $count    = (int) ($item->score_count ?? 0);
+
+        return [
+            'id'    => (int) ($item->id ?? 0),
+            'link'  => $link ?? Route::_(
+                'index.php?option=com_jed&view=extension&catid=' . (int) ($item->catid ?? 0)
+                . '&id=' . (int) ($item->id ?? 0)
+            ),
+            'title' => (string) ($item->name ?? ''),
+            // Already run through formatImage() by the models that have one; a raw filename is
+            // resolved here so a caller cannot end up with a broken <img>.
+            'image' => self::cardImage($item),
+            'developer'   => (string) ($item->developer ?? $item->created_by_name ?? ''),
+            'description' => self::cardText($item->intro ?? null, $item->description ?? null),
+
+            // 1. Rating, with the count beside it. 4.6 from two reviews is not 4.6 from two
+            //    hundred, and a star row on its own does not say which it is.
+            'score'        => (float) ($item->score_overall ?? 0),
+            'reviewCount'  => $count,
+
+            // 2. Compatibility - the study's single most important decision factor.
+            'compatibility' => $versions,
+
+            // 3. What the package contains.
+            'includes' => $includes,
+
+            // 4. Cost, named as a late-discovered limitation in the study.
+            'type' => (string) ($item->type ?? ''),
+
+            // 5. When it was last touched. A listing that has never been edited since it was
+            //    submitted has no `modified`, and "no date" tells a visitor nothing - whereas
+            //    "added four years ago" answers the same question they were asking, which is
+            //    whether anybody is still looking after this.
+            'modified' => (string) ($item->modified ?? ''),
+            'created'  => (string) ($item->created ?? ''),
+
+            'category'    => (string) ($item->category_title ?? ''),
+            // Never true from the server: the browse pages must stay one document for every
+            // visitor so they can be cached (P1-13). favoritestate.js fills the icons in.
+            'isFavorited' => false,
+        ];
+    }
+
+    /**
+     * The card image for a row, resolved whether or not the model already did it.
+     *
+     * @param object $item The listing row.
+     *
+     * @return string
+     *
+     * @since 4.1.0
+     */
+    private static function cardImage(object $item): string
+    {
+        $logo = (string) ($item->logo_url ?? $item->logo ?? '');
+
+        if ($logo === '' || str_starts_with($logo, 'http') || str_starts_with($logo, '/')) {
+            return $logo;
+        }
+
+        return self::formatImage($logo, ImageSize::SMALL);
+    }
+
+    /**
+     * The Joomla versions a listing declares, as label/short pairs.
+     *
+     * A list rather than a blob of markup, so the card decides how to render them and can put a
+     * visible number next to each icon. `JedtrophyHelper::getTrophyVersionsString()` returns
+     * finished HTML with the label only in a `title` attribute, and on an empty
+     * `joomla_versions` it emits one empty badge - a small grey rectangle meaning nothing, on
+     * every listing that has not declared a version.
+     *
+     * @param string $versions The raw `joomla_versions` column.
+     *
+     * @return array<int, array{key: string, short: string, label: string}>
+     *
+     * @since 4.1.0
+     */
+    public static function versionBadges(string $versions): array
+    {
+        // Stored as a JSON-ish array of #__jed_joomla_versions ids: ["40","50"].
+        $short = [
+            '15' => '1.5', '25' => '2.5', '30' => '3', '40' => '4', '41' => '4.1',
+            '50' => '5', '51' => '5 (b/c)', '60' => '6', '61' => '6 (b/c)',
+        ];
+
+        $badges = [];
+
+        foreach (self::splitStoredList($versions) as $id) {
+            if (!isset($short[$id])) {
+                continue;
+            }
+
+            $label = Text::_('COM_JED_VERSION_' . $id);
+
+            $badges[] = [
+                'key'   => $id,
+                'short' => htmlspecialchars($short[$id], ENT_QUOTES, 'UTF-8'),
+                'label' => htmlspecialchars($label === 'COM_JED_VERSION_' . $id ? 'Joomla ' . $short[$id] : $label, ENT_QUOTES, 'UTF-8'),
+            ];
+        }
+
+        return $badges;
+    }
+
+    /**
+     * What a package contains, as key/label pairs.
+     *
+     * The label is the whole word, not the initial. `JedtrophyHelper::getTrophyIncludesString()`
+     * renders `C`, `M`, `P` in coloured badges with the meaning in a `title` attribute - which
+     * is a tooltip on a device that has a pointer and nothing at all on one that does not, and
+     * fails 13.8 either way.
+     *
+     * @param string $types The raw `extension_types` column.
+     *
+     * @return array<int, array{key: string, label: string}>
+     *
+     * @since 4.1.0
+     */
+    public static function includeBadges(string $types): array
+    {
+        $known = ['com' => 'COMPONENT', 'mod' => 'MODULE', 'plugin' => 'PLUGIN', 'lang' => 'LANGUAGE', 'tpl' => 'TEMPLATE', 'lib' => 'LIBRARY', 'pkg' => 'PACKAGE'];
+
+        $badges = [];
+
+        foreach (self::splitStoredList($types) as $type) {
+            if (!isset($known[$type])) {
+                continue;
+            }
+
+            $badges[] = [
+                'key'   => htmlspecialchars($type, ENT_QUOTES, 'UTF-8'),
+                'label' => htmlspecialchars(Text::_('COM_JED_CARD_INCLUDES_' . $known[$type]), ENT_QUOTES, 'UTF-8'),
+            ];
+        }
+
+        return $badges;
+    }
+
+    /**
+     * Split one of the JSON-ish list columns into its values.
+     *
+     * `joomla_versions` and `extension_types` hold `["40","50"]` - valid JSON in the imported
+     * stock, but not reliably so across the legacy data, which is why this strips the
+     * punctuation rather than calling json_decode() and getting null.
+     *
+     * @param string $stored The raw column value.
+     *
+     * @return string[]
+     *
+     * @since 4.1.0
+     */
+    private static function splitStoredList(string $stored): array
+    {
+        $clean = str_replace(['[', ']', '"', "'", ' '], '', trim($stored));
+
+        if ($clean === '') {
+            return [];
+        }
+
+        return array_values(array_filter(array_map('trim', explode(',', $clean)), static fn ($v) => $v !== ''));
+    }
+
+    /**
+     * "3 months ago", with the exact date for anyone who wants it.
+     *
+     * Relative because that is the question a visitor is actually asking - not *when* was this
+     * updated but *how long ago*, which is the difference between a maintained extension and an
+     * abandoned one. The absolute date goes in the `title` and in `<time datetime>` so the
+     * precise answer is still one hover or one screen reader away.
+     *
+     * @param string|null $date A SQL datetime.
+     *
+     * @return array{relative: string, absolute: string, iso: string}|null  Null when there is no date.
+     *
+     * @since 4.1.0
+     */
+    public static function relativeDate(?string $date): ?array
+    {
+        $value = trim((string) $date);
+
+        if ($value === '' || str_starts_with($value, '0000-00-00')) {
+            return null;
+        }
+
+        try {
+            $then = Factory::getDate($value);
+            $now  = Factory::getDate();
+        } catch (Exception $e) {
+            return null;
+        }
+
+        $days = (int) floor(($now->toUnix() - $then->toUnix()) / 86400);
+
+        if ($days < 0) {
+            $days = 0;
+        }
+
+        $relative = match (true) {
+            $days === 0  => Text::_('COM_JED_CARD_UPDATED_TODAY'),
+            $days === 1  => Text::_('COM_JED_CARD_UPDATED_YESTERDAY'),
+            $days < 31   => Text::plural('COM_JED_CARD_UPDATED_DAYS', $days),
+            $days < 365  => Text::plural('COM_JED_CARD_UPDATED_MONTHS', (int) round($days / 30.4)),
+            default      => Text::plural('COM_JED_CARD_UPDATED_YEARS', (int) floor($days / 365)),
+        };
+
+        return [
+            'relative' => $relative,
+            'absolute' => HTMLHelper::_('date', $value, Text::_('DATE_FORMAT_LC3')),
+            'iso'      => $then->format('Y-m-d'),
+        ];
     }
 
     /**

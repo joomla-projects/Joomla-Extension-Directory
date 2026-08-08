@@ -266,34 +266,38 @@ class ExtensionModel extends ItemModel
 
         $db    = $this->getDatabase();
         $query = $db->getQuery(true)
+            // Everything JedHelper::cardData() reads (P1-14). A short select here meant these
+            // cards rendered the shared layout with the cost and the last-updated date blank,
+            // while the same card on the browse page showed both.
             ->select($db->quoteName([
-                'id', 'name', 'alias', 'catid', 'intro', 'description', 'logo',
-                'extension_types', 'joomla_versions', 'score_count',
+                'a.id', 'a.name', 'a.alias', 'a.catid', 'a.intro', 'a.description', 'a.logo',
+                'a.extension_types', 'a.joomla_versions', 'a.score_overall', 'a.score_count',
+                'a.type', 'a.modified', 'a.created',
             ]))
-            ->from($db->quoteName('#__jed_extensions'))
-            ->where($db->quoteName('owner') . ' = :owner')
-            ->where($db->quoteName('id') . ' <> :exclude')
+            ->select($db->quoteName('cat.title', 'category_title'))
+            ->select($db->quoteName('u.name', 'developer'))
+            ->from($db->quoteName('#__jed_extensions', 'a'))
+            ->join('INNER', $db->quoteName('#__categories', 'cat'), 'cat.id = a.catid')
+            ->join('LEFT', $db->quoteName('#__users', 'u'), 'u.id = a.created_by')
+            ->where($db->quoteName('a.owner') . ' = :owner')
+            ->where($db->quoteName('a.id') . ' <> :exclude')
             // The public half of the four-carrier rule (4.8), spelled out for the same reason the
             // profile page spells it out: this is not a moderation view.
-            ->where($db->quoteName('approved') . ' = 1')
-            ->where($db->quoteName('state') . ' = 1')
-            ->where($db->quoteName('blocked') . ' = 0')
-            ->where($db->quoteName('deleted') . ' = 0')
+            ->where($db->quoteName('a.approved') . ' = 1')
+            ->where($db->quoteName('a.state') . ' = 1')
+            ->where($db->quoteName('a.blocked') . ' = 0')
+            ->where($db->quoteName('a.deleted') . ' = 0')
             ->bind(':owner', $ownerId, ParameterType::INTEGER)
             ->bind(':exclude', $excludeId, ParameterType::INTEGER)
-            ->order($db->quoteName('score_count') . ' DESC')
-            ->order($db->quoteName('name') . ' ASC');
+            ->order($db->quoteName('a.score_count') . ' DESC')
+            ->order($db->quoteName('a.name') . ' ASC');
 
         $rows = $db->setQuery($query, 0, $limit)->loadObjectList() ?: [];
 
-        // The same shape the profile page's cards.profileextension layout expects, so both pages
-        // show a developer's extensions identically.
+        // Only what JedHelper::cardData() cannot derive itself. Since P1-14 the card takes the
+        // row and does the mapping, so a view can no longer omit a signal by not passing it.
         foreach ($rows as $row) {
-            $row->logo_url         = $row->logo ? JedHelper::formatImage((string) $row->logo, ImageSize::SMALL) : '';
-            $row->card_text        = JedHelper::cardText($row->intro ?? null, $row->description ?? null);
-            $row->includes_string  = JedtrophyHelper::getTrophyIncludesStringFull((string) $row->extension_types);
-            $row->version_string   = JedtrophyHelper::getTrophyVersionsStringFull((string) $row->joomla_versions);
-            $row->is_favorited     = $this->isFavorited((int) $row->id, (int) (Factory::getApplication()->getIdentity()->id ?? 0));
+            $row->logo_url = $row->logo ? JedHelper::formatImage((string) $row->logo, ImageSize::SMALL) : '';
         }
 
         return $rows;

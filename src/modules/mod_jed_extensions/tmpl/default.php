@@ -14,7 +14,9 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Administrator\Browse\BrowseList;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
 /**
@@ -29,36 +31,27 @@ if ($extensions === []) {
 $list = BrowseList::fromKey((string) $params->get('browse_list', 'top-rated')) ?? BrowseList::TOP_RATED;
 
 /*
- * No bookmark icons here, deliberately. A module appears on pages that are otherwise identical
- * for every visitor - the home page above all - and a per-visitor icon would make them
- * uncacheable for the sake of a decoration, which is the same trade P1-13 just undid on the
- * browse lists themselves.
+ * The same card as the browse pages (P1-14). It was a bespoke compact list until then, which is
+ * precisely the "five slightly different cards" the plan warns about - and it showed the name
+ * and a line of text where the pages showed five decision signals, so the module was the one
+ * place a visitor learned least.
+ *
+ * The bookmark icon is off for a different reason and stays off: a module appears on pages that
+ * are otherwise identical for every visitor - the home page above all - and a per-visitor icon
+ * would make them uncacheable for a decoration. That is the trade P1-13 undid on the lists.
  */
 ?>
 <div class="jed-module jed-module--extensions jed-module--<?php echo $list->value; ?>">
-    <ul class="jed-module__list list-unstyled m-0 p-0">
+    <ul class="jed-grid jed-grid--1 jed-module__list list-unstyled m-0 p-0">
         <?php foreach ($extensions as $extension) : ?>
-            <li class="jed-module__item d-flex gap-2 mb-3">
-                <?php if ($extension->logo_url) : ?>
-                    <img src="<?php echo htmlspecialchars($extension->logo_url, ENT_QUOTES, 'UTF-8'); ?>"
-                         alt="" loading="lazy" decoding="async"
-                         class="jed-module__logo rounded" width="48" height="48">
-                <?php endif; ?>
-                <div class="jed-module__body">
-                    <a class="jed-module__title d-block"
-                       href="<?php echo Route::_(
-                           'index.php?option=com_jed&view=extension&catid=' . (int) $extension->catid
-                           . '&id=' . (int) $extension->id
-                       ); ?>">
-                        <?php echo htmlspecialchars($extension->name, ENT_QUOTES, 'UTF-8'); ?>
-                    </a>
-                    <?php if ($params->get('show_description', 1)) : ?>
-                        <small class="jed-module__text text-muted d-block">
-                            <?php echo $extension->card_text; ?>
-                        </small>
-                    <?php endif; ?>
-                </div>
-            </li>
+            <?php
+            $card = JedHelper::cardData($extension);
+
+            if (!$params->get('show_description', 1)) {
+                $card['description'] = '';
+            }
+            ?>
+            <?php echo LayoutHelper::render('cards.extension', $card); ?>
         <?php endforeach; ?>
     </ul>
 
