@@ -16,6 +16,7 @@ namespace Jed\Component\Jed\Site\Model;
 
 use DateInterval;
 use Exception;
+use Jed\Component\Jed\Administrator\Listing\LinkedExtensions;
 use Jed\Component\Jed\Administrator\Listing\ListingAccess;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
@@ -163,6 +164,8 @@ class ExtensionModel extends ItemModel
             (int) $this->item->id
         );
 
+        $this->item->linked = $this->getLinkedExtensions((int) $this->item->id);
+
         return $this->item;
     }
 
@@ -301,6 +304,141 @@ class ExtensionModel extends ItemModel
         }
 
         return $rows;
+    }
+
+    /**
+     * The linked extensions to render on a detail page (`P1-23`, `P1-07` item 12).
+     *
+     * Four slots, from two stored columns:
+     *
+     *  - **parent** - what this listing says it extends. Rendered from `parent_id` alone,
+     *    without consulting `parent_confirmed`: describing your own add-on as an add-on *for*
+     *    something is a statement about your own product, and it appears on your own page.
+     *  - **children** - what extends this listing. This one *does* require
+     *    `parent_confirmed = 1`, because it puts other people's listings on this listing's page,
+     *    and unconfirmed that is a traffic lever rather than a fact (see LinkedExtensions).
+     *  - **variants** - the free/paid counterpart, collected from **both** directions. The
+     *    relation is symmetric and stored once, so a listing's counterpart is either the one it
+     *    names or the one that names it, and asking only one way loses half the catalogue's
+     *    pairs.
+     *  - **childCount** - the true total behind a truncated children list. VirtueMart has 268;
+     *    the page shows a slice and links to the rest rather than pretending the slice is all.
+     *
+     * Every branch is filtered through the one shared visibility rule, which is what keeps the
+     * acceptance criterion "a variant that is blocked must not be advertised from its sibling's
+     * page" true without restating it here. Owners and maintainers still see their own listings,
+     * exactly as they do everywhere else on the site - that is the rule, not an exception to it.
+     *
+     * @param int $extensionId The listing being rendered.
+     *
+     * @return object{parent: ?object, variants: array, children: array, childCount: int}
+     *
+     * @since  4.1.0
+     * @throws Exception
+     */
+    public function getLinkedExtensions(int $extensionId): object
+    {
+        $empty = (object) ['parent' => null, 'variants' => [], 'children' => [], 'childCount' => 0];
+
+        if ($extensionId <= 0) {
+            return $empty;
+        }
+
+        $db      = $this->getDatabase();
+        $visible = JedHelper::getExtensionVisibilityCondition($db, 'a');
+
+        // Everything JedHelper::cardData() reads (P1-14) - the same select getMoreByDeveloper()
+        // uses, and for the same reason: these render through the shared card layout, and a short
+        // select leaves the cost and the last-updated date blank on one page while the identical
+        // card on the browse page shows both.
+        $select = function () use ($db) {
+            return $db->getQuery(true)
+                ->select($db->quoteName([
+                    'a.id', 'a.name', 'a.alias', 'a.catid', 'a.intro', 'a.description', 'a.logo',
+                    'a.extension_types', 'a.joomla_versions', 'a.score_overall', 'a.score_count',
+                    'a.type', 'a.modified', 'a.created',
+                ]))
+                ->select($db->quoteName('cat.title', 'category_title'))
+                ->select($db->quoteName('u.name', 'developer'))
+                ->from($db->quoteName('#__jed_extensions', 'a'))
+                ->join('INNER', $db->quoteName('#__categories', 'cat'), 'cat.id = a.catid')
+                ->join('LEFT', $db->quoteName('#__users', 'u'), 'u.id = a.created_by');
+        };
+
+        // The parent: a single hop through this listing's own parent_id.
+        $parent = $db->setQuery(
+            $select()
+                ->where($db->quoteName('a.id') . ' = (SELECT ' . $db->quoteName('parent_id')
+                    . ' FROM ' . $db->quoteName('#__jed_extensions')
+                    . ' WHERE ' . $db->quoteName('id') . ' = :self)')
+                ->where($visible)
+                ->bind(':self', $extensionId, ParameterType::INTEGER),
+            0,
+            1
+        )->loadObject();
+
+        // Both directions of the variant relation at once. A listing cannot be its own variant -
+        // LinkedExtensions rejects that on the way in and the import dropped the 18 JED3 rows
+        // that had it - but the guard costs nothing and a self-link would otherwise render the
+        // listing as its own alternative.
+        $variants = $db->setQuery(
+            $select()
+                ->where('(' . $db->quoteName('a.variant_of_id') . ' = :self'
+                    . ' OR ' . $db->quoteName('a.id') . ' = (SELECT ' . $db->quoteName('variant_of_id')
+                    . ' FROM ' . $db->quoteName('#__jed_extensions')
+                    . ' WHERE ' . $db->quoteName('id') . ' = :selfb))')
+                ->where($db->quoteName('a.id') . ' != :selfc')
+                ->where($visible)
+                ->bind(':self', $extensionId, ParameterType::INTEGER)
+                ->bind(':selfb', $extensionId, ParameterType::INTEGER)
+                ->bind(':selfc', $extensionId, ParameterType::INTEGER)
+                ->order($db->quoteName('a.name') . ' ASC')
+        )->loadObjectList() ?: [];
+
+        // Confirmed add-ons only, best first - with 268 of them on one listing, which slice the
+        // page shows is a real editorial choice and "whatever the database returns" is the wrong
+        // one.
+        $childQuery = $select()
+            ->where($db->quoteName('a.parent_id') . ' = :self')
+            ->where($db->quoteName('a.parent_confirmed') . ' = 1')
+            ->where($db->quoteName('a.id') . ' != :selfb')
+            ->where($visible)
+            ->bind(':self', $extensionId, ParameterType::INTEGER)
+            ->bind(':selfb', $extensionId, ParameterType::INTEGER)
+            ->order($db->quoteName('a.score_overall') . ' DESC')
+            ->order($db->quoteName('a.score_count') . ' DESC')
+            ->order($db->quoteName('a.name') . ' ASC');
+
+        $children = $db->setQuery($childQuery, 0, LinkedExtensions::INLINE_LIMIT)->loadObjectList() ?: [];
+
+        // Only pay for the total when the list was actually cut short.
+        $childCount = \count($children);
+
+        if ($childCount === LinkedExtensions::INLINE_LIMIT) {
+            $childCount = (int) $db->setQuery(
+                $db->getQuery(true)
+                    ->select('COUNT(*)')
+                    ->from($db->quoteName('#__jed_extensions', 'a'))
+                    ->where($db->quoteName('a.parent_id') . ' = :self')
+                    ->where($db->quoteName('a.parent_confirmed') . ' = 1')
+                    ->where($db->quoteName('a.id') . ' != :selfb')
+                    ->where($visible)
+                    ->bind(':self', $extensionId, ParameterType::INTEGER)
+                    ->bind(':selfb', $extensionId, ParameterType::INTEGER)
+            )->loadResult();
+        }
+
+        // Only what cardData() cannot derive itself, exactly as getMoreByDeveloper() does it.
+        foreach (array_merge($parent ? [$parent] : [], $variants, $children) as $row) {
+            $row->logo_url = $row->logo ? JedHelper::formatImage((string) $row->logo, ImageSize::SMALL) : '';
+        }
+
+        return (object) [
+            'parent'     => $parent,
+            'variants'   => $variants,
+            'children'   => $children,
+            'childCount' => $childCount,
+        ];
     }
 
     /**

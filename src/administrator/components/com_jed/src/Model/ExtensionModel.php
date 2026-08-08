@@ -268,8 +268,14 @@ class ExtensionModel extends AdminModel
         // snapshotted with over the live one - so approving an edit made before a block would
         // silently lift that block, which is exactly what the separate carriers exist to prevent.
         // `state` goes the same way: online/offline is the developer's, not a moderation outcome.
+        // `parent_confirmed` (P1-23) travels with them for the same reason: the developer's
+        // claim about which product their add-on extends is theirs to make, but whether that
+        // claim also appears on the other product's page is the team's to decide. It is not a
+        // history column today, so this is belt and braces - add it to the revision table and
+        // approving an edit would confirm the claim in the same motion.
         unset(
             $liveData['state'],
+            $liveData['parent_confirmed'],
             $liveData['blocked'],
             $liveData['block_reason_code'],
             $liveData['block_reason_text'],

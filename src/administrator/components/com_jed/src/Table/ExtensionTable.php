@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Administrator\Table;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Listing\LinkedExtensions;
 use Jed\Component\Jed\Administrator\Parser\VideoParser;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -22,6 +23,7 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Tag\TaggableTableInterface;
 use Joomla\CMS\Tag\TaggableTableTrait;
 use Joomla\Database\DatabaseDriver;
+use Joomla\Database\ParameterType;
 use UnexpectedValueException;
 
 /**
@@ -46,6 +48,21 @@ class ExtensionTable extends Table implements TaggableTableInterface
         parent::__construct('#__jed_extensions', 'id', $db);
         $this->setColumnAlias('published', 'state');
     }
+
+    /**
+     * Whether this save actually carried a `parent_confirmed` value.
+     *
+     * Distinguishes the JED team editing the listing in the backend - where the form always
+     * submits the field, hence the yes/no radio rather than a checkbox - from
+     * `ExtensionModel::approve()` promoting a developer's revision, where the column is absent
+     * because `#__jed_extensions_history` does not have it. Only the second case may withdraw a
+     * confirmation; see normaliseLinks().
+     *
+     * @var bool
+     *
+     * @since 4.1.0
+     */
+    private bool $parentConfirmedSubmitted = false;
 
     /**
      * Define a namespaced asset name for inclusion in the #__assets table
@@ -113,6 +130,10 @@ class ExtensionTable extends Table implements TaggableTableInterface
             }
         }
 
+        // Noted before the checkbox defaulting below, which would otherwise make every save
+        // look as though it had carried a value.
+        $this->parentConfirmedSubmitted = \array_key_exists('parent_confirmed', (array) $src);
+
         $checkboxFields = ['checked_out', 'popular', 'requires_registration', 'approved', 'uses_updater'];
 
         foreach ($checkboxFields as $field) {
@@ -139,8 +160,60 @@ class ExtensionTable extends Table implements TaggableTableInterface
         }
 
         $this->normaliseVideo();
+        $this->normaliseLinks();
 
         return parent::check();
+    }
+
+    /**
+     * Resolve and vet the two `P1-23` link columns, and keep the parent claim honest.
+     *
+     * The resolution and the three rejections live in {@see LinkedExtensions}, shared with
+     * `ExtensionHistoryTable` so the frontend form and the backend form cannot diverge. What is
+     * only true here is the last step: `parent_confirmed` belongs to the live row alone, and a
+     * confirmation is a verdict on **one particular parent**. Moving the claim to a different
+     * product has to withdraw it, or a developer could get a link confirmed against a small
+     * extension nobody minds and then re-point it at VirtueMart, keeping the tick.
+     *
+     * Throws rather than returning false, for the reason normaliseVideo() gives: no caller in
+     * this component reads check()'s return value.
+     *
+     * @return void
+     *
+     * @throws UnexpectedValueException  When a link names no listing, or names this one.
+     *
+     * @since 4.1.0
+     */
+    protected function normaliseLinks(): void
+    {
+        $db     = $this->getDatabase();
+        $selfId = (int) ($this->id ?? 0);
+
+        $this->variant_of_id = LinkedExtensions::resolve($db, $this->variant_of_id ?? null, 'VARIANT');
+        $this->parent_id     = LinkedExtensions::resolve($db, $this->parent_id ?? null, 'PARENT');
+
+        LinkedExtensions::assertLinkable($db, $this->variant_of_id, $selfId, 'VARIANT');
+        LinkedExtensions::assertLinkable($db, $this->parent_id, $selfId, 'PARENT');
+
+        if ($this->variant_of_id !== null && !LinkedExtensions::mayLinkVariant($selfId, $this->variant_of_id)) {
+            throw new UnexpectedValueException(Text::_('COM_JED_EXTENSION_LINK_VARIANT_NOT_YOURS'));
+        }
+
+        if ($selfId <= 0 || $this->parentConfirmedSubmitted) {
+            return;
+        }
+
+        $storedParent = $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName('parent_id'))
+                ->from($db->quoteName('#__jed_extensions'))
+                ->where($db->quoteName('id') . ' = :id')
+                ->bind(':id', $selfId, ParameterType::INTEGER)
+        )->loadResult();
+
+        if ((int) $storedParent !== (int) $this->parent_id) {
+            $this->parent_confirmed = 0;
+        }
     }
 
     /**

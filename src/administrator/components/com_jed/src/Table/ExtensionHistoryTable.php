@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Administrator\Table;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Listing\LinkedExtensions;
 use Jed\Component\Jed\Administrator\Parser\VideoParser;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
@@ -151,8 +152,43 @@ class ExtensionHistoryTable extends Table
         }
 
         $this->normaliseVideo();
+        $this->normaliseLinks();
 
         return parent::check();
+    }
+
+    /**
+     * Resolve and vet the two `P1-23` link columns on a revision.
+     *
+     * The same rules as the live row, minus the confirmation half - a revision has no
+     * `parent_confirmed` column, on purpose, so that approving a developer's edit can never
+     * confirm their claim on somebody else's listing.
+     *
+     * `$this->id` is the revision's own primary key, not the listing's, so the self-link check
+     * is given `extension_id` instead. Passing the revision id would compare a listing id
+     * against a history id and let a listing name itself its own parent whenever the two
+     * numbers happened to differ.
+     *
+     * @return void
+     *
+     * @throws UnexpectedValueException  When a link names no listing, or names this one.
+     *
+     * @since 4.1.0
+     */
+    protected function normaliseLinks(): void
+    {
+        $db     = $this->getDatabase();
+        $selfId = (int) ($this->extension_id ?? 0);
+
+        $this->variant_of_id = LinkedExtensions::resolve($db, $this->variant_of_id ?? null, 'VARIANT');
+        $this->parent_id     = LinkedExtensions::resolve($db, $this->parent_id ?? null, 'PARENT');
+
+        LinkedExtensions::assertLinkable($db, $this->variant_of_id, $selfId, 'VARIANT');
+        LinkedExtensions::assertLinkable($db, $this->parent_id, $selfId, 'PARENT');
+
+        if ($this->variant_of_id !== null && !LinkedExtensions::mayLinkVariant($selfId, $this->variant_of_id)) {
+            throw new UnexpectedValueException(Text::_('COM_JED_EXTENSION_LINK_VARIANT_NOT_YOURS'));
+        }
     }
 
     /**

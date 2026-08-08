@@ -109,6 +109,13 @@ class ExtensionsModel extends ListModel
         $joomlaVersion = $this->getUserStateFromRequest($this->context . '.filter.joomla_version', 'filter_joomla_version', '');
         $this->setState('filter.joomla_version', $joomlaVersion);
 
+        // "Add-ons for X" (P1-23). A detail page can only render a slice of its children -
+        // VirtueMart has 268 - so the "see all" link needs a list view that can be asked for
+        // them. Read straight from the request rather than through getUserStateFromRequest():
+        // this is a property of the link that was followed, and remembering it would leave a
+        // later visit to the plain extensions list silently filtered to one product's add-ons.
+        $this->setState('filter.parent_id', $app->getInput()->getInt('parent_id', 0));
+
         // Split context into component and optional section
         $parts = FieldsHelper::extract($context);
 
@@ -228,6 +235,16 @@ class ExtensionsModel extends ListModel
         $joomlaVersion = $this->getState('filter.joomla_version');
         if (!empty($joomlaVersion)) {
             $query->where('a.joomla_versions LIKE ' . $db->quote('%"' . $db->escape($joomlaVersion, true) . '"%'));
+        }
+
+        // Confirmed add-ons of one product (P1-23). parent_confirmed is required here for the
+        // same reason the detail page requires it: this list is reached from the parent's page
+        // and is about the parent, so an unconfirmed claim must not put a listing into it.
+        $parentId = (int) $this->getState('filter.parent_id');
+
+        if ($parentId > 0) {
+            $query->where($db->quoteName('a.parent_id') . ' = ' . $parentId)
+                ->where($db->quoteName('a.parent_confirmed') . ' = 1');
         }
 
         // Add the list ordering clause.

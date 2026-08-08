@@ -303,6 +303,13 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
             endif; ?>
         </section>
 
+        <?php if (!empty($item->linked)) : ?>
+            <?php echo LayoutHelper::render('extension.linked', [
+                'linked'      => $item->linked,
+                'extensionId' => (int) $item->id,
+            ]); ?>
+        <?php endif; ?>
+
         <?php if (!empty($item->more_by_developer)) : ?>
             <section class="jed-extension-more mt-5">
                 <h2 class="heading heading--m">

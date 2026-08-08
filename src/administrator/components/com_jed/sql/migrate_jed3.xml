@@ -210,11 +210,107 @@ DELETE FROM #__jed_extensions_maintainers</sql>
                 non_gpl_css_js, parent_id, related_free_paid_id, jed_checked, extension_ext_libs, update_url_ok, can_update.
                 tags is carried into the staging table so a later pass can create core tag records from it.
             </description>
-            <sql>INSERT INTO #__jed_extensions (id, name, alias, catid, owner, state, approved, approved_time, approved_notes, approved_reason, intro, description, license, requires_registration, type, extension_types, created, created_by, modified, modified_by, checked_out, checked_out_time, extension_version, entry_version, joomla_versions, download_url, support_url, demo_url, documentation_url, git_url, internal_download_url, download_key, uses_updater, update_url, developer_url, developer_email, changelog_url, score_overall, score_functionality, score_ease_of_use, score_support, score_documentation, score_value_for_money, score_count, popular, logo, video, internal_note) SELECT id, LEFT(IFNULL(core_title, ''), 255), LEFT(IFNULL(core_alias, ''), 255), core_catid, core_created_user_id, CASE WHEN core_state = 1 THEN 1 ELSE 0 END, CASE WHEN approved = 1 THEN 1 ELSE 0 END, approved_time, CONCAT('JED3 approval_status_id=', IFNULL(approved, 0)), LEFT(IFNULL(approval_label, ''), 255), LEFT(TRIM(REGEXP_REPLACE(REGEXP_REPLACE(IFNULL(core_body, ''), '&lt;[^&gt;]*&gt;', ' '), '[[:space:]]+', ' ')), 300), REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REGEXP_REPLACE(IFNULL(core_body, ''), '&lt;[^&gt;]*&gt;', ''), CONCAT('&nbsp', CHAR(59)), ' '), CONCAT('&lt', CHAR(59)), '<'), CONCAT('&gt', CHAR(59)), '>'), CONCAT('&quot', CHAR(59)), '"'), CONCAT('&amp', CHAR(59)), '&'), LEFT(IFNULL(license, ''), 255), IFNULL(requires_registration, 0), CASE LOWER(TRIM(IFNULL(type, ''))) WHEN 'paid' THEN 'paid' WHEN 'freemium' THEN 'freemium' WHEN 'cloud' THEN 'cloud' ELSE 'free' END, LEFT(IFNULL(includes, ''), 255), core_created_time, core_created_user_id, core_modified_time, core_modified_user_id, NULLIF(core_checked_out_user_id, 0), core_checked_out_time, LEFT(IFNULL(version, ''), 50), 1, LEFT(IFNULL(versions, ''), 255), LEFT(IFNULL(download_link, ''), 255), LEFT(IFNULL(support_link, ''), 255), LEFT(IFNULL(demo_link, ''), 255), LEFT(IFNULL(documentation_link, ''), 255), '', LEFT(IFNULL(extension_file, ''), 255), '', IFNULL(uses_updater, 0), LEFT(IFNULL(update_url, ''), 255), LEFT(IFNULL(homepage_link, ''), 255), LEFT(IFNULL(second_contact_email, ''), 255), '', LEAST(GREATEST(ROUND(IFNULL(score, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(functionality, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(ease_of_use, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(support, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(documentation, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(value_for_money, 0) / 10) / 2, 0), 5), 0, IFNULL(popular, 0), LEFT(IFNULL(logo, ''), 255), LEFT(IFNULL(video, ''), 255), jed_note FROM combine_jed_extensions</sql>
+            <sql>INSERT INTO #__jed_extensions (id, name, alias, catid, owner, state, approved, approved_time, approved_notes, approved_reason, intro, description, license, requires_registration, type, extension_types, created, created_by, modified, modified_by, checked_out, checked_out_time, extension_version, entry_version, joomla_versions, download_url, support_url, demo_url, documentation_url, git_url, internal_download_url, download_key, uses_updater, update_url, developer_url, developer_email, changelog_url, score_overall, score_functionality, score_ease_of_use, score_support, score_documentation, score_value_for_money, score_count, popular, logo, video, internal_note) SELECT id, LEFT(IFNULL(core_title, ''), 255), LEFT(IFNULL(core_alias, ''), 255), core_catid, core_created_user_id, CASE WHEN core_state = 1 THEN 1 ELSE 0 END, CASE WHEN approved = 1 THEN 1 ELSE 0 END, approved_time, CONCAT('JED3 approval_status_id=', IFNULL(approved, 0)), LEFT(IFNULL(approval_label, ''), 255), LEFT(TRIM(REGEXP_REPLACE(REGEXP_REPLACE(IFNULL(core_body, ''), '&lt;[^&gt;]*&gt;', ' '), '[[:space:]]+', ' ')), 300), REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REGEXP_REPLACE(IFNULL(core_body, ''), '&lt;[^&gt;]*&gt;', ''), CONCAT('&amp;nbsp', CHAR(59)), ' '), CONCAT('&amp;lt', CHAR(59)), '&lt;'), CONCAT('&amp;gt', CHAR(59)), '&gt;'), CONCAT('&amp;quot', CHAR(59)), '"'), CONCAT('&amp;amp', CHAR(59)), '&amp;'), LEFT(IFNULL(license, ''), 255), IFNULL(requires_registration, 0), CASE LOWER(TRIM(IFNULL(type, ''))) WHEN 'paid' THEN 'paid' WHEN 'freemium' THEN 'freemium' WHEN 'cloud' THEN 'cloud' ELSE 'free' END, LEFT(IFNULL(includes, ''), 255), core_created_time, core_created_user_id, core_modified_time, core_modified_user_id, NULLIF(core_checked_out_user_id, 0), core_checked_out_time, LEFT(IFNULL(version, ''), 50), 1, LEFT(IFNULL(versions, ''), 255), LEFT(IFNULL(download_link, ''), 255), LEFT(IFNULL(support_link, ''), 255), LEFT(IFNULL(demo_link, ''), 255), LEFT(IFNULL(documentation_link, ''), 255), '', LEFT(IFNULL(extension_file, ''), 255), '', IFNULL(uses_updater, 0), LEFT(IFNULL(update_url, ''), 255), LEFT(IFNULL(homepage_link, ''), 255), LEFT(IFNULL(second_contact_email, ''), 255), '', LEAST(GREATEST(ROUND(IFNULL(score, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(functionality, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(ease_of_use, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(support, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(documentation, 0) / 10) / 2, 0), 5), LEAST(GREATEST(ROUND(IFNULL(value_for_money, 0) / 10) / 2, 0), 5), 0, IFNULL(popular, 0), LEFT(IFNULL(logo, ''), 255), LEFT(IFNULL(video, ''), 255), jed_note FROM combine_jed_extensions</sql>
         </instruction>
         <instruction>
             <description>Populate #__jed_extensions_category_map. JED3 allowed exactly one category per listing, so each extension gets the single mapping row that matches its catid - the new multi-category queries then work against imported data too.</description>
             <sql>INSERT IGNORE INTO #__jed_extensions_category_map (extension_id, catid) SELECT id, catid FROM #__jed_extensions</sql>
+        </instruction>
+    </task>
+
+    <task>
+        <heading>Linking Extensions</heading>
+        <instruction>
+            <description>
+                The two linked-extension relations (P1-23), lower-precedence carrier first.
+
+                JED3 stores each relation TWICE, and the two copies do not agree. P0-03 measured only the separate
+                tables; the columns wqyh6_jed_extensions.parent_id and .related_free_paid_id hold the same relations
+                again. Counted against listings that survive the import:
+
+                parent  - 5 rows only in the table, 16 only in the column, 1 contradicting.
+                variant - 0 rows only in the table, 22 only in the column, 0 contradicting.
+
+                The tables win where the two disagree, because the tables are what JED3 actually rendered from:
+                view_jed_extensions_parent_id and view_jed_extensions_related_free_paid both read the tables and
+                neither reads the columns. So this instruction lays down the column carrier and the next one overwrites
+                it - precedence expressed as ordering rather than as a CASE nobody can read.
+
+                The column-only rows are still taken, all 38 of them. Every one belongs to a listing with NO row in the
+                separate table at all - not one is a table row explicitly reset to 0 - so they are relations that never
+                got copied across, not relations somebody removed. Dropping them would lose real developer input to a
+                sync gap in a system being retired.
+
+                Both passes drop the same three shapes: the "no relation" marker (0 or NULL - despite its name the
+                stored value is an extension id, not a UCM id), self-references, and targets that no longer exist. The
+                INNER JOIN onto the target does the last one silently, which is the point: a relation to a row that is
+                not there is not a relation.
+            </description>
+            <sql>UPDATE #__jed_extensions e
+INNER JOIN wqyh6_jed_extensions je ON je.id = e.id
+INNER JOIN #__jed_extensions tp ON tp.id = je.parent_id
+SET e.parent_id = je.parent_id, e.parent_confirmed = 1
+WHERE je.parent_id IS NOT NULL AND je.parent_id != 0 AND je.parent_id != je.id;
+
+UPDATE #__jed_extensions e
+INNER JOIN wqyh6_jed_extensions je ON je.id = e.id
+INNER JOIN #__jed_extensions tv ON tv.id = je.related_free_paid_id
+SET e.variant_of_id = je.related_free_paid_id
+WHERE je.related_free_paid_id IS NOT NULL AND je.related_free_paid_id != 0 AND je.related_free_paid_id != je.id</sql>
+        </instruction>
+        <instruction>
+            <description>
+                The authoritative carrier: the two separate tables, overwriting whatever the columns just set.
+
+                parent_extension is "this extension extends that one" - 1,070 add-ons pointing at 191 distinct
+                products, VirtueMart alone collecting 268. This is the relation that carries what the "Extension
+                Specific" category only approximates, and it is lost outright if the import does not take it.
+
+                related_free_paid is the free/paid pairing - "Foobar Lite" and "Foobar Pro" as one product in two
+                forms, 938 rows.
+
+                parent_confirmed is set to 1 for the imported stock. The column exists so that a developer cannot put
+                their add-on onto somebody else's listing unaided, but these links are JED3's own live data and were
+                already public there - starting them unconfirmed would silently empty the reverse direction for the
+                whole catalogue on the day of the switch, and nobody is going to confirm a thousand rows by hand.
+            </description>
+            <sql>UPDATE #__jed_extensions e
+INNER JOIN wqyh6_jed_extensions_parent_extension p ON p.extension_id = e.id
+INNER JOIN #__jed_extensions t ON t.id = p.ucm_content_id
+SET e.parent_id = p.ucm_content_id, e.parent_confirmed = 1
+WHERE p.ucm_content_id != 0 AND p.ucm_content_id != p.extension_id;
+
+UPDATE #__jed_extensions e
+INNER JOIN wqyh6_jed_extensions_related_free_paid r ON r.extension_id = e.id
+INNER JOIN #__jed_extensions t ON t.id = r.ucm_content_id
+SET e.variant_of_id = r.ucm_content_id
+WHERE r.ucm_content_id != 0 AND r.ucm_content_id != r.extension_id</sql>
+        </instruction>
+        <instruction>
+            <description>
+                Store each variant pair once.
+
+                The variant relation is symmetric and JED3 could not make up its mind about it: 75 of the pairs are
+                recorded from both sides and the rest from one. The new schema keeps one row per pair and queries it in
+                both directions, so the reverse half of a mutual pair is removed here rather than being kept in step
+                forever. The surviving side is the lower extension id - arbitrary, but stable, so re-running the
+                migration produces the same table instead of a coin toss.
+
+                The self-join is safe in either evaluation order: the WHERE clause only ever clears the higher-id side,
+                and once that is NULL the pair no longer matches, so the lower-id side cannot be cleared afterwards.
+
+                The parent relation is deliberately NOT touched: it is many-to-one and its two directions mean
+                different things, so A extending B while B extends A is a data question, not a duplicate. The source
+                has no such cycle anyway.
+
+                Afterwards, reconcile against the source - the migration runner discards SELECT results, so this is a
+                check to run by hand. Both differences must be zero; the queries are in
+                docs/planning/P1-23-linked-extensions.md under "Acceptance criteria".
+            </description>
+            <sql>UPDATE #__jed_extensions a
+INNER JOIN #__jed_extensions b ON b.id = a.variant_of_id AND b.variant_of_id = a.id
+SET a.variant_of_id = NULL
+WHERE a.id &gt; b.id</sql>
         </instruction>
     </task>
 
@@ -262,7 +358,7 @@ INSERT IGNORE INTO #__jed_favorites (user_id, extension_id, created) SELECT f.us
                 a review they never wrote and inflated score_count.
             </description>
             <sql>DELETE FROM #__jed_reviews;
-INSERT INTO #__jed_reviews (extension_id, title, alias, body, functionality, functionality_comment, ease_of_use, ease_of_use_comment, support, support_comment, documentation, documentation_comment, value_for_money, value_for_money_comment, overall_score, used_for, version, flagged, ip_address, state, created_on, created_by, ordering) SELECT r.extension_id, LEFT(IFNULL(u.core_title, ''), 400), LEFT(IFNULL(u.core_alias, ''), 400), u.core_body, CASE WHEN r.functionality IS NULL OR r.functionality < 0 THEN NULL ELSE LEAST(GREATEST(ROUND(r.functionality / 10) / 2, 0), 5) END, '', CASE WHEN r.ease_of_use IS NULL OR r.ease_of_use < 0 THEN NULL ELSE LEAST(GREATEST(ROUND(r.ease_of_use / 10) / 2, 0), 5) END, '', CASE WHEN r.support IS NULL OR r.support < 0 THEN NULL ELSE LEAST(GREATEST(ROUND(r.support / 10) / 2, 0), 5) END, '', CASE WHEN r.documentation IS NULL OR r.documentation < 0 THEN NULL ELSE LEAST(GREATEST(ROUND(r.documentation / 10) / 2, 0), 5) END, '', CASE WHEN r.value_for_money IS NULL OR r.value_for_money < 0 THEN NULL ELSE LEAST(GREATEST(ROUND(r.value_for_money / 10) / 2, 0), 5) END, '', CASE WHEN ((r.functionality IS NOT NULL AND r.functionality >= 0) + (r.ease_of_use IS NOT NULL AND r.ease_of_use >= 0) + (r.support IS NOT NULL AND r.support >= 0) + (r.documentation IS NOT NULL AND r.documentation >= 0) + (r.value_for_money IS NOT NULL AND r.value_for_money >= 0)) = 0 THEN NULL ELSE LEAST(GREATEST(ROUND((IFNULL(NULLIF(r.functionality, -1), 0) + IFNULL(NULLIF(r.ease_of_use, -1), 0) + IFNULL(NULLIF(r.support, -1), 0) + IFNULL(NULLIF(r.documentation, -1), 0) + IFNULL(NULLIF(r.value_for_money, -1), 0)) / ((r.functionality IS NOT NULL AND r.functionality >= 0) + (r.ease_of_use IS NOT NULL AND r.ease_of_use >= 0) + (r.support IS NOT NULL AND r.support >= 0) + (r.documentation IS NOT NULL AND r.documentation >= 0) + (r.value_for_money IS NOT NULL AND r.value_for_money >= 0)) / 10) / 2, 0), 5) END, LEFT(IFNULL(r.used_for, ''), 400), LEFT(IFNULL(r.version, ''), 255), CAST(IFNULL(r.flagged, 0) AS CHAR), LEFT(IFNULL(r.ip_address, ''), 255), CASE WHEN u.core_state = 1 THEN 1 ELSE 0 END, NULLIF(u.core_created_time, '0000-00-00 00:00:00'), IFNULL(ru.user_id, u.core_created_user_id), 0 FROM wqyh6_jed_reviews r INNER JOIN wqyh6_ucm_content u ON u.core_content_item_id = r.id AND u.core_type_alias = 'com_jed.review' INNER JOIN #__jed_extensions e ON e.id = r.extension_id LEFT JOIN (SELECT review_id, MIN(user_id) AS user_id FROM wqyh6_jed_reviews_users GROUP BY review_id) ru ON ru.review_id = r.id ORDER BY r.extension_id ASC, u.core_created_time ASC</sql>
+INSERT INTO #__jed_reviews (extension_id, title, alias, body, functionality, functionality_comment, ease_of_use, ease_of_use_comment, support, support_comment, documentation, documentation_comment, value_for_money, value_for_money_comment, overall_score, used_for, version, flagged, ip_address, state, created_on, created_by, ordering) SELECT r.extension_id, LEFT(IFNULL(u.core_title, ''), 400), LEFT(IFNULL(u.core_alias, ''), 400), u.core_body, CASE WHEN r.functionality IS NULL OR r.functionality &lt; 0 THEN NULL ELSE LEAST(GREATEST(ROUND(r.functionality / 10) / 2, 0), 5) END, '', CASE WHEN r.ease_of_use IS NULL OR r.ease_of_use &lt; 0 THEN NULL ELSE LEAST(GREATEST(ROUND(r.ease_of_use / 10) / 2, 0), 5) END, '', CASE WHEN r.support IS NULL OR r.support &lt; 0 THEN NULL ELSE LEAST(GREATEST(ROUND(r.support / 10) / 2, 0), 5) END, '', CASE WHEN r.documentation IS NULL OR r.documentation &lt; 0 THEN NULL ELSE LEAST(GREATEST(ROUND(r.documentation / 10) / 2, 0), 5) END, '', CASE WHEN r.value_for_money IS NULL OR r.value_for_money &lt; 0 THEN NULL ELSE LEAST(GREATEST(ROUND(r.value_for_money / 10) / 2, 0), 5) END, '', CASE WHEN ((r.functionality IS NOT NULL AND r.functionality >= 0) + (r.ease_of_use IS NOT NULL AND r.ease_of_use >= 0) + (r.support IS NOT NULL AND r.support >= 0) + (r.documentation IS NOT NULL AND r.documentation >= 0) + (r.value_for_money IS NOT NULL AND r.value_for_money >= 0)) = 0 THEN NULL ELSE LEAST(GREATEST(ROUND((IFNULL(NULLIF(r.functionality, -1), 0) + IFNULL(NULLIF(r.ease_of_use, -1), 0) + IFNULL(NULLIF(r.support, -1), 0) + IFNULL(NULLIF(r.documentation, -1), 0) + IFNULL(NULLIF(r.value_for_money, -1), 0)) / ((r.functionality IS NOT NULL AND r.functionality >= 0) + (r.ease_of_use IS NOT NULL AND r.ease_of_use >= 0) + (r.support IS NOT NULL AND r.support >= 0) + (r.documentation IS NOT NULL AND r.documentation >= 0) + (r.value_for_money IS NOT NULL AND r.value_for_money >= 0)) / 10) / 2, 0), 5) END, LEFT(IFNULL(r.used_for, ''), 400), LEFT(IFNULL(r.version, ''), 255), CAST(IFNULL(r.flagged, 0) AS CHAR), LEFT(IFNULL(r.ip_address, ''), 255), CASE WHEN u.core_state = 1 THEN 1 ELSE 0 END, NULLIF(u.core_created_time, '0000-00-00 00:00:00'), IFNULL(ru.user_id, u.core_created_user_id), 0 FROM wqyh6_jed_reviews r INNER JOIN wqyh6_ucm_content u ON u.core_content_item_id = r.id AND u.core_type_alias = 'com_jed.review' INNER JOIN #__jed_extensions e ON e.id = r.extension_id LEFT JOIN (SELECT review_id, MIN(user_id) AS user_id FROM wqyh6_jed_reviews_users GROUP BY review_id) ru ON ru.review_id = r.id ORDER BY r.extension_id ASC, u.core_created_time ASC</sql>
         </instruction>
         <instruction>
             <description>Extract the per-criterion comments that JED3 stored inline in the review body as {functionality}...{/functionality} markers</description>
@@ -336,7 +432,7 @@ INSERT IGNORE INTO combine_jed_history_map (ucm_item_id, extension_id) SELECT cj
         </instruction>
         <instruction>
             <description>Add the current state of every listing as its one active revision, after the imported history so it carries the highest id. #__jed_extensions_history is what the edit workflow diffs against, so a listing without an active baseline cannot be edited cleanly after go-live. This runs last so the revision carries the recomputed score_count.</description>
-            <sql>INSERT INTO #__jed_extensions_history (extension_id, active, name, alias, catid, owner, state, approved, approved_time, approved_notes, approved_reason, intro, description, license, requires_registration, type, extension_types, created, created_by, modified, modified_by, checked_out, checked_out_time, extension_version, joomla_versions, download_url, support_url, demo_url, documentation_url, git_url, internal_download_url, download_key, uses_updater, update_url, developer_url, developer_email, changelog_url, score_overall, score_functionality, score_ease_of_use, score_support, score_documentation, score_value_for_money, score_count, popular, logo, video, internal_note) SELECT id, 1, name, alias, catid, owner, state, approved, approved_time, approved_notes, approved_reason, intro, description, license, requires_registration, type, extension_types, created, created_by, modified, modified_by, checked_out, checked_out_time, extension_version, joomla_versions, download_url, support_url, demo_url, documentation_url, git_url, internal_download_url, download_key, uses_updater, update_url, developer_url, developer_email, changelog_url, score_overall, score_functionality, score_ease_of_use, score_support, score_documentation, score_value_for_money, score_count, popular, logo, video, internal_note FROM #__jed_extensions</sql>
+            <sql>INSERT INTO #__jed_extensions_history (extension_id, active, name, alias, catid, owner, state, approved, approved_time, approved_notes, approved_reason, intro, description, license, requires_registration, type, extension_types, created, created_by, modified, modified_by, checked_out, checked_out_time, extension_version, joomla_versions, download_url, support_url, demo_url, documentation_url, git_url, internal_download_url, download_key, uses_updater, update_url, developer_url, developer_email, changelog_url, score_overall, score_functionality, score_ease_of_use, score_support, score_documentation, score_value_for_money, score_count, popular, logo, video, internal_note, variant_of_id, parent_id) SELECT id, 1, name, alias, catid, owner, state, approved, approved_time, approved_notes, approved_reason, intro, description, license, requires_registration, type, extension_types, created, created_by, modified, modified_by, checked_out, checked_out_time, extension_version, joomla_versions, download_url, support_url, demo_url, documentation_url, git_url, internal_download_url, download_key, uses_updater, update_url, developer_url, developer_email, changelog_url, score_overall, score_functionality, score_ease_of_use, score_support, score_documentation, score_value_for_money, score_count, popular, logo, video, internal_note, variant_of_id, parent_id FROM #__jed_extensions</sql>
         </instruction>
     </task>
 

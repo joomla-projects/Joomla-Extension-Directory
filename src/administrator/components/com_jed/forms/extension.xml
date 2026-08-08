@@ -65,6 +65,34 @@
         <field name="deleted_by" type="modifiedby" readonly="true" label="COM_JED_EXTENSION_DELETED_BY_LABEL"/>
     </fieldset>
 
+    <!--
+        Linked extensions (P1-23). Unlike the frontend form this one also carries
+        parent_confirmed, which is what decides whether the add-on appears on the *parent's*
+        page as well as on its own. That split is why the column is not in
+        #__jed_extensions_history: approving a developer's revision must never be able to
+        confirm their claim on somebody else's listing.
+
+        A yes/no radio rather than a checkbox on purpose - an unticked checkbox is simply absent
+        from the POST, and ExtensionTable cannot then tell "the team cleared this" from
+        "approve() is copying a revision that has no such column", which are opposite instructions.
+    -->
+    <fieldset name="linked" label="COM_JED_FIELDSET_LINKED_LABEL">
+        <field name="parent_id" type="listingref" filter="string"
+               label="COM_JED_EXTENSION_PARENT_ID_LABEL"
+               description="COM_JED_EXTENSION_PARENT_ID_DESC"
+               hint="COM_JED_EXTENSION_LINK_HINT"/>
+        <field name="parent_confirmed" type="radio" default="0" class="btn-group btn-group-yesno"
+               label="COM_JED_EXTENSION_PARENT_CONFIRMED_LABEL"
+               description="COM_JED_EXTENSION_PARENT_CONFIRMED_DESC">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="variant_of_id" type="listingref" filter="string"
+               label="COM_JED_EXTENSION_VARIANT_OF_ID_LABEL"
+               description="COM_JED_EXTENSION_VARIANT_OF_ID_DESC"
+               hint="COM_JED_EXTENSION_LINK_HINT"/>
+    </fieldset>
+
     <fieldset name="info" label="COM_JED_FIELDSET_INFO_LABEL">
         <field name="intro" editor="tinymce" buttons="false" filter="Joomla\CMS\Component\ComponentHelper::filterText"
                type="editor" label="COM_JED_EXTENSION_INTRO_TEXT_LABEL"

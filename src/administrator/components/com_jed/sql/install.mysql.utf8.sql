@@ -83,12 +83,38 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions`
 	`deleted`                tinyint(1)      NOT NULL DEFAULT '0',
 	`deleted_by`             int unsigned    DEFAULT NULL,
 	`deleted_time`           datetime        DEFAULT NULL,
+	-- The two linked-extension relations (P1-23). Single columns, not mapping tables: 8.5
+	-- assumed both were m:n, and P0-03 measured MAX(rows per extension) = 1 for both, so a
+	-- column carries the JED3 stock losslessly and a join table would only add a way to
+	-- disagree with itself.
+	--
+	-- variant_of_id is the free/paid pairing ("Foobar Lite" / "Foobar Pro"). The relation is
+	-- symmetric but stored ONCE and queried in both directions - JED3 stored it twice for 75
+	-- of its 938 pairs and once for the rest, which is exactly the inconsistency storing it
+	-- once cannot have.
+	--
+	-- parent_id is "this extension extends that one" and is NOT symmetric: 1,070 add-ons point
+	-- at 191 products, VirtueMart alone at 268. parent_confirmed is a JED team carrier, kept
+	-- apart from parent_id for the same reason `blocked` is kept apart from `state` (4.8): the
+	-- developer asserts what their own add-on extends, the team decides whether that assertion
+	-- also gets to appear on somebody else's listing. It is deliberately absent from
+	-- #__jed_extensions_history, so approving a developer's revision can never confirm it.
+	--
+	-- NULL, never 0, for "no relation" (8.14): 0 is not an extension id and a column that
+	-- means "unset" by pointing at a row that cannot exist is how JED3's own tables read.
+	`variant_of_id`          int unsigned    DEFAULT NULL,
+	`parent_id`              int unsigned    DEFAULT NULL,
+	`parent_confirmed`       tinyint(1)      NOT NULL DEFAULT '0',
 	PRIMARY KEY (`id`),
 	KEY `IDX_jed_extensions_catid` (`catid`),
 	KEY `IDX_jed_extensions_owner` (`owner`),
 	KEY `IDX_jed_extensions_state` (`state`),
 	KEY `IDX_jed_extensions_visibility` (`approved`, `state`, `blocked`, `deleted`),
-	KEY `IDX_jed_extensions_alias` (`alias`)
+	KEY `IDX_jed_extensions_alias` (`alias`),
+	-- Both relations are read backwards far more often than forwards: one listing's own
+	-- parent is a primary-key lookup, "everything that extends this one" is not.
+	KEY `IDX_jed_extensions_variant_of` (`variant_of_id`),
+	KEY `IDX_jed_extensions_parent` (`parent_id`, `parent_confirmed`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `#__jed_extensions_history`;
@@ -172,6 +198,12 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_history`
 	`deleted`                tinyint(1)      NOT NULL DEFAULT '0',
 	`deleted_by`             int unsigned    DEFAULT NULL,
 	`deleted_time`           datetime        DEFAULT NULL,
+	-- The developer's two halves of P1-23. parent_confirmed is not here on purpose: it is the
+	-- JED team's verdict on the parent claim, and a revision must not be able to carry one.
+	-- ExtensionModel::approve() copies every history column onto the live row, so a column
+	-- present here is by definition a column a developer can set.
+	`variant_of_id`          int unsigned    DEFAULT NULL,
+	`parent_id`              int unsigned    DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	KEY `IDX_jed_extensions_catid` (`catid`),
 	KEY `IDX_jed_extensions_owner` (`owner`),

@@ -158,6 +158,26 @@
         </field>
     </fieldset>
 
+    <!--
+        Linked extensions (P1-23). Both fields take a JED URL, an alias or an id; the resolution
+        and every rule about them is server-side in LinkedExtensions, reached through
+        ExtensionHistoryTable::check(), because this form is not the only way in (4.9).
+
+        parent_confirmed is deliberately absent. A developer states what their own add-on
+        extends, and that shows on their own listing; whether it also appears on the *other*
+        product's page is the JED team's call and is set in the backend form only.
+    -->
+    <fieldset name="linked" label="COM_JED_FIELDSET_LINKED_LABEL">
+        <field name="parent_id" type="listingref" filter="string"
+               label="COM_JED_EXTENSION_PARENT_ID_LABEL"
+               description="COM_JED_EXTENSION_PARENT_ID_DESC"
+               hint="COM_JED_EXTENSION_LINK_HINT"/>
+        <field name="variant_of_id" type="listingref" filter="string"
+               label="COM_JED_EXTENSION_VARIANT_OF_ID_LABEL"
+               description="COM_JED_EXTENSION_VARIANT_OF_ID_DESC"
+               hint="COM_JED_EXTENSION_LINK_HINT"/>
+    </fieldset>
+
     <fieldset name="files" label="COM_JED_FIELDSET_FILES_LABEL">
         <field name="files"
                type="subform"
