@@ -16,6 +16,7 @@ namespace Joomla\Plugin\Task\Jed\Extension;
 
 use Jed\Component\Jed\Administrator\Hit\HitAggregator;
 use Jed\Component\Jed\Administrator\Link\LinkCheckService;
+use Jed\Component\Jed\Administrator\Privacy\PrivacyRetentionService;
 use Jed\Component\Jed\Administrator\Queue\JobHandlerRegistry;
 use Jed\Component\Jed\Administrator\Queue\QueueService;
 use Jed\Component\Jed\Administrator\Service\UpdateCheckService;
@@ -71,6 +72,11 @@ final class Jed extends CMSPlugin implements SubscriberInterface
             'form'            => 'hitaggregate',
             'method'          => 'aggregateHits',
         ],
+        'jed.privacyprune' => [
+            'langConstPrefix' => 'PLG_TASK_JED_PRIVACYPRUNE',
+            'form'            => 'privacyprune',
+            'method'          => 'pruneExpiredData',
+        ],
     ];
 
     /**
@@ -94,7 +100,8 @@ final class Jed extends CMSPlugin implements SubscriberInterface
         private readonly QueueService $queueService,
         private readonly JobHandlerRegistry $jobHandlerRegistry,
         private readonly LinkCheckService $linkCheckService,
-        private readonly HitAggregator $hitAggregator
+        private readonly HitAggregator $hitAggregator,
+        private readonly PrivacyRetentionService $retentionService
     ) {
         parent::__construct($config);
     }
@@ -268,6 +275,46 @@ final class Jed extends CMSPlugin implements SubscriberInterface
             $result['days'],
             $result['rows'],
             $result['pruned']
+        ));
+
+        return TaskStatus::OK;
+    }
+
+    /**
+     * `jed.privacyprune` routine: apply the retention periods (`P1-18` item 5, 8.17).
+     *
+     * The counterpart to the privacy plugin rather than a duplicate of it. That one answers
+     * requests; this one removes what nobody will ever ask about - the address a review was
+     * submitted from, the recipient lookup log, old form-time URL checks - on a timer. A
+     * retention period that only exists in a policy document is not a retention period.
+     *
+     * @param ExecuteTaskEvent $event The `onExecuteTask` event.
+     *
+     * @return int The routine exit code.
+     *
+     * @since 4.1.0
+     */
+    protected function pruneExpiredData(ExecuteTaskEvent $event): int
+    {
+        $params = $event->getArgument('params');
+
+        try {
+            $result = $this->retentionService->prune(
+                isset($params->review_ip_days) ? (int) $params->review_ip_days : null,
+                isset($params->transfer_lookup_days) ? (int) $params->transfer_lookup_days : null,
+                isset($params->url_check_days) ? (int) $params->url_check_days : null
+            );
+        } catch (Throwable $e) {
+            $this->logTask('jed.privacyprune failed: ' . $e->getMessage(), 'error');
+
+            return TaskStatus::KNOCKOUT;
+        }
+
+        $this->logTask(\sprintf(
+            'jed.privacyprune: %d review address(es) cleared, %d lookup row(s) and %d URL check(s) deleted.',
+            $result['review_ips'],
+            $result['transfer_lookups'],
+            $result['url_checks']
         ));
 
         return TaskStatus::OK;

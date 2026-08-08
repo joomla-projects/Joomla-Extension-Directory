@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="plugin" group="privacy" method="upgrade">
+	<name>plg_privacy_tickets</name>
+	<author>Joomla! Project</author>
+	<creationDate>##DATE##</creationDate>
+	<copyright>(C) ##YEAR## Open Source Matters, Inc.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>admin@joomla.org</authorEmail>
+	<authorUrl>www.joomla.org</authorUrl>
+	<version>##VERSION##</version>
+	<description>PLG_PRIVACY_TICKETS_XML_DESCRIPTION</description>
+	<namespace path="src">Joomla\Plugin\Privacy\Tickets</namespace>
+	<files>
+		##FILES##
+	</files>
+	<languages>
+		##LANGUAGE_FILES##
+	</languages>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field
+					name="ticket_handling"
+					type="list"
+					label="PLG_PRIVACY_TICKETS_FIELD_HANDLING_LABEL"
+					description="PLG_PRIVACY_TICKETS_FIELD_HANDLING_DESC"
+					default="delete"
+					validate="options"
+				>
+					<option value="delete">PLG_PRIVACY_TICKETS_FIELD_HANDLING_DELETE</option>
+					<option value="anonymise">PLG_PRIVACY_TICKETS_FIELD_HANDLING_ANONYMISE</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>

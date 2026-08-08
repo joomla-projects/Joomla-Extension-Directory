@@ -113,6 +113,11 @@ class Com_JedInstallerScript
             'LC4' => ['Invalid licence type', 'com_jed.extension_lc4_invalid_license_type'],
             'US1' => ['Update server requirement not met', 'com_jed.extension_us1_update_server_requirement'],
             'PE1' => ['Under investigation', 'com_jed.extension_pe1_under_investigation'],
+            // Not a JED3 code and not a moderation decision: the block a privacy erasure leaves
+            // behind (P1-18). `owner` is not part of the visibility rule in 4.8, so a listing
+            // whose owner has been erased would otherwise stay online with nobody answerable for
+            // it. No mail template - there is by definition nobody left to write to.
+            'PV1' => ['No owner - the previous owner withdrew their account', null],
         ];
 
         $db       = Factory::getContainer()->get(DatabaseInterface::class);
