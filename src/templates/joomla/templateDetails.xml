@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE extension PUBLIC "-//Joomla! 2.5//DTD template 1.0//EN" "https://developer.joomla.org/xsd/v1/templateDetails.xsd">
+<extension type="template" client="site" method="upgrade">
+	<name>joomla</name>
+	<version>4.0.9</version>
+	<creationDate>30-Aug-2016</creationDate>
+	<author>Joomla Project</author>
+	<authorEmail>admin@joomla.org</authorEmail>
+	<copyright>Copyright (C) 2005 - 2023 Open Source Matters, Inc. All rights reserved.</copyright>
+	<description>TPL_JOOMLA_XML_DESCRIPTION</description>
+	<scriptfile>script.php</scriptfile>
+	<inheritable>1</inheritable>
+	<files>
+		<filename>LICENSE.txt</filename>
+		<filename>component.php</filename>
+		<filename>error.php</filename>
+		<filename>favicon.ico</filename>
+		<filename>joomla.asset.json</filename>
+		<filename>index.php</filename>
+		<filename>templateDetails.xml</filename>
+		<filename>template_preview.png</filename>
+		<filename>template_thumbnail.png</filename>
+		<folder>cdn</folder>
+		<folder>helpers</folder>
+		<folder>html</folder>
+		<folder>images</folder>
+		<folder>language</folder>
+	</files>
+	<media destination="templates/site/joomla" folder="media">
+		<folder>js</folder>
+		<folder>fonts</folder>
+		<folder>css</folder>
+	</media>
+	<positions>
+		<position>banner</position>
+		<position>debug</position>
+		<position>footer</position>
+		<position>footersponsor</position>
+		<position>position-0</position>
+		<position>position-1</position>
+		<position>position-2</position>
+		<position>position-3</position>
+		<position>position-4</position>
+		<position>position-5</position>
+		<position>position-6</position>
+		<position>position-7</position>
+		<position>position-8</position>
+		<position>position-9</position>
+		<position>position-10</position>
+		<position>position-11</position>
+		<position>position-12</position>
+		<position>position-13</position>
+		<position>position-14</position>
+	</positions>
+	<config>
+		<fields name="params">
+			<fieldset name="advanced">
+				<field
+					name="useCdn"
+					type="radio"
+					label="TPL_JOOMLA_USE_CDN_LABEL"
+					description="TPL_JOOMLA_USE_CDN_DESC"
+					class="btn-group btn-group-yesno"
+					default="1"
+					filter="int"
+					>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field
+					name="cookieControlActive"
+					type="radio"
+					label="TPL_JOOMLA_COOKIE_CONTROL_ACTIVE_LABEL"
+					description="TPL_JOOMLA_COOKIE_CONTROL_ACTIVE_DESC"
+					class="btn-group btn-group-yesno"
+					default="0"
+					filter="int"
+					>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field
+					name="fluidContainer"
+					type="radio"
+					label="TPL_JOOMLA_FLUID_LABEL"
+					description="TPL_JOOMLA_FLUID_DESC"
+					class="btn-group btn-group-yesno"
+					default="0"
+					filter="int"
+					>
+					<option value="0">TPL_JOOMLA_STATIC</option>
+					<option value="1">TPL_JOOMLA_FLUID</option>
+				</field>
+
+				<field
+					name="leftColumnWidth"
+					type="integer"
+					label="TPL_JOOMLA_LEFT_COLUMN_WIDTH_LABEL"
+					description="TPL_JOOMLA_COLUMN_WIDTH_DESC"
+					default="3"
+					first="1"
+					last="12"
+					step="1"
+				/>
+
+				<field
+					name="rightColumnWidth"
+					type="integer"
+					label="TPL_JOOMLA_RIGHT_COLUMN_WIDTH_LABEL"
+					description="TPL_JOOMLA_COLUMN_WIDTH_DESC"
+					default="3"
+					first="1"
+					last="12"
+					step="1"
+				/>
+
+				<field
+					name="twitterCardTitle"
+					type="text"
+					label="TPL_JOOMLA_TWITTER_CARD_TITLE_LABEL"
+					description="TPL_JOOMLA_TWITTER_CARD_TITLE_DESC"
+					default="Joomla.org"
+				/>
+
+				<field
+					name="twitterCardDescription"
+					type="text"
+					label="TPL_JOOMLA_TWITTER_CARD_DESC_LABEL"
+					description="TPL_JOOMLA_TWITTER_CARD_DESC_DESC"
+					default="The Platform Millions of Websites Are Built On"
+				/>
+
+				<field
+					name="twitterCardImage"
+					type="url"
+					label="TPL_JOOMLA_TWITTER_CARD_IMAGE_LABEL"
+					description="TPL_JOOMLA_TWITTER_CARD_IMAGE_DESC"
+					default="https://cdn.joomla.org/images/joomla-twitter-card.jpg"
+					filter="url"
+				/>
+
+				<field
+					name="ogImage"
+					type="url"
+					label="TPL_JOOMLA_OPENGRAPH_IMAGE_LABEL"
+					description="TPL_JOOMLA_OPENGRAPH_IMAGE_DESC"
+					default="https://cdn.joomla.org/images/joomla-org-og.jpg"
+					filter="url"
+				/>
+
+				<field
+					name="headerLogo"
+					type="url"
+					label="TPL_JOOMLA_HEADER_LOGO_LABEL"
+					description="TPL_JOOMLA_HEADER_LOGO_DESC"
+					default="https://cdn.joomla.org/images/joomla-colours-logo.svg"
+					filter="url"
+				/>
+
+				<field
+					name="customHeaderTitle"
+					type="text"
+					label="TPL_JOOMLA_CUSTOM_HEADER_TITLE_LABEL"
+					description="TPL_JOOMLA_CUSTOM_HEADER_TITLE_DESC"
+					default=""
+				/>
+
+				<field
+					name="searchModule"
+					type="radio"
+					label="TPL_JOOMLA_SEARCH_MODULE_LABEL"
+					description="TPL_JOOMLA_SEARCH_MODULE_DESC"
+					class="btn-group"
+					default="search"
+					>
+					<option value="finder">TPL_JOOMLA_FINDER</option>
+					<option value="search">TPL_JOOMLA_SEARCH</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>
