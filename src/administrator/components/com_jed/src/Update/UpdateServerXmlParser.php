@@ -21,7 +21,7 @@ use SimpleXMLElement;
  * {@see \Jed\Component\Jed\Administrator\Parser\Parser}, which parses extension
  * *manifests*, not update feeds.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class UpdateServerXmlParser
 {
@@ -32,7 +32,7 @@ class UpdateServerXmlParser
      *
      * @return UpdateServerResult|null Null if the feed is empty, malformed, or has no <update> entries.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function parse(string $xml): ?UpdateServerResult
     {

@@ -16,7 +16,7 @@ namespace Jed\Component\Jed\Administrator\Audit;
 /**
  * The result of a {@see ClaudeAuditor::audit()} call.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class ClaudeAuditResult
 {
@@ -27,7 +27,7 @@ final class ClaudeAuditResult
      *                               missing API key, truncation) — the pipeline degrades gracefully
      *                               rather than failing the whole job.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         public readonly string $reportMarkdown,

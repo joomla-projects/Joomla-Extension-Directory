@@ -25,7 +25,7 @@ namespace Jed\Component\Jed\Administrator\Hit;
  * the directory and update servers are run by developers, so it is not knowable without new,
  * voluntary telemetry - a data-protection discussion of its own. It must not appear in the UI.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 enum HitType: string
 {
@@ -37,7 +37,7 @@ enum HitType: string
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function statsColumn(): string
     {

@@ -125,7 +125,7 @@ class ReviewController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function remove(): void
@@ -156,7 +156,7 @@ class ReviewController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function saveResponse(): void
@@ -188,7 +188,7 @@ class ReviewController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      * @throws Exception
      */
     public function deleteResponse(): void

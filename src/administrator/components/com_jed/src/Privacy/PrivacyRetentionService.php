@@ -30,7 +30,7 @@ use Joomla\Database\DatabaseInterface;
  * jobs deleting from one table on two schedules is how a day gets aggregated after its rows are
  * gone.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class PrivacyRetentionService
 {
@@ -42,7 +42,7 @@ final class PrivacyRetentionService
      * not about last year. Six months covers a release cycle and the complaints that follow one.
      * After that the column is a liability with no remaining use.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const REVIEW_IP_DAYS = 180;
 
@@ -54,7 +54,7 @@ final class PrivacyRetentionService
      * per-window ceiling cannot see. A quarter is long enough for that pattern and short enough
      * that the log does not become a history of who somebody tried to reach.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const TRANSFER_LOOKUP_DAYS = 90;
 
@@ -66,14 +66,14 @@ final class PrivacyRetentionService
      * the *durable* link state lives in `#__jed_extension_linkchecks` rather than here. A year
      * leaves a submission's check history readable while a moderation case is open.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const URL_CHECK_DAYS = 365;
 
     /**
      * @param DatabaseInterface $db The database driver.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly DatabaseInterface $db)
     {
@@ -88,7 +88,7 @@ final class PrivacyRetentionService
      *
      * @return array{review_ips: int, transfer_lookups: int, url_checks: int}
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function prune(?int $reviewIpDays = null, ?int $transferLookupDays = null, ?int $urlCheckDays = null): array
     {
@@ -112,7 +112,7 @@ final class PrivacyRetentionService
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function clearReviewAddresses(int $days): int
     {
@@ -138,7 +138,7 @@ final class PrivacyRetentionService
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function pruneTransferLookups(int $days): int
     {
@@ -161,7 +161,7 @@ final class PrivacyRetentionService
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function pruneUrlChecks(int $days): int
     {
@@ -184,7 +184,7 @@ final class PrivacyRetentionService
      *
      * @return string  SQL datetime.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function cutoff(int $days): string
     {

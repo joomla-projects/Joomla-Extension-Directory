@@ -29,14 +29,14 @@ use Joomla\Database\DatabaseDriver;
  * case. The two columns that carry the process's guarantees, `status` and `contact_time`, are
  * stripped in {@see CaseModel::save()} before they ever reach here.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class CaseTable extends Table
 {
     /**
      * @param DatabaseDriver $db A database connector object.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(DatabaseDriver $db)
     {
@@ -48,7 +48,7 @@ class CaseTable extends Table
     /**
      * @return string  The asset name.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function _getAssetName(): string
     {
@@ -63,7 +63,7 @@ class CaseTable extends Table
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function bind($src, $ignore = '')
     {
@@ -99,7 +99,7 @@ class CaseTable extends Table
     /**
      * @return string  The alias for the history table.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getTypeAlias(): string
     {

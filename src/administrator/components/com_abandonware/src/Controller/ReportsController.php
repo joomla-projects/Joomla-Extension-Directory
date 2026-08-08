@@ -22,7 +22,7 @@ use Joomla\CMS\MVC\Controller\AdminController;
  * The report list controller. Read-mostly: a report is evidence of what somebody said at a moment,
  * and editing one would destroy the thing it is kept for.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ReportsController extends AdminController
 {
@@ -33,7 +33,7 @@ class ReportsController extends AdminController
      *
      * @return \Joomla\CMS\MVC\Model\BaseDatabaseModel
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getModel($name = 'Report', $prefix = 'Administrator', $config = ['ignore_request' => true])
     {

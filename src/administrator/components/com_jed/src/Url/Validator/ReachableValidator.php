@@ -29,14 +29,14 @@ use Jed\Component\Jed\Administrator\Url\UrlValidatorInterface;
  * do not look like that. A 404 is the one status worth being firm about: the developer's own
  * server says the page is not there.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ReachableValidator implements UrlValidatorInterface
 {
     /**
      * @param SafeHttpFetcher $fetcher The guarded fetcher.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(protected readonly SafeHttpFetcher $fetcher)
     {
@@ -48,7 +48,7 @@ class ReachableValidator implements UrlValidatorInterface
      *
      * @return UrlCheckResult
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function validate(string $url, array $context = []): UrlCheckResult
     {

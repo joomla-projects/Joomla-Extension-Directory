@@ -29,7 +29,7 @@ namespace Jed\Component\Abandonware\Administrator\Enum;
  * case is a *separate assessment* that may lead to a marker or to a block with a reason, and the
  * block it leads to is written by `P1-01`'s machinery through `blocked`, never by this one.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 enum CaseStatus: string
 {
@@ -37,14 +37,14 @@ enum CaseStatus: string
      * A signal arrived - a public report or one of the three automated ones - and nobody has
      * looked at it yet.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case RECEIVED = 'received';
 
     /**
      * Somebody on the JED team has picked it up.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case REVIEWING = 'reviewing';
 
@@ -52,14 +52,14 @@ enum CaseStatus: string
      * The owner has been written to and the grace period is running. Step 3, and the one 4.10
      * calls both the most important and the most likely to be skipped.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case OWNER_CONTACTED = 'owner_contacted';
 
     /**
      * The grace period ran out with no response.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case GRACE_EXPIRED = 'grace_expired';
 
@@ -67,7 +67,7 @@ enum CaseStatus: string
      * Concluded: no longer maintained. The only status that appears in the public list, and the
      * only one reachable exclusively through a recorded contact attempt.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case ABANDONED = 'abandoned';
 
@@ -75,7 +75,7 @@ enum CaseStatus: string
      * Finished with an outcome that is not "abandoned": the extension changed hands, the
      * developer answered, or the assessment was wrong.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case RESOLVED = 'resolved';
 
@@ -83,7 +83,7 @@ enum CaseStatus: string
      * Closed without a substantive outcome - a duplicate, or a report that was abuse. Separate
      * from `RESOLVED` so that "how many reports were abuse" stays an answerable question.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case DISMISSED = 'dismissed';
 
@@ -98,7 +98,7 @@ enum CaseStatus: string
      *
      * @return self[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function open(): array
     {
@@ -108,7 +108,7 @@ enum CaseStatus: string
     /**
      * @return bool  Whether a case in this status is still live.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function isOpen(): bool
     {
@@ -130,7 +130,7 @@ enum CaseStatus: string
      *
      * @return self[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function allowedNext(): array
     {
@@ -150,7 +150,7 @@ enum CaseStatus: string
      *
      * @return bool  Whether that move is legal.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function canMoveTo(self $next): bool
     {
@@ -160,7 +160,7 @@ enum CaseStatus: string
     /**
      * @return string  The language key for the label.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function label(): string
     {
@@ -170,7 +170,7 @@ enum CaseStatus: string
     /**
      * @return string  A Bootstrap badge suffix for the backend list.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function badge(): string
     {

@@ -23,42 +23,42 @@ namespace Jed\Component\Jed\Administrator\Access;
  *
  * The values are the column names, because that is what they are.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 enum Privilege: string
 {
     /**
      * Submit a new listing.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case CREATE_LISTING = 'create_listing';
 
     /**
      * Edit an existing listing.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case EDIT_LISTING = 'edit_listing';
 
     /**
      * Have an update-server XML read on the listing's behalf.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case UPDATE_XML = 'update_xml';
 
     /**
      * Write a review.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case REVIEW = 'review';
 
     /**
      * Report a listing or a review.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case REPORT = 'report';
 
@@ -67,7 +67,7 @@ enum Privilege: string
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function deniedMessage(): string
     {
@@ -79,7 +79,7 @@ enum Privilege: string
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function label(): string
     {

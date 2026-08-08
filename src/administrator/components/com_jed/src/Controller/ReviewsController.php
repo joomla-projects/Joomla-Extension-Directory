@@ -66,7 +66,7 @@ class ReviewsController extends AdminController
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function publishResponse(): void
     {
@@ -92,7 +92,7 @@ class ReviewsController extends AdminController
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function deleteResponse(): void
     {

@@ -29,14 +29,14 @@ use Joomla\Database\DatabaseInterface;
  * this file's class name, since a filename/classname mismatch is exactly the bug
  * that made several other ticket-related classes unreachable before this change.)
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class OtherTicketHandler implements TicketTypeHandlerInterface
 {
     /**
      * @param DatabaseInterface $db The database connector object (unused, kept for constructor parity with the other handlers).
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly DatabaseInterface $db)
     {
@@ -45,7 +45,7 @@ final class OtherTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function type(): TicketType
     {
@@ -55,7 +55,7 @@ final class OtherTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getMasterData(int $linkedItemId): ?object
     {
@@ -65,7 +65,7 @@ final class OtherTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getMasterDataLayout(): string
     {
@@ -75,7 +75,7 @@ final class OtherTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getActions(int $linkedItemId, User $user): array
     {

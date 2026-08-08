@@ -21,7 +21,7 @@ namespace Jed\Component\Jed\Administrator\Url;
  * developer typed, the second about somebody else's server having a bad day, and the UI has to
  * say different things about them.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class FetchResult
 {
@@ -35,7 +35,7 @@ final class FetchResult
      * @param string[]    $redirects   Every URL in the chain after the first.
      * @param string|null $finalUrl    Where the chain ended.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         public readonly bool $refused,
@@ -54,7 +54,7 @@ final class FetchResult
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function isOk(): bool
     {

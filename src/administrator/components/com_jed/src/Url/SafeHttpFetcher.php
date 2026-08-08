@@ -37,14 +37,14 @@ namespace Jed\Component\Jed\Administrator\Url;
  *  - **Timeouts on connect and on the whole exchange**, so a target that accepts the connection
  *    and then says nothing cannot hold a PHP worker open.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class SafeHttpFetcher
 {
     /**
      * Seconds to wait for the connection, and for the whole exchange.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const CONNECT_TIMEOUT = 5;
     public const TOTAL_TIMEOUT   = 12;
@@ -54,14 +54,14 @@ class SafeHttpFetcher
      *
      * Enough for any update or changelog XML; far short of anything that could exhaust memory.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const MAX_BYTES = 512000;
 
     /**
      * How many hops are followed before giving up.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const MAX_REDIRECTS = 5;
 
@@ -69,7 +69,7 @@ class SafeHttpFetcher
      * The JED identifies itself. A directory that checks a developer's server anonymously gives
      * them no way to recognise the traffic, allow-list it, or complain about it.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const USER_AGENT = 'JoomlaExtensionsDirectory/4.1 (+https://extensions.joomla.org/; link checker)';
 
@@ -81,7 +81,7 @@ class SafeHttpFetcher
      *
      * @return FetchResult
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function fetch(string $url, bool $bodyToo = true): FetchResult
     {
@@ -160,7 +160,7 @@ class SafeHttpFetcher
      *
      * @return array{errno: int, status: int, body: string, contentType: string, size: int, location: string}
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function request(string $url, string $ip, bool $bodyToo): array
     {
@@ -252,7 +252,7 @@ class SafeHttpFetcher
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function absoluteUrl(string $base, string $location): string
     {
@@ -285,7 +285,7 @@ class SafeHttpFetcher
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function curlReason(int $errno): string
     {

@@ -35,28 +35,28 @@ use Throwable;
  * what has to be true first belong to the service, so that the scheduled pass and the public form
  * are bound by exactly the same ones.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class CaseController extends FormController
 {
     /**
      * @var string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected $view_list = 'cases';
 
     /**
      * @var string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected $text_prefix = 'COM_ABANDONWARE_CASE';
 
     /**
      * @return CaseService
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function service(): CaseService
     {
@@ -68,7 +68,7 @@ class CaseController extends FormController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function contact(): void
     {
@@ -109,7 +109,7 @@ class CaseController extends FormController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function markabandoned(): void
     {
@@ -144,7 +144,7 @@ class CaseController extends FormController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function resolve(): void
     {
@@ -190,7 +190,7 @@ class CaseController extends FormController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function claim(): void
     {
@@ -246,7 +246,7 @@ class CaseController extends FormController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function fail(int $caseId, string $message): void
     {

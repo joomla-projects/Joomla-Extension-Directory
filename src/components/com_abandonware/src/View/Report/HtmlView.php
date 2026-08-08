@@ -29,7 +29,7 @@ use Throwable;
 /**
  * The report form.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
@@ -45,14 +45,14 @@ class HtmlView extends BaseHtmlView
      *
      * @var bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public bool $mayReport = false;
 
     /**
      * @var string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public string $refusal = '';
 
@@ -63,7 +63,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function display($tpl = null): void
     {

@@ -29,7 +29,7 @@ namespace Jed\Component\Jed\Administrator\Browse;
  * naming was the problem, so the date-based one is `Recently Added` and `New & Noteworthy` keeps
  * the name it is publicly known by.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 enum BrowseList: string
 {
@@ -46,7 +46,7 @@ enum BrowseList: string
      * improved: the list is publicly known and people have expectations of it, and there is no
      * evidence that a different window would be better.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const NOTEWORTHY_DAYS = 14;
 
@@ -58,7 +58,7 @@ enum BrowseList: string
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function ordering(): string
     {
@@ -84,7 +84,7 @@ enum BrowseList: string
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function tieBreak(): string
     {
@@ -99,7 +99,7 @@ enum BrowseList: string
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function label(): string
     {
@@ -113,7 +113,7 @@ enum BrowseList: string
      *
      * @return self|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function fromKey(?string $key): ?self
     {

@@ -24,21 +24,21 @@ use Joomla\Database\ParameterType;
  * action) and consumed in batches by the `jed.queueworker` scheduled task, which
  * dispatches each job to a registered {@see JobHandlerInterface} by `type`.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class QueueService
 {
     /**
      * Number of failed processing attempts after which a stuck job is given up on.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const MAX_ATTEMPTS = 3;
 
     /**
      * @param DatabaseInterface $db The database connector object.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly DatabaseInterface $db)
     {
@@ -55,7 +55,7 @@ class QueueService
      *
      * @return int The new job id.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function enqueue(string $type, ?int $extensionId = null, ?int $historyId = null, array $payload = [], int $createdBy = 0): int
     {
@@ -84,7 +84,7 @@ class QueueService
      *
      * @return object[] The claimed job rows.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function claimBatch(int $limit, int $jobTimeoutSeconds): array
     {
@@ -137,7 +137,7 @@ class QueueService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function markCompleted(int $jobId, array $resultMeta = []): void
     {
@@ -168,7 +168,7 @@ class QueueService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function markFailed(int $jobId, string $error): void
     {
@@ -198,7 +198,7 @@ class QueueService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function reclaimStuckJobs(int $jobTimeoutSeconds): void
     {
@@ -240,7 +240,7 @@ class QueueService
      *
      * @return object
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function loadJob(int $id): object
     {

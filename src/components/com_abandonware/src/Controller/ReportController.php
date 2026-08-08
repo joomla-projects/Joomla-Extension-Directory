@@ -25,21 +25,21 @@ use Throwable;
 /**
  * The public report form's controller.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ReportController extends FormController
 {
     /**
      * @var string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected $view_item = 'report';
 
     /**
      * @var string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected $view_list = 'abandoned';
 
@@ -48,7 +48,7 @@ class ReportController extends FormController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function submit(): void
     {
@@ -112,7 +112,7 @@ class ReportController extends FormController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function bounce(array $data, string $message): void
     {

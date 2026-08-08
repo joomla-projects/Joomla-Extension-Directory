@@ -28,14 +28,14 @@ use Joomla\CMS\User\User;
  * Reused as-is by both the admin and site ticket views - the site view simply
  * never calls getActions(), which is what makes it the simpler, read-only view.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 interface TicketTypeHandlerInterface
 {
     /**
      * @return TicketType The ticket type this handler is responsible for.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function type(): TicketType;
 
@@ -46,14 +46,14 @@ interface TicketTypeHandlerInterface
      *
      * @return object|null Null if the linked row no longer exists (deleted extension, etc).
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getMasterData(int $linkedItemId): ?object;
 
     /**
      * @return string The Joomla layout name (LayoutHelper::render) that renders getMasterData()'s result.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getMasterDataLayout(): string;
 
@@ -65,7 +65,7 @@ interface TicketTypeHandlerInterface
      *
      * @return TicketAction[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getActions(int $linkedItemId, User $user): array;
 }

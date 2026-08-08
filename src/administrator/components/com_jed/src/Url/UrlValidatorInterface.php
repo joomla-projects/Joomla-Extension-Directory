@@ -27,7 +27,7 @@ namespace Jed\Component\Jed\Administrator\Url;
  * to a class implementing this interface, so a new check is a class plus one registry line and
  * there is still exactly one AJAX endpoint to secure.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 interface UrlValidatorInterface
 {
@@ -45,7 +45,7 @@ interface UrlValidatorInterface
      *
      * @return UrlCheckResult
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function validate(string $url, array $context = []): UrlCheckResult;
 }

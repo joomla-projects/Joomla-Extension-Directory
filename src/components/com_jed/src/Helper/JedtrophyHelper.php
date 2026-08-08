@@ -38,7 +38,7 @@ class JedtrophyHelper
      *
      * @var string[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const INCLUDE_TOKENS = ['com', 'mod', 'plugin', 'ext', 'esp', 'lang'];
 

@@ -31,7 +31,7 @@ namespace Jed\Component\Jed\Administrator\Hit;
  * signals are for. JED3 had a `suspicious` column and never set it in 2.1 million rows; this is
  * the part that was missing rather than merely absent.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class BotDetector
 {
@@ -42,7 +42,7 @@ class BotDetector
      * `spider` cover the overwhelming majority, and the named entries are the ones that do not
      * contain any of those.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const ROBOT_MARKERS = [
         'bot', 'crawler', 'spider', 'slurp', 'archiver', 'scraper',
@@ -61,7 +61,7 @@ class BotDetector
      * would quietly write off a whole company's traffic. This is set where only automated access
      * reaches it.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const RATE_LIMIT   = 60;
     public const RATE_MINUTES = 5;
@@ -75,7 +75,7 @@ class BotDetector
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function isRobot(?string $userAgent): bool
     {
@@ -106,7 +106,7 @@ class BotDetector
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function isSuspicious(?string $userAgent, bool $hasReferrer, bool $knownRange, int $recentHits): bool
     {

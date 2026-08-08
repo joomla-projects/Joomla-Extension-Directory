@@ -29,14 +29,14 @@ use Joomla\CMS\Table\Table;
  * this model exists for is the list controller's state changes: accepting a submission, setting it
  * aside, or trashing one that should never have been stored.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ReportModel extends AdminModel
 {
     /**
      * @var string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected $text_prefix = 'COM_ABANDONWARE_REPORT';
 
@@ -47,7 +47,7 @@ class ReportModel extends AdminModel
      *
      * @return Table
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getTable($type = 'Report', $prefix = 'Administrator', $config = []): Table
     {
@@ -60,7 +60,7 @@ class ReportModel extends AdminModel
      *
      * @return Form|false
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getForm($data = [], $loadData = true)
     {
@@ -70,7 +70,7 @@ class ReportModel extends AdminModel
     /**
      * @return array
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function loadFormData(): array
     {

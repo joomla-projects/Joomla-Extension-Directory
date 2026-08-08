@@ -21,14 +21,14 @@ use Joomla\CMS\MVC\Controller\BaseController;
 /**
  * Default controller for com_abandonware's admin side.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class DisplayController extends BaseController
 {
     /**
      * @var string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected $default_view = 'cases';
 }

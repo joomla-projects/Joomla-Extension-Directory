@@ -32,7 +32,7 @@ use Throwable;
  * emails them to the extension's developer via the `com_jed.audit_report` mail
  * template.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class AuditPipeline
 {
@@ -45,7 +45,7 @@ class AuditPipeline
      * @param string             $reportsRoot           Directory where persisted reports are written.
      * @param int                $dockerTimeoutSeconds  Maximum time to allow the audit container to run.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         private readonly DatabaseInterface $db,
@@ -67,7 +67,7 @@ class AuditPipeline
      *
      * @throws RuntimeException If the extension cannot be loaded or has no download URL.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function run(object $job): array
     {
@@ -126,7 +126,7 @@ class AuditPipeline
      *
      * @return object|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function loadExtension(int $id): ?object
     {
@@ -149,7 +149,7 @@ class AuditPipeline
      *
      * @throws RuntimeException If the URL is empty or the download fails.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function downloadExtensionZip(string $url, string $destination): void
     {
@@ -173,7 +173,7 @@ class AuditPipeline
      *
      * @return string[] Map of relative file path => file contents.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function collectSourceFiles(string $sourceDir): array
     {
@@ -208,7 +208,7 @@ class AuditPipeline
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function sendReportEmail(object $extension, string $version, string $phpstanReportText, string $claudeReportMarkdown): void
     {

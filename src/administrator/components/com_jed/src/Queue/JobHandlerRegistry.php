@@ -19,14 +19,14 @@ namespace Jed\Component\Jed\Administrator\Queue;
  * New job types are added here (and to the `task/jed` plugin's provider.php wiring)
  * without needing a new task plugin routine or schema change.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class JobHandlerRegistry
 {
     /**
      * @var JobHandlerInterface[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private array $handlers = [];
 
@@ -38,7 +38,7 @@ class JobHandlerRegistry
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function register(string $type, JobHandlerInterface $handler): void
     {
@@ -54,7 +54,7 @@ class JobHandlerRegistry
      *
      * @throws \RuntimeException If no handler is registered for the given type.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function get(string $type): JobHandlerInterface
     {

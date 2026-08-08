@@ -16,7 +16,7 @@ namespace Jed\Component\Jed\Administrator\Update;
 /**
  * The highest version advertised by an extension's Joomla update-site XML feed.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class UpdateServerResult
 {
@@ -24,7 +24,7 @@ final class UpdateServerResult
      * @param string      $version     The advertised version string.
      * @param string|null $downloadUrl The download URL for that version, if present.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         public readonly string $version,

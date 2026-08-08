@@ -23,14 +23,14 @@ use Jed\Component\Jed\Administrator\Service\ScoreCalculationService;
  * {@see \Jed\Component\Jed\Administrator\Model\ReviewModel::publish()} and
  * {@see \Jed\Component\Jed\Administrator\Table\ReviewTable::store()}).
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ScoreRecalcJobHandler implements JobHandlerInterface
 {
     /**
      * @param ScoreCalculationService $scoreCalculationService The score calculation service.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly ScoreCalculationService $scoreCalculationService)
     {
@@ -39,7 +39,7 @@ class ScoreRecalcJobHandler implements JobHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function handle(object $job): array
     {

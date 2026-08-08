@@ -163,7 +163,7 @@ class ExtensionModel extends AdminModel
      *
      * @return int The history row id, or 0 if the extension has no history yet.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function getLatestHistoryId(int $extensionId): int
     {
@@ -186,7 +186,7 @@ class ExtensionModel extends AdminModel
      *
      * @return object|null Null if no live row exists for this id.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getLiveItem(int $extensionId): ?object
     {
@@ -209,7 +209,7 @@ class ExtensionModel extends AdminModel
      *
      * @return array{0: object|null, 1: object|null, 2: int} [$left, $right, $resolvedRightHistoryId]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getCompareItems(int $extensionId, ?int $leftHistoryId, ?int $rightHistoryId): array
     {
@@ -235,7 +235,7 @@ class ExtensionModel extends AdminModel
      *
      * @throws Exception If the history row doesn't belong to this extension.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function approve(int $extensionId, int $historyId): void
     {
@@ -329,7 +329,7 @@ class ExtensionModel extends AdminModel
      *
      * @throws Exception If the revision does not exist or the reason code is not a known one.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function reject(int $extensionId, int $historyId, string $reasonCode, string $notes = ''): void
     {
@@ -407,7 +407,7 @@ class ExtensionModel extends AdminModel
      *
      * @return int  The history id, or 0.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getPendingHistoryId(int $extensionId): int
     {
@@ -442,7 +442,7 @@ class ExtensionModel extends AdminModel
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function notifyDeveloperOfDecision(int $extensionId, bool $approved, string $reasonCode, string $notes): void
     {
@@ -518,7 +518,7 @@ class ExtensionModel extends AdminModel
      *
      * @throws Exception If the extension does not exist.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function checkout($pk = null)
     {
@@ -537,7 +537,7 @@ class ExtensionModel extends AdminModel
      *
      * @throws Exception If the extension does not exist.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function checkin($pk = null)
     {
@@ -553,7 +553,7 @@ class ExtensionModel extends AdminModel
      * @return bool  True when the lock was taken or released; false when the listing does not
      *               exist or the lock is held by someone else.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function setLiveCheckout(int $extensionId, bool $checkOut): bool
     {
@@ -598,7 +598,7 @@ class ExtensionModel extends AdminModel
      *
      * @throws Exception If the underlying table fails to save.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function publish(&$pks, $value = 1)
     {
@@ -800,7 +800,7 @@ class ExtensionModel extends AdminModel
      *
      * @throws Exception If the listing does not exist or the reason code is not a known one.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function block(int $extensionId, string $reasonCode, string $reasonText = ''): void
     {
@@ -852,7 +852,7 @@ class ExtensionModel extends AdminModel
      *
      * @throws Exception If the listing does not exist.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function unblock(int $extensionId): void
     {
@@ -874,7 +874,7 @@ class ExtensionModel extends AdminModel
      *
      * @throws Exception If the listing does not exist.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function softDelete(int $extensionId): void
     {
@@ -907,7 +907,7 @@ class ExtensionModel extends AdminModel
      *
      * @throws Exception If the listing does not exist.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function restore(int $extensionId): void
     {
@@ -936,7 +936,7 @@ class ExtensionModel extends AdminModel
      *
      * @throws Exception If the listing does not exist.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function applyListingState(int $extensionId, array $columns): ExtensionTable
     {
@@ -977,7 +977,7 @@ class ExtensionModel extends AdminModel
      *
      * @return string|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function blockReasonTitle(string $code): ?string
     {
@@ -1005,7 +1005,7 @@ class ExtensionModel extends AdminModel
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function logListingDecision(string $action, int $extensionId, string $name, array $extra = []): void
     {

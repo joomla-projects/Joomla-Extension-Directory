@@ -23,21 +23,21 @@ use PHPUnit\Framework\TestCase;
  *
  * So they are asserted here rather than left to review.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class SchemaUpdatePathTest extends TestCase
 {
     /**
      * The repository root.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const ROOT = __DIR__ . '/../../..';
 
     /**
      * The components in pkg_jed that own tables, and the manifest each one declares them in.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const COMPONENTS = [
         'com_jed'         => 'jed.xml',
@@ -56,7 +56,7 @@ final class SchemaUpdatePathTest extends TestCase
      * listing's content, so a rollback must not resurrect a stale one and a probe must not create
      * a revision. `ExtensionVersionUpdater::applyUpdate()` unsets exactly these three.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const HISTORY_EXEMPT = [
         'entry_version',
@@ -67,7 +67,7 @@ final class SchemaUpdatePathTest extends TestCase
     /**
      * Columns `#__jed_extensions_history` adds because it is a history table.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const HISTORY_OWN = [
         'extension_id',
@@ -83,7 +83,7 @@ final class SchemaUpdatePathTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testEveryComponentHasABaselineForTheBuiltVersion(): void
     {
@@ -114,7 +114,7 @@ final class SchemaUpdatePathTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testEveryManifestDeclaresTheSchemaPath(): void
     {
@@ -145,7 +145,7 @@ final class SchemaUpdatePathTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testUpdateFileNamesAreVersionsNotNewerThanTheBuild(): void
     {
@@ -175,7 +175,7 @@ final class SchemaUpdatePathTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testInstallSqlDestroysNothing(): void
     {
@@ -200,7 +200,7 @@ final class SchemaUpdatePathTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testUninstallSqlDropsNoTables(): void
     {
@@ -221,7 +221,7 @@ final class SchemaUpdatePathTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testInstallSqlIsRepeatable(): void
     {
@@ -254,7 +254,7 @@ final class SchemaUpdatePathTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testResetFileMatchesTheInstall(): void
     {
@@ -285,7 +285,7 @@ final class SchemaUpdatePathTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testNoManifestReferencesTheResetFile(): void
     {
@@ -313,7 +313,7 @@ final class SchemaUpdatePathTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testHistoryMirrorsTheExtensionsTable(): void
     {
@@ -357,7 +357,7 @@ final class SchemaUpdatePathTest extends TestCase
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function buildVersion(): string
     {
@@ -380,7 +380,7 @@ final class SchemaUpdatePathTest extends TestCase
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function sqlDir(string $component): string
     {
@@ -397,7 +397,7 @@ final class SchemaUpdatePathTest extends TestCase
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function executableSql(string $file): string
     {
@@ -419,7 +419,7 @@ final class SchemaUpdatePathTest extends TestCase
      *
      * @return array<int, string>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function tablesMatching(string $pattern, string $file): array
     {
@@ -436,7 +436,7 @@ final class SchemaUpdatePathTest extends TestCase
      *
      * @return array<int, string>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function columnsOf(string $file, string $table): array
     {

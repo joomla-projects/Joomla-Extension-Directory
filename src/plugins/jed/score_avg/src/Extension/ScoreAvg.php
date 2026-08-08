@@ -28,7 +28,7 @@ use Joomla\Event\SubscriberInterface;
  * This plugin cooperates by checking `result` is still null before acting, so it
  * becomes a silent no-op once a higher-priority plugin has already produced one.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class ScoreAvg extends CMSPlugin implements SubscriberInterface
 {
@@ -37,7 +37,7 @@ final class ScoreAvg extends CMSPlugin implements SubscriberInterface
      *
      * @return array<string, string>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function getSubscribedEvents(): array
     {
@@ -53,7 +53,7 @@ final class ScoreAvg extends CMSPlugin implements SubscriberInterface
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function calculateAverage(CalculateExtensionScoreEvent $event): void
     {

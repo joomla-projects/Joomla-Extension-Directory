@@ -22,14 +22,14 @@ use Jed\Component\Jed\Administrator\Hit\HitAggregator;
  * recomputed now - after a backfill, or after finding that a run was missed. Safe to enqueue
  * repeatedly, because the aggregation replaces a day rather than adding to it.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class HitAggregateJobHandler implements JobHandlerInterface
 {
     /**
      * @param HitAggregator $aggregator The aggregator.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly HitAggregator $aggregator)
     {
@@ -40,7 +40,7 @@ class HitAggregateJobHandler implements JobHandlerInterface
      *
      * @return array<string, mixed>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function handle(object $job): array
     {

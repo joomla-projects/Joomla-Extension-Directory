@@ -31,7 +31,7 @@ use Joomla\Database\ParameterType;
  * that a future API endpoint reaches the same answers as this form without either being the place
  * the rules are written down.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ReportModel extends FormModel
 {
@@ -41,7 +41,7 @@ class ReportModel extends FormModel
      *
      * @return Form|false
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getForm($data = [], $loadData = true)
     {
@@ -51,7 +51,7 @@ class ReportModel extends FormModel
     /**
      * @return array
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function loadFormData(): array
     {
@@ -91,7 +91,7 @@ class ReportModel extends FormModel
      *
      * @return object  The service's result: report id, case id, case.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function submit(array $data): object
     {

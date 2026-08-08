@@ -29,14 +29,14 @@ use Jed\Component\Jed\Administrator\Url\UrlValidatorInterface;
  * A HEAD request, so a check on a 200 MB package does not pull 200 MB - and the size the header
  * claims is reported, not verified.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class DownloadValidator implements UrlValidatorInterface
 {
     /**
      * Archive types a Joomla package plausibly arrives as.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const ARCHIVE_TYPES = [
         'application/zip',
@@ -52,7 +52,7 @@ class DownloadValidator implements UrlValidatorInterface
     /**
      * @param SafeHttpFetcher $fetcher The guarded fetcher.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(protected readonly SafeHttpFetcher $fetcher)
     {
@@ -64,7 +64,7 @@ class DownloadValidator implements UrlValidatorInterface
      *
      * @return UrlCheckResult
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function validate(string $url, array $context = []): UrlCheckResult
     {

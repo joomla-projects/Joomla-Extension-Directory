@@ -102,7 +102,7 @@ class PlgSampledataJed_Migrate extends CMSPlugin
      *
      * @var    integer
      *
-     * @since  4.1.0
+     * @since  4.0.0
      */
     private const TAG_UCM_BATCHES = 6;
 
@@ -129,7 +129,7 @@ class PlgSampledataJed_Migrate extends CMSPlugin
      *
      * @var    integer
      *
-     * @since  4.1.0
+     * @since  4.0.0
      */
     private const TAG_MIN_USES = 2;
 
@@ -628,7 +628,7 @@ class PlgSampledataJed_Migrate extends CMSPlugin
      *
      * @return  string|null  An error message, or null on success.
      *
-     * @since   4.1.0
+     * @since   4.0.0
      */
     private function normaliseVideos(): ?string
     {
@@ -692,7 +692,7 @@ class PlgSampledataJed_Migrate extends CMSPlugin
      *
      * @return  string|null  An error message, or null on success.
      *
-     * @since   4.1.0
+     * @since   4.0.0
      */
     private function ensureExtensionContentType(): ?string
     {
@@ -721,7 +721,7 @@ class PlgSampledataJed_Migrate extends CMSPlugin
      *
      * @return  string|null  An error message, or null on success.
      *
-     * @since   4.1.0
+     * @since   4.0.0
      */
     private function rebuildTagTree(): ?string
     {
@@ -763,7 +763,7 @@ class PlgSampledataJed_Migrate extends CMSPlugin
      * @return  string|null  An error message, or null on success. A report that cannot be written
      *                       is not a reason to fail the step - the import itself is done by then.
      *
-     * @since   4.1.0
+     * @since   4.0.0
      */
     private function reportTagCuration(): ?string
     {
@@ -851,7 +851,7 @@ class PlgSampledataJed_Migrate extends CMSPlugin
      *
      * @return  string  The path the report was written to, or an empty string on failure.
      *
-     * @since   4.1.0
+     * @since   4.0.0
      */
     private function writeTagReport(
         array $imported,

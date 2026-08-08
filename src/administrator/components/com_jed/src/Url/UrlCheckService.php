@@ -43,7 +43,7 @@ use Throwable;
  * answer "may this person edit this listing" differently, and that question belongs where the
  * request is.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class UrlCheckService
 {
@@ -54,7 +54,7 @@ class UrlCheckService
      * enough that the endpoint is not a useful amplifier. The cache means a developer working
      * through one listing spends far fewer than this.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const RATE_LIMIT  = 120;
     public const RATE_WINDOW = 1;
@@ -62,7 +62,7 @@ class UrlCheckService
     /**
      * How long a stored answer is reused, in minutes.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const CACHE_MINUTES = 10;
 
@@ -70,7 +70,7 @@ class UrlCheckService
      * @param DatabaseInterface    $db       The database.
      * @param UrlValidatorRegistry $registry The validators, by key.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         protected readonly DatabaseInterface $db,
@@ -89,7 +89,7 @@ class UrlCheckService
      *
      * @return UrlCheckResult
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function check(string $url, string $validatorKey, User $user, array $context = []): UrlCheckResult
     {
@@ -138,7 +138,7 @@ class UrlCheckService
      *
      * @return UrlCheckResult|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function findFresh(string $url, string $validatorKey): ?UrlCheckResult
     {
@@ -180,7 +180,7 @@ class UrlCheckService
      *
      * @throws RuntimeException When the limit is reached.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function assertWithinRateLimit(int $userId): void
     {
@@ -210,7 +210,7 @@ class UrlCheckService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function record(string $url, string $validatorKey, UrlCheckResult $result, int $userId, array $context): void
     {
@@ -242,7 +242,7 @@ class UrlCheckService
      *
      * @return array<string, object>  Keyed by field name.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function latestForExtension(int $extensionId): array
     {

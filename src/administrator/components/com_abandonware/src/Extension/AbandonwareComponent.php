@@ -25,7 +25,7 @@ use Psr\Container\ContainerInterface;
 /**
  * Component class for com_abandonware.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class AbandonwareComponent extends MVCComponent implements
     BootableExtensionInterface,
@@ -39,7 +39,7 @@ class AbandonwareComponent extends MVCComponent implements
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function boot(ContainerInterface $container): void
     {

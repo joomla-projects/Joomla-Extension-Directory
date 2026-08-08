@@ -29,7 +29,7 @@ namespace Jed\Component\Jed\Administrator\Url;
  * Format is the only thing that blocks a save. Whether the URL *answers* is a different question,
  * decided by a validator and reported as a notice - see {@see UrlValidatorInterface}.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class UrlFormat
 {
@@ -40,21 +40,21 @@ final class UrlFormat
      * SSRF primitive (`file:`, `gopher:`, `dict:`, `ftp:`). The validators fetch what is stored,
      * so the storage rule and the fetch rule have to be the same one.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const SCHEMES = ['http', 'https'];
 
     /**
      * `varchar(255)` is what every URL column in the schema is.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const MAX_LENGTH = 255;
 
     /**
      * Error keys, in the order they are reported. One rule, one key, one language string.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const ERROR_EMPTY       = 'empty';
     public const ERROR_LENGTH      = 'length';
@@ -74,7 +74,7 @@ final class UrlFormat
      *
      * @return string[]  The error keys, empty when the value is acceptable.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function check(?string $url, bool $required = false): array
     {
@@ -151,7 +151,7 @@ final class UrlFormat
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function isPlausibleHost(string $host): bool
     {
@@ -206,7 +206,7 @@ final class UrlFormat
      *
      * @return string|null  A corrected value to offer, or null when there is nothing to suggest.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function suggest(?string $url): ?string
     {
@@ -247,7 +247,7 @@ final class UrlFormat
      *
      * @return array<string, string>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function toDataAttributes(): array
     {

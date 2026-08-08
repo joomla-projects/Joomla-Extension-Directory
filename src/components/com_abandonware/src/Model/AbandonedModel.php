@@ -36,7 +36,7 @@ use Joomla\Database\QueryInterface;
  *    legacy `abandoneditem` view printed `reporter_fullname` on a public page; this cannot,
  *    because the query has no access to it.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class AbandonedModel extends ListModel
 {
@@ -45,7 +45,7 @@ class AbandonedModel extends ListModel
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct($config = [])
     {
@@ -67,7 +67,7 @@ class AbandonedModel extends ListModel
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function populateState($ordering = 'a.abandoned_time', $direction = 'DESC'): void
     {
@@ -81,7 +81,7 @@ class AbandonedModel extends ListModel
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function getStoreId($id = ''): string
     {
@@ -91,7 +91,7 @@ class AbandonedModel extends ListModel
     /**
      * @return QueryInterface
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function getListQuery(): QueryInterface
     {

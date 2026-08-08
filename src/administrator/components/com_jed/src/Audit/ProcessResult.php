@@ -16,7 +16,7 @@ namespace Jed\Component\Jed\Administrator\Audit;
 /**
  * The result of a {@see ProcessRunner::run()} call.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class ProcessResult
 {
@@ -25,7 +25,7 @@ final class ProcessResult
      * @param string $stdout   Captured standard output.
      * @param string $stderr   Captured standard error.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         public readonly int $exitCode,
@@ -37,7 +37,7 @@ final class ProcessResult
     /**
      * @return bool True if the process exited with code 0.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function isSuccessful(): bool
     {

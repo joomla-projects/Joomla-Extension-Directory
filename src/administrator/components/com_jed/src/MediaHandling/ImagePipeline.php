@@ -38,7 +38,7 @@ use RuntimeException;
  * A rejected upload throws; the caller decides whether that fails the save or just skips one
  * row of a gallery.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class ImagePipeline
 {
@@ -48,7 +48,7 @@ final class ImagePipeline
      * WebP and AVIF are readable by GD but are not accepted for upload: the JED3 stock is
      * PNG/JPEG/GIF only, and a narrower allowlist is a smaller attack surface.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const ACCEPTED = [
         IMAGETYPE_PNG  => 'png',
@@ -59,7 +59,7 @@ final class ImagePipeline
     /**
      * Fallback limits, used when the component configuration says nothing.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const DEFAULT_MAX_KILOBYTES = 2048;
     private const DEFAULT_MAX_PIXELS    = 4000;
@@ -75,7 +75,7 @@ final class ImagePipeline
      *
      * @throws RuntimeException  When the upload is not an acceptable image, or cannot be written.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function store(array $upload, string $directory, string $basename): string
     {
@@ -111,7 +111,7 @@ final class ImagePipeline
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function delete(string $rootRelativePath): void
     {
@@ -142,7 +142,7 @@ final class ImagePipeline
      *
      * @throws RuntimeException  When any rule rejects the upload.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function validate(array $upload): int
     {
@@ -198,7 +198,7 @@ final class ImagePipeline
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function writeVariant(string $originalPath, ImageSize $variant, int $type): void
     {
@@ -233,7 +233,7 @@ final class ImagePipeline
      *
      * @throws RuntimeException  When the file cannot be written.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function write(Image $image, string $path, int $type): void
     {
@@ -263,7 +263,7 @@ final class ImagePipeline
      *
      * @return string|null  The absolute path, or null when it points outside JPATH_ROOT.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function resolveInsideRoot(string $rootRelativePath): ?string
     {
@@ -283,7 +283,7 @@ final class ImagePipeline
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function label(array $upload): string
     {

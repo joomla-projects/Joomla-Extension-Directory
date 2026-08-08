@@ -23,14 +23,14 @@ use Joomla\Database\DatabaseDriver;
 /**
  * The `#__jed_abandonware_reports` row.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ReportTable extends Table
 {
     /**
      * @param DatabaseDriver $db A database connector object.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(DatabaseDriver $db)
     {
@@ -42,7 +42,7 @@ class ReportTable extends Table
     /**
      * @return string  The asset name.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function _getAssetName(): string
     {
@@ -57,7 +57,7 @@ class ReportTable extends Table
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function bind($src, $ignore = '')
     {
@@ -85,7 +85,7 @@ class ReportTable extends Table
     /**
      * @return string  The alias for the history table.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getTypeAlias(): string
     {

@@ -24,14 +24,14 @@ namespace Jed\Component\Abandonware\Administrator\Enum;
  * because a case opened by a dead download link and one opened by four years of silence read very
  * differently to whoever picks it up, and the team's first question is always which one it was.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 enum CaseSource: string
 {
     /**
      * A member of the public filled in the form.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case REPORT = 'report';
 
@@ -40,7 +40,7 @@ enum CaseSource: string
      * `#__jed_extension_linkchecks`. That plan deliberately opens no team ticket of its own; this
      * is the case it hands the signal to.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case LINKCHECK = 'linkcheck';
 
@@ -48,7 +48,7 @@ enum CaseSource: string
      * `last_update_check_error` has been set for long enough that the update server is not simply
      * having a bad week (5.3).
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case UPDATECHECK = 'updatecheck';
 
@@ -57,21 +57,21 @@ enum CaseSource: string
      * own - an extension with no release for three years may simply be finished - which is why it
      * opens a case for a human rather than doing anything.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case INACTIVITY = 'inactivity';
 
     /**
      * Somebody on the JED team opened it by hand.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case MANUAL = 'manual';
 
     /**
      * @return string  The language key for the label.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function label(): string
     {
@@ -81,7 +81,7 @@ enum CaseSource: string
     /**
      * @return bool  Whether this source is an automated signal rather than a person.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function isAutomated(): bool
     {

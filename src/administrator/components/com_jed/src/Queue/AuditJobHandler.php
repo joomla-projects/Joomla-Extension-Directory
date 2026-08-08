@@ -19,14 +19,14 @@ use Jed\Component\Jed\Administrator\Audit\AuditPipeline;
  * Handles `extension.audit` queue jobs: runs the Docker/phpstan/Claude audit
  * pipeline for one extension version and emails the developer.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class AuditJobHandler implements JobHandlerInterface
 {
     /**
      * @param AuditPipeline $pipeline The audit pipeline orchestrator.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly AuditPipeline $pipeline)
     {
@@ -35,7 +35,7 @@ class AuditJobHandler implements JobHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function handle(object $job): array
     {

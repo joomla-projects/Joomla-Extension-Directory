@@ -24,7 +24,7 @@ use Joomla\CMS\Helper\ModuleHelper;
 /**
  * Dispatcher class for mod_jed_opentickets.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class Dispatcher extends AbstractModuleDispatcher implements HelperFactoryAwareInterface
 {
@@ -35,7 +35,7 @@ class Dispatcher extends AbstractModuleDispatcher implements HelperFactoryAwareI
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function dispatch()
     {
@@ -65,7 +65,7 @@ class Dispatcher extends AbstractModuleDispatcher implements HelperFactoryAwareI
      *
      * @return array
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function getLayoutData()
     {

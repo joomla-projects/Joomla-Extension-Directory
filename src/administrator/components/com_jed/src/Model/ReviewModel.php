@@ -141,7 +141,7 @@ class ReviewModel extends AdminModel
      *
      * @return bool True on success.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function publish(&$pks, $value = 1): bool
     {
@@ -213,7 +213,7 @@ class ReviewModel extends AdminModel
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function notifyReviewer(object $review, bool $published): void
     {
@@ -258,7 +258,7 @@ class ReviewModel extends AdminModel
      *
      * @return bool True on success.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function publishResponse(array $pks): bool
     {
@@ -273,7 +273,7 @@ class ReviewModel extends AdminModel
      *
      * @return bool True on success.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function deleteResponse(array $pks): bool
     {
@@ -286,7 +286,7 @@ class ReviewModel extends AdminModel
      *
      * @return bool True on success.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function setDeveloperResponsePublished(array $pks, int $value): bool
     {
@@ -343,7 +343,7 @@ class ReviewModel extends AdminModel
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function logReviewDecision(string $action, object $review): void
     {

@@ -26,14 +26,14 @@ use Joomla\Database\ParameterType;
  * moderation. Master-data query moved here from the old
  * `TicketModel::getReviewData()`.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class ReviewTicketHandler implements TicketTypeHandlerInterface
 {
     /**
      * @param DatabaseInterface $db The database connector object.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly DatabaseInterface $db)
     {
@@ -42,7 +42,7 @@ final class ReviewTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function type(): TicketType
     {
@@ -52,7 +52,7 @@ final class ReviewTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getMasterData(int $linkedItemId): ?object
     {
@@ -72,7 +72,7 @@ final class ReviewTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getMasterDataLayout(): string
     {
@@ -82,7 +82,7 @@ final class ReviewTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getActions(int $linkedItemId, User $user): array
     {

@@ -232,7 +232,7 @@ class JedHelper
     /**
      * The state of an accepted maintainer row. Anything else grants nothing.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const MAINTAINER_INVITED  = 0;
     public const MAINTAINER_ACCEPTED = 1;
@@ -253,7 +253,7 @@ class JedHelper
      *
      * @return bool
      *
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function isOwner(int $extensionId): bool
@@ -290,7 +290,7 @@ class JedHelper
      *
      * @return bool
      *
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function isOwnerOrMaintainer(int $extensionId): bool
@@ -334,7 +334,7 @@ class JedHelper
      *
      * @return string  A parenthesised SQL condition, or a never-true one when logged out.
      *
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function getOwnedOrMaintainedCondition(DatabaseInterface $db, string $alias = 'a'): string
@@ -381,7 +381,7 @@ class JedHelper
      *
      * @return string  A parenthesised SQL condition.
      *
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function getExtensionVisibilityCondition(DatabaseInterface $db, string $alias = 'a'): string
@@ -416,7 +416,7 @@ class JedHelper
      *
      * @return string  Rendered HTML, safe to output.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function renderMarkdown(?string $text): string
     {
@@ -431,7 +431,7 @@ class JedHelper
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function markdownToText(?string $text, int $length = 0): string
     {
@@ -451,7 +451,7 @@ class JedHelper
      *
      * @return string  Plain text with HTML entities encoded, safe to output.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function cardText(?string $intro, ?string $description = null): string
     {
@@ -479,7 +479,7 @@ class JedHelper
      *
      * @return array<string, mixed>  Display data for the `cards.extension` layout.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function cardData(object $item, ?string $link = null): array
     {
@@ -535,7 +535,7 @@ class JedHelper
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function cardImage(object $item): string
     {
@@ -561,7 +561,7 @@ class JedHelper
      *
      * @return array<int, array{key: string, short: string, label: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function versionBadges(string $versions): array
     {
@@ -602,7 +602,7 @@ class JedHelper
      *
      * @return array<int, array{key: string, label: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function includeBadges(string $types): array
     {
@@ -635,7 +635,7 @@ class JedHelper
      *
      * @return string[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function splitStoredList(string $stored): array
     {
@@ -660,7 +660,7 @@ class JedHelper
      *
      * @return array{relative: string, absolute: string, iso: string}|null  Null when there is no date.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function relativeDate(?string $date): ?array
     {
@@ -714,7 +714,7 @@ class JedHelper
      *
      * @return string  A parenthesised SQL condition.
      *
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function getReviewVisibilityCondition(DatabaseInterface $db, string $alias = 'a'): string
@@ -745,7 +745,7 @@ class JedHelper
      *
      * @return bool
      *
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function canViewReview(object $item): bool
@@ -788,7 +788,7 @@ class JedHelper
      *
      * @return bool
      *
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function canViewExtension(object $item): bool
@@ -818,7 +818,7 @@ class JedHelper
      *
      * @return ListingAccess
      *
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws Exception
      */
     public static function resolveListingAccess(object $item): ListingAccess
@@ -839,7 +839,7 @@ class JedHelper
      *
      * @return array{code: string, title: string, article_id: int|null}|null
      *
-     * @since  4.1.0
+     * @since  4.0.0
      */
     public static function getPublicBlockReason(object $item): ?array
     {
@@ -1111,7 +1111,7 @@ class JedHelper
      *
      * @return string  Empty when the review does not exist.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function getReviewTitle(int $reviewId): string
     {

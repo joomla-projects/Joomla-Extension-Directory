@@ -33,14 +33,14 @@ use RuntimeException;
  * ({@see \Jed\Component\Jed\Administrator\Event\CalculateExtensionScoreEvent}), so
  * it can be swapped out without touching this service.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ScoreCalculationService
 {
     /**
      * @param DatabaseInterface $db The database connector object.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly DatabaseInterface $db)
     {
@@ -59,7 +59,7 @@ class ScoreCalculationService
      *
      * @throws RuntimeException If no `jed`-group plugin produced a score result.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function recalculateFor(int $extensionId): array
     {
@@ -95,7 +95,7 @@ class ScoreCalculationService
      *                   extension, with their score-dimension columns aliased to the
      *                   `*_score` names the `onJedCalculateExtensionScore` contract expects.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function loadScores(int $extensionId): array
     {
@@ -132,7 +132,7 @@ class ScoreCalculationService
      *     score_count: int
      * }
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function normaliseResult(array $result): array
     {

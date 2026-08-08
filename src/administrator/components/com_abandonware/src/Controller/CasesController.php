@@ -28,7 +28,7 @@ use Throwable;
 /**
  * The case list controller.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class CasesController extends AdminController
 {
@@ -39,7 +39,7 @@ class CasesController extends AdminController
      *
      * @return \Joomla\CMS\MVC\Model\BaseDatabaseModel
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getModel($name = 'Case', $prefix = 'Administrator', $config = ['ignore_request' => true])
     {
@@ -56,7 +56,7 @@ class CasesController extends AdminController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function scan(): void
     {

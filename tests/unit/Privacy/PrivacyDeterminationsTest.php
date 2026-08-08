@@ -23,14 +23,14 @@ use PHPUnit\Framework\TestCase;
  * nothing complains about and nobody sees. Comparing the catalogue against the install schema
  * turns that silence into a failing test.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class PrivacyDeterminationsTest extends TestCase
 {
     /**
      * The repository root.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const ROOT = __DIR__ . '/../../..';
 
@@ -39,7 +39,7 @@ final class PrivacyDeterminationsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testEveryJedTableHasADetermination(): void
     {
@@ -55,7 +55,7 @@ final class PrivacyDeterminationsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testEveryTicketTableHasADetermination(): void
     {
@@ -74,7 +74,7 @@ final class PrivacyDeterminationsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testNoTableIsBothInAndOutOfScope(): void
     {
@@ -90,7 +90,7 @@ final class PrivacyDeterminationsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testHandlingsAreKnown(): void
     {
@@ -115,7 +115,7 @@ final class PrivacyDeterminationsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testEveryReasonHasWording(): void
     {
@@ -147,7 +147,7 @@ final class PrivacyDeterminationsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testTheOwnerWithdrawnBlockReasonIsSeeded(): void
     {
@@ -170,7 +170,7 @@ final class PrivacyDeterminationsTest extends TestCase
      *
      * @dataProvider banRecords
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testBanRetentionRule(?array $row, bool $expected): void
     {
@@ -180,7 +180,7 @@ final class PrivacyDeterminationsTest extends TestCase
     /**
      * @return array<string, array{0: array<string, mixed>|null, 1: bool}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function banRecords(): array
     {
@@ -205,7 +205,7 @@ final class PrivacyDeterminationsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function assertSameTables(array $schema, array $determined, string $component): void
     {
@@ -232,7 +232,7 @@ final class PrivacyDeterminationsTest extends TestCase
      *
      * @return string[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function tablesIn(string $file): array
     {

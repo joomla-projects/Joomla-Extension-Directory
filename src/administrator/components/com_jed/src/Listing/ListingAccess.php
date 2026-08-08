@@ -22,14 +22,14 @@ namespace Jed\Component\Jed\Administrator\Listing;
  * where they are collapsed into the one answer a request needs, so the precedence is written
  * down once instead of being re-derived at every call site.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 enum ListingAccess
 {
     /**
      * Render the listing.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case VISIBLE;
 
@@ -40,14 +40,14 @@ enum ListingAccess
      * the listing is not usable, and on a site with this much organic traffic a 404 would
      * throw that information away.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case BLOCKED;
 
     /**
      * 410 Gone - the listing was soft-deleted.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case GONE;
 
@@ -55,7 +55,7 @@ enum ListingAccess
      * 404 - never approved, or the developer took it offline. No reason is given either way:
      * "this developer unpublished their extension" is not the public's business.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case NOT_FOUND;
 
@@ -64,7 +64,7 @@ enum ListingAccess
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function statusCode(): int
     {
@@ -96,7 +96,7 @@ enum ListingAccess
      *
      * @return ListingAccess
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function forItem(object $item, bool $isPrivileged = false): self
     {

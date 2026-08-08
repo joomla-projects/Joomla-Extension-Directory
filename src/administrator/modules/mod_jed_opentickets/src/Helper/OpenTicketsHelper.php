@@ -22,7 +22,7 @@ use Joomla\Registry\Registry;
 /**
  * Helper for mod_jed_opentickets.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class OpenTicketsHelper
 {
@@ -39,7 +39,7 @@ class OpenTicketsHelper
      *
      * @return object[] Ticket rows, each with a `link` property to its admin edit view.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getTickets(Registry $params, CMSApplicationInterface $app): array
     {

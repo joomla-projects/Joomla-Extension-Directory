@@ -26,7 +26,7 @@ use Throwable;
 /**
  * Ownership transfer, from the developer's side.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class TransferController extends BaseController
 {
@@ -39,7 +39,7 @@ class TransferController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function request(): void
     {
@@ -82,7 +82,7 @@ class TransferController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function confirm(): void
     {
@@ -118,7 +118,7 @@ class TransferController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function cancel(): void
     {
@@ -156,7 +156,7 @@ class TransferController extends BaseController
     /**
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function dashboard(): string
     {

@@ -40,7 +40,7 @@ use Throwable;
  * ("cannot be marked abandoned without a recorded contact attempt", "at most one open ticket per
  * extension") and an invariant enforced in four places is enforced in three.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class CaseService
 {
@@ -51,14 +51,14 @@ class CaseService
      * (4.10): how long a developer gets to answer before a public marker goes up is a decision
      * about people, not about software.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const DEFAULT_GRACE_DAYS = 30;
 
     /**
      * @param DatabaseInterface $db The database driver.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly DatabaseInterface $db)
     {
@@ -72,7 +72,7 @@ class CaseService
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function option(string $key, int $fallback): int
     {
@@ -92,7 +92,7 @@ class CaseService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function loadLanguage(): void
     {
@@ -115,7 +115,7 @@ class CaseService
      *
      * @return object|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function findOpenCase(int $extensionId): ?object
     {
@@ -137,7 +137,7 @@ class CaseService
      *
      * @return object|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function load(int $caseId): ?object
     {
@@ -165,7 +165,7 @@ class CaseService
      *
      * @return object  The open case, new or existing.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function raise(int $extensionId, CaseSource $source, string $detail, int $actorId = 0): object
     {
@@ -230,7 +230,7 @@ class CaseService
      *
      * @return object  The new case.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function raiseUnlisted(array $tuple, CaseSource $source, string $detail, int $actorId = 0): object
     {
@@ -266,7 +266,7 @@ class CaseService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function addSignal(int $caseId, CaseSource $source, string $detail): void
     {
@@ -310,7 +310,7 @@ class CaseService
      *
      * @return array<int, array<string, string>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function signalsOf(object $case): array
     {
@@ -325,7 +325,7 @@ class CaseService
      *
      * @return array<string, string>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function signalEntry(CaseSource $source, string $detail): array
     {
@@ -347,7 +347,7 @@ class CaseService
      *
      * @throws RuntimeException  The move is not legal from the case's current status.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function transition(int $caseId, CaseStatus $next, int $actorId): void
     {
@@ -385,7 +385,7 @@ class CaseService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function writeStatus(int $caseId, CaseStatus $status, int $actorId): void
     {
@@ -428,7 +428,7 @@ class CaseService
      *
      * @throws RuntimeException  The case is not in a status from which the owner can be contacted.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function recordContact(int $caseId, int $actorId, string $note = '', int $graceDays = 0): bool
     {
@@ -491,7 +491,7 @@ class CaseService
      *
      * @return bool  Whether at least one recipient was written to.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function mailOwner(object $case, string $until): bool
     {
@@ -584,7 +584,7 @@ class CaseService
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function signalSummary(object $case): string
     {
@@ -609,7 +609,7 @@ class CaseService
      *
      * @return int  How many moved.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function expireGracePeriods(): int
     {
@@ -652,7 +652,7 @@ class CaseService
      *
      * @throws RuntimeException  No contact attempt is recorded, or the move is not legal.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function markAbandoned(int $caseId, int $actorId, ?bool $publish = null): void
     {
@@ -723,7 +723,7 @@ class CaseService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function resolve(int $caseId, Resolution $resolution, int $actorId, string $note = ''): void
     {
@@ -797,7 +797,7 @@ class CaseService
      *
      * @return int  The ticket id, or 0 if none could be created.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function ensureTicket(int $caseId): int
     {
@@ -874,7 +874,7 @@ class CaseService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function closeTicket(object $case, Resolution $resolution): void
     {

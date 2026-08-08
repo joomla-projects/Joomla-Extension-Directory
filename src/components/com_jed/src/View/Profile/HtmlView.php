@@ -24,7 +24,7 @@ use Joomla\Registry\Registry;
 /**
  * View class for a developer/company profile.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
@@ -47,7 +47,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function display($tpl = null): void
     {
@@ -74,7 +74,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function prepareDocument(): void
     {
@@ -118,7 +118,7 @@ class HtmlView extends BaseHtmlView
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getState(mixed $state): bool
     {

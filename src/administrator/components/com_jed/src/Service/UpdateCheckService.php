@@ -27,7 +27,7 @@ use Throwable;
  * version, applies it directly to the live row (via {@see ExtensionVersionUpdater})
  * and enqueues an `extension.audit` job.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class UpdateCheckService
 {
@@ -38,7 +38,7 @@ class UpdateCheckService
      * @param ExtensionVersionUpdater $versionUpdater Applies a detected version bump to the live row.
      * @param QueueService            $queueService   Enqueues the follow-up audit job.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         private readonly DatabaseInterface $db,
@@ -57,7 +57,7 @@ class UpdateCheckService
      *
      * @return array{checked: int, updated: int, errors: int}
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function run(int $batchSize = 50, bool $force = false): array
     {
@@ -91,7 +91,7 @@ class UpdateCheckService
      *
      * @throws Throwable On a fetch/HTTP failure or downstream write failure.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function checkOne(object $row): bool
     {
@@ -145,7 +145,7 @@ class UpdateCheckService
      *
      * @return object[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function getCandidates(int $batchSize, bool $force): array
     {
@@ -178,7 +178,7 @@ class UpdateCheckService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function stampCheck(int $extensionId, ?string $error): void
     {

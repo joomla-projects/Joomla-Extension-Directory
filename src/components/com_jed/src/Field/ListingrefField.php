@@ -24,7 +24,7 @@ use Jed\Component\Jed\Administrator\Field\ListingrefField as AdminListingrefFiel
  * copies of one control are two places for the same rule to be fixed in only one of them. There
  * is nothing site-specific about resolving a JED URL to a listing id.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ListingrefField extends AdminListingrefField
 {

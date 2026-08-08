@@ -29,14 +29,14 @@ use RuntimeException;
  * `#__jed_extensions_history` (inactive, `active = 0`) but writes to the live table
  * immediately, without waiting for a review.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ExtensionVersionUpdater
 {
     /**
      * @param DatabaseInterface $db The database connector object.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly DatabaseInterface $db)
     {
@@ -54,7 +54,7 @@ class ExtensionVersionUpdater
      *
      * @throws RuntimeException If the extension does not exist.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function applyUpdate(int $extensionId, string $newVersion, ?string $newDownloadUrl = null): int
     {

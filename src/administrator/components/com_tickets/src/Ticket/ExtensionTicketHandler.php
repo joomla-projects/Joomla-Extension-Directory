@@ -27,14 +27,14 @@ use Joomla\Database\DatabaseInterface;
  * {@see \Jed\Component\Jed\Administrator\Model\ExtensionModel::getCompareItems()}
  * already computes for the standalone compare layout.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class ExtensionTicketHandler implements TicketTypeHandlerInterface
 {
     /**
      * @param DatabaseInterface $db The database connector object.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly DatabaseInterface $db)
     {
@@ -43,7 +43,7 @@ final class ExtensionTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function type(): TicketType
     {
@@ -53,7 +53,7 @@ final class ExtensionTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getMasterData(int $linkedItemId): ?object
     {
@@ -77,7 +77,7 @@ final class ExtensionTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getMasterDataLayout(): string
     {
@@ -87,7 +87,7 @@ final class ExtensionTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getActions(int $linkedItemId, User $user): array
     {

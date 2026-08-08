@@ -29,7 +29,7 @@ use stdClass;
  * `#__contentitem_tag_map` (`P1-16`). One writer, one definition - the alternative was the same
  * 40 lines of JSON in two files, drifting apart on the first change.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ContentTypeHelper
 {
@@ -38,7 +38,7 @@ class ContentTypeHelper
      *
      * @var   string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const EXTENSION_TYPE_ALIAS = 'com_jed.extension';
 
@@ -49,7 +49,7 @@ class ContentTypeHelper
      *
      * @return  integer  The `type_id` of the row.
      *
-     * @since   4.1.0
+     * @since   4.0.0
      */
     public static function ensureExtensionContentType(DatabaseInterface $db): int
     {

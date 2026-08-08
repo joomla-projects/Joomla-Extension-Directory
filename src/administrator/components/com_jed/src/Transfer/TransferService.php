@@ -42,7 +42,7 @@ use RuntimeException;
  *    not strand a transfer.
  *  - One open transfer per extension.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class TransferService
 {
@@ -50,7 +50,7 @@ final class TransferService
      * How long a request stays open. 8.8.1 asks for 7-14 days; two weeks is the generous end,
      * because the recipient may be a person who checks that address rarely.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const EXPIRY_DAYS = 14;
 
@@ -63,7 +63,7 @@ final class TransferService
      * ceiling plus an attributable log is proportionate. Enumerating a useful number of
      * addresses at this rate is not practical.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const LOOKUP_LIMIT  = 10;
     public const LOOKUP_WINDOW = 24;
@@ -71,7 +71,7 @@ final class TransferService
     /**
      * @param DatabaseInterface $db The database driver.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly DatabaseInterface $db)
     {
@@ -92,7 +92,7 @@ final class TransferService
      *
      * @throws RuntimeException  Rate limit reached, or no usable account behind the address.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function findRecipient(string $email, int $byUserId, int $extensionId): User
     {
@@ -143,7 +143,7 @@ final class TransferService
      *
      * @throws RuntimeException  When the extension cannot be transferred right now.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function initiate(int $extensionId, User $recipient, int $initiatedBy): int
     {
@@ -219,7 +219,7 @@ final class TransferService
      *
      * @throws RuntimeException  Unknown, expired, already finished, or the wrong person.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function confirm(int $transferId, string $token, int $userId): TransferState
     {
@@ -294,7 +294,7 @@ final class TransferService
      *
      * @throws RuntimeException  When the reason is missing or the extension cannot be moved.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function force(int $extensionId, User $recipient, int $byUserId, string $reason): int
     {
@@ -371,7 +371,7 @@ final class TransferService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function cancel(int $transferId, int $byUserId, string $reason = ''): void
     {
@@ -392,7 +392,7 @@ final class TransferService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function expire(int $transferId): void
     {
@@ -414,7 +414,7 @@ final class TransferService
      *
      * @return int  How many were expired.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function expireOverdue(): int
     {
@@ -449,7 +449,7 @@ final class TransferService
      *
      * @return array|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getOpenTransfer(int $extensionId): ?array
     {
@@ -484,7 +484,7 @@ final class TransferService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function cancelOpenFor(int $extensionId, int $byUserId, string $reason): void
     {
@@ -504,7 +504,7 @@ final class TransferService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function applyOwnership(int $extensionId, int $fromUserId, int $toUserId): void
     {
@@ -548,7 +548,7 @@ final class TransferService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function resetAuditConsent(int $extensionId): void
     {
@@ -573,7 +573,7 @@ final class TransferService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function complete(int $transferId): void
     {
@@ -611,7 +611,7 @@ final class TransferService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function closeAs(int $transferId, TransferState $state, ?int $byUserId, string $reason): void
     {
@@ -644,7 +644,7 @@ final class TransferService
      *
      * @throws RuntimeException  When the ceiling is reached.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function assertLookupAllowed(int $userId): void
     {
@@ -677,7 +677,7 @@ final class TransferService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function logLookup(int $userId, string $email, bool $found, int $extensionId): void
     {
@@ -697,7 +697,7 @@ final class TransferService
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function newToken(): string
     {
@@ -715,7 +715,7 @@ final class TransferService
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function hashToken(string $token): string
     {
@@ -730,7 +730,7 @@ final class TransferService
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function confirmationLink(int $transferId, string $token): string
     {
@@ -750,7 +750,7 @@ final class TransferService
      *
      * @throws RuntimeException  When it does not exist.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function loadExtension(int $extensionId): array
     {
@@ -774,7 +774,7 @@ final class TransferService
      *
      * @return array|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function loadTransfer(int $transferId): ?array
     {
@@ -796,7 +796,7 @@ final class TransferService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function notifyBothParties(array $transfer, string $template, array $data): void
     {
@@ -822,7 +822,7 @@ final class TransferService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function notify(User $recipient, string $template, array $data): void
     {

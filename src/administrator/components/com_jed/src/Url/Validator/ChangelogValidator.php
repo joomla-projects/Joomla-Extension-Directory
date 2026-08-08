@@ -29,14 +29,14 @@ use Jed\Component\Jed\Administrator\Url\UrlValidatorInterface;
  * that is a perfectly good thing to do; it just is not the machine-readable format, so it is
  * reported as a notice rather than a success.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ChangelogValidator implements UrlValidatorInterface
 {
     /**
      * @param SafeHttpFetcher $fetcher The guarded fetcher.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(protected readonly SafeHttpFetcher $fetcher)
     {
@@ -48,7 +48,7 @@ class ChangelogValidator implements UrlValidatorInterface
      *
      * @return UrlCheckResult
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function validate(string $url, array $context = []): UrlCheckResult
     {

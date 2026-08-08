@@ -157,7 +157,7 @@ class JedHelper extends ContentHelper
      *
      * @return string  Rendered HTML, safe to output.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function renderMarkdown(?string $text): string
     {
@@ -200,7 +200,7 @@ class JedHelper extends ContentHelper
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function markdownToText(?string $text, int $length = 0): string
     {
@@ -224,7 +224,7 @@ class JedHelper extends ContentHelper
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function displayFieldValue(string $fieldname, mixed $value): string
     {
@@ -353,7 +353,7 @@ class JedHelper extends ContentHelper
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function displayTags(mixed $value): string
     {
@@ -431,7 +431,7 @@ class JedHelper extends ContentHelper
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function displayScalar(mixed $value): string
     {
@@ -471,7 +471,7 @@ class JedHelper extends ContentHelper
      *
      * @return string  The rendered value, or an empty string when there is nothing to show.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function stringifyValue(mixed $value): string
     {
@@ -545,7 +545,7 @@ class JedHelper extends ContentHelper
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function displayOptionList(mixed $value, array $options, bool $translate = true): string
     {
@@ -603,7 +603,7 @@ class JedHelper extends ContentHelper
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function displayUser(int $userId): string
     {
@@ -623,7 +623,7 @@ class JedHelper extends ContentHelper
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function displayCategory(int $catid): string
     {

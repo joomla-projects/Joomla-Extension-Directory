@@ -225,7 +225,7 @@ class ReviewTable extends Table
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function logModeration(array $before): void
     {
@@ -264,7 +264,7 @@ class ReviewTable extends Table
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function extensionName(): string
     {

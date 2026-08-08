@@ -32,21 +32,21 @@ use Joomla\Database\ParameterType;
  * those rows lose the attribution and keep the thread, because the requester of the ticket has a
  * conversation they are entitled to still have.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class TicketPrivacyService
 {
     /**
      * Delete the person's tickets and their messages.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const DELETE = 'delete';
 
     /**
      * Keep the threads, drop the attribution.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const ANONYMISE = 'anonymise';
 
@@ -55,7 +55,7 @@ final class TicketPrivacyService
      *
      * @var array<string, array{export: bool, handling: string, reason: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const IN_SCOPE = [
         '#__jed_tickets' => [
@@ -78,7 +78,7 @@ final class TicketPrivacyService
      *
      * @var array<string, string>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const OUT_OF_SCOPE = [
         '#__jed_ticket_categories'        => 'COM_TICKETS_PRIVACY_OUTOFSCOPE_CONFIGURATION',
@@ -89,7 +89,7 @@ final class TicketPrivacyService
     /**
      * @param DatabaseInterface $db The database driver.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly DatabaseInterface $db)
     {
@@ -102,7 +102,7 @@ final class TicketPrivacyService
      *
      * @return array<string, array<int, array<string, mixed>>>  Domain name => rows.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function collect(int $userId): array
     {
@@ -124,7 +124,7 @@ final class TicketPrivacyService
      *
      * @return array<string, int|string>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function remove(int $userId, string $handling = self::DELETE): array
     {
@@ -162,7 +162,7 @@ final class TicketPrivacyService
      *
      * @return array<int, array<string, mixed>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function tickets(int $userId): array
     {
@@ -201,7 +201,7 @@ final class TicketPrivacyService
      *
      * @return array<int, array<string, mixed>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function messages(int $userId): array
     {
@@ -227,7 +227,7 @@ final class TicketPrivacyService
      *
      * @return int[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function ownTicketIds(int $userId): array
     {
@@ -260,7 +260,7 @@ final class TicketPrivacyService
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function deleteTickets(array $ticketIds): int
     {
@@ -288,7 +288,7 @@ final class TicketPrivacyService
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function deleteMessagesOf(array $ticketIds): int
     {
@@ -315,7 +315,7 @@ final class TicketPrivacyService
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function update(string $table, array $columns, string $match, int $userId): int
     {
@@ -342,7 +342,7 @@ final class TicketPrivacyService
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function delete(string $table, string $column, int $userId): int
     {

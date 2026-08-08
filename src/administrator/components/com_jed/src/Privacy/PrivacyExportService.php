@@ -30,7 +30,7 @@ use Joomla\Database\ParameterType;
  * soft delete must not become a place where data quietly sits outside the export and deletion
  * path, and that is exactly where it would end up if these queries reused the browse conditions.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class PrivacyExportService
 {
@@ -43,7 +43,7 @@ final class PrivacyExportService
      *
      * @var array<string, string[]>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const WITHHELD = [
         '#__jed_extension_transfers' => ['from_token_hash', 'to_token_hash'],
@@ -54,14 +54,14 @@ final class PrivacyExportService
      *
      * @var array<string, string[]>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private array $columnCache = [];
 
     /**
      * @param DatabaseInterface $db The database driver.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly DatabaseInterface $db)
     {
@@ -74,7 +74,7 @@ final class PrivacyExportService
      *
      * @return array<string, array<int, array<string, mixed>>>  Domain name => rows.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function collect(int $userId): array
     {
@@ -109,7 +109,7 @@ final class PrivacyExportService
      *
      * @return array<int, array<string, mixed>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function extensions(int $userId): array
     {
@@ -137,7 +137,7 @@ final class PrivacyExportService
      *
      * @return array<int, array<string, mixed>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function revisions(int $userId): array
     {
@@ -165,7 +165,7 @@ final class PrivacyExportService
      *
      * @return array<int, array<string, mixed>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function maintainerRoles(int $userId): array
     {
@@ -197,7 +197,7 @@ final class PrivacyExportService
      *
      * @return array<int, array<string, mixed>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function media(int $userId): array
     {
@@ -243,7 +243,7 @@ final class PrivacyExportService
      *
      * @return array<int, array<string, mixed>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function reviews(int $userId): array
     {
@@ -273,7 +273,7 @@ final class PrivacyExportService
      *
      * @return array<int, array<string, mixed>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function reviewResponses(int $userId): array
     {
@@ -308,7 +308,7 @@ final class PrivacyExportService
      *
      * @return array<int, array<string, mixed>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function favourites(int $userId): array
     {
@@ -337,7 +337,7 @@ final class PrivacyExportService
      *
      * @return array<int, array<string, mixed>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function privileges(int $userId): array
     {
@@ -357,7 +357,7 @@ final class PrivacyExportService
      *
      * @return array<int, array<string, mixed>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function reviewBans(int $userId): array
     {
@@ -378,7 +378,7 @@ final class PrivacyExportService
      *
      * @return array<int, array<string, mixed>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function transfers(int $userId): array
     {
@@ -408,7 +408,7 @@ final class PrivacyExportService
      *
      * @return array<int, array<string, mixed>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function urlChecks(int $userId): array
     {
@@ -430,7 +430,7 @@ final class PrivacyExportService
      *
      * @return array<int, array<string, mixed>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function rows($query, string $table): array
     {
@@ -454,7 +454,7 @@ final class PrivacyExportService
      *
      * @return string[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function columnsOf(string $table): array
     {
@@ -473,7 +473,7 @@ final class PrivacyExportService
      *
      * @return array<int, array<string, mixed>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function annotateRelationship(array $rows, int $userId): array
     {

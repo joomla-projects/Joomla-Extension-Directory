@@ -28,14 +28,14 @@ use Jed\Component\Jed\Administrator\Url\UrlValidatorInterface;
  * The URL is otherwise treated as an ordinary web address: no API calls, no tokens, no
  * host-specific knowledge beyond recognising the well-known forges for the wording.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class GitValidator implements UrlValidatorInterface
 {
     /**
      * @param SafeHttpFetcher $fetcher The guarded fetcher.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(protected readonly SafeHttpFetcher $fetcher)
     {
@@ -47,7 +47,7 @@ class GitValidator implements UrlValidatorInterface
      *
      * @return UrlCheckResult
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function validate(string $url, array $context = []): UrlCheckResult
     {

@@ -33,7 +33,7 @@ namespace Jed\Component\Jed\Administrator\Url;
  * IPv4-mapped IPv6, redirect chains - and that table is only meaningful against a function that
  * can be called directly.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class IpGuard
 {
@@ -44,7 +44,7 @@ final class IpGuard
      * the public internet" is the question, not "is it RFC1918". `100.64/10` is carrier-grade
      * NAT, `192.0.0/24` is IETF protocol assignments, `198.18/15` is benchmarking.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const BLOCKED_V4 = [
         '0.0.0.0/8',          // "this network"
@@ -71,7 +71,7 @@ final class IpGuard
      * see {@see self::isBlocked()}. Blocking the whole mapped range would be simpler and wrong:
      * `::ffff:93.184.216.34` is a legitimate way to reach a public address.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const BLOCKED_V6 = [
         '::/128',             // unspecified
@@ -94,7 +94,7 @@ final class IpGuard
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function isBlocked(string $ip): bool
     {
@@ -126,7 +126,7 @@ final class IpGuard
      *
      * @return string|null  The IPv4 address, or null when this is not a mapped address.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function unwrapMappedIpv4(string $ip): ?string
     {
@@ -152,7 +152,7 @@ final class IpGuard
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function isBlockedV4(string $ip): bool
     {
@@ -179,7 +179,7 @@ final class IpGuard
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function isBlockedV6(string $ip): bool
     {
@@ -212,7 +212,7 @@ final class IpGuard
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function sharesPrefix(string $a, string $b, int $bits): bool
     {
@@ -247,7 +247,7 @@ final class IpGuard
      *                                                        because "some answers were blocked"
      *                                                        is not the same as "none resolved".
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function resolve(string $host): array
     {

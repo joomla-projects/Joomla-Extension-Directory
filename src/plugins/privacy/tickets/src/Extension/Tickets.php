@@ -31,7 +31,7 @@ use Throwable;
  * separate component with a separate install: a JED without `com_tickets` must not end up with a
  * privacy plugin querying tables that are not there.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class Tickets extends PrivacyPlugin implements SubscriberInterface
 {
@@ -40,7 +40,7 @@ final class Tickets extends PrivacyPlugin implements SubscriberInterface
      *
      * @return array
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function getSubscribedEvents(): array
     {
@@ -58,7 +58,7 @@ final class Tickets extends PrivacyPlugin implements SubscriberInterface
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function onPrivacyCollectAdminCapabilities(CollectCapabilitiesEvent $event): void
     {
@@ -94,7 +94,7 @@ final class Tickets extends PrivacyPlugin implements SubscriberInterface
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function onPrivacyExportRequest(ExportRequestEvent $event): void
     {
@@ -126,7 +126,7 @@ final class Tickets extends PrivacyPlugin implements SubscriberInterface
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function onPrivacyRemoveData(RemoveDataEvent $event): void
     {

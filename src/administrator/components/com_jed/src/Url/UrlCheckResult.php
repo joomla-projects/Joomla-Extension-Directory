@@ -29,7 +29,7 @@ namespace Jed\Component\Jed\Administrator\Url;
  * geoblocking, a 403 for an unusual user agent, a blanket block on datacentre address space. A
  * hard failure would lock developers out of their own form over somebody else's WAF rule.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class UrlCheckResult
 {
@@ -44,7 +44,7 @@ final class UrlCheckResult
      * @param int                  $status  The HTTP status observed, 0 when there was none.
      * @param string|null          $detail  A short free-text detail, e.g. the version found.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         public readonly string $state,
@@ -63,7 +63,7 @@ final class UrlCheckResult
      *
      * @return self
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function ok(string $message, array $params = [], int $status = 0, ?string $detail = null): self
     {
@@ -77,7 +77,7 @@ final class UrlCheckResult
      *
      * @return self
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function notice(string $message, array $params = [], int $status = 0): self
     {
@@ -90,7 +90,7 @@ final class UrlCheckResult
      *
      * @return self
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function error(string $message, array $params = []): self
     {

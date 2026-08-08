@@ -93,7 +93,7 @@ class Com_JedInstallerScript
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function seedBlockReasons(): void
     {
@@ -158,7 +158,7 @@ class Com_JedInstallerScript
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function ensureExtensionContentType(): void
     {

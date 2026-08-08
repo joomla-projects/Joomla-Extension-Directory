@@ -39,7 +39,7 @@ use Throwable;
  * stricter reading of an erasure claim. Anonymise is the default; either way, the aggregates the
  * JED shows stay correct.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class Jed extends PrivacyPlugin implements SubscriberInterface
 {
@@ -48,7 +48,7 @@ final class Jed extends PrivacyPlugin implements SubscriberInterface
      *
      * @return array
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function getSubscribedEvents(): array
     {
@@ -71,7 +71,7 @@ final class Jed extends PrivacyPlugin implements SubscriberInterface
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function onPrivacyCollectAdminCapabilities(CollectCapabilitiesEvent $event): void
     {
@@ -118,7 +118,7 @@ final class Jed extends PrivacyPlugin implements SubscriberInterface
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function onPrivacyExportRequest(ExportRequestEvent $event): void
     {
@@ -154,7 +154,7 @@ final class Jed extends PrivacyPlugin implements SubscriberInterface
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function onPrivacyRemoveData(RemoveDataEvent $event): void
     {

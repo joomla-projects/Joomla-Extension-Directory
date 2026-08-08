@@ -33,14 +33,14 @@ use RuntimeException;
  * The column set is the whole of what is public. `internal_notes`, `signals`, `contact_note`, the
  * assignee and every report are absent, and not because a template chooses not to print them.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class CaseModel extends ItemModel
 {
     /**
      * @param array $config Configuration settings.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function populateState(): void
     {
@@ -54,7 +54,7 @@ class CaseModel extends ItemModel
      *
      * @throws RuntimeException  No such public case.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getItem($pk = null): object
     {

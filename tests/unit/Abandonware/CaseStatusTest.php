@@ -27,7 +27,7 @@ use PHPUnit\Framework\TestCase;
  * timestamp is a record of something that happened. This covers the other half: that the graph
  * itself offers no shortcut.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class CaseStatusTest extends TestCase
 {
@@ -36,7 +36,7 @@ final class CaseStatusTest extends TestCase
      *
      * @return array<string, array{0: CaseStatus, 1: CaseStatus}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function legalMoves(): array
     {
@@ -68,7 +68,7 @@ final class CaseStatusTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testLegalMovesAreAllowed(CaseStatus $from, CaseStatus $to): void
     {
@@ -80,7 +80,7 @@ final class CaseStatusTest extends TestCase
      *
      * @return array<string, array{0: CaseStatus, 1: CaseStatus}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function illegalMoves(): array
     {
@@ -107,7 +107,7 @@ final class CaseStatusTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testIllegalMovesAreRefused(CaseStatus $from, CaseStatus $to): void
     {
@@ -122,7 +122,7 @@ final class CaseStatusTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testEveryPathToAbandonedPassesThroughOwnerContacted(): void
     {
@@ -165,7 +165,7 @@ final class CaseStatusTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testOpenSetMatchesTheSchemaGeneratedColumn(): void
     {
@@ -194,7 +194,7 @@ final class CaseStatusTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testAbandonedStillCountsAsOpen(): void
     {
@@ -209,7 +209,7 @@ final class CaseStatusTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testDismissiveResolutionsCloseAsDismissed(): void
     {
@@ -227,7 +227,7 @@ final class CaseStatusTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testEveryResolutionIsReachableFromAbandoned(): void
     {
@@ -244,7 +244,7 @@ final class CaseStatusTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testEveryLabelHasALanguageString(): void
     {

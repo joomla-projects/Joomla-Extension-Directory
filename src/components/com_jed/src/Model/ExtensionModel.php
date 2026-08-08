@@ -179,7 +179,7 @@ class ExtensionModel extends ItemModel
      *
      * @return array<int, array{key: string, url: string, label: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function getOutboundLinks(object $item): array
     {
@@ -222,7 +222,7 @@ class ExtensionModel extends ItemModel
      *
      * @return array<int, object>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getScreenshots(int $extensionId): array
     {
@@ -259,7 +259,7 @@ class ExtensionModel extends ItemModel
      *
      * @return array<int, object>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getMoreByDeveloper(int $ownerId, int $excludeId, int $limit = 4): array
     {
@@ -333,7 +333,7 @@ class ExtensionModel extends ItemModel
      *
      * @return object{parent: ?object, variants: array, children: array, childCount: int}
      *
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getLinkedExtensions(int $extensionId): object
@@ -474,7 +474,7 @@ class ExtensionModel extends ItemModel
      *
      * @return int|null The user's existing review id, or null if they don't have one.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getUserReviewId(int $extension_id, int $user_id): ?int
     {
@@ -587,7 +587,7 @@ class ExtensionModel extends ItemModel
      *
      * @throws Exception If the listing does not exist or is soft-deleted.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function setOnlineState(int $extensionId, int $online): void
     {
@@ -637,7 +637,7 @@ class ExtensionModel extends ItemModel
      *
      * @return bool  False when there is no open invitation for this user.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function respondToMaintainerInvitation(int $extensionId, int $userId, bool $accept): bool
     {
@@ -694,7 +694,7 @@ class ExtensionModel extends ItemModel
      *
      * @return array
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getMaintainerInvitations(int $userId): array
     {

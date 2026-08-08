@@ -25,49 +25,49 @@ namespace Jed\Component\Jed\Administrator\Listing;
  * The verdict convention is the one `P1-02` settled: `approved_time` is null while nobody has
  * decided, and set once someone has - together with `approved` = 1 for a yes and 0 for a no.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 enum ListingStatus: string
 {
     /**
      * Submitted, nobody has looked at it yet.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case AWAITING_APPROVAL = 'awaiting-approval';
 
     /**
      * Reviewed and turned down. Still the developer's to revise and resubmit.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case REJECTED = 'rejected';
 
     /**
      * Approved and public.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case ONLINE = 'online';
 
     /**
      * Approved, but the developer has taken it offline.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case OFFLINE = 'offline';
 
     /**
      * Blocked by the JED team.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case BLOCKED = 'blocked';
 
     /**
      * Soft-deleted.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case DELETED = 'deleted';
 
@@ -76,7 +76,7 @@ enum ListingStatus: string
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function label(): string
     {
@@ -88,7 +88,7 @@ enum ListingStatus: string
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function badgeClass(): string
     {
@@ -114,7 +114,7 @@ enum ListingStatus: string
      *
      * @return ListingStatus
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function forItem(object $item): self
     {

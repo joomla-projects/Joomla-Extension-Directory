@@ -149,7 +149,7 @@ class ReviewModel extends ItemModel
      * @param int $id The review id
      *
      * @return bool
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function softDeleteOwn(int $id): bool
@@ -176,7 +176,7 @@ class ReviewModel extends ItemModel
      * @param int $id The review id
      *
      * @return bool
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function deleteOwnResponse(int $id): bool
@@ -204,7 +204,7 @@ class ReviewModel extends ItemModel
      * @param string $text The response text
      *
      * @return bool
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function saveResponse(int $id, string $text): bool

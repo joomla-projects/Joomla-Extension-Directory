@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
  * The parser is pure, so this is the one part of JED that can be tested properly without an
  * application fixture - which `P1-33` still owes the rest of the suite.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class VideoParserTest extends TestCase
 {
@@ -33,7 +33,7 @@ final class VideoParserTest extends TestCase
      *
      * @return array<string, array{0: string, 1: string, 2: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function convertible(): array
     {
@@ -99,7 +99,7 @@ final class VideoParserTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testConvertsKnownPatterns(string $raw, string $provider, string $id): void
     {
@@ -115,7 +115,7 @@ final class VideoParserTest extends TestCase
      *
      * @return array<string, array{0: string|null}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function notConvertible(): array
     {
@@ -165,7 +165,7 @@ final class VideoParserTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testRefusesWhatIsNotAVideo(?string $raw): void
     {
@@ -180,7 +180,7 @@ final class VideoParserTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testBuildsWatchAndEmbedUrls(): void
     {
@@ -208,7 +208,7 @@ final class VideoParserTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testIsIdempotentThroughItsOwnOutput(): void
     {

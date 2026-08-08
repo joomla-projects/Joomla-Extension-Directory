@@ -26,7 +26,7 @@ use Joomla\Database\ParameterType;
 /**
  * Controller for single-extension AJAX actions.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ExtensionController extends BaseController
 {
@@ -44,7 +44,7 @@ class ExtensionController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function favoriteState(): void
     {
@@ -90,7 +90,7 @@ class ExtensionController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function addFavorite(): void
     {
@@ -135,7 +135,7 @@ class ExtensionController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function setOnlineState(): void
     {
@@ -170,7 +170,7 @@ class ExtensionController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function respondToInvitation(): void
     {
@@ -218,7 +218,7 @@ class ExtensionController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function sendJson(array $result): void
     {

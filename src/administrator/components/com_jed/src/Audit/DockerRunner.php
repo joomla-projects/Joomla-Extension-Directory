@@ -21,7 +21,7 @@ namespace Jed\Component\Jed\Administrator\Audit;
  * (jorobo, phpstan, a Joomla core copy) is baked into the image at build time, so
  * no runtime network access is required or permitted.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class DockerRunner
 {
@@ -30,7 +30,7 @@ class DockerRunner
      * @param string        $dockerBinary   Path to the docker binary.
      * @param string        $image          The audit image tag.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         private readonly ProcessRunner $processRunner,
@@ -48,7 +48,7 @@ class DockerRunner
      *
      * @return ProcessResult
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function runAuditContainer(string $inputDir, string $outputDir, int $timeoutSeconds = 900): ProcessResult
     {

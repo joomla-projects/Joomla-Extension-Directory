@@ -173,7 +173,7 @@ class ExtensionHistoryTable extends Table
      *
      * @throws UnexpectedValueException  When a link names no listing, or names this one.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function normaliseLinks(): void
     {
@@ -202,7 +202,7 @@ class ExtensionHistoryTable extends Table
      *
      * @throws UnexpectedValueException  When the value is not a usable video.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function normaliseVideo(): void
     {

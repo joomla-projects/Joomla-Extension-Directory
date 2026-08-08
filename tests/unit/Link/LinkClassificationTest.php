@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
  *
  * Both classes are pure, so this can be a table rather than a simulation.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class LinkClassificationTest extends TestCase
 {
@@ -33,7 +33,7 @@ final class LinkClassificationTest extends TestCase
      *
      * @return array<string, array{0: string, 1: LinkStatus}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function outcomes(): array
     {
@@ -87,7 +87,7 @@ final class LinkClassificationTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testClassifiesEveryOutcome(string $message, LinkStatus $expected): void
     {
@@ -103,7 +103,7 @@ final class LinkClassificationTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testASuccessIsAlwaysOk(): void
     {
@@ -116,7 +116,7 @@ final class LinkClassificationTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testOnlyHardAndSemanticCount(): void
     {
@@ -134,7 +134,7 @@ final class LinkClassificationTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testEveryFieldIsFullyDescribed(): void
     {
@@ -156,7 +156,7 @@ final class LinkClassificationTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testWeightsTurnIntoRunCounts(): void
     {
@@ -194,7 +194,7 @@ final class LinkClassificationTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testAnUncheckedColumnNeverEscalates(): void
     {

@@ -33,27 +33,27 @@ class DashboardModel extends ItemModel
     /**
      * Rows per list, per page.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const int LIST_LIMIT = 10;
 
     /**
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected int $reviewsTotal = 0;
 
     /**
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected int $extensionsTotal = 0;
 
     /**
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected int $ticketsTotal = 0;
 
     /**
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected int $favoritesTotal = 0;
 
@@ -123,7 +123,7 @@ class DashboardModel extends ItemModel
 
     /**
      * @return Pagination
-     * @since  4.1.0
+     * @since  4.0.0
      */
     public function getReviewsPagination(): Pagination
     {
@@ -146,7 +146,7 @@ class DashboardModel extends ItemModel
      *
      * @return array
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getMaintainerInvitations(): array
     {
@@ -183,7 +183,7 @@ class DashboardModel extends ItemModel
      *
      * @return array
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getTransfers(): array
     {
@@ -243,7 +243,7 @@ class DashboardModel extends ItemModel
      *
      * @return array
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getTransferableExtensions(): array
     {
@@ -307,7 +307,7 @@ class DashboardModel extends ItemModel
 
     /**
      * @return Pagination
-     * @since  4.1.0
+     * @since  4.0.0
      */
     public function getExtensionsPagination(): Pagination
     {
@@ -351,7 +351,7 @@ class DashboardModel extends ItemModel
 
     /**
      * @return Pagination
-     * @since  4.1.0
+     * @since  4.0.0
      */
     public function getTicketsPagination(): Pagination
     {
@@ -362,7 +362,7 @@ class DashboardModel extends ItemModel
      * Returns the current user's bookmarked extensions, newest first by default.
      *
      * @return array
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws \Exception
      */
     public function getFavorites(): array
@@ -390,7 +390,7 @@ class DashboardModel extends ItemModel
 
     /**
      * @return Pagination
-     * @since  4.1.0
+     * @since  4.0.0
      */
     public function getFavoritesPagination(): Pagination
     {
@@ -401,7 +401,7 @@ class DashboardModel extends ItemModel
      * @param string $prefix The pagination request-variable prefix for this list.
      *
      * @return int
-     * @since  4.1.0
+     * @since  4.0.0
      */
     private function getLimitStart(string $prefix): int
     {
@@ -415,7 +415,7 @@ class DashboardModel extends ItemModel
      * @param QueryInterface $query The query to count.
      *
      * @return int
-     * @since  4.1.0
+     * @since  4.0.0
      */
     private function countTotal(QueryInterface $query): int
     {

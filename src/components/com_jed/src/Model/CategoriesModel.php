@@ -76,7 +76,7 @@ class CategoriesModel extends ListModel
      *
      * @return array<int, int>  Category id => number of listings.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function countVisiblePerCategory(): array
     {

@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
  * form is submitted. `P1-08` makes not letting the two drift apart a requirement, and this test
  * is what holds the shared definition still.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class UrlFormatTest extends TestCase
 {
@@ -28,7 +28,7 @@ final class UrlFormatTest extends TestCase
      *
      * @return array<string, array{0: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function acceptable(): array
     {
@@ -54,7 +54,7 @@ final class UrlFormatTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testAcceptsUsableUrls(string $url): void
     {
@@ -66,7 +66,7 @@ final class UrlFormatTest extends TestCase
      *
      * @return array<string, array{0: string|null, 1: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function rejected(): array
     {
@@ -118,7 +118,7 @@ final class UrlFormatTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testRejectsWithTheRightReason(string $url, string $expected): void
     {
@@ -140,7 +140,7 @@ final class UrlFormatTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testEmptyIsOnlyAnErrorWhenRequired(): void
     {
@@ -155,7 +155,7 @@ final class UrlFormatTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testRefusesWhatTheColumnCannotHold(): void
     {
@@ -172,7 +172,7 @@ final class UrlFormatTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testToleratesSurroundingWhitespace(): void
     {
@@ -184,7 +184,7 @@ final class UrlFormatTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testSuggestsRepairsWithoutApplyingThem(): void
     {
@@ -215,7 +215,7 @@ final class UrlFormatTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testPublishesItsRulesToTheClient(): void
     {

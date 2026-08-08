@@ -28,7 +28,7 @@ use Joomla\Registry\Registry;
  * The submissions behind the cases. Backend only - this is the one view that shows who reported
  * what, and it is why the public list reads the case table instead.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
@@ -45,7 +45,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function display($tpl = null): void
     {
@@ -67,7 +67,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function addToolbar(): void
     {

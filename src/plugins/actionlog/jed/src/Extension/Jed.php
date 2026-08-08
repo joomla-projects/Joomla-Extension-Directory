@@ -40,7 +40,7 @@ use Joomla\Event\SubscriberInterface;
  * loaded on requests where `com_jed` may be disabled or half-installed, and a class constant
  * referencing a component class would turn that into a fatal error while loading the plugin.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class Jed extends ActionLogPlugin implements SubscriberInterface
 {
@@ -53,7 +53,7 @@ final class Jed extends ActionLogPlugin implements SubscriberInterface
      *
      * @var array<string, string>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const MESSAGES = [
         'extension.approve'  => 'PLG_ACTIONLOG_JED_EXTENSION_APPROVE',
@@ -90,7 +90,7 @@ final class Jed extends ActionLogPlugin implements SubscriberInterface
      *
      * @var array<string, string>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const ITEM_LINKS = [
         'com_jed.extension'  => 'index.php?option=com_jed&task=extension.edit&id=%d',
@@ -104,14 +104,14 @@ final class Jed extends ActionLogPlugin implements SubscriberInterface
      *
      * @var boolean
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected $autoloadLanguage = true;
 
     /**
      * @return array<string, string>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function getSubscribedEvents(): array
     {
@@ -125,7 +125,7 @@ final class Jed extends ActionLogPlugin implements SubscriberInterface
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function onJedAdministrativeDecision(EventInterface $event): void
     {

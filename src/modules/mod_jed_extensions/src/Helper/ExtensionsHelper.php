@@ -37,7 +37,7 @@ use Joomla\Registry\Registry;
  * visibility rule ({@see JedHelper::getExtensionVisibilityCondition()}), which are the two things
  * that must never disagree with the pages.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ExtensionsHelper
 {
@@ -48,7 +48,7 @@ class ExtensionsHelper
      *
      * @return object[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getExtensions(Registry $params): array
     {

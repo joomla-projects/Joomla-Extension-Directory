@@ -26,14 +26,14 @@ use Joomla\Database\DatabaseInterface;
  * resolves site-side services through the container across the admin/site
  * boundary, so a plain static factory keeps this callable from both.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class TicketTypeHandlerRegistry
 {
     /**
      * @var array<int, TicketTypeHandlerInterface>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private array $handlers = [];
 
@@ -44,7 +44,7 @@ final class TicketTypeHandlerRegistry
      *
      * @return self
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function createDefault(DatabaseInterface $db): self
     {
@@ -63,7 +63,7 @@ final class TicketTypeHandlerRegistry
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function register(TicketTypeHandlerInterface $handler): void
     {
@@ -78,7 +78,7 @@ final class TicketTypeHandlerRegistry
      *
      * @return TicketTypeHandlerInterface
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function get(TicketType $type): TicketTypeHandlerInterface
     {

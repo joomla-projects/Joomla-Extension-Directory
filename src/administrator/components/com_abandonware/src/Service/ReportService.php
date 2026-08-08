@@ -42,7 +42,7 @@ use RuntimeException;
  *  - **The address is a hash.** Same call as `P1-12`'s hit log: enough to spot a flood, not
  *    personal data for `P1-18` to export and erase.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ReportService
 {
@@ -53,7 +53,7 @@ class ReportService
      * legitimately files five in an afternoon, and somebody working through a competitor's
      * catalogue would.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const RATE_LIMIT         = 5;
     public const RATE_WINDOW_HOURS  = 24;
@@ -62,7 +62,7 @@ class ReportService
      * @param DatabaseInterface $db      The database driver.
      * @param CaseService       $cases   The case object a report feeds.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         private readonly DatabaseInterface $db,
@@ -79,7 +79,7 @@ class ReportService
      *
      * @throws RuntimeException  Not logged in, not permitted, banned, or over the limit.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function assertMayReport(User $user): void
     {
@@ -123,7 +123,7 @@ class ReportService
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function hasReported(int $userId, int $extensionId, int $caseId): bool
     {
@@ -159,7 +159,7 @@ class ReportService
      *
      * @throws RuntimeException  Consent withheld, or the reporter may not report.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function submit(array $data, User $user): object
     {
@@ -236,7 +236,7 @@ class ReportService
      *
      * @return bool  Whether it exists and has not been soft-deleted.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function listingExists(int $extensionId): bool
     {
@@ -263,7 +263,7 @@ class ReportService
      *
      * @return string|null  The raw hash, or null if there was no address.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function hashAddress(string $ip): ?string
     {

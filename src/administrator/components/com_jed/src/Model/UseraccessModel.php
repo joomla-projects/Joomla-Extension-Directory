@@ -33,7 +33,7 @@ use RuntimeException;
  * (`P1-05`), so a list of existing rows would only ever show people who had already been dealt
  * with. The columns are read with COALESCE so the list shows the effective privilege, not NULL.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class UseraccessModel extends ListModel
 {
@@ -42,7 +42,7 @@ class UseraccessModel extends ListModel
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct($config = [])
     {
@@ -68,7 +68,7 @@ class UseraccessModel extends ListModel
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function populateState($ordering = 'u.name', $direction = 'ASC'): void
     {
@@ -81,7 +81,7 @@ class UseraccessModel extends ListModel
     /**
      * @return QueryInterface
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function getListQuery(): QueryInterface
     {
@@ -185,7 +185,7 @@ class UseraccessModel extends ListModel
      *
      * @throws RuntimeException  When the reason is missing or the user does not exist.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function applyDecision(int $userId, array $columns, string $reason): void
     {
@@ -268,7 +268,7 @@ class UseraccessModel extends ListModel
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function logDecision(int $userId, string $name, array $before, array $columns, string $reason): void
     {
@@ -355,7 +355,7 @@ class UseraccessModel extends ListModel
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function banPeriod(array $columns): string
     {

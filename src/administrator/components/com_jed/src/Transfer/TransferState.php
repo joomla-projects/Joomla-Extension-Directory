@@ -21,49 +21,49 @@ namespace Jed\Component\Jed\Administrator\Transfer;
  * a transfer is the kind of record somebody reads in a database client while working out what
  * happened to a listing.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 enum TransferState: string
 {
     /**
      * Requested, nobody has confirmed.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case PENDING = 'pending';
 
     /**
      * The current owner has confirmed; the recipient has not.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case FROM_CONFIRMED = 'from_confirmed';
 
     /**
      * The recipient has confirmed; the current owner has not.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case TO_CONFIRMED = 'to_confirmed';
 
     /**
      * Both confirmed; ownership has moved.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case COMPLETED = 'completed';
 
     /**
      * Nobody finished in time.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case EXPIRED = 'expired';
 
     /**
      * Called off by either party or by the JED team.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case CANCELLED = 'cancelled';
 
@@ -72,7 +72,7 @@ enum TransferState: string
      * hatch (8.8.1). Recorded as its own state rather than as `completed`, because how a
      * listing changed hands is exactly what a later reader needs to know.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     case FORCED = 'forced';
 
@@ -81,7 +81,7 @@ enum TransferState: string
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function isOpen(): bool
     {
@@ -98,7 +98,7 @@ enum TransferState: string
      *
      * @return TransferState
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function afterConfirmationBy(bool $isRecipient): self
     {

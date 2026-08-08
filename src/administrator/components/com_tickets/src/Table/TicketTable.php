@@ -41,7 +41,7 @@ class TicketTable extends Table
      *
      * @var string[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const SETTLED_STATUSES = ['3', '4'];
 
@@ -183,7 +183,7 @@ class TicketTable extends Table
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function logTicketDecisions(array $before): void
     {
@@ -241,7 +241,7 @@ class TicketTable extends Table
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function userName(int $userId): string
     {
@@ -268,7 +268,7 @@ class TicketTable extends Table
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function statusLabel(string $status): string
     {

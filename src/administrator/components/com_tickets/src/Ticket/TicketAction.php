@@ -21,7 +21,7 @@ namespace Jed\Component\Tickets\Administrator\Ticket;
  * "Delete". Rendered as its own small mini-form (layouts/ticket/ticket/action_button.php)
  * so each action's extra hidden fields stay isolated from the others.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class TicketAction
 {
@@ -37,7 +37,7 @@ final class TicketAction
      * @param string      $option         The component the task belongs to (e.g. "com_jed") - ticket
      *                                    actions can span multiple components, not just com_tickets.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         public readonly string $label,

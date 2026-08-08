@@ -39,7 +39,7 @@ trait ExtensionUtilities
     /**
      * Filename extensions accepted for an uploaded extension package.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const PACKAGE_EXTENSIONS = ['zip', 'tar', 'gz', 'tgz', 'bz2'];
 
@@ -297,7 +297,7 @@ trait ExtensionUtilities
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function logMaintainerChanges(string $action, int $extensionId, string $name, array $userIds): void
     {
@@ -340,7 +340,7 @@ trait ExtensionUtilities
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function storeTags(int $extensionId, array $tags): void
     {
@@ -376,7 +376,7 @@ trait ExtensionUtilities
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     /**
      * Promote a submission straight to live when its owner is trusted.
@@ -397,7 +397,7 @@ trait ExtensionUtilities
      *
      * @return bool  Whether it was approved automatically.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function autoApproveIfTrusted(int $extensionId, int $ownerId): bool
     {
@@ -546,7 +546,7 @@ trait ExtensionUtilities
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function deleteStoredUploads(array $paths, bool $isImage): void
     {
@@ -584,7 +584,7 @@ trait ExtensionUtilities
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function purgeExtensionUploads(int $extensionId): void
     {

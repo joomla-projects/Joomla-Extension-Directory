@@ -29,7 +29,7 @@ use Joomla\Database\QueryInterface;
  * be a list of history with today's work somewhere inside it, and on a catalogue this size the
  * history wins on volume within a year.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class CasesModel extends ListModel
 {
@@ -38,7 +38,7 @@ class CasesModel extends ListModel
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct($config = [])
     {
@@ -68,7 +68,7 @@ class CasesModel extends ListModel
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function populateState($ordering = 'a.created', $direction = 'DESC'): void
     {
@@ -88,7 +88,7 @@ class CasesModel extends ListModel
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function getStoreId($id = ''): string
     {
@@ -103,7 +103,7 @@ class CasesModel extends ListModel
     /**
      * @return QueryInterface
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function getListQuery(): QueryInterface
     {

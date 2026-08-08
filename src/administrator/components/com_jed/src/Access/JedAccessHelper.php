@@ -35,7 +35,7 @@ use RuntimeException;
  *    `banned_until` in the past is not a ban. Making that depend on a cleanup job would leave
  *    people banned whenever the job failed - the wrong way round for something to fail.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class JedAccessHelper
 {
@@ -47,7 +47,7 @@ final class JedAccessHelper
      *
      * @var array<int, array|null>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static array $cache = [];
 
@@ -59,7 +59,7 @@ final class JedAccessHelper
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function may(int $userId, Privilege $privilege): bool
     {
@@ -97,7 +97,7 @@ final class JedAccessHelper
      *
      * @throws RuntimeException  When the privilege is not held.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function assertMay(int $userId, Privilege $privilege): void
     {
@@ -134,7 +134,7 @@ final class JedAccessHelper
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function isTrusted(int $userId, bool $forReviews = false): bool
     {
@@ -163,7 +163,7 @@ final class JedAccessHelper
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function isBarredFromReviewing(int $userId, int $extensionId): bool
     {
@@ -212,7 +212,7 @@ final class JedAccessHelper
      *
      * @throws RuntimeException  When they may not.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function assertMayReview(int $userId, int $extensionId): void
     {
@@ -233,7 +233,7 @@ final class JedAccessHelper
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function isSuspectAddress(string $ip): bool
     {
@@ -262,7 +262,7 @@ final class JedAccessHelper
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function clearCache(): void
     {
@@ -280,7 +280,7 @@ final class JedAccessHelper
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function banIsInForce(array $row): bool
     {
@@ -310,7 +310,7 @@ final class JedAccessHelper
      *
      * @return array|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function row(int $userId): ?array
     {
@@ -332,7 +332,7 @@ final class JedAccessHelper
     /**
      * @return DatabaseInterface
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function db(): DatabaseInterface
     {

@@ -61,7 +61,7 @@ use UnexpectedValueException;
  * rule enforced anywhere else is a rule some third path does not have. Client-side checks
  * never stand in for this (4.9).
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class LinkedExtensions
 {
@@ -73,7 +73,7 @@ final class LinkedExtensions
      *
      * @var int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const INLINE_LIMIT = 12;
 
@@ -99,7 +99,7 @@ final class LinkedExtensions
      *
      * @throws UnexpectedValueException  When a value was given but names no listing.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function resolve(DatabaseInterface $db, mixed $value, string $context): ?int
     {
@@ -175,7 +175,7 @@ final class LinkedExtensions
      *
      * @return string  The alias, or '' when there is no link.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function displayValue(DatabaseInterface $db, ?int $id): string
     {
@@ -218,7 +218,7 @@ final class LinkedExtensions
      *
      * @throws UnexpectedValueException  When the target may not be linked to.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function assertLinkable(DatabaseInterface $db, ?int $target, int $selfId, string $context): void
     {
@@ -260,7 +260,7 @@ final class LinkedExtensions
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function mayLinkVariant(int $selfId, int $target): bool
     {
@@ -284,7 +284,7 @@ final class LinkedExtensions
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function isOwnerOrMaintainer(int $extensionId): bool
     {

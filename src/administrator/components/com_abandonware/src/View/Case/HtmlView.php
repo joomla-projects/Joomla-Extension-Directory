@@ -29,7 +29,7 @@ use Joomla\Database\DatabaseInterface;
 /**
  * One case, with everything needed to decide what to do about it.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
@@ -42,14 +42,14 @@ class HtmlView extends BaseHtmlView
      *
      * @var CaseStatus
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public CaseStatus $status = CaseStatus::RECEIVED;
 
     /**
      * @var array<string, bool>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public array $can = [];
 
@@ -58,7 +58,7 @@ class HtmlView extends BaseHtmlView
      *
      * @var int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public int $graceDays = CaseService::DEFAULT_GRACE_DAYS;
 
@@ -69,7 +69,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function display($tpl = null): void
     {
@@ -112,7 +112,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function addToolbar(): void
     {

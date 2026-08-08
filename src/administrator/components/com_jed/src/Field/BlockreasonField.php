@@ -26,7 +26,7 @@ use Joomla\Database\DatabaseInterface;
  * the JED team adds or retires a reason without a release, and the same vocabulary keys the
  * knowledge base articles and the com_tickets mail templates.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class BlockreasonField extends ListField
 {
@@ -35,7 +35,7 @@ class BlockreasonField extends ListField
      *
      * @var string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected $type = 'Blockreason';
 
@@ -44,7 +44,7 @@ class BlockreasonField extends ListField
      *
      * @return array
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function getOptions(): array
     {

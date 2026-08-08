@@ -26,7 +26,7 @@ use PHPUnit\Framework\TestCase;
  * that an unaccepted invitation grants nothing, and that no access decision anywhere in com_jed
  * has drifted back to `created_by`. `P1-33` still owes this suite an application fixture.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class RoleRulesTest extends TestCase
 {
@@ -35,14 +35,14 @@ final class RoleRulesTest extends TestCase
      *
      * @var string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private string $helper = '';
 
     /**
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function setUp(): void
     {
@@ -58,7 +58,7 @@ final class RoleRulesTest extends TestCase
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function methodBody(string $signature): string
     {
@@ -76,7 +76,7 @@ final class RoleRulesTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testIsOwnerReadsTheOwnerColumn(): void
     {
@@ -95,7 +95,7 @@ final class RoleRulesTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testTheTwoRolesAreSeparateHelpers(): void
     {
@@ -108,7 +108,7 @@ final class RoleRulesTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testOnlyAcceptedMaintainersCount(): void
     {
@@ -129,7 +129,7 @@ final class RoleRulesTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testMaintainerStatesAreDistinct(): void
     {
@@ -151,7 +151,7 @@ final class RoleRulesTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testAuthorshipHelperRefusesExtensions(): void
     {
@@ -166,7 +166,7 @@ final class RoleRulesTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testCanUserEditRefusesExtensionsAndDoesNotFailOpen(): void
     {
@@ -188,7 +188,7 @@ final class RoleRulesTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testNoExtensionAccessDecisionUsesCreatedBy(): void
     {
@@ -247,7 +247,7 @@ final class RoleRulesTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testAccessXmlNamesTheJedActions(): void
     {
@@ -273,7 +273,7 @@ final class RoleRulesTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testTheJedActionsAreEnforced(): void
     {

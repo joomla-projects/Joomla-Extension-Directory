@@ -34,21 +34,21 @@ use Throwable;
  * **Nothing here may break a page.** A listing must render whether or not its view could be
  * counted, so every path out of this class swallows its errors. A statistic is not worth a 500.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class HitRecorder
 {
     /**
      * Where the per-session record of what has already been counted lives.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const SESSION_KEY = 'com_jed.hits.counted';
 
     /**
      * @param DatabaseInterface $db The database.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(protected readonly DatabaseInterface $db)
     {
@@ -62,7 +62,7 @@ class HitRecorder
      *
      * @return bool  True when a row was written.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function record(int $extensionId, HitType $type): bool
     {
@@ -129,7 +129,7 @@ class HitRecorder
      *
      * @return string|null  32 raw bytes, or null when there was no usable address.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function hashAddress(string $ip): ?string
     {
@@ -149,7 +149,7 @@ class HitRecorder
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function recentHits(string $ipHash): int
     {

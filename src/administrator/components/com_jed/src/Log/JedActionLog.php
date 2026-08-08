@@ -47,56 +47,56 @@ use Throwable;
  * do it. A plain {@see Event} with an argument bag keeps the coupling at the level of a string,
  * which is what an extension point is.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 abstract class JedActionLog
 {
     /**
      * The event both components raise and the plugin listens for.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const EVENT = 'onJedAdministrativeDecision';
 
     /**
      * A submission or a pending revision was approved. (`P1-02`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const EXTENSION_APPROVE = 'extension.approve';
 
     /**
      * A submission or a pending revision was turned down, with a reason code. (`P1-02`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const EXTENSION_REJECT = 'extension.reject';
 
     /**
      * A listing was blocked by the JED team, with a reason code. (`P1-01`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const EXTENSION_BLOCK = 'extension.block';
 
     /**
      * A block was lifted. (`P1-01`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const EXTENSION_UNBLOCK = 'extension.unblock';
 
     /**
      * A listing was soft-deleted. (`P1-01`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const EXTENSION_DELETE = 'extension.delete';
 
     /**
      * A soft delete was undone. (`P1-01`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const EXTENSION_RESTORE = 'extension.restore';
 
@@ -104,56 +104,56 @@ abstract class JedActionLog
      * The JED team moved a listing to another account without the old owner's confirmation.
      * (`P1-04`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const TRANSFER_FORCE = 'transfer.force';
 
     /**
      * Somebody was invited as a maintainer of a listing. (`P1-03`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const MAINTAINER_ADD = 'maintainer.add';
 
     /**
      * A maintainer was taken off a listing. (`P1-03`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const MAINTAINER_REMOVE = 'maintainer.remove';
 
     /**
      * A review was published by a moderator. (`P1-02`, `P1-06`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const REVIEW_PUBLISH = 'review.publish';
 
     /**
      * A review was taken off the site by a moderator. (`P1-02`, `P1-06`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const REVIEW_UNPUBLISH = 'review.unpublish';
 
     /**
      * A developer's response to a review was approved. (`P1-06`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const RESPONSE_PUBLISH = 'response.publish';
 
     /**
      * A developer's response was hidden from the listing. (`P1-06`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const RESPONSE_UNPUBLISH = 'response.unpublish';
 
     /**
      * A ticket was handed to somebody. (`com_tickets`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const TICKET_ASSIGN = 'ticket.assign';
 
@@ -164,35 +164,35 @@ abstract class JedActionLog
      * The inverse of {@see self::TICKET_ASSIGN}, and logged for the same reason: without it the
      * log would say a ticket is somebody's long after it stopped being theirs.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const TICKET_UNASSIGN = 'ticket.unassign';
 
     /**
      * A ticket was closed or resolved. (`com_tickets`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const TICKET_CLOSE = 'ticket.close';
 
     /**
      * A ticket that had been closed was reopened. (`com_tickets`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const TICKET_REOPEN = 'ticket.reopen';
 
     /**
      * Somebody was banned from taking part. (`P1-05`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const USER_BAN = 'user.ban';
 
     /**
      * A ban was lifted. (`P1-05`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const USER_UNBAN = 'user.unban';
 
@@ -200,35 +200,35 @@ abstract class JedActionLog
      * Trusted status - submissions or reviews going live without moderation - was granted.
      * (`P1-05`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const USER_TRUST_GRANT = 'user.trust.grant';
 
     /**
      * Trusted status was taken away again. (`P1-05`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const USER_TRUST_REVOKE = 'user.trust.revoke';
 
     /**
      * One or more individual privileges were changed on an account. (`P1-05`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const USER_PRIVILEGE = 'user.privilege';
 
     /**
      * A link that had been answering stopped answering. (`P1-09`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const LINK_BROKEN = 'link.broken';
 
     /**
      * A link that had been failing started answering again. (`P1-09`)
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const LINK_RECOVERED = 'link.recovered';
 
@@ -258,7 +258,7 @@ abstract class JedActionLog
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function record(string $action, string $context, int $itemId, array $data = []): void
     {
@@ -301,7 +301,7 @@ abstract class JedActionLog
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function loadWording(): void
     {

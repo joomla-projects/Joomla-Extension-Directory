@@ -36,7 +36,7 @@ use Jed\Component\Jed\Administrator\Url\UrlCheckResult;
  * answering 200 with a document Joomla cannot read means their users are silently not being
  * offered updates.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 enum LinkStatus: string
 {
@@ -51,7 +51,7 @@ enum LinkStatus: string
      * Matched on the message key rather than on the HTTP status, because the validators already
      * did that reasoning once and repeating it here is how the two drift apart.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const HARD_MESSAGES = [
         'COM_JED_URLCHECK_NOT_FOUND',
@@ -79,7 +79,7 @@ enum LinkStatus: string
      *
      * The message is still stored, so the observation is not lost. Only the counter ignores it.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const HEALTHY_MESSAGES = [
         // A download link that leads to a product or cart page. Extremely common and correct.
@@ -96,7 +96,7 @@ enum LinkStatus: string
     /**
      * Outcomes where the document was fetched but is not what the field promises.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const SEMANTIC_MESSAGES = [
         'COM_JED_URLCHECK_UPDATE_EMPTY',
@@ -120,7 +120,7 @@ enum LinkStatus: string
      *
      * @return self
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function fromResult(UrlCheckResult $result): self
     {
@@ -148,7 +148,7 @@ enum LinkStatus: string
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function counts(): bool
     {

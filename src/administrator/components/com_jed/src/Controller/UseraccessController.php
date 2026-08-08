@@ -27,7 +27,7 @@ use Throwable;
  * Guarded by `jed.user.ban` throughout (`P1-03`): suspending somebody's ability to take part is
  * not something everyone who may edit a listing should be able to do.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class UseraccessController extends BaseController
 {
@@ -40,7 +40,7 @@ class UseraccessController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function save(): void
     {
@@ -83,7 +83,7 @@ class UseraccessController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function unban(): void
     {
@@ -108,7 +108,7 @@ class UseraccessController extends BaseController
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function allowed(): bool
     {
@@ -134,7 +134,7 @@ class UseraccessController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function run(int $userId, array $columns, string $reason, string $successKey): void
     {
@@ -155,7 +155,7 @@ class UseraccessController extends BaseController
     /**
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function listUrl(): string
     {

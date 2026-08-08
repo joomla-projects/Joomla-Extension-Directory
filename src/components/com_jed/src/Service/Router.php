@@ -305,7 +305,7 @@ class Router extends RouterView
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getProfileId($segment, $query): int
     {
@@ -318,7 +318,7 @@ class Router extends RouterView
      *
      * @return array
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getProfileSegment($id, $query): array
     {

@@ -23,14 +23,14 @@ use Jed\Component\Jed\Administrator\Link\LinkCheckService;
  * or one a moderator is looking at right now. Same service, same validators, only the selection
  * differs.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class LinkCheckJobHandler implements JobHandlerInterface
 {
     /**
      * @param LinkCheckService $service The link check service.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly LinkCheckService $service)
     {
@@ -41,7 +41,7 @@ class LinkCheckJobHandler implements JobHandlerInterface
      *
      * @return array<string, mixed>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function handle(object $job): array
     {

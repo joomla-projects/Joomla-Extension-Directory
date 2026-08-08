@@ -20,7 +20,7 @@ use Joomla\Database\ParameterType;
 /**
  * Script file of the "JED - Open Tickets" dashboard module.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class Mod_Jed_OpenTicketsInstallerScript
 {
@@ -28,7 +28,7 @@ class Mod_Jed_OpenTicketsInstallerScript
      * The module's element name, as stored in `#__modules.module`.
      *
      * @var   string
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const MODULE_ELEMENT = 'mod_jed_opentickets';
 
@@ -37,7 +37,7 @@ class Mod_Jed_OpenTicketsInstallerScript
      * e.g. mod_popular/mod_latest, ship published to this same position).
      *
      * @var   string
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const DASHBOARD_POSITION = 'cpanel';
 
@@ -54,7 +54,7 @@ class Mod_Jed_OpenTicketsInstallerScript
      *
      * @return bool True on success
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function install(InstallerAdapter $parent): bool
     {

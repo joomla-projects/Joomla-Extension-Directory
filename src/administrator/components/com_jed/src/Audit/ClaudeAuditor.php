@@ -22,7 +22,7 @@ use Throwable;
  * extension's source: SQL injection, privilege escalation / missing ACL checks,
  * unrestricted file uploads, and other findings.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ClaudeAuditor
 {
@@ -37,7 +37,7 @@ class ClaudeAuditor
      * @param string $apiKey The Anthropic API key (from com_jed's component configuration).
      * @param string $model  The Claude model to use.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         private readonly Http $http,
@@ -56,7 +56,7 @@ class ClaudeAuditor
      *
      * @return ClaudeAuditResult
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function audit(string $extensionName, string $version, array $sourceFiles, string $phpstanSummary): ClaudeAuditResult
     {
@@ -120,7 +120,7 @@ class ClaudeAuditor
     /**
      * @return string The fixed security-auditor persona/instructions.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function systemPrompt(): string
     {
@@ -143,7 +143,7 @@ class ClaudeAuditor
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function buildPrompt(string $extensionName, string $version, array $sourceFiles, string $phpstanSummary): string
     {

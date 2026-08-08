@@ -25,14 +25,14 @@ use Joomla\Database\ParameterType;
  * Handler for `TicketType::DeveloperResponse` tickets - an extension owner's/maintainer's
  * response to a review, awaiting moderation before it's shown publicly.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class DeveloperresponseTicketHandler implements TicketTypeHandlerInterface
 {
     /**
      * @param DatabaseInterface $db The database connector object.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly DatabaseInterface $db)
     {
@@ -41,7 +41,7 @@ final class DeveloperresponseTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function type(): TicketType
     {
@@ -51,7 +51,7 @@ final class DeveloperresponseTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getMasterData(int $linkedItemId): ?object
     {
@@ -71,7 +71,7 @@ final class DeveloperresponseTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getMasterDataLayout(): string
     {
@@ -81,7 +81,7 @@ final class DeveloperresponseTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getActions(int $linkedItemId, User $user): array
     {

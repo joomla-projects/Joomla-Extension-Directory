@@ -44,7 +44,7 @@ use Joomla\Database\ParameterType;
  * the extension's score intact, deleting changes it, and 8.17 lists that as open. Both paths are
  * implemented, and deleting enqueues the score recalculation the aggregates then need.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class PrivacyRemovalService
 {
@@ -54,7 +54,7 @@ final class PrivacyRemovalService
      * Seeded by the component's install script, so the public block notice has wording and the
      * knowledge base has something to key an article to, exactly like every other block reason.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const BLOCK_REASON_OWNER_WITHDRAWN = 'PV1';
 
@@ -68,14 +68,14 @@ final class PrivacyRemovalService
      *
      * @var array<string, string[]>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private array $columnCache = [];
 
     /**
      * @param DatabaseInterface $db The database driver.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly DatabaseInterface $db)
     {
@@ -95,7 +95,7 @@ final class PrivacyRemovalService
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function banMustBeRetained(?array $row, string $now): bool
     {
@@ -123,7 +123,7 @@ final class PrivacyRemovalService
      *
      * @return array<string, int|string>  A per-data-set tally, for the action log and the tests.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function remove(int $userId, string $reviewHandling = PrivacyDeterminations::ANONYMISE, int $actorId = 0): array
     {
@@ -183,7 +183,7 @@ final class PrivacyRemovalService
      *
      * @return int[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function ownedExtensionIds(int $userId): array
     {
@@ -204,7 +204,7 @@ final class PrivacyRemovalService
      *
      * @return int  How many were cancelled.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function cancelOpenTransfers(int $userId, int $actorId): int
     {
@@ -247,7 +247,7 @@ final class PrivacyRemovalService
      *
      * @return array<string, int>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function handleReviews(int $userId, string $handling): array
     {
@@ -295,7 +295,7 @@ final class PrivacyRemovalService
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function clearDeveloperResponses(array $extensionIds): int
     {
@@ -328,7 +328,7 @@ final class PrivacyRemovalService
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function blockOwnedListings(array $extensionIds): int
     {
@@ -370,7 +370,7 @@ final class PrivacyRemovalService
      *
      * @return int  Rows touched, counting a row once per column it was named in.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function scrubListingTable(string $table, int $userId): int
     {
@@ -403,7 +403,7 @@ final class PrivacyRemovalService
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function scrubAuthorship(string $table, int $userId): int
     {
@@ -419,7 +419,7 @@ final class PrivacyRemovalService
      *
      * @return string  What was decided, for the tally.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function handleUserAccess(int $userId): string
     {
@@ -460,7 +460,7 @@ final class PrivacyRemovalService
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function nullOut(string $table, array $columns, int $userId, array $matchColumns): int
     {
@@ -504,7 +504,7 @@ final class PrivacyRemovalService
      *
      * @return string[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function columnsOf(string $table): array
     {
@@ -524,7 +524,7 @@ final class PrivacyRemovalService
      *
      * @return int
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function deleteWhere(string $table, string $column, int $userId): int
     {

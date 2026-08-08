@@ -44,7 +44,7 @@ use Throwable;
  *  - **escalation**, developer first and the team only afterwards;
  *  - **transition logging**, which is the only thing that reaches the action log.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class LinkCheckService
 {
@@ -55,7 +55,7 @@ class LinkCheckService
      * spread over more than a thousand hosts. The thresholds below are counts of *runs*, so this
      * interval is also what turns them into durations: three failures is nine days.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const INTERVAL_HOURS = 72;
 
@@ -66,7 +66,7 @@ class LinkCheckService
      * Developer first, deliberately. Told at once, the team works cases the developer would have
      * fixed in ten minutes - the same reasoning as the trusted status in `P1-05`.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const THRESHOLD_DEVELOPER = 3;
     public const THRESHOLD_TEAM      = 6;
@@ -74,7 +74,7 @@ class LinkCheckService
     /**
      * Seconds to leave between two requests to the same host inside one run.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const HOST_DELAY = 2;
 
@@ -82,7 +82,7 @@ class LinkCheckService
      * @param DatabaseInterface    $db       The database.
      * @param UrlValidatorRegistry $registry The `P1-08` validators.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         protected readonly DatabaseInterface $db,
@@ -100,7 +100,7 @@ class LinkCheckService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function loadLanguage(): void
     {
@@ -128,7 +128,7 @@ class LinkCheckService
      *
      * @return array{checked: int, ok: int, hard: int, soft: int, semantic: int, notified: int, escalated: int, recovered: int}
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function run(int $batchSize = 200, bool $force = false): array
     {
@@ -177,7 +177,7 @@ class LinkCheckService
      *
      * @return array<string, string>  field => resulting status.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function checkExtension(int $extensionId): array
     {
@@ -246,7 +246,7 @@ class LinkCheckService
      *
      * @return object[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function due(int $batchSize, bool $force): array
     {
@@ -278,7 +278,7 @@ class LinkCheckService
      *
      * @return array{status: LinkStatus, notified: bool, escalated: bool, recovered: bool}
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function checkOne(object $link): array
     {
@@ -354,7 +354,7 @@ class LinkCheckService
      *
      * @return array<string, mixed>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function context(object $link): array
     {
@@ -378,7 +378,7 @@ class LinkCheckService
      *
      * @return object  The stored row, with its id, ticket_id and escalated flag.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function store(object $link, string $url, LinkStatus $status, UrlCheckResult $result, int $failCount): object
     {
@@ -427,7 +427,7 @@ class LinkCheckService
      *
      * @return array<string, mixed>|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function currentState(int $extensionId, string $field): ?array
     {
@@ -450,7 +450,7 @@ class LinkCheckService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function setTicket(int $checkId, int $ticketId): void
     {
@@ -479,7 +479,7 @@ class LinkCheckService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function raiseSignal(int $checkId, object $link, string $url, UrlCheckResult $result): void
     {
@@ -515,7 +515,7 @@ class LinkCheckService
      *
      * @return int  The ticket id, or 0 if it could not be created.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function openDeveloperTicket(object $link, string $url, UrlCheckResult $result): int
     {
@@ -586,7 +586,7 @@ class LinkCheckService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function mailDeveloper(int $ownerId, string $name, object $link, string $url, UrlCheckResult $result, int $ticketId): void
     {
@@ -623,7 +623,7 @@ class LinkCheckService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function annotateTicket(object $link, bool $broken, UrlCheckResult $result): void
     {
@@ -675,7 +675,7 @@ class LinkCheckService
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function logTransition(object $link, string $kind, UrlCheckResult $result): void
     {

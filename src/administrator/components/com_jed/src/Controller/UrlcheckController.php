@@ -47,7 +47,7 @@ use Throwable;
  * controller over a service that holds every rule - is what makes moving it later a rewiring
  * rather than a rewrite. Recorded in `P2-01`.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class UrlcheckController extends BaseController
 {
@@ -56,7 +56,7 @@ class UrlcheckController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function check(): void
     {
@@ -150,7 +150,7 @@ class UrlcheckController extends BaseController
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function mayCheck(int $extensionId): bool
     {
@@ -170,7 +170,7 @@ class UrlcheckController extends BaseController
      *
      * @return array<string, mixed>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function context(int $extensionId): array
     {
@@ -198,7 +198,7 @@ class UrlcheckController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function respond(int $status, array $data): void
     {

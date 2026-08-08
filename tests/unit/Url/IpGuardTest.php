@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
  * Every case is named after the trick it represents, so a failure says which class of bypass
  * reopened rather than just which string.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class IpGuardTest extends TestCase
 {
@@ -32,7 +32,7 @@ final class IpGuardTest extends TestCase
      *
      * @return array<string, array{0: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function blocked(): array
     {
@@ -109,7 +109,7 @@ final class IpGuardTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testRefusesAddressesThatMustNotBeReached(string $ip): void
     {
@@ -127,7 +127,7 @@ final class IpGuardTest extends TestCase
      *
      * @return array<string, array{0: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function allowed(): array
     {
@@ -160,7 +160,7 @@ final class IpGuardTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testAllowsPublicAddresses(string $ip): void
     {
@@ -178,7 +178,7 @@ final class IpGuardTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testRangeEdgesAreInclusive(): void
     {

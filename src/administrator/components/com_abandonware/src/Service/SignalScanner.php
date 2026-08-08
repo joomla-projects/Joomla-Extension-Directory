@@ -42,7 +42,7 @@ use Throwable;
  * person's first obligation is step 3, the contact attempt. That ordering is the whole reason this
  * class is allowed to run unattended over ~15,000 listings: the worst it can do is make work.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class SignalScanner
 {
@@ -50,7 +50,7 @@ class SignalScanner
      * @param DatabaseInterface $db    The database driver.
      * @param CaseService       $cases The case object the signals feed.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         private readonly DatabaseInterface $db,
@@ -65,7 +65,7 @@ class SignalScanner
      *
      * @return array{linkcheck: int, updatecheck: int, inactivity: int, expired: int, errors: int}
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function run(int $batchSize = 50): array
     {
@@ -116,7 +116,7 @@ class SignalScanner
      *
      * @return array<int, array{extension_id: int, source: CaseSource, detail: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function collect(int $batchSize): array
     {
@@ -139,7 +139,7 @@ class SignalScanner
      *
      * @return array<int, array{extension_id: int, source: CaseSource, detail: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function collectSafely(int $batchSize, array &$result): array
     {
@@ -171,7 +171,7 @@ class SignalScanner
      *
      * @return array<int, array{0: string, 1: int, 2: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function enabledSources(): array
     {
@@ -195,7 +195,7 @@ class SignalScanner
      *
      * @return array<int, array{extension_id: int, source: CaseSource, detail: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function fromLinkChecks(int $batchSize): array
     {
@@ -254,7 +254,7 @@ class SignalScanner
      *
      * @return array<int, array{extension_id: int, source: CaseSource, detail: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function fromUpdateChecks(int $batchSize): array
     {
@@ -313,7 +313,7 @@ class SignalScanner
      *
      * @return array<int, array{extension_id: int, source: CaseSource, detail: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function fromInactivity(int $batchSize): array
     {
@@ -369,7 +369,7 @@ class SignalScanner
      *
      * @return int  How many were closed.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function closeTransferredCases(): int
     {

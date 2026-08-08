@@ -63,7 +63,7 @@ class HtmlView extends BaseHtmlView
      *
      * @var string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected string $linked_item_type_name = 'Other';
 
@@ -82,7 +82,7 @@ class HtmlView extends BaseHtmlView
      *
      * @var object|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected ?object $linkedItemData = null;
 
@@ -91,7 +91,7 @@ class HtmlView extends BaseHtmlView
      *
      * @var string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected string $linkedItemLayout = 'ticket.masterdata_other';
 
@@ -100,7 +100,7 @@ class HtmlView extends BaseHtmlView
      *
      * @var TicketAction[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected array $linkedItemActions = [];
 

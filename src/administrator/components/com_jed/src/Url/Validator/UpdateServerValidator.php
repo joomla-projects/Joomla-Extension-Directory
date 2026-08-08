@@ -31,7 +31,7 @@ use Jed\Component\Jed\Administrator\Url\UrlValidatorInterface;
  * second XML reader beside it would drift, and then the form would promise something the
  * background job later disagreed with.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class UpdateServerValidator implements UrlValidatorInterface
 {
@@ -39,7 +39,7 @@ class UpdateServerValidator implements UrlValidatorInterface
      * @param SafeHttpFetcher       $fetcher The guarded fetcher.
      * @param UpdateServerXmlParser $parser  The feed parser the update check already uses.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         protected readonly SafeHttpFetcher $fetcher,
@@ -53,7 +53,7 @@ class UpdateServerValidator implements UrlValidatorInterface
      *
      * @return UrlCheckResult
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function validate(string $url, array $context = []): UrlCheckResult
     {

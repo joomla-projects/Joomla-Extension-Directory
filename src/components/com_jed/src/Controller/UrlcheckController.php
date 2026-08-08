@@ -27,7 +27,7 @@ use Joomla\CMS\Factory;
  *
  * What is genuinely different is one question: who may ask.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class UrlcheckController extends AdministratorUrlcheckController
 {
@@ -46,7 +46,7 @@ class UrlcheckController extends AdministratorUrlcheckController
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function mayCheck(int $extensionId): bool
     {

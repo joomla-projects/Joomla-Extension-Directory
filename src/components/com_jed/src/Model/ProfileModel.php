@@ -32,7 +32,7 @@ use stdClass;
  * Methods supporting the developer/company profile view: the developer's own (currently
  * placeholder) metadata plus the list of extensions they own.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ProfileModel extends ListModel
 {
@@ -44,7 +44,7 @@ class ProfileModel extends ListModel
      * @param array $config An optional associative array of configuration settings.
      *
      * @see    JController
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function __construct($config = [])
@@ -72,7 +72,7 @@ class ProfileModel extends ListModel
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function populateState($ordering = 'a.name', $direction = 'ASC'): void
     {
@@ -92,7 +92,7 @@ class ProfileModel extends ListModel
      *
      * @return QueryInterface
      *
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws Exception
      */
     protected function getListQuery(): QueryInterface
@@ -138,7 +138,7 @@ class ProfileModel extends ListModel
      *
      * @return mixed An array of data on success, false on failure.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getItems(): mixed
     {
@@ -185,7 +185,7 @@ class ProfileModel extends ListModel
      *
      * @return stdClass
      *
-     * @since  4.1.0
+     * @since  4.0.0
      * @throws Exception
      */
     public function getDeveloper(): stdClass
@@ -228,7 +228,7 @@ class ProfileModel extends ListModel
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function hasActiveExtension(int $ownerId): bool
     {

@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
  * the aggregate that decides which extensions get seen; too lax and the ranking is decided by
  * whoever is being crawled hardest. In JED3's stock 12.3% of hits were declared crawlers.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class BotDetectorTest extends TestCase
 {
@@ -30,7 +30,7 @@ final class BotDetectorTest extends TestCase
      *
      * @return array<string, array{0: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function crawlers(): array
     {
@@ -67,7 +67,7 @@ final class BotDetectorTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testRecognisesDeclaredCrawlers(string $agent): void
     {
@@ -79,7 +79,7 @@ final class BotDetectorTest extends TestCase
      *
      * @return array<string, array{0: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function browsers(): array
     {
@@ -100,7 +100,7 @@ final class BotDetectorTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testLeavesRealBrowsersAlone(string $agent): void
     {
@@ -119,7 +119,7 @@ final class BotDetectorTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testAnAbsentAgentIsSuspiciousRatherThanRobot(): void
     {
@@ -134,7 +134,7 @@ final class BotDetectorTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testWeakSignalsOnlyCountTogether(): void
     {
@@ -164,7 +164,7 @@ final class BotDetectorTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testTheRateLimitLeavesRoomForRealPeople(): void
     {
@@ -177,7 +177,7 @@ final class BotDetectorTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testTheMetricsAreNamedHonestly(): void
     {

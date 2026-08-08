@@ -33,7 +33,7 @@ namespace Jed\Component\Jed\Administrator\Link;
  *  - **demo**, **documentation**, **licence terms** and **source** are worth knowing about and
  *    worth nobody being woken for.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class LinkField
 {
@@ -45,7 +45,7 @@ final class LinkField
      *
      * @var array<string, array{0: string, 1: float}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const FIELDS = [
         'download_url'      => ['download', 1.0],
@@ -66,7 +66,7 @@ final class LinkField
      *
      * @return string  Empty when the column is not checked.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function validator(string $field): string
     {
@@ -80,7 +80,7 @@ final class LinkField
      *
      * @return float
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function weight(string $field): float
     {
@@ -101,7 +101,7 @@ final class LinkField
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function reaches(string $field, int $failCount, int $threshold): bool
     {
@@ -119,7 +119,7 @@ final class LinkField
      *
      * @return string[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function all(): array
     {
@@ -134,7 +134,7 @@ final class LinkField
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function label(string $field): string
     {

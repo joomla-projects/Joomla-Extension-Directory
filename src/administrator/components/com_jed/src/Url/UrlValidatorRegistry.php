@@ -32,14 +32,14 @@ use RuntimeException;
  * form field and, through the AJAX endpoint, from the request - so `get()` on an unknown key has
  * to fail rather than fall back to something, or the endpoint becomes "run any check on any URL".
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class UrlValidatorRegistry
 {
     /**
      * @var array<string, UrlValidatorInterface>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private array $validators = [];
 
@@ -59,7 +59,7 @@ class UrlValidatorRegistry
      *
      * @return self
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function withDefaults(SafeHttpFetcher $fetcher, UpdateServerXmlParser $parser): self
     {
@@ -82,7 +82,7 @@ class UrlValidatorRegistry
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function register(string $key, UrlValidatorInterface $validator): void
     {
@@ -98,7 +98,7 @@ class UrlValidatorRegistry
      *
      * @throws RuntimeException If nothing is registered under that key.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function get(string $key): UrlValidatorInterface
     {
@@ -116,7 +116,7 @@ class UrlValidatorRegistry
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function has(string $key): bool
     {
@@ -128,7 +128,7 @@ class UrlValidatorRegistry
      *
      * @return string[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function keys(): array
     {

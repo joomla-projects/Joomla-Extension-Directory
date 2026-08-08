@@ -90,7 +90,7 @@ class ExtensionController extends FormController
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function extensionExists(int $extensionId): bool
     {
@@ -154,7 +154,7 @@ class ExtensionController extends FormController
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function compareHistory(): bool
     {
@@ -187,7 +187,7 @@ class ExtensionController extends FormController
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function approve(): bool
     {
@@ -229,7 +229,7 @@ class ExtensionController extends FormController
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function reject(): bool
     {
@@ -275,7 +275,7 @@ class ExtensionController extends FormController
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function forceTransfer(): bool
     {
@@ -321,7 +321,7 @@ class ExtensionController extends FormController
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function block(): bool
     {
@@ -347,7 +347,7 @@ class ExtensionController extends FormController
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function unblock(): bool
     {
@@ -365,7 +365,7 @@ class ExtensionController extends FormController
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function softDelete(): bool
     {
@@ -383,7 +383,7 @@ class ExtensionController extends FormController
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function restore(): bool
     {
@@ -405,7 +405,7 @@ class ExtensionController extends FormController
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function runListingStateChange(string $action, callable $transition, string $successKey): bool
     {
@@ -448,7 +448,7 @@ class ExtensionController extends FormController
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function recalculateScore(): bool
     {

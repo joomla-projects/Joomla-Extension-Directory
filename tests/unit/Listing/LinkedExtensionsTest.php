@@ -27,7 +27,7 @@ use PHPUnit\Framework\TestCase;
  * than read. That is the half a developer touches: they paste the address of the listing they
  * are looking at, and if it does not resolve, the relation does not get made.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class LinkedExtensionsTest extends TestCase
 {
@@ -36,14 +36,14 @@ final class LinkedExtensionsTest extends TestCase
      *
      * @var string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private string $source = '';
 
     /**
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function setUp(): void
     {
@@ -60,7 +60,7 @@ final class LinkedExtensionsTest extends TestCase
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private function method(string $signature): string
     {
@@ -83,7 +83,7 @@ final class LinkedExtensionsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testATargetMustNotBeItselfMissingOrDeleted(): void
     {
@@ -115,7 +115,7 @@ final class LinkedExtensionsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testABlockedTargetIsNotRejectedOnSave(): void
     {
@@ -134,7 +134,7 @@ final class LinkedExtensionsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testVariantPermissionNeverReadsCreatedBy(): void
     {
@@ -153,7 +153,7 @@ final class LinkedExtensionsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testAnUnacceptedMaintainerInvitationGrantsNothing(): void
     {
@@ -171,7 +171,7 @@ final class LinkedExtensionsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testADeveloperNeedsBothSidesToPairThem(): void
     {
@@ -199,7 +199,7 @@ final class LinkedExtensionsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testTheParentClaimIsNotSelfConfirming(): void
     {
@@ -243,7 +243,7 @@ final class LinkedExtensionsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testMovingTheParentWithdrawsTheConfirmation(): void
     {
@@ -270,7 +270,7 @@ final class LinkedExtensionsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testOnlyConfirmedAddOnsAppearOnTheParentsPage(): void
     {
@@ -301,7 +301,7 @@ final class LinkedExtensionsTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testTheVariantRelationIsReadInBothDirections(): void
     {
@@ -334,7 +334,7 @@ final class LinkedExtensionsTest extends TestCase
      *
      * @dataProvider references
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testAPastedReferenceReducesToAnIdOrAnAlias(string $input, string $expected): void
     {
@@ -362,7 +362,7 @@ final class LinkedExtensionsTest extends TestCase
     /**
      * @return array<string, array{0: string, 1: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function references(): array
     {

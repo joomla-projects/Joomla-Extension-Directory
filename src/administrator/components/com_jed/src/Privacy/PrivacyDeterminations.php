@@ -28,21 +28,21 @@ namespace Jed\Component\Jed\Administrator\Privacy;
  * That test is the point of this class. Adding a table without deciding what happens to it on a
  * deletion request becomes a build failure rather than a blind spot found years later.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class PrivacyDeterminations
 {
     /**
      * The row survives, the personal fields in it do not.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const ANONYMISE = 'anonymise';
 
     /**
      * The rows go.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const DELETE = 'delete';
 
@@ -51,7 +51,7 @@ final class PrivacyDeterminations
      * of this carries the interest in its reason string - an unexplained retention is the thing
      * the capability screen exists to prevent.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const RETAIN = 'retain';
 
@@ -59,7 +59,7 @@ final class PrivacyDeterminations
      * The outcome depends on the row, or on how the JED team has configured the plugin. The
      * reason string says on what.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const CONDITIONAL = 'conditional';
 
@@ -72,7 +72,7 @@ final class PrivacyDeterminations
      *
      * @var array<string, array{export: bool, handling: string, reason: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const IN_SCOPE = [
         '#__jed_extensions' => [
@@ -149,7 +149,7 @@ final class PrivacyDeterminations
      *
      * @var array<string, string>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const OUT_OF_SCOPE = [
         '#__jed_extensions_category_map' => 'COM_JED_PRIVACY_OUTOFSCOPE_CATEGORY_MAP',
@@ -166,7 +166,7 @@ final class PrivacyDeterminations
      *
      * @return string[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function allTables(): array
     {

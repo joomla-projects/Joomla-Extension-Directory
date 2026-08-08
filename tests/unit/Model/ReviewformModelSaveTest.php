@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
  * running the method, and it is written that way on purpose: `P1-33` records that this suite has
  * no Joomla application fixture yet, and this item was not the place to build one.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class ReviewformModelSaveTest extends TestCase
 {
@@ -37,7 +37,7 @@ final class ReviewformModelSaveTest extends TestCase
      *
      * @var string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private string $source = '';
 
@@ -46,14 +46,14 @@ final class ReviewformModelSaveTest extends TestCase
      *
      * @var string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private string $saveBody = '';
 
     /**
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function setUp(): void
     {
@@ -74,7 +74,7 @@ final class ReviewformModelSaveTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testSaveForcesStateToZero(): void
     {
@@ -93,7 +93,7 @@ final class ReviewformModelSaveTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testStateIsForcedBeforeTheBranches(): void
     {
@@ -116,7 +116,7 @@ final class ReviewformModelSaveTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testSaveDropsFlagged(): void
     {
@@ -132,7 +132,7 @@ final class ReviewformModelSaveTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testSaveOverwritesIpAddressServerSide(): void
     {
@@ -150,7 +150,7 @@ final class ReviewformModelSaveTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testSaveDoesNotFallBackToTheExtensionId(): void
     {
@@ -167,7 +167,7 @@ final class ReviewformModelSaveTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testPublicFormAndTemplateKeepModerationFieldsOut(): void
     {
@@ -202,7 +202,7 @@ final class ReviewformModelSaveTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testPublicReviewListHidesModerationData(): void
     {

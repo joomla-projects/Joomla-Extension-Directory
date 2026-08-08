@@ -28,7 +28,7 @@ use Joomla\Database\QueryInterface;
  * been filing reports against one developer - the abuse pattern 4.10 names, which is invisible
  * unless the rejected submissions are kept and can be grouped by who sent them.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ReportsModel extends ListModel
 {
@@ -37,7 +37,7 @@ class ReportsModel extends ListModel
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct($config = [])
     {
@@ -65,7 +65,7 @@ class ReportsModel extends ListModel
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function populateState($ordering = 'a.created', $direction = 'DESC'): void
     {
@@ -80,7 +80,7 @@ class ReportsModel extends ListModel
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function getStoreId($id = ''): string
     {
@@ -90,7 +90,7 @@ class ReportsModel extends ListModel
     /**
      * @return QueryInterface
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function getListQuery(): QueryInterface
     {

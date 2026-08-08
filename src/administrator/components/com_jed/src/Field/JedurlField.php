@@ -41,7 +41,7 @@ use Joomla\CMS\Session\Session;
  * A `type="url"` field keeps working without JavaScript, which is the point of the base class:
  * layer 3 runs on save regardless, so the rules are enforced either way (4.9).
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class JedurlField extends UrlField
 {
@@ -49,7 +49,7 @@ class JedurlField extends UrlField
      * The form field type.
      *
      * @var    string
-     * @since  4.1.0
+     * @since  4.0.0
      */
     protected $type = 'Jedurl';
 
@@ -57,7 +57,7 @@ class JedurlField extends UrlField
      * Which check the AJAX endpoint should run for this field.
      *
      * @var    string
-     * @since  4.1.0
+     * @since  4.0.0
      */
     protected string $validator = '';
 
@@ -65,7 +65,7 @@ class JedurlField extends UrlField
      * Which application's endpoint this field talks to.
      *
      * @var    string
-     * @since  4.1.0
+     * @since  4.0.0
      */
     protected string $endpointOption = 'com_jed';
 
@@ -78,7 +78,7 @@ class JedurlField extends UrlField
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function setup(\SimpleXMLElement $element, $value, $group = null): bool
     {
@@ -106,7 +106,7 @@ class JedurlField extends UrlField
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function getInput(): string
     {

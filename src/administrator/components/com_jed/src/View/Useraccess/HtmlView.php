@@ -26,7 +26,7 @@ use Joomla\Registry\Registry;
 /**
  * Per-user privileges, bans and trusted status.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class HtmlView extends BaseHtmlView
 {
@@ -42,7 +42,7 @@ class HtmlView extends BaseHtmlView
      *
      * @var bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected bool $canDecide = false;
 
@@ -53,7 +53,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function display($tpl = null): void
     {
@@ -76,7 +76,7 @@ class HtmlView extends BaseHtmlView
      *
      * @throws Exception
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function addToolbar(): void
     {

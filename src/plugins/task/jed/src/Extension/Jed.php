@@ -41,7 +41,7 @@ use Throwable;
  * type is only ever enqueued manually, per extension (see
  * {@see \Jed\Component\Jed\Administrator\Queue\ScoreRecalcJobHandler}).
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class Jed extends CMSPlugin implements SubscriberInterface
 {
@@ -50,7 +50,7 @@ final class Jed extends CMSPlugin implements SubscriberInterface
     /**
      * @var array<string, array<string, string>>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected const TASKS_MAP = [
         'jed.updatecheck' => [
@@ -88,7 +88,7 @@ final class Jed extends CMSPlugin implements SubscriberInterface
     /**
      * @var boolean
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected $autoloadLanguage = true;
 
@@ -101,7 +101,7 @@ final class Jed extends CMSPlugin implements SubscriberInterface
      * @param HitAggregator       $hitAggregator       Rolls the raw hit log into daily buckets (P1-12).
      * @param SignalScanner       $signalScanner       Collects the three abandonware signals into cases (P1-19).
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         array $config,
@@ -121,7 +121,7 @@ final class Jed extends CMSPlugin implements SubscriberInterface
      *
      * @return array<string, string>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function getSubscribedEvents(): array
     {
@@ -139,7 +139,7 @@ final class Jed extends CMSPlugin implements SubscriberInterface
      *
      * @return int The routine exit code.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function checkForUpdates(ExecuteTaskEvent $event): int
     {
@@ -176,7 +176,7 @@ final class Jed extends CMSPlugin implements SubscriberInterface
      *
      * @return int The routine exit code.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function drainQueue(ExecuteTaskEvent $event): int
     {
@@ -222,7 +222,7 @@ final class Jed extends CMSPlugin implements SubscriberInterface
      *
      * @return int The routine exit code.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function checkLinks(ExecuteTaskEvent $event): int
     {
@@ -265,7 +265,7 @@ final class Jed extends CMSPlugin implements SubscriberInterface
      *
      * @return int The routine exit code.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function aggregateHits(ExecuteTaskEvent $event): int
     {
@@ -302,7 +302,7 @@ final class Jed extends CMSPlugin implements SubscriberInterface
      *
      * @return int The routine exit code.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function pruneExpiredData(ExecuteTaskEvent $event): int
     {
@@ -347,7 +347,7 @@ final class Jed extends CMSPlugin implements SubscriberInterface
      *
      * @return int The routine exit code.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function scanAbandonware(ExecuteTaskEvent $event): int
     {

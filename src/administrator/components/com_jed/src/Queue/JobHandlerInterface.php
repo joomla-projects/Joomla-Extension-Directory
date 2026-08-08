@@ -16,7 +16,7 @@ namespace Jed\Component\Jed\Administrator\Queue;
 /**
  * A handler for one #__jed_queue_jobs `type`, registered in {@see JobHandlerRegistry}.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 interface JobHandlerInterface
 {
@@ -29,7 +29,7 @@ interface JobHandlerInterface
      *
      * @throws \Throwable On failure. The caller marks the job failed with the exception message.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function handle(object $job): array;
 }

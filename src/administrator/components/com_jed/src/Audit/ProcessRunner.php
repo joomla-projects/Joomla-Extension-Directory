@@ -21,7 +21,7 @@ use RuntimeException;
  * (e.g. symfony/process) to avoid adding a new runtime dependency to the shipped
  * JED extension package for this one narrow use.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ProcessRunner
 {
@@ -36,7 +36,7 @@ class ProcessRunner
      *
      * @throws RuntimeException If the process could not be started, or timed out.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function run(array $command, ?string $cwd = null, int $timeoutSeconds = 900): ProcessResult
     {

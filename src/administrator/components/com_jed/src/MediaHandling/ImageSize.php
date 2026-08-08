@@ -63,7 +63,7 @@ enum ImageSize: string
     /**
      * Default dimensions per case, used when the component configuration says nothing.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const DEFAULTS = [
         'small' => [360, 188],
@@ -75,7 +75,7 @@ enum ImageSize: string
      *
      * @return string  Empty for ORIGINAL, which keeps the plain filename.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function suffix(): string
     {
@@ -87,7 +87,7 @@ enum ImageSize: string
      *
      * @return ImageSize[]
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function variants(): array
     {
@@ -132,7 +132,7 @@ enum ImageSize: string
      *
      * @return string  The variant's filename, e.g. ".../logo-small.png".
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function applyTo(string $filename): string
     {

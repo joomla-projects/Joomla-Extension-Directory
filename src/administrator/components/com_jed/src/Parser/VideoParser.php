@@ -41,7 +41,7 @@ namespace Jed\Component\Jed\Administrator\Parser;
  * | Bare id                          |    3 | `Y9qdPldwDWw`                                   |
  * | Direct media file                |   30 | `https://webxdesign.co/…/Ark_Editor_pro.mp4`    |
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class VideoParser
 {
@@ -53,21 +53,21 @@ final class VideoParser
      * names, 13 characters, not videos. A looser pattern would have turned both into embeds
      * pointing at nothing.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const YOUTUBE_ID = '/^[A-Za-z0-9_-]{11}$/';
 
     /**
      * Vimeo ids are numeric. `vimeo.com/weeblr/4seointro` is a user's page, not a video.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const VIMEO_ID = '/^[0-9]+$/';
 
     /**
      * File extensions accepted as a self-hosted video.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const MEDIA_EXTENSIONS = ['mp4', 'webm', 'ogv'];
 
@@ -78,7 +78,7 @@ final class VideoParser
      *
      * @return Video|null  Null when the value is not a video this can be sure about.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function parse(?string $raw): ?Video
     {
@@ -139,7 +139,7 @@ final class VideoParser
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function cleanTagContent(string $inner): string
     {
@@ -163,7 +163,7 @@ final class VideoParser
      *
      * @return Video|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function parseUrl(string $value): ?Video
     {
@@ -205,7 +205,7 @@ final class VideoParser
      *
      * @return Video|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function fromYouTube(string $host, string $path, array $query): ?Video
     {
@@ -252,7 +252,7 @@ final class VideoParser
      *
      * @return Video|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function fromVimeo(string $host, string $path): ?Video
     {
@@ -286,7 +286,7 @@ final class VideoParser
      *
      * @return Video|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function fromMediaFile(string $url, string $path): ?Video
     {

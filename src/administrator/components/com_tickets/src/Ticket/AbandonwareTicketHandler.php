@@ -38,14 +38,14 @@ use Throwable;
  * as a ticket button would be a second write path to an invariant that only holds because there is
  * one.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class AbandonwareTicketHandler implements TicketTypeHandlerInterface
 {
     /**
      * @param DatabaseInterface $db The database connector object.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(private readonly DatabaseInterface $db)
     {
@@ -54,7 +54,7 @@ final class AbandonwareTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function type(): TicketType
     {
@@ -64,7 +64,7 @@ final class AbandonwareTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getMasterData(int $linkedItemId): ?object
     {
@@ -102,7 +102,7 @@ final class AbandonwareTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getMasterDataLayout(): string
     {
@@ -112,7 +112,7 @@ final class AbandonwareTicketHandler implements TicketTypeHandlerInterface
     /**
      * @inheritDoc
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getActions(int $linkedItemId, User $user): array
     {

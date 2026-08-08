@@ -34,7 +34,7 @@ use Joomla\Database\DatabaseInterface;
  * `/vulnerable-extensions/`: P0-04 settled that the new VEL serves that path from this same
  * installation, and the one obligation the JED has there is to stay out of the way.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class Router extends RouterView
 {
@@ -45,7 +45,7 @@ class Router extends RouterView
      * @param SiteApplication $app  The application.
      * @param AbstractMenu    $menu The menu.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(SiteApplication $app, AbstractMenu $menu)
     {
@@ -74,7 +74,7 @@ class Router extends RouterView
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getCaseId($segment, $query)
     {
@@ -87,7 +87,7 @@ class Router extends RouterView
      *
      * @return array
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getCaseSegment($id, $query)
     {

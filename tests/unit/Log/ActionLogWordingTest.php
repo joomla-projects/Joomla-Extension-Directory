@@ -27,14 +27,14 @@ use ReflectionClass;
  *  - `plg_actionlog_jed`'s message map - which key each action renders with;
  *  - `plg_actionlog_jed.ini` - the sentence itself.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class ActionLogWordingTest extends TestCase
 {
     /**
      * Where the plugin lives, relative to this file.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private const PLUGIN = __DIR__ . '/../../../src/plugins/actionlog/jed';
 
@@ -44,7 +44,7 @@ final class ActionLogWordingTest extends TestCase
      *
      * @return array<string, array{0: string}>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public static function actions(): array
     {
@@ -70,7 +70,7 @@ final class ActionLogWordingTest extends TestCase
      *
      * @return array<string, string>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function messageMap(): array
     {
@@ -93,7 +93,7 @@ final class ActionLogWordingTest extends TestCase
      *
      * @return array<string, string>
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     private static function strings(): array
     {
@@ -103,7 +103,7 @@ final class ActionLogWordingTest extends TestCase
     /**
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testTheMapAndTheLanguageFileWereBothFound(): void
     {
@@ -119,7 +119,7 @@ final class ActionLogWordingTest extends TestCase
      *
      * @dataProvider actions
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testEveryActionHasWording(string $action): void
     {
@@ -141,7 +141,7 @@ final class ActionLogWordingTest extends TestCase
     /**
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testTheMapHasNothingSpare(): void
     {
@@ -169,7 +169,7 @@ final class ActionLogWordingTest extends TestCase
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function testPlaceholdersAreSupplied(): void
     {

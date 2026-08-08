@@ -37,7 +37,7 @@ use UnexpectedValueException;
  * is a save that times out, and a save refused because somebody else's WAF returned 403 is a
  * developer locked out of their own listing (13.4 point 5).
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class JedurlRule extends FormRule
 {
@@ -55,7 +55,7 @@ class JedurlRule extends FormRule
      * @throws UnexpectedValueException  With the message the form shows, so the developer is told
      *                                   which rule they broke rather than "invalid field".
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function test(SimpleXMLElement $element, $value, $group = null, ?Registry $input = null, ?Form $form = null): bool
     {

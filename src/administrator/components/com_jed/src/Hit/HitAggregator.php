@@ -34,7 +34,7 @@ use Joomla\Database\ParameterType;
  * automated" stays answerable once the raw rows are gone; keeping it *separate* means the
  * ranking signal is what a person did.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class HitAggregator
 {
@@ -46,14 +46,14 @@ class HitAggregator
      * lived with rather than a number chosen here. Long enough to investigate an abuse case,
      * short enough that the table stays a few million rows instead of a hundred million.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const RETENTION_DAYS = 30;
 
     /**
      * @param DatabaseInterface $db The database.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(protected readonly DatabaseInterface $db)
     {
@@ -68,7 +68,7 @@ class HitAggregator
      *
      * @return array{days: int, rows: int, pruned: int}
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function run(int $days = 2): array
     {
@@ -88,7 +88,7 @@ class HitAggregator
      *
      * @return int  Listings written for that day.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function aggregateDay(string $day): int
     {
@@ -146,7 +146,7 @@ class HitAggregator
      *
      * @return int  Rows removed.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function prune(): int
     {
@@ -170,7 +170,7 @@ class HitAggregator
      *
      * @return array{views: int, download_clicks: int}
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function totals(int $extensionId, int $days = 90): array
     {

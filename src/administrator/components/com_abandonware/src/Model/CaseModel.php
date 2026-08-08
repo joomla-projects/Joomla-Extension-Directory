@@ -31,14 +31,14 @@ use Joomla\Database\ParameterType;
  * hold no matter who calls it. What this model does is the ordinary editing around them: notes, the
  * assignee, and the subject tuple of a case about something the JED never listed.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class CaseModel extends AdminModel
 {
     /**
      * @var string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected $text_prefix = 'COM_ABANDONWARE';
 
@@ -49,7 +49,7 @@ class CaseModel extends AdminModel
      *
      * @return Table
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getTable($type = 'Case', $prefix = 'Administrator', $config = []): Table
     {
@@ -62,7 +62,7 @@ class CaseModel extends AdminModel
      *
      * @return Form|false
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getForm($data = [], $loadData = true)
     {
@@ -72,7 +72,7 @@ class CaseModel extends AdminModel
     /**
      * @return array|object
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function loadFormData()
     {
@@ -97,7 +97,7 @@ class CaseModel extends AdminModel
      *
      * @return object|false
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function getItem($pk = null)
     {
@@ -165,7 +165,7 @@ class CaseModel extends AdminModel
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function save($data): bool
     {

@@ -40,7 +40,7 @@ use Joomla\Database\ParameterType;
  *  - the listing has to be publicly visible (4.8) - a blocked or unapproved listing has no
  *    download link, and this must not be the way around that.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class DownloadController extends BaseController
 {
@@ -49,7 +49,7 @@ class DownloadController extends BaseController
      *
      * @return void
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function go(): void
     {
@@ -93,7 +93,7 @@ class DownloadController extends BaseController
      *
      * @return array<string, mixed>|null
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function loadListing(int $extensionId): ?array
     {

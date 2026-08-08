@@ -39,7 +39,7 @@ use SimpleXMLElement;
  * stored id, because an id in a text box tells nobody whether it is the right listing, and
  * repeats the resolved name underneath so the answer is visible before saving.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 class ListingrefField extends TextField
 {
@@ -47,7 +47,7 @@ class ListingrefField extends TextField
      * The form field type.
      *
      * @var   string
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected $type = 'Listingref';
 
@@ -55,7 +55,7 @@ class ListingrefField extends TextField
      * The listing the stored value names, or null.
      *
      * @var   object|null
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected ?object $linked = null;
 
@@ -68,7 +68,7 @@ class ListingrefField extends TextField
      *
      * @return bool
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function setup(SimpleXMLElement $element, $value, $group = null): bool
     {
@@ -106,7 +106,7 @@ class ListingrefField extends TextField
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     protected function getInput(): string
     {

@@ -24,12 +24,12 @@ namespace Jed\Component\Jed\Administrator\Parser;
  * a developer hosts themselves. Keeping it here rather than dropping it is deliberate - accepting
  * only YouTube and Vimeo would exclude exactly the developers who avoid them on purpose.
  *
- * @since 4.1.0
+ * @since 4.0.0
  */
 final class Video
 {
     /**
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public const YOUTUBE = 'youtube';
     public const VIMEO   = 'vimeo';
@@ -39,7 +39,7 @@ final class Video
      * @param string $provider One of the constants above.
      * @param string $id       The video id, or the full URL for a self-hosted file.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function __construct(
         public readonly string $provider,
@@ -55,7 +55,7 @@ final class Video
      *
      * @return string
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function watchUrl(): string
     {
@@ -75,7 +75,7 @@ final class Video
      *
      * @return string  Empty for a self-hosted file, which needs no iframe.
      *
-     * @since 4.1.0
+     * @since 4.0.0
      */
     public function embedUrl(): string
     {
