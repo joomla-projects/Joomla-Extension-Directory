@@ -10,6 +10,8 @@
 
 \defined('_JEXEC') or die;
 
+use Jed\Component\Abandonware\Administrator\Service\CaseService;
+use Jed\Component\Abandonware\Administrator\Service\SignalScanner;
 use Jed\Component\Jed\Administrator\Audit\AuditPipeline;
 use Jed\Component\Jed\Administrator\Audit\ClaudeAuditor;
 use Jed\Component\Jed\Administrator\Audit\DockerRunner;
@@ -107,13 +109,19 @@ return new class () implements ServiceProviderInterface {
                 $jobHandlerRegistry->register('extension.linkcheck', new LinkCheckJobHandler($linkCheckService));
                 $jobHandlerRegistry->register('hits.aggregate', new HitAggregateJobHandler($hitAggregator));
 
+                // P1-19's case object. Built here rather than resolved from com_abandonware's own
+                // container for the same reason the ticket handler registry is a plain factory:
+                // the scheduler boots no component, so nothing has registered that container.
+                $signalScanner = new SignalScanner($db, new CaseService($db));
+
                 $plugin = new Jed(
                     (array) PluginHelper::getPlugin('task', 'jed'),
                     $updateCheck,
                     $queueService,
                     $jobHandlerRegistry,
                     $linkCheckService,
-                    $hitAggregator
+                    $hitAggregator,
+                    $signalScanner
                 );
                 $plugin->setApplication(Factory::getApplication());
 

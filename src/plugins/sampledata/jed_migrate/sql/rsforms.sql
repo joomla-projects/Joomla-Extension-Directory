@@ -74,9 +74,12 @@ UPDATE old_rsform7 f, wqyh6_rsform_submission_values v SET f.consentuse= v.Field
 UPDATE old_rsform7 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.Name= v.FieldValue WHERE v.FieldName='Name' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.Email= v.FieldValue WHERE v.FieldName='Email' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.Extension_name= v.FieldValue WHERE v.FieldName='Extension_name' AND v.SubmissionId=f.SubmissionId;
+-- The RSForm field is named with spaces, not underscores. Mapping it to 'Extension_name'
+-- matched nothing, so this column was empty in all 60 abandonware submissions - the one field
+-- that says what the report is about. Same for the version below.
+UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.Extension_name= v.FieldValue WHERE v.FieldName='Extension name' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.Developer= v.FieldValue WHERE v.FieldName='Developer' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.Last_known_version_number= v.FieldValue WHERE v.FieldName='Last_known_version_number' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.Last_known_version_number= v.FieldValue WHERE v.FieldName='Last known version number' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.url= v.FieldValue WHERE v.FieldName='url' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.Reason= v.FieldValue WHERE v.FieldName='Reason' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform9 f, wqyh6_rsform_submission_values v SET f.consentuse= v.FieldValue WHERE v.FieldName='consentuse' AND v.SubmissionId=f.SubmissionId;
@@ -120,9 +123,12 @@ UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.summary= v.FieldVa
 UPDATE old_rsform13 f, wqyh6_rsform_submission_values v SET f.formId= v.FieldValue WHERE v.FieldName='formId' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Name= v.FieldValue WHERE v.FieldName='Name' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Email= v.FieldValue WHERE v.FieldName='Email' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Extension_name= v.FieldValue WHERE v.FieldName='Extension_name' AND v.SubmissionId=f.SubmissionId;
+-- The RSForm field is named with spaces, not underscores. Mapping it to 'Extension_name'
+-- matched nothing, so this column was empty in all 60 abandonware submissions - the one field
+-- that says what the report is about. Same for the version below.
+UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Extension_name= v.FieldValue WHERE v.FieldName='Extension name' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Developer= v.FieldValue WHERE v.FieldName='Developer' AND v.SubmissionId=f.SubmissionId;
-UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Last_known_version_number= v.FieldValue WHERE v.FieldName='Last_known_version_number' AND v.SubmissionId=f.SubmissionId;
+UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Last_known_version_number= v.FieldValue WHERE v.FieldName='Last known version number' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.url= v.FieldValue WHERE v.FieldName='url' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.Reason= v.FieldValue WHERE v.FieldName='Reason' AND v.SubmissionId=f.SubmissionId;
 UPDATE old_rsform14 f, wqyh6_rsform_submission_values v SET f.consentuse= v.FieldValue WHERE v.FieldName='consentuse' AND v.SubmissionId=f.SubmissionId;

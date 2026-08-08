@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field
+                name="search"
+                type="text"
+                label="JSEARCH_FILTER"
+                hint="COM_ABANDONWARE_REPORTS_SEARCH_HINT"
+        />
+
+        <field
+                name="origin"
+                type="list"
+                label="COM_ABANDONWARE_REPORTS_FILTER_ORIGIN"
+                onchange="this.form.submit();"
+        >
+            <option value="">COM_ABANDONWARE_REPORTS_FILTER_ORIGIN_ALL</option>
+            <option value="new">COM_ABANDONWARE_REPORTS_FILTER_ORIGIN_NEW</option>
+            <option value="legacy">COM_ABANDONWARE_REPORTS_FILTER_ORIGIN_LEGACY</option>
+            <!-- Rows where no consent is recorded. All of them are imports: the live form refuses
+                 to store a submission without it (4.6). -->
+            <option value="no_consent">COM_ABANDONWARE_REPORTS_FILTER_ORIGIN_NO_CONSENT</option>
+        </field>
+    </fields>
+
+    <fields name="list">
+        <field
+                name="fullordering"
+                type="list"
+                label="JGLOBAL_SORT_BY"
+                default="a.created DESC"
+                onchange="this.form.submit();"
+        >
+            <option value="a.created DESC">COM_ABANDONWARE_REPORTS_SORT_CREATED_DESC</option>
+            <option value="a.created ASC">COM_ABANDONWARE_REPORTS_SORT_CREATED_ASC</option>
+            <option value="a.extension_name ASC">COM_ABANDONWARE_REPORTS_SORT_NAME_ASC</option>
+            <option value="a.reporter_name ASC">COM_ABANDONWARE_REPORTS_SORT_REPORTER_ASC</option>
+            <option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
+        </field>
+
+        <field
+                name="limit"
+                type="limitbox"
+                label="JGLOBAL_LIST_LIMIT"
+                default="25"
+                onchange="this.form.submit();"
+        />
+    </fields>
+</form>

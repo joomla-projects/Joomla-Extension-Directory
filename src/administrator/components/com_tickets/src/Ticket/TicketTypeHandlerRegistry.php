@@ -52,6 +52,7 @@ final class TicketTypeHandlerRegistry
         $registry->register(new ExtensionTicketHandler($db));
         $registry->register(new ReviewTicketHandler($db));
         $registry->register(new DeveloperresponseTicketHandler($db));
+        $registry->register(new AbandonwareTicketHandler($db));
         $registry->register(new OtherTicketHandler($db));
 
         return $registry;

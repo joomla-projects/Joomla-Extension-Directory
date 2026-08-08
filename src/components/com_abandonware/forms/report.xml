@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Derived from com_vel's `abandonedreport.xml`, with the fields that turned out to be somebody
+    else's problem removed and one added.
+
+    Gone: `passed_to_vel` and `vel_item_id`, which belong to the VEL and left with it (P0-04);
+    `data_source`, which enumerated RSForms form ids and has no meaning outside the legacy system;
+    `user_ip`, `date_submitted`, `created` and `modified`, which a submitter must never be able to
+    set - the legacy form exposed all four to the public form and they are now written server-side.
+
+    Gone too: `reporter_fullname` and `reporter_email`. They are taken from the account, because
+    submitting requires one - the abuse protection 4.10 asks for is P1-05's `report` privilege and
+    its bans, and both are per-account. That is the one substantive parity change on this form.
+
+    New: `extension_id`, the relational link 4.10 asks for, populated when the visitor arrives from
+    a listing.
+-->
+<form>
+    <fieldset name="subject">
+        <!-- Hidden rather than absent: it survives a failed validation round-trip, which is the
+             case where a reporter would otherwise silently lose the link to the listing. -->
+        <field
+                name="extension_id"
+                type="hidden"
+                filter="integer"
+        />
+
+        <field
+                name="extension_name"
+                type="text"
+                label="COM_ABANDONWARE_FIELD_EXTENSION_NAME_LABEL"
+                description="COM_ABANDONWARE_REPORT_EXTENSION_NAME_DESC"
+                required="true"
+                maxlength="255"
+                filter="string"
+                message="COM_ABANDONWARE_ERROR_NO_SUBJECT"
+        />
+
+        <field
+                name="extension_version"
+                type="text"
+                label="COM_ABANDONWARE_FIELD_EXTENSION_VERSION_LABEL"
+                description="COM_ABANDONWARE_REPORT_EXTENSION_VERSION_DESC"
+                maxlength="100"
+                filter="string"
+        />
+
+        <field
+                name="extension_url"
+                type="url"
+                label="COM_ABANDONWARE_FIELD_EXTENSION_URL_LABEL"
+                description="COM_ABANDONWARE_REPORT_EXTENSION_URL_DESC"
+                maxlength="255"
+                filter="url"
+                validate="url"
+        />
+
+        <field
+                name="developer_name"
+                type="text"
+                label="COM_ABANDONWARE_FIELD_DEVELOPER_NAME_LABEL"
+                description="COM_ABANDONWARE_REPORT_DEVELOPER_NAME_DESC"
+                maxlength="255"
+                filter="string"
+        />
+
+        <field
+                name="reason"
+                type="textarea"
+                label="COM_ABANDONWARE_FIELD_REASON_LABEL"
+                description="COM_ABANDONWARE_REPORT_REASON_DESC"
+                required="true"
+                rows="6"
+                filter="string"
+                message="COM_ABANDONWARE_ERROR_REASON_REQUIRED"
+        />
+    </fieldset>
+
+    <fieldset name="reporter">
+        <field
+                name="reporter_organisation"
+                type="text"
+                label="COM_ABANDONWARE_FIELD_REPORTER_ORGANISATION_LABEL"
+                description="COM_ABANDONWARE_REPORT_REPORTER_ORGANISATION_DESC"
+                maxlength="255"
+                filter="string"
+        />
+
+        <!--
+            4.6 lists consent as a P1 item for abandonware reporters. A checkbox and not a
+            preselected list: the legacy form offered a two-option list whose options carried the
+            same language key, so both read "I consent" - which is not a choice.
+
+            Withholding it does not store the submission with the flag off. ReportService refuses
+            it outright, because consent is the lawful basis for keeping the row at all.
+        -->
+        <field
+                name="consent_to_process"
+                type="checkbox"
+                label="COM_ABANDONWARE_FIELD_CONSENT_LABEL"
+                description="COM_ABANDONWARE_FIELD_CONSENT_DESC"
+                required="true"
+                value="1"
+                filter="integer"
+                message="COM_ABANDONWARE_ERROR_CONSENT_REQUIRED"
+        />
+    </fieldset>
+</form>

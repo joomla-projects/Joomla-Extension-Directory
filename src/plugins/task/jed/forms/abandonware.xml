@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+	<fields name="params">
+		<fieldset name="task_params">
+			<!--
+				Per signal, not in total. The three sources are read independently, so a pass can
+				produce up to three times this many cases - which is the intent: a batch that
+				filled up on link checks would starve the other two indefinitely.
+
+				The thresholds themselves are not here. They are component options on
+				com_abandonware, because how long a developer may be silent before the JED says
+				something in public is a policy decision (4.10) and does not belong in the
+				parameters of whichever scheduled task happens to read it.
+			-->
+			<field
+				name="batch_size"
+				type="number"
+				label="PLG_TASK_JED_LABEL_BATCH_SIZE"
+				description="PLG_TASK_JED_ABANDONWARE_BATCH_SIZE_DESC"
+				default="50"
+				min="1"
+				step="1"
+				filter="int"
+			/>
+		</fieldset>
+	</fields>
+</form>

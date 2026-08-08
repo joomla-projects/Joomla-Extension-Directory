@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" method="upgrade">
+    <name>COM_ABANDONWARE</name>
+    <author>Joomla! Project</author>
+    <creationDate>##DATE##</creationDate>
+    <copyright>(C) ##YEAR## Open Source Matters, Inc.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>admin@joomla.org</authorEmail>
+    <authorUrl>www.joomla.org</authorUrl>
+    <version>##VERSION##</version>
+    <description>COM_ABANDONWARE_XML_DESCRIPTION</description>
+    <namespace path="src">Jed\Component\Abandonware</namespace>
+
+    <files folder="components/com_abandonware">
+        ##FRONTEND_COMPONENT_FILES##
+    </files>
+
+    <languages folder="language">
+        ##FRONTEND_LANGUAGE_FILES##
+    </languages>
+
+    <administration>
+        <menu view="cases" img="class:jedextension">
+            COM_ABANDONWARE
+        </menu>
+
+        <submenu>
+            <menu link="option=com_abandonware&amp;view=cases" view="cases">COM_ABANDONWARE_SUBMENU_CASES</menu>
+            <menu link="option=com_abandonware&amp;view=reports" view="reports">COM_ABANDONWARE_SUBMENU_REPORTS</menu>
+        </submenu>
+
+        <files folder="administrator/components/com_abandonware">
+            ##BACKEND_COMPONENT_FILES##
+        </files>
+
+        <languages folder="administrator/components/com_abandonware/language">
+            ##BACKEND_LANGUAGE_FILES##
+        </languages>
+    </administration>
+
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+</extension>

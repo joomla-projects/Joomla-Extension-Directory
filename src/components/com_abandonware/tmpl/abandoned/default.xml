@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <layout title="COM_ABANDONWARE_MENU_ABANDONED_TITLE" option="COM_ABANDONWARE_MENU_ABANDONED_OPTION">
+        <message>
+            <![CDATA[COM_ABANDONWARE_MENU_ABANDONED_DESC]]>
+        </message>
+    </layout>
+</metadata>

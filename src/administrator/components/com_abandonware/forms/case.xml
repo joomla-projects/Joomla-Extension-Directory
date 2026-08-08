@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Only the editable half of a case is here.
+
+    `status`, `contact_time`, `grace_until`, `abandoned_time`, `resolution` and `published` are
+    absent on purpose, and CaseModel::save() strips them again for any caller that posts them
+    anyway. They carry the guarantees of the process - most importantly that nothing reaches
+    `abandoned` without a recorded contact attempt - and a form field that could set them would
+    walk straight past the service that enforces it.
+-->
+<form>
+    <fieldset name="case">
+        <field name="id" type="number" label="JGLOBAL_FIELD_ID_LABEL" default="0" class="readonly" readonly="true"/>
+
+        <!--
+            Editable, because a case about something the JED never listed has nothing else to
+            identify it by, and because the JED team is often the first to work out what the
+            reporter actually meant.
+        -->
+        <field
+                name="extension_name"
+                type="text"
+                label="COM_ABANDONWARE_FIELD_EXTENSION_NAME_LABEL"
+                description="COM_ABANDONWARE_FIELD_EXTENSION_NAME_DESC"
+                maxlength="255"
+                filter="string"
+        />
+
+        <field
+                name="extension_version"
+                type="text"
+                label="COM_ABANDONWARE_FIELD_EXTENSION_VERSION_LABEL"
+                maxlength="100"
+                filter="string"
+        />
+
+        <field
+                name="extension_url"
+                type="url"
+                label="COM_ABANDONWARE_FIELD_EXTENSION_URL_LABEL"
+                maxlength="255"
+                filter="url"
+                validate="url"
+        />
+
+        <field
+                name="developer_name"
+                type="text"
+                label="COM_ABANDONWARE_FIELD_DEVELOPER_NAME_LABEL"
+                maxlength="255"
+                filter="string"
+        />
+
+        <!--
+            The relational link 4.10 asks for. Editable so a case that arrived as free text can be
+            attached to the listing it turns out to be about - which is the single most useful
+            thing somebody triaging can do to it.
+        -->
+        <field
+                name="extension_id"
+                type="number"
+                label="COM_ABANDONWARE_FIELD_EXTENSION_ID_LABEL"
+                description="COM_ABANDONWARE_FIELD_EXTENSION_ID_DESC"
+                filter="integer"
+                min="0"
+        />
+
+        <!--
+            P1-28's key. Stored NULL rather than '' when blank - a unique index accepts any number
+            of NULLs and exactly one empty string (8.14), so the second blank one would refuse to
+            save. CaseTable::bind() does the conversion.
+        -->
+        <field
+                name="identity_key"
+                type="text"
+                label="COM_ABANDONWARE_FIELD_IDENTITY_KEY_LABEL"
+                description="COM_ABANDONWARE_FIELD_IDENTITY_KEY_DESC"
+                maxlength="64"
+                filter="string"
+        />
+
+        <field
+                name="assigned_to"
+                type="user"
+                label="COM_ABANDONWARE_FIELD_ASSIGNED_TO_LABEL"
+                description="COM_ABANDONWARE_FIELD_ASSIGNED_TO_DESC"
+        />
+
+        <!-- Never public. Same rule as audit results (8.7). -->
+        <field
+                name="internal_notes"
+                type="textarea"
+                label="COM_ABANDONWARE_FIELD_INTERNAL_NOTES_LABEL"
+                description="COM_ABANDONWARE_FIELD_INTERNAL_NOTES_DESC"
+                rows="8"
+                filter="safehtml"
+        />
+    </fieldset>
+</form>

@@ -16,6 +16,7 @@
 	<files>
 		<file type="component" id="com_jed">com_jed.zip</file>
 		<file type="component" id="com_tickets">com_tickets.zip</file>
+		<file type="component" id="com_abandonware">com_abandonware.zip</file>
 		<file type="module" id="mod_jed_opentickets" client="administrator">mod_jed_opentickets.zip</file>
 		<file type="module" id="mod_jed_extensions" client="site">mod_jed_extensions.zip</file>
 		<file type="plugin" id="jed_sampledata" group="sampledata">plg_sampledata_jed.zip</file>
