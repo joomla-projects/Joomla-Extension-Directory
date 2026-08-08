@@ -96,6 +96,7 @@ class PlgSampledataJed2 extends CMSPlugin
             'com_tickets' => $this->getComponentId($db, 'com_tickets'),
             'com_finder'  => $this->getComponentId($db, 'com_finder'),
             'com_users'   => $this->getComponentId($db, 'com_users'),
+            'com_tags'    => $this->getComponentId($db, 'com_tags'),
         ];
 
         if (!$componentIds['com_jed']) {
@@ -218,6 +219,20 @@ class PlgSampledataJed2 extends CMSPlugin
             'path'         => 'search',
             'link'         => 'index.php?option=com_finder&view=search',
             'component_id' => $componentIds['com_finder'],
+        ], 1, $messages);
+
+        // Tag listing pages come from core com_tags - com_jed neither implements them nor routes
+        // them (P1-16). The alias has to be exactly "tags": com_tags' router drops the id prefix
+        // from a tag segment when it builds a URL and resolves a bare alias back to an id when it
+        // parses one, so this single menu item reproduces the legacy pattern /tags/<slug> (6.3)
+        // natively for every imported tag. Nothing to redirect, and nothing for P1-25 to map -
+        // but also nothing that may take the "tags" alias away from this item.
+        $this->createMenuItem($db, [
+            'title'        => 'Tags',
+            'alias'        => 'tags',
+            'path'         => 'tags',
+            'link'         => 'index.php?option=com_tags&view=tags',
+            'component_id' => $componentIds['com_tags'],
         ], 1, $messages);
 
         $this->createMenuItem($db, [
