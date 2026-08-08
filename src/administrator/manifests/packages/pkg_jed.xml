@@ -19,6 +19,7 @@
 		<file type="component" id="com_abandonware">com_abandonware.zip</file>
 		<file type="module" id="mod_jed_opentickets" client="administrator">mod_jed_opentickets.zip</file>
 		<file type="module" id="mod_jed_extensions" client="site">mod_jed_extensions.zip</file>
+		<file type="template" id="joomla" client="site">tpl_joomla.zip</file>
 		<file type="plugin" id="jed_sampledata" group="sampledata">plg_sampledata_jed.zip</file>
 		<file type="plugin" id="jed_sampledata2" group="sampledata">plg_sampledata_jed2.zip</file>
 		<file type="plugin" id="jed_migrate" group="sampledata">plg_sampledata_jed_migrate.zip</file>
