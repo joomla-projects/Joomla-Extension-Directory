@@ -17,6 +17,7 @@ use Jed\Component\Jed\Administrator\Audit\ProcessRunner;
 use Jed\Component\Jed\Administrator\Hit\HitAggregator;
 use Jed\Component\Jed\Administrator\Link\LinkCheckService;
 use Jed\Component\Jed\Administrator\Queue\AuditJobHandler;
+use Jed\Component\Jed\Administrator\Privacy\PrivacyRetentionService;
 use Jed\Component\Jed\Administrator\Queue\HitAggregateJobHandler;
 use Jed\Component\Jed\Administrator\Queue\JobHandlerRegistry;
 use Jed\Component\Jed\Administrator\Queue\LinkCheckJobHandler;
@@ -113,7 +114,8 @@ return new class () implements ServiceProviderInterface {
                     $queueService,
                     $jobHandlerRegistry,
                     $linkCheckService,
-                    $hitAggregator
+                    $hitAggregator,
+                    new PrivacyRetentionService($db)
                 );
                 $plugin->setApplication(Factory::getApplication());
 
