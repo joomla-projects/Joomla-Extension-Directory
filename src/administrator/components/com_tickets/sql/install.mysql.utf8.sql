@@ -1,5 +1,9 @@
+-- Safe to run twice (P1-30): CREATE TABLE IF NOT EXISTS, INSERT IGNORE for the seed rows, and no
+-- DROP - those moved to reset.mysql.utf8.sql, which no manifest references. Schema changes after
+-- go-live belong in sql/updates/mysql/<version>.sql; this file is kept in step so that a fresh
+-- install ends up with the same schema.
+
 /* Ticket Category Types */
-DROP TABLE IF EXISTS `#__jed_ticket_categories`;
 
 CREATE TABLE IF NOT EXISTS `#__jed_ticket_categories`
 (
@@ -14,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_categories`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `#__jed_ticket_categories`(`id`, `categorytype`, `ordering`, `state`, `checked_out`, `checked_out_time`, `created_by`, `modified_by`) VALUES
+INSERT IGNORE INTO `#__jed_ticket_categories`(`id`, `categorytype`, `ordering`, `state`, `checked_out`, `checked_out_time`, `created_by`, `modified_by`) VALUES
 (1, 'Unknown', 0, 1, NULL, NULL, 652, 652),
 (2, 'Extension', 0, 1, NULL, NULL, 652, 652),
 (3, 'Review', 0, 1, NULL, NULL, 652, 652),
@@ -27,7 +31,6 @@ INSERT INTO `#__jed_ticket_categories`(`id`, `categorytype`, `ordering`, `state`
 (10, 'Reported Extension', 0, 1, NULL, NULL, 652, 652);
 
 /* Ticket Allocation Groups */
-DROP TABLE IF EXISTS `#__jed_ticket_groups`;
 CREATE TABLE IF NOT EXISTS `#__jed_ticket_groups`
 (
     `id`               int unsigned NOT NULL AUTO_INCREMENT,
@@ -41,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_groups`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `#__jed_ticket_groups`(`id`, `name`, `ordering`, `state`, `checked_out`, `checked_out_time`, `created_by`, `modified_by`) VALUES
+INSERT IGNORE INTO `#__jed_ticket_groups`(`id`, `name`, `ordering`, `state`, `checked_out`, `checked_out_time`, `created_by`, `modified_by`) VALUES
 (1, 'Any', 0, 1, NULL, NULL, 652, 652),
 (2, 'Team Leadership', 0, 1, NULL, NULL, 652, 652),
 (3, 'Listing Specialist', 0, 1, NULL, NULL, 652, 652),
@@ -49,7 +52,6 @@ INSERT INTO `#__jed_ticket_groups`(`id`, `name`, `ordering`, `state`, `checked_o
 (5, 'Support Speciailist', 0, 1, NULL, NULL, 652, 652);
 
 /* Ticket Linked Items */
-DROP TABLE IF EXISTS `#__jed_ticket_linked_item_types`;
 CREATE TABLE IF NOT EXISTS `#__jed_ticket_linked_item_types`
 (
     `id`               int unsigned NOT NULL AUTO_INCREMENT,
@@ -64,13 +66,12 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_linked_item_types`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `#__jed_ticket_linked_item_types`(`id`, `title`, `model`, `ordering`, `state`, `checked_out`, `checked_out_time`, `created_by`, `modified_by`) VALUES
+INSERT IGNORE INTO `#__jed_ticket_linked_item_types`(`id`, `title`, `model`, `ordering`, `state`, `checked_out`, `checked_out_time`, `created_by`, `modified_by`) VALUES
 (1, 'Unknown', 'unknown', 0, 1, NULL, NULL, 652, 652),
 (2, 'Extension', 'Extension', 1, 1, NULL, NULL, 652, 652),
 (3, 'Review', 'Review', 0, 1, NULL, NULL, 652, 652);
 
 /* JED Ticket Messages */
-DROP TABLE IF EXISTS `#__jed_ticket_messages`;
 CREATE TABLE IF NOT EXISTS `#__jed_ticket_messages`
 (
     `id`                int unsigned NOT NULL AUTO_INCREMENT,
@@ -85,7 +86,6 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_messages`
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 /* JED Tickets */
-DROP TABLE IF EXISTS `#__jed_tickets`;
 CREATE TABLE IF NOT EXISTS `#__jed_tickets`
 (
     `id`                      int unsigned NOT NULL AUTO_INCREMENT,

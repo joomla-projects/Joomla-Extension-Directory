@@ -75,4 +75,16 @@
             <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
         </sql>
     </uninstall>
+
+    <!--
+        P1-30. On the update route Joomla ignores <install><sql> entirely and runs the files in
+        this folder instead, from the version recorded in #__schemas upwards. Without this element
+        no #__schemas row is ever written, and the first schema change after go-live has nothing
+        to anchor to.
+    -->
+    <update>
+        <schemas>
+            <schemapath type="mysql">sql/updates/mysql</schemapath>
+        </schemas>
+    </update>
 </extension>

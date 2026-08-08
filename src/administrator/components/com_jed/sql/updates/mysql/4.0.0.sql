@@ -1,0 +1,13 @@
+-- Baseline schema anchor for com_jed 4.0.0 (P1-30).
+--
+-- Deliberately empty of statements. On a fresh install Joomla does not run this file; it reads
+-- the directory, takes the highest version it finds and writes that into #__schemas
+-- (Installer::setSchemaVersion). That row is the anchor. Without it the first update after
+-- go-live has nothing to compare against and Joomla replays every update file from 0.0.0.
+--
+-- Everything in the schema as of 4.0.0 is therefore in install.mysql.utf8.sql, not here.
+--
+-- The next schema change goes in a NEW file named after the version that ships it - 4.0.1.sql,
+-- 4.1.0.sql - and is mirrored into install.mysql.utf8.sql so a fresh install lands in the same
+-- place. tests/unit/Schema/SchemaUpdatePathTest.php fails the build if the version in jorobo.ini
+-- has no matching file here, so bumping the version is what reminds you.
