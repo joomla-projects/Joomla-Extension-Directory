@@ -16,6 +16,8 @@ namespace Jed\Component\Jed\Administrator\Model;
 
 use Exception;
 use Jed\Component\Jed\Administrator\Access\JedAccessHelper;
+use Jed\Component\Jed\Administrator\Access\Privilege;
+use Jed\Component\Jed\Administrator\Log\JedActionLog;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
@@ -195,25 +197,27 @@ class UseraccessModel extends ListModel
 
         $db = $this->getDatabase();
 
-        $exists = (bool) $db->setQuery(
+        $name = $db->setQuery(
             $db->getQuery(true)
-                ->select('1')
+                ->select($db->quoteName('name'))
                 ->from($db->quoteName('#__users'))
                 ->where($db->quoteName('id') . ' = :uid')
                 ->bind(':uid', $userId, ParameterType::INTEGER)
         )->loadResult();
 
-        if (!$exists) {
+        if ($name === null) {
             throw new RuntimeException(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
         }
 
-        $hasRow = (bool) $db->setQuery(
+        $before = $db->setQuery(
             $db->getQuery(true)
-                ->select('1')
+                ->select('*')
                 ->from($db->quoteName('#__jed_user_access'))
                 ->where($db->quoteName('user_id') . ' = :uid')
                 ->bind(':uid', $userId, ParameterType::INTEGER)
-        )->loadResult();
+        )->loadAssoc();
+
+        $hasRow = $before !== null;
 
         $columns['set_by']   = (int) $this->getCurrentUser()->id;
         $columns['set_time'] = Factory::getDate()->toSql();
@@ -240,5 +244,129 @@ class UseraccessModel extends ListModel
         // The gate caches rows per request; a decision made in this request has to be visible to
         // anything that asks afterwards.
         JedAccessHelper::clearCache();
+
+        $this->logDecision($userId, (string) $name, $before ?? [], $columns, $reason);
+    }
+
+    /**
+     * Record what actually changed about one account in the action log (`P1-22`).
+     *
+     * One entry per **kind** of change, and only where the value really moved. The edit form
+     * submits every field at once (see {@see UseraccessController::save()}), so writing an entry
+     * per submitted column would mean six entries for one decision, five of them saying nothing.
+     * Comparing against the previous row is what turns a form submission back into the decision
+     * the person made.
+     *
+     * The absent-row case is the normal one: no row means full privileges and no ban (`P1-05`),
+     * so that is what "before" is when there is nothing to read.
+     *
+     * @param int    $userId  The account decided about.
+     * @param string $name    Their name, so the entry reads without a lookup.
+     * @param array  $before  The previous `#__jed_user_access` row, or an empty array.
+     * @param array  $columns What was written.
+     * @param string $reason  The mandatory reason.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     */
+    private function logDecision(int $userId, string $name, array $before, array $columns, string $reason): void
+    {
+        JedActionLog::loadWording();
+
+        $base = ['title' => $name, 'reason' => $reason];
+
+        $changed = static function (string $column, int $default) use ($before, $columns): ?int {
+            if (!\array_key_exists($column, $columns)) {
+                return null;
+            }
+
+            $now = (int) $columns[$column];
+
+            return (int) ($before[$column] ?? $default) === $now ? null : $now;
+        };
+
+        $banned = $changed('banned', 0);
+
+        if ($banned === 1) {
+            JedActionLog::record(JedActionLog::USER_BAN, 'com_jed.useraccess', $userId, $base + [
+                'period' => $this->banPeriod($columns),
+            ]);
+        } elseif ($banned === 0) {
+            JedActionLog::record(JedActionLog::USER_UNBAN, 'com_jed.useraccess', $userId, $base);
+        }
+
+        foreach (['auto_approve_extensions' => 'EXTENSIONS', 'auto_approve_reviews' => 'REVIEWS'] as $column => $scope) {
+            $trust = $changed($column, 0);
+
+            if ($trust === null) {
+                continue;
+            }
+
+            JedActionLog::record(
+                $trust === 1 ? JedActionLog::USER_TRUST_GRANT : JedActionLog::USER_TRUST_REVOKE,
+                'com_jed.useraccess',
+                $userId,
+                $base + ['scope' => Text::_('COM_JED_USERACCESS_TRUST_' . $scope)]
+            );
+        }
+
+        $granted = [];
+        $revoked = [];
+
+        foreach (Privilege::cases() as $privilege) {
+            // Default 1: everyone has every privilege until somebody decides otherwise.
+            $value = $changed($privilege->value, 1);
+
+            if ($value === null) {
+                continue;
+            }
+
+            if ($value === 1) {
+                $granted[] = Text::_($privilege->label());
+            } else {
+                $revoked[] = Text::_($privilege->label());
+            }
+        }
+
+        if ($granted === [] && $revoked === []) {
+            return;
+        }
+
+        $changes = [];
+
+        if ($granted !== []) {
+            $changes[] = Text::sprintf('COM_JED_USERACCESS_PRIVILEGE_GRANTED', implode(', ', $granted));
+        }
+
+        if ($revoked !== []) {
+            $changes[] = Text::sprintf('COM_JED_USERACCESS_PRIVILEGE_REVOKED', implode(', ', $revoked));
+        }
+
+        JedActionLog::record(JedActionLog::USER_PRIVILEGE, 'com_jed.useraccess', $userId, $base + [
+            'changes' => implode('; ', $changes),
+        ]);
+    }
+
+    /**
+     * How long a ban runs, as a phrase rather than two dates the reader has to interpret.
+     *
+     * @param array $columns The written columns.
+     *
+     * @return string
+     *
+     * @since 4.1.0
+     */
+    private function banPeriod(array $columns): string
+    {
+        $from  = trim((string) ($columns['banned_from'] ?? ''));
+        $until = trim((string) ($columns['banned_until'] ?? ''));
+
+        return match (true) {
+            $from !== '' && $until !== '' => Text::sprintf('COM_JED_USERACCESS_BANNED_FROM_UNTIL', $from, $until),
+            $until !== ''                 => Text::sprintf('COM_JED_USERACCESS_BANNED_UNTIL', $until),
+            $from !== ''                  => Text::sprintf('COM_JED_USERACCESS_BANNED_FROM_ONWARDS', $from),
+            default                       => Text::_('COM_JED_USERACCESS_BANNED_PERMANENTLY'),
+        };
     }
 }

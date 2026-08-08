@@ -18,6 +18,7 @@ defined('_JEXEC') or die;
 use Exception;
 use InvalidArgumentException;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Jed\Component\Jed\Administrator\Log\JedActionLog;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Table\ExtensionHistoryTable;
 use Jed\Component\Jed\Administrator\Table\ExtensionTable;
@@ -301,6 +302,7 @@ class ExtensionModel extends AdminModel
         $this->updateEntryVersion($extensionId, $historyId);
 
         $this->notifyDeveloperOfDecision($extensionId, true, '', '');
+        $this->logListingDecision(JedActionLog::EXTENSION_APPROVE, $extensionId, (string) $liveTable->name);
     }
 
     /**
@@ -331,7 +333,9 @@ class ExtensionModel extends AdminModel
             throw new Exception(Text::_('COM_JED_REJECT_ERROR_REASON_REQUIRED'));
         }
 
-        if (!$this->blockReasonExists($reasonCode)) {
+        $reasonTitle = $this->blockReasonTitle($reasonCode);
+
+        if ($reasonTitle === null) {
             throw new Exception(Text::sprintf('COM_JED_BLOCK_ERROR_REASON_UNKNOWN', $reasonCode));
         }
 
@@ -374,6 +378,12 @@ class ExtensionModel extends AdminModel
         }
 
         $this->notifyDeveloperOfDecision($extensionId, false, $reasonCode, $notes);
+        $this->logListingDecision(
+            JedActionLog::EXTENSION_REJECT,
+            $extensionId,
+            (string) $liveTable->name,
+            ['reason' => $reasonTitle]
+        );
     }
 
     /**
@@ -794,11 +804,13 @@ class ExtensionModel extends AdminModel
             throw new Exception(Text::_('COM_JED_BLOCK_ERROR_REASON_REQUIRED'));
         }
 
-        if (!$this->blockReasonExists($reasonCode)) {
+        $reasonTitle = $this->blockReasonTitle($reasonCode);
+
+        if ($reasonTitle === null) {
             throw new Exception(Text::sprintf('COM_JED_BLOCK_ERROR_REASON_UNKNOWN', $reasonCode));
         }
 
-        $this->applyListingState(
+        $liveTable = $this->applyListingState(
             $extensionId,
             [
                 'blocked'           => 1,
@@ -808,6 +820,16 @@ class ExtensionModel extends AdminModel
                 'blocked_by'        => (int) $this->getCurrentUser()->id,
                 'blocked_time'      => Factory::getDate()->toSql(),
             ]
+        );
+
+        // The reason title, not the code: the log is read by people, and the code is only
+        // meaningful to whoever remembers the vocabulary. The internal free text stays out - it
+        // is internal (8.7), and the action log has its own audience and its own retention.
+        $this->logListingDecision(
+            JedActionLog::EXTENSION_BLOCK,
+            $extensionId,
+            (string) $liveTable->name,
+            ['reason' => $reasonTitle]
         );
     }
 
@@ -828,7 +850,9 @@ class ExtensionModel extends AdminModel
      */
     public function unblock(int $extensionId): void
     {
-        $this->applyListingState($extensionId, ['blocked' => 0]);
+        $liveTable = $this->applyListingState($extensionId, ['blocked' => 0]);
+
+        $this->logListingDecision(JedActionLog::EXTENSION_UNBLOCK, $extensionId, (string) $liveTable->name);
     }
 
     /**
@@ -848,7 +872,7 @@ class ExtensionModel extends AdminModel
      */
     public function softDelete(int $extensionId): void
     {
-        $this->applyListingState(
+        $liveTable = $this->applyListingState(
             $extensionId,
             [
                 'deleted'      => 1,
@@ -856,6 +880,8 @@ class ExtensionModel extends AdminModel
                 'deleted_time' => Factory::getDate()->toSql(),
             ]
         );
+
+        $this->logListingDecision(JedActionLog::EXTENSION_DELETE, $extensionId, (string) $liveTable->name);
 
         // A handover of a listing that no longer exists is meaningless, and leaving it open would
         // let it complete later against a deleted record (8.8.1). Both parties are told.
@@ -879,7 +905,12 @@ class ExtensionModel extends AdminModel
      */
     public function restore(int $extensionId): void
     {
-        $this->applyListingState($extensionId, ['deleted' => 0, 'deleted_by' => null, 'deleted_time' => null]);
+        $liveTable = $this->applyListingState(
+            $extensionId,
+            ['deleted' => 0, 'deleted_by' => null, 'deleted_time' => null]
+        );
+
+        $this->logListingDecision(JedActionLog::EXTENSION_RESTORE, $extensionId, (string) $liveTable->name);
     }
 
     /**
@@ -894,13 +925,14 @@ class ExtensionModel extends AdminModel
      * @param int   $extensionId The extension id.
      * @param array $columns     Column => value pairs to write.
      *
-     * @return void
+     * @return ExtensionTable  The stored live row, so the caller can name the listing in the
+     *                         action log without loading it a second time.
      *
      * @throws Exception If the listing does not exist.
      *
      * @since 4.1.0
      */
-    private function applyListingState(int $extensionId, array $columns): void
+    private function applyListingState(int $extensionId, array $columns): ExtensionTable
     {
         /** @var ExtensionTable $liveTable */
         $liveTable = $this->getTable('Extension');
@@ -925,29 +957,53 @@ class ExtensionModel extends AdminModel
         $historyTable->bind($revision);
         $historyTable->check();
         $historyTable->store();
+
+        return $liveTable;
     }
 
     /**
-     * Whether a block reason code exists and is enabled.
+     * The readable title of a block reason code, or null when the code is not a known, enabled one.
      *
-     * @param string $code The code to check.
+     * Doubles as the existence check the block and reject paths need, so those two facts cannot
+     * come from different queries and disagree.
      *
-     * @return bool
+     * @param string $code The code to look up.
+     *
+     * @return string|null
      *
      * @since 4.1.0
      */
-    private function blockReasonExists(string $code): bool
+    private function blockReasonTitle(string $code): ?string
     {
         $db = $this->getDatabase();
 
-        return (bool) $db->setQuery(
+        $title = $db->setQuery(
             $db->getQuery(true)
-                ->select('1')
+                ->select($db->quoteName('title'))
                 ->from($db->quoteName('#__jed_block_reasons'))
                 ->where($db->quoteName('code') . ' = :code')
                 ->where($db->quoteName('state') . ' = 1')
                 ->bind(':code', $code)
         )->loadResult();
+
+        return $title === null ? null : (string) $title;
+    }
+
+    /**
+     * Record one listing decision in the action log (`P1-22`).
+     *
+     * @param string $action      A {@see JedActionLog} listing action.
+     * @param int    $extensionId The listing decided about.
+     * @param string $name        Its name, for a message that reads without looking anything up.
+     * @param array  $extra       Further placeholders the wording of this action needs.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     */
+    private function logListingDecision(string $action, int $extensionId, string $name, array $extra = []): void
+    {
+        JedActionLog::record($action, 'com_jed.extension', $extensionId, ['title' => $name] + $extra);
     }
 
     /**

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="plugin" group="actionlog" method="upgrade">
+	<name>plg_actionlog_jed</name>
+	<author>Joomla! Project</author>
+	<creationDate>##DATE##</creationDate>
+	<copyright>(C) ##YEAR## Open Source Matters, Inc.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>admin@joomla.org</authorEmail>
+	<authorUrl>www.joomla.org</authorUrl>
+	<version>##VERSION##</version>
+	<description>PLG_ACTIONLOG_JED_XML_DESCRIPTION</description>
+	<namespace path="src">Joomla\Plugin\Actionlog\Jed</namespace>
+	<files>
+		##FILES##
+	</files>
+	<languages>
+		##LANGUAGE_FILES##
+	</languages>
+</extension>
