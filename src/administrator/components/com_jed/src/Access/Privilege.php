@@ -73,4 +73,16 @@ enum Privilege: string
     {
         return 'COM_JED_ACCESS_DENIED_' . strtoupper($this->value);
     }
+
+    /**
+     * The language key naming this privilege - the same wording the list column uses.
+     *
+     * @return string
+     *
+     * @since 4.1.0
+     */
+    public function label(): string
+    {
+        return 'COM_JED_USERACCESS_PRIVILEGE_' . strtoupper($this->value);
+    }
 }

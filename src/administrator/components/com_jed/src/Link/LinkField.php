@@ -125,4 +125,19 @@ final class LinkField
     {
         return array_keys(self::FIELDS);
     }
+
+    /**
+     * The language key naming a column the way a developer would - "Download link", not
+     * "download_url".
+     *
+     * @param string $field The column name.
+     *
+     * @return string
+     *
+     * @since 4.1.0
+     */
+    public static function label(string $field): string
+    {
+        return 'COM_JED_LINKCHECK_FIELD_' . strtoupper($field);
+    }
 }

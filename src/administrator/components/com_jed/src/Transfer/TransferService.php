@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Administrator\Transfer;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Administrator\Log\JedActionLog;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -345,6 +346,18 @@ final class TransferService
                 'REASONNOTES'   => $reason,
             ]);
         }
+
+        // Only the forced handover is logged. An agreed one is the two parties' own business and
+        // is already answerable from `#__jed_extension_transfers`, which - unlike the log - is
+        // kept for good (`8.15` boundary 1).
+        JedActionLog::record(JedActionLog::TRANSFER_FORCE, 'com_jed.extension', $extensionId, [
+            'title'    => (string) $extension['name'],
+            'from'     => $owner->name,
+            'fromlink' => 'index.php?option=com_users&task=user.edit&id=' . (int) $owner->id,
+            'to'       => $recipient->name,
+            'tolink'   => 'index.php?option=com_users&task=user.edit&id=' . (int) $recipient->id,
+            'reason'   => $reason,
+        ]);
 
         return (int) $row->id;
     }

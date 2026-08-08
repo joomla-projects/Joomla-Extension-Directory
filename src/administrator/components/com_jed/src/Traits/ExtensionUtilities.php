@@ -11,6 +11,7 @@
 namespace Jed\Component\Jed\Administrator\Traits;
 
 use Jed\Component\Jed\Administrator\Access\JedAccessHelper;
+use Jed\Component\Jed\Administrator\Log\JedActionLog;
 use Jed\Component\Jed\Administrator\MediaHandling\ImagePipeline;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Site\Helper\JedHelper;
@@ -206,13 +207,15 @@ trait ExtensionUtilities
         // enforced here and again when a transfer completes (P1-04). Silently dropping the owner
         // is the right answer rather than an error: the form offers a user picker, and picking
         // the owner is a plausible slip, not an attack.
-        $owner = (int) $db->setQuery(
+        $listing = $db->setQuery(
             $db->getQuery(true)
-                ->select($db->quoteName('owner'))
+                ->select($db->quoteName(['owner', 'name']))
                 ->from($db->quoteName('#__jed_extensions'))
                 ->where($db->quoteName('id') . ' = :eid')
                 ->bind(':eid', $extensionId, ParameterType::INTEGER)
-        )->loadResult();
+        )->loadAssoc() ?: ['owner' => 0, 'name' => ''];
+
+        $owner = (int) $listing['owner'];
 
         $userIds = array_values(array_filter($userIds, static fn (int $id) => $id !== $owner));
 
@@ -237,6 +240,13 @@ trait ExtensionUtilities
                     ->where($db->quoteName('extension_id') . ' = ' . $extensionId)
                     ->whereIn($db->quoteName('user_id'), array_values($removed))
             )->execute();
+
+            $this->logMaintainerChanges(
+                JedActionLog::MAINTAINER_REMOVE,
+                $extensionId,
+                (string) $listing['name'],
+                array_values($removed)
+            );
         }
 
         if ($added === []) {
@@ -260,6 +270,58 @@ trait ExtensionUtilities
         }
 
         $db->setQuery($query)->execute();
+
+        $this->logMaintainerChanges(
+            JedActionLog::MAINTAINER_ADD,
+            $extensionId,
+            (string) $listing['name'],
+            array_values($added)
+        );
+    }
+
+    /**
+     * Record maintainer changes in the action log (`P1-22`), one entry per person.
+     *
+     * One entry each rather than one listing several: the log's item filter is a single id, and a
+     * combined entry could not be found by searching for the person it concerns.
+     *
+     * This is logged even when a developer does it on their own listing, which looks like a
+     * departure from `8.15`'s "only moderation-relevant events from the frontend". It is not: a
+     * maintainer may edit the listing and their name appears publicly on it (`P1-03`), so the
+     * question "who gave this person access, and when" is exactly the kind the log exists for.
+     *
+     * @param string $action      Add or remove.
+     * @param int    $extensionId The listing.
+     * @param string $name        Its name.
+     * @param int[]  $userIds     The people added or removed.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     */
+    private function logMaintainerChanges(string $action, int $extensionId, string $name, array $userIds): void
+    {
+        if ($userIds === []) {
+            return;
+        }
+
+        $users = Factory::getContainer()->get(UserFactoryInterface::class);
+
+        foreach ($userIds as $userId) {
+            $userId = (int) $userId;
+
+            try {
+                $maintainer = $users->loadUserById($userId)->name;
+            } catch (Throwable) {
+                $maintainer = (string) $userId;
+            }
+
+            JedActionLog::record($action, 'com_jed.extension', $extensionId, [
+                'title'          => $name,
+                'maintainer'     => $maintainer,
+                'maintainerlink' => 'index.php?option=com_users&task=user.edit&id=' . $userId,
+            ]);
+        }
     }
 
     /**

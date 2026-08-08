@@ -15,9 +15,11 @@ namespace Jed\Component\Jed\Administrator\Table;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Log\JedActionLog;
 use Jed\Component\Jed\Administrator\Queue\QueueService;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\ParameterType;
@@ -178,17 +180,19 @@ class ReviewTable extends Table
      */
     public function store($updateNulls = true): bool
     {
-        $wasPublished = false;
+        $before = null;
 
         if ($this->id) {
-            $db    = $this->getDatabase();
-            $query = $db->getQuery(true)
-                ->select($db->quoteName('state'))
+            $db     = $this->getDatabase();
+            $query  = $db->getQuery(true)
+                ->select($db->quoteName(['state', 'developer_response_published']))
                 ->from($db->quoteName('#__jed_reviews'))
                 ->where($db->quoteName('id') . ' = :id')
                 ->bind(':id', $this->id, ParameterType::INTEGER);
-            $wasPublished = (int) $db->setQuery($query)->loadResult() === 1;
+            $before = $db->setQuery($query)->loadAssoc();
         }
+
+        $wasPublished = (int) ($before['state'] ?? 0) === 1;
 
         $result = parent::store($updateNulls);
 
@@ -200,9 +204,80 @@ class ReviewTable extends Table
                 $userId       = (int) (Factory::getApplication()->getIdentity()->id ?? 0);
                 $queueService->enqueue('extension.score_recalc', (int) $this->extension_id, null, [], $userId);
             }
+
+            if ($before !== null) {
+                $this->logModeration($before);
+            }
         }
 
         return $result;
+    }
+
+    /**
+     * Record a moderation decision made on the review *edit form* in the action log (`P1-22`).
+     *
+     * The list's publish/unpublish toolbar goes through
+     * {@see \Jed\Component\Jed\Administrator\Model\ReviewModel::publish()} and never reaches this
+     * method - core's `Table::publish()` writes its own UPDATE. The two paths are therefore
+     * disjoint, and each has to log for itself or the entry depends on which button was used.
+     *
+     * @param array $before The `state` and `developer_response_published` the row had a moment ago.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     */
+    private function logModeration(array $before): void
+    {
+        JedActionLog::loadWording();
+
+        $reviewId = (int) $this->id;
+        $data     = [
+            'title'     => trim((string) ($this->title ?? '')) ?: Text::_('COM_JED_REVIEW_UNTITLED'),
+            'extension' => $this->extensionName(),
+        ];
+
+        if ((int) ($before['state'] ?? 0) !== (int) $this->state) {
+            JedActionLog::record(
+                (int) $this->state === 1 ? JedActionLog::REVIEW_PUBLISH : JedActionLog::REVIEW_UNPUBLISH,
+                'com_jed.review',
+                $reviewId,
+                $data
+            );
+        }
+
+        $wasResponse = (int) ($before['developer_response_published'] ?? 0);
+        $nowResponse = (int) ($this->developer_response_published ?? 0);
+
+        if ($wasResponse !== $nowResponse) {
+            JedActionLog::record(
+                $nowResponse === 1 ? JedActionLog::RESPONSE_PUBLISH : JedActionLog::RESPONSE_UNPUBLISH,
+                'com_jed.review',
+                $reviewId,
+                $data
+            );
+        }
+    }
+
+    /**
+     * The name of the listing this review is about.
+     *
+     * @return string
+     *
+     * @since 4.1.0
+     */
+    private function extensionName(): string
+    {
+        $db          = $this->getDatabase();
+        $extensionId = (int) $this->extension_id;
+
+        return (string) $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName('name'))
+                ->from($db->quoteName('#__jed_extensions'))
+                ->where($db->quoteName('id') . ' = :id')
+                ->bind(':id', $extensionId, ParameterType::INTEGER)
+        )->loadResult();
     }
 
     /**

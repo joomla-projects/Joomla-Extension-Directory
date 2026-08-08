@@ -13,6 +13,7 @@ namespace Jed\Component\Jed\Administrator\Link;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Jed\Component\Jed\Administrator\Log\JedActionLog;
 use Jed\Component\Jed\Administrator\Url\UrlCheckResult;
 use Jed\Component\Jed\Administrator\Url\UrlFormat;
 use Jed\Component\Jed\Administrator\Url\UrlValidatorRegistry;
@@ -185,7 +186,7 @@ class LinkCheckService
         $columns = LinkField::all();
 
         $query = $this->db->getQuery(true)
-            ->select($this->db->quoteName(array_merge(['id'], $columns)))
+            ->select($this->db->quoteName(array_merge(['id', 'name'], $columns)))
             ->from($this->db->quoteName('#__jed_extensions'))
             ->where($this->db->quoteName('id') . ' = :id')
             ->bind(':id', $extensionId, ParameterType::INTEGER);
@@ -211,15 +212,16 @@ class LinkCheckService
             $previous = $this->currentState($extensionId, $field);
 
             $outcome = $this->checkOne((object) [
-                'check_id'     => $previous['id'] ?? null,
-                'extension_id' => $extensionId,
-                'link_type'    => $field,
-                'url'          => $url,
-                'fail_count'   => (int) ($previous['fail_count'] ?? 0),
-                'status'       => (string) ($previous['status'] ?? 'ok'),
-                'ticket_id'    => $previous['ticket_id'] ?? null,
-                'escalated'    => (int) ($previous['escalated'] ?? 0),
-                'first_failed' => $previous['first_failed'] ?? null,
+                'check_id'       => $previous['id'] ?? null,
+                'extension_id'   => $extensionId,
+                'extension_name' => (string) ($row['name'] ?? ''),
+                'link_type'      => $field,
+                'url'            => $url,
+                'fail_count'     => (int) ($previous['fail_count'] ?? 0),
+                'status'         => (string) ($previous['status'] ?? 'ok'),
+                'ticket_id'      => $previous['ticket_id'] ?? null,
+                'escalated'      => (int) ($previous['escalated'] ?? 0),
+                'first_failed'   => $previous['first_failed'] ?? null,
             ]);
 
             $results[$field] = $outcome['status']->value;
@@ -252,7 +254,8 @@ class LinkCheckService
         $unions = [];
 
         foreach (LinkField::all() as $field) {
-            $unions[] = 'SELECT e.id AS extension_id, ' . $this->db->quote($field) . ' AS link_type, '
+            $unions[] = 'SELECT e.id AS extension_id, e.name AS extension_name, '
+                . $this->db->quote($field) . ' AS link_type, '
                 . 'e.' . $this->db->quoteName($field) . ' AS url, '
                 . 'c.id AS check_id, c.status, c.fail_count, c.first_failed, c.ticket_id, c.escalated, c.last_checked '
                 . 'FROM ' . $this->db->quoteName('#__jed_extensions', 'e') . ' '
@@ -530,7 +533,7 @@ class LinkCheckService
             return 0;
         }
 
-        $fieldLabel = Text::_('COM_JED_LINKCHECK_FIELD_' . strtoupper((string) $link->link_type));
+        $fieldLabel = Text::_(LinkField::label((string) $link->link_type));
         $subject    = Text::sprintf('COM_JED_LINKCHECK_TICKET_SUBJECT', $listing['name'], $fieldLabel);
         $body       = Text::sprintf(
             'COM_JED_LINKCHECK_TICKET_BODY',
@@ -598,7 +601,7 @@ class LinkCheckService
             $mailer->addTemplateData([
                 'SITENAME'      => (string) Factory::getApplication()->get('sitename'),
                 'EXTENSIONNAME' => $name,
-                'LINKTYPE'      => Text::_('COM_JED_LINKCHECK_FIELD_' . strtoupper((string) $link->link_type)),
+                'LINKTYPE'      => Text::_(LinkField::label((string) $link->link_type)),
                 'URL'           => $url,
                 'REASON'        => Text::_($result->message),
                 'SINCE'         => (string) ($link->first_failed ?? ''),
@@ -632,7 +635,7 @@ class LinkCheckService
 
         $note = Text::sprintf(
             'COM_JED_LINKCHECK_TICKET_RECOVERED',
-            Text::_('COM_JED_LINKCHECK_FIELD_' . strtoupper((string) $link->link_type)),
+            Text::_(LinkField::label((string) $link->link_type)),
             (string) $link->url
         );
 
@@ -688,5 +691,23 @@ class LinkCheckService
             $kind === 'recovered' ? Log::INFO : Log::WARNING,
             'com_jed.linkcheck'
         );
+
+        // `escalated` is deliberately absent: it is a consequence of a `broken` already recorded
+        // here, and logging both would put the same outage in front of the team twice.
+        $action = match ($kind) {
+            'broken'    => JedActionLog::LINK_BROKEN,
+            'recovered' => JedActionLog::LINK_RECOVERED,
+            default     => null,
+        };
+
+        if ($action === null) {
+            return;
+        }
+
+        JedActionLog::record($action, 'com_jed.extension', (int) $link->extension_id, [
+            'title'  => (string) ($link->extension_name ?? ''),
+            'field'  => Text::_(LinkField::label((string) $link->link_type)),
+            'detail' => Text::_($result->message),
+        ]);
     }
 }

@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Administrator\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Log\JedActionLog;
 use Jed\Component\Jed\Administrator\Queue\QueueService;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
@@ -150,7 +151,7 @@ class ReviewModel extends AdminModel
 
         if ($ids !== []) {
             $query = $db->getQuery(true)
-                ->select($db->quoteName(['r.id', 'r.extension_id', 'r.state', 'r.created_by']))
+                ->select($db->quoteName(['r.id', 'r.extension_id', 'r.state', 'r.created_by', 'r.title']))
                 ->select($db->quoteName('e.name', 'extension_name'))
                 ->from($db->quoteName('#__jed_reviews', 'r'))
                 ->leftJoin($db->quoteName('#__jed_extensions', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('r.extension_id'))
@@ -179,6 +180,13 @@ class ReviewModel extends AdminModel
                     // 4.3: moderating a review told nobody. The reviewer wrote it and never heard
                     // whether it was published, which is the one thing they wanted to know.
                     $this->notifyReviewer($old, $nowPublished);
+
+                    // On the transition only - the same test the mail uses. Re-publishing what is
+                    // already public is not a decision and must not fill the log with repeats.
+                    $this->logReviewDecision(
+                        $nowPublished ? JedActionLog::REVIEW_PUBLISH : JedActionLog::REVIEW_UNPUBLISH,
+                        $old
+                    );
                 }
             }
 
@@ -288,7 +296,20 @@ class ReviewModel extends AdminModel
             return false;
         }
 
-        $db    = $this->getDatabase();
+        $db = $this->getDatabase();
+
+        $before = $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(['r.id', 'r.title', 'r.developer_response_published']))
+                ->select($db->quoteName('e.name', 'extension_name'))
+                ->from($db->quoteName('#__jed_reviews', 'r'))
+                ->leftJoin(
+                    $db->quoteName('#__jed_extensions', 'e')
+                    . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('r.extension_id')
+                )
+                ->whereIn($db->quoteName('r.id'), $ids)
+        )->loadObjectList('id');
+
         $query = $db->getQuery(true)
             ->update($db->quoteName('#__jed_reviews'))
             ->set($db->quoteName('developer_response_published') . ' = ' . (int) $value)
@@ -296,7 +317,44 @@ class ReviewModel extends AdminModel
 
         $db->setQuery($query)->execute();
 
+        foreach ($ids as $id) {
+            $old = $before[$id] ?? null;
+
+            // Transitions only, as for the review itself: approving a response that is already
+            // approved decides nothing.
+            if ($old === null || (int) $old->developer_response_published === $value) {
+                continue;
+            }
+
+            $this->logReviewDecision(
+                $value === 1 ? JedActionLog::RESPONSE_PUBLISH : JedActionLog::RESPONSE_UNPUBLISH,
+                $old
+            );
+        }
+
         return true;
+    }
+
+    /**
+     * Record one review-moderation decision in the action log (`P1-22`).
+     *
+     * @param string $action A {@see JedActionLog} review or response action.
+     * @param object $review A row carrying id, title and extension_name.
+     *
+     * @return void
+     *
+     * @since 4.1.0
+     */
+    private function logReviewDecision(string $action, object $review): void
+    {
+        JedActionLog::loadWording();
+
+        JedActionLog::record($action, 'com_jed.review', (int) $review->id, [
+            // A review with no title is normal in the imported stock; falling back to the
+            // extension keeps the entry a sentence rather than a dangling "the review of".
+            'title'     => trim((string) ($review->title ?? '')) ?: Text::_('COM_JED_REVIEW_UNTITLED'),
+            'extension' => (string) ($review->extension_name ?? ''),
+        ]);
     }
 
     /**

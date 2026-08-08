@@ -25,6 +25,7 @@
 		<file type="plugin" id="jed_finder" group="finder">plg_finder_jed.zip</file>
 		<file type="plugin" id="jed_score_avg" group="jed">plg_jed_score_avg.zip</file>
 		<file type="plugin" id="jed_task" group="task">plg_task_jed.zip</file>
+		<file type="plugin" id="jed_actionlog" group="actionlog">plg_actionlog_jed.zip</file>
 		<file type="plugin" id="jed_privacy" group="privacy">plg_privacy_jed.zip</file>
 		<file type="plugin" id="tickets_privacy" group="privacy">plg_privacy_tickets.zip</file>
 	</files>
