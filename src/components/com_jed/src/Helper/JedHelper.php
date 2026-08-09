@@ -490,8 +490,8 @@ class JedHelper
         return [
             'id'    => (int) ($item->id ?? 0),
             'link'  => $link ?? Route::_(
-                'index.php?option=com_jed&view=extension&catid=' . (int) ($item->catid ?? 0)
-                . '&id=' . (int) ($item->id ?? 0)
+                'index.php?option=com_jed&view=extension&catid=' . $item->catid
+                . '&id=' . $item->id . ':' . $item->alias
             ),
             'title' => (string) ($item->name ?? ''),
             // Already run through formatImage() by the models that have one; a raw filename is
