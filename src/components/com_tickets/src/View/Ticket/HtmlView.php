@@ -165,7 +165,7 @@ class HtmlView extends BaseHtmlView
         $this->form     = $model->getForm();
         $this->params   = $app->getParams('com_jed');
 
-        $registry = TicketTypeHandlerRegistry::createDefault($model->getDatabase());
+        $registry = TicketTypeHandlerRegistry::createDefault(Factory::getDbo());
         $type     = TicketType::tryFrom((int) ($this->item->linked_item_type ?? 0)) ?? TicketType::Other;
         $handler  = $registry->get($type);
 
