@@ -12,6 +12,7 @@
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Event\SubscriberInterface;
 use Joomla\CMS\Table\Asset;
+use Joomla\CMS\Table\Category;
 use Joomla\CMS\Application\AdministratorApplication;
 use Joomla\CMS\Application\ApplicationHelper;
 use Joomla\CMS\Component\ComponentHelper;
@@ -211,7 +212,17 @@ class PlgSampledataJed extends CMSPlugin implements SubscriberInterface
         }
 
         $this->importFile(__DIR__ . '/sql/step2.sql');
-        $db = $this->getDatabase();
+        $db         = $this->getDatabase();
+        $dispatcher = $this->getDispatcher();
+
+        // step2.sql carries the lft/rgt values of the system it was dumped from, which do not
+        // nest inside a fresh install's root node - the tree is left inconsistent until it is
+        // rebuilt. It matters beyond tidiness: Categories::get() resolves nothing outside the
+        // root's bounds, so the router silently drops the category segment from every extension
+        // URL it builds and the link it hands out 404s. Rebuild before the asset rows below are
+        // derived from it, so they pick up the corrected level.
+        $categories = new Category($db, $dispatcher);
+        $categories->rebuild();
 
         $db->setQuery('SELECT id FROM #__assets WHERE name = \'com_jed\'');
         $component_asset_id = $db->loadResult();
@@ -226,7 +237,7 @@ class PlgSampledataJed extends CMSPlugin implements SubscriberInterface
         $db->setQuery('UPDATE #__categories SET asset_id = id + ' . ($asset_id - 8) . ' WHERE id > 8');
         $db->execute();
 
-        $table = new Asset($db, $this->getDispatcher());
+        $table = new Asset($db, $dispatcher);
         $table->rebuild();
 
         $response            = [];

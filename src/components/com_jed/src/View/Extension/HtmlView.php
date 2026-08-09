@@ -199,6 +199,10 @@ class HtmlView extends BaseHtmlView
         // shows raw asterisks reads as broken.
         $summary = JedHelper::cardText($this->item->intro ?? null, $this->item->description ?? null);
 
+        if ($summary === '') {
+            $summary = $name;
+        }
+
         $document->setDescription($summary);
 
         $tags = [

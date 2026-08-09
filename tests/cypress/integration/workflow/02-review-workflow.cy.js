@@ -138,6 +138,21 @@ describe('Workflow part 2: reviewer writes a review, admin moderates it', { test
     cy.contains(probeTitle).should('not.exist')
   })
 
+  it('moderates and publishes the review as admin', () => {
+    cy.doAdministratorLogin(Cypress.env('username'), Cypress.env('password'), false)
+
+    cy.visit('administrator/index.php?option=com_jed&view=reviews')
+    cy.searchForItem(`id:${state.reviewId}`)
+    cy.get('#cb0').click()
+    cy.clickToolbarButton('action')
+    cy.clickToolbarButton('publish')
+    cy.checkForSystemMessage('published')
+
+    cy.doAdministratorLogout()
+
+    cy.saveJsonState('review-workflow', state)
+  })
+
   // The other half of P1-06: an ordinary reader could not report a review at all.
   it('lets a logged-in reader report a review', () => {
     cy.doFrontendLogin(Cypress.env('username'), Cypress.env('password'), false)
@@ -159,20 +174,5 @@ describe('Workflow part 2: reviewer writes a review, admin moderates it', { test
   it('shows no report link to a logged-out reader', () => {
     cy.visit('index.php?option=com_jed&view=reviews')
     cy.contains('Report this review').should('not.exist')
-  })
-
-  it('moderates and publishes the review as admin', () => {
-    cy.doAdministratorLogin(Cypress.env('username'), Cypress.env('password'), false)
-
-    cy.visit('administrator/index.php?option=com_jed&view=reviews')
-    cy.searchForItem(`id:${state.reviewId}`)
-    cy.get('#cb0').click()
-    cy.clickToolbarButton('action')
-    cy.clickToolbarButton('publish')
-    cy.checkForSystemMessage('published')
-
-    cy.doAdministratorLogout()
-
-    cy.saveJsonState('review-workflow', state)
   })
 })

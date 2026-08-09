@@ -74,10 +74,9 @@ class ForeignKeyField extends ListField
     protected function processQuery(): string
     {
         // Type of input the field shows
-        $this->input_type = $this->getAttribute('input_type');
+        $this->input_type = (string)$this->getAttribute('input_type');
 
-        // Database Table
-        $table = $this->getAttribute('table');
+        $table = (string)$this->getAttribute('table');
 
         // The field that the field will save on the database
         $this->key_field = (string)$this->getAttribute('key_field');

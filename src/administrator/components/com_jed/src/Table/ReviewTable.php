@@ -101,6 +101,13 @@ class ReviewTable extends Table
         }
 
 
+        // The five ratings and the overall score are nullable decimal columns
+        foreach (['functionality', 'ease_of_use', 'support', 'documentation', 'value_for_money', 'overall_score'] as $score) {
+            if (isset($src[$score]) && !is_numeric($src[$score])) {
+                $src[$score] = null;
+            }
+        }
+
         // Support for checkbox field: flagged
         if (!isset($src['flagged'])) {
             $src['flagged'] = 0;

@@ -148,6 +148,8 @@ class ReviewformController extends FormController
             $id = (int) $app->getUserState('com_jed.edit.review.id');
             $this->setMessage(Text::_('Save failed'), 'warning');
             $this->setRedirect(Route::_('index.php?option=com_jed&view=reviewform&id=' . $id, false));
+
+            return;
         }
 
         // Clear the profile id from the session.

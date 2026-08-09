@@ -17,10 +17,10 @@ use Joomla\CMS\Language\Text;
 
 /** @var \Jed\Component\Jed\Administrator\View\Extension\HtmlView $this */
 
-// A soft-deleted listing stays readable here and nowhere else: the frontend answers 410. There
-// is deliberately no <form> on this page and no save task behind it - 8.8 asks for read-only by
-// absence of the action, not for a disabled form whose controller is still reachable. The only
-// thing offered is Restore, from the toolbar.
+// A soft-deleted listing stays readable here and nowhere else: the frontend answers 410. 8.8 asks
+// for read-only by absence of the action, not for a disabled form whose controller is still
+// reachable, so this page carries no editable field and no save task - the only thing offered is
+// Restore, from the toolbar.
 $fields = [
     'name',
     'alias',
@@ -40,6 +40,12 @@ $fields = [
     'internal_note',
 ];
 ?>
+
+<form action="index.php?option=com_jed&view=extension&layout=deleted&id=<?php echo (int) ($this->item->extension_id ?: $this->item->id); ?>"
+      method="post" name="adminForm" id="adminForm">
+    <input type="hidden" name="task" value="">
+    <?php echo HTMLHelper::_('form.token'); ?>
+</form>
 
 <div class="p-3">
     <joomla-alert type="warning">

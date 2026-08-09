@@ -939,7 +939,7 @@ class ExtensionModel extends AdminModel
             throw new Exception(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
         }
 
-        $liveTable->bind($columns);
+        $liveTable->bind(array_merge(get_object_vars($liveTable), $columns));
         $liveTable->check();
         $liveTable->store();
 
