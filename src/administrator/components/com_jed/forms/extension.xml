@@ -94,11 +94,11 @@
     </fieldset>
 
     <fieldset name="info" label="COM_JED_FIELDSET_INFO_LABEL">
-        <field name="intro" editor="tinymce" buttons="false" filter="Joomla\CMS\Component\ComponentHelper::filterText"
-               type="editor" label="COM_JED_EXTENSION_INTRO_TEXT_LABEL"
+        <field name="intro" filter="Joomla\CMS\Component\ComponentHelper::filterText"
+               type="textarea" rows="4" label="COM_JED_EXTENSION_INTRO_TEXT_LABEL"
                hint="COM_JED_EXTENSION_INTRO_TEXT_LABEL"/>
-        <field name="description" editor="tinymce" buttons="false" filter="Joomla\CMS\Component\ComponentHelper::filterText"
-               type="editor" label="COM_JED_EXTENSION_DESCRIPTION_LABEL"
+        <field name="description" filter="Joomla\CMS\Component\ComponentHelper::filterText"
+               type="textarea" rows="20" label="COM_JED_EXTENSION_DESCRIPTION_LABEL"
                hint="COM_JED_EXTENSION_DESCRIPTION_LABEL"/>
         <field name="license" filter="safehtml" type="text" label="COM_JED_EXTENSION_LICENSE_LABEL"
                hint="COM_JED_EXTENSION_LICENSE_LABEL"/>
