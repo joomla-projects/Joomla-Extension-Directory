@@ -68,7 +68,6 @@ class Router extends RouterView
 
         // Extensions
         $categories = new RouterViewConfiguration('categories');
-        $categories->setKey('id');
         $this->registerView($categories);
 
         $category = new RouterViewConfiguration('category');
