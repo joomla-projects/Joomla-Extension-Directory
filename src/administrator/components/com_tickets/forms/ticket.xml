@@ -59,11 +59,17 @@
         </field>
         <field name="parent_id" label="COM_TICKETS_TICKETS_PARENT_ID_LABEL"
                description="COM_TICKETS_TICKETS_PARENT_ID_DESCR" hint="COM_TICKETS_TICKETS_PARENT_ID_LABEL"/>
-        <field name="state" type="list" label="JSTATUS" description="COM_TICKETS_TICKETS_STATE_DESCR" class="inputbox" size="1"
+        <!--
+            "State" and not "Status": the field above carries the ticket's status, this one is the
+            publication state. Both used to be labelled JSTATUS, which is why the same ticket could
+            appear to be in two different statuses at once.
+        -->
+        <field name="state" type="list" label="COM_TICKETS_TICKETS_STATE_LABEL"
+               description="COM_TICKETS_TICKETS_STATE_DESCR" class="inputbox" size="1"
                default="1">
             <option value="1">COM_TICKETS_TICKETS_STATE_OPTION_OPEN</option>
             <option value="0">COM_TICKETS_TICKETS_STATE_OPTION_CLOSED</option>
-            <option value="2">COM_TICKETS_TICKETS_STATE_OPTION_SOLVED</option>
+            <option value="2">COM_TICKETS_TICKETS_STATE_OPTION_RESOLVED</option>
             <option value="-2">COM_TICKETS_TICKETS_STATE_OPTION_SPAM</option>
             <option value="-1">COM_TICKETS_TICKETS_STATE_OPTION_TRASHED</option>
         </field>

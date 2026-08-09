@@ -21,10 +21,10 @@ use Joomla\CMS\Uri\Uri;
 
 /** @var \Jed\Component\Tickets\Site\View\Tickets\HtmlView $this */
 
-$user        = $this->getCurrentUser();
-$userId      = $user->id;
-$listOrder   = $this->state->get('list.ordering', 'id');
-$listDirn    = $this->state->get('list.direction', 'DESC');
+$user      = $this->getCurrentUser();
+$userId    = $user->id;
+$listOrder = $this->state->get('list.ordering', 'a.`created_on`');
+$listDirn  = $this->state->get('list.direction', 'DESC');
 ?>
 <form action="<?php echo htmlspecialchars(Uri::getInstance()->toString()); ?>" method="post" name="adminForm" id="adminForm">
     <fieldset class="mytickets">
@@ -68,7 +68,7 @@ $listDirn    = $this->state->get('list.direction', 'DESC');
             </thead>
             <tfoot>
             <tr>
-                <td colspan="<?php echo isset($this->items[0]) ? count(get_object_vars($this->items[0])) : 10; ?>">
+                <td colspan="<?php echo $user->id ? 6 : 5; ?>">
                     <?php echo $this->pagination->getListFooter(); ?>
                 </td>
             </tr>
@@ -85,7 +85,7 @@ $listDirn    = $this->state->get('list.direction', 'DESC');
                         </a>
                     </td>
                     <td>
-                        <?php echo (new DateTime($item->created_on))->format("d M y H:i"); ?>
+                        <?php echo HTMLHelper::_('date', $item->created_on, 'd M y H:i'); ?>
                     </td>
                     <td>
                         <?php echo $item->ticket_status; ?>
@@ -109,7 +109,14 @@ $listDirn    = $this->state->get('list.direction', 'DESC');
 
     <input type="hidden" name="task" value=""/>
     <input type="hidden" name="boxchecked" value="0"/>
-    <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>"/>
-    <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>"/>
+    <?php
+    /*
+     * No filter_order / filter_order_Dir hidden inputs here. They carried the ordering the page was
+     * rendered with, and ListModel::populateState()'s "support old ordering field" branch applies
+     * them *after* list[fullordering], so every sort click was immediately undone by the previous
+     * ordering being posted back alongside it. searchtools submits the ordering in
+     * list[fullordering] on its own.
+     */
+    ?>
     <?php echo HTMLHelper::_('form.token'); ?>
 </form>

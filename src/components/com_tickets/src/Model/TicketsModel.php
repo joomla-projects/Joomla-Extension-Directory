@@ -17,7 +17,6 @@ namespace Jed\Component\Tickets\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Tickets\Administrator\Enum\TicketType;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
@@ -31,6 +30,36 @@ use Joomla\Database\ParameterType;
 class TicketsModel extends ListModel
 {
     /**
+     * The column the list falls back to when nothing else has been asked for: newest first.
+     *
+     * @var string
+     *
+     * @since 4.0.0
+     */
+    private const DEFAULT_ORDERING = 'a.`created_on`';
+
+    /**
+     * The default ordering direction that goes with {@see self::DEFAULT_ORDERING}.
+     *
+     * @var string
+     *
+     * @since 4.0.0
+     */
+    private const DEFAULT_DIRECTION = 'DESC';
+
+    /**
+     * The `ticket_status` value that means "Resolved".
+     *
+     * Kept as a string because `#__jed_tickets.ticket_status` is a varchar. See
+     * forms/filter_tickets.xml for the full vocabulary.
+     *
+     * @var string
+     *
+     * @since 4.0.0
+     */
+    private const STATUS_RESOLVED = '3';
+
+    /**
      * Constructor.
      *
      * @param array $config An optional associative array of configuration settings.
@@ -42,27 +71,35 @@ class TicketsModel extends ListModel
     public function __construct($config = [])
     {
         if (empty($config['filter_fields'])) {
+            /*
+             * Both spellings are listed on purpose. ListModel::populateState() validates the
+             * submitted ordering with a plain in_array() against this list, and the sort links in
+             * tmpl/tickets/default.php as well as the fullordering options in
+             * forms/filter_tickets.xml use the quoted form. Listing only the bare names made every
+             * sort request fail that check and fall back to the default, which is what made
+             * ordering look broken.
+             */
             $config['filter_fields'] = [
-                'id', 'a.id',
-                'ticket_origin', 'a.ticket_origin',
-                'ticket_category_type', 'a.ticket_category_type',
-                'ticket_subject', 'a.ticket_subject',
-                'ticket_text', 'a.ticket_text',
-                'internal_notes', 'a.internal_notes',
-                'uploaded_files_preview', 'a.uploaded_files_preview',
-                'uploaded_files_location', 'a.uploaded_files_location',
-                'allocated_group', 'a.allocated_group',
-                'allocated_to', 'a.allocated_to',
-                'linked_item_type', 'a.linked_item_type',
-                'linked_item_id', 'a.linked_item_id',
-                'ticket_status', 'a.ticket_status',
-                'parent_id', 'a.parent_id',
-                'state', 'a.state',
-                'ordering', 'a.ordering',
-                'created_by', 'a.created_by',
-                'created_on', 'a.created_on',
-                'modified_by', 'a.modified_by',
-                'modified_on', 'a.modified_on',
+                'id', 'a.id', 'a.`id`',
+                'ticket_origin', 'a.ticket_origin', 'a.`ticket_origin`',
+                'ticket_category_type', 'a.ticket_category_type', 'a.`ticket_category_type`',
+                'ticket_subject', 'a.ticket_subject', 'a.`ticket_subject`',
+                'ticket_text', 'a.ticket_text', 'a.`ticket_text`',
+                'internal_notes', 'a.internal_notes', 'a.`internal_notes`',
+                'uploaded_files_preview', 'a.uploaded_files_preview', 'a.`uploaded_files_preview`',
+                'uploaded_files_location', 'a.uploaded_files_location', 'a.`uploaded_files_location`',
+                'allocated_group', 'a.allocated_group', 'a.`allocated_group`',
+                'allocated_to', 'a.allocated_to', 'a.`allocated_to`',
+                'linked_item_type', 'a.linked_item_type', 'a.`linked_item_type`',
+                'linked_item_id', 'a.linked_item_id', 'a.`linked_item_id`',
+                'ticket_status', 'a.ticket_status', 'a.`ticket_status`',
+                'parent_id', 'a.parent_id', 'a.`parent_id`',
+                'state', 'a.state', 'a.`state`',
+                'ordering', 'a.ordering', 'a.`ordering`',
+                'created_by', 'a.created_by', 'a.`created_by`',
+                'created_on', 'a.created_on', 'a.`created_on`',
+                'modified_by', 'a.modified_by', 'a.`modified_by`',
+                'modified_on', 'a.modified_on', 'a.`modified_on`',
             ];
         }
 
@@ -186,20 +223,50 @@ class TicketsModel extends ListModel
         }
 
         // Filtering ticket_category_type
-        $filter_ticket_category_type = $this->state->get("filter.ticket_category_type");
+        $filter_ticket_category_type = (int) $this->getState('filter.ticket_category_type');
 
-        if (!empty($filter_ticket_category_type)) {
-            $query->where("a.`ticket_category_type` = '" . $db->escape($filter_ticket_category_type) . "'");
+        if ($filter_ticket_category_type > 0) {
+            $query->where($db->quoteName('a.ticket_category_type') . ' = :categoryType')
+                ->bind(':categoryType', $filter_ticket_category_type, ParameterType::INTEGER);
         }
 
+        /*
+         * Filtering ticket_status.
+         *
+         * With no status picked the list leaves out Resolved tickets. This is a queue of things
+         * still wanting attention, and two thirds of the table is resolved, so including them by
+         * default buries everything that is not. Picking "All" or "Resolved" brings them back.
+         */
+        $filter_ticket_status = (string) $this->getState('filter.ticket_status', '');
 
-        // Add the list ordering clause.
-        $orderCol  = $this->state->get('list.ordering', 'allocated_group');
-        $orderDirn = $this->state->get('list.direction', 'ASC');
-
-        if ($orderCol && $orderDirn) {
-            $query->order($db->escape($orderCol . ' ' . $orderDirn));
+        if ($filter_ticket_status === '') {
+            $resolved = self::STATUS_RESOLVED;
+            $query->where($db->quoteName('a.ticket_status') . ' <> :notResolved')
+                ->bind(':notResolved', $resolved);
+        } elseif ($filter_ticket_status !== '*') {
+            $query->where($db->quoteName('a.ticket_status') . ' = :ticketStatus')
+                ->bind(':ticketStatus', $filter_ticket_status);
         }
+
+        /*
+         * Add the list ordering clause.
+         *
+         * The values come out of filter_fields, so they are already known-good column names; the
+         * fallbacks are here only so that an empty state cannot leave the query without an ORDER
+         * BY, which is what used to happen and left the row order up to MySQL.
+         */
+        $orderCol  = (string) $this->getState('list.ordering', self::DEFAULT_ORDERING);
+        $orderDirn = strtoupper((string) $this->getState('list.direction', self::DEFAULT_DIRECTION));
+
+        if (!in_array($orderCol, $this->filter_fields, true)) {
+            $orderCol = self::DEFAULT_ORDERING;
+        }
+
+        if (!in_array($orderDirn, ['ASC', 'DESC'], true)) {
+            $orderDirn = self::DEFAULT_DIRECTION;
+        }
+
+        $query->order($db->escape($orderCol) . ' ' . $orderDirn);
 
         return $query;
     }
@@ -219,44 +286,17 @@ class TicketsModel extends ListModel
      */
     protected function populateState($ordering = null, $direction = null): void
     {
-        /* @var $app \Joomla\CMS\Application\SiteApplication */
-        $app = Factory::getApplication();
-
-        $list = $app->getUserState($this->context . '.list');
-
-        $ordering  = $list['filter_order'] ?? null;
-        $direction = $list['filter_order_Dir'] ?? null;
-        if (empty($ordering)) {
-            $ordering = $app->getUserStateFromRequest($this->context . '.filter_order', 'filter_order', $app->get('filter_order'));
-            if (!in_array($ordering, $this->filter_fields)) {
-                $ordering = 'allocated_group';
-            }
-            $this->setState('list.ordering', $ordering);
-        }
-        if (empty($direction)) {
-            $direction = $app->getUserStateFromRequest($this->context . '.filter_order_Dir', 'filter_order_Dir', $app->get('filter_order_Dir', ''));
-            if (!in_array(strtoupper((string) $direction), ['ASC', 'DESC', ''])) {
-                $direction = 'ASC';
-            }
-            $this->setState('list.direction', $direction);
-        }
-
-        $list['limit']     = $app->getUserStateFromRequest($this->context . '.list.limit', 'limit', $app->get('list_limit'), 'uint');
-        $list['start']     = $app->getInput()->getInt('start', 0);
-        $list['ordering']  = $ordering;
-        $list['direction'] = $direction;
-
-        $app->setUserState($this->context . '.list', $list);
-        $app->getInput()->set('list', null);
-
-
-        // List state information.
-
-        parent::populateState($ordering, $direction);
+        /*
+         * Ordering is left entirely to ListModel. What used to stand here read `filter_order` out
+         * of the user state, wrote its own `list` array back, and then cleared the `list` input
+         * with $app->getInput()->set('list', null) *before* calling the parent - so the
+         * list[fullordering] value that both the sort dropdown and the column headers submit was
+         * thrown away before anything could read it, and the list never reordered.
+         */
+        parent::populateState(self::DEFAULT_ORDERING, self::DEFAULT_DIRECTION);
 
         $context = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
         $this->setState('filter.search', $context);
-
 
         // Split context into component and optional section
         $parts = FieldsHelper::extract($context);
@@ -265,5 +305,28 @@ class TicketsModel extends ListModel
             $this->setState('filter.component', $parts[0]);
             $this->setState('filter.section', $parts[1]);
         }
+    }
+
+    /**
+     * Method to get a store id based on model configuration state.
+     *
+     * The filters have to be part of the id, otherwise two different filter combinations asked for
+     * in the same request would be served the same cached result set.
+     *
+     * @param string $id A prefix for the store id.
+     *
+     * @return string A store id.
+     *
+     * @since 4.0.0
+     */
+    protected function getStoreId($id = ''): string
+    {
+        $id .= ':' . $this->getState('filter.search');
+        $id .= ':' . $this->getState('filter.state');
+        $id .= ':' . $this->getState('filter.ticket_status');
+        $id .= ':' . $this->getState('filter.ticket_category_type');
+        $id .= ':' . $this->getState('filter.ticket_origin');
+
+        return parent::getStoreId($id);
     }
 }

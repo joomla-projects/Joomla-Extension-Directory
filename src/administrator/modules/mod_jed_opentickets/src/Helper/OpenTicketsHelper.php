@@ -55,7 +55,7 @@ class OpenTicketsHelper
             ->createModel('Tickets', 'Administrator', ['ignore_request' => true]);
 
         // 1 = Open (see forms/ticket.xml's "state" field) - the other four states
-        // (Closed/Solved/Spam/Trashed) are deliberately excluded.
+        // (Closed/Resolved/Spam/Trashed) are deliberately excluded.
         $model->setState('filter.state', 1);
         $model->setState('list.ordering', 'a.created_on');
         $model->setState('list.direction', 'DESC');

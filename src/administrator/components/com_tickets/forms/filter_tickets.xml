@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
     <fields name="filter">
-        <field name="search" type="text" description="JSEARCH_FILTER_SUBMIT"
-               label="COM_USERS_FILTER_SEARCH_DESC"
+        <!-- The label used to be COM_USERS_FILTER_SEARCH_DESC, a com_users key that is not loaded here. -->
+        <field name="search" type="text"
+               label="JSEARCH_FILTER"
+               hint="JSEARCH_FILTER"
+               description="COM_TICKETS_TICKETS_FILTER_SEARCH_DESC"
                class="js-stools-search-string"/>
 
         <field name="state"

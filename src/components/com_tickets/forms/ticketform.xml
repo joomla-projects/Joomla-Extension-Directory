@@ -71,12 +71,19 @@
         </field>
         <field name="parent_id" label="COM_TICKETS_TICKETS_PARENT_ID_LABEL"
                description="COM_TICKETS_TICKETS_PARENT_ID_DESCR" hint="COM_TICKETS_TICKETS_PARENT_ID_LABEL"/>
-        <field name="state" type="list" label="JSTATUS" description="JFIELD_PUBLISHED_DESC" class="inputbox" size="1"
+        <!--
+            Same option set as the administrator's forms/ticket.xml. This form used to offer
+            Published/Unpublished/Archived/Trashed for the very same column, so value 2 read as
+            "Archived" here and as "Solved" in the backend.
+        -->
+        <field name="state" type="list" label="COM_TICKETS_TICKETS_STATE_LABEL"
+               description="COM_TICKETS_TICKETS_STATE_DESCR" class="inputbox" size="1"
                default="1">
-            <option value="1">JPUBLISHED</option>
-            <option value="0">JUNPUBLISHED</option>
-            <option value="2">JARCHIVED</option>
-            <option value="-2">JTRASHED</option>
+            <option value="1">COM_TICKETS_TICKETS_STATE_OPTION_OPEN</option>
+            <option value="0">COM_TICKETS_TICKETS_STATE_OPTION_CLOSED</option>
+            <option value="2">COM_TICKETS_TICKETS_STATE_OPTION_RESOLVED</option>
+            <option value="-2">COM_TICKETS_TICKETS_STATE_OPTION_SPAM</option>
+            <option value="-1">COM_TICKETS_TICKETS_STATE_OPTION_TRASHED</option>
         </field>
         <field name="ordering"/>
 
