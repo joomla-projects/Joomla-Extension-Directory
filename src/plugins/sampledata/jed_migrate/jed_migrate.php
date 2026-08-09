@@ -107,17 +107,32 @@ class PlgSampledataJed_Migrate extends CMSPlugin
     private const TAG_UCM_BATCHES = 6;
 
     /**
-     * Total number of steps: ten fixed migration steps, the history prepare step, one step per
-     * history batch, then the baseline revision, the RSForms staging, the three-part tag import
-     * (vocabulary, one step per UCM batch, assignments) history batch, then the baseline
-     * revision, the hit aggregate, the RSForms staging, the
-     * abandonware import and the cleanup.
+     * How many steps the legacy status history import is spread over.
+     *
+     * Same reasoning as HISTORY_BATCHES again, and the largest of the three: the moderation log,
+     * the extension half of the audit trail and the edit log together come to 165,518 events on
+     * the real data, each written as one revision carrying a copy of the listing. Measured at
+     * roughly 2.5 seconds per 6,900 rows, so 24 batches put a step well inside a 30 second limit.
      *
      * @var    integer
      *
      * @since  4.0.0
      */
-    private const STEP_COUNT = 16 + self::HISTORY_BATCHES + self::TAG_UCM_BATCHES;
+    private const STATUS_BATCHES = 24;
+
+    /**
+     * Total number of steps.
+     *
+     * Twenty-two fixed steps - the ten original migration tasks, the two prepare steps, the
+     * baseline revision, the hit aggregate, the RSForms staging, the two non-batched thirds of the
+     * tag import, the abandonware import, the linked extensions, the user privileges, the tickets
+     * and the cleanup - plus one step per history, status and tag-UCM batch.
+     *
+     * @var    integer
+     *
+     * @since  4.0.0
+     */
+    private const STEP_COUNT = 22 + self::HISTORY_BATCHES + self::STATUS_BATCHES + self::TAG_UCM_BATCHES;
 
     /**
      * How many surviving assignments a legacy tag needs before it is imported (`P1-16`).
@@ -362,6 +377,156 @@ class PlgSampledataJed_Migrate extends CMSPlugin
         return $this->applyStep(38);
     }
 
+    public function onAjaxSampledataApplyStep39()
+    {
+        return $this->applyStep(39);
+    }
+
+    public function onAjaxSampledataApplyStep40()
+    {
+        return $this->applyStep(40);
+    }
+
+    public function onAjaxSampledataApplyStep41()
+    {
+        return $this->applyStep(41);
+    }
+
+    public function onAjaxSampledataApplyStep42()
+    {
+        return $this->applyStep(42);
+    }
+
+    public function onAjaxSampledataApplyStep43()
+    {
+        return $this->applyStep(43);
+    }
+
+    public function onAjaxSampledataApplyStep44()
+    {
+        return $this->applyStep(44);
+    }
+
+    public function onAjaxSampledataApplyStep45()
+    {
+        return $this->applyStep(45);
+    }
+
+    public function onAjaxSampledataApplyStep46()
+    {
+        return $this->applyStep(46);
+    }
+
+    public function onAjaxSampledataApplyStep47()
+    {
+        return $this->applyStep(47);
+    }
+
+    public function onAjaxSampledataApplyStep48()
+    {
+        return $this->applyStep(48);
+    }
+
+    public function onAjaxSampledataApplyStep49()
+    {
+        return $this->applyStep(49);
+    }
+
+    public function onAjaxSampledataApplyStep50()
+    {
+        return $this->applyStep(50);
+    }
+
+    public function onAjaxSampledataApplyStep51()
+    {
+        return $this->applyStep(51);
+    }
+
+    public function onAjaxSampledataApplyStep52()
+    {
+        return $this->applyStep(52);
+    }
+
+    public function onAjaxSampledataApplyStep53()
+    {
+        return $this->applyStep(53);
+    }
+
+    public function onAjaxSampledataApplyStep54()
+    {
+        return $this->applyStep(54);
+    }
+
+    public function onAjaxSampledataApplyStep55()
+    {
+        return $this->applyStep(55);
+    }
+
+    public function onAjaxSampledataApplyStep56()
+    {
+        return $this->applyStep(56);
+    }
+
+    public function onAjaxSampledataApplyStep57()
+    {
+        return $this->applyStep(57);
+    }
+
+    public function onAjaxSampledataApplyStep58()
+    {
+        return $this->applyStep(58);
+    }
+
+    public function onAjaxSampledataApplyStep59()
+    {
+        return $this->applyStep(59);
+    }
+
+    public function onAjaxSampledataApplyStep60()
+    {
+        return $this->applyStep(60);
+    }
+
+    public function onAjaxSampledataApplyStep61()
+    {
+        return $this->applyStep(61);
+    }
+
+    public function onAjaxSampledataApplyStep62()
+    {
+        return $this->applyStep(62);
+    }
+
+    public function onAjaxSampledataApplyStep63()
+    {
+        return $this->applyStep(63);
+    }
+
+    public function onAjaxSampledataApplyStep64()
+    {
+        return $this->applyStep(64);
+    }
+
+    public function onAjaxSampledataApplyStep65()
+    {
+        return $this->applyStep(65);
+    }
+
+    public function onAjaxSampledataApplyStep66()
+    {
+        return $this->applyStep(66);
+    }
+
+    public function onAjaxSampledataApplyStep67()
+    {
+        return $this->applyStep(67);
+    }
+
+    public function onAjaxSampledataApplyStep68()
+    {
+        return $this->applyStep(68);
+    }
+
     /**
      * Map every step number onto the SQL file that implements it.
      *
@@ -406,6 +571,27 @@ class PlgSampledataJed_Migrate extends CMSPlugin
 
         $next = 11 + self::HISTORY_BATCHES;
 
+        // The legacy status history (P1-24). It has to sit here, between the last content revision
+        // and the baseline, and both halves of that are load-bearing:
+        //
+        //  - BEFORE history_baseline.sql, because the baseline appends each listing's current
+        //    state as its ONE active revision and relies on that row carrying the highest id.
+        //    ExtensionformModel::getItem() and the admin list both resolve "the current version"
+        //    with MAX(id), not with active = 1, so a status revision written after the baseline
+        //    would become what the developer edits.
+        //  - AFTER the content revisions, because history_baseline.sql also normalises
+        //    description and intro across the whole table, and these rows carry a raw description
+        //    that has to go through that pass exactly once.
+        $plan[++$next] = ['file' => 'status_prepare.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_STATUS_PREPARE_SUCCESS'];
+
+        for ($batch = 1; $batch <= self::STATUS_BATCHES; $batch++) {
+            $plan[++$next] = [
+                'file'        => 'status_batch.sql',
+                'statusBatch' => $batch,
+                'label'       => 'PLG_SAMPLEDATA_JED_MIGRATE_STATUS_BATCH_SUCCESS',
+            ];
+        }
+
         $plan[++$next] = ['file' => 'history_baseline.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_HISTORY_BASELINE_SUCCESS'];
         // After the listings exist, because the aggregate joins them to drop hits for extensions
         // that never came across (P1-12 item 7).
@@ -443,6 +629,19 @@ class PlgSampledataJed_Migrate extends CMSPlugin
         // After rsforms.sql, which stages forms 9 and 14, and after the listings exist, because it
         // resolves each report's free-text extension name against #__jed_extensions (P1-19).
         $plan[++$next] = ['file' => 'abandonware.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_ABANDONWARE_SUCCESS'];
+
+        // After history_baseline.sql, because it writes the two link columns onto the active
+        // baseline revision and that revision does not exist until the baseline has run (P1-23).
+        $plan[++$next] = ['file' => 'linked.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_LINKED_SUCCESS'];
+
+        // Only needs the users from step 2 and the categories from step 4, so its position is free;
+        // it sits with the other late data sets rather than being threaded into the middle.
+        $plan[++$next] = ['file' => 'useraccess.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_USERACCESS_SUCCESS'];
+
+        // Last of the data sets: the tickets reference extensions and reviews by id, so both have
+        // to be in place, and nothing else references the tickets.
+        $plan[++$next] = ['file' => 'tickets.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_TICKETS_SUCCESS'];
+
         $plan[++$next] = ['file' => 'cleanup.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_CLEANUP_SUCCESS'];
 
         return $plan;
@@ -500,14 +699,17 @@ class PlgSampledataJed_Migrate extends CMSPlugin
         }
 
         // {{BATCH}} selects the slice of wqyh6_ucm_history this step imports and {{BATCHES}} tells
-        // the prepare step how many slices to cut; {{TAG_BATCH}}/{{TAG_BATCHES}} do the same for
-        // the tag UCM import, and {{TAG_MIN_USES}} is the tag import threshold. All of them are
-        // plugin constants or step numbers, never user input.
+        // the prepare step how many slices to cut; {{STATUS_BATCH}}/{{STATUS_BATCHES}} and
+        // {{TAG_BATCH}}/{{TAG_BATCHES}} do the same for the status history and the tag UCM import,
+        // and {{TAG_MIN_USES}} is the tag import threshold. All of them are plugin constants or
+        // step numbers, never user input.
         $sql = str_replace(
-            ['{{BATCH}}', '{{BATCHES}}', '{{TAG_BATCH}}', '{{TAG_BATCHES}}', '{{TAG_MIN_USES}}'],
+            ['{{BATCH}}', '{{BATCHES}}', '{{STATUS_BATCH}}', '{{STATUS_BATCHES}}', '{{TAG_BATCH}}', '{{TAG_BATCHES}}', '{{TAG_MIN_USES}}'],
             [
                 (string) ($spec['batch'] ?? 0),
                 (string) self::HISTORY_BATCHES,
+                (string) ($spec['statusBatch'] ?? 0),
+                (string) self::STATUS_BATCHES,
                 // MOD(id, batches) yields 0..batches-1, but the batches are numbered from 1 so
                 // that the progress message reads "1 of 6" rather than "0 of 6".
                 (string) (($spec['tagBatch'] ?? 1) - 1),
@@ -564,6 +766,8 @@ class PlgSampledataJed_Migrate extends CMSPlugin
 
         if (isset($spec['batch'])) {
             $message = Text::sprintf($spec['label'], $spec['batch'], self::HISTORY_BATCHES, $count);
+        } elseif (isset($spec['statusBatch'])) {
+            $message = Text::sprintf($spec['label'], $spec['statusBatch'], self::STATUS_BATCHES, $count);
         } elseif (isset($spec['tagBatch'])) {
             $message = Text::sprintf($spec['label'], $spec['tagBatch'], self::TAG_UCM_BATCHES, $count);
         } else {

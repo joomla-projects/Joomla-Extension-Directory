@@ -1,0 +1,40 @@
+-- Import one batch of legacy status events as revisions. {{STATUS_BATCH}} is substituted by the
+-- plugin; this one file backs every status import step.
+--
+-- Each event becomes an inactive revision of the listing it concerns. The listing content is the
+-- listing as it stands - JED3 does not record what the description said at the moment somebody
+-- pressed "unpublish", and inventing one would be worse than repeating today's. What the revision
+-- adds over its neighbours is the moderation state, the actor and the timestamp.
+--
+-- The description is taken RAW from combine_jed_extensions.core_body rather than from the live
+-- #__jed_extensions row, for the same reason history_batch.sql does: history_baseline.sql runs
+-- after this step and normalises the whole table once. Reading the already-normalised live column
+-- here would put these rows through tag stripping and entity decoding a second time, which is not
+-- idempotent - a description containing a literal < after the first pass loses everything up to
+-- the next > on the second.
+--
+-- HOW THE JED3 EVENT TYPES MAP.
+--
+--   extension.approved     approved = 1, approved_time = the event. The moderation verdict of
+--                          P1-02: approved_time set together with approved = 1 is an approval.
+--   extension.rejected     approved = 0 with approved_time set, which is how P1-02 spells a
+--   extension.unapproved   rejection - as opposed to approved_time NULL, which means undecided.
+--   extension.pending      approved = 0, approved_time NULL. Waiting on the JED, not yet judged.
+--   extension.waiting
+--   extension.unpublished  blocked = 1, with the reason code, the actor and the time. NOT state.
+--   extension.published    blocked = 0. This is the invariant from 4.8 and 6.6: the JED team
+--                          withholding a listing writes `blocked`; `state` belongs to the
+--                          developer and JED3's "published" flag was the team's, not theirs.
+--   anything else          carried over from the live row unchanged - the event is recorded for
+--                          its actor and timestamp, and asserts nothing about the state.
+--
+-- REASON CODES. block_reason_code and approved_reason name a row of #__jed_block_reasons, and the
+-- JED3 vocabulary is wider than the new one: GL1-3, PH1-3, SE2-4, TM1/TM3, LD1/2 and UR1-UR14 have
+-- no counterpart. A code is only written when it exists in #__jed_block_reasons, because an
+-- unknown code renders as a blank reason rather than as an error. The full raw code list survives
+-- in block_reason_text / approved_notes, so nothing is thrown away - it is prose rather than a key.
+INSERT INTO #__jed_extensions_history (extension_id, active, name, alias, catid, owner, state, approved, approved_time, approved_by, approved_notes, approved_reason, intro, description, license, license_url, requires_registration, type, extension_types, created, created_by, modified, modified_by, checked_out, checked_out_time, extension_version, joomla_versions, download_url, support_url, demo_url, documentation_url, git_url, internal_download_url, download_key, uses_updater, update_url, developer_url, developer_email, changelog_url, score_overall, score_functionality, score_ease_of_use, score_support, score_documentation, score_value_for_money, score_count, popular, logo, video, internal_note, blocked, block_reason_code, block_reason_text, blocked_by, blocked_time) SELECT ev.extension_id, 0, e.name, e.alias, e.catid, e.owner, e.state, CASE WHEN ev.event_type = 'extension.approved' THEN 1 WHEN ev.event_type IN ('extension.rejected', 'extension.unapproved', 'extension.pending', 'extension.waiting') THEN 0 ELSE e.approved END, CASE WHEN ev.event_type IN ('extension.approved', 'extension.rejected', 'extension.unapproved') THEN ev.event_time WHEN ev.event_type IN ('extension.pending', 'extension.waiting') THEN NULL ELSE e.approved_time END, CASE WHEN ev.event_type IN ('extension.approved', 'extension.rejected', 'extension.unapproved') THEN ev.user_id ELSE e.approved_by END, CONCAT_WS(CHAR(10), CONCAT('JED3 ', ev.source, ' event "', ev.event_type, '"', IFNULL(CONCAT(' at ', DATE_FORMAT(ev.event_time, '%Y-%m-%d %H:%i:%s')), ''), '.'), CASE WHEN ev.codes IS NOT NULL THEN CONCAT('Reason codes: ', ev.codes) END, NULLIF(TRIM(IFNULL(ev.message, '')), '')), IFNULL(ar.code, ''), '', cj.core_body, e.license, e.license_url, e.requires_registration, e.type, e.extension_types, e.created, e.created_by, ev.event_time, ev.user_id, NULL, NULL, e.extension_version, e.joomla_versions, e.download_url, e.support_url, e.demo_url, e.documentation_url, e.git_url, e.internal_download_url, e.download_key, e.uses_updater, e.update_url, e.developer_url, e.developer_email, e.changelog_url, e.score_overall, e.score_functionality, e.score_ease_of_use, e.score_support, e.score_documentation, e.score_value_for_money, e.score_count, e.popular, e.logo, e.video, e.internal_note, CASE WHEN ev.event_type = 'extension.unpublished' THEN 1 WHEN ev.event_type = 'extension.published' THEN 0 ELSE e.blocked END, CASE WHEN ev.event_type = 'extension.unpublished' THEN br.code WHEN ev.event_type = 'extension.published' THEN NULL ELSE e.block_reason_code END, CASE WHEN ev.event_type = 'extension.unpublished' THEN CONCAT_WS(CHAR(10), CASE WHEN ev.codes IS NOT NULL THEN CONCAT('JED3 reason codes: ', ev.codes) END, NULLIF(TRIM(IFNULL(ev.message, '')), '')) WHEN ev.event_type = 'extension.published' THEN NULL ELSE e.block_reason_text END, CASE WHEN ev.event_type = 'extension.unpublished' THEN ev.user_id WHEN ev.event_type = 'extension.published' THEN NULL ELSE e.blocked_by END, CASE WHEN ev.event_type = 'extension.unpublished' THEN ev.event_time WHEN ev.event_type = 'extension.published' THEN NULL ELSE e.blocked_time END FROM combine_jed_status_events ev INNER JOIN #__jed_extensions e ON e.id = ev.extension_id INNER JOIN combine_jed_extensions cj ON cj.id = ev.extension_id LEFT JOIN #__jed_block_reasons br ON br.code = ev.first_code LEFT JOIN #__jed_block_reasons ar ON ar.code = ev.first_code AND ev.event_type IN ('extension.rejected', 'extension.unapproved') LEFT JOIN combine_jed_status_done d ON d.seq = ev.seq WHERE ev.seq BETWEEN (SELECT lo FROM combine_jed_status_batches WHERE batch = {{STATUS_BATCH}}) AND (SELECT hi FROM combine_jed_status_batches WHERE batch = {{STATUS_BATCH}}) AND d.seq IS NULL ORDER BY ev.event_time ASC, ev.seq ASC;
+
+-- Record every event in this batch as processed, including any skipped because its listing or its
+-- staging row was missing.
+INSERT IGNORE INTO combine_jed_status_done (seq) SELECT ev.seq FROM combine_jed_status_events ev WHERE ev.seq BETWEEN (SELECT lo FROM combine_jed_status_batches WHERE batch = {{STATUS_BATCH}}) AND (SELECT hi FROM combine_jed_status_batches WHERE batch = {{STATUS_BATCH}});
