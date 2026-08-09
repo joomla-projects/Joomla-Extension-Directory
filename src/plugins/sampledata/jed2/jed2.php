@@ -25,7 +25,7 @@ use Joomla\Event\SubscriberInterface;
  *
  * Creates a set of "mainmenu" menu items exercising the com_jed site views, including the
  * Top Rated / Most Reviewed / New / Recently Updated / Compatible with J4-J5-J6 presets of the
- * Extensions list view.
+ * Extensions list view, plus the com_abandonware and com_tickets entry points.
  *
  * @since  1.0.0
  */
@@ -76,8 +76,9 @@ class PlgSampledataJed2 extends CMSPlugin
 
     /**
      * Creates the "mainmenu" menu items for browsing com_jed extensions (including the
-     * Top Rated/Most Reviewed/New/Recently Updated/Compatible-with-J4-J5-J6 presets), searching,
-     * logging in/registering, submitting a new extension and the user dashboard.
+     * Top Rated/Most Reviewed/New/Recently Updated/Compatible-with-J4-J5-J6 presets), the
+     * abandoned list and its report form, searching, logging in/registering, submitting a new
+     * extension, the user dashboard and tickets.
      *
      * @return  array|void  Will be converted into the JSON response to the module.
      *
@@ -92,11 +93,12 @@ class PlgSampledataJed2 extends CMSPlugin
         $db = Factory::getDbo();
 
         $componentIds = [
-            'com_jed'     => $this->getComponentId($db, 'com_jed'),
-            'com_tickets' => $this->getComponentId($db, 'com_tickets'),
-            'com_finder'  => $this->getComponentId($db, 'com_finder'),
-            'com_users'   => $this->getComponentId($db, 'com_users'),
-            'com_tags'    => $this->getComponentId($db, 'com_tags'),
+            'com_jed'         => $this->getComponentId($db, 'com_jed'),
+            'com_abandonware' => $this->getComponentId($db, 'com_abandonware'),
+            'com_tickets'     => $this->getComponentId($db, 'com_tickets'),
+            'com_finder'      => $this->getComponentId($db, 'com_finder'),
+            'com_users'       => $this->getComponentId($db, 'com_users'),
+            'com_tags'        => $this->getComponentId($db, 'com_tags'),
         ];
 
         if (!$componentIds['com_jed']) {
@@ -212,6 +214,31 @@ class PlgSampledataJed2 extends CMSPlugin
             }
         }
 
+        // --- Abandonware ----------------------------------------------------------------
+        // The abandoned list is what com_abandonware's router hangs its `case` view off, the way
+        // "Show Categories" carries com_jed's extension URLs: without a menu item for the list,
+        // a single case has no menu item to route through. The report form is its counterpart -
+        // the two are the whole public surface of the component (4.10).
+        //
+        // Neither alias goes anywhere near /vulnerable-extensions/: that path space belongs to
+        // the new VEL, which serves it from this same installation, and the JED's one obligation
+        // there is to stay out of the way (P0-04 question 2).
+        $this->createMenuItem($db, [
+            'title'        => 'Abandoned Extensions',
+            'alias'        => 'abandoned-extensions',
+            'path'         => 'abandoned-extensions',
+            'link'         => 'index.php?option=com_abandonware&view=abandoned',
+            'component_id' => $componentIds['com_abandonware'],
+        ], 1, $messages);
+
+        $this->createMenuItem($db, [
+            'title'        => 'Report an Abandoned Extension',
+            'alias'        => 'report-abandoned-extension',
+            'path'         => 'report-abandoned-extension',
+            'link'         => 'index.php?option=com_abandonware&view=report',
+            'component_id' => $componentIds['com_abandonware'],
+        ], 1, $messages);
+
         // --- Search / Login / Register / New Extension / Dashboard ----------------------
         $this->createMenuItem($db, [
             'title'        => 'Search',
@@ -309,7 +336,7 @@ class PlgSampledataJed2 extends CMSPlugin
         $query = $db->getQuery(true)
             ->select($db->quoteName('extension_id'))
             ->from($db->quoteName('#__extensions'))
-            ->where($db->quoteName('name') . ' = ' . $db->quote($name));
+            ->where($db->quoteName('element') . ' = ' . $db->quote($name));
         $db->setQuery($query);
 
         return (int) $db->loadResult();

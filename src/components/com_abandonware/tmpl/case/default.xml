@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<metadata>
-    <layout title="COM_ABANDONWARE_MENU_CASE_TITLE" option="COM_ABANDONWARE_MENU_CASE_OPTION">
-        <message>
-            <![CDATA[COM_ABANDONWARE_MENU_CASE_DESC]]>
-        </message>
-    </layout>
-</metadata>
