@@ -6,10 +6,14 @@ Build Status
 [![CI](https://github.com/joomla-projects/Joomla-Extension-Directory/actions/workflows/ci.yml/badge.svg)](https://github.com/joomla-projects/Joomla-Extension-Directory/actions/workflows/ci.yml)
 [![PHP](https://img.shields.io/badge/PHP-%5E8.3-green)](https://www.php.net/)
 
-The set of components which power the Joomla Extensions Directory (extensions.joomla.org):
+The set of extensions which power the Joomla Extensions Directory (extensions.joomla.org). They are built and shipped as **one installable package, `pkg_jed`**:
 
 * **com_jed** — the extensions directory itself (browsing, submitting, reviewing and approving extensions, categories, scores).
-* **com_tickets** — the internal support/workflow queue used by the JED team (approvals, flagged reviews).
+* **com_tickets** — the support/workflow queue connecting developers, users and the JED team (approvals, flagged reviews, link-check escalations).
+* **com_abandonware** — reports and cases for extensions that appear to be no longer maintained.
+* **mod_jed_extensions** (site) and **mod_jed_opentickets** (administrator).
+* **Plugins** — Smart Search adapter, the scoring algorithm, the scheduled background tasks, action-log and privacy integration, and the sample-data/migration plugins.
+* **tpl_joomla** — the front-end site template. It is part of the package and no longer installed separately.
 
 See [`docs/features.md`](docs/features.md) for a detailed walkthrough of what each
 component does, and [`docs/datastructure.md`](docs/datastructure.md) for how the
@@ -57,7 +61,7 @@ vendor/bin/phpstan                             # static analysis (needs a Joomla
 
 Testing
 -------
-* **Unit tests** (`vendor/bin/phpunit`): the PHPUnit scaffold exists (`tests/unit/`, `phpunit.xml.dist`) but there are currently no test cases in it.
+* **Unit tests** (`vendor/bin/phpunit`): under `tests/unit/`, configured by `phpunit.xml.dist`.
 * **End-to-end tests** (the actual functional coverage): Cypress, under `tests/cypress/`.
   ```bash
   npx cypress run --browser=chrome --e2e
@@ -67,19 +71,40 @@ CI (`.github/workflows/ci.yml`) runs, in order: `composer install` → `php-cs-f
 
 Installing a built package
 ---------------------------
-Install the package produced by `vendor/bin/robo build` (or a release download) as an extension into a clean Joomla 6 installation. Do not create any users other than the admin before installing.
+Everything installs in one step. The package produced by `vendor/bin/robo build` (`dist/pkg-jed-current.zip`) — or a release download — contains all three components, both modules, all plugins **and the site template**. There is nothing to install separately.
 
-Once you see "Installation of the package was successful":
+### 1. Install the package
 
-* Go to System → Plugins and enable **Sample Data - JED**.
+Start from a clean Joomla 6 installation and install the package via System → Install → Extensions (or `php cli/joomla.php extension:install --path=/path/to/pkg-jed-current.zip`).
+
+Do not create any users other than the admin before installing — the sample data in step 3 renumbers the admin account.
+
+Once you see "Installation of the package was successful", the administrator menu offers **JED** (Extensions, Categories, Reviews, User Access), **Tickets** and **Abandonware**.
+
+### 2. Select the site template
+
+The template ships with the package, but Joomla does not make an installed template the active one. Go to **System → Site Template Styles**, open the **joomla** style and set it as the default for the site.
+
+(The standalone template under `templatework/` is superseded by this and is no longer used for installation.)
+
+### 3. Install the sample data
+
+* Go to System → Plugins and enable **Sample Data - JED**. Enable **Sample Data - JED Menu** as well if you want a ready-made front-end menu.
 * Go to the Home Dashboard and click **Install** next to **JED Sample Data** — this installs sample extensions/reviews/categories/tickets/users. It also moves your admin user to id=5 so you can still log in; the site may log you out afterwards, just log back in as your admin user.
+* If you enabled the menu plugin, click **Install** next to **JED Main Menu** afterwards. It creates main-menu items for the browse presets (Top Rated, Most Reviewed, New, Recently Updated, compatibility filters), the abandoned-extensions list and its report form, search, login/registration, extension submission, the developer dashboard and tickets.
 
-In the admin, JED exposes Tickets, Categories and Extensions.
+### 4. Optional: background tasks
 
-### Template
+The scheduled routines (link checking, update checking, traffic aggregation, queue worker, privacy pruning, abandonware scanning) are provided by the **Task - JED** plugin. Enable it, then add the tasks you want under System → Scheduled Tasks. None of them are created automatically.
 
-* Install the Joomla template from `templatework/jtemplate_4.0.9_jed` (`jtemplate_4.0.9_jedcustom.zip`).
-* Go to System → Site Template Styles and select it as the default for the site.
+### Migrating an existing JED3 data set
+
+Instead of the sample data, an existing JED3 database can be imported:
+
+* Set the JED3 database name and table prefix in the JED component options (System → Manage → Components → JED). The JED3 database must be on the same server.
+* Enable the **Sampledata - JED3 Migration** plugin and run **JED3 Migration** from the Home Dashboard. Each step is a separate request and can be retried on its own.
+
+Running the migration replaces the existing JED data.
 
 ### Front-end testing
 
