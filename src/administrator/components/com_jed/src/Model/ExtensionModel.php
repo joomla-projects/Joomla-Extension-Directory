@@ -26,6 +26,7 @@ use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Jed\Administrator\Transfer\TransferService;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
 use Joomla\CMS\Date\Date;
+use Joomla\CMS\Event\Model\AfterSaveEvent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Form\FormFactoryInterface;
@@ -35,6 +36,7 @@ use Joomla\CMS\Log\Log;
 use Joomla\CMS\Mail\MailTemplate;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\User\User;
 use Joomla\CMS\User\UserFactoryInterface;
@@ -307,6 +309,10 @@ class ExtensionModel extends AdminModel
         // Point the live row at the now-approved history entry.
         $this->updateEntryVersion($extensionId, $historyId);
 
+        // The approved revision is now the live text, so the search index has to be re-read - it
+        // still holds whatever was public before this decision.
+        $this->announceListingChange($liveTable);
+
         $this->notifyDeveloperOfDecision($extensionId, true, '', '');
         $this->logListingDecision(JedActionLog::EXTENSION_APPROVE, $extensionId, (string) $liveTable->name);
     }
@@ -381,6 +387,10 @@ class ExtensionModel extends AdminModel
             $liveTable->approved_reason = $reasonCode;
             $liveTable->approved_notes  = $notes;
             $liveTable->store();
+
+            // Only this branch changed a visibility carrier - rejecting an edit to an already
+            // approved listing leaves the live row, and therefore the index, as it was.
+            $this->announceListingChange($liveTable);
         }
 
         $this->notifyDeveloperOfDecision($extensionId, false, $reasonCode, $notes);
@@ -955,7 +965,53 @@ class ExtensionModel extends AdminModel
         $historyTable->check();
         $historyTable->store();
 
+        $this->announceListingChange($liveTable);
+
         return $liveTable;
+    }
+
+    /**
+     * Tell the rest of the CMS that a listing's live row changed outside the ordinary save path.
+     *
+     * The transitions in this class write the table directly, which is deliberate - they touch a
+     * named handful of columns and must not run the form save. The cost is that nothing observing
+     * `onContentAfterSave` ever hears about them, and Smart Search is such an observer: it keeps
+     * its own copy of a listing in `#__finder_links` and only refreshes it when told. So a blocked
+     * listing stayed findable, a soft-deleted one stayed findable, and an approval did not put the
+     * newly approved text into the index until somebody ran a full reindex by hand (P1-15).
+     *
+     * `plg_content_finder` is the bridge: it turns this event into `onFinderAfterSave`, which
+     * `plg_finder_jed` answers with a reindex of that one row. A reindex rather than a state
+     * change, because `approved`, `blocked` and `deleted` are not Joomla's `state` - the adapter
+     * has to re-read the row to collapse all four carriers into the one flag Smart Search knows
+     * (4.8, P1-01).
+     *
+     * @param ExtensionTable $liveTable The listing as it now stands.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    private function announceListingChange(ExtensionTable $liveTable): void
+    {
+        $dispatcher = $this->getDispatcher();
+
+        // The group has to be imported before the event goes out, exactly as AdminModel::save()
+        // does it: plugin groups are loaded on demand, and a listing transition is not a request
+        // that would otherwise have loaded `content`. Without this the event is dispatched into a
+        // dispatcher no bridge is listening on, and the block reaches the database but not the
+        // index - which is what the first run of this test showed.
+        PluginHelper::importPlugin('content', null, true, $dispatcher);
+
+        $dispatcher->dispatch(
+            'onContentAfterSave',
+            new AfterSaveEvent('onContentAfterSave', [
+                'context' => 'com_jed.extension',
+                'subject' => $liveTable,
+                'isNew'   => false,
+                'data'    => get_object_vars($liveTable),
+            ])
+        );
     }
 
     /**

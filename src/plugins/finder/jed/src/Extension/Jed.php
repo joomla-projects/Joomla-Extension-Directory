@@ -10,6 +10,7 @@
 
 namespace Joomla\Plugin\Finder\Jed\Extension;
 
+use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Site\Helper\RouteHelper;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Event\Finder as FinderEvent;
@@ -249,9 +250,13 @@ final class Jed extends Adapter implements SubscriberInterface
         // component params apply.
         $item->params = clone ComponentHelper::getParams('com_jed', true);
 
-        // Trigger the onContentPrepare event on the free-text fields.
-        $item->summary = Helper::prepareContent($item->summary, $item->params, $item);
-        $item->body    = Helper::prepareContent($item->body, $item->params, $item);
+        // Trigger the onContentPrepare event on the free-text fields - on the *rendered* text,
+        // not on the stored column. Intro and description are Markdown and there is only one
+        // format (P1-17), so this is one path rather than a per-format branch. Indexing the source
+        // put `**`, `*` and link syntax into the index: a search for "gallery" missed
+        // `**gallery**`, and the result snippets showed the asterisks back to the reader.
+        $item->summary = Helper::prepareContent(JedHelper::markdownToText($item->summary), $item->params, $item);
+        $item->body    = Helper::prepareContent(JedHelper::markdownToText($item->body), $item->params, $item);
 
         // Create a URL as identifier to recognise items again.
         $item->url = $this->getUrl($item->id, $this->extension, $this->layout);
@@ -305,6 +310,12 @@ final class Jed extends Adapter implements SubscriberInterface
 
         $item->joomlaVersionsText = implode(', ', $joomlaVersionLabels);
 
+        // The tags carried over from the legacy site (P1-16). They are the one facet the Algolia
+        // index offered that had no equivalent here, because core tags only arrived after this
+        // plugin was written.
+        $tagTitles       = $this->decodeConcatenatedTitles($item->tagTitles ?? null);
+        $item->tagsText  = implode(', ', $tagTitles);
+
         // Add the free-text search instructions. developer_email is deliberately
         // excluded: it must never be exposed via public search result snippets.
         $item->addInstruction(Indexer::META_CONTEXT, 'author');
@@ -312,6 +323,7 @@ final class Jed extends Adapter implements SubscriberInterface
         $item->addInstruction(Indexer::META_CONTEXT, 'typeLabel');
         $item->addInstruction(Indexer::META_CONTEXT, 'extensionTypesText');
         $item->addInstruction(Indexer::META_CONTEXT, 'joomlaVersionsText');
+        $item->addInstruction(Indexer::META_CONTEXT, 'tagsText');
 
         // Translate the state. Extensions should only be indexed as published if the category is published.
         $item->state = $this->translateState($item->state, $item->cat_state);
@@ -368,6 +380,11 @@ final class Jed extends Adapter implements SubscriberInterface
             $item->addTaxonomy('Author', $item->author, $item->state, $item->access);
         }
 
+        // Add the tag taxonomy data.
+        foreach ($tagTitles as $tagTitle) {
+            $item->addTaxonomy('Tag', $tagTitle, $item->state, $item->access);
+        }
+
         // Add the popular taxonomy data.
         if (!empty($item->popular)) {
             $item->addTaxonomy('Popular', Text::_('JYES'), $item->state, $item->access);
@@ -388,7 +405,17 @@ final class Jed extends Adapter implements SubscriberInterface
      */
     protected function setup()
     {
-        $this->getApplication()->getLanguage()->load('com_jed', JPATH_SITE);
+        // com_jed keeps its language files inside the component folders rather than the client
+        // ones, so the plain two-argument load() looks in language/en-GB/, finds nothing, and
+        // every Text::_() below hands back its own key. That is what the Type and Extension Type
+        // facets were storing as node titles: a full-stock index came out with a filter offering
+        // "COM_JED_GENERAL_TYPE_LABEL_FREE" instead of "Free". The second call is the fallback
+        // core itself uses for extensions that ship their language this way.
+        $language = $this->getApplication()->getLanguage();
+        $language->load('com_jed', JPATH_ADMINISTRATOR)
+            || $language->load('com_jed', JPATH_ADMINISTRATOR . '/components/com_jed');
+        $language->load('com_jed', JPATH_SITE)
+            || $language->load('com_jed', JPATH_SITE . '/components/com_jed');
 
         $db = $this->getDatabase();
 
@@ -420,6 +447,28 @@ final class Jed extends Adapter implements SubscriberInterface
     }
 
     /**
+     * Split the tag titles {@see getListQuery()} concatenates for one listing back into an array.
+     *
+     * They arrive pre-joined rather than through a query per item because the indexer walks the
+     * whole stock in batches: a lookup inside {@see index()} would be one extra round trip per
+     * listing, ~5,600 of them on a full run.
+     *
+     * @param mixed $value The concatenated column value.
+     *
+     * @return string[]
+     *
+     * @since 4.0.0
+     */
+    private function decodeConcatenatedTitles($value): array
+    {
+        if (empty($value)) {
+            return [];
+        }
+
+        return array_values(array_filter(array_map('trim', explode("\n", (string) $value)), 'strlen'));
+    }
+
+    /**
      * Method to get the SQL query used to retrieve the list of content items.
      *
      * @param mixed $query An object implementing QueryInterface or null.
@@ -438,6 +487,17 @@ final class Jed extends Adapter implements SubscriberInterface
             ->select('c.title AS category, c.published AS cat_state, c.access AS cat_access')
             ->select('u.name AS author')
             ->select('d.value AS developer_name')
+            // The listing's tags, newline-joined so one row still carries them all. A correlated
+            // subquery rather than a join, because joining the map would multiply the listing row
+            // by its tag count and every other aggregate would have to defend against that.
+            ->select(
+                '(SELECT GROUP_CONCAT(' . $db->quoteName('t.title') . " SEPARATOR '\\n')"
+                . ' FROM ' . $db->quoteName('#__contentitem_tag_map', 'tm')
+                . ' INNER JOIN ' . $db->quoteName('#__tags', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('tm.tag_id')
+                . ' WHERE ' . $db->quoteName('tm.content_item_id') . ' = ' . $db->quoteName('a.id')
+                . ' AND ' . $db->quoteName('tm.type_alias') . ' = ' . $db->quote('com_jed.extension')
+                . ' AND ' . $db->quoteName('t.published') . ' = 1) AS ' . $db->quoteName('tagTitles')
+            )
             ->from($db->quoteName('#__jed_extensions', 'a'))
             ->leftJoin($db->quoteName('#__categories', 'c'), 'c.id = a.catid')
             ->leftJoin($db->quoteName('#__users', 'u'), 'u.id = a.created_by')
