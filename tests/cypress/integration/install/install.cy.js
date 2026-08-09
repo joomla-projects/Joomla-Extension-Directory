@@ -20,6 +20,12 @@ describe('Install Joomla and JED sample data', () => {
     // "Install Sample Data" dashboard widget.
     cy.enablePlugin('Sample Data - JED')
     cy.enablePlugin('Sample Data - JED Menu')
+    cy.enablePlugin('Action Log - JED')
+    cy.enablePlugin('Smart Search - JED')
+    cy.enablePlugin('JED - Default Score Average')
+    cy.enablePlugin('Privacy - JED')
+    cy.enablePlugin('Privacy - JED Tickets')
+    cy.enablePlugin('JED - Queue Tasks')
 
     // The "Install Sample Data" widget lives on the admin Home Dashboard, one row (and one
     // independent "Install" button) per enabled sample-data plugin.
@@ -39,6 +45,10 @@ describe('Install Joomla and JED sample data', () => {
     // front-end main-menu items (Browse Extensions, Register, New Extension, Dashboard, ...).
     cy.get('li.sampledata-jed2 button.apply-sample-data[data-type="jed2"]').click()
     cy.get('#system-message-container .alert-message', { timeout: 30000 }).should('contain.text', 'Sample data installed.')
+
+    // Sampledata changes the current user and that makes the guided tours reappear
+    cy.reload()
+    cy.cancelTour();
 
     // Allow front-end self-registration with no activation step, so the users registered in
     // later parts of this workflow can log straight in. (Joomla's own default is "Admin
