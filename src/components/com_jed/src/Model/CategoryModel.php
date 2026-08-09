@@ -141,7 +141,7 @@ class CategoryModel extends ListModel
         $this->setState('params', $params);
 
         $user  = $this->getCurrentUser();
-        $asset = 'com_content';
+        $asset = 'com_jed';
 
         if ($pk) {
             $asset .= '.category.' . $pk;
@@ -163,15 +163,15 @@ class CategoryModel extends ListModel
 
         $itemid = $app->getInput()->get('id', 0, 'int') . ':' . $app->getInput()->get('Itemid', 0, 'int');
 
-        $value = $this->getUserStateFromRequest('com_content.category.filter.' . $itemid . '.tag', 'filter_tag', 0, 'int', false);
+        $value = $this->getUserStateFromRequest('com_jed.category.filter.' . $itemid . '.tag', 'filter_tag', 0, 'int', false);
         $this->setState('filter.tag', $value);
 
         // Optional filter text
-        $search = $app->getUserStateFromRequest('com_content.category.list.' . $itemid . '.filter-search', 'filter-search', '', 'string');
+        $search = $app->getUserStateFromRequest('com_jed.category.list.' . $itemid . '.filter-search', 'filter-search', '', 'string');
         $this->setState('list.filter', $search);
 
         // Filter.order
-        $orderCol = $app->getUserStateFromRequest('com_content.category.list.' . $itemid . '.filter_order', 'filter_order', '', 'string');
+        $orderCol = $app->getUserStateFromRequest('com_jed.category.list.' . $itemid . '.filter_order', 'filter_order', '', 'string');
 
         if (!\in_array($orderCol, $this->filter_fields)) {
             $orderCol = 'a.ordering';
@@ -179,7 +179,7 @@ class CategoryModel extends ListModel
 
         $this->setState('list.ordering', $orderCol);
 
-        $listOrder = $app->getUserStateFromRequest('com_content.category.list.' . $itemid . '.filter_order_Dir', 'filter_order_Dir', '', 'cmd');
+        $listOrder = $app->getUserStateFromRequest('com_jed.category.list.' . $itemid . '.filter_order_Dir', 'filter_order_Dir', '', 'cmd');
 
         if (!\in_array(strtoupper((string) $listOrder), ['ASC', 'DESC', ''])) {
             $listOrder = 'ASC';
@@ -194,7 +194,7 @@ class CategoryModel extends ListModel
             $limit = $params->get('num_leading_articles') + $params->get('num_intro_articles') + $params->get('num_links');
             $this->setState('list.links', $params->get('num_links'));
         } else {
-            $limit = $app->getUserStateFromRequest('com_content.category.list.' . $itemid . '.limit', 'limit', $params->get('display_num'), 'uint');
+            $limit = $app->getUserStateFromRequest('com_jed.category.list.' . $itemid . '.limit', 'limit', $params->get('display_num'), 'uint');
         }
 
         $this->setState('list.limit', $limit);
@@ -390,7 +390,7 @@ class CategoryModel extends ListModel
         return $images;
     }
 
-    /* Below code modified from com_content_category_model */
+    /* Below code modified from com_jed_category_model */
     /**
      * Method to get category data for the current category
      *
