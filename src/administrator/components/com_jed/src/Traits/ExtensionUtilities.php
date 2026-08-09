@@ -43,6 +43,8 @@ trait ExtensionUtilities
      */
     private const PACKAGE_EXTENSIONS = ['zip', 'tar', 'gz', 'tgz', 'bz2'];
 
+    private $catService;
+
     /**
      * Gets current extension category and hierarchy of parents as string
      *
@@ -74,9 +76,13 @@ trait ExtensionUtilities
     public function getCategoryHierarchyStack(int $catId): array
     {
         $stack      = [];
-        $catService = new Category();
-        $rootNode   = $catService->get('root');
-        $cat        = $catService->get($catId);
+
+        if (!$this->catService) {
+            $this->catService = new Category();
+        }
+
+        $rootNode   = $this->catService->get('root');
+        $cat        = $this->catService->get($catId);
 
         do {
             if ($cat === null) {
