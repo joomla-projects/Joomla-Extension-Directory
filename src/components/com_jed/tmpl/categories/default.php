@@ -36,21 +36,21 @@ HTMLHelper::_('bootstrap.tooltip');
                         <div class="card-header jed-home-item-view d-flex align-items-center gap-2">
                             <span class="jed-home-category-icon fa fa-camera rounded-circle bg-warning p-2 text-white"></span>
                             <h4 class="jed-home-category-title mb-0 category_list_jed">
-                                <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $c->id); ?>">
+                                <a class="text-decoration-none" href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $c->id); ?>">
                                     <?php echo $c->title; ?>
                                 </a>
                             </h4>
-                            <span class="badge badge-info rounded-pill ms-auto"><?php echo $c->numitems; ?></span>
+                            <span class="badge bg-jed rounded-pill ms-auto"><?php echo $c->numitems; ?></span>
                         </div>
                         <div class="card-body">
                             <ul class="list-group list-group-flush">
                                 <?php foreach ($c->children as $sc) {
                                     if ($sc->numitems > 0) { ?>
                                         <li class="list-group-item category_list_jed">
-                                            <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $sc->id); ?>">
+                                            <a class="text-decoration-none" href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $sc->id); ?>">
                                                 <?php echo $sc->title; ?>
                                             </a>
-                                            <span class="badge rounded-pill float-end badge-info">  <?php echo $sc->numitems; ?></span>
+                                            <span class="badge rounded-pill float-end bg-jed">  <?php echo $sc->numitems; ?></span>
                                         </li>
                                     <?php }
                                 } ?>
