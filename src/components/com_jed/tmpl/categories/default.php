@@ -31,29 +31,31 @@ HTMLHelper::_('bootstrap.tooltip');
     <div class="container">
         <div class="row gx-5">
             <?php foreach ($this->items as $c) : ?>
-                <div class="col-lg-4 mb-3 card jed-home-category">
-                    <div class="card-header jed-home-item-view">
-                        <span class="jed-home-category-icon fa fa-camera rounded-circle bg-warning p-2 text-white d-inline-block"></span>
-                        <h4 class="jed-home-category-title d-inline-block category_list_jed">
-                            <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $c->id); ?>">
-                                <?php echo $c->title; ?>
-                            </a>
-                        </h4>
-                        <span class="badge badge-info rounded-pill float-end"><?php echo $c->numitems; ?></span>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <?php foreach ($c->children as $sc) {
-                                if ($sc->numitems > 0) { ?>
-                                    <li class="list-group-item category_list_jed">
-                                        <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $sc->id); ?>">
-                                            <?php echo $sc->title; ?>
-                                        </a>
-                                        <span class="badge rounded-pill float-end badge-info">  <?php echo $sc->numitems; ?></span>
-                                    </li>
-                                <?php }
-                            } ?>
-                        </ul>
+                <div class="col-lg-4 mb-3 jed-home-category">
+                    <div class="card">
+                        <div class="card-header jed-home-item-view">
+                            <span class="jed-home-category-icon fa fa-camera rounded-circle bg-warning p-2 text-white d-inline-block"></span>
+                            <h4 class="jed-home-category-title d-inline-block category_list_jed">
+                                <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $c->id); ?>">
+                                    <?php echo $c->title; ?>
+                                </a>
+                            </h4>
+                            <span class="badge badge-info rounded-pill float-end"><?php echo $c->numitems; ?></span>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <?php foreach ($c->children as $sc) {
+                                    if ($sc->numitems > 0) { ?>
+                                        <li class="list-group-item category_list_jed">
+                                            <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $sc->id); ?>">
+                                                <?php echo $sc->title; ?>
+                                            </a>
+                                            <span class="badge rounded-pill float-end badge-info">  <?php echo $sc->numitems; ?></span>
+                                        </li>
+                                    <?php }
+                                } ?>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             <?php endforeach; ?>
