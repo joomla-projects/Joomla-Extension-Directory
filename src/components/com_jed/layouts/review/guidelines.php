@@ -55,4 +55,4 @@
         </div>
     </div>
     </div>
-<div><button id="reviewBtn" >Continue</button></div>
+<div><button class="btn btn-secondary" id="reviewBtn" >Continue</button></div>
