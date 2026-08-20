@@ -47,7 +47,7 @@
             </menu>
 
             <menu view="useraccess">
-                COM_JED_USERACCESS_TITLE
+                COM_JED_TITLE_USERACCESS
             </menu>
         </submenu>
 

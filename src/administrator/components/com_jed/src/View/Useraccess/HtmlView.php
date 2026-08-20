@@ -80,6 +80,6 @@ class HtmlView extends BaseHtmlView
      */
     protected function addToolbar(): void
     {
-        ToolbarHelper::title(Text::_('COM_JED_USERACCESS_TITLE'), 'users');
+        ToolbarHelper::title(Text::_('COM_JED_TITLE_USERACCESS'), 'users');
     }
 }

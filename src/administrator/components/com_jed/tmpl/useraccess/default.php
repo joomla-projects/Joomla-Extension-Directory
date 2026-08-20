@@ -68,7 +68,7 @@ $banInForce = static function (object $item): bool {
                     </p>
 
                     <table class="table">
-                        <caption class="visually-hidden"><?php echo Text::_('COM_JED_USERACCESS_TITLE'); ?></caption>
+                        <caption class="visually-hidden"><?php echo Text::_('COM_JED_TITLE_USERACCESS'); ?></caption>
                         <thead>
                             <tr>
                                 <th scope="col"><?php echo Text::_('JGLOBAL_TITLE'); ?></th>
