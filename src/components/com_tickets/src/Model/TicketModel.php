@@ -17,6 +17,8 @@ namespace Jed\Component\Tickets\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Tickets\Administrator\Enum\TicketType;
+use Jed\Component\Tickets\Administrator\Ticket\TicketTypeHandlerInterface;
+use Jed\Component\Tickets\Administrator\Ticket\TicketTypeHandlerRegistry;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Model\AdminModel;
@@ -162,5 +164,26 @@ class TicketModel extends AdminModel
         $messages = $db->loadObjectList();
 
         return $messages;
+    }
+
+    /**
+     * Method to get the record form.
+     *
+     * @param   mixed  $item  Object, false or null. False or null will try and re-retrieve the item.
+     *
+     * @return  TicketTypeHandlerInterface  A TicketTypeHandlerInterface object
+     *
+     * @since   4.0.0
+     * @throws  \Exception on failure
+     */
+    public function getTicketTypeHandler($item = null): TicketTypeHandlerInterface
+    {
+        if (!$item) {
+            $item = $this->getItem();
+        }
+        $registry = TicketTypeHandlerRegistry::createDefault($this->getDatabase());
+        $type     = TicketType::tryFrom((int) ($item->linked_item_type ?? 0)) ?? TicketType::Other;
+
+        return $registry->get($type);
     }
 }
