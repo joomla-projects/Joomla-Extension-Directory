@@ -87,6 +87,25 @@ describe('Workflow part 1: extension owner registers and submits a new extension
     cy.doFrontendLogout()
   })
 
+  it('keeps the pending extension hidden from a guest until it is approved', () => {
+    // A brand-new submission is created unapproved and offline (NewextensionModel sets
+    // state = 0; approved defaults to 0 in the schema) - that is what keeps it out of the
+    // public catalogue between submission and moderation. Checked here, with nobody logged
+    // in at all, so this stays true rather than just being true for the owner who just
+    // logged out. See Jed\Component\Jed\Administrator\Listing\ListingAccess::forItem(): a
+    // never-approved listing is a 404 even on its own owner's public URL, so approval - not
+    // ownership - is what unlocks it.
+    const detailUrl = `index.php?option=com_jed&view=extension&catid=${state.extensionCatId}` +
+      `&id=${state.extensionId}`
+
+    cy.request({ url: detailUrl, failOnStatusCode: false }).its('status').should('eq', 404)
+
+    // Nor does it appear in the public catalogue.
+    cy.request('index.php?option=com_jed&view=extensions').then((response) => {
+      expect(response.body).to.not.contain(`id=${state.extensionId}"`)
+    })
+  })
+
   it('approves and publishes the new extension as admin', () => {
     cy.doAdministratorLogin(Cypress.env('username'), Cypress.env('password'), false)
 
