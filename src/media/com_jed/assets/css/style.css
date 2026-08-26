@@ -463,6 +463,38 @@ p:last-child {
 }
 
 /* ==========================================================================
+   Search Tools
+   ========================================================================== */
+.js-stools-container-bar {
+  padding: 8px 0;
+}
+.js-stools-container-bar .btn-toolbar {
+  align-items: center;
+  row-gap: 8px;
+  column-gap: 8px;
+}
+.js-stools-container-bar .ordering-select {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.js-stools-container-filters {
+  padding: 10px;
+  margin-top: 8px;
+  background-color: #f4f6f7;
+  border-radius: 4px;
+}
+.js-stools-container-filters > * {
+  margin: 4px 0;
+}
+
+.js-stools-field-filter .form-select {
+  width: auto;
+  min-width: 220px;
+}
+
+/* ==========================================================================
    Stars
    ========================================================================== */
 .stars {
