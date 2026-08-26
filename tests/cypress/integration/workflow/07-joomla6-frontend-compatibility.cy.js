@@ -40,7 +40,10 @@ describe('Workflow part 7: extension owner adds Joomla 6 compatibility from the 
   const editFormUrl = () =>
     `index.php?option=com_jed&task=extensionform.edit&id=${state.extensionId}`
 
-  const openInfoTab = () =>
+  const openNewInfoTab = () =>
+    cy.get('#newextensionTab button[role="tab"]').filter((_, el) => el.textContent.trim() === 'Info').click()
+
+  const openEditInfoTab = () =>
     cy.get('#extensionformTab button[role="tab"]').filter((_, el) => el.textContent.trim() === 'Info').click()
 
   const setJoomlaVersion = (value) =>
@@ -93,7 +96,7 @@ describe('Workflow part 7: extension owner adds Joomla 6 compatibility from the 
       }
     })
 
-    openInfoTab()
+    openNewInfoTab()
     setJoomlaVersion('40')
     setJoomlaVersion('50')
 
@@ -141,7 +144,7 @@ describe('Workflow part 7: extension owner adds Joomla 6 compatibility from the 
     cy.doFrontendLogin(owner.username, owner.password, false)
 
     cy.visit(editFormUrl())
-    openInfoTab()
+    openEditInfoTab()
 
     // The previous save's choices must still be there - this is an addition, not a replacement.
     cy.get('input[name="jform[joomla_versions][]"][value="40"]').should('be.checked')
