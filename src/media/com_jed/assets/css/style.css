@@ -544,10 +544,6 @@ p:last-child {
   margin-bottom: 64px;
 }
 
-.margin-bottom-half.margin-bottom-half {
-  margin-bottom: 32px;
-}
-
 /* Font size */
 .font-size-xl.font-size-xl {
   font-size: 20px;
@@ -565,3 +561,5 @@ p:last-child {
   padding-top: 43.75%;
   background: rgb(87.9411764706%, 87.9411764706%, 87.9411764706%);
 }
+
+/*# sourceMappingURL=style.css.map */
