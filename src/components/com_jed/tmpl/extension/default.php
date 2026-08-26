@@ -66,7 +66,7 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
          data-ajax-url="<?php echo Route::_('index.php?option=com_jed&format=raw'); ?>"
          data-csrf-token="<?php echo Session::getFormToken(); ?>"></div>
 <?php endif; ?>
-<div class="jed-cards-wrapper margin-bottom-half">
+<div class="jed-cards-wrapper mb-4">
     <article class="container mb-5">
         <header class="row gap-2">
             <div class="col d-flex flex-column gap-2 mb-3">

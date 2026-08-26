@@ -110,7 +110,7 @@ if (JedHelper::isLoggedIn()) {
     </div>
 <?php endif; ?>
 
-<div class="jed-cards-wrapper margin-bottom-half">
+<div class="jed-cards-wrapper mb-4">
     <div class="jed-container">
         <?php // A category can legitimately hold no listings of its own while its children do,
               // so the heading is taken from the category rather than from the first extension. ?>

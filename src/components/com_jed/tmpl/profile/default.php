@@ -39,7 +39,7 @@ if (JedHelper::isLoggedIn()) {
          data-csrf-token="<?php echo Session::getFormToken(); ?>"></div>
 <?php endif; ?>
 
-<div class="jed-cards-wrapper margin-bottom-half">
+<div class="jed-cards-wrapper mb-4">
     <div class="jed-container">
         <div class="jed-profile-header d-flex align-items-center gap-3 mb-4">
             <img src="<?php echo $this->developer->logo; ?>" alt="<?php echo $this->escape($this->developer->name); ?>"

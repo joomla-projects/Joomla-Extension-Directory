@@ -60,7 +60,7 @@ $heading = ($catid && !empty($this->items)) ? $this->items[0]->category_title . 
          data-csrf-token="<?php echo Session::getFormToken(); ?>"></div>
 <?php endif; ?>
 
-<div class="jed-cards-wrapper margin-bottom-half">
+<div class="jed-cards-wrapper mb-4">
     <div class="jed-container">
         <h2 class="heading heading--m"><?php echo $this->escape($heading); ?></h2>
         <?php if ($catid && !empty($this->items)) : ?>
