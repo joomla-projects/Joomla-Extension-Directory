@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Site\View\Categories;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Joomla\CMS\Application\CMSWebApplicationInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
@@ -72,9 +73,8 @@ class HtmlView extends BaseHtmlView
      * @since  4.0.0
      * @throws Exception
      */
-    protected function prepareDocument(): void
+    protected function prepareDocument(CMSWebApplicationInterface $app): void
     {
-        $app   = Factory::getApplication();
         $menus = $app->getMenu();
 
         // Because the application sets a default page title,
@@ -132,7 +132,7 @@ class HtmlView extends BaseHtmlView
         $this->items  = $model->getItems();
         $this->params = $app->getParams('com_jed');
 
-        $this->prepareDocument();
+        $this->prepareDocument($app);
         parent::display($tpl);
     }
 
