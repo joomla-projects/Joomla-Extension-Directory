@@ -37,9 +37,8 @@ describe('Workflow part 7: extension owner adds Joomla 6 compatibility from the 
   const detailUrl = () =>
     `index.php?option=com_jed&view=extension&catid=${state.extensionCatId}&id=${state.extensionId}`
 
-  // Same route the Dashboard's "Extensions (as Owner)" table links every listing name to.
-  const openOwnerEditForm = () =>
-    cy.visit(`index.php?option=com_jed&task=extensionform.edit&id=${state.extensionId}`)
+  const editFormUrl = () =>
+    `index.php?option=com_jed&task=extensionform.edit&id=${state.extensionId}`
 
   const openInfoTab = () =>
     cy.get('#extensionformTab button[role="tab"]').filter((_, el) => el.textContent.trim() === 'Info').click()
@@ -94,6 +93,10 @@ describe('Workflow part 7: extension owner adds Joomla 6 compatibility from the 
       }
     })
 
+    openInfoTab()
+    setJoomlaVersion('40')
+    setJoomlaVersion('50')
+
     cy.get('#form-newextension button[type=submit]').click()
 
     cy.url({ timeout: 20000 }).should('include', 'extensionform').then((url) => {
@@ -121,23 +124,6 @@ describe('Workflow part 7: extension owner adds Joomla 6 compatibility from the 
     cy.doAdministratorLogout()
   })
 
-  it('lets the owner declare Joomla 4 and 5 compatibility from the front end edit form', () => {
-    cy.doFrontendLogin(owner.username, owner.password, false)
-
-    openOwnerEditForm()
-    openInfoTab()
-
-    setJoomlaVersion('40')
-    setJoomlaVersion('50')
-
-    cy.get('#form-extension button[type=submit]').click()
-
-    // ExtensionformController::getRedirectUrlToList() sends a successful save to the Dashboard.
-    cy.url().should('include', 'view=dashboard')
-
-    cy.doFrontendLogout()
-  })
-
   it('approves that revision, and the public page shows Joomla 4 and 5', () => {
     cy.doAdministratorLogin(Cypress.env('username'), Cypress.env('password'), false)
     approvePendingRevision()
@@ -154,7 +140,7 @@ describe('Workflow part 7: extension owner adds Joomla 6 compatibility from the 
   it('lets the owner add Joomla 6 compatibility from the front end edit form', () => {
     cy.doFrontendLogin(owner.username, owner.password, false)
 
-    openOwnerEditForm()
+    cy.visit(editFormUrl())
     openInfoTab()
 
     // The previous save's choices must still be there - this is an addition, not a replacement.
