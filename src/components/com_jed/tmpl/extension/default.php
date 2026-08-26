@@ -167,7 +167,7 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
                                 <?php echo Text::_($link['label']); ?>
                             </a>
                         <?php endforeach; ?>
-                    </p>
+                    </p><br />
                 <?php endif; ?>
 
                 <p class="btn-group">
