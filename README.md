@@ -69,6 +69,10 @@ Testing
 
 CI (`.github/workflows/ci.yml`) runs, in order: `composer install` → `php-cs-fixer` → `npm ci` → `vendor/bin/robo build` (producing the package used by later steps) → `vendor/bin/phpstan` → Cypress system tests against a matrix of Joomla/PHP versions.
 
+Building the CSS
+-------
+Run `npx sass src/media/com_jed/assets/scss/style.scss src/media/com_jed/assets/css/style.css`
+
 Installing a built package
 ---------------------------
 Everything installs in one step. The package produced by `vendor/bin/robo build` (`dist/pkg-jed-current.zip`) — or a release download — contains all three components, both modules, all plugins **and the site template**. There is nothing to install separately.

@@ -7,7 +7,8 @@
 		"@babel/preset-env": "^7.11.5",
 		"babel-preset-minify": "^0.5.1",
     "cypress": "^15.18.0",
-    "joomla-cypress": "^2.0.0"
+    "joomla-cypress": "^2.0.0",
+    "sass": "^1.103.1"
 	},
 	"babel": {
 		"presets": [
