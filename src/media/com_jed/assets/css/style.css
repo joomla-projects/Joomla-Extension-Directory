@@ -19,10 +19,6 @@ p:last-child {
   padding-left: 32px;
 }
 
-.jed-cards-wrapper {
-  margin-bottom: 32px;
-}
-
 /* ==========================================================================
    Breadcrumb
    ========================================================================== */
@@ -37,89 +33,6 @@ p:last-child {
 }
 .breadcrumb.breadcrumb .active {
   display: none;
-}
-
-/* ==========================================================================
-   Button
-   ========================================================================== */
-.button-group {
-  margin-bottom: -12px;
-}
-
-.button {
-  display: inline-block;
-  height: 40px;
-  padding-right: 16px;
-  padding-left: 16px;
-  margin-right: 8px;
-  margin-bottom: 12px;
-  font-size: 18px;
-  line-height: 40px;
-  color: #212121;
-  vertical-align: middle;
-  cursor: pointer;
-  border: none;
-  border-radius: 4px;
-  -webkit-appearance: none;
-  /* Some space between buttons */
-}
-.button:last-child {
-  margin-right: 0;
-}
-.button {
-  /* Default focus/hover styling */
-}
-.button:focus, .button:hover {
-  color: #212121;
-  text-decoration: none;
-}
-
-/* Button styles
-   ========================================================================== */
-/* Blue button */
-.button--blue {
-  color: #fff;
-  background: #016DCC;
-}
-.button--blue:focus, .button--blue:hover {
-  color: #fff;
-  background: #18558B;
-}
-
-/* Grey button */
-.button--grey {
-  background: #f5f5f5;
-  border: 1px solid #6d6d6d;
-}
-.button--grey:focus, .button--grey:hover {
-  background: #eee;
-  border-color: #555;
-}
-
-/* Big button */
-.button--big {
-  height: 48px;
-  padding-right: 24px;
-  padding-left: 24px;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 48px;
-}
-
-/* Icon button (make them square) */
-.button--icon-only {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  padding-right: 0;
-  padding-left: 0;
-  font-size: 24px;
-  line-height: 24px;
-  /* For big buttons */
-}
-.button--icon-only.button--big {
-  width: 48px;
 }
 
 /* ==========================================================================
