@@ -130,4 +130,16 @@ describe('Workflow part 1: extension owner registers and submits a new extension
 
     cy.saveJsonState('extension-submission', state)
   })
+
+  it('it shows the extension to guests once approved', () => {
+    const detailUrl = `index.php?option=com_jed&view=extension&catid=${state.extensionCatId}` +
+      `&id=${state.extensionId}`
+
+    cy.request({ url: detailUrl, failOnStatusCode: false }).its('status').should('eq', 200)
+
+    // Nor does it appear in the public catalogue.
+    cy.request('index.php?option=com_jed&view=extensions').then((response) => {
+      expect(response.body).to.contain(`id=${state.extensionId}"`)
+    })
+  })
 })
