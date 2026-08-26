@@ -34,11 +34,21 @@ describe('Workflow part 7: extension owner adds Joomla 6 compatibility from the 
     extensionName: `JED Test J6 Extension ${timestamp}`,
   }
 
+  // Cypress usually resolves a bare "index.php?..." against the configured baseUrl itself, but
+  // around a login/session boundary it can fall back to a hard top-level navigation that hands
+  // the raw string straight to the browser - which then applies its own address-bar fixup and
+  // treats a scheme-less, dot-containing token like "index.php" as a hostname to look up rather
+  // than a path (`getaddrinfo ENOTFOUND index.php`). Building the absolute URL from
+  // Cypress.config('baseUrl') up front leaves nothing for that fallback to misinterpret, and
+  // still respects a subpath baseUrl (e.g. CI's `http://localhost/<db>`) rather than assuming
+  // root, which a leading "/" would not.
+  const siteUrl = (path) => `${Cypress.config('baseUrl').replace(/\/$/, '')}/${path}`
+
   const detailUrl = () =>
     `index.php?option=com_jed&view=extension&catid=${state.extensionCatId}&id=${state.extensionId}`
 
   const editFormUrl = () =>
-    `index.php?option=com_jed&task=extensionform.edit&id=${state.extensionId}`
+    siteUrl(`index.php?option=com_jed&task=extensionform.edit&id=${state.extensionId}`)
 
   const openNewInfoTab = () =>
     cy.get('#newextensionTab button[role="tab"]').filter((_, el) => el.textContent.trim() === 'Info').click()
