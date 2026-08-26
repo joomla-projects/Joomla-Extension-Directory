@@ -159,10 +159,10 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
                 <?php endif; ?>
 
                 <?php if (!empty($item->links)) : ?>
-                    <p class="button-group">
+                    <p class="btn-group">
                         <?php foreach ($item->links as $link) : ?>
                             <a href="<?php echo htmlspecialchars($link['url'], ENT_QUOTES, 'UTF-8'); ?>"
-                               class="button button--grey jed-link jed-link--<?php echo $link['key']; ?>"
+                               class="btn btn-secondary jed-link jed-link--<?php echo $link['key']; ?>"
                                target="_blank" rel="nofollow noopener external">
                                 <?php echo Text::_($link['label']); ?>
                             </a>
@@ -170,11 +170,11 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
                     </p>
                 <?php endif; ?>
 
-                <p class="button-group">
+                <p class="btn-group">
                     <a href="<?php echo Route::_(
                         'index.php?option=com_tickets&view=ticketform&litem=' . TicketType::Extension->value
                         . '&lid=' . (int) $item->id . '&vr=' . (int) $item->id
-                    ); ?>" class="button button--grey">
+                    ); ?>" class="btn btn-secondary">
                         <?php echo Text::_('COM_JED_EXTENSION_REPORT'); ?>
                     </a>
                 </p>
