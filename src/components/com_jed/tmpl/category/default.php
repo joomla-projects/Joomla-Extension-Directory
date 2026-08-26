@@ -47,7 +47,9 @@ $canDelete  = $user->authorise('core.delete', 'com_jed');
  * @var Joomla\CMS\WebAsset\WebAssetManager $wa
 */
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-$wa->useStyle('com_jed.jazstyle');
+$wa->useStyle('com_jed.style');
+
+$childrenLimit = 9;
 
 if (JedHelper::isLoggedIn()) {
     $wa->useScript('com_jed.favorite');
@@ -80,18 +82,26 @@ if (JedHelper::isLoggedIn()) {
                             <span class="badge rounded-pill float-end"><?php echo (int) $c->getNumItems(); ?></span>
                         </div>
                         <div class="card-body">
+                            <?php
+                            $visibleChildren = array_values(array_filter($c->getChildren(), fn ($sc) => $sc->getNumItems() > 0));
+                            $shownChildren   = array_slice($visibleChildren, 0, $childrenLimit);
+                            ?>
                             <ul class="list-group list-group-flush">
-                                <?php foreach ($c->getChildren() as $sc) : ?>
-                                    <?php if ($sc->getNumItems() > 0) : ?>
-                                        <li class="list-group-item">
-                                            <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $sc->id); ?>">
-                                                <?php echo $this->escape($sc->title); ?>
-                                            </a>
-                                            <span class="badge rounded-pill float-end badge-info-cat">  <?php echo (int) $sc->getNumItems(); ?></span>
-                                        </li>
-                                    <?php endif; ?>
+                                <?php foreach ($shownChildren as $sc) : ?>
+                                    <li class="list-group-item">
+                                        <a href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $sc->id); ?>">
+                                            <?php echo $this->escape($sc->title); ?>
+                                        </a>
+                                        <span class="badge rounded-pill float-end badge-info-cat">  <?php echo (int) $sc->getNumItems(); ?></span>
+                                    </li>
                                 <?php endforeach; ?>
                             </ul>
+                            <?php if (count($visibleChildren) > $childrenLimit) : ?>
+                                <a class="btn btn-sm btn-outline-secondary d-block mt-2 jed-view-more"
+                                   href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $c->id); ?>">
+                                    <?php echo Text::_('COM_JED_VIEW_MORE'); ?>
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>

@@ -39,7 +39,7 @@ $canDelete  = $user->authorise('core.delete', 'com_jed');
  * @var Joomla\CMS\WebAsset\WebAssetManager $wa
 */
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-$wa->useStyle('com_jed.jazstyle');
+$wa->useStyle('com_jed.style');
 
 if (JedHelper::isLoggedIn()) {
     $wa->useScript('com_jed.favorite');

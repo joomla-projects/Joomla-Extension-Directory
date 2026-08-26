@@ -27,7 +27,7 @@ HTMLHelper::_('bootstrap.tooltip');
  * @var Joomla\CMS\WebAsset\WebAssetManager $wa
 */
 $wa = $this->getDocument()->getWebAssetManager();
-$wa->useStyle('com_jed.jazstyle');
+$wa->useStyle('com_jed.style');
 
 if (JedHelper::isLoggedIn()) {
     $wa->useScript('com_jed.favorite');

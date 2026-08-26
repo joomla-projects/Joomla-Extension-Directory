@@ -43,7 +43,7 @@ $user   = $this->getCurrentUser();
 $userId = $user->id;
 
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-$wa->useStyle('com_jed.jazstyle');
+$wa->useStyle('com_jed.style');
 $wa->useScript('com_jed.favorite');
 
 ?>
