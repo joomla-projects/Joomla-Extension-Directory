@@ -57,20 +57,6 @@
       "uri": "media/com_jed/css/jedmigrate.css"
     },
     {
-      "name": "com_jed.oldjed",
-      "type": "style",
-      "uri": "media/com_jed/css/oldjed.css",
-      "package": "jed",
-      "version": "4.0.0"
-    },
-    {
-      "name": "com_jed.newjed",
-      "type": "style",
-      "uri": "media/com_jed/css/newjed.css",
-      "package": "jed",
-      "version": "4.0.0"
-    },
-    {
       "name": "com_jed.submitextension",
       "type": "style",
       "uri": "media/com_jed/css/submit-extension.css",
@@ -78,9 +64,9 @@
       "version": "4.0.0"
     },
     {
-      "name": "com_jed.jazstyle",
+      "name": "com_jed.style",
       "type": "style",
-      "uri": "media/com_jed/css/jazstyle.css",
+      "uri": "media/com_jed/assets/css/style.css",
       "package": "jed",
       "version": "4.0.0"
     },
