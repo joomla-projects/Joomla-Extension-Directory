@@ -21,6 +21,8 @@ $wa = $this->getDocument()->getWebAssetManager();
 $wa->useStyle('com_jed.t09_jed'); /*
     ->useScript('form.validate');*/
 HTMLHelper::_('bootstrap.tooltip');
+
+$childrenLimit = 9;
 ?>
 <div class="jed-home-categories">
     <?php
@@ -43,18 +45,26 @@ HTMLHelper::_('bootstrap.tooltip');
                             <span class="badge bg-jed rounded-pill ms-auto"><?php echo $c->numitems; ?></span>
                         </div>
                         <div class="card-body">
+                            <?php
+                            $visibleChildren = array_values(array_filter($c->children, fn ($sc) => $sc->numitems > 0));
+                            $shownChildren   = array_slice($visibleChildren, 0, $childrenLimit);
+                            ?>
                             <ul class="list-group list-group-flush">
-                                <?php foreach ($c->children as $sc) {
-                                    if ($sc->numitems > 0) { ?>
-                                        <li class="list-group-item category_list_jed">
-                                            <a class="text-decoration-none" href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $sc->id); ?>">
-                                                <?php echo $sc->title; ?>
-                                            </a>
-                                            <span class="badge rounded-pill float-end bg-jed">  <?php echo $sc->numitems; ?></span>
-                                        </li>
-                                    <?php }
-                                } ?>
+                                <?php foreach ($shownChildren as $sc) : ?>
+                                    <li class="list-group-item category_list_jed">
+                                        <a class="text-decoration-none" href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $sc->id); ?>">
+                                            <?php echo $sc->title; ?>
+                                        </a>
+                                        <span class="badge rounded-pill float-end bg-jed">  <?php echo $sc->numitems; ?></span>
+                                    </li>
+                                <?php endforeach; ?>
                             </ul>
+                            <?php if (count($visibleChildren) > $childrenLimit) : ?>
+                                <a class="btn btn-sm btn-outline-secondary d-block mt-2 jed-view-more"
+                                   href="<?php echo Route::_('index.php?option=com_jed&view=category&id=' . $c->id); ?>">
+                                    <?php echo Text::_('COM_JED_VIEW_MORE'); ?>
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
