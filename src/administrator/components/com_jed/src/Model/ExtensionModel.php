@@ -17,7 +17,6 @@ defined('_JEXEC') or die;
 
 use Exception;
 use InvalidArgumentException;
-use Jed\Component\Jed\Administrator\Helper\JedHelper;
 use Jed\Component\Jed\Administrator\Log\JedActionLog;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Table\ExtensionHistoryTable;
@@ -130,14 +129,6 @@ class ExtensionModel extends AdminModel
             $registry     = new Registry($item->params);
             $item->params = $registry->toArray();
         }
-
-        // The checkboxes fields on this form (joomla_versions, extension_types) store a
-        // JSON-ish list string, e.g. `["40","50"]` (SiteJedHelper::splitStoredList()). The
-        // CheckboxesField only checks an option whose value is `in_array()` in $this->value, so
-        // handing it the raw string here left every box unchecked on re-edit - the same gap
-        // fixed on the front-end edit form's ExtensionformModel::getItem().
-        $item->joomla_versions = SiteJedHelper::splitStoredList((string) ($item->joomla_versions ?? ''));
-        $item->extension_types = SiteJedHelper::splitStoredList((string) ($item->extension_types ?? ''));
 
         $db               = $this->getDatabase();
         $mapId            = $item->extension_id ?: (int) $item->id;

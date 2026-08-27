@@ -637,7 +637,7 @@ class JedHelper
      *
      * @since 4.0.0
      */
-    public static function splitStoredList(string $stored): array
+    private static function splitStoredList(string $stored): array
     {
         $clean = str_replace(['[', ']', '"', "'", ' '], '', trim($stored));
 
