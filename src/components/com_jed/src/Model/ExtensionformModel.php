@@ -19,6 +19,7 @@ use Exception;
 use Jed\Component\Jed\Administrator\Access\JedAccessHelper;
 use Jed\Component\Jed\Administrator\Access\Privilege;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Tickets\Administrator\Enum\TicketType;
 use Jed\Component\Tickets\Administrator\Traits\TicketHandlingTrait;
 use Joomla\CMS\Application\SiteApplication;
@@ -347,6 +348,15 @@ class ExtensionformModel extends FormModel
 
         // Convert the Table to a clean stdClass.
         $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
+
+        // The checkboxes fields on this form (joomla_versions, extension_types) store a
+        // JSON-ish list string, e.g. `["40","50"]` (JedHelper::splitStoredList()). The
+        // CheckboxesField only checks an option whose value is `in_array()` in $this->value, so
+        // handing it the raw string here left every box unchecked on re-edit - the previous
+        // save's Joomla version choices silently vanished from the form despite still being in
+        // the database.
+        $this->item->joomla_versions = JedHelper::splitStoredList((string) ($this->item->joomla_versions ?? ''));
+        $this->item->extension_types = JedHelper::splitStoredList((string) ($this->item->extension_types ?? ''));
 
         // Pre-fill the "categories" multi-select with the extension's existing categories.
         $catQuery = $db->getQuery(true)
