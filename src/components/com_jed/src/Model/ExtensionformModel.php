@@ -546,15 +546,30 @@ class ExtensionformModel extends FormModel
 
         $categories = (array) ($data['categories'] ?? []);
 
+        $db = $this->getDatabase();
+
+        // The "owner" field is hidden/readonly on this form and filter="unset" strips it from
+        // $data entirely, so a submitter can't reassign the listing to someone else by tampering
+        // with the request. #__jed_extensions_history.owner is NOT NULL with no default, so it
+        // must be re-populated here from the live row before binding, or the INSERT fails with
+        // "Field 'owner' doesn't have a default value".
+        $ownerId = (int) $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName('owner'))
+                ->from($db->quoteName('#__jed_extensions'))
+                ->where($db->quoteName('id') . ' = :eid')
+                ->bind(':eid', $extensionId, ParameterType::INTEGER)
+        )->loadResult();
+
         // Force a new INSERT rather than an UPDATE of an existing history entry.
         $data['id']           = 0;
         $data['extension_id'] = $extensionId;
         $data['active']       = 1;
+        $data['owner']        = $ownerId;
         unset($data['created']); // ExtensionHistoryTable::bind() sets this for new rows
 
         // Only one history entry may be active per extension; deactivate the rest
         // before inserting the new (active) one.
-        $db = $this->getDatabase();
         $db->setQuery(
             $db->getQuery(true)
                 ->update($db->quoteName('#__jed_extensions_history'))
@@ -601,13 +616,6 @@ class ExtensionformModel extends FormModel
         // An edit by a trusted developer goes live without waiting for a moderator, on the
         // *owner's* trust rather than the editor's - a maintainer edits on the owner's listing,
         // and it is the owner the JED team decided to trust.
-        $ownerId = (int) $this->getDatabase()->setQuery(
-            $this->getDatabase()->getQuery(true)
-                ->select($this->getDatabase()->quoteName('owner'))
-                ->from($this->getDatabase()->quoteName('#__jed_extensions'))
-                ->where($this->getDatabase()->quoteName('id') . ' = ' . $extensionId)
-        )->loadResult();
-
         $this->autoApproveIfTrusted($extensionId, $ownerId);
 
         return true;
