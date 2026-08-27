@@ -102,6 +102,13 @@ describe('Workflow part 7: extension owner adds Joomla 6 compatibility from the 
     cy.doAdministratorLogout()
   }
 
+  // ExtensionformModel::isAuthorised() requires core.edit.own on com_jed for anyone who is not
+  // already covered by the blanket core.edit - a clean install ships no group-to-action mapping
+  // for it at all (access.xml's own comment: that mapping is "per-installation data, set in
+  // Global Configuration"), so a freshly registered owner is refused with a 401 until a real
+  // deployment grants it once to its developer-facing group, same as here. Undone in after().
+  before(() => setOwnerEditOwnPermission('1'))
+
   // Undoes the grant below regardless of how the spec finishes, so this spec doesn't leave a
   // permanent ACL change behind on an install other specs also run against.
   after(() => setOwnerEditOwnPermission(''))
@@ -182,15 +189,6 @@ describe('Workflow part 7: extension owner adds Joomla 6 compatibility from the 
       expect(text).to.include('Joomla! 5')
       expect(text).to.not.include('Joomla! 6')
     })
-  })
-
-  it('grants the Registered group permission to edit their own listings', () => {
-    // ExtensionformModel::isAuthorised() requires core.edit.own on com_jed for anyone who is not
-    // already covered by the blanket core.edit - a clean install ships no group-to-action mapping
-    // for it at all (access.xml's own comment: that mapping is "per-installation data, set in
-    // Global Configuration"), so a freshly registered owner is refused with a 401 until a real
-    // deployment grants it once to its developer-facing group, same as here. Undone in after().
-    setOwnerEditOwnPermission('1')
   })
 
   it('lets the owner add Joomla 6 compatibility from the front end edit form', () => {
