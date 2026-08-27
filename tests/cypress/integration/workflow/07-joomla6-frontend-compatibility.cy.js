@@ -16,6 +16,13 @@
  * "Compatibility" fact (`JedtrophyHelper::getTrophyVersionsStringFull()`) is asserted after each
  * approval, so this exercises the real save -> moderate -> publish path rather than writing to the
  * database directly.
+ *
+ * A clean install ships no ACL mapping for `core.edit.own` on `com_jed` at all (a real deployment
+ * is expected to grant it to its developer-facing group), so this
+ * spec grants it to the Registered group itself before the owner's edit-form step - otherwise
+ * ExtensionformModel::isAuthorised() refuses every front-end owner edit with a 401. `after()`
+ * reverts that grant once the spec is done, win or lose, so it doesn't linger on an install other
+ * specs also run against.
  */
 
 describe('Workflow part 7: extension owner adds Joomla 6 compatibility from the front end', { testIsolation: false }, () => {
@@ -71,6 +78,33 @@ describe('Workflow part 7: extension owner adds Joomla 6 compatibility from the 
   // matches that literal U+00A0 non-breaking space so assertions can use an ordinary space.
   const compatibilityText = () =>
     cy.contains('dt', 'Compatibility').next('dd').invoke('text').then((text) => text.replace(/ /g, ' '))
+
+  // "1" = Allowed, "" = Not Set/Inherited (rules.php's own option values) - shared by the
+  // setup step below and its teardown, which puts the install back exactly how it found it.
+  const setOwnerEditOwnPermission = (value) => {
+    cy.doAdministratorLogin(Cypress.env('username'), Cypress.env('password'), false)
+
+    cy.visit('administrator/index.php?option=com_config&view=component&component=com_jed')
+    cy.get('#configTabs button[role="tab"]').contains('Permissions').click()
+
+    // Scoped off the clicked tab's own aria-controls rather than a hardcoded group id, since the
+    // "Registered" group's numeric id is an install default, not something to assume here.
+    cy.get('#permissions-sliders button[role="tab"]').contains('Registered')
+      .click()
+      .invoke('attr', 'aria-controls')
+      .then((panelId) => {
+        cy.get(`#${panelId}`).contains('tr', 'Edit Own').find('select').select(value)
+      })
+
+    cy.get('#toolbar-apply').click()
+    cy.get('#system-message-container').should('contain.text', 'Configuration saved')
+
+    cy.doAdministratorLogout()
+  }
+
+  // Undoes the grant below regardless of how the spec finishes, so this spec doesn't leave a
+  // permanent ACL change behind on an install other specs also run against.
+  after(() => setOwnerEditOwnPermission(''))
 
   it('registers the extension owner and submits a new extension manually', () => {
     cy.visit('index.php?option=com_users&view=registration')
@@ -148,6 +182,15 @@ describe('Workflow part 7: extension owner adds Joomla 6 compatibility from the 
       expect(text).to.include('Joomla! 5')
       expect(text).to.not.include('Joomla! 6')
     })
+  })
+
+  it('grants the Registered group permission to edit their own listings', () => {
+    // ExtensionformModel::isAuthorised() requires core.edit.own on com_jed for anyone who is not
+    // already covered by the blanket core.edit - a clean install ships no group-to-action mapping
+    // for it at all (access.xml's own comment: that mapping is "per-installation data, set in
+    // Global Configuration"), so a freshly registered owner is refused with a 401 until a real
+    // deployment grants it once to its developer-facing group, same as here. Undone in after().
+    setOwnerEditOwnPermission('1')
   })
 
   it('lets the owner add Joomla 6 compatibility from the front end edit form', () => {
