@@ -348,6 +348,8 @@ class ExtensionformModel extends FormModel
         // Convert the Table to a clean stdClass.
         $this->item = ArrayHelper::toObject(ArrayHelper::fromObject($table), stdClass::class);
 
+        $this->decodeCheckboxColumns($this->item);
+
         // Pre-fill the "categories" multi-select with the extension's existing categories.
         $catQuery = $db->getQuery(true)
             ->select($db->quoteName('catid'))

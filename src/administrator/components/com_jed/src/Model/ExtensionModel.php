@@ -130,6 +130,8 @@ class ExtensionModel extends AdminModel
             $item->params = $registry->toArray();
         }
 
+        $this->decodeCheckboxColumns($item);
+
         $db               = $this->getDatabase();
         $mapId            = $item->extension_id ?: (int) $item->id;
         $catQuery         = $db->getQuery(true)

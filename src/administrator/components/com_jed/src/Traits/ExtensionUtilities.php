@@ -46,6 +46,40 @@ trait ExtensionUtilities
     private $catService;
 
     /**
+     * Decode the "checkboxes" columns (`extension_types`, `joomla_versions`) on a freshly
+     * loaded item back into arrays.
+     *
+     * ExtensionTable/ExtensionHistoryTable::$_jsonEncode stores these as JSON
+     * (`["com","mod"]`) on save, but Table::load() does not decode them back - the
+     * checkboxes form field needs an array to know which boxes to check
+     * (`in_array($option->value, (array) $this->value)`), and a raw JSON string counts
+     * as one non-matching element.
+     *
+     * Tolerant of non-JSON data for the same reason JedHelper::splitStoredList() is:
+     * legacy rows imported from JED3 are not reliably valid JSON.
+     *
+     * @param object $item The item as loaded from the table (getItem()'s return value).
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    private function decodeCheckboxColumns(object $item): void
+    {
+        foreach (['extension_types', 'joomla_versions'] as $field) {
+            if (!isset($item->$field) || \is_array($item->$field)) {
+                continue;
+            }
+
+            $decoded = json_decode((string) $item->$field, true);
+
+            $item->$field = \is_array($decoded)
+                ? $decoded
+                : array_values(array_filter(explode(',', (string) $item->$field), static fn ($v) => $v !== ''));
+        }
+    }
+
+    /**
      * Gets current extension category and hierarchy of parents as string
      *
      * @param int $category_id
