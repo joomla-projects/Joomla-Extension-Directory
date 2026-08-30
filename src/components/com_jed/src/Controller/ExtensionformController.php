@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
@@ -107,5 +108,30 @@ class ExtensionformController extends FormController
     protected function getRedirectUrlToList(): string
     {
         return Route::_('index.php?option=com_jed&view=dashboard');
+    }
+
+    /**
+     * Method to check if you can edit an existing record.
+     *
+     * @param array  $data An array of input data.
+     * @param string $key  The name of the key for the primary key; default is id.
+     *
+     * @return bool
+     *
+     * @since 4.0.0
+     */
+    protected function allowEdit($data = [], $key = 'id'): bool
+    {
+        $user = $this->app->getIdentity();
+
+        if ($user->authorise('core.edit', $this->option)) {
+            return true;
+        }
+
+        if (!$user->authorise('core.edit.own', $this->option)) {
+            return false;
+        }
+
+        return JedHelper::isOwnerOrMaintainer((int) ($data[$key] ?? 0));
     }
 }
