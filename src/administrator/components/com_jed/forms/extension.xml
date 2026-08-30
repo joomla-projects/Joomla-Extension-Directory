@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form addfieldprefix="Jed\Component\Jed\Administrator\Field" addruleprefix="Jed\Component\Jed\Administrator\Rule">
 	<fieldset name="common" label="COM_JED_FIELDSET_COMMON_LABEL">
-        <field name="id" type="text" readonly="true" class="readonly" default="0" filter="unset" description="JGLOBAL_FIELD_ID_DESC"/>
-        <field name="extension_id" type="text" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"/>
+        <field name="id" type="text" readonly="true" class="readonly" default="0" filter="unset"
+			   label="COM_JED_EXTENSION_REVISION_ID_LABEL" description="JGLOBAL_FIELD_ID_DESC"/>
+        <field name="extension_id" type="text" readonly="true" class="readonly" default="0"
+			   label="COM_JED_EXTENSION_EXTENSION_ID_LABEL" description="JGLOBAL_FIELD_ID_DESC"/>
 
         <field name="name" filter="safehtml" type="text" label="JGLOBAL_TITLE" required="true"
                hint="COM_JED_GENERAL_TITLE_LABEL"/>
