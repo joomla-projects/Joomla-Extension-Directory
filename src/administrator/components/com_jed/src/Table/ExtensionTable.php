@@ -168,6 +168,15 @@ class ExtensionTable extends Table implements TaggableTableInterface
             $this->ordering = $this->getNextOrder();
         }
 
+        // Check if alias is unique
+        if (!$this->isUnique('alias')) {
+            $count        = 0;
+            $currentAlias = $this->alias;
+            while (!$this->isUnique('alias')) {
+                $this->alias = $currentAlias . '-' . $count++;
+            }
+        }
+
         $this->normaliseVideo();
         $this->normaliseLinks();
 
