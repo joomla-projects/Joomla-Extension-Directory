@@ -152,6 +152,73 @@ final class JedAccessHelper
     }
 
     /**
+     * How many listings a user may have sitting in the moderation queue at once.
+     *
+     * @since 4.0.0
+     */
+    public const MAX_PENDING_LISTINGS = 3;
+
+    /**
+     * How many of this user's own listings are still awaiting a moderation decision.
+     *
+     * Mirrors the "pending" definition used elsewhere (P1-02): `approved_time IS NULL` on the
+     * live row. A history row for a later edit is not counted here - it is the same listing,
+     * not a new submission, so it does not consume another slot in the cap.
+     *
+     * @param int $userId The user.
+     *
+     * @return int
+     *
+     * @since 4.0.0
+     */
+    public static function countPendingListings(int $userId): int
+    {
+        if ($userId <= 0) {
+            return 0;
+        }
+
+        $db = self::db();
+
+        return (int) $db->setQuery(
+            $db->getQuery(true)
+                ->select('COUNT(*)')
+                ->from($db->quoteName('#__jed_extensions'))
+                ->where($db->quoteName('owner') . ' = :uid')
+                ->where($db->quoteName('approved_time') . ' IS NULL')
+                ->where($db->quoteName('deleted') . ' = 0')
+                ->bind(':uid', $userId, ParameterType::INTEGER)
+        )->loadResult();
+    }
+
+    /**
+     * The submit-a-new-listing gate, as one call: may this user submit at all, and are they
+     * under the pending-submission cap?
+     *
+     * Checked in that order deliberately - a banned or otherwise disallowed user gets that
+     * message rather than being told about a limit that was never theirs to hit.
+     *
+     * @param int $userId The user.
+     *
+     * @return void
+     *
+     * @throws RuntimeException When they may not.
+     *
+     * @since 4.0.0
+     */
+    public static function assertMayCreateListing(int $userId): void
+    {
+        self::assertMay($userId, Privilege::CREATE_LISTING);
+
+        $pending = self::countPendingListings($userId);
+
+        if ($pending >= self::MAX_PENDING_LISTINGS) {
+            throw new RuntimeException(
+                Text::sprintf('COM_JED_ACCESS_DENIED_PENDING_LIMIT', self::MAX_PENDING_LISTINGS)
+            );
+        }
+    }
+
+    /**
      * Whether a user is barred from reviewing this particular extension.
      *
      * Two ways in: barred from the extension's owner, or from any category it sits in. Checked

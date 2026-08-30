@@ -17,7 +17,6 @@ namespace Jed\Component\Jed\Site\Model;
 
 use Exception;
 use Jed\Component\Jed\Administrator\Access\JedAccessHelper;
-use Jed\Component\Jed\Administrator\Access\Privilege;
 use Jed\Component\Jed\Administrator\Parser\File as FileParser;
 use Jed\Component\Jed\Administrator\Parser\Github as GithubParser;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
@@ -165,7 +164,9 @@ class NewextensionModel extends FormModel
         // The per-user gate (P1-05). Being logged in is not the same as being allowed: a banned
         // user, or one whose create_listing privilege was withdrawn, arrives here with a
         // perfectly good session. The refusal names the reason rather than a generic error.
-        JedAccessHelper::assertMay((int) Factory::getApplication()->getIdentity()->id, Privilege::CREATE_LISTING);
+        // Also caps how many of a user's own submissions may sit in the moderation queue at
+        // once, so one person cannot flood it while earlier submissions are still waiting.
+        JedAccessHelper::assertMayCreateListing((int) Factory::getApplication()->getIdentity()->id);
 
         $extensionId = $this->createExtension($data);
 
