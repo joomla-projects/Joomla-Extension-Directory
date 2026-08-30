@@ -65,6 +65,15 @@ class ExtensionTable extends Table implements TaggableTableInterface
     private bool $parentConfirmedSubmitted = false;
 
     /**
+     * Columns holding "checkboxes" field values, JSON-encoded on bind().
+     *
+     * @var array
+     *
+     * @since 4.0.0
+     */
+    protected $_jsonEncode = ['extension_types', 'joomla_versions'];
+
+    /**
      * Define a namespaced asset name for inclusion in the #__assets table
      *
      * @return string The asset name

@@ -32,6 +32,15 @@ use UnexpectedValueException;
 class ExtensionHistoryTable extends Table
 {
     /**
+     * Columns holding "checkboxes" field values, JSON-encoded on bind().
+     *
+     * @var array
+     *
+     * @since 4.0.0
+     */
+    protected $_jsonEncode = ['extension_types', 'joomla_versions'];
+
+    /**
      * Constructor
      *
      * @param DatabaseDriver $db A database connector object
