@@ -208,7 +208,7 @@ describe('Workflow part 7: extension owner adds Joomla 6 compatibility from the 
     // This isn't ideal as it relies on SEF URLs being enabled and our sample data structure
     cy.url().should('include', 'dashboard')
     cy.get('joomla-alert').should('not.contain.text', 'error')
-    cy.get('joomla-alert').should('not.contain.text', 'Save not permitted')
+    cy.get('joomla-alert').should('not.contain.text', 'danger')
 
     cy.doFrontendLogout()
   })
