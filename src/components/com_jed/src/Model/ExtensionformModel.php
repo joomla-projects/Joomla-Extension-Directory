@@ -487,7 +487,7 @@ class ExtensionformModel extends FormModel
      * @since 4.0.0
      * @throws Exception
      */
-    private function isAuthorised(int $extensionId): bool
+    public function isAuthorised(int $extensionId): bool
     {
         $user = $this->getCurrentUser();
 

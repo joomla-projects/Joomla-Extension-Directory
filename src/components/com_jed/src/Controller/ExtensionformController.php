@@ -14,7 +14,7 @@ namespace Jed\Component\Jed\Site\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
-use Jed\Component\Jed\Site\Helper\JedHelper;
+use Jed\Component\Jed\Site\Model\ExtensionformModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
@@ -111,27 +111,35 @@ class ExtensionformController extends FormController
     }
 
     /**
-     * Method to check if you can edit an existing record.
+     * Method to check if you can save the record overridden because the form posts no `id`/`jform[id]`
+     * field, so FormController::allowSave()'s own record-id-from-request logic always sees 0 and takes the
+     * allowAdd() branch - requiring core.create, the wrong permission for an edit-only form - rather than allowEdit().
+     * It also duplicates a global core.edit ACL check this component doesn't otherwise use for per-listing permission
+     * (access.xml's own comment: "may this group approve anything at all" is a global question, "may
+     * this person touch this extension" is not expressible as an ACL action). ExtensionformModel::
+     * isAuthorised() (core.edit / core.edit.own + ownership) is already the single source of truth
+     * for that question, so allowSave() below just asks it instead of reimplementing the check.
      *
      * @param array  $data An array of input data.
-     * @param string $key  The name of the key for the primary key; default is id.
+     * @param string $key  The name of the key for the primary key; unused, kept for signature
+     *                      compatibility with FormController::allowSave().
      *
      * @return bool
      *
+     * @throws Exception
      * @since 4.0.0
      */
-    protected function allowEdit($data = [], $key = 'id'): bool
+    protected function allowSave($data, $key = 'id'): bool
     {
-        $user = $this->app->getIdentity();
+        $extensionId = (int) Factory::getApplication()->getUserState('com_jed.edit.extension.id');
 
-        if ($user->authorise('core.edit', $this->option)) {
-            return true;
-        }
-
-        if (!$user->authorise('core.edit.own', $this->option)) {
+        if (!$extensionId) {
             return false;
         }
 
-        return JedHelper::isOwnerOrMaintainer((int) ($data[$key] ?? 0));
+        /** @var ExtensionformModel $model */
+        $model = $this->getModel();
+
+        return $model->isAuthorised($extensionId);
     }
 }
