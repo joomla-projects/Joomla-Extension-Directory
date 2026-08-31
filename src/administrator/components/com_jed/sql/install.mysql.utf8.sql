@@ -9,6 +9,18 @@
 -- Schema changes after go-live do NOT belong in this file. They belong in
 -- sql/updates/mysql/<version>.sql, which is what Joomla runs on the `update` route; this file is
 -- then updated to match so a fresh install produces the same schema.
+--
+-- Foreign keys (added in 4.0.1) are scoped to com_jed's own tables, anchored on
+-- `#__jed_extensions`.`id` and, once, on `#__jed_extensions_history`.`id`. Deliberately absent:
+-- every `catid` (references Joomla core `#__categories`, which core components never FK into
+-- either) and every `owner`/`created_by`/`modified_by`/`*_user_id`/`checked_by`/`set_by` column
+-- (references core `#__users`). A RESTRICT there would block deleting a user who ever touched a
+-- listing; CASCADE would silently delete a developer's whole catalogue when their account is
+-- removed; SET NULL cannot apply to the columns that are NOT NULL. None of the three is safe, so
+-- those stay plain, unconstrained indexes, same as every other Joomla component.
+--
+-- FOREIGN_KEY_CHECKS is off for the whole file so table order below is free; every FK here would
+-- also resolve without it, since every referenced table is created earlier in this file.
 
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -125,7 +137,11 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions`
 	-- Both relations are read backwards far more often than forwards: one listing's own
 	-- parent is a primary-key lookup, "everything that extends this one" is not.
 	KEY `IDX_jed_extensions_variant_of` (`variant_of_id`),
-	KEY `IDX_jed_extensions_parent` (`parent_id`, `parent_confirmed`)
+	KEY `IDX_jed_extensions_parent` (`parent_id`, `parent_confirmed`),
+	-- SET NULL, not CASCADE: both columns already use NULL to mean "no relation" (see above), so
+	-- deleting the target listing removes exactly the claim, not the listing making it.
+	CONSTRAINT `FK_jed_extensions_variant_of_id` FOREIGN KEY (`variant_of_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE SET NULL,
+	CONSTRAINT `FK_jed_extensions_parent_id` FOREIGN KEY (`parent_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
@@ -150,7 +166,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions`
 -- ExtensionVersionUpdater::applyUpdate() unsets exactly these three when it copies a row.
 CREATE TABLE IF NOT EXISTS `#__jed_extensions_history`
 (
-	`id`                     int             NOT NULL AUTO_INCREMENT,
+	`id`                     int unsigned    NOT NULL AUTO_INCREMENT,
 	`extension_id`           int unsigned    NOT NULL,
 	`active`                 tinyint(1)      NOT NULL DEFAULT '0',
 	`name`                   varchar(255)    NOT NULL DEFAULT '',
@@ -239,7 +255,9 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_history`
 	KEY `IDX_jed_extensions_state` (`state`),
 	KEY `IDX_jed_extensions_alias` (`alias`),
 	KEY `IDX_jed_extensions_history_extension_id` (`extension_id`),
-	KEY `IDX_jed_extensions_history_extension_id_active` (`extension_id`, `active`)
+	KEY `IDX_jed_extensions_history_extension_id_active` (`extension_id`, `active`),
+	-- A revision is only meaningful next to the listing it revises, so it dies with it.
+	CONSTRAINT `FK_jed_extensions_history_extension_id` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
@@ -248,7 +266,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_category_map`
 	`extension_id` int unsigned NOT NULL,
 	`catid`        int unsigned NOT NULL,
 	PRIMARY KEY (`extension_id`, `catid`),
-	KEY `IDX_jed_extensions_category_map_catid` (`catid`)
+	KEY `IDX_jed_extensions_category_map_catid` (`catid`),
+	CONSTRAINT `FK_jed_extensions_category_map_extension_id` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
@@ -270,7 +289,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_maintainers`
 	`invited_time`  datetime     DEFAULT NULL,
 	`accepted_time` datetime     DEFAULT NULL,
 	PRIMARY KEY (`extension_id`, `user_id`),
-	KEY `IDX_jed_maintainers_user_state` (`user_id`, `state`)
+	KEY `IDX_jed_maintainers_user_state` (`user_id`, `state`),
+	CONSTRAINT `FK_jed_extensions_maintainers_extension_id` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
@@ -288,7 +308,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_images`
 	PRIMARY KEY (`id`),
 	KEY `FK_jed_extensions_images_extension_id` (`extension_id`),
 	KEY `FK_jed_extensions_images_created_by` (`created_by`),
-	KEY `FK_jed_extensions_images_modified_by` (`modified_by`)
+	KEY `FK_jed_extensions_images_modified_by` (`modified_by`),
+	CONSTRAINT `FK_jed_extensions_images_extension_id` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
@@ -304,7 +325,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_extensions_files`
 	PRIMARY KEY (`id`),
 	KEY `FK_jed_extensions_files_extension_id` (`extension_id`),
 	KEY `FK_jed_extensions_files_created_by` (`created_by`),
-	KEY `FK_jed_extensions_files_modified_by` (`modified_by`)
+	KEY `FK_jed_extensions_files_modified_by` (`modified_by`),
+	CONSTRAINT `FK_jed_extensions_files_extension_id` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
@@ -342,7 +364,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_reviews`
 	PRIMARY KEY (`id`),
 	KEY `IDX_jed_reviews_extension_id_created_by` (`extension_id`, `created_by`),
 	KEY `FK_jed_reviews_extension_id` (`extension_id`),
-	KEY `FK_jed_reviews_created_by` (`created_by`)
+	KEY `FK_jed_reviews_created_by` (`created_by`),
+	CONSTRAINT `FK_jed_reviews_extension_id` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
@@ -355,7 +378,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_favorites`
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `UK_jed_favorites_user_id_extension_id` (`user_id`, `extension_id`),
 	KEY `FK_jed_favorites_user_id` (`user_id`),
-	KEY `FK_jed_favorites_extension_id` (`extension_id`)
+	KEY `FK_jed_favorites_extension_id` (`extension_id`),
+	CONSTRAINT `FK_jed_favorites_extension_id` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
@@ -450,7 +474,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_extension_transfers`
 	PRIMARY KEY (`id`),
 	KEY `IDX_transfers_extension` (`extension_id`, `state`),
 	KEY `IDX_transfers_to_user` (`to_user_id`, `state`),
-	KEY `IDX_transfers_expiry` (`state`, `expires`)
+	KEY `IDX_transfers_expiry` (`state`, `expires`),
+	CONSTRAINT `FK_jed_extension_transfers_extension_id` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
@@ -472,7 +497,11 @@ CREATE TABLE IF NOT EXISTS `#__jed_transfer_lookups`
 	`extension_id` int unsigned DEFAULT NULL,
 	`created`      datetime     NOT NULL,
 	PRIMARY KEY (`id`),
-	KEY `IDX_transfer_lookups_user` (`user_id`, `created`)
+	KEY `IDX_transfer_lookups_user` (`user_id`, `created`),
+	KEY `FK_jed_transfer_lookups_extension_id` (`extension_id`),
+	-- SET NULL: the log entry itself is the record that matters (P1-18 retention), and it must
+	-- outlive the extension it happened to name.
+	CONSTRAINT `FK_jed_transfer_lookups_extension_id` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
@@ -539,7 +568,13 @@ CREATE TABLE IF NOT EXISTS `#__jed_queue_jobs`
 	PRIMARY KEY (`id`),
 	KEY `IDX_jed_queue_jobs_status` (`status`),
 	KEY `IDX_jed_queue_jobs_type` (`type`),
-	KEY `IDX_jed_queue_jobs_extension_id` (`extension_id`)
+	KEY `IDX_jed_queue_jobs_extension_id` (`extension_id`),
+	KEY `FK_jed_queue_jobs_history_id` (`history_id`),
+	-- SET NULL on both: a job is a record that the work happened, and must survive its subject
+	-- being deleted - a queue table that lost rows on every unrelated delete would be useless
+	-- as an audit trail.
+	CONSTRAINT `FK_jed_queue_jobs_extension_id` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE SET NULL,
+	CONSTRAINT `FK_jed_queue_jobs_history_id` FOREIGN KEY (`history_id`) REFERENCES `#__jed_extensions_history` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
@@ -576,7 +611,10 @@ CREATE TABLE IF NOT EXISTS `#__jed_url_checks`
 	PRIMARY KEY (`id`),
 	KEY `IDX_jed_url_checks_lookup` (`url_hash`, `validator`, `checked`),
 	KEY `IDX_jed_url_checks_user` (`checked_by`, `checked`),
-	KEY `IDX_jed_url_checks_extension` (`extension_id`, `field`)
+	KEY `IDX_jed_url_checks_extension` (`extension_id`, `field`),
+	-- SET NULL: this is the moderation record of what was checked and when (P1-08), and it must
+	-- outlive the listing it was checked for.
+	CONSTRAINT `FK_jed_url_checks_extension_id` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
@@ -616,7 +654,10 @@ CREATE TABLE IF NOT EXISTS `#__jed_extension_linkchecks`
 	UNIQUE KEY `UQ_jed_linkcheck` (`extension_id`, `link_type`),
 	KEY `IDX_jed_linkcheck_due` (`last_checked`),
 	KEY `IDX_jed_linkcheck_state` (`status`, `fail_count`),
-	KEY `IDX_jed_linkcheck_escalated` (`escalated`)
+	KEY `IDX_jed_linkcheck_escalated` (`escalated`),
+	-- A state table, not a log (see above) - there is nothing here worth keeping once the
+	-- listing it describes is gone.
+	CONSTRAINT `FK_jed_extension_linkchecks_extension_id` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
@@ -647,7 +688,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_hit_log`
 	PRIMARY KEY (`id`),
 	KEY `IDX_jed_hitlog_ext_time` (`extension_id`, `hit_time`),
 	KEY `IDX_jed_hitlog_time` (`hit_time`),
-	KEY `IDX_jed_hitlog_rate` (`ip_hash`, `hit_time`)
+	KEY `IDX_jed_hitlog_rate` (`ip_hash`, `hit_time`),
+	CONSTRAINT `FK_jed_hit_log_extension_id` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
@@ -665,7 +707,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_hit_stats`
 	`download_clicks` int unsigned NOT NULL DEFAULT '0',
 	`robot_hits`      int unsigned NOT NULL DEFAULT '0',
 	PRIMARY KEY (`extension_id`, `period`),
-	KEY `IDX_jed_hitstats_period` (`period`)
+	KEY `IDX_jed_hitstats_period` (`period`),
+	CONSTRAINT `FK_jed_hit_stats_extension_id` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 

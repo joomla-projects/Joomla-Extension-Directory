@@ -152,17 +152,6 @@ Note the channel URL — it is not a video at all and cannot be converted.
       `ExtensionModel`/`ExtensionsModel` beyond that. (The queue/audit/score
       service classes under `src/Service`, `Queue` and `Audit` are fresh code and
       need no rework.)
-- [ ] **No foreign key constraints anywhere in `com_jed`'s install SQL.**
-      `install.mysql.utf8.sql` contains zero `FOREIGN KEY` / `CONSTRAINT`
-      clauses — including `#__jed_favorites`, which has only `KEY` indexes
-      despite an earlier note in this file claiming it had `ON DELETE CASCADE`.
-      Deleting an extension therefore orphans rows in
-      `#__jed_extensions_category_map`, `#__jed_extensions_maintainers`,
-      `#__jed_extensions_images`, `#__jed_extensions_files` and
-      `#__jed_favorites`. Decide deliberately: add FKs with cascade, or handle
-      cleanup in the delete path. (The absence of FKs is also why the errno 121
-      duplicate-key problem in Issue #67 appears to be gone — worth verifying
-      and closing that issue.)
 - [ ] **`#__jed_ticket_linked_item_types` is stale and unused.** It seeds three
       rows — `1 Unknown`, `2 Extension`, `3 Review` — which do not line up with
       the `TicketType` enum (`Extension = 1`, `Review = 2`, `Other = 7`,
