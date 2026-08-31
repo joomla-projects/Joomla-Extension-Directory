@@ -134,15 +134,6 @@ Note the channel URL — it is not a video at all and cannot be converted.
 
 ## 4. Code cleanup / dead code
 
-- [ ] **Delete the dead frontend layouts.** None of these is referenced anywhere
-      outside the layouts directory itself:
-      `layouts/extension/extension-single.php` (the "Dummy Company" placeholder),
-      `layouts/extension/varied-form.php`, `layouts/extension/varied-form/section.php`,
-      and `layouts/elements/stars.php`. The last one carries the half-star
-      `@TODO`, which is misleading: the live path is
-      `JedscoreHelper::getStars()`, which *does* render half stars but resolves
-      any fractional remainder to exactly one — so 4.1 and 4.9 look identical.
-      Move that note to the helper if it is worth keeping.
 - [ ] **Reduce duplicated CRUD boilerplate in the models.** The owner/maintainer
       check was extracted into `JedHelper::isOwnerOrMaintainer()`, but the
       near-identical "flag favorited via `LEFT JOIN #__jed_favorites`" block now
