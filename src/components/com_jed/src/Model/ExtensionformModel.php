@@ -597,6 +597,12 @@ class ExtensionformModel extends FormModel
         // Keep state pointing to the extension ID (not the new history entry's PK)
         $this->setState('extension.id', $extensionId);
 
+        $this->triggerTicket(
+            TicketType::Extension,
+            $extensionId,
+            Text::sprintf('COM_JED_TICKET_EXTENSION_EDITED_EVENT', $data['name'] ?? $extensionId)
+        );
+
         $this->notifyListingSubmitted($extensionId, (int) $table->id, true);
 
         // An edit by a trusted developer goes live without waiting for a moderator, on the
