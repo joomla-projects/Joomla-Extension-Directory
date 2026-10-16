@@ -115,7 +115,7 @@ class HtmlView extends BaseHtmlView
                     ->listCheck(true);
             }
         }
-        JedHelper::addConfigToolbar($toolbar);
+        JedHelper::addConfigToolbar($toolbar,'Tickets');
         if ($canDo->get('core.admin')) {
             $toolbar->preferences('com_jed');
         }
