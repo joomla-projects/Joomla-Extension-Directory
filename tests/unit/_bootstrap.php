@@ -107,3 +107,5 @@ JLoader::registerNamespace('Jed\\Component\\Tickets\\Administrator', dirname(JPA
 JLoader::registerNamespace('Jed\\Component\\Tickets\\Site', dirname(JPATH_TESTS, 2) . '/src/components/com_tickets/src');
 JLoader::registerNamespace('Jed\\Component\\Abandonware\\Administrator', dirname(JPATH_TESTS, 2) . '/src/administrator/components/com_abandonware/src');
 JLoader::registerNamespace('Jed\\Component\\Abandonware\\Site', dirname(JPATH_TESTS, 2) . '/src/components/com_abandonware/src');
+JLoader::registerNamespace('Jed\\Component\\Apps\\Administrator', dirname(JPATH_TESTS, 2) . '/src/administrator/components/com_apps/src');
+JLoader::registerNamespace('Jed\\Component\\Apps\\Site', dirname(JPATH_TESTS, 2) . '/src/components/com_apps/src');

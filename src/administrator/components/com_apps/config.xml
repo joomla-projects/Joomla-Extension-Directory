@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <fieldset name="cache" label="COM_APPS_CONFIG_CACHE_LABEL" description="COM_APPS_CONFIG_CACHE_DESC">
+        <field name="origin_ttl" type="number" label="COM_APPS_CONFIG_ORIGIN_TTL_LABEL"
+            description="COM_APPS_CONFIG_ORIGIN_TTL_DESC" default="15" min="0" max="1440" filter="integer" />
+        <field name="edge_ttl" type="number" label="COM_APPS_CONFIG_EDGE_TTL_LABEL"
+            description="COM_APPS_CONFIG_EDGE_TTL_DESC" default="3600" min="0" max="86400" filter="integer" />
+        <field name="edge_ttl_search" type="number" label="COM_APPS_CONFIG_EDGE_TTL_SEARCH_LABEL"
+            description="COM_APPS_CONFIG_EDGE_TTL_SEARCH_DESC" default="300" min="0" max="86400" filter="integer" />
+    </fieldset>
+    <fieldset name="listing" label="COM_APPS_CONFIG_LISTING_LABEL">
+        <field name="max_items" type="number" label="COM_APPS_CONFIG_MAX_ITEMS_LABEL"
+            description="COM_APPS_CONFIG_MAX_ITEMS_DESC" default="256" min="10" max="1000" filter="integer" />
+        <field name="search_min_length" type="number" label="COM_APPS_CONFIG_SEARCH_MIN_LABEL"
+            description="COM_APPS_CONFIG_SEARCH_MIN_DESC" default="2" min="1" max="10" filter="integer" />
+    </fieldset>
+</config>
