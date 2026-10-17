@@ -69,6 +69,13 @@ final class TransferService
     public const LOOKUP_WINDOW = 24;
 
     /**
+     * How many times a confirmation is retried when the other party's confirmation lands first.
+     *
+     * @since 4.0.0
+     */
+    private const CONFIRM_ATTEMPTS = 3;
+
+    /**
      * @param DatabaseInterface $db The database driver.
      *
      * @since 4.0.0
@@ -223,56 +230,76 @@ final class TransferService
      */
     public function confirm(int $transferId, string $token, int $userId): TransferState
     {
-        $transfer = $this->loadTransfer($transferId);
+        // The two parties can confirm at the same moment. Each decides the next state from what it
+        // read, so the write is conditional on that state and on the token still being there; when
+        // the other side got in first the row no longer matches and this starts again from the
+        // fresh row, which is how the second confirmation ends up completing the transfer instead
+        // of overwriting the first.
+        $newState = null;
 
-        if ($transfer === null) {
-            throw new RuntimeException(Text::_('COM_JED_TRANSFER_ERROR_UNKNOWN'));
+        for ($attempt = 0; $attempt < self::CONFIRM_ATTEMPTS && $newState === null; $attempt++) {
+            $transfer = $this->loadTransfer($transferId);
+
+            if ($transfer === null) {
+                throw new RuntimeException(Text::_('COM_JED_TRANSFER_ERROR_UNKNOWN'));
+            }
+
+            $state = TransferState::from((string) $transfer['state']);
+
+            if (!$state->isOpen()) {
+                throw new RuntimeException(Text::_('COM_JED_TRANSFER_ERROR_CLOSED'));
+            }
+
+            if (strtotime((string) $transfer['expires']) < time()) {
+                $this->expire($transferId);
+
+                throw new RuntimeException(Text::_('COM_JED_TRANSFER_ERROR_EXPIRED'));
+            }
+
+            // Which side does this token open? Compared with hash_equals against the stored hash, so
+            // a token that is close but not equal is not distinguishable by timing.
+            $hash        = $this->hashToken($token);
+            $isRecipient = $transfer['to_token_hash'] !== null && hash_equals((string) $transfer['to_token_hash'], $hash);
+            $isOwner     = $transfer['from_token_hash'] !== null && hash_equals((string) $transfer['from_token_hash'], $hash);
+
+            if (!$isRecipient && !$isOwner) {
+                throw new RuntimeException(Text::_('COM_JED_TRANSFER_ERROR_TOKEN'));
+            }
+
+            $expectedUser = $isRecipient ? (int) $transfer['to_user_id'] : (int) $transfer['from_user_id'];
+
+            if ($userId !== $expectedUser) {
+                throw new RuntimeException(Text::_('COM_JED_TRANSFER_ERROR_WRONG_USER'));
+            }
+
+            $newState = $state->afterConfirmationBy($isRecipient);
+            $now      = Factory::getDate()->toSql();
+
+            $update = $this->db->getQuery(true)
+                ->update($this->db->quoteName('#__jed_extension_transfers'))
+                ->set($this->db->quoteName('state') . ' = ' . $this->db->quote($newState->value))
+                // Single use: the token that was just spent is cleared, so the same link cannot be
+                // replayed and cannot be used to work out the other side's token.
+                ->set($this->db->quoteName($isRecipient ? 'to_token_hash' : 'from_token_hash') . ' = NULL')
+                ->set($this->db->quoteName($isRecipient ? 'to_confirmed_time' : 'from_confirmed_time') . ' = ' . $this->db->quote($now))
+                ->where($this->db->quoteName('id') . ' = ' . $transferId)
+                ->where($this->db->quoteName('state') . ' = ' . $this->db->quote($state->value))
+                ->where($this->db->quoteName($isRecipient ? 'to_token_hash' : 'from_token_hash') . ' = ' . $this->db->quote($hash));
+
+            $this->db->setQuery($update)->execute();
+
+            if ($this->db->getAffectedRows() !== 1) {
+                // Somebody else changed the transfer since it was read: read it again.
+                $newState = null;
+            }
         }
 
-        $state = TransferState::from((string) $transfer['state']);
-
-        if (!$state->isOpen()) {
+        if ($newState === null) {
             throw new RuntimeException(Text::_('COM_JED_TRANSFER_ERROR_CLOSED'));
         }
 
-        if (strtotime((string) $transfer['expires']) < time()) {
-            $this->expire($transferId);
-
-            throw new RuntimeException(Text::_('COM_JED_TRANSFER_ERROR_EXPIRED'));
-        }
-
-        // Which side does this token open? Compared with hash_equals against the stored hash, so
-        // a token that is close but not equal is not distinguishable by timing.
-        $hash        = $this->hashToken($token);
-        $isRecipient = $transfer['to_token_hash'] !== null && hash_equals((string) $transfer['to_token_hash'], $hash);
-        $isOwner     = $transfer['from_token_hash'] !== null && hash_equals((string) $transfer['from_token_hash'], $hash);
-
-        if (!$isRecipient && !$isOwner) {
-            throw new RuntimeException(Text::_('COM_JED_TRANSFER_ERROR_TOKEN'));
-        }
-
-        $expectedUser = $isRecipient ? (int) $transfer['to_user_id'] : (int) $transfer['from_user_id'];
-
-        if ($userId !== $expectedUser) {
-            throw new RuntimeException(Text::_('COM_JED_TRANSFER_ERROR_WRONG_USER'));
-        }
-
-        $newState = $state->afterConfirmationBy($isRecipient);
-        $now      = Factory::getDate()->toSql();
-
-        $update = $this->db->getQuery(true)
-            ->update($this->db->quoteName('#__jed_extension_transfers'))
-            ->set($this->db->quoteName('state') . ' = ' . $this->db->quote($newState->value))
-            // Single use: the token that was just spent is cleared, so the same link cannot be
-            // replayed and cannot be used to work out the other side's token.
-            ->set($this->db->quoteName($isRecipient ? 'to_token_hash' : 'from_token_hash') . ' = NULL')
-            ->set($this->db->quoteName($isRecipient ? 'to_confirmed_time' : 'from_confirmed_time') . ' = ' . $this->db->quote($now))
-            ->where($this->db->quoteName('id') . ' = ' . $transferId);
-
-        $this->db->setQuery($update)->execute();
-
-        if ($newState === TransferState::COMPLETED) {
-            $this->complete($transferId);
+        if ($newState === TransferState::COMPLETED && !$this->complete($transferId)) {
+            return TransferState::CANCELLED;
         }
 
         return $newState;
@@ -502,11 +529,11 @@ final class TransferService
      * @param int $fromUserId  The previous owner.
      * @param int $toUserId    The new owner.
      *
-     * @return void
+     * @return bool Whether the listing was moved; false when it no longer belongs to $fromUserId.
      *
      * @since 4.0.0
      */
-    private function applyOwnership(int $extensionId, int $fromUserId, int $toUserId): void
+    private function applyOwnership(int $extensionId, int $fromUserId, int $toUserId): bool
     {
         // `owner` and nothing else. `created_by` stays where it is - it is the authorship record
         // and does not move (8.8.1). The previous owner loses access purely because this column
@@ -516,9 +543,17 @@ final class TransferService
                 ->update($this->db->quoteName('#__jed_extensions'))
                 ->set($this->db->quoteName('owner') . ' = :to')
                 ->where($this->db->quoteName('id') . ' = :eid')
+                // Only from the owner the transfer was agreed with: a listing that changed hands
+                // since (forced, or by another transfer) is not moved back on an old agreement.
+                ->where($this->db->quoteName('owner') . ' = :from')
                 ->bind(':to', $toUserId, ParameterType::INTEGER)
                 ->bind(':eid', $extensionId, ParameterType::INTEGER)
+                ->bind(':from', $fromUserId, ParameterType::INTEGER)
         )->execute();
+
+        if ($this->db->getAffectedRows() !== 1) {
+            return false;
+        }
 
         // If the new owner was a maintainer, that row goes. The owner is never held in the
         // maintainers table, and leaving it would record the same person twice and break the
@@ -536,6 +571,8 @@ final class TransferService
         // and deliberately does not gain one. 8.8.1: the old owner loses all access.
 
         $this->resetAuditConsent($extensionId);
+
+        return true;
     }
 
     /**
@@ -571,16 +608,28 @@ final class TransferService
      *
      * @param int $transferId The transfer.
      *
-     * @return void
+     * @return bool Whether the handover took effect; false when the listing changed owner meanwhile and the transfer was cancelled.
      *
      * @since 4.0.0
      */
-    private function complete(int $transferId): void
+    private function complete(int $transferId): bool
     {
         $transfer = $this->loadTransfer($transferId);
 
         if ($transfer === null) {
-            return;
+            return true;
+        }
+
+        $moved = $this->applyOwnership(
+            (int) $transfer['extension_id'],
+            (int) $transfer['from_user_id'],
+            (int) $transfer['to_user_id']
+        );
+
+        if (!$moved) {
+            $this->closeAs($transferId, TransferState::CANCELLED, null, Text::_('COM_JED_TRANSFER_OWNER_CHANGED'));
+
+            return false;
         }
 
         $now = Factory::getDate()->toSql();
@@ -592,13 +641,9 @@ final class TransferService
                 ->where($this->db->quoteName('id') . ' = ' . $transferId)
         )->execute();
 
-        $this->applyOwnership(
-            (int) $transfer['extension_id'],
-            (int) $transfer['from_user_id'],
-            (int) $transfer['to_user_id']
-        );
-
         $this->notifyBothParties($transfer, 'com_jed.transfer_completed', []);
+
+        return true;
     }
 
     /**
