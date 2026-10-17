@@ -188,7 +188,7 @@ $userFactory = $container->get('user.factory');
 
     <?php
 
-    echo HTMLHelper::_('uitab.addTab', $this->linked_item_type_name.'Tab', 'Linked'.$this->linked_item_type_name, 'Linked '.$this->linked_item_type_name);
+    echo HTMLHelper::_('uitab.addTab', 'myTab', 'Linked'.$this->linked_item_type_name, 'Linked '.$this->linked_item_type_name);
 
     echo LayoutHelper::render(
                             'ticket.'.$this->linkedItemLayout,

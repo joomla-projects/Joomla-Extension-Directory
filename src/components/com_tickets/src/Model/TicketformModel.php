@@ -432,6 +432,6 @@ class TicketformModel extends FormModel
         $query = $db->getQuery(true);
         $query->select('categorytype')->from($db->quoteName('#__jed_ticket_categories'))->where('id = ' . $db->quote($categoryId));
 
-        return $db->setQuery($query)->loadResult();
+        return (string) $db->setQuery($query)->loadResult();
     }
 }
