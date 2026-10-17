@@ -85,7 +85,6 @@ return new class () implements ServiceProviderInterface {
                 );
                 $auditPipeline = new AuditPipeline(
                     $db,
-                    $http,
                     $dockerRunner,
                     $claudeAuditor,
                     JPATH_ADMINISTRATOR . '/components/com_jed/audit-workspace',

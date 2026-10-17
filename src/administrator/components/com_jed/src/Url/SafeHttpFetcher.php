@@ -74,6 +74,18 @@ class SafeHttpFetcher
     public const USER_AGENT = 'JoomlaExtensionsDirectory/4.1 (+https://extensions.joomla.org/; link checker)';
 
     /**
+     * @param int $maxBytes     How much of a response is read before the transfer is aborted.
+     * @param int $totalTimeout Seconds allowed for the whole exchange.
+     *
+     * @since 4.0.0
+     */
+    public function __construct(
+        private readonly int $maxBytes = self::MAX_BYTES,
+        private readonly int $totalTimeout = self::TOTAL_TIMEOUT
+    ) {
+    }
+
+    /**
      * Fetch a URL, or refuse to.
      *
      * @param string $url    The URL, which has already passed {@see UrlFormat::check()}.
@@ -171,6 +183,7 @@ class SafeHttpFetcher
 
         $body     = '';
         $overflow = false;
+        $maxBytes = $this->maxBytes;
 
         $ch = curl_init($url);
 
@@ -193,16 +206,16 @@ class SafeHttpFetcher
             CURLOPT_HEADER          => false,
             CURLOPT_NOBODY          => !$bodyToo,
             CURLOPT_CONNECTTIMEOUT  => self::CONNECT_TIMEOUT,
-            CURLOPT_TIMEOUT         => self::TOTAL_TIMEOUT,
+            CURLOPT_TIMEOUT         => $this->totalTimeout,
             CURLOPT_USERAGENT       => self::USER_AGENT,
             CURLOPT_SSL_VERIFYPEER  => true,
             CURLOPT_SSL_VERIFYHOST  => 2,
             CURLOPT_ACCEPT_ENCODING => '',
-            CURLOPT_WRITEFUNCTION   => static function ($handle, string $chunk) use (&$body, &$overflow) {
+            CURLOPT_WRITEFUNCTION   => static function ($handle, string $chunk) use (&$body, &$overflow, $maxBytes) {
                 $length = \strlen($chunk);
 
-                if (\strlen($body) + $length > self::MAX_BYTES) {
-                    $body .= substr($chunk, 0, max(0, self::MAX_BYTES - \strlen($body)));
+                if (\strlen($body) + $length > $maxBytes) {
+                    $body .= substr($chunk, 0, max(0, $maxBytes - \strlen($body)));
                     $overflow = true;
 
                     // Returning less than was handed in aborts the transfer. This is the size cap
