@@ -146,7 +146,6 @@ class ExtensionModel extends ItemModel
             $this->item->logo       = JedHelper::formatImage($this->item->logo, ImageSize::SMALL);
         }
 
-        $this->item->developer_email   = JedHelper::getUserById($this->item->created_by)->email;
         //$this->item->developer_company = $this->getDeveloperName($this->item->created_by);
 
         $this->item->tags = (new TagsHelper())->getItemTags('com_jed.extension', $this->item->id);
@@ -554,6 +553,11 @@ class ExtensionModel extends ItemModel
             $db->setQuery($query)->execute();
 
             return false;
+        }
+
+        // Only a listing the user can see can be bookmarked; removing one stays possible.
+        if (!JedHelper::canViewExtensionById($extension_id)) {
+            throw new Exception(Text::_('JERROR_LAYOUT_PAGE_NOT_FOUND'), 404);
         }
 
         $created = Factory::getDate()->toSql();

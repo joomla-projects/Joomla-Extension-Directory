@@ -197,46 +197,4 @@ class ReviewformController extends FormController
         $url  = (empty($item->link) ? 'index.php?option=com_jed&view=reviews' : $item->link);
         $this->setRedirect(Route::_($url, false));
     }
-
-    /**
-     * Method to remove data
-     *
-     * @return void
-     *
-     * @throws Exception
-     *
-     * @since 4.0.0
-     */
-    public function remove(): void
-    {
-        $app   = Factory::getApplication();
-        $model = $this->getModel('Reviewform', 'Site');
-        $pk    = $app->getInput()->getInt('id');
-
-        // Attempt to save the data
-        try {
-            $return = $model->delete($pk);
-
-            // Check in the profile
-            $model->checkin($return);
-
-            // Clear the profile id from the session.
-            $app->setUserState('com_jed.edit.review.id', null);
-
-            $menu = $app->getMenu();
-            $item = $menu->getActive();
-            $url  = (empty($item->link) ? 'index.php?option=com_jed&view=reviews' : $item->link);
-
-            // Redirect to the list screen
-            $this->setMessage(Text::_('COM_JED_ITEM_DELETED_SUCCESSFULLY'));
-            $this->setRedirect(Route::_($url, false));
-
-            // Flush the data from the session.
-            $app->setUserState('com_jed.edit.review.data', null);
-        } catch (Exception $e) {
-            $errorType = ($e->getCode() == '404') ? 'error' : 'warning';
-            $this->setMessage($e->getMessage(), $errorType);
-            $this->setRedirect('index.php?option=com_jed&view=reviews');
-        }
-    }
 }

@@ -161,13 +161,14 @@ class HtmlView extends BaseHtmlView
                 $ticket_type = "Review";
             }
 
-            $this->item->extension_title = JedHelper::getExtensionTitle($vr);
+            // The ids come from the URL: a title is only shown for what the visitor may see.
+            $this->item->extension_title = JedHelper::canViewExtensionById($vr) ? JedHelper::getExtensionTitle($vr) : '';
 
             // A review report names the review; `vr` still carries the extension so the ticket
             // stays attached to the right listing. Without this, two reports about different
             // reviews of the same extension arrive with identical subjects.
             $subject = $linked_item === TicketType::Review->value
-                ? (JedHelper::getReviewTitle($linked_id) ?: $this->item->extension_title)
+                ? ((JedHelper::canViewReviewById($linked_id) ? JedHelper::getReviewTitle($linked_id) : '') ?: $this->item->extension_title)
                 : $this->item->extension_title;
 
             $this->item->ticket_title = "Reporting " . $ticket_type . ' - ' . $subject;
