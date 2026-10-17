@@ -26,6 +26,16 @@ namespace Jed\Component\Jed\Administrator\Audit;
 class DockerRunner
 {
     /**
+     * Resource limits for one audit container.
+     *
+     * @since 4.0.0
+     */
+    public const MEMORY    = '2g';
+    public const CPUS      = '2';
+    public const PIDS      = '512';
+    public const WORK_SIZE = '1500m';
+
+    /**
      * @param ProcessRunner $processRunner  Runs the `docker` CLI.
      * @param string        $dockerBinary   Path to the docker binary.
      * @param string        $image          The audit image tag.
@@ -57,6 +67,18 @@ class DockerRunner
             'run',
             '--rm',
             '--network', 'none',
+            // The package is untrusted code: bound what it can take from the host and what it can
+            // do inside the container. The working copy lives on a size-capped tmpfs, so an archive
+            // that expands past it fails inside the container instead of filling the host disk.
+            '--memory', self::MEMORY,
+            '--memory-swap', self::MEMORY,
+            '--cpus', self::CPUS,
+            '--pids-limit', self::PIDS,
+            '--cap-drop', 'ALL',
+            '--security-opt', 'no-new-privileges',
+            '--read-only',
+            '--tmpfs', '/audit/work:rw,exec,nosuid,size=' . self::WORK_SIZE,
+            '--tmpfs', '/tmp:rw,nosuid,size=256m',
             '-v', $inputDir . ':/audit/input:ro',
             '-v', $outputDir . ':/audit/output',
             $this->image,
