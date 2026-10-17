@@ -206,3 +206,14 @@ jobs:
           name: screenshots-j${{ matrix.joomla-version }}-${{ matrix.db }}-php${{ matrix.php-version }}
           path: tests/cypress/output/screenshots
           retention-days: 7
+
+  composer-audit:
+    runs-on: ubuntu-latest
+    container:
+      image: joomlaprojects/docker-images:php8.5
+    steps:
+      - uses: actions/checkout@v6
+      - name: Audit the packages shipped with the component
+        run: composer audit --no-dev --locked --working-dir=src/administrator/components/com_jed
+      - name: Audit the build tooling
+        run: composer audit --no-dev --locked
