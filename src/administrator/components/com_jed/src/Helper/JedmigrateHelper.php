@@ -53,7 +53,7 @@ class JedmigrateHelper
             $db->setQuery($query);
             $db->execute();
         } catch (Exception) {
-            echo "An Error Occurred - Failed SQL - " . $sql;
+            echo "An Error Occurred - Failed SQL - " . htmlspecialchars($sql);
             exit();
         }
     }

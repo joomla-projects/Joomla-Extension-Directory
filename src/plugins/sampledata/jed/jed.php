@@ -119,6 +119,11 @@ class PlgSampledataJed extends CMSPlugin implements SubscriberInterface
             return;
         }
 
+        // Sample data wipes and reloads the directory: Super Users only.
+        if (!$this->getApplication()->getIdentity()->authorise('core.admin')) {
+            throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $this->moveCurrentUserToId5();
 
         $response            = [];
@@ -211,6 +216,11 @@ class PlgSampledataJed extends CMSPlugin implements SubscriberInterface
             return;
         }
 
+        // Sample data wipes and reloads the directory: Super Users only.
+        if (!$this->getApplication()->getIdentity()->authorise('core.admin')) {
+            throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $this->importFile(__DIR__ . '/sql/step2.sql');
         $db         = $this->getDatabase();
         $dispatcher = $this->getDispatcher();
@@ -262,6 +272,11 @@ class PlgSampledataJed extends CMSPlugin implements SubscriberInterface
             return;
         }
 
+        // Sample data wipes and reloads the directory: Super Users only.
+        if (!$this->getApplication()->getIdentity()->authorise('core.admin')) {
+            throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $this->importFile(__DIR__ . '/sql/step3.sql');
 
         $response            = [];
@@ -284,6 +299,11 @@ class PlgSampledataJed extends CMSPlugin implements SubscriberInterface
     {
         if ($this->getApplication()->getInput()->get('type') !== $this->_name) {
             return;
+        }
+
+        // Sample data wipes and reloads the directory: Super Users only.
+        if (!$this->getApplication()->getIdentity()->authorise('core.admin')) {
+            throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
         $this->importFile(__DIR__ . '/sql/step4.sql');
@@ -310,6 +330,11 @@ class PlgSampledataJed extends CMSPlugin implements SubscriberInterface
             return;
         }
 
+        // Sample data wipes and reloads the directory: Super Users only.
+        if (!$this->getApplication()->getIdentity()->authorise('core.admin')) {
+            throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $this->importFile(__DIR__ . '/sql/step5.sql');
 
         $response            = [];
@@ -332,6 +357,11 @@ class PlgSampledataJed extends CMSPlugin implements SubscriberInterface
     {
         if ($this->getApplication()->getInput()->get('type') !== $this->_name) {
             return;
+        }
+
+        // Sample data wipes and reloads the directory: Super Users only.
+        if (!$this->getApplication()->getIdentity()->authorise('core.admin')) {
+            throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
         $this->importFile(__DIR__ . '/sql/step6.sql');
