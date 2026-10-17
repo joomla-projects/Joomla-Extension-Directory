@@ -90,6 +90,11 @@ class PlgSampledataJed2 extends CMSPlugin
             return;
         }
 
+        // Sample data wipes and reloads the directory: Super Users only.
+        if (!$this->getApplication()->getIdentity()->authorise('core.admin')) {
+            throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $db = Factory::getDbo();
 
         $componentIds = [
