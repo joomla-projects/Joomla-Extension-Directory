@@ -142,6 +142,21 @@ class ReviewModel extends ItemModel
     }
 
     /**
+     * Releases the edit lock on a review.
+     *
+     * @param int $id The review id.
+     *
+     * @return bool
+     *
+     * @since  4.0.0
+     * @throws Exception
+     */
+    public function checkin(int $id): bool
+    {
+        return (bool) $this->getTable()->checkIn($id);
+    }
+
+    /**
      * Soft-deletes a review the current user wrote (or, for staff, any review) by setting
      * `state = -2`, rather than removing the row - so the same extension/user pair remains
      * available for a fresh review later on.
