@@ -61,7 +61,7 @@ $userFactory = $container->get('user.factory');
     <div class="com_jed_ticket">
         <div class="row-fluid">
             <!-- header boxes -->
-            <?php echo LayoutHelper::render('ticket.header', $this->form); ?>
+            <?php echo LayoutHelper::render('ticket.ticket.header', $this->form); ?>
 
         </div>
 
@@ -185,6 +185,18 @@ $userFactory = $container->get('user.factory');
         </div>
     </div>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+    <?php
+
+    echo HTMLHelper::_('uitab.addTab', $this->linked_item_type_name.'Tab', 'Linked'.$this->linked_item_type_name, 'Linked '.$this->linked_item_type_name);
+
+    echo LayoutHelper::render(
+                            'ticket.'.$this->linkedItemLayout,
+                            $this->linkedItemData
+                        );
+
+    echo HTMLHelper::_('uitab.endTab');
+?>
 
     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Publishing', Text::_('COM_TICKETS_TAB_PUBLISHING', true)); ?>
     <div class="row-fluid">
