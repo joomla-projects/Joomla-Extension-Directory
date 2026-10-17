@@ -438,12 +438,14 @@ class TicketformModel extends FormModel
     private function restrictToRequester(array $data, int $userId): array
     {
         foreach (
-            ['id', 'ticket_status', 'allocated_to', 'allocated_group', 'internal_notes', 'state',
+            ['ticket_status', 'allocated_to', 'allocated_group', 'internal_notes', 'state',
                 'parent_id', 'created_on', 'modified_by', 'modified_on', 'checked_out', 'checked_out_time'] as $field
         ) {
             unset($data[$field]);
         }
 
+        // A requester only ever opens a new ticket: id 0, owned by them.
+        $data['id']         = 0;
         $data['created_by'] = $userId;
 
         $type = (int) ($data['linked_item_type'] ?? 0);

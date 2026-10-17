@@ -48,10 +48,11 @@ final class TicketformModelRestrictTest extends TestCase
             'linked_item_id'   => 0,
         ], 42);
 
-        foreach (['id', 'ticket_status', 'allocated_to', 'allocated_group', 'internal_notes', 'state', 'parent_id'] as $field) {
+        foreach (['ticket_status', 'allocated_to', 'allocated_group', 'internal_notes', 'state', 'parent_id'] as $field) {
             $this->assertArrayNotHasKey($field, $result, $field . ' must not survive');
         }
 
+        $this->assertSame(0, $result['id'], 'a requester can only open a new ticket');
         $this->assertSame('Help', $result['ticket_subject']);
         $this->assertSame('Please', $result['ticket_text']);
     }
