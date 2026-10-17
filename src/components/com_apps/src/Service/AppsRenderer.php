@@ -29,15 +29,15 @@ namespace Jed\Component\Apps\Site\Service;
  *
  * @since 4.0.0
  */
-class AppsRenderer
+class AppsRenderer implements AppsRendererInterface
 {
     /** Tags the client's sanitizer keeps; used to flatten a rendered description. */
     public const ALLOWED_DESCRIPTION_TAGS = '<a><b><br><code><div><em><h1><h2><h3><h4><h5><h6><hr><i>'
         . '<li><ol><p><pre><s><small><span><strong><sub><sup><u><ul>';
 
-    private const INCLUDE_LABELS = ['com' => 'COM_APPS_COMPONENT', 'mod' => 'COM_APPS_MODULE', 'plugin' => 'COM_APPS_PLUGIN',
-        'plg'                             => 'COM_APPS_PLUGIN'];
-    private const INCLUDE_BADGES = ['com' => 'bg-success', 'mod' => 'bg-danger', 'plugin' => 'bg-secondary', 'plg' => 'bg-secondary'];
+    protected const INCLUDE_LABELS = ['com' => 'COM_APPS_COMPONENT', 'mod' => 'COM_APPS_MODULE', 'plugin' => 'COM_APPS_PLUGIN',
+        'plg'                               => 'COM_APPS_PLUGIN'];
+    protected const INCLUDE_BADGES = ['com' => 'bg-success', 'mod' => 'bg-danger', 'plugin' => 'bg-secondary', 'plg' => 'bg-secondary'];
 
     /**
      * @param callable $translate  fn(string $key, mixed ...$args): string
@@ -47,11 +47,11 @@ class AppsRenderer
      * @param string   $siteUrl      Absolute URL of the site root, to resolve stored logo paths
      */
     public function __construct(
-        private $translate,
-        private $listingUrl,
-        private $markdown,
-        private readonly string $directoryUrl,
-        private readonly string $siteUrl = ''
+        protected $translate,
+        protected $listingUrl,
+        protected $markdown,
+        protected readonly string $directoryUrl,
+        protected readonly string $siteUrl = ''
     ) {
     }
 
@@ -152,7 +152,7 @@ class AppsRenderer
         return 'index.php?option=com_apps&format=json&view=' . $view . ($id > 0 ? '&id=' . $id : '');
     }
 
-    private function sidebar(array $categories, ?object $current): string
+    protected function sidebar(array $categories, ?object $current): string
     {
         $t      = $this->translate;
         $openId = 0;
@@ -182,12 +182,12 @@ class AppsRenderer
         return $html . '</ul></div>';
     }
 
-    private function navLink(string $url, string $label, bool $active): string
+    protected function navLink(string $url, string $label, bool $active): string
     {
         return '<a class="nav-link transcode' . ($active ? ' active' : '') . '" href="' . self::e($url) . '">' . self::e($label) . '</a>';
     }
 
-    private function children(array $categories, object $parent, ?object $current): string
+    protected function children(array $categories, object $parent, ?object $current): string
     {
         $html = '';
 
@@ -203,7 +203,7 @@ class AppsRenderer
         return $html === '' ? '' : '<ul class="nav flex-column">' . $html . '</ul>';
     }
 
-    private function toolbar(AppsRequest $request): string
+    protected function toolbar(AppsRequest $request): string
     {
         $t       = $this->translate;
         $options = '';
@@ -226,16 +226,21 @@ class AppsRenderer
             . '<div class="input-group-append"><button type="button" class="btn btn-primary" id="search-extensions" aria-label="'
             . self::e($t('COM_APPS_SEARCH')) . '"><span class="icon-search" aria-hidden="true"></span></button>'
             . '<button type="button" class="btn btn-secondary" id="search-reset">' . self::e($t('COM_APPS_SEARCH_CLEAR')) . '</button>'
-            . '</div></div></div><div class="col-md-auto"><select class="form-select" id="com-apps-ordering" name="ordering">'
-            . $options . '</select></div><div class="col-md-auto"><div class="btn-group">'
+            . '</div></div></div><div class="col-md-auto"><div class="btn-group">'
             . '<button type="button" class="btn btn-secondary grid-view active" id="btn-grid-view" aria-label="'
             . self::e($t('COM_APPS_GRID_VIEW')) . '"><span class="icon-grid-view" aria-hidden="true"></span></button>'
             . '<button type="button" class="btn btn-secondary list-view" id="btn-list-view" aria-label="'
             . self::e($t('COM_APPS_LIST_VIEW')) . '"><span class="icon-list-view" aria-hidden="true"></span></button>'
-            . '</div></div></div>';
+            . '</div></div></div><div class="form-row mb-3"><div class="col-md">'
+            . '<select class="form-select" id="com-apps-filter-joomla-version" name="filter_version" aria-label="'
+            . self::e($t('COM_APPS_FILTER_VERSION')) . '"><option value="all"' . ($request->allVersions ? ' selected="selected"' : '')
+            . '>' . self::e($t('COM_APPS_FILTER_ALL')) . '</option><option value="current"' . ($request->allVersions ? '' : ' selected="selected"')
+            . '>' . self::e($t('COM_APPS_FILTER_CURRENT')) . '</option></select></div><div class="col-md">'
+            . '<select class="form-select" id="com-apps-ordering" name="ordering" aria-label="' . self::e($t('COM_APPS_SORT')) . '">'
+            . $options . '</select></div></div>';
     }
 
-    private function breadcrumb(?object $category, ?string $leaf): string
+    protected function breadcrumb(?object $category, ?string $leaf): string
     {
         $t    = $this->translate;
         $html = '<ol class="breadcrumb"><li class="breadcrumb-item">' . $t('COM_APPS_BREADCRUMB_POPULAR', self::e($this->directoryUrl)) . '</li>';
@@ -252,14 +257,14 @@ class AppsRenderer
         return $html . '</ol>';
     }
 
-    private function notice(string $key): string
+    protected function notice(string $key): string
     {
         $t = $this->translate;
 
         return '<div class="alert alert-info">' . self::e($t($key)) . '</div>';
     }
 
-    private function card(object $item): string
+    protected function card(object $item): string
     {
         $logo = $this->logo((string) $item->logo);
 
@@ -272,7 +277,7 @@ class AppsRenderer
             . '</div></div></div>';
     }
 
-    private function row(object $item): string
+    protected function row(object $item): string
     {
         $logo = $this->logo((string) $item->logo);
 
@@ -284,7 +289,7 @@ class AppsRenderer
             . '<p class="small">' . $this->rating($item) . '</p></div></div></div>';
     }
 
-    private function rating(object $item): string
+    protected function rating(object $item): string
     {
         $t     = $this->translate;
         $count = (int) $item->score_count;
@@ -299,7 +304,7 @@ class AppsRenderer
             . self::e($t('COM_APPS_REVIEWS', $count, (int) round(((float) $item->score_overall) * 20))) . '</a>';
     }
 
-    private function detail(string $labelKey, string $value): string
+    protected function detail(string $labelKey, string $value): string
     {
         $t = $this->translate;
 
@@ -309,7 +314,7 @@ class AppsRenderer
     /**
      * @param string[] $labels Joomla version id => label.
      */
-    private function versions(string $stored, array $labels): string
+    protected function versions(string $stored, array $labels): string
     {
         $names = [];
 
@@ -322,7 +327,7 @@ class AppsRenderer
         return implode(', ', $names);
     }
 
-    private function badges(string $stored, bool $withText): string
+    protected function badges(string $stored, bool $withText): string
     {
         $t    = $this->translate;
         $html = '';
@@ -344,7 +349,7 @@ class AppsRenderer
         return $html;
     }
 
-    private function buttons(object $item): string
+    protected function buttons(object $item): string
     {
         $t         = $this->translate;
         $name      = self::e($item->name);
@@ -373,14 +378,14 @@ class AppsRenderer
         return $html;
     }
 
-    private function description(object $item): string
+    protected function description(object $item): string
     {
         $html = ($this->markdown)((string) ($item->description ?? ''));
 
         return strip_tags($html, self::ALLOWED_DESCRIPTION_TAGS);
     }
 
-    private function excerpt(string $intro): string
+    protected function excerpt(string $intro): string
     {
         $text = trim((string) preg_replace('/\s+/u', ' ', strip_tags($intro)));
 
@@ -390,7 +395,7 @@ class AppsRenderer
     /**
      * A logo as an absolute URL: stored values are either that or a path under the site root.
      */
-    private function logo(string $stored): string
+    protected function logo(string $stored): string
     {
         $stored = trim($stored);
 
@@ -411,7 +416,7 @@ class AppsRenderer
         return preg_match('#^https?://[^\s<>"\']+$#i', $value) === 1 ? $value : '';
     }
 
-    private static function e(mixed $value): string
+    protected static function e(mixed $value): string
     {
         return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }

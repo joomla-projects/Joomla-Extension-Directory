@@ -8,10 +8,18 @@
  * sanitizer, the tab - is Joomla's. Nothing is installed: the test stops at the confirmation
  * form the client shows before it would.
  *
+ * The endpoint is the site under test unless the env value appsUrl names another one, which is how
+ * the same spec runs Joomla 5's client (or any other release's) against this component:
+ *
+ *   npx cypress run --spec <this file> --config baseUrl=http://localhost:8080/joomla5/ \
+ *     --env appsUrl=http://localhost:8080/jed_j6/,username=...,password=...
+ *
  * filter_version=all is added to the requests because the sample data does not declare any
  * extension for the Joomla version the test site runs; which versions are listed is covered by
  * the unit tests.
  */
+
+const appsUrl = () => Cypress.env('appsUrl') || Cypress.config('baseUrl')
 
 // The client covers the tab with a loader while a request is in flight; wait for it to go.
 const loaded = () => cy.get('joomla-core-loader', { timeout: 15000 }).should('not.exist')
@@ -20,7 +28,7 @@ describe('Install from Web tab', { testIsolation: false }, () => {
   beforeEach(() => {
     cy.intercept('https://appscdn.joomla.org/webapps/**', (request) => {
       const url = new URL(request.url)
-      const target = new URL('index.php', Cypress.config('baseUrl'))
+      const target = new URL('index.php', appsUrl())
 
       target.search = url.search
       target.searchParams.set('filter_version', 'all')
@@ -104,7 +112,7 @@ describe('Install from Web tab', { testIsolation: false }, () => {
   })
 
   it('is a response a CDN may keep', () => {
-    cy.request({ url: `${Cypress.config('baseUrl')}index.php?option=com_apps&format=json&view=dashboard&release=6.0&filter_version=all` }).then((response) => {
+    cy.request({ url: `${appsUrl()}index.php?option=com_apps&format=json&view=dashboard&release=6.0&filter_version=all` }).then((response) => {
       expect(response.headers['cache-control']).to.match(/public.*s-maxage=\d+/)
       expect(response.headers).to.not.have.property('set-cookie')
       expect(response.headers['access-control-allow-origin']).to.eq('*')

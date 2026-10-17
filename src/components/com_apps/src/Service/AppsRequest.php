@@ -40,12 +40,21 @@ final class AppsRequest
 
     public const SEARCH_MAX_LENGTH = 64;
 
+    /** Joomla 4 is the first release whose client takes the Bootstrap 5 markup; older ones, and unknown ones, get the old. */
+    public const FIRST_BOOTSTRAP_RELEASE = 4;
+
+    /** The fixed name Joomla 3's plugin uses, and what jQuery generates when none is set. */
+    public const CALLBACK_PATTERN = '/^(jedapps_jsonpcallback|jQuery[0-9_]{10,60})$/';
+
     private function __construct(
         public readonly string $view,
         public readonly int $id,
         public readonly string $search,
         public readonly string $ordering,
         public readonly ?int $major,
+        public readonly bool $legacy = false,
+        public readonly string $callback = '',
+        public readonly bool $allVersions = false,
         public readonly bool $searchTooShort = false
     ) {
     }
@@ -98,12 +107,17 @@ final class AppsRequest
             $ordering = '';
         }
 
+        $release = self::releaseMajor(self::scalar($query, 'release'));
+
         return new self(
             $view,
             $id,
             $search,
             $ordering,
-            self::major(self::scalar($query, 'release'), self::scalar($query, 'filter_version')),
+            self::major($release, self::scalar($query, 'filter_version')),
+            $release === null || $release < self::FIRST_BOOTSTRAP_RELEASE,
+            self::callback(self::scalar($query, 'callback')),
+            strtolower(self::scalar($query, 'filter_version')) === 'all',
             $search !== '' && mb_strlen($search) < $searchMinimum
         );
     }
@@ -123,13 +137,32 @@ final class AppsRequest
     }
 
     /**
+     * The client's Joomla major version, from the release parameter.
+     *
+     * The plugin sends it base64 encoded ("Ni4y" is 6.2). A plain "6.2" is read too, which only
+     * matters to someone calling the endpoint by hand. Anything else is not a release.
+     *
+     * @since 4.0.0
+     */
+    private static function releaseMajor(string $release): ?int
+    {
+        if ($release === '') {
+            return null;
+        }
+
+        $plain = preg_match('/^\d{1,2}\.\d+/', $release) === 1 ? $release : (string) base64_decode($release, true);
+
+        return preg_match('/^(\d{1,2})\.\d+/', $plain, $m) === 1 && (int) $m[1] > 0 ? (int) $m[1] : null;
+    }
+
+    /**
      * The Joomla major version to filter on, or null for every version.
      *
      * "current" (and anything unknown) means the major version the client runs on.
      *
      * @since 4.0.0
      */
-    private static function major(string $release, string $filterVersion): ?int
+    private static function major(?int $release, string $filterVersion): ?int
     {
         $filterVersion = strtolower($filterVersion);
 
@@ -141,11 +174,26 @@ final class AppsRequest
             return (int) $filterVersion;
         }
 
-        if (preg_match('/^(\d{1,2})(?:\.\d+)?/', $release, $m) === 1 && (int) $m[1] > 0) {
-            return (int) $m[1];
+        return $release;
+    }
+
+    /**
+     * The JSONP callback of Joomla 3's client. Only the names its scripts use are accepted, so the
+     * endpoint cannot be made to call an arbitrary function of the page that includes it.
+     *
+     * @throws InvalidRequestException
+     */
+    private static function callback(string $callback): string
+    {
+        if ($callback === '') {
+            return '';
         }
 
-        return null;
+        if (preg_match(self::CALLBACK_PATTERN, $callback) !== 1) {
+            throw new InvalidRequestException('COM_APPS_ERROR_CALLBACK');
+        }
+
+        return $callback;
     }
 
     /**
@@ -156,12 +204,13 @@ final class AppsRequest
     public function cacheKey(): string
     {
         return sprintf(
-            '%s-%d-%s-%s-%s',
+            '%s-%d-%s-%s-%s-%s',
             $this->view,
             $this->id,
             md5($this->search),
             $this->ordering === '' ? 'default' : $this->ordering,
-            $this->major === null ? 'all' : (string) $this->major
+            $this->major === null ? 'all' : (string) $this->major,
+            $this->legacy ? 'legacy' : 'current'
         );
     }
 

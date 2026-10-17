@@ -20,6 +20,83 @@ use PHPUnit\Framework\TestCase;
  */
 final class AppsRequestTest extends TestCase
 {
+    /**
+     * @dataProvider releases
+     */
+    public function testTheReleaseIsReadTheWayTheClientsSendIt(string $release, ?int $major, bool $legacy): void
+    {
+        $r = AppsRequest::fromQuery(['release' => $release]);
+
+        $this->assertSame($major, $r->major);
+        $this->assertSame($legacy, $r->legacy);
+    }
+
+    public static function releases(): array
+    {
+        return [
+            'joomla 6.2, base64'  => [base64_encode('6.2'), 6, false],
+            'joomla 5.4, base64'  => [base64_encode('5.4'), 5, false],
+            'joomla 4.0, base64'  => [base64_encode('4.0'), 4, false],
+            'joomla 3.10, base64' => [base64_encode('3.10'), 3, true],
+            'joomla 3.9, base64'  => [base64_encode('3.9'), 3, true],
+            'plain, by hand'      => ['6.0', 6, false],
+            'none'                => ['', null, true],
+            'not a release'       => ['hello', null, true],
+            'base64 of a word'    => [base64_encode('joomla'), null, true],
+        ];
+    }
+
+    public function testTheVersionFilterOverridesTheReleaseButNotTheMarkup(): void
+    {
+        $r = AppsRequest::fromQuery(['release' => base64_encode('3.10'), 'filter_version' => 'all']);
+
+        $this->assertNull($r->major);
+        $this->assertTrue($r->allVersions);
+        $this->assertTrue($r->legacy);
+    }
+
+    public function testOldAndNewMarkupDoNotShareACacheEntry(): void
+    {
+        $this->assertNotSame(
+            AppsRequest::fromQuery(['release' => base64_encode('3.10'), 'filter_version' => '3'])->cacheKey(),
+            AppsRequest::fromQuery(['release' => base64_encode('6.0'), 'filter_version' => '3'])->cacheKey()
+        );
+    }
+
+    /**
+     * @dataProvider callbacks
+     */
+    public function testOnlyTheCallbacksOfJoomlasScriptsAreAccepted(string $callback, bool $accepted): void
+    {
+        if (!$accepted) {
+            $this->expectException(InvalidRequestException::class);
+        }
+
+        $this->assertSame($callback, AppsRequest::fromQuery(['callback' => $callback])->callback);
+    }
+
+    public static function callbacks(): array
+    {
+        return [
+            'joomla 3 plugin'  => ['jedapps_jsonpcallback', true],
+            'jquery generated' => ['jQuery111207394882817334516_1760730000000', true],
+            'none'             => ['', true],
+            'a function'       => ['alert', false],
+            'a call'           => ['alert(1)', false],
+            'a path'           => ['window.location', false],
+            'html'             => ['<script>', false],
+            'almost'           => ['jedapps_jsonpcallback2', false],
+        ];
+    }
+
+    public function testTheCallbackDoesNotChangeTheCacheKey(): void
+    {
+        $this->assertSame(
+            AppsRequest::fromQuery(['release' => base64_encode('3.9')])->cacheKey(),
+            AppsRequest::fromQuery(['release' => base64_encode('3.9'), 'callback' => 'jedapps_jsonpcallback'])->cacheKey()
+        );
+    }
+
     public function testDefaultsToTheDashboardForTheClientsMajorVersion(): void
     {
         $r = AppsRequest::fromQuery(['release' => '6.1']);

@@ -27,7 +27,8 @@ class AppsService
      */
     public function __construct(
         private readonly AppsCatalogue $catalogue,
-        private readonly AppsRenderer $renderer,
+        private readonly AppsRendererInterface $renderer,
+        private readonly AppsRendererInterface $legacyRenderer,
         private $translate
     ) {
     }
@@ -38,6 +39,7 @@ class AppsService
     public function handle(AppsRequest $request): AppsResult
     {
         $t          = $this->translate;
+        $renderer   = $request->legacy ? $this->legacyRenderer : $this->renderer;
         $categories = $this->catalogue->categories();
         $current    = null;
 
@@ -51,7 +53,7 @@ class AppsService
             $current = self::category($categories, (int) $item->catid);
 
             return AppsResult::page(
-                $this->renderer->extension($request, $item, $categories, $current, $this->catalogue->versionLabels()),
+                $renderer->extension($request, $item, $categories, $current, $this->catalogue->versionLabels()),
                 AppsResult::KIND_BROWSE
             );
         }
@@ -67,7 +69,7 @@ class AppsService
         $items = $request->searchTooShort ? [] : $this->catalogue->items($request, $categories);
 
         return AppsResult::page(
-            $this->renderer->listing($request, $categories, $items, $current),
+            $renderer->listing($request, $categories, $items, $current),
             $request->isSearch() ? AppsResult::KIND_SEARCH : AppsResult::KIND_BROWSE
         );
     }

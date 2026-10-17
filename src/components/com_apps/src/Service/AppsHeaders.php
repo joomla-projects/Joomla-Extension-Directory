@@ -30,28 +30,31 @@ final class AppsHeaders
      * @param int        $edgeTtl        s-maxage for browsing, seconds.
      * @param int        $edgeTtlSearch  s-maxage for search, seconds.
      * @param string     $ifNoneMatch    The request's If-None-Match header.
+     * @param string     $callback       The JSONP callback, or the empty string for plain JSON.
      *
      * @return array{status:int, headers:array<string,string>, body:string}
      *
      * @since 4.0.0
      */
-    public static function build(AppsResult $result, int $edgeTtl, int $edgeTtlSearch, string $ifNoneMatch = ''): array
+    public static function build(AppsResult $result, int $edgeTtl, int $edgeTtlSearch, string $ifNoneMatch = '', string $callback = ''): array
     {
         $headers = [
-            'Content-Type'                => 'application/json; charset=utf-8',
+            'Content-Type'                => ($callback === '' ? 'application/json' : 'application/javascript') . '; charset=utf-8',
             'Access-Control-Allow-Origin' => '*',
             'Vary'                        => 'Accept-Encoding',
             'X-Content-Type-Options'      => 'nosniff',
         ];
 
+        $body = $callback === '' ? $result->body : $callback . '(' . $result->body . ')';
+
         if ($result->kind === AppsResult::KIND_ERROR) {
             $headers['Cache-Control'] = 'public, max-age=60, s-maxage=60';
 
-            return ['status' => $result->status, 'headers' => $headers, 'body' => $result->body];
+            return ['status' => $result->status, 'headers' => $headers, 'body' => $body];
         }
 
         $edge = $result->kind === AppsResult::KIND_SEARCH ? $edgeTtlSearch : $edgeTtl;
-        $etag = '"' . md5($result->body) . '"';
+        $etag = '"' . md5($body) . '"';
 
         $headers['Cache-Control'] = sprintf(
             'public, max-age=60, s-maxage=%d, stale-while-revalidate=%d, stale-if-error=%d',
@@ -65,6 +68,6 @@ final class AppsHeaders
             return ['status' => 304, 'headers' => $headers, 'body' => ''];
         }
 
-        return ['status' => $result->status, 'headers' => $headers, 'body' => $result->body];
+        return ['status' => $result->status, 'headers' => $headers, 'body' => $body];
     }
 }

@@ -18,6 +18,7 @@ namespace Jed\Component\Apps\Site\Controller;
 use Jed\Component\Apps\Site\Service\AppsCache;
 use Jed\Component\Apps\Site\Service\AppsCatalogue;
 use Jed\Component\Apps\Site\Service\AppsHeaders;
+use Jed\Component\Apps\Site\Service\AppsLegacyRenderer;
 use Jed\Component\Apps\Site\Service\AppsRenderer;
 use Jed\Component\Apps\Site\Service\AppsRequest;
 use Jed\Component\Apps\Site\Service\AppsResult;
@@ -60,7 +61,7 @@ class DisplayController extends BaseController
 
         $query = [];
 
-        foreach (['view', 'id', 'filter_search', 'ordering', 'release', 'filter_version'] as $name) {
+        foreach (['view', 'id', 'filter_search', 'ordering', 'release', 'filter_version', 'callback'] as $name) {
             $query[$name] = $input->get($name, '', 'raw');
         }
 
@@ -81,28 +82,31 @@ class DisplayController extends BaseController
                 ? Text::_($key)
                 : sprintf(Text::_($key), ...$args);
 
-            $renderer = new AppsRenderer(
-                $translate,
-                static fn (object $item): string => Route::link(
-                    'site',
-                    'index.php?option=com_jed&view=extension&catid=' . (int) $item->catid . '&id=' . (int) $item->id,
-                    false,
-                    Route::TLS_IGNORE,
-                    true
-                ),
-                static fn (string $text): string => JedHelper::renderMarkdown($text),
-                Uri::root(),
-                Uri::root()
+            $listingUrl = static fn (object $item): string => Route::link(
+                'site',
+                'index.php?option=com_jed&view=extension&catid=' . (int) $item->catid . '&id=' . (int) $item->id,
+                false,
+                Route::TLS_IGNORE,
+                true
             );
 
+            $arguments = [
+                $translate,
+                $listingUrl,
+                static fn (string $text): string => JedHelper::renderMarkdown($text),
+                Uri::root(),
+                Uri::root(),
+            ];
+
             return (new AppsService(
-                new AppsCatalogue($container->get(DatabaseInterface::class), (int) $params->get('max_items', 256)),
-                $renderer,
+                new AppsCatalogue($container->get(DatabaseInterface::class), (int) $params->get('max_items', 128)),
+                new AppsRenderer(...$arguments),
+                new AppsLegacyRenderer(...$arguments),
                 $translate
             ))->handle($request);
         });
 
-        $this->send($result, $params);
+        $this->send($result, $params, $request->callback);
 
         return $this;
     }
@@ -115,13 +119,14 @@ class DisplayController extends BaseController
      *
      * @since 4.0.0
      */
-    private function send(AppsResult $result, $params): never
+    private function send(AppsResult $result, $params, string $callback = ''): never
     {
         $response = AppsHeaders::build(
             $result,
             (int) $params->get('edge_ttl', 3600),
             (int) $params->get('edge_ttl_search', 300),
-            (string) ($_SERVER['HTTP_IF_NONE_MATCH'] ?? '')
+            (string) ($_SERVER['HTTP_IF_NONE_MATCH'] ?? ''),
+            $callback
         );
 
         // Discard the visitor's session unwritten, so a request costs no row in #__session.

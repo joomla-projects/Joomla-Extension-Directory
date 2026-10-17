@@ -36,7 +36,7 @@ class AppsCatalogue
         'a.developer_url',
     ];
 
-    public function __construct(private readonly DatabaseInterface $db, private readonly int $maxItems = 256)
+    public function __construct(private readonly DatabaseInterface $db, private readonly int $maxItems = 128)
     {
     }
 

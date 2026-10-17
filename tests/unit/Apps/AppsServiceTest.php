@@ -10,6 +10,7 @@
 namespace Jed\Tests\Unit\Apps;
 
 use Jed\Component\Apps\Site\Service\AppsCatalogue;
+use Jed\Component\Apps\Site\Service\AppsLegacyRenderer;
 use Jed\Component\Apps\Site\Service\AppsRenderer;
 use Jed\Component\Apps\Site\Service\AppsRequest;
 use Jed\Component\Apps\Site\Service\AppsResult;
@@ -60,7 +61,7 @@ final class AppsServiceTest extends TestCase
         $translate = static fn (string $key, ...$args): string => $key;
         $renderer  = new AppsRenderer($translate, static fn (object $i): string => 'https://jed.example/x', static fn (string $t): string => $t, 'https://jed.example/');
 
-        return new AppsService($catalogue, $renderer, $translate);
+        return new AppsService($catalogue, $renderer, new AppsLegacyRenderer($translate, static fn (object $i): string => 'https://jed.example/x', static fn (string $t): string => $t, 'https://jed.example/'), $translate);
     }
 
     private static function item(): object
@@ -117,10 +118,23 @@ final class AppsServiceTest extends TestCase
 
     public function testAVisibleExtensionIsRendered(): void
     {
-        $result = $this->service([], self::item())->handle(AppsRequest::fromQuery(['view' => 'extension', 'id' => '1']));
+        $result = $this->service([], self::item())->handle(AppsRequest::fromQuery(['view' => 'extension', 'id' => '1', 'release' => base64_encode('6.2')]));
 
         $this->assertSame(200, $result->status);
         $this->assertStringContainsString('<h2>X</h2>', json_decode($result->body, true)['data']['html']);
+    }
+
+    public function testAJoomla3ClientGetsTheOldMarkupAndANewerOneTheNew(): void
+    {
+        $service = $this->service([self::item()], null);
+
+        $old = $service->handle(AppsRequest::fromQuery(['release' => base64_encode('3.10')]))->body;
+        $new = $service->handle(AppsRequest::fromQuery(['release' => base64_encode('5.4')]))->body;
+
+        $this->assertStringContainsString('Joomla.loadweb(apps_base_url', $old);
+        $this->assertStringNotContainsString('card-body', $old);
+        $this->assertStringContainsString('card-body', $new);
+        $this->assertStringNotContainsString('apps_base_url', $new);
     }
 
     public function testAnAnswerSurvivesTheCacheRoundTrip(): void

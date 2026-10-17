@@ -86,6 +86,33 @@ final class AppsHeadersTest extends TestCase
         $this->assertNotSame('', $r['body']);
     }
 
+    public function testJsonpIsServedAsJavascriptAroundTheSameJson(): void
+    {
+        $page = AppsResult::page('<p>x</p>', AppsResult::KIND_BROWSE);
+        $r    = AppsHeaders::build($page, 3600, 300, '', 'jedapps_jsonpcallback');
+
+        $this->assertStringStartsWith('application/javascript', $r['headers']['Content-Type']);
+        $this->assertSame('jedapps_jsonpcallback(' . $page->body . ')', $r['body']);
+    }
+
+    public function testJsonpAndJsonHaveDifferentEtags(): void
+    {
+        $page = AppsResult::page('<p>x</p>', AppsResult::KIND_BROWSE);
+
+        $this->assertNotSame(
+            AppsHeaders::build($page, 3600, 300)['headers']['ETag'],
+            AppsHeaders::build($page, 3600, 300, '', 'jedapps_jsonpcallback')['headers']['ETag']
+        );
+    }
+
+    public function testTheLineSeparatorsAJavascriptStringCannotHoldAreEscaped(): void
+    {
+        $body = AppsResult::page("a\u{2028}b\u{2029}c", AppsResult::KIND_BROWSE)->body;
+
+        $this->assertStringNotContainsString("\u{2028}", $body);
+        $this->assertStringNotContainsString("\u{2029}", $body);
+    }
+
     public function testTheBodyIsTheJsonTheClientParses(): void
     {
         $decoded = json_decode(AppsResult::page('<p>é/x</p>', AppsResult::KIND_BROWSE)->body, true);
