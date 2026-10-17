@@ -193,7 +193,7 @@ class TicketformModel extends FormModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem(int $id = null): mixed
+    public function getItem(?int $id = null): mixed
     {
         if ($this->item === null) {
             $this->item = false;
