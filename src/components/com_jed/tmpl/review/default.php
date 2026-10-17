@@ -30,6 +30,9 @@ if (!$canEdit && $this->getCurrentUser()->authorise('core.edit.own', 'com_jed'))
     $canEdit = $isOwnReview;
 }
 
+// Flag count, reviewer IP address and raw state are moderation data, not public content.
+$isModerator = $this->getCurrentUser()->authorise('core.edit.state', 'com_jed');
+
 $canRespond = JedHelper::isOwnerOrMaintainer((int) $this->item->extension_id);
 
 // Reporting a review was reachable only from the developer's dashboard, so a reader who found a
@@ -74,12 +77,12 @@ $reportUrl = Route::_(
 
         <tr>
             <th><?php echo Text::_('COM_JED_GENERAL_TITLE_LABEL'); ?></th>
-            <td><?php echo $this->item->title; ?></td>
+            <td><?php echo $this->escape($this->item->title); ?></td>
         </tr>
 
         <tr>
             <th><?php echo Text::_('JALIAS'); ?></th>
-            <td><?php echo $this->item->alias; ?></td>
+            <td><?php echo $this->escape($this->item->alias); ?></td>
         </tr>
 
         <tr>
@@ -94,7 +97,7 @@ $reportUrl = Route::_(
 
         <tr>
             <th><?php echo Text::_('COM_JED_REVIEWS_FUNCTIONALITY_LABEL_COMMENT'); ?></th>
-            <td><?php echo $this->item->functionality_comment; ?></td>
+            <td><?php echo $this->escape($this->item->functionality_comment); ?></td>
         </tr>
 
         <tr>
@@ -104,7 +107,7 @@ $reportUrl = Route::_(
 
         <tr>
             <th><?php echo Text::_('COM_JED_REVIEWS_EASE_OF_USE_LABEL_COMMENT'); ?></th>
-            <td><?php echo $this->item->ease_of_use_comment; ?></td>
+            <td><?php echo $this->escape($this->item->ease_of_use_comment); ?></td>
         </tr>
 
         <tr>
@@ -114,7 +117,7 @@ $reportUrl = Route::_(
 
         <tr>
             <th><?php echo Text::_('COM_JED_GENERAL_SUPPORT_LABEL_COMMENT'); ?></th>
-            <td><?php echo $this->item->support_comment; ?></td>
+            <td><?php echo $this->escape($this->item->support_comment); ?></td>
         </tr>
 
         <tr>
@@ -124,7 +127,7 @@ $reportUrl = Route::_(
 
         <tr>
             <th><?php echo Text::_('COM_JED_EXTENSION_DOCUMENTATION_LABEL_COMMENT'); ?></th>
-            <td><?php echo $this->item->documentation_comment; ?></td>
+            <td><?php echo $this->escape($this->item->documentation_comment); ?></td>
         </tr>
 
         <tr>
@@ -134,7 +137,7 @@ $reportUrl = Route::_(
 
         <tr>
             <th><?php echo Text::_('COM_JED_REVIEWS_VALUE_FOR_MONEY_LABEL_COMMENT'); ?></th>
-            <td><?php echo $this->item->value_for_money_comment; ?></td>
+            <td><?php echo $this->escape($this->item->value_for_money_comment); ?></td>
         </tr>
 
         <tr>
@@ -144,9 +147,10 @@ $reportUrl = Route::_(
 
         <tr>
             <th><?php echo Text::_('COM_JED_REVIEWS_USED_FOR_LABEL'); ?></th>
-            <td><?php echo $this->item->used_for; ?></td>
+            <td><?php echo $this->escape($this->item->used_for); ?></td>
         </tr>
 
+        <?php if ($isModerator) : ?>
         <tr>
             <th><?php echo Text::_('COM_JED_REVIEWS_FLAGGED_LABEL'); ?></th>
             <td><?php echo $this->item->flagged; ?></td>
@@ -161,15 +165,16 @@ $reportUrl = Route::_(
             <th><?php echo Text::_('JPUBLISHED'); ?></th>
             <td><?php echo $this->item->state; ?></td>
         </tr>
+        <?php endif; ?>
 
         <tr>
             <th><?php echo Text::_('COM_JED_GENERAL_CREATED_ON_LABEL'); ?></th>
-            <td><?php echo $this->item->created_on; ?></td>
+            <td><?php echo $this->escape($this->item->created_on); ?></td>
         </tr>
 
         <tr>
             <th><?php echo Text::_('JGLOBAL_FIELD_CREATED_BY_LABEL'); ?></th>
-            <td><?php echo $this->item->created_by_name; ?></td>
+            <td><?php echo $this->escape($this->item->created_by_name); ?></td>
         </tr>
 
     </table>
