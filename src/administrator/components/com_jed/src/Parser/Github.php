@@ -19,7 +19,6 @@ use Joomla\Github\Github as GithubClient;
 use Joomla\Registry\Registry;
 use RuntimeException;
 use SimpleXMLElement;
-use ZipArchive;
 
 /**
  * Parser that reads a Joomla extension manifest from the latest GitHub release.
@@ -155,10 +154,22 @@ class Github extends Parser
             ],
         ]);
 
-        $content = file_get_contents($zipUrl, false, $context);
+        $handle = fopen($zipUrl, 'rb', false, $context);
+
+        if ($handle === false) {
+            throw new RuntimeException(sprintf('Failed to download release zip from: %s', $zipUrl));
+        }
+
+        // One byte past the limit is enough to know the release is too large.
+        $content = stream_get_contents($handle, SafeZip::MAX_BYTES + 1);
+        fclose($handle);
 
         if ($content === false) {
             throw new RuntimeException(sprintf('Failed to download release zip from: %s', $zipUrl));
+        }
+
+        if (\strlen($content) > SafeZip::MAX_BYTES) {
+            throw new RuntimeException('The release zip is larger than the allowed size.');
         }
 
         $tmpFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'jed_github_' . uniqid() . '.zip';
@@ -176,14 +187,7 @@ class Github extends Parser
     {
         $tmpDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'jed_github_' . uniqid();
 
-        $zip = new ZipArchive();
-
-        if ($zip->open($zipFile) !== true) {
-            throw new RuntimeException(sprintf('Cannot open zip file: %s', $zipFile));
-        }
-
-        $zip->extractTo($tmpDir);
-        $zip->close();
+        SafeZip::extract($zipFile, $tmpDir);
 
         return $tmpDir;
     }

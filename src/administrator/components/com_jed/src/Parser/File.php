@@ -16,7 +16,6 @@ namespace Jed\Component\Jed\Administrator\Parser;
 use Joomla\CMS\Installer\Installer;
 use RuntimeException;
 use SimpleXMLElement;
-use ZipArchive;
 
 /**
  * Parser that reads a Joomla extension manifest from a local zip file.
@@ -121,14 +120,7 @@ class File extends Parser
     {
         $tmpDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'jed_file_' . uniqid();
 
-        $zip = new ZipArchive();
-
-        if ($zip->open($filePath) !== true) {
-            throw new RuntimeException(sprintf('Cannot open zip file: %s', $filePath));
-        }
-
-        $zip->extractTo($tmpDir);
-        $zip->close();
+        SafeZip::extract($filePath, $tmpDir);
 
         return $tmpDir;
     }
