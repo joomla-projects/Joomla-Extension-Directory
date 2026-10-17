@@ -79,7 +79,7 @@ echo LayoutHelper::render('ticket.ticket_edit_header', $this->item);
                                     $inout = "jed-ticket-message-in";
                                 }
 
-                                echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' . $ticketMessage->subject . ' - ' . JedHelper::prettyDate($ticketMessage->created_on) . '</span>', 'ticket_messages_group' . '_slide' . ($slideid++), $ticketMessage->internal ? 'text-bg-danger' : '');
+                                echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' . htmlspecialchars((string) $ticketMessage->subject, ENT_QUOTES, 'UTF-8') . ' - ' . JedHelper::prettyDate($ticketMessage->created_on) . '</span>', 'ticket_messages_group' . '_slide' . ($slideid++), $ticketMessage->internal ? 'text-bg-danger' : '');
                                 echo  $ticketMessage->message ;
                                 echo HTMLHelper::_('bootstrap.endSlide');
                             }

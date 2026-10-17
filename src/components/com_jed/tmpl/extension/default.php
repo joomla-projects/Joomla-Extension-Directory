@@ -252,8 +252,8 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
                     echo HTMLHelper::_(
                         'bootstrap.addSlide',
                         'review_extension_group',
-                        $rev->version . ' - ' .
-                        $rev->title . ' - ' . JedscoreHelper::getStars($rev->overall_score) . ' ' . JedHelper::prettyShortDate($rev->created_on),
+                        htmlspecialchars((string) $rev->version, ENT_QUOTES, 'UTF-8') . ' - ' .
+                        htmlspecialchars((string) $rev->title, ENT_QUOTES, 'UTF-8') . ' - ' . JedscoreHelper::getStars($rev->overall_score) . ' ' . JedHelper::prettyShortDate($rev->created_on),
                         'review_extension_group_slide' . ($slideid++)
                     );
                     ?>

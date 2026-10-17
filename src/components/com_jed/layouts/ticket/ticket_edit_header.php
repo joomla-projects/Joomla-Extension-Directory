@@ -26,7 +26,7 @@ $fieldhiddenoptions = ['hidden' => true];
             <h1>Subject</h1>
 
             <h7><?php
-                echo $displayData->ticket_subject; ?></h7>
+                echo htmlspecialchars((string) $displayData->ticket_subject, ENT_QUOTES, "UTF-8"); ?></h7>
         </div>
     </div>
     <div class="row ticket-header-row">
