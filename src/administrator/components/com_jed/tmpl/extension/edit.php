@@ -251,7 +251,7 @@ $this->getDocument()
                                         <td><?php echo htmlspecialchars(JedHelper::getUserById($review->created_by)->name, ENT_QUOTES, 'UTF-8'); ?></td>
                                         <td><?php echo number_format((float) $review->overall_score, 1); ?> / 5</td>
                                         <td><?php echo JedHelper::prettyDate($review->created_on); ?></td>
-                                        <td><?php echo (int) $review->published === 1 ? Text::_('JPUBLISHED') : Text::_('JUNPUBLISHED'); ?></td>
+                                        <td><?php echo (int) $review->state === 1 ? Text::_('JPUBLISHED') : Text::_('JUNPUBLISHED'); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                                 </tbody>

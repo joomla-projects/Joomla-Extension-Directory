@@ -18,6 +18,7 @@ use Jed\Component\Jed\Administrator\Queue\QueueService;
 use Jed\Component\Jed\Administrator\Transfer\TransferService;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
 use Joomla\Database\DatabaseInterface;
@@ -117,6 +118,26 @@ class ExtensionController extends FormController
         Factory::getApplication()->setUserState('com_jed.edit.extension.live_id', 0);
 
         return parent::add();
+    }
+
+    /**
+     * The extension form drops `id` on purpose (it is the revision id and a save always creates a
+     * new revision), but FormController::save() reads it from the validated data afterwards.
+     *
+     * Joomla 6.1 calls this hook; earlier releases never do, which only means the warning stays.
+     *
+     * @param BaseDatabaseModel $model     The data model object.
+     * @param array             $validData The validated data.
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    protected function preSaveHook(BaseDatabaseModel $model, array $validData = []): array
+    {
+        $validData['id'] ??= 0;
+
+        return $validData;
     }
 
     /**

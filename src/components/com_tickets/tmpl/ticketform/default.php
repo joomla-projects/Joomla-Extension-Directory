@@ -56,7 +56,7 @@ if (!$isLoggedIn) {
     $default_values['created_on']              = Factory::getDate()->toSql();
     $default_values['linked_item_type']        = $this->item->linked_item_type;
     $default_values['linked_item_id']          = $this->item->linked_item_id;
-    $default_values['exension_varied_name']    = $this->item->vr;
+    $default_values['exension_varied_name']    = $this->item->vr ?? 0;
     $default_values['allocated_group']         = 1; //Any
     $default_values['internal_notes']          = '';
     $default_values['uploaded_files_preview']  = '';

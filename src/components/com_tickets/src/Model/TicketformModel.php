@@ -193,7 +193,7 @@ class TicketformModel extends FormModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem(int $id = null): mixed
+    public function getItem(?int $id = null): mixed
     {
         if ($this->item === null) {
             $this->item = false;
@@ -432,6 +432,6 @@ class TicketformModel extends FormModel
         $query = $db->getQuery(true);
         $query->select('categorytype')->from($db->quoteName('#__jed_ticket_categories'))->where('id = ' . $db->quote($categoryId));
 
-        return $db->setQuery($query)->loadResult();
+        return (string) $db->setQuery($query)->loadResult();
     }
 }

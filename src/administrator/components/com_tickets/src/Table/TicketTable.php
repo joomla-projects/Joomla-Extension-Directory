@@ -111,6 +111,9 @@ class TicketTable extends Table
             }
         }
 
+        // A new ticket carries no id.
+        $src['id'] ??= 0;
+
         $input = Factory::getApplication()->input;
         $task  = $input->getString('task', '');
 

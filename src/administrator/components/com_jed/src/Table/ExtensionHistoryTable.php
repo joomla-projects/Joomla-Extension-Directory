@@ -101,6 +101,9 @@ class ExtensionHistoryTable extends Table
             }
         }
 
+        // A new revision carries no id (the form drops it on purpose).
+        $src['id'] ??= 0;
+
         // Support for checkbox field: checked_out
         if (!isset($src['checked_out'])) {
             $src['checked_out'] = 0;
