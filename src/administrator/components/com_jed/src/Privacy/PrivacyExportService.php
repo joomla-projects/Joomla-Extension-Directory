@@ -39,7 +39,9 @@ final class PrivacyExportService
      *
      * Two reasons only, and both are narrow. A hash of a *third party's* address is not the
      * requester's data and returning it would turn an export into an oracle; a token hash is a
-     * credential, which is why the core user plugin withholds `password` in the same way.
+     * credential, which is why the core user plugin withholds `password` in the same way. A listing
+     * row is shared by everyone who ever touched it, so the download key (a credential) and the
+     * JED team's own notes are withheld from every export, not handed to whoever last edited it.
      *
      * @var array<string, string[]>
      *
@@ -47,6 +49,8 @@ final class PrivacyExportService
      */
     private const WITHHELD = [
         '#__jed_extension_transfers' => ['from_token_hash', 'to_token_hash'],
+        '#__jed_extensions'          => ['download_key', 'internal_download_url', 'internal_note', 'approved_notes'],
+        '#__jed_extensions_history'  => ['download_key', 'internal_download_url', 'internal_note', 'approved_notes'],
     ];
 
     /**

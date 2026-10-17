@@ -15,10 +15,15 @@ namespace Jed\Component\Jed\Administrator\Privacy;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Administrator\Queue\QueueService;
+use Jed\Component\Jed\Administrator\Table\ExtensionTable;
 use Jed\Component\Jed\Administrator\Transfer\TransferService;
+use Joomla\CMS\Event\Model\AfterSaveEvent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseInterface;
+use Joomla\Event\DispatcherInterface;
 use Joomla\Database\ParameterType;
 
 /**
@@ -156,6 +161,7 @@ final class PrivacyRemovalService
         $report['extensions_blocked']  = $this->blockOwnedListings($ownedExtensions);
         $report['extensions_scrubbed'] = $this->scrubListingTable('#__jed_extensions', $userId);
         $report['revisions_scrubbed']  = $this->scrubListingTable('#__jed_extensions_history', $userId);
+        $this->reindexListings($ownedExtensions);
 
         // Authorship columns on the remaining tables.
         $report['media_scrubbed']      = $this->scrubAuthorship('#__jed_extensions_images', $userId)
@@ -360,6 +366,46 @@ final class PrivacyRemovalService
         $this->db->setQuery($query)->execute();
 
         return $this->db->getAffectedRows();
+    }
+
+    /**
+     * Tells Smart Search the listings changed, so a blocked or scrubbed listing leaves the index
+     * now rather than at the next full reindex.
+     *
+     * The updates above are direct SQL and fire nothing on their own.
+     *
+     * @param int[] $extensionIds The listings the person owned.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    private function reindexListings(array $extensionIds): void
+    {
+        if ($extensionIds === [] || !$this->db instanceof DatabaseDriver) {
+            return;
+        }
+
+        $dispatcher = Factory::getContainer()->get(DispatcherInterface::class);
+        PluginHelper::importPlugin('content', null, true, $dispatcher);
+
+        foreach ($extensionIds as $extensionId) {
+            $table = new ExtensionTable($this->db);
+
+            if (!$table->load((int) $extensionId)) {
+                continue;
+            }
+
+            $dispatcher->dispatch(
+                'onContentAfterSave',
+                new AfterSaveEvent('onContentAfterSave', [
+                    'context' => 'com_jed.extension',
+                    'subject' => $table,
+                    'isNew'   => false,
+                    'data'    => get_object_vars($table),
+                ])
+            );
+        }
     }
 
     /**
