@@ -19,6 +19,7 @@ use Jed\Component\Jed\Administrator\Model\Copyjed3dataModel;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Registry\Registry;
@@ -116,8 +117,20 @@ class HtmlView extends BaseHtmlView
         $this->params      = ComponentHelper::getParams('com_jed');
         $this->migrate_xml = $this->getMigrateXML();
         $app               = Factory::getApplication();
-        $input             = $app->getInput()->getInputForRequestMethod();
-        $this->task        = $input->get('task', '');
+        $this->task        = '';
+
+        // The migration deletes and reloads live tables: super users only, POST only, with a token.
+        if ($app->getInput()->post->get('task', '') === 'GO') {
+            if (!Session::checkToken('post')) {
+                throw new \Exception(Text::_('JINVALID_TOKEN'), 403);
+            }
+
+            if (!$this->getCurrentUser()->authorise('core.admin', 'com_jed')) {
+                throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+
+            $this->task = 'GO';
+        }
 
         $this->addToolbar();
 
