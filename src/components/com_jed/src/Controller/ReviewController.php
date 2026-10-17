@@ -225,7 +225,7 @@ class ReviewController extends BaseController
         // Check for request forgeries.
         $this->checkToken('GET');
 
-        $id        = $this->input->post->get('id', 0, 'int');
+        $id        = $this->input->getInt('id', 0);
         $model     = $this->getModel();
         $item      = $model->getItem($id);
 

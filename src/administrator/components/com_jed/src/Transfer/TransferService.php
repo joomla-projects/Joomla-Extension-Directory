@@ -668,6 +668,33 @@ final class TransferService
     }
 
     /**
+     * The value stored in the lookup log in place of an address.
+     *
+     * Keyed with the site secret: a plain hash of an email address can be reversed by anybody who
+     * can guess the address, and the log is kept for the retention period. Without a secret (a
+     * test, a command line job) it falls back to the plain hash.
+     *
+     * @param string $email The address, in any case.
+     *
+     * @return string
+     *
+     * @since 4.0.0
+     */
+    public static function lookupHash(string $email): string
+    {
+        $email  = strtolower(trim($email));
+        $secret = '';
+
+        try {
+            $secret = (string) Factory::getApplication()->get('secret', '');
+        } catch (\Throwable) {
+            // No application: fall through to the plain hash.
+        }
+
+        return $secret !== '' ? hash_hmac('sha256', $email, $secret) : hash('sha256', $email);
+    }
+
+    /**
      * Record a lookup attempt against the person who made it.
      *
      * @param int    $userId      Who asked.
@@ -683,7 +710,7 @@ final class TransferService
     {
         $row = (object) [
             'user_id'      => $userId,
-            'email_hash'   => hash('sha256', $email),
+            'email_hash'   => self::lookupHash($email),
             'found'        => $found ? 1 : 0,
             'extension_id' => $extensionId ?: null,
             'created'      => Factory::getDate()->toSql(),
