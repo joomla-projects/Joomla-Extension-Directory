@@ -138,7 +138,7 @@ class ExtensionimageTable extends Table
             $oldFiles = JedHelper::getFiles($this->id, $this->_tbl, 'filename');
 
             foreach ($oldFiles as $f) {
-                $oldFile = JPATH_ROOT . '//tmp/' . $f;
+                $oldFile = JPATH_ROOT . '//tmp/' . basename((string) $f);
 
                 if (file_exists($oldFile) && !is_dir($oldFile)) {
                     unlink($oldFile);
@@ -223,11 +223,11 @@ class ExtensionimageTable extends Table
 
             switch ($checkImageVariableType) {
                 case 'string':
-                    File::delete(JPATH_ROOT . '/tmp/' . $this->filename);
+                    File::delete(JPATH_ROOT . '/tmp/' . basename((string) $this->filename));
                     break;
                 default:
                     foreach ($this->filename as $filenameFile) {
-                        File::delete(JPATH_ROOT . '/tmp/' . $filenameFile);
+                        File::delete(JPATH_ROOT . '/tmp/' . basename((string) $filenameFile));
                     }
             }
         }
