@@ -149,7 +149,8 @@ final class PrivacyRemovalService
         // Assignments and preferences: nothing here is about software, so nothing here is kept.
         $report['favourites_deleted']       = $this->deleteWhere('#__jed_favorites', 'user_id', $userId);
         $report['maintainer_roles_deleted'] = $this->deleteWhere('#__jed_extensions_maintainers', 'user_id', $userId);
-        $report['transfer_lookups_deleted'] = $this->deleteWhere('#__jed_transfer_lookups', 'user_id', $userId);
+        $report['transfer_lookups_deleted'] = $this->deleteWhere('#__jed_transfer_lookups', 'user_id', $userId)
+            + $this->deleteLookupsAbout($userId);
 
         // The listings themselves: block what they owned, then take the person out of every row
         // that names them - live rows and revisions alike.
@@ -513,6 +514,44 @@ final class PrivacyRemovalService
         }
 
         return $this->columnCache[$table];
+    }
+
+    /**
+     * Delete the lookup log rows that name this person's address.
+     *
+     * The log holds a hash of the address somebody else looked up. Deleting the rows the person
+     * made is not enough: rows other people made about them are about them too. Both the keyed
+     * hash and the plain one older rows used are matched.
+     *
+     * @param int $userId The subject of the request.
+     *
+     * @return int
+     *
+     * @since 4.0.0
+     */
+    private function deleteLookupsAbout(int $userId): int
+    {
+        $email = (string) $this->db->setQuery(
+            $this->db->getQuery(true)
+                ->select($this->db->quoteName('email'))
+                ->from($this->db->quoteName('#__users'))
+                ->where($this->db->quoteName('id') . ' = :uid')
+                ->bind(':uid', $userId, ParameterType::INTEGER)
+        )->loadResult();
+
+        if ($email === '') {
+            return 0;
+        }
+
+        $hashes = array_values(array_unique([TransferService::lookupHash($email), hash('sha256', strtolower(trim($email)))]));
+
+        $this->db->setQuery(
+            $this->db->getQuery(true)
+                ->delete($this->db->quoteName('#__jed_transfer_lookups'))
+                ->whereIn($this->db->quoteName('email_hash'), $hashes, ParameterType::STRING)
+        )->execute();
+
+        return $this->db->getAffectedRows();
     }
 
     /**
