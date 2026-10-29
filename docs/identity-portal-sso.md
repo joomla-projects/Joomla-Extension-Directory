@@ -29,13 +29,14 @@ From the issue discussion, and from the live portal at https://identity.joomla.o
 - The principle is one source of truth: people see and remove their data in the portal. Authentication
   happens at the portal, authorisation happens on each site.
 - A staging portal exists.
+- RO Single Sign On is written by the portal maintainer, who installs and updates it on the connected sites.
 
 ## Design
 
 ### What the JED needs
 
 1. **RO Single Sign On as the service provider.** No SAML code of our own. Installed and configured
-   with the portal team (their instructions ask for that), with the attribute mapping and the group
+   by its author (their instructions ask for that), with the attribute mapping and the group
    for new users set in its options. This is operations work, not part of the JED package.
 2. **A JED plugin for what the portal does not know:** linking existing JED accounts, authorisation, and privacy.
    It reacts to Joomla's own login events, so it does not depend on how RO Single Sign On works inside.
@@ -142,6 +143,5 @@ login for designated users, backend login through the portal, a staging portal. 
    and keep the content, or delete it?
 5. What is in the `data` attribute, and is any of it useful to the JED (for example the display name or
    the volunteer status)?
-6. Who installs and updates RO Single Sign On on the JED servers, and how do updates reach it?
-7. When can the JED be registered on the staging portal, and what does the portal need from us (entity
-   id, assertion consumer URL, certificate, logo)?
+6. How do we get access to the staging portal, and what does it need from the JED (entity id,
+   assertion consumer URL, certificate, logo)?
