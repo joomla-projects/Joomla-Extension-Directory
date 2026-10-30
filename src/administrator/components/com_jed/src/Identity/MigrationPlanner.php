@@ -22,7 +22,8 @@ namespace Jed\Component\Jed\Administrator\Identity;
  *
  * The planner is deliberately cautious. Anything that is not a clear one-to-one match is left out
  * with a reason, because a wrong match hands one person's listings to another and cannot be told
- * apart from a right one afterwards. Left out is not lost: the person signs in, gets a new account,
+ * apart from a right one afterwards. Blocked accounts and staff accounts are never matched: the
+ * portal's addresses are not verified, and these are the accounts worth impersonating. Left out is not lost: the person signs in, gets a new account,
  * and can still claim the old one with the mailed link.
  *
  * @since 4.0.0
@@ -36,14 +37,16 @@ final class MigrationPlanner
     public const AMBIGUOUS_JED_EMAIL  = 'ambiguous_jed_email';
     public const GUID_TAKEN           = 'guid_taken';
     public const OTHER_GUID           = 'account_has_other_guid';
+    public const BLOCKED              = 'blocked_account';
+    public const PRIVILEGED           = 'staff_account';
 
     /**
      * Work out the renames.
      *
-     * @param array<int, array{id: int, username: string, email: string, block?: int}> $users  The JED accounts.
+     * @param array<int, array{id: int, username: string, email: string, block?: int, privileged?: bool}> $users  The JED accounts.
      * @param array<int, array{guid: string, email: string}>                          $portal The portal export.
      *
-     * @return array{rename: array<int, array{user_id: int, from: string, guid: string, email: string, blocked: bool}>, skipped: array<int, array{reason: string, guid: string, email: string, user_id: int|null}>}
+     * @return array{rename: array<int, array{user_id: int, from: string, guid: string, email: string}>, skipped: array<int, array{reason: string, guid: string, email: string, user_id: int|null}>}
      *
      * @since 4.0.0
      */
@@ -115,6 +118,18 @@ final class MigrationPlanner
                 continue;
             }
 
+            if (!empty($user['block'])) {
+                $skip(self::BLOCKED, (int) $user['id']);
+
+                continue;
+            }
+
+            if (!empty($user['privileged'])) {
+                $skip(self::PRIVILEGED, (int) $user['id']);
+
+                continue;
+            }
+
             if (isset($used[(int) $user['id']])) {
                 $skip(self::AMBIGUOUS_JED_EMAIL, (int) $user['id']);
 
@@ -127,7 +142,6 @@ final class MigrationPlanner
                 'from'    => (string) $user['username'],
                 'guid'    => $row['guid'],
                 'email'   => $row['email'],
-                'blocked' => !empty($user['block']),
             ];
         }
 

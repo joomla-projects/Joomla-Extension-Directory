@@ -104,15 +104,55 @@ final class IdentityMigrationTest extends TestCase
     public function testAnEmailMatchBecomesARename(): void
     {
         $plan = MigrationPlanner::plan(
-            [['id' => 7, 'username' => 'ann', 'email' => 'Ann@Example.org', 'block' => 1]],
+            [['id' => 7, 'username' => 'ann', 'email' => 'Ann@Example.org', 'block' => 0]],
             [['guid' => self::G1, 'email' => 'ann@example.org']]
         );
 
         $this->assertSame([], $plan['skipped']);
         $this->assertSame(
-            [['user_id' => 7, 'from' => 'ann', 'guid' => self::G1, 'email' => 'ann@example.org', 'blocked' => true]],
+            [['user_id' => 7, 'from' => 'ann', 'guid' => self::G1, 'email' => 'ann@example.org']],
             $plan['rename']
         );
+    }
+
+    /**
+     * Blocked accounts and staff accounts are the ones worth impersonating, and the portal does not
+     * verify addresses, so neither is ever matched.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    public function testBlockedAndStaffAccountsAreNeverRenamed(): void
+    {
+        $plan = MigrationPlanner::plan(
+            [
+                ['id' => 1, 'username' => 'ann', 'email' => 'ann@example.org', 'block' => 1],
+                ['id' => 2, 'username' => 'bob', 'email' => 'bob@example.org', 'block' => 0, 'privileged' => true],
+            ],
+            [
+                ['guid' => self::G1, 'email' => 'ann@example.org'],
+                ['guid' => self::G2, 'email' => 'bob@example.org'],
+            ]
+        );
+
+        $this->assertSame([], $plan['rename']);
+        $this->assertSame([MigrationPlanner::BLOCKED, MigrationPlanner::PRIVILEGED], array_column($plan['skipped'], 'reason'));
+    }
+
+    /**
+     * Cells shown in error messages carry no control characters.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    public function testExportErrorsCarryNoControlCharacters(): void
+    {
+        $parsed = PortalExport::parse("guid,email\n\"\x1b[31mred\",a@example.org\n");
+
+        $this->assertCount(1, $parsed['errors']);
+        $this->assertStringNotContainsString("\x1b", $parsed['errors'][0]);
     }
 
     /**

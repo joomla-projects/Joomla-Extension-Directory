@@ -42,6 +42,7 @@ final class ClaimRulesTest extends TestCase
         $this->assertSame(ClaimRules::SAME_ACCOUNT, ClaimRules::oldAccountProblem(self::OLD, 7, false));
         $this->assertSame(ClaimRules::LINKED, ClaimRules::oldAccountProblem(self::OLD, 99, true));
         $this->assertSame(ClaimRules::BLOCKED, ClaimRules::oldAccountProblem(['block' => 1] + self::OLD, 99, false));
+        $this->assertSame(ClaimRules::PRIVILEGED, ClaimRules::oldAccountProblem(self::OLD, 99, false, true));
         $this->assertSame(ClaimRules::NO_EMAIL, ClaimRules::oldAccountProblem(['email' => ''] + self::OLD, 99, false));
         $this->assertSame(ClaimRules::NO_EMAIL, ClaimRules::oldAccountProblem(['email' => 'nope'] + self::OLD, 99, false));
         $this->assertSame(

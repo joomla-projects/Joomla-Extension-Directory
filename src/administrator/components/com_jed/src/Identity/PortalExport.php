@@ -78,13 +78,13 @@ final class PortalExport
             $email = trim((string) ($cells[$emailAt] ?? ''));
 
             if (!Guid::isValid($guid)) {
-                $result['errors'][] = sprintf('Line %d: "%s" is not a GUID.', $i + $offset, $guid);
+                $result['errors'][] = sprintf('Line %d: "%s" is not a GUID.', $i + $offset, self::printable($guid));
 
                 continue;
             }
 
             if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $result['errors'][] = sprintf('Line %d: "%s" is not an email address.', $i + $offset, $email);
+                $result['errors'][] = sprintf('Line %d: "%s" is not an email address.', $i + $offset, self::printable($email));
 
                 continue;
             }
@@ -93,6 +93,21 @@ final class PortalExport
         }
 
         return $result;
+    }
+
+    /**
+     * A cell as it may be shown to the operator: shortened, and without control characters, so a
+     * crafted file cannot write escape sequences into the terminal.
+     *
+     * @param string $value The cell.
+     *
+     * @return string
+     *
+     * @since 4.0.0
+     */
+    private static function printable(string $value): string
+    {
+        return mb_substr(preg_replace('/[^\P{C}]+/u', '?', $value) ?? '?', 0, 60);
     }
 
     /**

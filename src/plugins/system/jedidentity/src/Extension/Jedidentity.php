@@ -17,17 +17,22 @@ namespace Joomla\Plugin\System\Jedidentity\Extension;
 use Jed\Component\Jed\Administrator\Identity\Guid;
 use Jed\Component\Jed\Administrator\Identity\IdentityLinks;
 use Jed\Component\Jed\Administrator\Identity\PingVerifier;
+use Jed\Component\Jed\Administrator\Identity\PrivilegedAccounts;
 use Joomla\Application\ApplicationEvents;
 use Joomla\CMS\Application\ConsoleApplication;
 use Joomla\CMS\Event\Plugin\AjaxEvent;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Event\User\AfterDeleteEvent;
 use Joomla\CMS\Event\User\AfterLoginEvent;
+use Joomla\CMS\Event\User\BeforeSaveEvent;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\User\User;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Component\Privacy\Administrator\Table\RequestTable;
 use Joomla\Database\DatabaseAwareTrait;
+use Joomla\Database\ParameterType;
 use Joomla\Event\SubscriberInterface;
 use Joomla\Plugin\System\Jedidentity\Console\MigrateCommand;
 use Throwable;
@@ -64,6 +69,8 @@ final class Jedidentity extends CMSPlugin implements SubscriberInterface
         return [
             ApplicationEvents::BEFORE_EXECUTE => 'registerCommands',
             'onUserAfterLogin'                => 'onUserAfterLogin',
+            'onUserAfterDelete'               => 'onUserAfterDelete',
+            'onUserBeforeSave'                => 'onUserBeforeSave',
             'onAjaxJedidentity'               => 'onAjaxJedidentity',
         ];
     }
@@ -87,8 +94,9 @@ final class Jedidentity extends CMSPlugin implements SubscriberInterface
     /**
      * Record which portal identity the account that just signed in belongs to.
      *
-     * Only accounts whose username is a GUID are portal accounts; password users in the backend
-     * are left alone. Repeating a tie that already exists is harmless.
+     * Only a login that came through the single sign-on counts. A password login, or a cookie that
+     * restores one, proves nothing about a GUID-shaped username, so it never creates a tie.
+     * Repeating a tie that already exists is harmless.
      *
      * @param AfterLoginEvent $event The event.
      *
@@ -98,14 +106,91 @@ final class Jedidentity extends CMSPlugin implements SubscriberInterface
      */
     public function onUserAfterLogin(AfterLoginEvent $event): void
     {
-        $user = $event->getOptions()['user'] ?? null;
+        $options = $event->getOptions();
+        $user    = $options['user'] ?? null;
 
         if (!$user instanceof User || !$user->id || !Guid::isValid((string) $user->username)) {
             return;
         }
 
+        if (\in_array(strtolower((string) ($options['responseType'] ?? 'joomla')), ['joomla', 'cookie', ''], true)) {
+            return;
+        }
+
         if (!(new IdentityLinks($this->getDatabase()))->link((int) $user->id, (string) $user->username, IdentityLinks::SOURCE_LOGIN)) {
-            $this->log(sprintf('account %d could not be tied to GUID %s: one of them is already linked', (int) $user->id, $user->username));
+            $this->log(sprintf('account %d could not be tied to its portal identity: one of them is already linked', (int) $user->id));
+        }
+    }
+
+    /**
+     * Keep the ties tidy when an account is deleted by any route.
+     *
+     * @param AfterDeleteEvent $event The event.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    public function onUserAfterDelete(AfterDeleteEvent $event): void
+    {
+        $userId = (int) ($event->getUser()['id'] ?? 0);
+
+        if ($userId <= 0) {
+            return;
+        }
+
+        $db = $this->getDatabase();
+
+        $db->setQuery(
+            $db->getQuery(true)
+                ->delete($db->quoteName('#__jed_identity_links'))
+                ->where($db->quoteName('user_id') . ' = :uid')
+                ->bind(':uid', $userId, ParameterType::INTEGER)
+        )->execute();
+
+        $db->setQuery(
+            $db->getQuery(true)
+                ->delete($db->quoteName('#__jed_identity_claims'))
+                ->where('(' . $db->quoteName('user_id') . ' = :uid OR ' . $db->quoteName('old_user_id') . ' = :old)')
+                ->bind(':uid', $userId, ParameterType::INTEGER)
+                ->bind(':old', $userId, ParameterType::INTEGER)
+        )->execute();
+    }
+
+    /**
+     * Refuse a GUID-shaped username chosen on the public registration and profile forms.
+     *
+     * The portal GUID is the key to an account. If anybody could register with somebody else's GUID
+     * as a username, that person's later portal sign-in would land in an account they do not
+     * control. Accounts created by the single sign-on, and by an administrator, are not affected.
+     *
+     * @param BeforeSaveEvent $event The event.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    public function onUserBeforeSave(BeforeSaveEvent $event): void
+    {
+        $app = $this->getApplication();
+
+        if (!$app->isClient('site')) {
+            return;
+        }
+
+        $input = $app->getInput();
+
+        // The dispatcher has already split "registration.register" into controller and task.
+        if ($input->getCmd('option') !== 'com_users' || !\in_array(strtolower($input->getCmd('controller')), ['registration', 'profile'], true)) {
+            return;
+        }
+
+        $username = (string) ($event->getData()['username'] ?? '');
+
+        if (Guid::isValid($username) && strtolower(trim($username)) !== strtolower((string) ($event->getUser()['username'] ?? ''))) {
+            $this->loadLanguage();
+            $app->enqueueMessage(Text::_('PLG_SYSTEM_JEDIDENTITY_USERNAME_RESERVED'), 'error');
+            $event->addResult(false);
         }
     }
 
@@ -186,14 +271,30 @@ final class Jedidentity extends CMSPlugin implements SubscriberInterface
     {
         $app    = $this->getApplication();
         $db     = $this->getDatabase();
-        $userId = (new IdentityLinks($db))->userIdForGuid($guid) ?? $this->userIdByUsername($guid);
+        $userId = (new IdentityLinks($db))->userIdForGuid($guid);
 
         // Nothing to remove is the answer the portal wants too: the same removal can be sent twice.
         if (!$userId) {
             return $this->reply(200, 'unknown', ['removed' => false]);
         }
 
-        $user    = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($userId);
+        // Staff accounts are handled by a person, not by a message.
+        if ((new PrivilegedAccounts($db))->isPrivileged($userId)) {
+            $this->log(sprintf('removal for account %d refused: staff account', $userId));
+
+            return $this->reply(409, 'the removal needs a person', ['removed' => false]);
+        }
+
+        $user = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($userId);
+
+        // com_privacy finds the account again by email address. That has to lead to this account and
+        // to no other, or the wrong person is erased and this one is reported as done.
+        if ((int) $user->id !== $userId || !$this->emailBelongsOnlyTo($userId, (string) $user->email)) {
+            $this->log(sprintf('removal for account %d refused: its email address does not identify it', $userId));
+
+            return $this->reply(409, 'the account cannot be identified', ['removed' => false]);
+        }
+
         $app->getLanguage()->load('com_privacy', JPATH_ADMINISTRATOR);
         $factory = $app->bootComponent('com_privacy')->getMVCFactory();
 
@@ -230,25 +331,32 @@ final class Jedidentity extends CMSPlugin implements SubscriberInterface
     }
 
     /**
-     * The id of the account whose username is the given value.
+     * Whether exactly one account has this email address, case ignored, and it is the given one.
      *
-     * @param string $username The username.
+     * @param int    $userId The account.
+     * @param string $email  Its email address.
      *
-     * @return int
+     * @return boolean
      *
      * @since 4.0.0
      */
-    private function userIdByUsername(string $username): int
+    private function emailBelongsOnlyTo(int $userId, string $email): bool
     {
+        if (trim($email) === '') {
+            return false;
+        }
+
         $db    = $this->getDatabase();
         $query = $db->getQuery(true)
             ->select($db->quoteName('id'))
             ->from($db->quoteName('#__users'))
-            ->where($db->quoteName('username') . ' = :username')
-            ->bind(':username', $username)
-            ->setLimit(1);
+            ->where('LOWER(' . $db->quoteName('email') . ') = LOWER(:email)')
+            ->bind(':email', $email)
+            ->setLimit(2);
 
-        return (int) $db->setQuery($query)->loadResult();
+        $ids = array_map('intval', $db->setQuery($query)->loadColumn() ?: []);
+
+        return $ids === [$userId];
     }
 
     /**

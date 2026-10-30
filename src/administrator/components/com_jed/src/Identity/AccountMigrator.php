@@ -53,7 +53,16 @@ final class AccountMigrator
             ->select($this->db->quoteName(['id', 'username', 'email', 'block']))
             ->from($this->db->quoteName('#__users'));
 
-        return MigrationPlanner::plan($this->db->setQuery($query)->loadAssocList() ?: [], $portal);
+        $users      = $this->db->setQuery($query)->loadAssocList() ?: [];
+        $privileged = (new PrivilegedAccounts($this->db))->among();
+
+        foreach ($users as &$user) {
+            $user['privileged'] = isset($privileged[(int) $user['id']]);
+        }
+
+        unset($user);
+
+        return MigrationPlanner::plan($users, $portal);
     }
 
     /**

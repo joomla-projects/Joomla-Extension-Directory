@@ -26,6 +26,7 @@ final class ClaimRules
     public const BLOCKED       = 'blocked';
     public const NO_EMAIL      = 'no_email';
     public const LINKED        = 'already_linked';
+    public const PRIVILEGED    = 'staff_account';
     public const NO_CLAIM      = 'no_claim';
     public const EXPIRED       = 'expired';
     public const WRONG_TOKEN   = 'wrong_token';
@@ -36,12 +37,13 @@ final class ClaimRules
      * @param array{id: int, username: string, email: string, block?: int}|null $old      The old account.
      * @param int                                                               $newUserId The account claiming it.
      * @param boolean                                                           $linked    Whether the old account is already tied to a GUID.
+     * @param boolean                                                           $privileged Whether the old account holds staff powers.
      *
      * @return string|null Null when it may be claimed, otherwise why not.
      *
      * @since 4.0.0
      */
-    public static function oldAccountProblem(?array $old, int $newUserId, bool $linked): ?string
+    public static function oldAccountProblem(?array $old, int $newUserId, bool $linked, bool $privileged = false): ?string
     {
         if ($old === null) {
             return self::NOT_FOUND;
@@ -57,6 +59,10 @@ final class ClaimRules
 
         if ($linked) {
             return self::LINKED;
+        }
+
+        if ($privileged) {
+            return self::PRIVILEGED;
         }
 
         if (!empty($old['block'])) {

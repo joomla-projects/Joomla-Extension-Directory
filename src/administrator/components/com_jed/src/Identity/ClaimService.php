@@ -18,6 +18,7 @@ use Joomla\CMS\Log\Log;
 use Joomla\CMS\Mail\MailTemplate;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\User\User;
+use Joomla\CMS\User\UserHelper;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
@@ -61,18 +62,31 @@ final class ClaimService
     public const HAS_CONTENT = 'has_content';
 
     /**
-     * Tables whose rows would be lost, or left pointing at nobody, if the new account were removed.
-     * Each entry is table => column.
+     * Mails to one old account that the requests of different people may cause within a day.
      *
-     * @var array<string, string>
+     * @since 4.0.0
+     */
+    public const MAILS_PER_ACCOUNT = 3;
+
+    /**
+     * Where the new account may already have left a trace. Removing it would lose these rows or
+     * leave them pointing at nobody, and for bans that would lift the ban, so a claim is refused
+     * while any exist. Each entry is [table, column].
+     *
+     * @var array<int, array{0: string, 1: string}>
      *
      * @since 4.0.0
      */
     private const CONTENT = [
-        '#__jed_extensions'             => 'owner',
-        '#__jed_extensions_maintainers' => 'user_id',
-        '#__jed_reviews'                => 'created_by',
-        '#__jed_favorites'              => 'user_id',
+        ['#__jed_extensions', 'owner'],
+        ['#__jed_extensions_maintainers', 'user_id'],
+        ['#__jed_reviews', 'created_by'],
+        ['#__jed_favorites', 'user_id'],
+        ['#__jed_user_access', 'user_id'],
+        ['#__jed_user_review_bans', 'user_id'],
+        ['#__jed_extension_transfers', 'from_user_id'],
+        ['#__jed_extension_transfers', 'to_user_id'],
+        ['#__jed_tickets', 'created_by'],
     ];
 
     /**
@@ -117,37 +131,29 @@ final class ClaimService
             return self::HAS_CONTENT;
         }
 
-        $old   = $this->findOld(trim($identifier));
-        $why   = ClaimRules::oldAccountProblem($old, $userId, $old !== null && $links->guidForUser((int) $old['id']) !== null);
+        $old        = $this->findOld(trim($identifier));
+        $privileged = $old !== null && (new PrivilegedAccounts($this->db))->isPrivileged((int) $old['id']);
+        $why        = ClaimRules::oldAccountProblem($old, $userId, $old !== null && $links->guidForUser((int) $old['id']) !== null, $privileged);
+        $token      = bin2hex(random_bytes(32));
 
+        // Whatever the outcome, the attempt leaves a row, so the one minute wait applies to a name
+        // that matched and to one that did not. A row for no account has old_user_id 0 and can
+        // never be confirmed.
         if ($why !== null) {
+            $this->record($userId, 0, $token);
+
             return $why;
         }
 
-        $token = bin2hex(random_bytes(32));
-        $now   = gmdate('Y-m-d H:i:s');
+        // Nobody can be made to receive more than a few of these a day, whoever asks. The caller
+        // is told it was sent either way, as for any other address.
+        if ($this->recentClaimsFor((int) $old['id']) >= self::MAILS_PER_ACCOUNT) {
+            $this->record($userId, 0, $token);
 
-        $this->db->transactionStart();
-
-        try {
-            $this->deleteClaim($userId);
-
-            $row = (object) [
-                'user_id'     => $userId,
-                'old_user_id' => (int) $old['id'],
-                'token_hash'  => ClaimRules::hashToken($token),
-                'created'     => $now,
-                'expires'     => gmdate('Y-m-d H:i:s', time() + self::HOURS * 3600),
-            ];
-
-            $this->db->insertObject('#__jed_identity_claims', $row);
-            $this->db->transactionCommit();
-        } catch (Throwable $e) {
-            $this->db->transactionRollback();
-
-            throw $e;
+            return self::SENT;
         }
 
+        $this->record($userId, (int) $old['id'], $token);
         $this->mail($old, $token);
 
         return self::SENT;
@@ -178,7 +184,14 @@ final class ClaimService
         $guid  = $links->guidForUser($userId);
         $oldId = (int) $claim['old_user_id'];
         $old   = $this->findOld((string) $oldId, true);
-        $why   = $guid === null ? self::NOT_PORTAL : ClaimRules::oldAccountProblem($old, $userId, $links->guidForUser($oldId) !== null);
+        $why   = $guid === null
+            ? self::NOT_PORTAL
+            : ClaimRules::oldAccountProblem(
+                $old,
+                $userId,
+                $links->guidForUser($oldId) !== null,
+                (new PrivilegedAccounts($this->db))->isPrivileged($oldId)
+            );
 
         if ($why === null && $this->contentOf($userId) > 0) {
             $why = self::HAS_CONTENT;
@@ -212,6 +225,26 @@ final class ClaimService
             if (!$links->link($oldId, $guid, IdentityLinks::SOURCE_CLAIM)) {
                 throw new RuntimeException('the old account could not be linked');
             }
+
+            // From now on the portal is the way in. The old password is replaced by one nobody
+            // knows, and any session already open under the old account ends.
+            $unknown = UserHelper::hashPassword(bin2hex(random_bytes(32)));
+
+            $this->db->setQuery(
+                $this->db->getQuery(true)
+                    ->update($this->db->quoteName('#__users'))
+                    ->set($this->db->quoteName('password') . ' = :password')
+                    ->where($this->db->quoteName('id') . ' = :uid')
+                    ->bind(':password', $unknown)
+                    ->bind(':uid', $oldId, ParameterType::INTEGER)
+            )->execute();
+
+            $this->db->setQuery(
+                $this->db->getQuery(true)
+                    ->delete($this->db->quoteName('#__session'))
+                    ->where($this->db->quoteName('userid') . ' = :uid')
+                    ->bind(':uid', $oldId, ParameterType::INTEGER)
+            )->execute();
 
             $this->db->transactionCommit();
         } catch (Throwable $e) {
@@ -280,6 +313,64 @@ final class ClaimService
     }
 
     /**
+     * Store the open claim of an account, replacing any earlier one.
+     *
+     * @param int    $userId The account that asked.
+     * @param int    $oldId  The account asked for, or 0 when nothing can be confirmed.
+     * @param string $token  The token that goes in the mail.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    private function record(int $userId, int $oldId, string $token): void
+    {
+        $this->db->transactionStart();
+
+        try {
+            $this->deleteClaim($userId);
+
+            $row = (object) [
+                'user_id'     => $userId,
+                'old_user_id' => $oldId,
+                'token_hash'  => ClaimRules::hashToken($token),
+                'created'     => gmdate('Y-m-d H:i:s'),
+                'expires'     => gmdate('Y-m-d H:i:s', time() + ($oldId > 0 ? self::HOURS * 3600 : 0)),
+            ];
+
+            $this->db->insertObject('#__jed_identity_claims', $row);
+            $this->db->transactionCommit();
+        } catch (Throwable $e) {
+            $this->db->transactionRollback();
+
+            throw $e;
+        }
+    }
+
+    /**
+     * How many claims on an old account were started in the last day.
+     *
+     * @param int $oldId The old account.
+     *
+     * @return int
+     *
+     * @since 4.0.0
+     */
+    private function recentClaimsFor(int $oldId): int
+    {
+        $since = gmdate('Y-m-d H:i:s', time() - 86400);
+        $query = $this->db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($this->db->quoteName('#__jed_identity_claims'))
+            ->where($this->db->quoteName('old_user_id') . ' = :old')
+            ->where($this->db->quoteName('created') . ' > :since')
+            ->bind(':old', $oldId, ParameterType::INTEGER)
+            ->bind(':since', $since);
+
+        return (int) $this->db->setQuery($query)->loadResult();
+    }
+
+    /**
      * @param int $userId The account that asked.
      *
      * @return void
@@ -310,7 +401,7 @@ final class ClaimService
     {
         $count = 0;
 
-        foreach (self::CONTENT as $table => $column) {
+        foreach (self::CONTENT as [$table, $column]) {
             $query = $this->db->getQuery(true)
                 ->select('COUNT(*)')
                 ->from($this->db->quoteName($table))

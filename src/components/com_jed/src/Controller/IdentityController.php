@@ -83,6 +83,9 @@ class IdentityController extends BaseController
         $app   = Factory::getApplication();
         $token = (string) $app->getInput()->getAlnum('token', '');
 
+        // The address carries a credential. Keep it out of the Referer header of whatever page follows.
+        $app->setHeader('Referrer-Policy', 'no-referrer', true);
+
         if (!JedHelper::isLoggedIn()) {
             $app->enqueueMessage(Text::_('COM_JED_IDENTITY_LOGIN_REQUIRED'), 'warning');
             $this->setRedirect(JedHelper::getLoginlink());

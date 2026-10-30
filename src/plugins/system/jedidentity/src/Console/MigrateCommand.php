@@ -29,7 +29,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  *
  * Moves old JED accounts onto the GUIDs the portal gave the same people, matching by email address.
  * Without `--apply` it only reports, so the run can be read first and repeated as often as needed.
- * With `-v` every account is listed.
+ * With `-v` every account is listed. Writing needs `--emails-verified`: the match is only as good as the
+ * address, so the person running it states that the portal confirmed the addresses in the file.
  *
  * @since 4.0.0
  */
@@ -63,6 +64,12 @@ final class MigrateCommand extends AbstractCommand
         $this->setHelp('The CSV needs a guid column and an email (or emailaddress) column. Without --apply nothing is written.');
         $this->addArgument('file', InputArgument::REQUIRED, 'The portal export (CSV)');
         $this->addOption('apply', null, InputOption::VALUE_NONE, 'Write the changes (the default only reports them)');
+        $this->addOption(
+            'emails-verified',
+            null,
+            InputOption::VALUE_NONE,
+            'Confirm that the portal verified every email address in the file. Required with --apply'
+        );
     }
 
     /**
@@ -99,13 +106,12 @@ final class MigrateCommand extends AbstractCommand
         $migrator = new AccountMigrator($this->db);
         $plan     = $migrator->plan($export['rows']);
         $reasons  = array_count_values(array_column($plan['skipped'], 'reason'));
-        $blocked  = \count(array_filter($plan['rename'], static fn (array $r): bool => $r['blocked']));
 
         $io->title('Migration of old accounts to portal GUIDs');
         $io->table(
             ['', 'People'],
             array_merge(
-                [['In the export', \count($export['rows'])], ['Accounts to rename', \count($plan['rename'])], ['  of which blocked accounts', $blocked]],
+                [['In the export', \count($export['rows'])], ['Accounts to rename', \count($plan['rename'])]],
                 array_map(static fn (string $reason, int $n): array => ['Left out: ' . $reason, $n], array_keys($reasons), $reasons)
             )
         );
@@ -124,6 +130,12 @@ final class MigrateCommand extends AbstractCommand
             $io->note('Nothing was written. Run again with --apply to rename these accounts.');
 
             return 0;
+        }
+
+        if (!$input->getOption('emails-verified')) {
+            $io->error('Refusing to write: the match is by email address, and the portal does not verify addresses by itself. If it verified every address in this file, run again with --emails-verified.');
+
+            return 1;
         }
 
         $report = $migrator->apply($plan['rename']);

@@ -37,6 +37,14 @@ final class PingVerifier
     public const TOLERANCE = 300;
 
     /**
+     * The shortest secret accepted, in characters. A shared secret is a key: anything shorter than
+     * this can be guessed from a captured ping.
+     *
+     * @since 4.0.0
+     */
+    public const MIN_SECRET = 32;
+
+    /**
      * Compute the signature the portal is expected to send.
      *
      * @param string $secret    The shared secret.
@@ -69,6 +77,10 @@ final class PingVerifier
     {
         if ($secret === '') {
             return 'pings are not enabled';
+        }
+
+        if (\strlen($secret) < self::MIN_SECRET) {
+            return 'the secret is too short';
         }
 
         if (!ctype_digit($timestamp) || abs($now - (int) $timestamp) > self::TOLERANCE) {

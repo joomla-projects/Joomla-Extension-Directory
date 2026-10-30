@@ -19,6 +19,8 @@ use PHPUnit\Framework\TestCase;
  */
 final class PingVerifierTest extends TestCase
 {
+    private const SECRET = 'a-shared-secret-of-at-least-32-chars!';
+
     private const BODY = '{"task":"remove","guid":"11111111-1111-4111-8111-111111111111"}';
 
     /**
@@ -28,10 +30,10 @@ final class PingVerifierTest extends TestCase
      */
     public function testAGenuinePingPasses(): void
     {
-        $sig = PingVerifier::sign('s3cret', '1000', self::BODY);
+        $sig = PingVerifier::sign(self::SECRET, '1000', self::BODY);
 
-        $this->assertNull(PingVerifier::check('s3cret', '1000', $sig, self::BODY, 1100));
-        $this->assertNull(PingVerifier::check('s3cret', '1000', strtoupper($sig), self::BODY, 1000 + PingVerifier::TOLERANCE));
+        $this->assertNull(PingVerifier::check(self::SECRET, '1000', $sig, self::BODY, 1100));
+        $this->assertNull(PingVerifier::check(self::SECRET, '1000', strtoupper($sig), self::BODY, 1000 + PingVerifier::TOLERANCE));
     }
 
     /**
@@ -41,16 +43,22 @@ final class PingVerifierTest extends TestCase
      */
     public function testRefusals(): void
     {
-        $sig = PingVerifier::sign('s3cret', '1000', self::BODY);
+        $sig = PingVerifier::sign(self::SECRET, '1000', self::BODY);
 
+        $short = 'short';
+
+        $this->assertNotNull(
+            PingVerifier::check($short, '1000', PingVerifier::sign($short, '1000', self::BODY), self::BODY, 1000),
+            'a short secret is refused even with a matching signature'
+        );
         $this->assertNotNull(PingVerifier::check('', '1000', $sig, self::BODY, 1000), 'no secret, no pings');
-        $this->assertNotNull(PingVerifier::check('s3cret', '1000', $sig, self::BODY, 1000 + PingVerifier::TOLERANCE + 1), 'too old');
-        $this->assertNotNull(PingVerifier::check('s3cret', '1000', $sig, self::BODY, 1000 - PingVerifier::TOLERANCE - 1), 'from the future');
-        $this->assertNotNull(PingVerifier::check('s3cret', 'abc', $sig, self::BODY, 1000), 'bad timestamp');
+        $this->assertNotNull(PingVerifier::check(self::SECRET, '1000', $sig, self::BODY, 1000 + PingVerifier::TOLERANCE + 1), 'too old');
+        $this->assertNotNull(PingVerifier::check(self::SECRET, '1000', $sig, self::BODY, 1000 - PingVerifier::TOLERANCE - 1), 'from the future');
+        $this->assertNotNull(PingVerifier::check(self::SECRET, 'abc', $sig, self::BODY, 1000), 'bad timestamp');
         $this->assertNotNull(PingVerifier::check('other', '1000', $sig, self::BODY, 1000), 'wrong secret');
-        $this->assertNotNull(PingVerifier::check('s3cret', '1000', $sig, self::BODY . ' ', 1000), 'body changed');
-        $this->assertNotNull(PingVerifier::check('s3cret', '1001', $sig, self::BODY, 1000), 'timestamp changed');
-        $this->assertNotNull(PingVerifier::check('s3cret', '1000', '', self::BODY, 1000), 'no signature');
+        $this->assertNotNull(PingVerifier::check(self::SECRET, '1000', $sig, self::BODY . ' ', 1000), 'body changed');
+        $this->assertNotNull(PingVerifier::check(self::SECRET, '1001', $sig, self::BODY, 1000), 'timestamp changed');
+        $this->assertNotNull(PingVerifier::check(self::SECRET, '1000', '', self::BODY, 1000), 'no signature');
     }
 
     /**
