@@ -94,6 +94,7 @@ final class PrivacyExportService
             'jed_reviews'             => $this->reviews($userId),
             'jed_review_responses'    => $this->reviewResponses($userId),
             'jed_favourites'          => $this->favourites($userId),
+            'jed_identity_link'       => $this->identityLink($userId),
             'jed_privileges_and_bans' => $this->privileges($userId),
             'jed_review_bans'         => $this->reviewBans($userId),
             'jed_ownership_transfers' => $this->transfers($userId),
@@ -325,6 +326,26 @@ final class PrivacyExportService
             ->order($this->db->quoteName('f.id') . ' ASC');
 
         return $this->rows($query, '#__jed_favorites');
+    }
+
+    /**
+     * The tie between the account and the person's Identity Portal identifier.
+     *
+     * @param int $userId The subject of the request.
+     *
+     * @return array<int, array<string, mixed>>
+     *
+     * @since 4.0.0
+     */
+    private function identityLink(int $userId): array
+    {
+        $query = $this->db->getQuery(true)
+            ->select('*')
+            ->from($this->db->quoteName('#__jed_identity_links'))
+            ->where($this->db->quoteName('user_id') . ' = :uid')
+            ->bind(':uid', $userId, ParameterType::INTEGER);
+
+        return $this->rows($query, '#__jed_identity_links');
     }
 
     /**

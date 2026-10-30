@@ -164,6 +164,7 @@ final class PrivacyRemovalService
         $report['maintainer_roles_deleted'] = $this->deleteWhere('#__jed_extensions_maintainers', 'user_id', $userId);
         $report['transfer_lookups_deleted'] = $this->deleteWhere('#__jed_transfer_lookups', 'user_id', $userId)
             + $this->deleteLookupsAbout($userId);
+        $report['identity_links_deleted']   = $this->deleteWhere('#__jed_identity_links', 'user_id', $userId);
 
         // The listings themselves: block what they owned, then take the person out of every row
         // that names them - live rows and revisions alike.

@@ -383,6 +383,23 @@ CREATE TABLE IF NOT EXISTS `#__jed_favorites`
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
+-- Which Joomla Identity Portal person a JED account belongs to. The portal's GUID is also the
+-- username of the account once it has signed in, so this table adds no key the login needs; it
+-- records how the two came to be tied (`source`: login, migration, claim or manual) and keeps the
+-- tie one to one, so a second account can never claim a GUID that is already taken.
+CREATE TABLE IF NOT EXISTS `#__jed_identity_links`
+(
+	`id`      int unsigned NOT NULL AUTO_INCREMENT,
+	`user_id` int unsigned NOT NULL,
+	`guid`    char(36)     NOT NULL,
+	`source`  varchar(16)  NOT NULL DEFAULT 'login',
+	`linked`  datetime     NOT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `UK_jed_identity_links_user_id` (`user_id`),
+	UNIQUE KEY `UK_jed_identity_links_guid` (`guid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+
 -- The abuse-prevention layer JED3 grew over years and this code had none of (7.1). Modelled on
 -- the legacy `jed_user_access`, plus the audit fields 4.8 asks for everywhere.
 --

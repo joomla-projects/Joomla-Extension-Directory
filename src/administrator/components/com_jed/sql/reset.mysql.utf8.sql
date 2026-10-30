@@ -22,6 +22,7 @@ DROP TABLE IF EXISTS `#__jed_extensions_images`;
 DROP TABLE IF EXISTS `#__jed_extensions_files`;
 DROP TABLE IF EXISTS `#__jed_reviews`;
 DROP TABLE IF EXISTS `#__jed_favorites`;
+DROP TABLE IF EXISTS `#__jed_identity_links`;
 DROP TABLE IF EXISTS `#__jed_user_access`;
 DROP TABLE IF EXISTS `#__jed_user_review_bans`;
 DROP TABLE IF EXISTS `#__jed_suspect_ip_ranges`;
