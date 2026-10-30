@@ -55,9 +55,9 @@ final class ClaimService
      */
     public const WAIT = 60;
 
-    public const SENT      = 'sent';
-    public const THROTTLED = 'throttled';
-    public const NOT_PORTAL = 'not_portal_account';
+    public const SENT        = 'sent';
+    public const THROTTLED   = 'throttled';
+    public const NOT_PORTAL  = 'not_portal_account';
     public const HAS_CONTENT = 'has_content';
 
     /**
@@ -131,13 +131,16 @@ final class ClaimService
 
         try {
             $this->deleteClaim($userId);
-            $this->db->insertObject('#__jed_identity_claims', (object) [
+
+            $row = (object) [
                 'user_id'     => $userId,
                 'old_user_id' => (int) $old['id'],
                 'token_hash'  => ClaimRules::hashToken($token),
                 'created'     => $now,
                 'expires'     => gmdate('Y-m-d H:i:s', time() + self::HOURS * 3600),
-            ]);
+            ];
+
+            $this->db->insertObject('#__jed_identity_claims', $row);
             $this->db->transactionCommit();
         } catch (Throwable $e) {
             $this->db->transactionRollback();

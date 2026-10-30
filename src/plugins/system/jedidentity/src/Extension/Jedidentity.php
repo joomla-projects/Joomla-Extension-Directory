@@ -200,10 +200,10 @@ final class Jedidentity extends CMSPlugin implements SubscriberInterface
         /** @var RequestTable $table */
         $table = $factory->createTable('Request', 'Administrator');
         $table->bind([
-            'email'        => $user->email,
-            'requested_at' => gmdate('Y-m-d H:i:s'),
-            'status'       => 1,
-            'request_type' => 'remove',
+            'email'         => $user->email,
+            'requested_at'  => gmdate('Y-m-d H:i:s'),
+            'status'        => 1,
+            'request_type'  => 'remove',
             'confirm_token' => '',
         ]);
 

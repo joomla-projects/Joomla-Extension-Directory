@@ -61,7 +61,7 @@ final class MigrationPlanner
         $byUsername = [];
 
         foreach ($users as $user) {
-            $byEmail[strtolower((string) $user['email'])][] = $user;
+            $byEmail[strtolower((string) $user['email'])][]     = $user;
             $byUsername[strtolower((string) $user['username'])] = $user;
         }
 
