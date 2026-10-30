@@ -165,6 +165,8 @@ final class PrivacyRemovalService
         $report['transfer_lookups_deleted'] = $this->deleteWhere('#__jed_transfer_lookups', 'user_id', $userId)
             + $this->deleteLookupsAbout($userId);
         $report['identity_links_deleted']   = $this->deleteWhere('#__jed_identity_links', 'user_id', $userId);
+        $report['identity_claims_deleted']  = $this->deleteWhere('#__jed_identity_claims', 'user_id', $userId)
+            + $this->deleteWhere('#__jed_identity_claims', 'old_user_id', $userId);
 
         // The listings themselves: block what they owned, then take the person out of every row
         // that names them - live rows and revisions alike.

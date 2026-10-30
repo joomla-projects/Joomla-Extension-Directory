@@ -400,6 +400,24 @@ CREATE TABLE IF NOT EXISTS `#__jed_identity_links`
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
+-- A pending claim of an old JED account by a person who has just signed in through the portal.
+-- The portal creates a new account at the first login, so an old account can only be taken over
+-- afterwards: the owner proves control by opening a one time link mailed to the address stored on
+-- the OLD account. One open claim per new account; the token is kept only as a hash.
+CREATE TABLE IF NOT EXISTS `#__jed_identity_claims`
+(
+	`id`         int unsigned NOT NULL AUTO_INCREMENT,
+	`user_id`    int unsigned NOT NULL,
+	`old_user_id` int unsigned NOT NULL,
+	`token_hash` char(64)     NOT NULL,
+	`created`    datetime     NOT NULL,
+	`expires`    datetime     NOT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `UK_jed_identity_claims_user_id` (`user_id`),
+	KEY `IDX_jed_identity_claims_old_user_id` (`old_user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+
 -- The abuse-prevention layer JED3 grew over years and this code had none of (7.1). Modelled on
 -- the legacy `jed_user_access`, plus the audit fields 4.8 asks for everywhere.
 --
@@ -884,6 +902,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_tickets`
 
 INSERT IGNORE INTO `#__mail_templates` (`template_id`, `extension`, `language`, `subject`, `body`, `htmlbody`, `attachments`, `params`) VALUES
 ('com_jed.audit_report', 'com_jed', '', 'COM_JED_AUDIT_REPORT_EMAIL_SUBJECT', 'COM_JED_AUDIT_REPORT_EMAIL_BODY', '', '', '{"tags":["sitename","extensionname","extensionversion","phpstanreport","claudereport"]}'),
+('com_jed.identity_claim', 'com_jed', '', 'COM_JED_IDENTITY_CLAIM_EMAIL_SUBJECT', 'COM_JED_IDENTITY_CLAIM_EMAIL_BODY', '', '', '{"tags":["sitename","name","link","hours"]}'),
 ('com_jed.link_broken', 'com_jed', '', 'COM_JED_LINKCHECK_EMAIL_SUBJECT', 'COM_JED_LINKCHECK_EMAIL_BODY', '', '', '{"tags":["sitename","extensionname","linktype","url","reason","since","ticketlink"]}');
 
 

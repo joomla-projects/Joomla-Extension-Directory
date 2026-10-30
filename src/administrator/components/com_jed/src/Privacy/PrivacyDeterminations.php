@@ -115,6 +115,11 @@ final class PrivacyDeterminations
             'handling' => self::DELETE,
             'reason'   => 'COM_JED_PRIVACY_DETERMINATION_IDENTITY_LINKS',
         ],
+        '#__jed_identity_claims' => [
+            'export'   => false,
+            'handling' => self::DELETE,
+            'reason'   => 'COM_JED_PRIVACY_DETERMINATION_IDENTITY_CLAIMS',
+        ],
         '#__jed_user_access' => [
             'export'   => true,
             'handling' => self::CONDITIONAL,
