@@ -25,7 +25,7 @@ use Joomla\Event\SubscriberInterface;
  *
  * Creates a set of "mainmenu" menu items exercising the com_jed site views, including the
  * Top Rated / Most Reviewed / New / Recently Updated / Compatible with J4-J5-J6 presets of the
- * Extensions list view, plus the com_abandonware and com_tickets entry points.
+ * Extensions list view, plus the ticket views and the com_abandonware entry points.
  *
  * @since  1.0.0
  */
@@ -95,7 +95,6 @@ class PlgSampledataJed2 extends CMSPlugin
         $componentIds = [
             'com_jed'         => $this->getComponentId($db, 'com_jed'),
             'com_abandonware' => $this->getComponentId($db, 'com_abandonware'),
-            'com_tickets'     => $this->getComponentId($db, 'com_tickets'),
             'com_finder'      => $this->getComponentId($db, 'com_finder'),
             'com_users'       => $this->getComponentId($db, 'com_users'),
             'com_tags'        => $this->getComponentId($db, 'com_tags'),
@@ -298,16 +297,16 @@ class PlgSampledataJed2 extends CMSPlugin
             'title'        => 'Tickets',
             'alias'        => 'tickets',
             'path'         => 'tickets',
-            'link'         => 'index.php?option=com_tickets&view=tickets',
-            'component_id' => $componentIds['com_tickets'],
+            'link'         => 'index.php?option=com_jed&view=tickets',
+            'component_id' => $componentIds['com_jed'],
         ], 1, $messages);
 
         $this->createMenuItem($db, [
             'title'        => 'Ticketform',
             'alias'        => 'ticketform',
             'path'         => 'ticketform',
-            'link'         => 'index.php?option=com_tickets&view=ticketform',
-            'component_id' => $componentIds['com_tickets'],
+            'link'         => 'index.php?option=com_jed&view=ticketform',
+            'component_id' => $componentIds['com_jed'],
         ], 1, $messages);
 
         foreach ($messages as $message) {

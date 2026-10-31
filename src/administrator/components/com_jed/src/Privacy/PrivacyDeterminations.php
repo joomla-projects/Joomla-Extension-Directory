@@ -140,6 +140,28 @@ final class PrivacyDeterminations
             'handling' => self::ANONYMISE,
             'reason'   => 'COM_JED_PRIVACY_DETERMINATION_QUEUE_JOBS',
         ],
+        // The ticket system. Deletion is the default here, not anonymisation: a ticket is
+        // correspondence *with* a person rather than a record about software, and nothing is
+        // computed from it. Anonymising is the plugin's option. See TicketPrivacyService, which
+        // carries these two tables for the export and removal services.
+        '#__jed_tickets' => [
+            'export'   => true,
+            'handling' => self::DELETE,
+            'reason'   => 'COM_JED_PRIVACY_DETERMINATION_TICKETS',
+        ],
+        '#__jed_ticket_messages' => [
+            'export'   => true,
+            'handling' => self::DELETE,
+            'reason'   => 'COM_JED_PRIVACY_DETERMINATION_TICKET_MESSAGES',
+        ],
+        // The team's notes on a ticket. The only person named in a row is the team member who
+        // wrote it, and that attribution is what comes off; the note itself is the team's record of
+        // a case and can describe a third party, which is also why it is never exported (8.7).
+        '#__jed_ticket_internal_notes' => [
+            'export'   => false,
+            'handling' => self::ANONYMISE,
+            'reason'   => 'COM_JED_PRIVACY_DETERMINATION_TICKET_INTERNAL_NOTES',
+        ],
     ];
 
     /**
@@ -159,6 +181,12 @@ final class PrivacyDeterminations
         '#__jed_suspect_ip_ranges'       => 'COM_JED_PRIVACY_OUTOFSCOPE_SUSPECT_IP_RANGES',
         '#__jed_hit_log'                 => 'COM_JED_PRIVACY_OUTOFSCOPE_HIT_LOG',
         '#__jed_hit_stats'               => 'COM_JED_PRIVACY_OUTOFSCOPE_HIT_STATS',
+        // Ticket configuration, maintained by the team. These carry `created_by`, but so does
+        // `#__categories`, and core's privacy plugins leave that alone for the same reason: it
+        // records who configured the site, not who used it.
+        '#__jed_ticket_categories'        => 'COM_JED_PRIVACY_OUTOFSCOPE_TICKET_CONFIGURATION',
+        '#__jed_ticket_groups'            => 'COM_JED_PRIVACY_OUTOFSCOPE_TICKET_CONFIGURATION',
+        '#__jed_ticket_linked_item_types' => 'COM_JED_PRIVACY_OUTOFSCOPE_TICKET_CONFIGURATION',
     ];
 
     /**

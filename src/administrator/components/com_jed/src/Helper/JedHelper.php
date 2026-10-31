@@ -50,7 +50,7 @@ class JedHelper extends ContentHelper
     public static function addConfigToolbar(Toolbar $bar, string $caller=''): void
     {
         if($caller == '') {
-            $bar->linkButton('tickets')->text(Text::_('COM_JED_TITLE_TICKETS'))->url('index.php?option=com_tickets&view=tickets')->icon('fa fa-ticket-alt');
+            $bar->linkButton('tickets')->text(Text::_('COM_JED_TITLE_TICKETS'))->url('index.php?option=com_jed&view=tickets')->icon('fa fa-ticket-alt');
         }
 
         $bar->linkButton('vulnerable')->text('Vulnerable Items')->url('index.php?option=com_jed&view=velvulnerableitems')->icon('fa fa-bug');

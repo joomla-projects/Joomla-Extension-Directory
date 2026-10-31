@@ -4,7 +4,8 @@
 -- catastrophic: the tables below are the Joomla Extension Directory. Two clicks in the backend -
 -- or one failed install, because Joomla pushes this file as the rollback step for a failed
 -- install (InstallerAdapter::doDatabaseTransactions) - would end fifteen years of listings,
--- reviews and moderation history.
+-- reviews and moderation history. The tickets are part of that history: they carry the
+-- correspondence with developers - the record of why a listing was blocked, rejected or restored.
 --
 -- So this file removes only what is genuinely owned by the extension and is recreated on the next
 -- install: the mail templates. The data tables are left standing. A reinstall finds them and
@@ -15,4 +16,6 @@
 -- on a development machine, not something reachable from a backend anyone on the JED team can
 -- get to. The statements it runs are in reset.mysql.utf8.sql.
 
-DELETE FROM `#__mail_templates` WHERE `template_id` IN ('com_jed.audit_report', 'com_jed.link_broken');
+-- Both the two system notifications seeded by install.mysql.utf8.sql and the ticket
+-- templates seeded by script.php, all of which carry `extension` = 'com_jed'.
+DELETE FROM `#__mail_templates` WHERE `extension` = 'com_jed';

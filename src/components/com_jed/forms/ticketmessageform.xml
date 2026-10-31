@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The site-side ticket message form, loaded by TicketmessageformModel. Same fields as the
+    administrator's forms/ticketmessage.xml; the "internal" flag is removed for anybody without
+    core.manage on com_jed by TicketmessageformModel::preprocessForm().
+-->
+<form addfieldprefix="Jed\Component\Jed\Site\Field">
+    <fieldset>
+        <field name="id" type="text" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"/>
+        <field name="ticket_id" type="foreignkey" label="COM_JED_TICKETMESSAGE_TICKET_ID_LABEL"
+               description="COM_JED_TICKETS_TICKET_ID_DESCR" input_type="list" table="#__jed_tickets"
+               key_field="id" value_field="ticket_subject" default="0"/>
+        <field name="subject" filter="safehtml" type="text" required="true"
+               label="COM_JED_GENERAL_SUBJECT_LABEL"
+               hint="COM_JED_GENERAL_SUBJECT_LABEL"/>
+        <field name="message" editor="tinymce|codemirror" buttons="false" filter="Joomla\CMS\Component\ComponentHelper::filterText"
+               type="editor" required="true"
+               label="COM_JED_EXTENSION_MESSAGE_LABEL" description="COM_JED_FORM_DESC_TICKETMESSAGE_MESSAGE"
+               hint="COM_JED_EXTENSION_MESSAGE_LABEL"/>
+        <field name="message_direction" type="hidden" default="1"/>
+        <field name="internal" type="checkbox" default="0" label="COM_JED_TICKETMESSAGE_INTERNAL_LABEL"
+               description="COM_JED_TICKETMESSAGE_INTERNAL_DESCR"
+               hint="COM_JED_TICKETMESSAGE_INTERNAL_LABEL"/>
+        <field name="created_by" type="createdby" default="0" label="JGLOBAL_FIELD_CREATED_BY_LABEL"
+               description="JGLOBAL_FIELD_CREATED_BY_DESC" hidden="true"/>
+        <field name="created_on" type="timecreated" label="JGLOBAL_CREATED" hint="JGLOBAL_CREATED"/>
+    </fieldset>
+</form>

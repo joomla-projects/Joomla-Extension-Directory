@@ -14,7 +14,7 @@
 
 use Jed\Component\Jed\Administrator\Listing\ListingStatus;
 use Jed\Component\Jed\Site\Helper\JedHelper;
-use Jed\Component\Tickets\Administrator\Enum\TicketType;
+use Jed\Component\Jed\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -258,7 +258,7 @@ $wa->useScript('com_jed.favorite');
                                     <?php endif; ?>
                                     <?php if ($isOwnExtensionRow) : ?>
                                         <a class="btn btn-outline-secondary btn-sm"
-                                           href="<?php echo Route::_('index.php?option=com_tickets&view=ticketform&litem=' . TicketType::Review->value . '&lid=' . (int) $item->id . '&vr=' . (int) $item->extension_id); ?>">
+                                           href="<?php echo Route::_('index.php?option=com_jed&view=ticketform&litem=' . TicketType::Review->value . '&lid=' . (int) $item->id . '&vr=' . (int) $item->extension_id); ?>">
                                             <?php echo Text::_('COM_JED_DASHBOARD_REPORT_REVIEW'); ?>
                                         </a>
                                     <?php endif; ?>
@@ -428,7 +428,7 @@ $wa->useScript('com_jed.favorite');
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h3 class="mb-0"><?php echo Text::_('COM_JED_DASHBOARD_TICKETS_HEADER'); ?></h3>
-            <a href="<?php echo Route::_('index.php?option=com_tickets&view=ticketform'); ?>" class="btn btn-primary btn-sm">
+            <a href="<?php echo Route::_('index.php?option=com_jed&view=ticketform'); ?>" class="btn btn-primary btn-sm">
                 <?php echo Text::_('COM_JED_DASHBOARD_CREATE_TICKET'); ?>
             </a>
         </div>
@@ -455,7 +455,7 @@ $wa->useScript('com_jed.favorite');
                             <tr class="row<?php echo $i % 2; ?>">
                                 <td><?php echo $this->escape($item->categorytype_string ?? '—'); ?></td>
                                 <td>
-                                    <a href="<?php echo Route::_('index.php?option=com_tickets&task=ticket.edit&id=' . (int) $item->id); ?>">
+                                    <a href="<?php echo Route::_('index.php?option=com_jed&view=ticket&id=' . (int) $item->id); ?>">
                                         <?php echo $this->escape($item->ticket_subject); ?>
                                     </a>
                                 </td>

@@ -24,7 +24,7 @@ use Joomla\Database\DatabaseInterface;
  *
  * Read from the table rather than declared in the form XML because the codes are data (4.8):
  * the JED team adds or retires a reason without a release, and the same vocabulary keys the
- * knowledge base articles and the com_tickets mail templates.
+ * knowledge base articles and the ticket mail templates.
  *
  * @since 4.0.0
  */

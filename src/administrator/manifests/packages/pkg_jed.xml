@@ -15,7 +15,6 @@
 	<description>JED 4 Installation Packages</description>
 	<files>
 		<file type="component" id="com_jed">com_jed.zip</file>
-		<file type="component" id="com_tickets">com_tickets.zip</file>
 		<file type="component" id="com_abandonware">com_abandonware.zip</file>
 		<file type="module" id="mod_jed_opentickets" client="administrator">mod_jed_opentickets.zip</file>
 		<file type="module" id="mod_jed_extensions" client="site">mod_jed_extensions.zip</file>
@@ -28,6 +27,5 @@
 		<file type="plugin" id="jed_task" group="task">plg_task_jed.zip</file>
 		<file type="plugin" id="jed_actionlog" group="actionlog">plg_actionlog_jed.zip</file>
 		<file type="plugin" id="jed_privacy" group="privacy">plg_privacy_jed.zip</file>
-		<file type="plugin" id="tickets_privacy" group="privacy">plg_privacy_tickets.zip</file>
 	</files>
 </extension>

@@ -43,16 +43,17 @@ use Throwable;
  *
  * ## Why a plain event and not a typed one
  *
- * `com_tickets` raises two of these actions and must not have to load a `com_jed` event class to
- * do it. A plain {@see Event} with an argument bag keeps the coupling at the level of a string,
- * which is what an extension point is.
+ * The actions are raised from models, tables and services alike, and other extensions - the
+ * abandonware component, for one - must not have to load a `com_jed` event class to raise one. A
+ * plain {@see Event} with an argument bag keeps the coupling at the level of a string, which is
+ * what an extension point is.
  *
  * @since 4.0.0
  */
 abstract class JedActionLog
 {
     /**
-     * The event both components raise and the plugin listens for.
+     * The event the component raises and the plugin listens for.
      *
      * @since 4.0.0
      */
@@ -151,7 +152,7 @@ abstract class JedActionLog
     public const RESPONSE_UNPUBLISH = 'response.unpublish';
 
     /**
-     * A ticket was handed to somebody. (`com_tickets`)
+     * A ticket was handed to somebody. (TicketTable)
      *
      * @since 4.0.0
      */
@@ -159,7 +160,7 @@ abstract class JedActionLog
 
     /**
      * A ticket was taken away from whoever had it, without being given to anybody else.
-     * (`com_tickets`)
+     * (TicketTable)
      *
      * The inverse of {@see self::TICKET_ASSIGN}, and logged for the same reason: without it the
      * log would say a ticket is somebody's long after it stopped being theirs.
@@ -169,14 +170,14 @@ abstract class JedActionLog
     public const TICKET_UNASSIGN = 'ticket.unassign';
 
     /**
-     * A ticket was closed or resolved. (`com_tickets`)
+     * A ticket was closed or resolved. (TicketTable)
      *
      * @since 4.0.0
      */
     public const TICKET_CLOSE = 'ticket.close';
 
     /**
-     * A ticket that had been closed was reopened. (`com_tickets`)
+     * A ticket that had been closed was reopened. (TicketTable)
      *
      * @since 4.0.0
      */

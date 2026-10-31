@@ -91,7 +91,7 @@ try {
         ->useScript('webcomponent.field-fancy-select')
         ->useScript('webcomponent.field-subform')
         ->useScript('com_jed.extensionUploadAreas')
-        ->useStyle('com_tickets.Tickets')
+        ->useStyle('com_jed.tickets')
         ->useStyle('com_jed.jquery_dataTables');
 } catch (Exception) {
 }

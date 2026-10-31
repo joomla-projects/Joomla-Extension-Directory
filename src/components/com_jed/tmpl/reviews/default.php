@@ -12,7 +12,7 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Site\Helper\JedHelper;
-use Jed\Component\Tickets\Administrator\Enum\TicketType;
+use Jed\Component\Jed\Administrator\Enum\TicketType;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
@@ -178,7 +178,7 @@ $wa->useStyle('com_jed.list');
                         // readers only, and not on one's own review.
                         if (JedHelper::isLoggedIn() && (int) $item->created_by !== (int) $user->id) :
                             $reportUrl = Route::_(
-                                'index.php?option=com_tickets&view=ticketform'
+                                'index.php?option=com_jed&view=ticketform'
                                 . '&litem=' . TicketType::Review->value
                                 . '&lid=' . (int) $item->id
                                 . '&vr=' . (int) $item->extension_id

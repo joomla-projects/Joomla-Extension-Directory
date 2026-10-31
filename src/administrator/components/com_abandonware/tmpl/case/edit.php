@@ -252,7 +252,7 @@ $canReachAbandoned = $status->canMoveTo(CaseStatus::ABANDONED);
                         <?php if ((int) ($item->ticket_id ?? 0) > 0) : ?>
                             <dt class="col-5"><?php echo Text::_('COM_ABANDONWARE_HEADING_TICKET'); ?></dt>
                             <dd class="col-7">
-                                <a href="<?php echo Route::_('index.php?option=com_tickets&task=ticket.edit&id=' . (int) $item->ticket_id); ?>">
+                                <a href="<?php echo Route::_('index.php?option=com_jed&task=ticket.edit&id=' . (int) $item->ticket_id); ?>">
                                     #<?php echo (int) $item->ticket_id; ?>
                                 </a>
                             </dd>

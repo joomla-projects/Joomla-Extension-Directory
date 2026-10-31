@@ -1,4 +1,4 @@
--- Developer reset for JED catalogue (com_jed) - P1-30.
+-- Developer reset for the JED catalogue and ticket system (com_jed) - P1-30.
 --
 -- These statements used to sit at the top of install.mysql.utf8.sql, one DROP before every
 -- CREATE. That made a reinstall a total data loss, so they were moved here, out of the
@@ -34,5 +34,11 @@ DROP TABLE IF EXISTS `#__jed_url_checks`;
 DROP TABLE IF EXISTS `#__jed_extension_linkchecks`;
 DROP TABLE IF EXISTS `#__jed_hit_log`;
 DROP TABLE IF EXISTS `#__jed_hit_stats`;
+DROP TABLE IF EXISTS `#__jed_ticket_categories`;
+DROP TABLE IF EXISTS `#__jed_ticket_groups`;
+DROP TABLE IF EXISTS `#__jed_ticket_linked_item_types`;
+DROP TABLE IF EXISTS `#__jed_ticket_messages`;
+DROP TABLE IF EXISTS `#__jed_ticket_internal_notes`;
+DROP TABLE IF EXISTS `#__jed_tickets`;
 
 SET FOREIGN_KEY_CHECKS = 1;

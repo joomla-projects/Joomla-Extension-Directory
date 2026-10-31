@@ -1,4 +1,4 @@
--- Tickets, from BOTH legacy sources onto com_tickets (P1-24 section B, inventory 4.5).
+-- Tickets, from BOTH legacy sources onto the JED ticket system (P1-24 section B, inventory 4.5).
 --
 -- JED3 ran two ticket systems one after the other and neither was migrated into the other:
 --
@@ -19,7 +19,7 @@
 --
 -- WHAT IS LOST. RSTicketsPro carries priorities, departments, staff groups, ticket codes, time
 -- spent, feedback scores, close dates, flags, the submitter's IP, browser and referer, and 47,260
--- rows of status history. com_tickets has a column for none of it and this migration does not
+-- rows of status history. #__jed_tickets has a column for none of it and this migration does not
 -- extend the schema. Everything except the IP, browser, referer and the status history is written
 -- into internal_notes as plain text, so the JED team can still read what a ticket was - it is just
 -- not queryable any more. The four that are dropped outright are personal data with no purpose in
@@ -38,7 +38,7 @@ DELETE FROM #__jed_tickets;
 -- wqyh6_jed_tickets is flat: a reply is another row in the same table with parent_type_id set to
 -- the ticket it answers. 11,413 rows are ticket openings, 14,570 are replies, and the tree is
 -- exactly two deep - there is not one reply to a reply. So openings become #__jed_tickets and
--- replies become #__jed_ticket_messages, which is the shape com_tickets already has.
+-- replies become #__jed_ticket_messages, which is the shape the ticket system already has.
 --
 -- 160 replies point at a ticket that is not in the table. They are taken as tickets of their own
 -- rather than dropped: they carry a subject, a body and an author, and the only thing wrong with
@@ -58,7 +58,7 @@ DELETE FROM #__jed_tickets;
 -- Anything else becomes 1 (Unknown). The raw value goes into internal_notes either way, so the
 -- reconstruction can be revisited without going back to the JED3 database.
 --
--- STATUS. The legacy values are 0, 1, 3 and 11, against com_tickets' 0 New, 1 Awaiting User,
+-- STATUS. The legacy values are 0, 1, 3 and 11, against the ticket system's 0 New, 1 Awaiting User,
 -- 2 Awaiting JED, 3 Resolved, 4 Closed, 5 Updated - the new vocabulary was derived from the old
 -- one, so 0, 1 and 3 carry straight over. 11 is outside it and holds 12 tickets, all dormant since
 -- 2018/19; they become 4 (Closed) rather than 0 (New), because putting six-year-old tickets at the
@@ -113,7 +113,7 @@ UPDATE combine_jed_rsp c INNER JOIN wqyh6_rsticketspro_custom_fields_values v ON
 
 UPDATE combine_jed_rsp c INNER JOIN wqyh6_rsticketspro_custom_fields_values v ON v.ticket_id = c.ticket_id INNER JOIN wqyh6_rsticketspro_custom_fields f ON f.id = v.custom_field_id SET c.review_title = LEFT(TRIM(v.value), 255) WHERE f.name = 'review-title';
 
--- Staff notes. com_tickets keeps its internal notes in one text column on the ticket rather than
+-- Staff notes. The ticket system keeps its internal notes in one text column on the ticket rather than
 -- as rows, so they are folded together in date order.
 UPDATE combine_jed_rsp c SET c.notes = (SELECT GROUP_CONCAT(CONCAT(IFNULL(DATE_FORMAT(NULLIF(n.date, '0000-00-00 00:00:00'), '%Y-%m-%d'), 'undated'), ' (user ', n.user_id, '): ', n.text) ORDER BY n.id SEPARATOR '\n') FROM wqyh6_rsticketspro_ticket_notes n WHERE n.ticket_id = c.ticket_id);
 
