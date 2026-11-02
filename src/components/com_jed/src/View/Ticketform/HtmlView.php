@@ -153,14 +153,20 @@ class HtmlView extends BaseHtmlView
             $this->item->linked_item_id   = $linked_id;
             $this->item->vr               = $vr;
             $ticket_type                  = "Unknown";
+            $ticket_selector               = 1;
             if ($linked_item === TicketType::Extension->value) {
                 $ticket_type = "Extension";
+                $ticket_selector  = 10;
+                $this->item->allocated_group = 3; //listing specialist
             }
 
             if ($linked_item === TicketType::Review->value) {
                 $ticket_type = "Review";
-            }
+                $ticket_selector  = 9;
 
+                $this->item->allocated_group = 4; //review specialist
+            }
+            $this->item->ticket_category_type = $ticket_selector;
             $this->item->extension_title = JedHelper::getExtensionTitle($vr);
 
             // A review report names the review; `vr` still carries the extension so the ticket

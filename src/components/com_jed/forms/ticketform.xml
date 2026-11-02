@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<form addfieldprefix="Jed\Component\Jed\Site\Field,Jed\Component\Jed\Administrator\Field">
+<form addfieldprefix="Jed\Component\Jed\Site\Field">
     <fieldset>
         <field name="id" type="text" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"/>
         <field name="ticket_origin" default="0" type="list" label="COM_JED_TICKETS_TICKET_ORIGIN_LABEL"
@@ -8,9 +8,19 @@
             <option value="0">COM_JED_TICKETS_TICKET_ORIGIN_OPTION_0</option>
             <option value="1">COM_JED_TICKETS_TICKET_ORIGIN_OPTION_1</option>
         </field>
-        <field name="ticket_category_type" type="foreignkey" label="COM_JED_TICKETS_TICKET_CATEGORY_TYPE_LABEL"
+        <field
+                name="id"
+                query="SELECT `id`, `title` FROM #__jed_reviews ORDER BY `id`"
+                type="sql"
+                key_field="id"
+                value_field="title"
+                label="COM_JED_ITEM_ID_SELECT_LABEL"
+                require="true"
+                description="JGLOBAL_SHOW_TITLE_DESC">
+        </field>
+        <field name="ticket_category_type" type="sql" label="COM_JED_TICKETS_TICKET_CATEGORY_TYPE_LABEL"
                description="COM_JED_TICKETS_TICKET_CATEGORY_TYPE_DESCR" input_type="list"
-               table="#__jed_ticket_categories" key_field="id" value_field="categorytype" default="0"  condition="`id` not in (11,12,13)"/>
+               query="select `id`, `categorytype` from #__jed_ticket_categories" key_field="id" value_field="categorytype" default="0" />
         <field name="ticket_subject" filter="safehtml" type="text" label="COM_JED_GENERAL_SUBJECT_LABEL"
                description="COM_JED_TICKETS_TICKET_SUBJECT_DESCR"
                hint="COM_JED_GENERAL_SUBJECT_LABEL"/>
@@ -51,7 +61,7 @@
 
 
         <field name="reported_varied_name" type="jedextensions" label="Extension"
-               description="COM_JED_TICKETS_LINKED_ITEM_TYPE_DESCR" input_type="list" showon="ticket_category_type:14"
+               description="COM_JED_TICKETS_LINKED_ITEM_TYPE_DESCR" input_type="list" showon="ticket_category_type:10"
                />
         <field name="myextension_varied_name" type="jedmyextensions" label="My Extension"
                description="COM_JED_TICKETS_LINKED_ITEM_TYPE_DESCR" input_type="list" showon="ticket_category_type:2"

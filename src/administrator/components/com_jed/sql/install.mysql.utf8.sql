@@ -773,7 +773,7 @@ INSERT IGNORE INTO `#__jed_ticket_groups`(`id`, `name`, `ordering`, `state`, `ch
 (2, 'Team Leadership', 0, 1, NULL, NULL, 652, 652),
 (3, 'Listing Specialist', 0, 1, NULL, NULL, 652, 652),
 (4, 'Review Specialist', 0, 1, NULL, NULL, 652, 652),
-(5, 'Support Speciailist', 0, 1, NULL, NULL, 652, 652);
+(5, 'Support Specialist', 0, 1, NULL, NULL, 652, 652);
 
 
 /* Ticket Linked Items */
@@ -840,7 +840,7 @@ CREATE TABLE IF NOT EXISTS `#__jed_ticket_internal_notes`
 CREATE TABLE IF NOT EXISTS `#__jed_tickets`
 (
 	`id`                      int unsigned NOT NULL AUTO_INCREMENT,
-	`ticket_origin`           varchar(255) NULL DEFAULT '0',
+	`ticket_origin`           int          NULL DEFAULT 0,
 	`ticket_category_type`    int          NULL DEFAULT 0,
 	`ticket_subject`          varchar(255) NULL DEFAULT '',
 	`ticket_text`             text         NULL,
@@ -851,9 +851,9 @@ CREATE TABLE IF NOT EXISTS `#__jed_tickets`
 	`allocated_to`            int          NULL DEFAULT 0,
 	`linked_item_type`        int          NULL DEFAULT 0,
 	`linked_item_id`          int          NULL DEFAULT 0,
-	`ticket_status`           varchar(255) NULL DEFAULT '0',
-	`parent_id`               int          NULL DEFAULT 0,
-	`state`                   tinyint(1)   NOT NULL DEFAULT '1',
+	`ticket_status`           INT          NULL DEFAULT 0,
+	`parent_id`               int          NULL DEFAULT -1,
+	`state`                   tinyint(1)   NOT NULL DEFAULT 0,
 	`ordering`                int          NULL DEFAULT 0,
 	`created_by`              int unsigned NOT NULL,
 	`created_on`              datetime,

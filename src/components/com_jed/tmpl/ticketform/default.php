@@ -57,7 +57,8 @@ if (!$isLoggedIn) {
     $default_values['linked_item_type']        = $this->item->linked_item_type;
     $default_values['linked_item_id']          = $this->item->linked_item_id;
     $default_values['exension_varied_name']    = $this->item->vr;
-    $default_values['allocated_group']         = 1; //Any
+    $default_values['ticket_category_type']    = $this->item->ticket_category_type;
+    $default_values['allocated_group']         = $this->item->allocated_group; //Any
     $default_values['internal_notes']          = '';
     $default_values['uploaded_files_preview']  = '';
     $default_values['uploaded_files_location'] = '';
@@ -65,7 +66,8 @@ if (!$isLoggedIn) {
 
     $this->form->bind($default_values);
 
-    $fieldsets['overview']['title']       = '';
+
+    $fieldsets['overview']['title']       = 'Enter Ticket Details';
     $fieldsets['overview']['description'] = '';
     $fieldsets['overview']['fields']      = [
         'ticket_category_type',
@@ -86,7 +88,7 @@ if (!$isLoggedIn) {
         'uploaded_files_location',
         'allocated_to',
     ];
-    $fieldsets['overview']['hidden']      = ['id', 'linked_item_type', 'linked_item_id','ticket_origin', 'ticket_status', 'allocated_group','internal_notes','uploaded_files_preview','uploaded_files_location','allocated_to', 'parent_id', 'created_on'];
+    $fieldsets['overview']['hidden']      = ['id', 'linked_item_type', 'linked_item_id','ticket_origin', 'ticket_status', 'allocated_group','internal_notes','uploaded_files_preview','uploaded_files_location','allocated_to', 'parent_id', 'created_on','reported_varied_name','myextension_varied_name'];
 
     /*
     if ($this->item->state == 1) {
@@ -115,6 +117,9 @@ if (!$isLoggedIn) {
                     echo Route::_('index.php?option=com_jed&task=ticketform.save'); ?>"
                   method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
                 <?php
+
+                //echo "<pre>";print_r($fieldsets);echo "</pre>";
+
                 $fscount = 0;
                 foreach ($fieldsets as $fs) {
                     $fscount = $fscount + 1;
@@ -138,59 +143,6 @@ if (!$isLoggedIn) {
                     }
                 }
                 ?>
-                <?php
-                /* echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'ticket']); ?>
-                           <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'ticket', Text::_('COM_JED_TAB_TICKET', true)); ?>
-                           <?php echo $this->form->renderField('id'); ?>
-
-                           <?php echo $this->form->renderField('ticket_origin'); ?>
-
-                           <?php echo $this->form->renderField('ticket_category_type'); ?>
-
-                           <?php echo $this->form->renderField('ticket_subject'); ?>
-
-                           <?php echo $this->form->renderField('ticket_text'); ?>
-
-                           <?php echo $this->form->renderField('internal_notes'); ?>
-
-                           <?php echo $this->form->renderField('uploaded_files_preview'); ?>
-
-                           <?php echo $this->form->renderField('uploaded_files_location'); ?>
-
-                           <?php echo $this->form->renderField('allocated_group'); ?>
-
-                           <?php echo $this->form->renderField('allocated_to'); ?>
-
-                           <?php echo $this->form->renderField('linked_item_type'); ?>
-
-                           <?php echo $this->form->renderField('linked_item_id'); ?>
-
-                           <?php echo $this->form->renderField('ticket_status'); ?>
-
-                           <?php echo $this->form->renderField('parent_id'); ?>
-
-                           <?php echo HTMLHelper::_('uitab.endTab'); ?>
-                           <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Publishing', Text::_('COM_JED_TAB_PUBLISHING', true)); ?>
-                           <div class="control-group">
-                               <?php if (!$canState) : ?>
-                                   <div class="control-label"><?php echo $this->form->getLabel('state'); ?></div>
-                                   <div class="controls"><?php echo $state_string; ?></div>
-                                   <input type="hidden" name="jform[state]" value="<?php echo $state_value; ?>"/>
-                               <?php else : ?>
-                                   <div class="control-label"><?php echo $this->form->getLabel('state'); ?></div>
-                                   <div class="controls"><?php echo $this->form->getInput('state'); ?></div>
-                               <?php endif; ?>
-                           </div>
-
-                           <?php echo $this->form->renderField('created_by'); ?>
-
-                           <?php echo $this->form->renderField('created_on'); ?>
-
-                           <?php echo $this->form->renderField('modified_by'); ?>
-
-                           <?php echo $this->form->renderField('modified_on'); ?>
-
-                           <?php echo HTMLHelper::_('uitab.endTab'); */ ?>
                 <div class="control-group">
                     <div class="controls">
 

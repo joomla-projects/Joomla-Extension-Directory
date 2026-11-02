@@ -6,8 +6,5 @@
                type="editor" required="true" message="Please enter a message"
                label="COM_JED_EXTENSION_MESSAGE_LABEL" description="COM_JED_FORM_DESC_TICKETMESSAGE_MESSAGE"
                hint="COM_JED_EXTENSION_MESSAGE_LABEL"/>
-	    <field name="internal" type="checkbox" default="1" checked="true" label="COM_JED_TICKETMESSAGE_INTERNAL_LABEL"
-	           description="COM_JED_TICKETMESSAGE_INTERNAL_DESCR"
-	           hint="COM_JED_TICKETMESSAGE_INTERNAL_LABEL"/>
     </fieldset>
 </form>

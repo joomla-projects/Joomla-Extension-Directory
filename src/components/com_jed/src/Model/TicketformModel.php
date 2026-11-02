@@ -59,73 +59,6 @@ class TicketformModel extends FormModel
     private int $id = -1;
 
     /**
-     * Method to check in an item.
-     *
-     * @param int $pk The id of the row to check out.
-     *
-     * @return bool True on success, false on failure.
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function checkin($pk = null): bool
-    {
-        // Get the id.
-        $pk = (!empty($pk)) ? $pk : (int) $this->getState('ticket.id');
-        if (!$pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-            if ($pk) {
-                // Initialise the table
-                $table = $this->getTable();
-
-                // Attempt to check the row in.
-                if (method_exists($table, 'checkin')) {
-                    if (!$table->checkin($pk)) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-    }
-
-    /**
-     * Method to check out an item for editing.
-     *
-     * @param int|null $pk The id of the row to check out.
-     *
-     * @return bool True on success, false on failure.
-     *
-     * @since  4.0.0
-     * @throws Exception
-     */
-    public function checkout($pk = null): bool
-    {
-        // Get the user id.
-        $pk = (!empty($pk)) ? $pk : (int) $this->getState('ticket.id');
-        if (!$pk || JedHelper::userIDItem($pk, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-            if ($pk) {
-                // Initialise the table
-                $table = $this->getTable();
-
-                // Get the current user object.
-                $user = Factory::getApplication()->getIdentity();
-
-                // Attempt to check the row out.
-                if (method_exists($table, 'checkout')) {
-                    if (!$table->checkout($user->id, $pk)) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
-    }
-
-    /**
      * Check if data can be saved
      *
      * @return bool
@@ -372,13 +305,14 @@ class TicketformModel extends FormModel
      *
      * @param array $data The form data
      *
-     * @return bool
+     * @return
      *
      * @since  4.0.0
      * @throws Exception
      */
-    public function save(array $data): bool
+    public function save(array $data)
     {
+       // echo "<pre>";print_r($data);echo "</pre>";exit();
         $isLoggedIn      = JedHelper::isLoggedIn();
         $data['user_ip'] = $_SERVER['REMOTE_ADDR'];
         $user            = Factory::getApplication()->getIdentity();
@@ -405,7 +339,6 @@ class TicketformModel extends FormModel
                     $ticket_message['created_by']        = -1;
                     $ticket_message_model->save($ticket_message);
                 }
-
                 return $table->id;
             }
             echo "can't save";
