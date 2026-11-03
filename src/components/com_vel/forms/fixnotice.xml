@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The developer's fix notice (VEL2-PRD §6.4.2), the successor of veldeveloperupdateform.xml. -->
+<form>
+    <fieldset name="reporter" label="COM_VEL_REPORT_FIELDSET_CONTACT">
+        <field name="reporter_name" type="text" label="COM_VEL_FIELD_REPORTER_NAME_LABEL" maxlength="255" filter="string" required="true"/>
+        <field name="reporter_email" type="email" label="COM_VEL_FIELD_REPORTER_EMAIL_LABEL" maxlength="255" filter="string" validate="email" required="true"/>
+        <field name="reporter_organisation" type="text" label="COM_VEL_FIELD_REPORTER_ORGANISATION_LABEL" maxlength="255" filter="string"/>
+        <field name="reporter_role" type="hidden" default="developer" filter="cmd"/>
+    </fieldset>
+
+    <fieldset name="fix" label="COM_VEL_FIXNOTICE_FIELDSET_FIX">
+        <field
+                name="advisory_reference"
+                type="text"
+                label="COM_VEL_FIELD_ADVISORY_REFERENCE_LABEL"
+                description="COM_VEL_FIELD_ADVISORY_REFERENCE_DESC"
+                maxlength="50"
+                filter="string"
+                hint="VEL-0042 / CVE-2026-12345"
+        />
+        <field name="extension_name" type="text" label="COM_VEL_FIELD_EXTENSION_NAME_LABEL" maxlength="255" filter="string" required="true"/>
+        <field name="extension_version" type="text" label="COM_VEL_FIELD_AFFECTED_VERSION_LABEL" description="COM_VEL_FIELD_AFFECTED_VERSION_DESC" maxlength="100" filter="string"/>
+        <field name="fixed_version" type="text" label="COM_VEL_FIELD_FIXED_VERSION_LABEL" description="COM_VEL_FIELD_FIXED_VERSION_NOTICE_DESC" maxlength="50" filter="string" required="true"/>
+        <field name="patch_url" type="url" label="COM_VEL_FIELD_PATCH_URL_LABEL" description="COM_VEL_FIELD_PATCH_URL_DESC" maxlength="255" filter="url" validate="url"/>
+        <field name="extension_url" type="url" label="COM_VEL_FIELD_RELEASE_NOTES_URL_LABEL" description="COM_VEL_FIELD_RELEASE_NOTES_URL_DESC" maxlength="255" filter="url" validate="url"/>
+        <field name="description" type="textarea" label="COM_VEL_FIELD_FIX_DESCRIPTION_LABEL" description="COM_VEL_FIELD_FIX_DESCRIPTION_DESC" rows="6" filter="string" required="true"/>
+    </fieldset>
+
+    <fieldset name="consent" label="COM_VEL_REPORT_FIELDSET_CONSENT">
+        <field name="consent_to_process" type="checkbox" label="COM_VEL_FIELD_CONSENT_LABEL" description="COM_VEL_FIELD_CONSENT_DESC" value="1" filter="integer" required="true"/>
+        <field name="captcha" type="captcha" label="COM_VEL_FIELD_CAPTCHA_LABEL" validate="captcha" namespace="com_vel"/>
+        <field name="website" type="text" label="COM_VEL_FIELD_HONEYPOT_LABEL" class="com-vel-hp" autocomplete="off" tabindex="-1" filter="string"/>
+    </fieldset>
+</form>

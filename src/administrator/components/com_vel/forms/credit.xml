@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One credit (brief §3.1.H). -->
+<form>
+    <field name="id" type="hidden" filter="integer" default="0"/>
+    <field name="report_id" type="hidden" filter="integer" default="0"/>
+    <field name="user_id" type="hidden" filter="integer" default="0"/>
+
+    <field
+            name="name"
+            type="text"
+            label="COM_VEL_FIELD_CREDIT_NAME_LABEL"
+            required="true"
+            maxlength="255"
+            filter="string"
+    />
+
+    <field
+            name="role"
+            type="list"
+            label="COM_VEL_FIELD_CREDIT_ROLE_LABEL"
+            default="finder"
+    >
+        <option value="finder">COM_VEL_CREDIT_ROLE_FINDER</option>
+        <option value="reporter">COM_VEL_CREDIT_ROLE_REPORTER</option>
+        <option value="analyst">COM_VEL_CREDIT_ROLE_ANALYST</option>
+        <option value="coordinator">COM_VEL_CREDIT_ROLE_COORDINATOR</option>
+        <option value="remediation_developer">COM_VEL_CREDIT_ROLE_REMEDIATION_DEVELOPER</option>
+        <option value="remediation_reviewer">COM_VEL_CREDIT_ROLE_REMEDIATION_REVIEWER</option>
+        <option value="remediation_verifier">COM_VEL_CREDIT_ROLE_REMEDIATION_VERIFIER</option>
+        <option value="tool">COM_VEL_CREDIT_ROLE_TOOL</option>
+        <option value="sponsor">COM_VEL_CREDIT_ROLE_SPONSOR</option>
+        <option value="other">COM_VEL_CREDIT_ROLE_OTHER</option>
+    </field>
+
+    <field
+            name="is_public"
+            type="list"
+            label="COM_VEL_FIELD_CREDIT_PUBLIC_LABEL"
+            default="1"
+            filter="integer"
+    >
+        <option value="1">JYES</option>
+        <option value="0">JNO</option>
+    </field>
+</form>

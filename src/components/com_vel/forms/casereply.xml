@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A participant's reply on the case page. -->
+<form>
+    <field name="body" type="textarea" label="COM_VEL_FIELD_MESSAGE_BODY_LABEL" rows="6" filter="string" required="true"/>
+    <field name="attachments" type="file" label="COM_VEL_FIELD_ATTACHMENTS_LABEL" description="COM_VEL_FIELD_ATTACHMENTS_DESC" multiple="true"/>
+</form>

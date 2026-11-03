@@ -95,6 +95,7 @@ class PlgSampledataJed2 extends CMSPlugin
         $componentIds = [
             'com_jed'         => $this->getComponentId($db, 'com_jed'),
             'com_abandonware' => $this->getComponentId($db, 'com_abandonware'),
+            'com_vel'         => $this->getComponentId($db, 'com_vel'),
             'com_finder'      => $this->getComponentId($db, 'com_finder'),
             'com_users'       => $this->getComponentId($db, 'com_users'),
             'com_tags'        => $this->getComponentId($db, 'com_tags'),
@@ -237,6 +238,36 @@ class PlgSampledataJed2 extends CMSPlugin
             'link'         => 'index.php?option=com_abandonware&view=report',
             'component_id' => $componentIds['com_abandonware'],
         ], 1, $messages);
+
+        // --- VEL ----------------------------------------------------------------------
+        // The path space the comment above reserves. The list is the menu item everything in
+        // com_vel routes through (advisories, the report forms, the case page, the API); the
+        // two forms get items of their own so they have titles in the menu.
+        if (!empty($componentIds['com_vel'])) {
+            $velId = $this->createMenuItem($db, [
+                'title'        => 'Vulnerable Extensions List',
+                'alias'        => 'vulnerable-extensions',
+                'path'         => 'vulnerable-extensions',
+                'link'         => 'index.php?option=com_vel&view=advisories',
+                'component_id' => $componentIds['com_vel'],
+            ], 1, $messages);
+
+            $this->createMenuItem($db, [
+                'title'        => 'Report a Vulnerability',
+                'alias'        => 'report',
+                'path'         => 'vulnerable-extensions/report',
+                'link'         => 'index.php?option=com_vel&view=report',
+                'component_id' => $componentIds['com_vel'],
+            ], $velId, $messages);
+
+            $this->createMenuItem($db, [
+                'title'        => 'Submit a Fix Notice',
+                'alias'        => 'fixnotice',
+                'path'         => 'vulnerable-extensions/fixnotice',
+                'link'         => 'index.php?option=com_vel&view=fixnotice',
+                'component_id' => $componentIds['com_vel'],
+            ], $velId, $messages);
+        }
 
         // --- Search / Login / Register / New Extension / Dashboard ----------------------
         $this->createMenuItem($db, [

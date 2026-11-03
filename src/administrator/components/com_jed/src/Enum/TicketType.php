@@ -44,4 +44,10 @@ enum TicketType: int
     // two things is worse than a gap in the numbering, and here the old meaning was a *VEL*
     // report, which this deliberately is not.
     case Abandonware         = 10;
+    // The VEL's ticket for the JED team (VEL2-PRD §6.9.2): "a published advisory names this
+    // listing; block it or confirm the fixed version is listed". `linked_item_id` is the
+    // **advisory** in com_vel's tables. A new value, not 4/5/6: those were the old com_vel's
+    // report types and stay retired for the reason given above. The ticket carries public
+    // information only - nothing confidential ever crosses from com_vel into this queue.
+    case Vulnerability       = 11;
 }

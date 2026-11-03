@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field
+                name="search"
+                type="text"
+                label="JSEARCH_FILTER"
+                hint="COM_VEL_ADVISORIES_SEARCH_HINT"
+        />
+
+        <!-- Defaults to "working" - draft and ready - because that is the morning's question. -->
+        <field
+                name="state"
+                type="list"
+                label="COM_VEL_FILTER_STATE"
+                default=""
+                onchange="this.form.submit();"
+        >
+            <option value="">COM_VEL_FILTER_STATE_ALL</option>
+            <option value="working">COM_VEL_FILTER_STATE_WORKING</option>
+            <option value="draft">COM_VEL_STATE_DRAFT</option>
+            <option value="ready">COM_VEL_STATE_READY</option>
+            <option value="published">COM_VEL_STATE_PUBLISHED</option>
+            <option value="retired">COM_VEL_STATE_RETIRED</option>
+        </field>
+
+        <field
+                name="status"
+                type="list"
+                label="COM_VEL_FILTER_STATUS"
+                onchange="this.form.submit();"
+        >
+            <option value="">COM_VEL_FILTER_STATUS_ALL</option>
+            <option value="live">COM_VEL_STATUS_LIVE</option>
+            <option value="patched">COM_VEL_STATUS_PATCHED</option>
+            <option value="abandoned">COM_VEL_STATUS_ABANDONED</option>
+        </field>
+
+        <field
+                name="severity"
+                type="list"
+                label="COM_VEL_FILTER_SEVERITY"
+                onchange="this.form.submit();"
+        >
+            <option value="">COM_VEL_FILTER_SEVERITY_ALL</option>
+            <option value="critical">COM_VEL_SEVERITY_CRITICAL</option>
+            <option value="high">COM_VEL_SEVERITY_HIGH</option>
+            <option value="medium">COM_VEL_SEVERITY_MEDIUM</option>
+            <option value="low">COM_VEL_SEVERITY_LOW</option>
+            <option value="none">COM_VEL_SEVERITY_NONE</option>
+            <option value="unset">COM_VEL_FILTER_SEVERITY_UNSET</option>
+        </field>
+
+        <field
+                name="cve"
+                type="list"
+                label="COM_VEL_FILTER_CVE"
+                onchange="this.form.submit();"
+        >
+            <option value="">COM_VEL_FILTER_CVE_ANY</option>
+            <option value="yes">COM_VEL_FILTER_CVE_YES</option>
+            <option value="no">COM_VEL_FILTER_CVE_NO</option>
+        </field>
+
+        <field
+                name="source"
+                type="list"
+                label="COM_VEL_FILTER_SOURCE"
+                onchange="this.form.submit();"
+        >
+            <option value="">COM_VEL_FILTER_SOURCE_ALL</option>
+            <option value="manual">COM_VEL_SOURCE_MANUAL</option>
+            <option value="report">COM_VEL_SOURCE_REPORT</option>
+            <option value="cna">COM_VEL_SOURCE_CNA</option>
+            <option value="nvd">COM_VEL_SOURCE_NVD</option>
+            <option value="legacy">COM_VEL_SOURCE_LEGACY</option>
+        </field>
+
+        <field
+                name="assigned"
+                type="list"
+                label="COM_VEL_FILTER_ASSIGNED"
+                onchange="this.form.submit();"
+        >
+            <option value="">COM_VEL_FILTER_ASSIGNED_ANY</option>
+            <option value="me">COM_VEL_FILTER_ASSIGNED_ME</option>
+            <option value="none">COM_VEL_FILTER_ASSIGNED_NONE</option>
+        </field>
+    </fields>
+
+    <fields name="list">
+        <field
+                name="fullordering"
+                type="list"
+                label="JGLOBAL_SORT_BY"
+                default="a.modified DESC"
+                onchange="this.form.submit();"
+        >
+            <option value="a.modified DESC">COM_VEL_SORT_MODIFIED_DESC</option>
+            <option value="a.modified ASC">COM_VEL_SORT_MODIFIED_ASC</option>
+            <option value="a.date_published DESC">COM_VEL_SORT_PUBLISHED_DESC</option>
+            <option value="a.date_published ASC">COM_VEL_SORT_PUBLISHED_ASC</option>
+            <option value="a.title ASC">JGLOBAL_TITLE_ASC</option>
+            <option value="a.title DESC">JGLOBAL_TITLE_DESC</option>
+            <option value="a.cvss_score DESC">COM_VEL_SORT_SCORE_DESC</option>
+            <option value="a.cvss_score ASC">COM_VEL_SORT_SCORE_ASC</option>
+            <option value="a.state ASC">COM_VEL_SORT_STATE_ASC</option>
+            <option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
+            <option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
+        </field>
+
+        <field
+                name="limit"
+                type="limitbox"
+                label="JGLOBAL_LIST_LIMIT"
+                default="25"
+                onchange="this.form.submit();"
+        />
+    </fields>
+</form>

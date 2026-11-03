@@ -130,6 +130,10 @@ class Com_JedInstallerScript
             // whose owner has been erased would otherwise stay online with nobody answerable for
             // it. No mail template - there is by definition nobody left to write to.
             'PV1' => ['No owner - the previous owner withdrew their account', null],
+            // The VEL's reason (VEL2-PRD §6.9.2, D-10): a published, unpatched advisory names the
+            // listing. Requested by com_vel through a ticket, decided and applied by the JED team
+            // - never by the VEL itself.
+            'VL1' => ['Listed on the Vulnerable Extension List', 'com_jed.extension_vl1_vulnerable'],
         ];
 
         $db       = Factory::getContainer()->get(DatabaseInterface::class);
@@ -527,6 +531,15 @@ HTML,
 <p><strong>Reason:</strong></p>
 <p>{REASONNOTES}</p>
 <p>This is a notification, not a request - the change has already been made. If you think it was a mistake, reply to this mail.</p>
+HTML,
+            ],
+            'com_jed.extension_vl1_vulnerable' => [
+                'subject' => '{EXTENSIONNAME} has been unpublished: security advisory',
+                'body'    => <<<'HTML'
+<p><strong>{EXTENSIONNAME}</strong> has been taken offline because the Joomla Vulnerable Extension List has published a security advisory about it and no fixed version is available.</p>
+<p><strong>Reason ({REASONCODE}):</strong></p>
+<p>{REASONNOTES}</p>
+<p>Release a fixed version, submit a fix notice at https://extensions.joomla.org/vulnerable-extensions/fixnotice, and the listing will be restored once the VEL team has confirmed the fix.</p>
 HTML,
             ],
             'com_jed.review_report_received' => [

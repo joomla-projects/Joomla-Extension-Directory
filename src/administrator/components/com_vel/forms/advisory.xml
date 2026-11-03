@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The advisory editor (VEL2-PRD §6.3.2). Kept lean on purpose (brief §3): the editor enters
+    what only a person knows, and the CVE JSON is derived from it at export time.
+
+    Absent on purpose: `state`, `date_reserved`, `date_published`, `date_updated`, `cve_state`,
+    `published_json`, `jed_ticket_id`, `abandonware_case_id`. They carry the process's guarantees
+    and are written only by VelService; AdvisoryModel::save() strips them from any post that
+    carries them anyway. They are shown read-only on the CVE tab from the item, not the form.
+
+    The repeatable structures are subforms. They are normalised into the child tables on save and
+    re-hydrated on load - nothing structured is stored as JSON on the advisory row, because the
+    public filters and the check API query by product, element and version.
+-->
+<form addfieldprefix="Jed\Component\Vel\Administrator\Field">
+    <fieldset name="advisory" label="COM_VEL_TAB_ADVISORY">
+        <field name="id" type="number" label="JGLOBAL_FIELD_ID_LABEL" default="0" class="readonly" readonly="true"/>
+
+        <field
+                name="title"
+                type="text"
+                label="JGLOBAL_TITLE"
+                description="COM_VEL_FIELD_TITLE_DESC"
+                required="true"
+                maxlength="255"
+                filter="string"
+        />
+
+        <field
+                name="alias"
+                type="text"
+                label="JFIELD_ALIAS_LABEL"
+                description="COM_VEL_FIELD_ALIAS_DESC"
+                maxlength="255"
+                hint="JFIELD_ALIAS_PLACEHOLDER"
+        />
+
+        <field
+                name="status"
+                type="list"
+                label="COM_VEL_FIELD_STATUS_LABEL"
+                description="COM_VEL_FIELD_STATUS_DESC"
+                default="live"
+        >
+            <option value="live">COM_VEL_STATUS_LIVE</option>
+            <option value="patched">COM_VEL_STATUS_PATCHED</option>
+            <option value="abandoned">COM_VEL_STATUS_ABANDONED</option>
+        </field>
+
+        <field
+                name="status_override"
+                type="radio"
+                label="COM_VEL_FIELD_STATUS_OVERRIDE_LABEL"
+                description="COM_VEL_FIELD_STATUS_OVERRIDE_DESC"
+                layout="joomla.form.field.radio.switcher"
+                default="0"
+                filter="integer"
+        >
+            <option value="0">COM_VEL_FIELD_STATUS_OVERRIDE_DERIVED</option>
+            <option value="1">COM_VEL_FIELD_STATUS_OVERRIDE_PINNED</option>
+        </field>
+
+        <field
+                name="description"
+                type="editor"
+                label="COM_VEL_FIELD_DESCRIPTION_LABEL"
+                description="COM_VEL_FIELD_DESCRIPTION_DESC"
+                filter="JComponentHelper::filterText"
+                buttons="true"
+                hide="readmore,pagebreak,module,menu,contact,fields,article"
+        />
+
+        <field
+                name="solution"
+                type="textarea"
+                label="COM_VEL_FIELD_SOLUTION_LABEL"
+                description="COM_VEL_FIELD_SOLUTION_DESC"
+                rows="3"
+                filter="string"
+        />
+
+        <field
+                name="workaround"
+                type="textarea"
+                label="COM_VEL_FIELD_WORKAROUND_LABEL"
+                description="COM_VEL_FIELD_WORKAROUND_DESC"
+                rows="3"
+                filter="string"
+        />
+
+        <field
+                name="exploited"
+                type="list"
+                label="COM_VEL_FIELD_EXPLOITED_LABEL"
+                description="COM_VEL_FIELD_EXPLOITED_DESC"
+                default="unknown"
+        >
+            <option value="unknown">COM_VEL_EXPLOITED_UNKNOWN</option>
+            <option value="no">COM_VEL_EXPLOITED_NO</option>
+            <option value="yes">COM_VEL_EXPLOITED_YES</option>
+        </field>
+
+        <field
+                name="discovery"
+                type="list"
+                label="COM_VEL_FIELD_DISCOVERY_LABEL"
+                description="COM_VEL_FIELD_DISCOVERY_DESC"
+                default="UNKNOWN"
+        >
+            <option value="UNKNOWN">COM_VEL_DISCOVERY_UNKNOWN</option>
+            <option value="EXTERNAL">COM_VEL_DISCOVERY_EXTERNAL</option>
+            <option value="INTERNAL">COM_VEL_DISCOVERY_INTERNAL</option>
+            <option value="USER">COM_VEL_DISCOVERY_USER</option>
+        </field>
+
+        <field
+                name="assigned_to"
+                type="user"
+                label="COM_VEL_FIELD_ASSIGNED_TO_LABEL"
+                description="COM_VEL_FIELD_ASSIGNED_TO_DESC"
+        />
+    </fieldset>
+
+    <fieldset name="dates" label="COM_VEL_TAB_DATES">
+        <!--
+            The dates a person knows. The three the brief says editors must never type -
+            reserved, published, updated - are not here; see the file comment.
+        -->
+        <field
+                name="date_reported"
+                type="calendar"
+                label="COM_VEL_FIELD_DATE_REPORTED_LABEL"
+                description="COM_VEL_FIELD_DATE_REPORTED_DESC"
+                translateformat="true"
+                showtime="true"
+                filter="user_utc"
+        />
+
+        <field
+                name="date_vendor_notified"
+                type="calendar"
+                label="COM_VEL_FIELD_DATE_VENDOR_NOTIFIED_LABEL"
+                description="COM_VEL_FIELD_DATE_VENDOR_NOTIFIED_DESC"
+                translateformat="true"
+                showtime="true"
+                filter="user_utc"
+        />
+
+        <field
+                name="date_public"
+                type="calendar"
+                label="COM_VEL_FIELD_DATE_PUBLIC_LABEL"
+                description="COM_VEL_FIELD_DATE_PUBLIC_DESC"
+                translateformat="true"
+                showtime="true"
+                filter="user_utc"
+        />
+
+        <field
+                name="date_fixed"
+                type="calendar"
+                label="COM_VEL_FIELD_DATE_FIXED_LABEL"
+                description="COM_VEL_FIELD_DATE_FIXED_DESC"
+                translateformat="true"
+                showtime="true"
+                filter="user_utc"
+        />
+    </fieldset>
+
+    <fieldset name="products" label="COM_VEL_TAB_PRODUCTS">
+        <field
+                name="products"
+                type="subform"
+                label="COM_VEL_FIELD_PRODUCTS_LABEL"
+                description="COM_VEL_FIELD_PRODUCTS_DESC"
+                formsource="administrator/components/com_vel/forms/product.xml"
+                multiple="true"
+                layout="joomla.form.field.subform.repeatable"
+                min="0"
+                max="50"
+                buttons="add,remove,move"
+                groupByFieldset="true"
+        />
+    </fieldset>
+
+    <fieldset name="classification" label="COM_VEL_TAB_CLASSIFICATION">
+        <field
+                name="cwes"
+                type="subform"
+                label="COM_VEL_FIELD_CWES_LABEL"
+                description="COM_VEL_FIELD_CWES_DESC"
+                formsource="administrator/components/com_vel/forms/cwe.xml"
+                multiple="true"
+                layout="joomla.form.field.subform.repeatable-table"
+                min="0"
+                max="10"
+                buttons="add,remove,move"
+        />
+
+        <field
+                name="cvss_vector"
+                type="text"
+                label="COM_VEL_FIELD_CVSS_VECTOR_LABEL"
+                description="COM_VEL_FIELD_CVSS_VECTOR_DESC"
+                maxlength="160"
+                filter="string"
+                hint="CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+                class="font-monospace"
+        />
+
+        <field
+                name="cvss_score"
+                type="number"
+                label="COM_VEL_FIELD_CVSS_SCORE_LABEL"
+                description="COM_VEL_FIELD_CVSS_SCORE_DESC"
+                min="0"
+                max="10"
+                step="0.1"
+                filter="float"
+        />
+
+        <field
+                name="severity"
+                type="list"
+                label="COM_VEL_FIELD_SEVERITY_LABEL"
+                description="COM_VEL_FIELD_SEVERITY_DESC"
+        >
+            <option value="">COM_VEL_FIELD_SEVERITY_FROM_CVSS</option>
+            <option value="none">COM_VEL_SEVERITY_NONE</option>
+            <option value="low">COM_VEL_SEVERITY_LOW</option>
+            <option value="medium">COM_VEL_SEVERITY_MEDIUM</option>
+            <option value="high">COM_VEL_SEVERITY_HIGH</option>
+            <option value="critical">COM_VEL_SEVERITY_CRITICAL</option>
+        </field>
+
+        <field
+                name="severity_reason"
+                type="text"
+                label="COM_VEL_FIELD_SEVERITY_REASON_LABEL"
+                description="COM_VEL_FIELD_SEVERITY_REASON_DESC"
+                maxlength="255"
+                filter="string"
+                showon="severity!:"
+        />
+    </fieldset>
+
+    <fieldset name="references" label="COM_VEL_TAB_REFERENCES">
+        <field
+                name="references"
+                type="subform"
+                label="COM_VEL_FIELD_REFERENCES_LABEL"
+                description="COM_VEL_FIELD_REFERENCES_DESC"
+                formsource="administrator/components/com_vel/forms/reference.xml"
+                multiple="true"
+                layout="joomla.form.field.subform.repeatable-table"
+                min="0"
+                max="50"
+                buttons="add,remove,move"
+        />
+    </fieldset>
+
+    <fieldset name="credits" label="COM_VEL_TAB_CREDITS">
+        <field
+                name="credits"
+                type="subform"
+                label="COM_VEL_FIELD_CREDITS_LABEL"
+                description="COM_VEL_FIELD_CREDITS_DESC"
+                formsource="administrator/components/com_vel/forms/credit.xml"
+                multiple="true"
+                layout="joomla.form.field.subform.repeatable-table"
+                min="0"
+                max="20"
+                buttons="add,remove,move"
+        />
+    </fieldset>
+
+    <fieldset name="notes" label="COM_VEL_TAB_NOTES">
+        <field
+                name="external_ticket_url"
+                type="url"
+                label="COM_VEL_FIELD_EXTERNAL_TICKET_URL_LABEL"
+                description="COM_VEL_FIELD_EXTERNAL_TICKET_URL_DESC"
+                maxlength="255"
+                filter="url"
+                validate="url"
+        />
+
+        <!-- Never public. -->
+        <field
+                name="internal_notes"
+                type="textarea"
+                label="COM_VEL_FIELD_INTERNAL_NOTES_LABEL"
+                description="COM_VEL_FIELD_INTERNAL_NOTES_DESC"
+                rows="10"
+                filter="safehtml"
+        />
+    </fieldset>
+
+    <fieldset name="hidden">
+        <field name="state" type="hidden" filter="unset"/>
+        <field name="source" type="hidden" filter="unset"/>
+        <field name="checked_out" type="hidden" filter="unset"/>
+        <field name="checked_out_time" type="hidden" filter="unset"/>
+    </fieldset>
+</form>

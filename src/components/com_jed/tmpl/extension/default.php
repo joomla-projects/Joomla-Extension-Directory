@@ -68,6 +68,13 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
 <?php endif; ?>
 <div class="jed-cards-wrapper mb-4">
     <article class="container mb-5">
+        <?php
+        // The VEL's warning while a published advisory names this listing (VEL2-PRD §6.9.1).
+        // Guarded on the class so a JED without com_vel renders nothing here.
+        if (class_exists('\\Jed\\Component\\Vel\\Site\\Helper\\VelBadge')) {
+            echo \Jed\Component\Vel\Site\Helper\VelBadge::render((int) $item->id);
+        }
+        ?>
         <header class="row gap-2">
             <div class="col d-flex flex-column gap-2 mb-3">
                 <h2 class="fs-1 m-0 d-flex flex-row gap-2 align-items-center">
