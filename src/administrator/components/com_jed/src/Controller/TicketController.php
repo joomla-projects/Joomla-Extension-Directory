@@ -162,7 +162,7 @@ class TicketController extends FormController
         if ($saved) {
             $app->enqueueMessage(Text::_('COM_JED_TICKET_INTERNAL_NOTE_SAVED'));
         } else {
-            $app->enqueueMessage($model->getError() ?: Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+            $app->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
         }
 
         $this->setRedirect($redirect);

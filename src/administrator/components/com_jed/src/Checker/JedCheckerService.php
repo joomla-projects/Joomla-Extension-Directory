@@ -19,7 +19,7 @@ namespace Jed\Component\Jed\Administrator\Checker;
 use Joomla\Archive\Archive;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Http\HttpFactory;
+use Joomla\Http\HttpFactory;
 use Joomla\CMS\Language\Text;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;

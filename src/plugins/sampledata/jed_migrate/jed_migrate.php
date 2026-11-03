@@ -836,7 +836,7 @@ class PlgSampledataJed_Migrate extends CMSPlugin
             if (!$table->rebuild()) {
                 return Text::sprintf(
                     'PLG_SAMPLEDATA_JED_MIGRATE_ERROR_CATEGORY_REBUILD',
-                    $table->getError() ?: 'unknown error'
+                    'unknown error'
                 );
             }
         } catch (\Throwable $e) {
@@ -967,7 +967,7 @@ class PlgSampledataJed_Migrate extends CMSPlugin
             if (!$table->rebuild()) {
                 return Text::sprintf(
                     'PLG_SAMPLEDATA_JED_MIGRATE_ERROR_TAG_REBUILD',
-                    $table->getError() ?: 'unknown error'
+                    'unknown error'
                 );
             }
         } catch (\Throwable $e) {

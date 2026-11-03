@@ -1,7 +1,7 @@
 # VEL 2 — implementation notes
 
 `com_vel` is the Vulnerable Extension List rebuilt as its own component inside `pkg_jed`
-(see `VEL2-PRD.md` at the repository root for the requirements and decisions D-1…D-10).
+(see `VEL2-PRD.md` for the requirements and decisions D-1…D-10).
 
 | Document | What it covers |
 |---|---|

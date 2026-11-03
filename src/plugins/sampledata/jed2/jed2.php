@@ -90,7 +90,7 @@ class PlgSampledataJed2 extends CMSPlugin
             return;
         }
 
-        $db = Factory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 
         $componentIds = [
             'com_jed'         => $this->getComponentId($db, 'com_jed'),
