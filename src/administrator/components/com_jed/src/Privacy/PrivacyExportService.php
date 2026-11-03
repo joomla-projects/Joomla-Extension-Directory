@@ -94,7 +94,7 @@ final class PrivacyExportService
             'jed_review_bans'         => $this->reviewBans($userId),
             'jed_ownership_transfers' => $this->transfers($userId),
             'jed_url_checks'          => $this->urlChecks($userId),
-        ]);
+        ] + (new TicketPrivacyService($this->db))->collect($userId));
     }
 
     /**

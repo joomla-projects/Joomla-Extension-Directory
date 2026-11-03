@@ -46,6 +46,10 @@
                 COM_JED_TITLE_REVIEWS
             </menu>
 
+            <menu view="tickets">
+                COM_JED_TITLE_TICKETS
+            </menu>
+
             <menu view="useraccess">
                 COM_JED_TITLE_USERACCESS
             </menu>

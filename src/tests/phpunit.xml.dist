@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Unit tests for the parts of the package that need no Joomla application: the VEL's CVSS
+    scoring, version matching, CVE record builder/validator, feed mappers and mail parsing.
+
+    Run from the repository root: vendor/bin/phpunit -c tests/phpunit.xml.dist
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         bootstrap="unit/bootstrap.php"
+         colors="true"
+         failOnWarning="true">
+    <testsuites>
+        <testsuite name="vel">
+            <directory>unit/Vel</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

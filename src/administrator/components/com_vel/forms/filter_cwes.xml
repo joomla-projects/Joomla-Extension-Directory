@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field name="search" type="text" label="JSEARCH_FILTER" hint="COM_VEL_CWES_SEARCH_HINT"/>
+    </fields>
+    <fields name="list">
+        <field name="limit" type="limitbox" label="JGLOBAL_LIST_LIMIT" default="50" onchange="this.form.submit();"/>
+    </fields>
+</form>

@@ -23,9 +23,9 @@ $this->addScriptOptions(
     [
         'settings' => [
             'skipTo' => [
-                'attachElement' => '.navigation'
-            ]
-        ]
+                'attachElement' => '.navigation',
+            ],
+        ],
     ]
 );
 
@@ -52,7 +52,7 @@ $wa->useStyle('template.joomla.custom.' . ($this->direction === 'rtl' ? 'rtl' : 
 // Override 'template.active' asset to set correct ltr/rtl dependency and with CDN Dependency
 $wa->registerStyle('template.active', '', [], [], [((!JDEBUG && $this->params->get('useCdn', '1')) ? 'cdn.' : '') . 'template.joomla.' . ($this->direction === 'rtl' ? 'rtl' : 'ltr')]);
 
-$fontName = 'Open Sans';
+$fontName        = 'Open Sans';
 $escapedFontName = str_replace(' ', '+', $fontName);
 
 $this->getPreloadManager()->preconnect('https://fonts.googleapis.com/', ['crossorigin' => 'anonymous']);
@@ -71,18 +71,15 @@ $rightColumnWidth = $this->params->get('rightColumnWidth', 3);
 $span = 'col-md-12';
 
 // Width if both columns are displayed
-if ($this->countModules($rightPosition) && $this->countModules($leftPosition))
-{
+if ($this->countModules($rightPosition) && $this->countModules($leftPosition)) {
     $span  = 'col-md-' . (12 - $leftColumnWidth - $rightColumnWidth);
 }
 // Width if right column is displayed only
-elseif ($this->countModules($rightPosition) && !$this->countModules($leftPosition))
-{
+elseif ($this->countModules($rightPosition) && !$this->countModules($leftPosition)) {
     $span  = 'col-md-' . (12 - $rightColumnWidth);
 }
 // Width if left column is displayed only
-elseif (!$this->countModules($rightPosition) && $this->countModules($leftPosition))
-{
+elseif (!$this->countModules($rightPosition) && $this->countModules($leftPosition)) {
     $span  = 'col-md-' . (12 - $leftColumnWidth);
 }
 
@@ -104,43 +101,35 @@ $this->addHeadLink("$templateBaseUrl/images/apple-touch-icon.png", 'apple-touch-
 
 // Check if social metadata was set by content otherwise add template defaults
 // Note: Even though Open Graph may support multiple tags, Joomla doesn't, so we need to check them anyway or go to custom tags
-if (!$this->getMetaData('twitter:card'))
-{
+if (!$this->getMetaData('twitter:card')) {
     $this->setMetaData('twitter:card', 'summary_large_image');
 }
 
-if (!$this->getMetaData('twitter:site'))
-{
+if (!$this->getMetaData('twitter:site')) {
     $this->setMetaData('twitter:site', '@joomla');
 }
 
-if (!$this->getMetaData('og:site_name', 'property'))
-{
+if (!$this->getMetaData('og:site_name', 'property')) {
     $this->setMetaData('og:site_name', $sitename, 'property');
 }
 
-if (!$this->getMetaData('og:image', 'property'))
-{
+if (!$this->getMetaData('og:image', 'property')) {
     $this->setMetaData('og:image', $this->params->get('ogImage', 'https://cdn.joomla.org/images/joomla-org-og.jpg'), 'property');
 }
 
-if (!$this->getMetaData('twitter:description'))
-{
+if (!$this->getMetaData('twitter:description')) {
     $this->setMetaData('twitter:description', $this->params->get('twitterCardDescription', 'The Platform Millions of Websites Are Built On'));
 }
 
-if (!$this->getMetaData('twitter:image'))
-{
+if (!$this->getMetaData('twitter:image')) {
     $this->setMetaData('twitter:image', $this->params->get('twitterCardImage', 'https://cdn.joomla.org/images/joomla-twitter-card.jpg'));
 }
 
-if (!$this->getMetaData('twitter:title'))
-{
+if (!$this->getMetaData('twitter:title')) {
     $this->setMetaData('twitter:title', $this->params->get('twitterCardTitle', $sitename));
 }
 
-if (!$this->getMetaData('referrer'))
-{
+if (!$this->getMetaData('referrer')) {
     $this->setMetaData('referrer', 'unsafe-url');
 }
 
@@ -297,15 +286,10 @@ if ($gtmId) : ?>
                             Debug <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="index.php?option=com_jed&view=velliveitems">Live VEL Items</a></li>
-                            <li><a class="dropdown-item" href="index.php?option=com_jed&view=velpatcheditems">Patched VEL Items List</a></li>
-                            <li><a class="dropdown-item" href="index.php?option=com_jed&view=velreportform">Report a Vulnerable Item</a></li>
-                            <li><a class="dropdown-item" href="index.php?option=com_jed&view=veldeveloperupdateform">Show VEL Developer Update Form</a></li>
-                            <li><a class="dropdown-item" href="index.php?option=com_jed&view=velabandonedreportform">Report an Abandoned Item</a></li>
-                            <li><a class="dropdown-item" href="index.php?option=com_jed&view=velabandoneditems">Abandoned Items </a></li>
-                            <li><a class="dropdown-item" href="index.php?option=com_jed&view=velreports">My Reported Vulnerable Items</a></li>
-                            <li><a class="dropdown-item" href="index.php?option=com_jed&view=veldeveloperupdates">My Developer Updates</a></li>
-                            <li><a class="dropdown-item" href="index.php?option=com_jed&view=velabandonedreports">My Reported Abandoned Items</a></li>
+                            <li><a class="dropdown-item" href="index.php?option=com_vel&view=advisories">Live VEL Items</a></li>
+                            <li><a class="dropdown-item" href="index.php?option=com_vel&view=report">VEL Report a Vulnerability</a></li>
+                            <li><a class="dropdown-item" href="index.php?option=com_vel&view=fixnotice">VEL Fix Notice</a></li>
+                            <li><a class="dropdown-item" href="index.php?option=com_vel&view=advisory">VEL Single Advisory</a></li>
                             <li><a class="dropdown-item" href="index.php?option=com_jed&view=tickets">My Tickets</a></li>
                             <li><a class="dropdown-item" href="index.php?option=com_jed&view=categories&id=0">Show Extension Categories</a></li>
                             <li><a class="dropdown-item" href="index.php?option=com_jed&view=extensionform">Submit Extension</a></li>

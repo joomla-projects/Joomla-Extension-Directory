@@ -12,7 +12,7 @@
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Site\Helper\JedHelper;
-use Jed\Component\Tickets\Administrator\Enum\TicketType;
+use Jed\Component\Jed\Administrator\Enum\TicketType;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
@@ -41,7 +41,7 @@ $canRespond = JedHelper::isOwnerOrMaintainer((int) $this->item->extension_id);
 // the review, vr stays the extension so the ticket lands on the right listing.
 $canReport = JedHelper::isLoggedIn() && !$isOwnReview;
 $reportUrl = Route::_(
-    'index.php?option=com_tickets&view=ticketform'
+    'index.php?option=com_jed&view=ticketform'
     . '&litem=' . TicketType::Review->value
     . '&lid=' . (int) $this->item->id
     . '&vr=' . (int) $this->item->extension_id

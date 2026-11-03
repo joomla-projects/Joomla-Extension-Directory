@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <layout title="COM_VEL_MENU_ADVISORIES_TITLE" option="COM_VEL_MENU_ADVISORIES_OPTION">
+        <message>
+            <![CDATA[COM_VEL_MENU_ADVISORIES_DESC]]>
+        </message>
+    </layout>
+    <fields name="params">
+        <fieldset name="basic">
+            <field
+                    name="default_status"
+                    type="list"
+                    label="COM_VEL_MENU_ADVISORIES_PARAM_STATUS"
+                    description="COM_VEL_MENU_ADVISORIES_PARAM_STATUS_DESC"
+                    default="live"
+            >
+                <option value="live">COM_VEL_STATUS_LIVE</option>
+                <option value="patched">COM_VEL_STATUS_PATCHED</option>
+                <option value="abandoned">COM_VEL_STATUS_ABANDONED</option>
+                <option value="all">JALL</option>
+            </field>
+        </fieldset>
+    </fields>
+</metadata>

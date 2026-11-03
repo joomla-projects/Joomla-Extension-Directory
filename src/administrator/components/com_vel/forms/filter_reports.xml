@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field
+                name="search"
+                type="text"
+                label="JSEARCH_FILTER"
+                hint="COM_VEL_REPORTS_SEARCH_HINT"
+        />
+
+        <!-- Defaults to "open": new and triaged. The queue is today's work, not the archive. -->
+        <field
+                name="state"
+                type="list"
+                label="COM_VEL_FILTER_REPORT_STATE"
+                default="open"
+                onchange="this.form.submit();"
+        >
+            <option value="open">COM_VEL_FILTER_REPORT_STATE_OPEN</option>
+            <option value="new">COM_VEL_REPORT_STATE_NEW</option>
+            <option value="triaged">COM_VEL_REPORT_STATE_TRIAGED</option>
+            <option value="verifying">COM_VEL_REPORT_STATE_VERIFYING</option>
+            <option value="accepted">COM_VEL_REPORT_STATE_ACCEPTED</option>
+            <option value="duplicate">COM_VEL_REPORT_STATE_DUPLICATE</option>
+            <option value="rejected">COM_VEL_REPORT_STATE_REJECTED</option>
+            <option value="spam">COM_VEL_REPORT_STATE_SPAM</option>
+            <option value="all">JALL</option>
+        </field>
+
+        <field
+                name="kind"
+                type="list"
+                label="COM_VEL_FILTER_REPORT_KIND"
+                onchange="this.form.submit();"
+        >
+            <option value="">COM_VEL_FILTER_REPORT_KIND_ALL</option>
+            <option value="vulnerability">COM_VEL_REPORT_KIND_VULNERABILITY</option>
+            <option value="fix_notice">COM_VEL_REPORT_KIND_FIX_NOTICE</option>
+        </field>
+
+        <field
+                name="channel"
+                type="list"
+                label="COM_VEL_FILTER_REPORT_CHANNEL"
+                onchange="this.form.submit();"
+        >
+            <option value="">COM_VEL_FILTER_REPORT_CHANNEL_ALL</option>
+            <option value="web">COM_VEL_CHANNEL_WEB</option>
+            <option value="email">COM_VEL_CHANNEL_EMAIL</option>
+            <option value="legacy">COM_VEL_CHANNEL_LEGACY</option>
+        </field>
+    </fields>
+
+    <fields name="list">
+        <field
+                name="fullordering"
+                type="list"
+                label="JGLOBAL_SORT_BY"
+                default="a.created DESC"
+                onchange="this.form.submit();"
+        >
+            <option value="a.created DESC">COM_VEL_SORT_RECEIVED_DESC</option>
+            <option value="a.created ASC">COM_VEL_SORT_RECEIVED_ASC</option>
+            <option value="a.extension_name ASC">COM_VEL_SORT_EXTENSION_ASC</option>
+            <option value="a.state ASC">COM_VEL_SORT_STATE_ASC</option>
+            <option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
+        </field>
+
+        <field
+                name="limit"
+                type="limitbox"
+                label="JGLOBAL_LIST_LIMIT"
+                default="25"
+                onchange="this.form.submit();"
+        />
+    </fields>
+</form>

@@ -96,7 +96,7 @@ final class Jed extends ActionLogPlugin implements SubscriberInterface
         'com_jed.extension'  => 'index.php?option=com_jed&task=extension.edit&id=%d',
         'com_jed.review'     => 'index.php?option=com_jed&task=review.edit&id=%d',
         'com_jed.useraccess' => 'index.php?option=com_users&task=user.edit&id=%d',
-        'com_tickets.ticket' => 'index.php?option=com_tickets&task=ticket.edit&id=%d',
+        'com_jed.ticket'     => 'index.php?option=com_jed&task=ticket.edit&id=%d',
     ];
 
     /**

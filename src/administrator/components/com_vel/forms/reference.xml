@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One reference (brief §3.1.G). -->
+<form addfieldprefix="Jed\Component\Vel\Administrator\Field">
+    <field name="id" type="hidden" filter="integer" default="0"/>
+
+    <field
+            name="url"
+            type="url"
+            label="COM_VEL_FIELD_REFERENCE_URL_LABEL"
+            required="true"
+            maxlength="1024"
+            filter="url"
+            validate="url"
+    />
+
+    <field
+            name="name"
+            type="text"
+            label="COM_VEL_FIELD_REFERENCE_NAME_LABEL"
+            maxlength="255"
+            filter="string"
+    />
+
+    <field
+            name="tags"
+            type="referencetags"
+            label="COM_VEL_FIELD_REFERENCE_TAGS_LABEL"
+            multiple="true"
+            layout="joomla.form.field.list-fancy-select"
+    />
+</form>

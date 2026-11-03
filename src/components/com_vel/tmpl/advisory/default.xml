@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <layout title="COM_VEL_MENU_ADVISORY_TITLE" option="COM_VEL_MENU_ADVISORY_OPTION">
+        <message>
+            <![CDATA[COM_VEL_MENU_ADVISORY_DESC]]>
+        </message>
+    </layout>
+    <fields name="request">
+        <fieldset name="request">
+            <field
+                    name="id"
+                    type="number"
+                    label="COM_VEL_FIELD_ADVISORY_ID_LABEL"
+                    description="COM_VEL_FIELD_ADVISORY_ID_DESC"
+                    required="true"
+                    filter="integer"
+            />
+        </fieldset>
+    </fields>
+</metadata>

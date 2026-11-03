@@ -47,8 +47,8 @@ $childrenLimit = 9;
                         <div class="card-body">
                             <?php
                             $visibleChildren = array_values(array_filter($c->children, fn ($sc) => $sc->numitems > 0));
-                            $shownChildren   = array_slice($visibleChildren, 0, $childrenLimit);
-                            ?>
+                $shownChildren               = array_slice($visibleChildren, 0, $childrenLimit);
+                ?>
                             <ul class="list-group list-group-flush">
                                 <?php foreach ($shownChildren as $sc) : ?>
                                     <li class="list-group-item category_list_jed">

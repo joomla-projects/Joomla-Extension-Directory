@@ -91,7 +91,7 @@ try {
         ->useScript('webcomponent.field-fancy-select')
         ->useScript('webcomponent.field-subform')
         ->useScript('com_jed.extensionUploadAreas')
-        ->useStyle('com_tickets.Tickets')
+        ->useStyle('com_jed.tickets')
         ->useStyle('com_jed.jquery_dataTables');
 } catch (Exception) {
 }
@@ -162,55 +162,55 @@ $this->getDocument()
         <?php
         echo HTMLHelper::_('uitab.startTabSet', 'extensionTab', ['active' => 'general', 'recall' => true, 'breakpoint' => 768]);
 
-        foreach ($this->form->getFieldsets() as $fieldset) :
-            echo HTMLHelper::_('uitab.addTab', 'extensionTab', $fieldset->name, Text::_($fieldset->label));
-            ?>
+foreach ($this->form->getFieldsets() as $fieldset) :
+    echo HTMLHelper::_('uitab.addTab', 'extensionTab', $fieldset->name, Text::_($fieldset->label));
+    ?>
                 <div class="row">
                     <div class="col-12 col-lg-6">
                         <?php
-                        if ($fieldset->name === 'media' || $fieldset->name === 'files') {
-                            // Render the technical subform markup (needed for correct field names/ids and the
-                            // joomla-field-subform web component), but keep it out of view: the custom gallery
-                            // below is the actual user-facing UI for images/files.
-                            echo '<div class="jed-upload-subform-hidden">';
-                            echo $this->form->renderFieldset($fieldset->name);
-                            echo '</div>';
-                        } else {
-                            echo $this->form->renderFieldset($fieldset->name);
-                        }
-                        ?>
+                if ($fieldset->name === 'media' || $fieldset->name === 'files') {
+                    // Render the technical subform markup (needed for correct field names/ids and the
+                    // joomla-field-subform web component), but keep it out of view: the custom gallery
+                    // below is the actual user-facing UI for images/files.
+                    echo '<div class="jed-upload-subform-hidden">';
+                    echo $this->form->renderFieldset($fieldset->name);
+                    echo '</div>';
+                } else {
+                    echo $this->form->renderFieldset($fieldset->name);
+                }
+    ?>
                     </div>
                 </div>
                 <?php if ($fieldset->name === 'media') : ?>
                     <div class="row">
                         <div class="col-12">
                             <?php
-                            jedRenderExtensionUploadArea(
-                                $this,
-                                Text::_('COM_JED_EXTENSION_IMAGES_LABEL'),
-                                $this->images,
-                                'image',
-                                'jform[images]',
-                                'jed-images-dropzone',
-                                'jform[deleteImages]'
-                            );
-                            ?>
+        jedRenderExtensionUploadArea(
+            $this,
+            Text::_('COM_JED_EXTENSION_IMAGES_LABEL'),
+            $this->images,
+            'image',
+            'jform[images]',
+            'jed-images-dropzone',
+            'jform[deleteImages]'
+        );
+                    ?>
                         </div>
                     </div>
                 <?php elseif ($fieldset->name === 'files') : ?>
                     <div class="row">
                         <div class="col-12">
                             <?php
-                            jedRenderExtensionUploadArea(
-                                $this,
-                                Text::_('COM_JED_EXTENSION_FILES_LABEL'),
-                                $this->files,
-                                'file',
-                                'jform[files]',
-                                'jed-files-dropzone',
-                                'jform[deleteFiles]'
-                            );
-                            ?>
+                    jedRenderExtensionUploadArea(
+                        $this,
+                        Text::_('COM_JED_EXTENSION_FILES_LABEL'),
+                        $this->files,
+                        'file',
+                        'jform[files]',
+                        'jed-files-dropzone',
+                        'jform[deleteFiles]'
+                    );
+                    ?>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -220,7 +220,7 @@ $this->getDocument()
 
         <?php
         echo HTMLHelper::_('uitab.addTab', 'extensionTab', 'viewextensionreviews', Text::_('COM_JED_EXTENSION_REVIEWS_TAB_LABEL', true));
-        ?>
+?>
 
             <div class="container">
                 <div class="row">

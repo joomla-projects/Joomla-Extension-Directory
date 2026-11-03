@@ -488,22 +488,22 @@ class JedHelper
         $count    = (int) ($item->score_count ?? 0);
 
         return [
-            'id'    => (int) ($item->id ?? 0),
-            'link'  => $link ?? Route::_(
+            'id'   => (int) ($item->id ?? 0),
+            'link' => $link ?? Route::_(
                 'index.php?option=com_jed&view=extension&catid=' . $item->catid
                 . '&id=' . $item->id . ':' . $item->alias
             ),
             'title' => (string) ($item->name ?? ''),
             // Already run through formatImage() by the models that have one; a raw filename is
             // resolved here so a caller cannot end up with a broken <img>.
-            'image' => self::cardImage($item),
+            'image'       => self::cardImage($item),
             'developer'   => (string) ($item->developer ?? $item->created_by_name ?? ''),
             'description' => self::cardText($item->intro ?? null, $item->description ?? null),
 
             // 1. Rating, with the count beside it. 4.6 from two reviews is not 4.6 from two
             //    hundred, and a star row on its own does not say which it is.
-            'score'        => (float) ($item->score_overall ?? 0),
-            'reviewCount'  => $count,
+            'score'       => (float) ($item->score_overall ?? 0),
+            'reviewCount' => $count,
 
             // 2. Compatibility - the study's single most important decision factor.
             'compatibility' => $versions,
@@ -521,7 +521,7 @@ class JedHelper
             'modified' => (string) ($item->modified ?? ''),
             'created'  => (string) ($item->created ?? ''),
 
-            'category'    => (string) ($item->category_title ?? ''),
+            'category' => (string) ($item->category_title ?? ''),
             // Never true from the server: the browse pages must stay one document for every
             // visitor so they can be cached (P1-13). favoritestate.js fills the icons in.
             'isFavorited' => false,
@@ -684,11 +684,11 @@ class JedHelper
         }
 
         $relative = match (true) {
-            $days === 0  => Text::_('COM_JED_CARD_UPDATED_TODAY'),
-            $days === 1  => Text::_('COM_JED_CARD_UPDATED_YESTERDAY'),
-            $days < 31   => Text::plural('COM_JED_CARD_UPDATED_DAYS', $days),
-            $days < 365  => Text::plural('COM_JED_CARD_UPDATED_MONTHS', (int) round($days / 30.4)),
-            default      => Text::plural('COM_JED_CARD_UPDATED_YEARS', (int) floor($days / 365)),
+            $days === 0 => Text::_('COM_JED_CARD_UPDATED_TODAY'),
+            $days === 1 => Text::_('COM_JED_CARD_UPDATED_YESTERDAY'),
+            $days < 31  => Text::plural('COM_JED_CARD_UPDATED_DAYS', $days),
+            $days < 365 => Text::plural('COM_JED_CARD_UPDATED_MONTHS', (int) round($days / 30.4)),
+            default     => Text::plural('COM_JED_CARD_UPDATED_YEARS', (int) floor($days / 365)),
         };
 
         return [

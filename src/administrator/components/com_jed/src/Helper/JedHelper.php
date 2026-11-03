@@ -49,8 +49,8 @@ class JedHelper extends ContentHelper
      */
     public static function addConfigToolbar(Toolbar $bar, string $caller=''): void
     {
-        if($caller == '') {
-            $bar->linkButton('tickets')->text(Text::_('COM_JED_TITLE_TICKETS'))->url('index.php?option=com_tickets&view=tickets')->icon('fa fa-ticket-alt');
+        if ($caller == '') {
+            $bar->linkButton('tickets')->text(Text::_('COM_JED_TITLE_TICKETS'))->url('index.php?option=com_jed&view=tickets')->icon('fa fa-ticket-alt');
         }
 
         $bar->linkButton('vulnerable')->text('Vulnerable Items')->url('index.php?option=com_jed&view=velvulnerableitems')->icon('fa fa-bug');
@@ -60,7 +60,7 @@ class JedHelper extends ContentHelper
         /*
          * Only for finally moving live to test
          */
-        if($caller == '') {
+        if ($caller == '') {
             $bar->linkButton('copyjed3data')->text('COM_JED_TITLE_COPY_JED3_DATA')->icon('fa fa-link')->url('index.php?option=com_jed&view=copyjed3data');
         }
 

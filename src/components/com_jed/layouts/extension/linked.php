@@ -55,7 +55,7 @@ if (!empty($linked->children)) {
         'heading' => Text::_('COM_JED_EXTENSION_LINKED_CHILDREN'),
         'items'   => $linked->children,
         // Only when the list was actually cut short - "see all 4" above four cards is noise.
-        'more'    => $linked->childCount > \count($linked->children) ? (int) $linked->childCount : 0,
+        'more' => $linked->childCount > \count($linked->children) ? (int) $linked->childCount : 0,
     ];
 }
 
@@ -68,7 +68,7 @@ if (!$sections) {
         <h2 class="heading heading--m"><?php echo $section['heading']; ?></h2>
         <ul class="jed-grid jed-grid--1-1-1">
             <?php foreach ($section['items'] as $item) : ?>
-                <?php // One card, one mapping (P1-14). See JedHelper::cardData(). ?>
+                <?php // One card, one mapping (P1-14). See JedHelper::cardData().?>
                 <?php echo LayoutHelper::render('cards.extension', JedHelper::cardData($item)); ?>
             <?php endforeach; ?>
         </ul>

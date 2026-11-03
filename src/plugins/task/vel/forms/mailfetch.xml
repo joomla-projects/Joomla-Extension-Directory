@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+	<fields name="params">
+		<fieldset name="task_params">
+			<field
+				name="batch_size"
+				type="number"
+				label="PLG_TASK_VEL_LABEL_BATCH_SIZE"
+				description="PLG_TASK_VEL_MAILFETCH_BATCH_SIZE_DESC"
+				default="50"
+				min="1"
+				max="500"
+				step="1"
+				filter="int"
+			/>
+		</fieldset>
+	</fields>
+</form>
