@@ -36,7 +36,9 @@ $range = static fn (array $r): string => (string) VersionRange::fromStrings((str
         <span class="font-monospace fs-5"><?php echo $this->escape($item->external_id); ?></span>
         <span class="badge bg-light text-dark"><?php echo Text::_('COM_VEL_FEED_SOURCE_' . strtoupper((string) $item->source)); ?></span>
         <span class="badge bg-info"><?php echo Text::_($this->classification->label()); ?></span>
-        <span class="badge bg-<?php echo match ($this->decision) { FeedDecision::PENDING => 'warning text-dark', FeedDecision::CREATED, FeedDecision::MERGED => 'success', default => 'secondary' }; ?>"><?php echo Text::_($this->decision->label()); ?></span>
+        <span class="badge bg-<?php echo match ($this->decision) {
+            FeedDecision::PENDING => 'warning text-dark', FeedDecision::CREATED, FeedDecision::MERGED => 'success', default => 'secondary'
+        }; ?>"><?php echo Text::_($this->decision->label()); ?></span>
         <?php if (!empty($n['source_url'])) : ?>
             <a class="ms-auto small" href="<?php echo $this->escape($n['source_url']); ?>" target="_blank" rel="noopener"><?php echo Text::_('COM_VEL_FEED_VIEW_SOURCE'); ?></a>
         <?php endif; ?>

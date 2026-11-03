@@ -25,8 +25,8 @@ use Joomla\CMS\Router\Route;
 HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('bootstrap.tab');
 
-$item      = $this->item;
-$status    = $this->status;
+$item       = $this->item;
+$status     = $this->status;
 $hasContact = !empty($item->contact_time);
 
 // The two conditions the mark button needs, kept apart so the reason it is unavailable can be
@@ -152,7 +152,7 @@ $canReachAbandoned = $status->canMoveTo(CaseStatus::ABANDONED);
                      * to be skipped; making it the only thing available at this point is the
                      * cheapest way to make skipping it hard.
                      */
-                    ?>
+?>
                     <?php if ($this->can['contact'] && $status->isOpen() && $status !== CaseStatus::ABANDONED) : ?>
                         <fieldset class="mb-3">
                             <legend class="fs-6"><?php echo Text::_('COM_ABANDONWARE_LEGEND_CONTACT'); ?></legend>

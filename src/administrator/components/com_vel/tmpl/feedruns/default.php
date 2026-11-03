@@ -49,7 +49,9 @@ use Joomla\CMS\Router\Route;
                                 <td class="small"><?php echo $run->window_from ? $this->escape($run->window_from) . ' &rarr; ' . $this->escape($run->window_to) : '&mdash;'; ?></td>
                                 <td class="small"><?php echo Text::sprintf('COM_VEL_FEED_RUN_SUMMARY', (int) $run->items_seen, (int) $run->items_new, (int) $run->items_updated); ?></td>
                                 <td>
-                                    <span class="badge bg-<?php echo match ((string) $run->status) { 'ok' => 'success', 'partial' => 'warning text-dark', 'failed' => 'danger', default => 'secondary' }; ?>"><?php echo Text::_('COM_VEL_FEED_RUN_STATUS_' . strtoupper((string) $run->status)); ?></span>
+                                    <span class="badge bg-<?php echo match ((string) $run->status) {
+                                        'ok' => 'success', 'partial' => 'warning text-dark', 'failed' => 'danger', default => 'secondary'
+                                    }; ?>"><?php echo Text::_('COM_VEL_FEED_RUN_STATUS_' . strtoupper((string) $run->status)); ?></span>
                                     <?php if ($run->message) : ?><div class="small text-muted"><?php echo $this->escape($run->message); ?></div><?php endif; ?>
                                 </td>
                             </tr>

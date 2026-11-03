@@ -121,48 +121,48 @@ if (!$isLoggedIn) {
                 //echo "<pre>";print_r($fieldsets);echo "</pre>";
 
                 $fscount = 0;
-                foreach ($fieldsets as $fs) {
-                    $fscount = $fscount + 1;
-                    if ($fs['title'] <> '') {
-                        if ($fscount > 1) {
-                            echo '</fieldset>';
-                        }
+            foreach ($fieldsets as $fs) {
+                $fscount = $fscount + 1;
+                if ($fs['title'] <> '') {
+                    if ($fscount > 1) {
+                        echo '</fieldset>';
+                    }
 
-                        echo '<fieldset class="ticketform"><legend>' . $fs['title'] . '</legend>';
-                    }
-                    if ($fs['description'] <> '') {
-                        echo $fs['description'];
-                    }
-                    $fields       = $fs['fields'];
-                    $hiddenFields = $fs['hidden'];
-                    foreach ($fields as $field) {
-                        if (in_array($field, $hiddenFields)) {
-                            $this->form->setFieldAttribute($field, 'type', 'hidden');
-                        }
-                        echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
-                    }
+                    echo '<fieldset class="ticketform"><legend>' . $fs['title'] . '</legend>';
                 }
-                ?>
+                if ($fs['description'] <> '') {
+                    echo $fs['description'];
+                }
+                $fields       = $fs['fields'];
+                $hiddenFields = $fs['hidden'];
+                foreach ($fields as $field) {
+                    if (in_array($field, $hiddenFields)) {
+                        $this->form->setFieldAttribute($field, 'type', 'hidden');
+                    }
+                    echo $this->form->renderField($field, null, null, ['class' => 'control-wrapper-' . $field]);
+                }
+            }
+            ?>
                 <div class="control-group">
                     <div class="controls">
 
                         <?php
-                        if ($this->canSave) : ?>
+                    if ($this->canSave) : ?>
                             <button type="submit" class="validate btn btn-primary">
                                 <span class="fas fa-check" aria-hidden="true"></span>
                                     <?php
-                                    echo Text::_('JSUBMIT'); ?>
+                                echo Text::_('JSUBMIT'); ?>
                             </button>
                                 <?php
-                        endif; ?>
+                    endif; ?>
                         <a class="btn btn-danger"
                            href="<?php
-                            echo Route::_('index.php?option=com_jed&task=ticketform.cancel'); ?>"
+                        echo Route::_('index.php?option=com_jed&task=ticketform.cancel'); ?>"
                            title="<?php
-                            echo Text::_('JCANCEL'); ?>">
+                        echo Text::_('JCANCEL'); ?>">
                             <span class="fas fa-times" aria-hidden="true"></span>
                             <?php
-                            echo Text::_('JCANCEL'); ?>
+                        echo Text::_('JCANCEL'); ?>
                         </a>
                     </div>
                 </div>

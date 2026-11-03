@@ -66,8 +66,12 @@ $wa->useScript('table.columns')->useScript('multiselect');
                                 </td>
                                 <th scope="row"><?php echo $this->escape($item->title); ?></th>
                                 <td class="small"><?php echo $this->escape($item->assigner); ?></td>
-                                <td><span class="badge bg-<?php echo match ($classification) { FeedClassification::JOOMLA_CNA => 'primary', FeedClassification::JOOMLA_EXTENSION_OTHER_CNA => 'info', FeedClassification::JOOMLA_CORE => 'secondary', default => 'light text-dark' }; ?>"><?php echo Text::_($classification->label()); ?></span></td>
-                                <td><span class="badge bg-<?php echo match ($decision) { FeedDecision::PENDING => 'warning text-dark', FeedDecision::CREATED, FeedDecision::MERGED => 'success', default => 'secondary' }; ?>"><?php echo Text::_($decision->label()); ?></span></td>
+                                <td><span class="badge bg-<?php echo match ($classification) {
+                                    FeedClassification::JOOMLA_CNA => 'primary', FeedClassification::JOOMLA_EXTENSION_OTHER_CNA => 'info', FeedClassification::JOOMLA_CORE => 'secondary', default => 'light text-dark'
+                                }; ?>"><?php echo Text::_($classification->label()); ?></span></td>
+                                <td><span class="badge bg-<?php echo match ($decision) {
+                                    FeedDecision::PENDING => 'warning text-dark', FeedDecision::CREATED, FeedDecision::MERGED => 'success', default => 'secondary'
+                                }; ?>"><?php echo Text::_($decision->label()); ?></span></td>
                                 <td class="d-none d-md-table-cell small">
                                     <?php if ($item->advisory_id) : ?>
                                         <?php $aState = AdvisoryState::tryFrom((string) $item->advisory_state) ?? AdvisoryState::DRAFT; ?>

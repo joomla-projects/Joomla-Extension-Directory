@@ -129,14 +129,14 @@ $banInForce = $access !== null && (int) $access->banned === 1;
     <?php
     echo HTMLHelper::_('uitab.startTabSet', 'ticketHelpTab', ['active' => 'tickethelp-extensions']);
 
-    // ---- Their listings
-    echo HTMLHelper::_(
-        'uitab.addTab',
-        'ticketHelpTab',
-        'tickethelp-extensions',
-        Text::_('COM_JED_TICKET_HELP_EXTENSIONS') . ' <span class="badge bg-secondary">' . \count($extensions) . '</span>'
-    );
-    ?>
+// ---- Their listings
+echo HTMLHelper::_(
+    'uitab.addTab',
+    'ticketHelpTab',
+    'tickethelp-extensions',
+    Text::_('COM_JED_TICKET_HELP_EXTENSIONS') . ' <span class="badge bg-secondary">' . \count($extensions) . '</span>'
+);
+?>
     <div class="widget">
         <h1><?php echo Text::_('COM_JED_TICKET_HELP_EXTENSIONS'); ?></h1>
         <div class="container">
@@ -183,16 +183,16 @@ $banInForce = $access !== null && (int) $access->banned === 1;
         </div>
     </div>
     <?php
-    echo HTMLHelper::_('uitab.endTab');
+echo HTMLHelper::_('uitab.endTab');
 
-    // ---- Their reviews
-    echo HTMLHelper::_(
-        'uitab.addTab',
-        'ticketHelpTab',
-        'tickethelp-reviews',
-        Text::_('COM_JED_TITLE_REVIEWS') . ' <span class="badge bg-secondary">' . \count($reviews) . '</span>'
-    );
-    ?>
+// ---- Their reviews
+echo HTMLHelper::_(
+    'uitab.addTab',
+    'ticketHelpTab',
+    'tickethelp-reviews',
+    Text::_('COM_JED_TITLE_REVIEWS') . ' <span class="badge bg-secondary">' . \count($reviews) . '</span>'
+);
+?>
     <div class="widget">
         <h1><?php echo Text::_('COM_JED_TITLE_REVIEWS'); ?></h1>
         <div class="container">
@@ -237,16 +237,16 @@ $banInForce = $access !== null && (int) $access->banned === 1;
         </div>
     </div>
     <?php
-    echo HTMLHelper::_('uitab.endTab');
+echo HTMLHelper::_('uitab.endTab');
 
-    // ---- Their other tickets (the migrated legacy ones included - they are all in #__jed_tickets now)
-    echo HTMLHelper::_(
-        'uitab.addTab',
-        'ticketHelpTab',
-        'tickethelp-tickets',
-        Text::_('COM_JED_TICKET_HELP_OTHER_TICKETS') . ' <span class="badge bg-secondary">' . \count($tickets) . '</span>'
-    );
-    ?>
+// ---- Their other tickets (the migrated legacy ones included - they are all in #__jed_tickets now)
+echo HTMLHelper::_(
+    'uitab.addTab',
+    'ticketHelpTab',
+    'tickethelp-tickets',
+    Text::_('COM_JED_TICKET_HELP_OTHER_TICKETS') . ' <span class="badge bg-secondary">' . \count($tickets) . '</span>'
+);
+?>
     <div class="widget">
         <h1><?php echo Text::_('COM_JED_TICKET_HELP_OTHER_TICKETS'); ?></h1>
         <div class="container">
@@ -283,7 +283,7 @@ $banInForce = $access !== null && (int) $access->banned === 1;
         </div>
     </div>
     <?php
-    echo HTMLHelper::_('uitab.endTab');
-    echo HTMLHelper::_('uitab.endTabSet');
-    ?>
+echo HTMLHelper::_('uitab.endTab');
+echo HTMLHelper::_('uitab.endTabSet');
+?>
 </div>

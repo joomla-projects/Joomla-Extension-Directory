@@ -68,9 +68,9 @@ final class CveRecordMapper
         $isCore   = false;
 
         foreach ((array) ($cna['affected'] ?? []) as $product) {
-            $vendor  = trim((string) ($product['vendor'] ?? ''));
-            $name    = trim((string) ($product['product'] ?? ''));
-            $ranges  = VersionRangeMapper::fromCve((array) ($product['versions'] ?? []));
+            $vendor   = trim((string) ($product['vendor'] ?? ''));
+            $name     = trim((string) ($product['product'] ?? ''));
+            $ranges   = VersionRangeMapper::fromCve((array) ($product['versions'] ?? []));
             $haystack = strtolower($vendor . ' ' . $name . ' ' . implode(' ', (array) ($product['platforms'] ?? [])) . ' ' . (string) ($product['collectionURL'] ?? ''));
 
             if (str_contains($haystack, 'joomla')) {
@@ -180,12 +180,12 @@ final class CveRecordMapper
                 'published' => self::sql($meta['datePublished'] ?? null),
                 'updated'   => self::sql($meta['dateUpdated'] ?? null),
             ],
-            'solution'         => (string) (($cna['solutions'][0]['value'] ?? '')),
-            'workaround'       => (string) (($cna['workarounds'][0]['value'] ?? '')),
-            'discovery'        => (string) ($cna['source']['discovery'] ?? 'UNKNOWN'),
-            'source_url'       => 'https://www.cve.org/CVERecord?id=' . $cveId,
-            'mentions_joomla'  => $mentions,
-            'is_core'          => $isCore,
+            'solution'        => (string) (($cna['solutions'][0]['value'] ?? '')),
+            'workaround'      => (string) (($cna['workarounds'][0]['value'] ?? '')),
+            'discovery'       => (string) ($cna['source']['discovery'] ?? 'UNKNOWN'),
+            'source_url'      => 'https://www.cve.org/CVERecord?id=' . $cveId,
+            'mentions_joomla' => $mentions,
+            'is_core'         => $isCore,
         ];
 
         return new FeedRecord(FeedSource::CNA, $cveId, $normalised, $record);

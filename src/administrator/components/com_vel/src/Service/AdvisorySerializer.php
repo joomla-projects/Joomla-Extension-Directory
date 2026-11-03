@@ -80,12 +80,12 @@ final class AdvisorySerializer
             }
 
             $affected[] = [
-                'vendor'            => (string) $product->vendor,
-                'product'           => (string) $product->product,
-                'jed_extension_id'  => $product->extension_id !== null ? (int) $product->extension_id : null,
-                'jed_url'           => $product->extension_id !== null ? $this->siteRoot . '/extension/' . (int) $product->extension_id : null,
-                'supplier_url'      => (string) $product->supplier_url !== '' ? (string) $product->supplier_url : null,
-                'identity'          => $identity->isKnown() ? [
+                'vendor'           => (string) $product->vendor,
+                'product'          => (string) $product->product,
+                'jed_extension_id' => $product->extension_id !== null ? (int) $product->extension_id : null,
+                'jed_url'          => $product->extension_id !== null ? $this->siteRoot . '/extension/' . (int) $product->extension_id : null,
+                'supplier_url'     => (string) $product->supplier_url !== '' ? (string) $product->supplier_url : null,
+                'identity'         => $identity->isKnown() ? [
                     'type'      => $identity->type->value,
                     'element'   => $identity->element,
                     'folder'    => $identity->folder,
@@ -126,15 +126,15 @@ final class AdvisorySerializer
         $description = (string) ($advisory->description ?? '');
 
         return [
-            'id'               => (int) $advisory->id,
-            'vel_id'           => \sprintf('VEL-%04d', (int) $advisory->id),
-            'cve_id'           => $advisory->cve_id ?: null,
-            'cve_assigner'     => (string) $advisory->cve_assigner !== '' ? (string) $advisory->cve_assigner : null,
-            'url'              => $this->url($advisory),
-            'title'            => (string) $advisory->title,
-            'status'           => (string) $advisory->status,
-            'severity'         => $advisory->severity ?: null,
-            'cvss'             => $advisory->cvss_vector ? [
+            'id'           => (int) $advisory->id,
+            'vel_id'       => \sprintf('VEL-%04d', (int) $advisory->id),
+            'cve_id'       => $advisory->cve_id ?: null,
+            'cve_assigner' => (string) $advisory->cve_assigner !== '' ? (string) $advisory->cve_assigner : null,
+            'url'          => $this->url($advisory),
+            'title'        => (string) $advisory->title,
+            'status'       => (string) $advisory->status,
+            'severity'     => $advisory->severity ?: null,
+            'cvss'         => $advisory->cvss_vector ? [
                 'version' => (string) $advisory->cvss_version,
                 'vector'  => (string) $advisory->cvss_vector,
                 'score'   => (float) $advisory->cvss_score,

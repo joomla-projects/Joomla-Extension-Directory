@@ -44,7 +44,7 @@ $badges = static function (array $counts): string {
     foreach (['errors' => 'bg-danger', 'warnings' => 'bg-warning text-dark', 'compat' => 'bg-secondary', 'notices' => 'bg-info text-dark', 'infos' => 'bg-light text-dark border'] as $key => $class) {
         $count  = (int) ($counts[$key] ?? 0);
         $total += $count;
-        $html  .= '<span class="badge ' . $class . ' rounded-pill ms-1' . ($count === 0 ? ' d-none' : '') . '">' . $count . '</span>';
+        $html .= '<span class="badge ' . $class . ' rounded-pill ms-1' . ($count === 0 ? ' d-none' : '') . '">' . $count . '</span>';
     }
 
     if ($total === 0) {

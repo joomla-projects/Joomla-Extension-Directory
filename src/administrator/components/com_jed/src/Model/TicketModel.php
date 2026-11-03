@@ -348,7 +348,7 @@ class TicketModel extends AdminModel
             $db    = $this->getDatabase();
             $type  = 'extension.audit';
             $audit = $db->setQuery(
-                    $db->getQuery(true)
+                $db->getQuery(true)
                             ->select($db->quoteName(['id', 'status', 'created', 'finished_time', 'last_error', 'result_meta', 'payload']))
                             ->from($db->quoteName('#__jed_queue_jobs'))
                             ->where($db->quoteName('type') . ' = :type')

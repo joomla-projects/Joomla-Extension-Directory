@@ -206,23 +206,23 @@ class HtmlView extends BaseHtmlView
         $document->setDescription($summary);
 
         $tags = [
-            'og:type'         => 'website',
-            'og:site_name'    => (string) Factory::getApplication()->get('sitename'),
-            'og:title'        => $name,
-            'og:description'  => $summary,
+            'og:type'        => 'website',
+            'og:site_name'   => (string) Factory::getApplication()->get('sitename'),
+            'og:title'       => $name,
+            'og:description' => $summary,
             // The listing's own route, made absolute - not the requested URL. Otherwise a share
             // from a link carrying campaign parameters advertises that URL as the canonical one,
             // and the same listing ends up with as many og:urls as there are inbound links.
             // Route::_() already returns a root-relative path that includes the site's subfolder,
             // so only scheme/host/port are prefixed - Uri::root() would repeat the subfolder.
-            'og:url'          => Uri::getInstance()->toString(['scheme', 'host', 'port'])
+            'og:url' => Uri::getInstance()->toString(['scheme', 'host', 'port'])
                 . Route::_(
                     'index.php?option=com_jed&view=extension&catid=' . (int) $this->item->catid
                     . '&id=' . (int) $this->item->id,
                     false
                 ),
-            'twitter:card'    => 'summary',
-            'twitter:title'   => $name,
+            'twitter:card'        => 'summary',
+            'twitter:title'       => $name,
             'twitter:description' => $summary,
         ];
 

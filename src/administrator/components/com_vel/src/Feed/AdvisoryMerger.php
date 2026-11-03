@@ -330,7 +330,7 @@ final class AdvisoryMerger
                     str_starts_with($product->element, 'tpl_') => 'template',
                     str_starts_with($product->element, 'lib_') => 'library',
                     str_starts_with($product->element, 'pkg_') => 'package',
-                    default                                     => null,
+                    default                                    => null,
                 };
 
                 if ($product->ext_type === 'plugin' && preg_match('/^plg_([a-z0-9\-]+)_([a-z0-9_\-]+)$/', $product->element, $m)) {

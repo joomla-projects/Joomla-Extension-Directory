@@ -240,7 +240,7 @@ class Com_JedInstallerScript
                 // Editable in the administrator only, i.e. not editable on the frontend.
                 'show_on' => '2',
             ],
-            'fieldparams'   => [
+            'fieldparams' => [
                 'options' => [
                     ['name' => 'JYES', 'value' => '1'],
                 ],

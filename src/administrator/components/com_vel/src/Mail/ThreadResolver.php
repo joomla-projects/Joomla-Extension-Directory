@@ -41,9 +41,9 @@ use Joomla\Database\ParameterType;
  */
 class ThreadResolver
 {
-    public const RESULT_REPLY    = 'reply';
-    public const RESULT_NEW      = 'new_report';
-    public const RESULT_SKIPPED  = 'skipped';
+    public const RESULT_REPLY     = 'reply';
+    public const RESULT_NEW       = 'new_report';
+    public const RESULT_SKIPPED   = 'skipped';
     public const RESULT_DUPLICATE = 'duplicate';
 
     /**

@@ -64,18 +64,18 @@ final class FeedMappingTest extends TestCase
     {
         $classifier = new RecordClassifier('Joomla', '', true);
 
-        $core = $this->example();
+        $core                                  = $this->example();
         $core['containers']['cna']['affected'] = [['vendor' => 'Joomla!', 'product' => 'Joomla! CMS', 'versions' => [['version' => '4.0.0', 'lessThan' => '4.4.9', 'status' => 'affected', 'versionType' => 'semver']]]];
         self::assertSame(FeedClassification::JOOMLA_CORE, $classifier->classify(CveRecordMapper::map($core)));
 
-        $other = $this->example();
+        $other                                     = $this->example();
         $other['cveMetadata']['assignerShortName'] = 'VulDB';
         self::assertSame(FeedClassification::JOOMLA_EXTENSION_OTHER_CNA, $classifier->classify(CveRecordMapper::map($other)));
 
-        $unrelated = $this->example();
-        $unrelated['cveMetadata']['assignerShortName'] = 'mitre';
-        $unrelated['containers']['cna']['affected'] = [['vendor' => 'acme', 'product' => 'widget', 'versions' => [['version' => '1', 'status' => 'affected']]]];
-        $unrelated['containers']['cna']['title'] = 'Widget overflow';
+        $unrelated                                      = $this->example();
+        $unrelated['cveMetadata']['assignerShortName']  = 'mitre';
+        $unrelated['containers']['cna']['affected']     = [['vendor' => 'acme', 'product' => 'widget', 'versions' => [['version' => '1', 'status' => 'affected']]]];
+        $unrelated['containers']['cna']['title']        = 'Widget overflow';
         $unrelated['containers']['cna']['descriptions'] = [['lang' => 'en', 'value' => 'A buffer overflow in widget.']];
         self::assertSame(FeedClassification::UNRELATED, $classifier->classify(CveRecordMapper::map($unrelated)));
 
@@ -153,11 +153,11 @@ final class FeedMappingTest extends TestCase
                     ['source' => 'cna@example', 'type' => 'Secondary', 'cvssData' => ['version' => '3.1', 'vectorString' => 'CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H', 'baseScore' => 8.8, 'baseSeverity' => 'HIGH']],
                     ['source' => 'nvd@nist.gov', 'type' => 'Primary', 'cvssData' => ['version' => '3.1', 'vectorString' => 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H', 'baseScore' => 9.8, 'baseSeverity' => 'CRITICAL']],
                 ]],
-                'weaknesses'       => [['source' => 'nvd@nist.gov', 'type' => 'Primary', 'description' => [['lang' => 'en', 'value' => 'CWE-89']]]],
-                'configurations'   => [['nodes' => [['operator' => 'OR', 'negate' => false, 'cpeMatch' => [
+                'weaknesses'     => [['source' => 'nvd@nist.gov', 'type' => 'Primary', 'description' => [['lang' => 'en', 'value' => 'CWE-89']]]],
+                'configurations' => [['nodes' => [['operator' => 'OR', 'negate' => false, 'cpeMatch' => [
                     ['vulnerable' => true, 'criteria' => 'cpe:2.3:a:acme:foo:*:*:*:*:*:joomla:*:*', 'versionEndExcluding' => '2.0.0'],
                 ]]]]],
-                'references'       => [['url' => 'https://acme.example/advisory', 'source' => 'x', 'tags' => ['Vendor Advisory']]],
+                'references' => [['url' => 'https://acme.example/advisory', 'source' => 'x', 'tags' => ['Vendor Advisory']]],
             ],
         ];
 
@@ -184,14 +184,14 @@ final class FeedMappingTest extends TestCase
 
     public function testHashIgnoresTheUpdatedStamp(): void
     {
-        $a = CveRecordMapper::map($this->example());
-        $b = $this->example();
+        $a                               = CveRecordMapper::map($this->example());
+        $b                               = $this->example();
         $b['cveMetadata']['dateUpdated'] = '2027-01-01T00:00:00.000Z';
-        $b = CveRecordMapper::map($b);
+        $b                               = CveRecordMapper::map($b);
 
         self::assertSame($a->hash(), $b->hash());
 
-        $c = $this->example();
+        $c                               = $this->example();
         $c['containers']['cna']['title'] = 'Changed';
         self::assertNotSame($a->hash(), CveRecordMapper::map($c)->hash());
     }

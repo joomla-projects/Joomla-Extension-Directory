@@ -27,7 +27,7 @@ $authorised = Factory::getApplication()->getIdentity()->getAuthorisedViewLevels(
     <ul class="tags list-inline">
         <?php foreach ($displayData as $i => $tag) : ?>
             <?php if (in_array($tag->access, $authorised)) : ?>
-                <?php $tagParams = new Registry($tag->params); ?>
+                <?php $tagParams  = new Registry($tag->params); ?>
                 <?php $link_class = $tagParams->get('tag_link_class', 'bg-info'); ?>
                 <li class="list-inline-item tag-<?php echo $tag->tag_id; ?> tag-list<?php echo $i; ?>" itemprop="keywords">
                     <a href="<?php echo Route::_(RouteHelper::getComponentTagRoute($tag->tag_id . ':' . $tag->alias, $tag->language)); ?>" class="badge rounded-pill <?php echo $link_class; ?>">

@@ -35,11 +35,11 @@ use Joomla\Registry\Registry;
  */
 class HtmlView extends BaseHtmlView
 {
-    public ?object $item      = null;
-    public ?Registry $params  = null;
-    public AdvisoryState $state = AdvisoryState::PUBLISHED;
+    public ?object $item          = null;
+    public ?Registry $params      = null;
+    public AdvisoryState $state   = AdvisoryState::PUBLISHED;
     public AdvisoryStatus $status = AdvisoryStatus::LIVE;
-    public ?Severity $severity = null;
+    public ?Severity $severity    = null;
 
     /**
      * @var array<string, mixed>  The JSON v2 shape, which the template reads for the

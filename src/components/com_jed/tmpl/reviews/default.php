@@ -122,7 +122,7 @@ $wa->useStyle('com_jed.list');
                     // imported stock. They are moderation data, the same three fields
                     // reviewform.xml now keeps in its own fieldset, and they belong in the
                     // administrator's review list and nowhere else.
-                    ?>
+?>
                     <th class=''>
                         <?php echo HTMLHelper::_('grid.sort', 'JPUBLISHED', 'a.state', $listDirn, $listOrder); ?>
                     </th>
@@ -174,16 +174,16 @@ $wa->useStyle('com_jed.list');
                         <a href="<?php echo Route::_('index.php?option=com_jed&view=review&id=' . (int) $item->id); ?>">
                             <?php echo $this->escape($item->title); ?></a>
                         <?php
-                        // Same report entry point as the single-review view, per row. Logged-in
-                        // readers only, and not on one's own review.
-                        if (JedHelper::isLoggedIn() && (int) $item->created_by !== (int) $user->id) :
-                            $reportUrl = Route::_(
-                                'index.php?option=com_jed&view=ticketform'
-                                . '&litem=' . TicketType::Review->value
-                                . '&lid=' . (int) $item->id
-                                . '&vr=' . (int) $item->extension_id
-                            );
-                            ?>
+    // Same report entry point as the single-review view, per row. Logged-in
+    // readers only, and not on one's own review.
+    if (JedHelper::isLoggedIn() && (int) $item->created_by !== (int) $user->id) :
+        $reportUrl = Route::_(
+            'index.php?option=com_jed&view=ticketform'
+            . '&litem=' . TicketType::Review->value
+            . '&lid=' . (int) $item->id
+            . '&vr=' . (int) $item->extension_id
+        );
+        ?>
                             <a href="<?php echo $reportUrl; ?>" class="small text-muted ms-2">
                                 <span class="icon-flag" aria-hidden="true"></span>
                                 <?php echo Text::_('COM_JED_REVIEW_REPORT_LABEL'); ?>

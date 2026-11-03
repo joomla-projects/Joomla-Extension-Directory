@@ -31,10 +31,10 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
  */
 class HtmlView extends BaseHtmlView
 {
-    public mixed $item = null;
+    public mixed $item                        = null;
     public FeedClassification $classification = FeedClassification::UNKNOWN;
-    public FeedDecision $decision = FeedDecision::PENDING;
-    public bool $canDecide = false;
+    public FeedDecision $decision             = FeedDecision::PENDING;
+    public bool $canDecide                    = false;
 
     /**
      * @param string|null $tpl The template name.

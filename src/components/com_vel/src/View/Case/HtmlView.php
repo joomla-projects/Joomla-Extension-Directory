@@ -29,13 +29,13 @@ use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
  */
 class HtmlView extends BaseHtmlView
 {
-    public ?object $participant = null;
+    public ?object $participant  = null;
     public ParticipantRole $role = ParticipantRole::OTHER;
-    public array $thread        = [];
-    public ?object $advisory    = null;
-    public string $reference    = '';
-    public string $token        = '';
-    public ?Form $form          = null;
+    public array $thread         = [];
+    public ?object $advisory     = null;
+    public string $reference     = '';
+    public string $token         = '';
+    public ?Form $form           = null;
 
     /**
      * @param string|null $tpl The template name.

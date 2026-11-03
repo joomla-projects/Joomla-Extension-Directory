@@ -17,7 +17,7 @@ namespace Jed\Component\Vel\Administrator\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Http\HttpFactory;
+use Joomla\Http\HttpFactory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Router\Route;
@@ -53,7 +53,7 @@ class CwesController extends BaseController
         }
 
         try {
-            $response = HttpFactory::getHttp(['timeout' => 120])->get(self::MITRE_URL, ['User-Agent' => 'Joomla-VEL/2.0']);
+            $response = (new HttpFactory())->getHttp(['timeout' => 120])->get(self::MITRE_URL, ['User-Agent' => 'Joomla-VEL/2.0']);
 
             if ($response->code >= 400) {
                 throw new \RuntimeException('MITRE answered ' . $response->code);

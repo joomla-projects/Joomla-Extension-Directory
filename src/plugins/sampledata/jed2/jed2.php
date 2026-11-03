@@ -198,10 +198,10 @@ class PlgSampledataJed2 extends CMSPlugin
                 // variable, because that is a filter of the ordinary list rather than a list of
                 // its own.
                 $item = [
-                    'title'        => $preset['title'],
-                    'alias'        => $preset['alias'],
-                    'path'         => 'browse-extensions/' . $preset['alias'],
-                    'link'         => 'index.php?option=com_jed&view=extensions'
+                    'title' => $preset['title'],
+                    'alias' => $preset['alias'],
+                    'path'  => 'browse-extensions/' . $preset['alias'],
+                    'link'  => 'index.php?option=com_jed&view=extensions'
                         . (isset($preset['query']) ? '&' . $preset['query'] : ''),
                     'component_id' => $componentIds['com_jed'],
                 ];
@@ -438,18 +438,18 @@ class PlgSampledataJed2 extends CMSPlugin
         // browse-list preset reaches the menu item rather than the URL (P1-13).
         $menuItem->params = json_encode(array_merge(
             [
-                'menu-anchor_title'    => '',
-                'menu-anchor_css'      => '',
-                'menu_image'           => '',
-                'menu_image_css'       => '',
-                'menu_text'            => 1,
-                'menu_show'            => 1,
-                'page_title'           => '',
-                'show_page_heading'    => '',
-                'page_heading'         => '',
-                'pageclass_sfx'        => '',
+                'menu-anchor_title'     => '',
+                'menu-anchor_css'       => '',
+                'menu_image'            => '',
+                'menu_image_css'        => '',
+                'menu_text'             => 1,
+                'menu_show'             => 1,
+                'page_title'            => '',
+                'show_page_heading'     => '',
+                'page_heading'          => '',
+                'pageclass_sfx'         => '',
                 'menu-meta_description' => '',
-                'robots'               => '',
+                'robots'                => '',
             ],
             isset($data['params']) ? (array) json_decode((string) $data['params'], true) : []
         ));

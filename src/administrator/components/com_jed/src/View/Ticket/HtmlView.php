@@ -236,10 +236,10 @@ class HtmlView extends BaseHtmlView
         $this->ticket_messages  = $model->getTicketMessages();
 
         $this->latest_ticket_message = self::getLastInboundMessageIndex($this->ticket_messages);
-        $this->canManage        = $this->getCurrentUser()->authorise('core.manage', 'com_jed');
-        $this->internal_notes   = $this->canManage ? $model->getTicketInternalNotes() : [];
-        $this->linked_item_type = (int) ($this->item->linked_item_type ?? 0);
-        $this->linked_item_id   = (int) ($this->item->linked_item_id ?? 0);
+        $this->canManage             = $this->getCurrentUser()->authorise('core.manage', 'com_jed');
+        $this->internal_notes        = $this->canManage ? $model->getTicketInternalNotes() : [];
+        $this->linked_item_type      = (int) ($this->item->linked_item_type ?? 0);
+        $this->linked_item_id        = (int) ($this->item->linked_item_id ?? 0);
 
         $registry = TicketTypeHandlerRegistry::createDefault($model->getDB());
         $type     = TicketType::tryFrom((int) $this->linked_item_type) ?? TicketType::Other;

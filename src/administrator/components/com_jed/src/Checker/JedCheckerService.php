@@ -244,7 +244,7 @@ class JedCheckerService
     private function download(string $url, string $workspace): string
     {
         try {
-            $response = HttpFactory::getHttp()->get($url, ['User-Agent' => 'JoomlaExtensionsDirectory/4.1 (+https://extensions.joomla.org/; JED Checker)'], 60);
+            $response = (new HttpFactory())->getHttp()->get($url, ['User-Agent' => 'JoomlaExtensionsDirectory/4.1 (+https://extensions.joomla.org/; JED Checker)'], 60);
         } catch (Throwable $e) {
             throw new RuntimeException(Text::sprintf('COM_JED_JEDCHECKER_DOWNLOAD_FAILED', $url, $e->getMessage()));
         }
@@ -382,7 +382,7 @@ class JedCheckerService
                     'html'        => '<div class="alert alert-secondary">'
                         . htmlspecialchars(Text::sprintf('COM_JED_JEDCHECKER_RULE_FAILED', $e->getMessage()), ENT_QUOTES, 'UTF-8')
                         . '</div>',
-                    'ordering'    => 0,
+                    'ordering' => 0,
                 ];
             }
         }

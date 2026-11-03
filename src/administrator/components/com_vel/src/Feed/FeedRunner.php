@@ -26,7 +26,7 @@ use Jed\Component\Vel\Administrator\Enum\FeedSource;
 use Jed\Component\Vel\Administrator\Service\VelService;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Http\HttpFactory;
+use Joomla\Http\HttpFactory;
 use Joomla\CMS\Log\Log;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
@@ -66,7 +66,7 @@ final class FeedRunner
     public static function source(FeedSource $source): FeedSourceInterface
     {
         $params     = ComponentHelper::getParams('com_vel');
-        $http       = HttpFactory::getHttp(['timeout' => 60]);
+        $http       = (new HttpFactory())->getHttp(['timeout' => 60]);
         $classifier = new RecordClassifier(
             (string) $params->get('cna_short_name', 'Joomla'),
             (string) $params->get('cna_org_id', ''),
@@ -124,8 +124,8 @@ final class FeedRunner
 
         $this->db->insertObject('#__vel_feed_runs', $run, 'id');
 
-        $start    = microtime(true);
-        $deadline = static fn (): bool => (microtime(true) - $start) > $budgetSeconds;
+        $start      = microtime(true);
+        $deadline   = static fn (): bool => (microtime(true) - $start) > $budgetSeconds;
         $autoCreate = (int) $params->get('feed_auto_create', 1) === 1;
         $partial    = false;
 

@@ -39,20 +39,20 @@ $wa->useScript('keepalive')
             <?php
             echo HTMLHelper::_('uitab.startTabSet', 'newextensionTab', ['active' => 'general', 'recall' => true, 'breakpoint' => 768]);
 
-            foreach ($this->form->getFieldsets() as $fieldset) :
-                echo HTMLHelper::_('uitab.addTab', 'newextensionTab', $fieldset->name, Text::_($fieldset->label));
-                ?>
+foreach ($this->form->getFieldsets() as $fieldset) :
+    echo HTMLHelper::_('uitab.addTab', 'newextensionTab', $fieldset->name, Text::_($fieldset->label));
+    ?>
                 <div class="row">
                     <div class="col-12 col-lg-8">
                         <?php echo $this->form->renderFieldset($fieldset->name); ?>
                     </div>
                 </div>
                 <?php
-                echo HTMLHelper::_('uitab.endTab');
-            endforeach;
+    echo HTMLHelper::_('uitab.endTab');
+endforeach;
 
-            echo HTMLHelper::_('uitab.endTabSet');
-            ?>
+echo HTMLHelper::_('uitab.endTabSet');
+?>
         </div>
 
         <div class="control-group mt-3">

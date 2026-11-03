@@ -183,13 +183,13 @@ final class NvdRecordMapper
                 'published' => CveRecordMapper::sql($cve['published'] ?? null),
                 'updated'   => CveRecordMapper::sql($cve['lastModified'] ?? null),
             ],
-            'solution'         => '',
-            'workaround'       => '',
-            'discovery'        => 'UNKNOWN',
-            'source_url'       => 'https://nvd.nist.gov/vuln/detail/' . $cveId,
-            'mentions_joomla'  => $mentions,
-            'is_core'          => $isCore,
-            'nvd_status'       => (string) ($cve['vulnStatus'] ?? ''),
+            'solution'        => '',
+            'workaround'      => '',
+            'discovery'       => 'UNKNOWN',
+            'source_url'      => 'https://nvd.nist.gov/vuln/detail/' . $cveId,
+            'mentions_joomla' => $mentions,
+            'is_core'         => $isCore,
+            'nvd_status'      => (string) ($cve['vulnStatus'] ?? ''),
         ];
 
         return new FeedRecord(FeedSource::NVD, $cveId, $normalised, $item);

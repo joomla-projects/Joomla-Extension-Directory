@@ -13,7 +13,7 @@ namespace Joomla\Plugin\System\Velcheck\Extension;
 \defined('_JEXEC') or die;
 
 use Joomla\CMS\Cache\CacheControllerFactoryInterface;
-use Joomla\CMS\Http\HttpFactory;
+use Joomla\Http\HttpFactory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Database\DatabaseAwareTrait;
@@ -185,7 +185,7 @@ final class Velcheck extends CMSPlugin implements SubscriberInterface
         $entries = array_map(static fn (array $e): array => array_intersect_key($e, array_flip(['type', 'element', 'folder', 'client_id', 'version'])), $inventory);
         $body    = json_encode(['client' => 'joomla/' . JVERSION . ' plg_system_velcheck/1.0', 'extensions' => $entries]);
 
-        $response = HttpFactory::getHttp(['timeout' => 20])->post(
+        $response = (new HttpFactory())->getHttp(['timeout' => 20])->post(
             rtrim((string) $this->params->get('api_base', ''), '/') . '/check',
             (string) $body,
             ['Content-Type' => 'application/json', 'Accept' => 'application/json']
@@ -311,7 +311,7 @@ final class Velcheck extends CMSPlugin implements SubscriberInterface
             }
         }
 
-        $response = HttpFactory::getHttp(['timeout' => 30])->get(
+        $response = (new HttpFactory())->getHttp(['timeout' => 30])->get(
             rtrim((string) $this->params->get('api_base', ''), '/') . '/dataset.json',
             ['Accept' => 'application/json', 'User-Agent' => 'plg_system_velcheck/1.0 joomla/' . JVERSION]
         );

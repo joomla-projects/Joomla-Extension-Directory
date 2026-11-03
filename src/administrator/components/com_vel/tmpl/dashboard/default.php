@@ -100,7 +100,9 @@ $tiles = [
                             <?php foreach ($this->feedRuns as $run) : ?>
                                 <li class="mb-2">
                                     <strong><?php echo Text::_('COM_VEL_FEED_SOURCE_' . strtoupper((string) $run->source)); ?></strong>
-                                    <span class="badge bg-<?php echo match ((string) $run->status) { 'ok' => 'success', 'partial' => 'warning text-dark', 'failed' => 'danger', default => 'secondary' }; ?>">
+                                    <span class="badge bg-<?php echo match ((string) $run->status) {
+                                        'ok' => 'success', 'partial' => 'warning text-dark', 'failed' => 'danger', default => 'secondary'
+                                    }; ?>">
                                         <?php echo Text::_('COM_VEL_FEED_RUN_STATUS_' . strtoupper((string) $run->status)); ?>
                                     </span>
                                     <div class="small text-muted">

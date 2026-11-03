@@ -36,7 +36,7 @@ HTMLHelper::_('behavior.formvalidator');
      * simply be finished, and telling somebody that up front is cheaper than working the case that
      * comes of them not knowing.
      */
-    ?>
+?>
     <div class="alert alert-info">
         <p class="mb-0"><?php echo Text::_('COM_ABANDONWARE_REPORT_INTRO'); ?></p>
     </div>

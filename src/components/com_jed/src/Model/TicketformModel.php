@@ -312,7 +312,7 @@ class TicketformModel extends FormModel
      */
     public function save(array $data)
     {
-       // echo "<pre>";print_r($data);echo "</pre>";exit();
+        // echo "<pre>";print_r($data);echo "</pre>";exit();
         $isLoggedIn      = JedHelper::isLoggedIn();
         $data['user_ip'] = $_SERVER['REMOTE_ADDR'];
         $user            = Factory::getApplication()->getIdentity();

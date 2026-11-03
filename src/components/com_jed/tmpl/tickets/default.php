@@ -117,6 +117,6 @@ $listDirn  = $this->state->get('list.direction', 'DESC');
      * ordering being posted back alongside it. searchtools submits the ordering in
      * list[fullordering] on its own.
      */
-    ?>
+?>
     <?php echo HTMLHelper::_('form.token'); ?>
 </form>

@@ -87,9 +87,9 @@ class ApiModel extends BaseDatabaseModel
         $root = rtrim(\Joomla\CMS\Uri\Uri::root(), '/') . VelHelper::listPath();
 
         return [
-            'name'        => 'Joomla Vulnerable Extension List API',
-            'version'     => '2.0',
-            'endpoints'   => [
+            'name'      => 'Joomla Vulnerable Extension List API',
+            'version'   => '2.0',
+            'endpoints' => [
                 'advisories' => $root . '/api/v2/advisories.json',
                 'advisory'   => $root . '/api/v2/advisories/{id|VEL-0042|CVE-YYYY-NNNN}.json',
                 'cve'        => $root . '/api/v2/cve/{CVE-YYYY-NNNN}.json',
@@ -99,12 +99,12 @@ class ApiModel extends BaseDatabaseModel
                 'atom'       => $root . '?format=feed&type=atom',
                 'html'       => $root,
             ],
-            'filters'     => ['status', 'search', 'severity', 'cvss_min', 'cvss_max', 'vendor', 'type', 'element', 'cve', 'from', 'to', 'updated_since', 'include_withdrawn', 'sort', 'dir', 'limit', 'limitstart'],
-            'dataset'     => [
+            'filters' => ['status', 'search', 'severity', 'cvss_min', 'cvss_max', 'vendor', 'type', 'element', 'cve', 'from', 'to', 'updated_since', 'include_withdrawn', 'sort', 'dir', 'limit', 'limitstart'],
+            'dataset' => [
                 'etag'                  => $this->getDatasetVersion(),
                 'retired_included_days' => (int) VelHelper::option('retired_in_dataset_days', 365),
             ],
-            'check'       => [
+            'check' => [
                 'method'      => 'POST',
                 'max_entries' => (int) VelHelper::option('check_max_entries', 500),
             ],
@@ -240,7 +240,7 @@ class ApiModel extends BaseDatabaseModel
 
             $identity = Identity::normalise($entry['type'] ?? null, $entry['element'] ?? null, $entry['folder'] ?? null, $entry['client_id'] ?? null);
             $parsed[] = [
-                'input'    => [
+                'input' => [
                     'type'      => $identity->type?->value,
                     'element'   => $identity->element,
                     'folder'    => $identity->folder,
@@ -324,7 +324,7 @@ class ApiModel extends BaseDatabaseModel
         }
 
         return [
-            'meta'    => [
+            'meta' => [
                 'checked'      => \count($results),
                 'generated'    => gmdate('Y-m-d\TH:i:s\Z'),
                 'dataset_etag' => $this->getDatasetVersion(),

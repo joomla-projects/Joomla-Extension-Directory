@@ -17,7 +17,7 @@ namespace Jed\Component\Vel\Administrator\Cve;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Component\ComponentHelper;
-use Joomla\CMS\Http\HttpFactory;
+use Joomla\Http\HttpFactory;
 use Joomla\Http\Http;
 use RuntimeException;
 
@@ -72,7 +72,7 @@ final class CveServicesClient
         $params = ComponentHelper::getParams('com_vel');
 
         return new self(
-            HttpFactory::getHttp(['timeout' => 30]),
+            (new HttpFactory())->getHttp(['timeout' => 30]),
             (string) $params->get('cve_services_env', 'test') === 'prod' ? self::PROD : self::TEST,
             (string) $params->get('cve_api_org', ''),
             (string) $params->get('cve_api_user', ''),

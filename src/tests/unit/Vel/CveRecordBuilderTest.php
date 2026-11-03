@@ -59,34 +59,34 @@ final class CveRecordBuilderTest extends TestCase
         }
 
         return (object) [
-            'id'             => 42,
-            'alias'          => 'xss-regular-labs',
-            'title'          => 'XSS vectors in tag-provided inputs in various Regular Labs extensions',
-            'state'          => 'published',
-            'status'         => 'patched',
-            'description'    => '<p>Tag-provided custom HTML, module content/title overrides and decoded modal or tooltip values could execute unsafe markup. A content author could inject JavaScript that ran in visitors’ browsers.</p>',
-            'solution'       => '',
-            'workaround'     => '',
-            'cvss_version'   => null,
-            'cvss_vector'    => null,
-            'cvss_score'     => null,
-            'severity'       => null,
-            'exploited'      => 'unknown',
-            'discovery'      => 'UNKNOWN',
-            'cve_id'         => 'CVE-2026-64795',
-            'cve_state'      => 'published',
-            'cve_assigner'   => 'Joomla',
-            'date_reserved'  => '2026-07-20 18:16:31',
-            'date_published' => '2026-07-22 20:41:19',
-            'date_updated'   => '2026-07-27 13:29:26',
-            'date_public'    => null,
-            'date_reported'  => null,
+            'id'                   => 42,
+            'alias'                => 'xss-regular-labs',
+            'title'                => 'XSS vectors in tag-provided inputs in various Regular Labs extensions',
+            'state'                => 'published',
+            'status'               => 'patched',
+            'description'          => '<p>Tag-provided custom HTML, module content/title overrides and decoded modal or tooltip values could execute unsafe markup. A content author could inject JavaScript that ran in visitors’ browsers.</p>',
+            'solution'             => '',
+            'workaround'           => '',
+            'cvss_version'         => null,
+            'cvss_vector'          => null,
+            'cvss_score'           => null,
+            'severity'             => null,
+            'exploited'            => 'unknown',
+            'discovery'            => 'UNKNOWN',
+            'cve_id'               => 'CVE-2026-64795',
+            'cve_state'            => 'published',
+            'cve_assigner'         => 'Joomla',
+            'date_reserved'        => '2026-07-20 18:16:31',
+            'date_published'       => '2026-07-22 20:41:19',
+            'date_updated'         => '2026-07-27 13:29:26',
+            'date_public'          => null,
+            'date_reported'        => null,
             'date_vendor_notified' => null,
-            'date_fixed'     => null,
-            'products'       => $products,
-            'cwes'           => [(object) ['cwe_id' => 'CWE-79', 'description' => "CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"]],
-            'references'     => [(object) ['url' => 'https://regularlabs.com/', 'name' => '', 'tags' => ['product']]],
-            'credits'        => [],
+            'date_fixed'           => null,
+            'products'             => $products,
+            'cwes'                 => [(object) ['cwe_id' => 'CWE-79', 'description' => "CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"]],
+            'references'           => [(object) ['url' => 'https://regularlabs.com/', 'name' => '', 'tags' => ['product']]],
+            'credits'              => [],
         ];
     }
 
@@ -172,8 +172,8 @@ final class CveRecordBuilderTest extends TestCase
 
     public function testOpenEndedRangeBecomesStar(): void
     {
-        $advisory                            = $this->advisory();
-        $advisory->products[0]->versions[0]->version_to = '*';
+        $advisory                                         = $this->advisory();
+        $advisory->products[0]->versions[0]->version_to   = '*';
         $advisory->products[0]->versions[0]->version_from = '*';
 
         $versions = $this->builder()->record($advisory)['containers']['cna']['affected'][0]['versions'][0];

@@ -75,7 +75,7 @@ use Joomla\CMS\Router\Route;
                                      * One is a citizen doing their bit; a run of them against one
                                      * developer is what the `report` privilege gets withdrawn for.
                                      */
-                                    ?>
+                            ?>
                                     <?php if ((int) $item->reporter_user_id > 0 && (int) $item->reporter_total > 1) : ?>
                                         <div><span class="badge bg-info"><?php echo Text::plural('COM_ABANDONWARE_REPORTER_TOTAL_N', (int) $item->reporter_total); ?></span></div>
                                     <?php endif; ?>
