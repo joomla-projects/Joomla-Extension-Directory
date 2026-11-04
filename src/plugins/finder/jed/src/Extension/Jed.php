@@ -524,12 +524,48 @@ final class Jed extends Adapter implements SubscriberInterface
     {
         $query = $this->db->createQuery();
 
+        // A listing the public may not see (not approved, blocked or soft-deleted) is indexed as
+        // unpublished, see index(). The state carried here has to say the same, or a category or
+        // item state change would recompute it from `state` alone and make the listing
+        // searchable again.
+        $visible = '(a.approved = 1 AND a.blocked = 0 AND a.deleted = 0)';
+
         $query->select('a.id')
-            ->select('a.' . $this->state_field . ' AS state, c.published AS cat_state')
+            ->select('CASE WHEN ' . $visible . ' THEN a.' . $this->state_field . ' ELSE 0 END AS state')
+            ->select('c.published AS cat_state')
+            ->select($visible . ' AS visible')
             ->select('1 AS access, c.access AS cat_access')
             ->from($this->db->quoteName($this->table, 'a'))
             ->leftJoin($this->db->quoteName('#__categories', 'c'), 'c.id = a.catid');
 
         return $query;
+    }
+
+    /**
+     * Method to update index data on published state changes.
+     *
+     * The inherited version translates the value it was handed and never looks at approval,
+     * blocking or soft deletion, so publishing a blocked listing would put it back in the results.
+     *
+     * @param array   $pks   The extension ids whose state changed.
+     * @param integer $value The state they were changed to.
+     *
+     * @return void
+     */
+    protected function itemStateChange($pks, $value)
+    {
+        foreach ($pks as $pk) {
+            $query = clone $this->getStateQuery();
+            $query->where('a.id = ' . (int) $pk);
+
+            $this->db->setQuery($query);
+            $item = $this->db->loadObject();
+
+            if (!$item) {
+                continue;
+            }
+
+            $this->change((int) $pk, 'state', $item->visible ? $this->translateState($value, $item->cat_state) : 0);
+        }
     }
 }
