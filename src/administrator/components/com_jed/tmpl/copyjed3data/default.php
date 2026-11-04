@@ -8,6 +8,7 @@
  */
 use Jed\Component\Jed\Administrator\Helper\JedmigrateHelper;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
 
 /** @var \Jed\Component\Jed\Administrator\View\Copyjed3data\HtmlView $this */
 
@@ -43,9 +44,13 @@ HTMLHelper::_('bootstrap.tooltip');
 </div>
 <div class="container">
     <div class="row">
-        <div class="col-md-12"><a href="<?php echo $_SERVER['REQUEST_URI'] . '&task=GO'; ?>"
-            <button class="btn btn-primary" type="button">Go</button>
-            </a></div>
+        <div class="col-md-12">
+            <form action="<?php echo Route::_('index.php?option=com_jed&view=copyjed3data'); ?>" method="post">
+                <input type="hidden" name="task" value="GO">
+                <?php echo HTMLHelper::_('form.token'); ?>
+                <button class="btn btn-primary" type="submit">Go</button>
+            </form>
+        </div>
     </div>
 </div>
 <div class="container">

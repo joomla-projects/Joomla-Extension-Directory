@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Administrator\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Joomla\CMS\Language\Text;
 use Jed\Component\Jed\Administrator\Model\ReviewModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\FormController;
@@ -44,7 +45,12 @@ class ReviewController extends FormController
     {
         $this->checkToken();
 
-        $app      = Factory::getApplication();
+        $app = Factory::getApplication();
+
+        if (!$app->getIdentity()->authorise('core.edit.state', 'com_jed')) {
+            throw new Exception(Text::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'), 403);
+        }
+
         $reviewId = $app->getInput()->getInt('itemId', 0);
         $optionId = $app->getInput()->getInt('optionId', 0);
 
