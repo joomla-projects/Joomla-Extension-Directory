@@ -74,7 +74,7 @@ class JedComponent extends MVCComponent implements
      *
      * @since 4.0.0
      */
-    protected function getTableNameForSection(string $section = null): string|null
+    protected function getTableNameForSection(?string $section = null): string|null
     {
         return 'jed_extensions';
     }

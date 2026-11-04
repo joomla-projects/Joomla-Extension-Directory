@@ -311,7 +311,7 @@ class ExtensionformModel extends FormModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem(int $id = null): stdClass|bool
+    public function getItem(?int $id = null): stdClass|bool
     {
         if ($this->item !== null) {
             return $this->item;

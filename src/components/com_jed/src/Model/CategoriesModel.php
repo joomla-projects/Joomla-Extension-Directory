@@ -75,7 +75,7 @@ class CategoriesModel extends ListModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItems(int $limitStart = null, int $limit = null, bool $extended = true): array
+    public function getItems(?int $limitStart = null, ?int $limit = null, bool $extended = true): array
     {
         if (isset($this->_items)) {
             return $this->_items;
