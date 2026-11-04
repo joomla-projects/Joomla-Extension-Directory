@@ -30,8 +30,7 @@ try {
     $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 } catch (Exception) {
 }
-$wa->useStyle('com_jed.admin')
-    ->useScript('com_jed.admin');
+// There are no `com_jed.admin` style or script assets; asking for them made the page throw.
 
 $user      = $this->getCurrentUser();
 $userId    = $user->id;
