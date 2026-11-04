@@ -135,7 +135,11 @@ class ReviewModel extends ItemModel
     {
         $table = $this->getTable();
 
-        if (empty($result) || JedHelper::isAdminOrSuperUser() || $table->created_by == Factory::getApplication()->getIdentity()->id) {
+        if (!$table->load($id)) {
+            throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 404);
+        }
+
+        if (JedHelper::isAdminOrSuperUser() || (int) $table->created_by === (int) Factory::getApplication()->getIdentity()->id) {
             return $table->delete($id);
         }
         throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
@@ -396,14 +400,16 @@ class ReviewModel extends ItemModel
      */
     public function publish(int $id, int $state): bool
     {
+        // Who may publish is decided by the caller (ReviewController checks core.edit.state).
         $table = $this->getTable();
-        if ($id || JedHelper::userIDItem($id, $this->dbtable) || JedHelper::isAdminOrSuperUser()) {
-            $table->load($id);
-            $table->state = $state;
 
-            return $table->store();
+        if ($id <= 0 || !$table->load($id)) {
+            throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 404);
         }
-        throw new Exception(Text::_("JERROR_ALERTNOAUTHOR"), 401);
+
+        $table->state = $state;
+
+        return $table->store();
     }
 
     /**

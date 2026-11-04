@@ -243,7 +243,7 @@ $wa->useStyle('com_jed.list');
                                 <a href="<?php echo Route::_('index.php?option=com_jed&task=review.edit&id=' . $item->id, false, 2); ?>" class="btn btn-mini" type="button"><i class="icon-edit" ></i></a>
                             <?php endif; ?>
                             <?php if ($canDelete) : ?>
-                                <a href="<?php echo Route::_('index.php?option=com_jed&task=reviewform.remove&id=' . $item->id, false, 2); ?>" class="btn btn-mini delete-button" type="button"><i class="icon-trash" ></i></a>
+                                <a href="<?php echo Route::_('index.php?option=com_jed&task=review.remove&id=' . (int) $item->id . '&' . Session::getFormToken() . '=1', false); ?>" class="btn btn-mini delete-button" type="button"><i class="icon-trash" ></i></a>
                             <?php endif; ?>
                         </td>
                     <?php endif; ?>
