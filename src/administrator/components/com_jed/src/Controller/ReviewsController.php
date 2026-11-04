@@ -148,6 +148,9 @@ class ReviewsController extends AdminController
      */
     public function saveOrderAjax(): void
     {
+        // Same check as core's saveOrderAjax(); the draggable list sends the token with its request.
+        $this->checkToken();
+
         // Get the input
         $input = Factory::getApplication()->input;
         $pks   = $input->post->get('cid', [], 'array');
