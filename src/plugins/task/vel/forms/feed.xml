@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+	<fields name="params">
+		<fieldset name="task_params">
+			<field
+				name="budget_seconds"
+				type="number"
+				label="PLG_TASK_VEL_LABEL_BUDGET_SECONDS"
+				description="PLG_TASK_VEL_LABEL_BUDGET_SECONDS_DESC"
+				default="240"
+				min="30"
+				max="1800"
+				step="1"
+				filter="int"
+			/>
+		</fieldset>
+	</fields>
+</form>

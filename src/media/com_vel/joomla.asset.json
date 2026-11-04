@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "com_vel",
+  "version": "4.0.0",
+  "description": "Vulnerable Extension List assets.",
+  "license": "GPL-2.0-or-later",
+  "assets": [
+    { "name": "com_vel.site", "type": "style", "uri": "com_vel/css/vel.css" },
+    { "name": "com_vel.admin", "type": "style", "uri": "com_vel/css/admin.css" }
+  ]
+}

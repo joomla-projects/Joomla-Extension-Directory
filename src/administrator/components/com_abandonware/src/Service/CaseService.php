@@ -19,7 +19,7 @@ namespace Jed\Component\Abandonware\Administrator\Service;
 use Jed\Component\Abandonware\Administrator\Enum\CaseSource;
 use Jed\Component\Abandonware\Administrator\Enum\CaseStatus;
 use Jed\Component\Abandonware\Administrator\Enum\Resolution;
-use Jed\Component\Tickets\Administrator\Enum\TicketType;
+use Jed\Component\Jed\Administrator\Enum\TicketType;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -554,7 +554,7 @@ class CaseService
                     'GRACEUNTIL'    => $until,
                     'LISTINGLINK'   => 'index.php?option=com_jed&view=extension&id=' . $extensionId,
                     'TICKETLINK'    => (int) ($case->ticket_id ?? 0) > 0
-                        ? 'index.php?option=com_tickets&view=ticket&id=' . (int) $case->ticket_id
+                        ? 'index.php?option=com_jed&view=ticket&id=' . (int) $case->ticket_id
                         : '',
                 ]);
                 $mailer->addRecipient($user->email, $user->name);

@@ -509,8 +509,8 @@ CREATE TABLE IF NOT EXISTS `#__jed_transfer_lookups`
 -- team can add one without a release. `code` is the primary key because it is what
 -- #__jed_extensions and its history store, what the knowledge base articles are keyed by, and
 -- what the API will carry - a surrogate id would add a join and a second identity for the same
--- thing. Seeded by script.php from the JED3 submission error codes (P0-05), which the
--- com_tickets mail templates already speak.
+-- thing. Seeded by script.php from the JED3 submission error codes (P0-05), which the ticket
+-- mail templates it also seeds already speak.
 --
 -- The table is named for blocking because `P1-01` introduced it, but `P1-02` deliberately reuses
 -- it for submission rejections: a rejection reason and a block reason say the same things to a
@@ -709,6 +709,159 @@ CREATE TABLE IF NOT EXISTS `#__jed_hit_stats`
 	PRIMARY KEY (`extension_id`, `period`),
 	KEY `IDX_jed_hitstats_period` (`period`),
 	CONSTRAINT `FK_jed_hit_stats_extension_id` FOREIGN KEY (`extension_id`) REFERENCES `#__jed_extensions` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+
+-- ---------------------------------------------------------------------------------------------
+-- The ticket system: the moderation correspondence with developers and reporters.
+--
+-- Every ticket about a listing, a review or a developer response lands here, whether a person
+-- opened it from the site form or the machinery did (a submission, a flagged review, the link
+-- checker, an abandonware case). The three small tables in front of it are the vocabularies the
+-- ticket form offers - category, allocation group, linked-item type - seeded below so a fresh
+-- install has something to pick from; the JED team maintains them as data from then on.
+--
+-- No foreign keys out of `#__jed_tickets`: `linked_item_id` points at a different table per
+-- `linked_item_type` (an extension, a review, an abandonware case), which is not something a
+-- constraint can express, and a ticket must in any case outlive the thing it was about - "why was
+-- this listing removed" is a question asked after the listing is gone.
+-- ---------------------------------------------------------------------------------------------
+
+/* Ticket Category Types */
+CREATE TABLE IF NOT EXISTS `#__jed_ticket_categories`
+(
+	`id`               int unsigned NOT NULL AUTO_INCREMENT,
+	`categorytype`     varchar(255) DEFAULT '',
+	`ordering`         int          DEFAULT '0',
+	`state`            tinyint(1)   DEFAULT '1',
+	`checked_out`      int unsigned,
+	`checked_out_time` datetime,
+	`created_by`       int unsigned NOT NULL,
+	`modified_by`      int unsigned NULL,
+	PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO `#__jed_ticket_categories`(`id`, `categorytype`, `ordering`, `state`, `checked_out`, `checked_out_time`, `created_by`, `modified_by`) VALUES
+(1, 'Unknown', 0, 1, NULL, NULL, 652, 652),
+(2, 'Extension', 0, 1, NULL, NULL, 652, 652),
+(3, 'Review', 0, 1, NULL, NULL, 652, 652),
+(4, 'Joomla Site Issue', 0, 1, NULL, NULL, 652, 652),
+(5, 'New Listing Support', 0, 1, NULL, NULL, 652, 652),
+(6, 'Current Listing Support', 0, 1, NULL, NULL, 652, 652),
+(7, 'Site Technical Issues', 0, 1, NULL, NULL, 652, 652),
+(8, 'Unpublished Support', 0, 1, NULL, NULL, 652, 652),
+(9, 'Reported Review', 0, 1, NULL, NULL, 652, 652),
+(10, 'Reported Extension', 0, 1, NULL, NULL, 652, 652);
+
+
+/* Ticket Allocation Groups */
+CREATE TABLE IF NOT EXISTS `#__jed_ticket_groups`
+(
+	`id`               int unsigned NOT NULL AUTO_INCREMENT,
+	`name`             varchar(255) DEFAULT '',
+	`ordering`         int          DEFAULT '0',
+	`state`            tinyint(1)   DEFAULT '1',
+	`checked_out`      int unsigned,
+	`checked_out_time` datetime,
+	`created_by`       int unsigned NOT NULL,
+	`modified_by`      int unsigned NULL,
+	PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO `#__jed_ticket_groups`(`id`, `name`, `ordering`, `state`, `checked_out`, `checked_out_time`, `created_by`, `modified_by`) VALUES
+(1, 'Any', 0, 1, NULL, NULL, 652, 652),
+(2, 'Team Leadership', 0, 1, NULL, NULL, 652, 652),
+(3, 'Listing Specialist', 0, 1, NULL, NULL, 652, 652),
+(4, 'Review Specialist', 0, 1, NULL, NULL, 652, 652),
+(5, 'Support Specialist', 0, 1, NULL, NULL, 652, 652);
+
+
+/* Ticket Linked Items */
+CREATE TABLE IF NOT EXISTS `#__jed_ticket_linked_item_types`
+(
+	`id`               int unsigned NOT NULL AUTO_INCREMENT,
+	`title`            varchar(255) DEFAULT '',
+	`model`            varchar(255) DEFAULT '',
+	`ordering`         int          DEFAULT '0',
+	`state`            tinyint(1)   DEFAULT '1',
+	`checked_out`      int unsigned,
+	`checked_out_time` datetime,
+	`created_by`       int unsigned NOT NULL,
+	`modified_by`      int unsigned NULL,
+	PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO `#__jed_ticket_linked_item_types`(`id`, `title`, `model`, `ordering`, `state`, `checked_out`, `checked_out_time`, `created_by`, `modified_by`) VALUES
+(1, 'Unknown', 'unknown', 0, 1, NULL, NULL, 652, 652),
+(2, 'Extension', 'Extension', 1, 1, NULL, NULL, 652, 652),
+(3, 'Review', 'Review', 0, 1, NULL, NULL, 652, 652);
+
+
+/* JED Ticket Messages */
+CREATE TABLE IF NOT EXISTS `#__jed_ticket_messages`
+(
+	`id`                int unsigned NOT NULL AUTO_INCREMENT,
+	`ticket_id`         int          DEFAULT '0',
+	`subject`           varchar(255) NOT NULL,
+	`message`           text,
+	`message_direction` int          DEFAULT '0',
+	`internal`          tinyint(1)   DEFAULT '0',
+	`created_by`        int unsigned NOT NULL,
+	`created_on`        datetime     DEFAULT NULL,
+	PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+
+/* JED Ticket Internal Notes */
+-- The JED team's own notes on a ticket: for the team only, never shown to the ticket's creator and
+-- never mailed. Separate from a message flagged `internal` in #__jed_ticket_messages - that is a
+-- reply in the thread hidden from the requester, this is not part of the conversation at all.
+-- `#__jed_tickets`.`internal_notes` next to it is the single legacy block the JED3 migration
+-- carries across per ticket; notes written in JED4 land here, one row each, attributed and dated.
+CREATE TABLE IF NOT EXISTS `#__jed_ticket_internal_notes`
+(
+	`id`               int unsigned NOT NULL AUTO_INCREMENT,
+	`ticket_id`        int          NULL DEFAULT 0,
+	`summary`          varchar(255) NULL DEFAULT '',
+	`note`             text         NULL,
+	`ordering`         int          NULL DEFAULT 0,
+	`state`            tinyint(1)   NULL DEFAULT 1,
+	`checked_out`      int unsigned,
+	`checked_out_time` datetime,
+	`created_by`       int unsigned NOT NULL DEFAULT 0,
+	`modified_by`      int unsigned NULL DEFAULT 0,
+	`created_on`       datetime     DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	KEY `IDX_jed_ticket_internal_notes_ticket` (`ticket_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+
+/* JED Tickets */
+CREATE TABLE IF NOT EXISTS `#__jed_tickets`
+(
+	`id`                      int unsigned NOT NULL AUTO_INCREMENT,
+	`ticket_origin`           int          NULL DEFAULT 0,
+	`ticket_category_type`    int          NULL DEFAULT 0,
+	`ticket_subject`          varchar(255) NULL DEFAULT '',
+	`ticket_text`             text         NULL,
+	`internal_notes`          text         NULL,
+	`uploaded_files_preview`  blob         NULL,
+	`uploaded_files_location` varchar(255) NULL DEFAULT '',
+	`allocated_group`         int          NULL DEFAULT 0,
+	`allocated_to`            int          NULL DEFAULT 0,
+	`linked_item_type`        int          NULL DEFAULT 0,
+	`linked_item_id`          int          NULL DEFAULT 0,
+	`ticket_status`           INT          NULL DEFAULT 0,
+	`parent_id`               int          NULL DEFAULT -1,
+	`state`                   tinyint(1)   NOT NULL DEFAULT 0,
+	`ordering`                int          NULL DEFAULT 0,
+	`created_by`              int unsigned NOT NULL,
+	`created_on`              datetime,
+	`modified_by`             int unsigned NULL,
+	`modified_on`             datetime,
+	`checked_out`             int unsigned,
+	`checked_out_time`        datetime,
+	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 

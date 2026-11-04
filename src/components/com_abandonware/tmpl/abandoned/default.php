@@ -38,7 +38,7 @@ $listDirn  = $this->state->get('list.direction', 'DESC');
      * "unsafe" - neither of which it says. It states the process that produced each entry: a
      * signal, a contact attempt, a grace period, a decision.
      */
-    ?>
+?>
     <div class="alert alert-info">
         <p class="mb-0"><?php echo Text::_('COM_ABANDONWARE_LIST_INTRO'); ?></p>
     </div>

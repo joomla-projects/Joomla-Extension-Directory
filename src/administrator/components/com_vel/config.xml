@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Every number in here is a policy number, not a technical constant (VEL2-PRD §6.3.3, D-7).
+    How long a vendor gets to answer, how long an embargo runs, whether anything is ever published
+    without a human - these are decisions about people and products, and none of them belongs in a
+    class constant where changing it needs a release. Same reasoning as com_abandonware's
+    grace_days.
+-->
+<config>
+    <fieldset name="policy" label="COM_VEL_CONFIG_POLICY_FIELDSET_LABEL">
+        <field
+            name="vendor_first_response_days"
+            type="number"
+            default="14"
+            min="1"
+            max="365"
+            filter="integer"
+            label="COM_VEL_CONFIG_VENDOR_FIRST_RESPONSE_DAYS_LABEL"
+            description="COM_VEL_CONFIG_VENDOR_FIRST_RESPONSE_DAYS_DESC"
+        />
+
+        <field
+            name="disclosure_days"
+            type="number"
+            default="90"
+            min="1"
+            max="365"
+            filter="integer"
+            label="COM_VEL_CONFIG_DISCLOSURE_DAYS_LABEL"
+            description="COM_VEL_CONFIG_DISCLOSURE_DAYS_DESC"
+        />
+
+        <field
+            name="auto_publish_on_embargo"
+            type="radio"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_VEL_CONFIG_AUTO_PUBLISH_ON_EMBARGO_LABEL"
+            description="COM_VEL_CONFIG_AUTO_PUBLISH_ON_EMBARGO_DESC"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field
+            name="require_cvss_to_publish"
+            type="radio"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_VEL_CONFIG_REQUIRE_CVSS_TO_PUBLISH_LABEL"
+            description="COM_VEL_CONFIG_REQUIRE_CVSS_TO_PUBLISH_DESC"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+    </fieldset>
+
+    <fieldset name="intake" label="COM_VEL_CONFIG_INTAKE_FIELDSET_LABEL">
+        <field
+            name="allow_guest_reports"
+            type="radio"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_VEL_CONFIG_ALLOW_GUEST_REPORTS_LABEL"
+            description="COM_VEL_CONFIG_ALLOW_GUEST_REPORTS_DESC"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field
+            name="guest_verification_required"
+            type="radio"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_VEL_CONFIG_GUEST_VERIFICATION_REQUIRED_LABEL"
+            description="COM_VEL_CONFIG_GUEST_VERIFICATION_REQUIRED_DESC"
+            showon="allow_guest_reports:1"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field
+            name="report_rate_limit"
+            type="number"
+            default="5"
+            min="1"
+            max="100"
+            filter="integer"
+            label="COM_VEL_CONFIG_REPORT_RATE_LIMIT_LABEL"
+            description="COM_VEL_CONFIG_REPORT_RATE_LIMIT_DESC"
+        />
+
+        <field
+            name="report_rate_window_hours"
+            type="number"
+            default="24"
+            min="1"
+            max="720"
+            filter="integer"
+            label="COM_VEL_CONFIG_REPORT_RATE_WINDOW_HOURS_LABEL"
+            description="COM_VEL_CONFIG_REPORT_RATE_WINDOW_HOURS_DESC"
+        />
+
+        <field
+            name="unverified_purge_days"
+            type="number"
+            default="7"
+            min="1"
+            max="90"
+            filter="integer"
+            label="COM_VEL_CONFIG_UNVERIFIED_PURGE_DAYS_LABEL"
+            description="COM_VEL_CONFIG_UNVERIFIED_PURGE_DAYS_DESC"
+        />
+
+        <field
+            name="captcha"
+            type="plugins"
+            folder="captcha"
+            default=""
+            useglobal="true"
+            filter="cmd"
+            label="COM_VEL_CONFIG_CAPTCHA_LABEL"
+            description="COM_VEL_CONFIG_CAPTCHA_DESC"
+        >
+            <option value="0">JOPTION_DO_NOT_USE</option>
+        </field>
+
+        <field
+            name="attachment_max_mb"
+            type="number"
+            default="10"
+            min="1"
+            max="100"
+            filter="integer"
+            label="COM_VEL_CONFIG_ATTACHMENT_MAX_MB_LABEL"
+            description="COM_VEL_CONFIG_ATTACHMENT_MAX_MB_DESC"
+        />
+
+        <field
+            name="attachment_types"
+            type="text"
+            default="zip,txt,md,log,png,jpg,jpeg,gif,pdf,asc,gpg,json,xml,php,html,htm"
+            filter="string"
+            label="COM_VEL_CONFIG_ATTACHMENT_TYPES_LABEL"
+            description="COM_VEL_CONFIG_ATTACHMENT_TYPES_DESC"
+        />
+
+        <!--
+            Outside the web root by default. A proof-of-concept exploit that a web server will
+            happily serve is a second vulnerability, and one the VEL would have created itself.
+        -->
+        <field
+            name="attachment_path"
+            type="text"
+            default=""
+            filter="string"
+            label="COM_VEL_CONFIG_ATTACHMENT_PATH_LABEL"
+            description="COM_VEL_CONFIG_ATTACHMENT_PATH_DESC"
+        />
+
+        <field
+            name="pgp_public_key"
+            type="textarea"
+            rows="8"
+            filter="raw"
+            label="COM_VEL_CONFIG_PGP_PUBLIC_KEY_LABEL"
+            description="COM_VEL_CONFIG_PGP_PUBLIC_KEY_DESC"
+        />
+
+        <field
+            name="contact_email"
+            type="email"
+            default=""
+            validate="email"
+            label="COM_VEL_CONFIG_CONTACT_EMAIL_LABEL"
+            description="COM_VEL_CONFIG_CONTACT_EMAIL_DESC"
+        />
+    </fieldset>
+
+    <fieldset name="email" label="COM_VEL_CONFIG_EMAIL_FIELDSET_LABEL">
+        <field
+            name="from_address"
+            type="email"
+            default=""
+            validate="email"
+            label="COM_VEL_CONFIG_FROM_ADDRESS_LABEL"
+            description="COM_VEL_CONFIG_FROM_ADDRESS_DESC"
+        />
+
+        <field
+            name="from_name"
+            type="text"
+            default="Joomla! Vulnerable Extension List"
+            filter="string"
+            label="COM_VEL_CONFIG_FROM_NAME_LABEL"
+        />
+
+        <field
+            name="inbound_mode"
+            type="list"
+            default="off"
+            label="COM_VEL_CONFIG_INBOUND_MODE_LABEL"
+            description="COM_VEL_CONFIG_INBOUND_MODE_DESC"
+        >
+            <option value="off">COM_VEL_CONFIG_INBOUND_MODE_OFF</option>
+            <option value="imap">COM_VEL_CONFIG_INBOUND_MODE_IMAP</option>
+            <option value="webhook">COM_VEL_CONFIG_INBOUND_MODE_WEBHOOK</option>
+        </field>
+
+        <field name="imap_host" type="text" default="" filter="string" label="COM_VEL_CONFIG_IMAP_HOST_LABEL" showon="inbound_mode:imap"/>
+        <field name="imap_port" type="number" default="993" filter="integer" label="COM_VEL_CONFIG_IMAP_PORT_LABEL" showon="inbound_mode:imap"/>
+        <field name="imap_encryption" type="list" default="ssl" label="COM_VEL_CONFIG_IMAP_ENCRYPTION_LABEL" showon="inbound_mode:imap">
+            <option value="ssl">SSL</option>
+            <option value="tls">STARTTLS</option>
+            <option value="none">COM_VEL_CONFIG_IMAP_ENCRYPTION_NONE</option>
+        </field>
+        <field name="imap_username" type="text" default="" filter="string" label="COM_VEL_CONFIG_IMAP_USERNAME_LABEL" showon="inbound_mode:imap"/>
+        <field name="imap_password" type="password" default="" filter="raw" label="COM_VEL_CONFIG_IMAP_PASSWORD_LABEL" showon="inbound_mode:imap"/>
+        <field name="imap_folder" type="text" default="INBOX" filter="string" label="COM_VEL_CONFIG_IMAP_FOLDER_LABEL" showon="inbound_mode:imap"/>
+        <field name="imap_processed_folder" type="text" default="Processed" filter="string" label="COM_VEL_CONFIG_IMAP_PROCESSED_FOLDER_LABEL" description="COM_VEL_CONFIG_IMAP_PROCESSED_FOLDER_DESC" showon="inbound_mode:imap"/>
+        <field name="webhook_secret" type="password" default="" filter="raw" label="COM_VEL_CONFIG_WEBHOOK_SECRET_LABEL" description="COM_VEL_CONFIG_WEBHOOK_SECRET_DESC" showon="inbound_mode:webhook"/>
+        <field name="inbound_daily_cap" type="number" default="20" min="1" max="1000" filter="integer" label="COM_VEL_CONFIG_INBOUND_DAILY_CAP_LABEL" description="COM_VEL_CONFIG_INBOUND_DAILY_CAP_DESC" showon="inbound_mode!:off"/>
+    </fieldset>
+
+    <fieldset name="cve" label="COM_VEL_CONFIG_CVE_FIELDSET_LABEL">
+        <field
+            name="cna_org_id"
+            type="text"
+            default="6ff30186-7fb7-4ad9-be33-533e7b05e586"
+            filter="string"
+            label="COM_VEL_CONFIG_CNA_ORG_ID_LABEL"
+            description="COM_VEL_CONFIG_CNA_ORG_ID_DESC"
+        />
+
+        <field
+            name="cna_short_name"
+            type="text"
+            default="Joomla"
+            filter="string"
+            label="COM_VEL_CONFIG_CNA_SHORT_NAME_LABEL"
+        />
+
+        <field
+            name="cve_data_version"
+            type="list"
+            default="5.1"
+            label="COM_VEL_CONFIG_CVE_DATA_VERSION_LABEL"
+            description="COM_VEL_CONFIG_CVE_DATA_VERSION_DESC"
+        >
+            <option value="5.1">5.1</option>
+            <option value="5.2">5.2</option>
+        </field>
+
+        <field
+            name="cve_versions_style"
+            type="list"
+            default="structured"
+            label="COM_VEL_CONFIG_CVE_VERSIONS_STYLE_LABEL"
+            description="COM_VEL_CONFIG_CVE_VERSIONS_STYLE_DESC"
+        >
+            <option value="structured">COM_VEL_CONFIG_CVE_VERSIONS_STYLE_STRUCTURED</option>
+            <option value="string">COM_VEL_CONFIG_CVE_VERSIONS_STYLE_STRING</option>
+        </field>
+
+        <field
+            name="title_prefix"
+            type="text"
+            default="Joomla Extension - {vendor} - "
+            filter="string"
+            label="COM_VEL_CONFIG_TITLE_PREFIX_LABEL"
+            description="COM_VEL_CONFIG_TITLE_PREFIX_DESC"
+        />
+
+        <field
+            name="product_suffix"
+            type="text"
+            default=" extension for Joomla"
+            filter="string"
+            label="COM_VEL_CONFIG_PRODUCT_SUFFIX_LABEL"
+            description="COM_VEL_CONFIG_PRODUCT_SUFFIX_DESC"
+        />
+
+        <field
+            name="cve_services_env"
+            type="list"
+            default="test"
+            label="COM_VEL_CONFIG_CVE_SERVICES_ENV_LABEL"
+            description="COM_VEL_CONFIG_CVE_SERVICES_ENV_DESC"
+        >
+            <option value="test">COM_VEL_CONFIG_CVE_SERVICES_ENV_TEST</option>
+            <option value="prod">COM_VEL_CONFIG_CVE_SERVICES_ENV_PROD</option>
+        </field>
+
+        <field name="cve_api_org" type="text" default="" filter="string" label="COM_VEL_CONFIG_CVE_API_ORG_LABEL"/>
+        <field name="cve_api_user" type="text" default="" filter="string" label="COM_VEL_CONFIG_CVE_API_USER_LABEL"/>
+        <field name="cve_api_key" type="password" default="" filter="raw" label="COM_VEL_CONFIG_CVE_API_KEY_LABEL"/>
+    </fieldset>
+
+    <fieldset name="feeds" label="COM_VEL_CONFIG_FEEDS_FIELDSET_LABEL">
+        <field
+            name="cna_enabled"
+            type="radio"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_VEL_CONFIG_CNA_ENABLED_LABEL"
+            description="COM_VEL_CONFIG_CNA_ENABLED_DESC"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field
+            name="cna_source"
+            type="list"
+            default="cvelist_github"
+            label="COM_VEL_CONFIG_CNA_SOURCE_LABEL"
+            description="COM_VEL_CONFIG_CNA_SOURCE_DESC"
+            showon="cna_enabled:1"
+        >
+            <option value="cvelist_github">COM_VEL_CONFIG_CNA_SOURCE_CVELIST</option>
+            <option value="cve_services">COM_VEL_CONFIG_CNA_SOURCE_SERVICES</option>
+        </field>
+
+        <field name="github_token" type="password" default="" filter="raw" label="COM_VEL_CONFIG_GITHUB_TOKEN_LABEL" description="COM_VEL_CONFIG_GITHUB_TOKEN_DESC" showon="cna_enabled:1"/>
+
+        <field
+            name="cna_lookback_days"
+            type="number"
+            default="7"
+            min="1"
+            max="120"
+            filter="integer"
+            label="COM_VEL_CONFIG_CNA_LOOKBACK_DAYS_LABEL"
+            description="COM_VEL_CONFIG_LOOKBACK_DAYS_DESC"
+            showon="cna_enabled:1"
+        />
+
+        <field
+            name="feed_import_other_cnas"
+            type="radio"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_VEL_CONFIG_FEED_IMPORT_OTHER_CNAS_LABEL"
+            description="COM_VEL_CONFIG_FEED_IMPORT_OTHER_CNAS_DESC"
+            showon="cna_enabled:1"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field
+            name="nvd_enabled"
+            type="radio"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_VEL_CONFIG_NVD_ENABLED_LABEL"
+            description="COM_VEL_CONFIG_NVD_ENABLED_DESC"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field name="nvd_api_key" type="password" default="" filter="raw" label="COM_VEL_CONFIG_NVD_API_KEY_LABEL" description="COM_VEL_CONFIG_NVD_API_KEY_DESC" showon="nvd_enabled:1"/>
+
+        <field
+            name="nvd_lookback_days"
+            type="number"
+            default="7"
+            min="1"
+            max="120"
+            filter="integer"
+            label="COM_VEL_CONFIG_NVD_LOOKBACK_DAYS_LABEL"
+            description="COM_VEL_CONFIG_LOOKBACK_DAYS_DESC"
+            showon="nvd_enabled:1"
+        />
+
+        <field
+            name="feed_auto_create"
+            type="radio"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_VEL_CONFIG_FEED_AUTO_CREATE_LABEL"
+            description="COM_VEL_CONFIG_FEED_AUTO_CREATE_DESC"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+    </fieldset>
+
+    <fieldset name="public" label="COM_VEL_CONFIG_PUBLIC_FIELDSET_LABEL">
+        <field
+            name="public_list_path"
+            type="text"
+            default="/vulnerable-extensions"
+            filter="string"
+            label="COM_VEL_CONFIG_PUBLIC_LIST_PATH_LABEL"
+            description="COM_VEL_CONFIG_PUBLIC_LIST_PATH_DESC"
+        />
+
+        <field
+            name="list_limit"
+            type="number"
+            default="25"
+            min="5"
+            max="200"
+            filter="integer"
+            label="COM_VEL_CONFIG_LIST_LIMIT_LABEL"
+        />
+
+        <field
+            name="show_cvss_in_list"
+            type="radio"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_VEL_CONFIG_SHOW_CVSS_IN_LIST_LABEL"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field
+            name="legacy_feed_enabled"
+            type="radio"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_VEL_CONFIG_LEGACY_FEED_ENABLED_LABEL"
+            description="COM_VEL_CONFIG_LEGACY_FEED_ENABLED_DESC"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field
+            name="legacy_feed_sunset_date"
+            type="calendar"
+            default=""
+            format="%Y-%m-%d"
+            filter="user_utc"
+            label="COM_VEL_CONFIG_LEGACY_FEED_SUNSET_DATE_LABEL"
+            description="COM_VEL_CONFIG_LEGACY_FEED_SUNSET_DATE_DESC"
+            showon="legacy_feed_enabled:1"
+        />
+
+        <field
+            name="api_cache_seconds"
+            type="number"
+            default="300"
+            min="0"
+            max="86400"
+            filter="integer"
+            label="COM_VEL_CONFIG_API_CACHE_SECONDS_LABEL"
+            description="COM_VEL_CONFIG_API_CACHE_SECONDS_DESC"
+        />
+
+        <field
+            name="check_max_entries"
+            type="number"
+            default="500"
+            min="1"
+            max="5000"
+            filter="integer"
+            label="COM_VEL_CONFIG_CHECK_MAX_ENTRIES_LABEL"
+            description="COM_VEL_CONFIG_CHECK_MAX_ENTRIES_DESC"
+        />
+
+        <field
+            name="retired_in_dataset_days"
+            type="number"
+            default="365"
+            min="0"
+            max="3650"
+            filter="integer"
+            label="COM_VEL_CONFIG_RETIRED_IN_DATASET_DAYS_LABEL"
+            description="COM_VEL_CONFIG_RETIRED_IN_DATASET_DAYS_DESC"
+        />
+    </fieldset>
+
+    <fieldset name="jed" label="COM_VEL_CONFIG_JED_FIELDSET_LABEL">
+        <field
+            name="jed_badge_enabled"
+            type="radio"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_VEL_CONFIG_JED_BADGE_ENABLED_LABEL"
+            description="COM_VEL_CONFIG_JED_BADGE_ENABLED_DESC"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field
+            name="jed_open_ticket_on_publish"
+            type="list"
+            default="ask"
+            label="COM_VEL_CONFIG_JED_OPEN_TICKET_ON_PUBLISH_LABEL"
+            description="COM_VEL_CONFIG_JED_OPEN_TICKET_ON_PUBLISH_DESC"
+        >
+            <option value="never">COM_VEL_CONFIG_JED_OPEN_TICKET_NEVER</option>
+            <option value="ask">COM_VEL_CONFIG_JED_OPEN_TICKET_ASK</option>
+            <option value="always">COM_VEL_CONFIG_JED_OPEN_TICKET_ALWAYS</option>
+        </field>
+    </fieldset>
+
+    <fieldset name="permissions" label="JCONFIG_PERMISSIONS_LABEL" description="JCONFIG_PERMISSIONS_DESC">
+        <field name="rules" type="rules" label="JCONFIG_PERMISSIONS_LABEL" filter="rules" component="com_vel" section="component"/>
+    </fieldset>
+</config>

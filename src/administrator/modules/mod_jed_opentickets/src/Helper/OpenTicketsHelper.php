@@ -27,10 +27,10 @@ use Joomla\Registry\Registry;
 class OpenTicketsHelper
 {
     /**
-     * Get the open com_tickets tickets visible to the current user, most recent first.
+     * Get the open JED tickets visible to the current user, most recent first.
      *
-     * "Available to the current user" mirrors com_tickets' own admin Tickets list: any
-     * user authorised to manage/administer com_tickets sees every open ticket - there is
+     * "Available to the current user" mirrors com_jed's own admin Tickets list: any
+     * user authorised to manage/administer com_jed sees every open ticket - there is
      * no per-user/allocated_to visibility restriction anywhere else in this codebase to
      * mirror, so a user without that authorisation simply sees an empty list.
      *
@@ -45,12 +45,12 @@ class OpenTicketsHelper
     {
         $user = $app->getIdentity();
 
-        if (!$user->authorise('core.manage', 'com_tickets') && !$user->authorise('core.admin', 'com_tickets')) {
+        if (!$user->authorise('core.manage', 'com_jed') && !$user->authorise('core.admin', 'com_jed')) {
             return [];
         }
 
-        /** @var \Jed\Component\Tickets\Administrator\Model\TicketsModel $model */
-        $model = $app->bootComponent('com_tickets')
+        /** @var \Jed\Component\Jed\Administrator\Model\TicketsModel $model */
+        $model = $app->bootComponent('com_jed')
             ->getMVCFactory()
             ->createModel('Tickets', 'Administrator', ['ignore_request' => true]);
 
@@ -69,7 +69,7 @@ class OpenTicketsHelper
         }
 
         foreach ($items as $item) {
-            $item->link = Route::_('index.php?option=com_tickets&task=ticket.edit&id=' . (int) $item->id);
+            $item->link = Route::_('index.php?option=com_jed&task=ticket.edit&id=' . (int) $item->id);
         }
 
         return $items;

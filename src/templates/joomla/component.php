@@ -24,7 +24,7 @@ $wa->useStyle('template.joomla.custom.' . ($this->direction === 'rtl' ? 'rtl' : 
 // Override 'template.active' asset to set correct ltr/rtl dependency and with CDN Dependency
 $wa->registerStyle('template.active', '', [], [], [((!JDEBUG && $this->params->get('useCdn', '1')) ? 'cdn.' : '') . 'template.joomla.' . ($this->direction === 'rtl' ? 'rtl' : 'ltr')]);
 
-$fontName = 'Open Sans';
+$fontName        = 'Open Sans';
 $escapedFontName = str_replace(' ', '+', $fontName);
 
 $this->getPreloadManager()->preconnect('https://fonts.googleapis.com/', ['crossorigin' => 'anonymous']);

@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The public vulnerability report form (VEL2-PRD §6.4.1). The successor of the legacy
+    velreportform.xml, cut down to what a reporter actually knows.
+
+    Absent on purpose: anything written server-side (IP hash, dates, state, verification), and
+    the legacy `data_source`, `passed_to_vel`, `vel_item_id` which belonged to the old system.
+    `reporter_name` and `reporter_email` are required for a guest and taken from the account for
+    a logged-in user (the model fills them in).
+-->
+<form>
+    <fieldset name="reporter" label="COM_VEL_REPORT_FIELDSET_REPORTER">
+        <field
+                name="reporter_name"
+                type="text"
+                label="COM_VEL_FIELD_REPORTER_NAME_LABEL"
+                description="COM_VEL_FIELD_REPORTER_NAME_DESC"
+                maxlength="255"
+                filter="string"
+                required="true"
+        />
+
+        <field
+                name="reporter_email"
+                type="email"
+                label="COM_VEL_FIELD_REPORTER_EMAIL_LABEL"
+                description="COM_VEL_FIELD_REPORTER_EMAIL_DESC"
+                maxlength="255"
+                filter="string"
+                validate="email"
+                required="true"
+        />
+
+        <field
+                name="reporter_organisation"
+                type="text"
+                label="COM_VEL_FIELD_REPORTER_ORGANISATION_LABEL"
+                maxlength="255"
+                filter="string"
+        />
+
+        <field
+                name="reporter_role"
+                type="list"
+                label="COM_VEL_FIELD_REPORTER_ROLE_LABEL"
+                default="researcher"
+        >
+            <option value="researcher">COM_VEL_REPORTER_ROLE_RESEARCHER</option>
+            <option value="site_owner">COM_VEL_REPORTER_ROLE_SITE_OWNER</option>
+            <option value="developer">COM_VEL_REPORTER_ROLE_DEVELOPER</option>
+            <option value="other">COM_VEL_REPORTER_ROLE_OTHER</option>
+        </field>
+
+        <field
+                name="reporter_wants_credit"
+                type="radio"
+                label="COM_VEL_FIELD_REPORTER_WANTS_CREDIT_LABEL"
+                description="COM_VEL_FIELD_REPORTER_WANTS_CREDIT_DESC"
+                layout="joomla.form.field.radio.switcher"
+                default="1"
+                filter="integer"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field
+                name="reporter_credit_name"
+                type="text"
+                label="COM_VEL_FIELD_REPORTER_CREDIT_NAME_LABEL"
+                description="COM_VEL_FIELD_REPORTER_CREDIT_NAME_DESC"
+                maxlength="255"
+                filter="string"
+                showon="reporter_wants_credit:1"
+        />
+    </fieldset>
+
+    <fieldset name="extension" label="COM_VEL_REPORT_FIELDSET_EXTENSION">
+        <field
+                name="extension_id"
+                type="hidden"
+                filter="integer"
+        />
+
+        <field
+                name="extension_name"
+                type="text"
+                label="COM_VEL_FIELD_EXTENSION_NAME_LABEL"
+                description="COM_VEL_FIELD_EXTENSION_NAME_REPORT_DESC"
+                maxlength="255"
+                filter="string"
+                required="true"
+        />
+
+        <field
+                name="extension_version"
+                type="text"
+                label="COM_VEL_FIELD_EXTENSION_VERSION_LABEL"
+                description="COM_VEL_FIELD_EXTENSION_VERSION_DESC"
+                maxlength="100"
+                filter="string"
+                required="true"
+        />
+
+        <field
+                name="extension_url"
+                type="url"
+                label="COM_VEL_FIELD_EXTENSION_URL_LABEL"
+                description="COM_VEL_FIELD_EXTENSION_URL_DESC"
+                maxlength="255"
+                filter="url"
+                validate="url"
+        />
+
+        <field
+                name="developer_name"
+                type="text"
+                label="COM_VEL_FIELD_DEVELOPER_NAME_LABEL"
+                maxlength="255"
+                filter="string"
+        />
+
+        <field
+                name="developer_email"
+                type="email"
+                label="COM_VEL_FIELD_DEVELOPER_EMAIL_LABEL"
+                description="COM_VEL_FIELD_DEVELOPER_EMAIL_DESC"
+                maxlength="255"
+                filter="string"
+                validate="email"
+        />
+    </fieldset>
+
+    <fieldset name="vulnerability" label="COM_VEL_REPORT_FIELDSET_VULNERABILITY">
+        <field
+                name="vulnerability_class"
+                type="list"
+                label="COM_VEL_FIELD_VULNERABILITY_CLASS_LABEL"
+                description="COM_VEL_FIELD_VULNERABILITY_CLASS_DESC"
+                default=""
+        >
+            <option value="">COM_VEL_CLASS_UNSURE</option>
+            <option value="CWE-89">COM_VEL_CLASS_SQLI</option>
+            <option value="CWE-79">COM_VEL_CLASS_XSS</option>
+            <option value="CWE-352">COM_VEL_CLASS_CSRF</option>
+            <option value="CWE-22">COM_VEL_CLASS_TRAVERSAL</option>
+            <option value="CWE-434">COM_VEL_CLASS_UPLOAD</option>
+            <option value="CWE-94">COM_VEL_CLASS_RCE</option>
+            <option value="CWE-287">COM_VEL_CLASS_AUTH_BYPASS</option>
+            <option value="CWE-862">COM_VEL_CLASS_MISSING_AUTHZ</option>
+            <option value="CWE-200">COM_VEL_CLASS_INFO_DISCLOSURE</option>
+            <option value="CWE-918">COM_VEL_CLASS_SSRF</option>
+            <option value="CWE-601">COM_VEL_CLASS_OPEN_REDIRECT</option>
+            <option value="CWE-502">COM_VEL_CLASS_DESERIALIZATION</option>
+            <option value="CWE-20">COM_VEL_CLASS_OTHER</option>
+        </field>
+
+        <field
+                name="description"
+                type="textarea"
+                label="COM_VEL_FIELD_REPORT_DESCRIPTION_LABEL"
+                description="COM_VEL_FIELD_REPORT_DESCRIPTION_DESC"
+                rows="8"
+                filter="string"
+                required="true"
+        />
+
+        <field
+                name="steps_to_reproduce"
+                type="textarea"
+                label="COM_VEL_FIELD_STEPS_LABEL"
+                description="COM_VEL_FIELD_STEPS_DESC"
+                rows="8"
+                filter="string"
+        />
+
+        <field
+                name="impact"
+                type="textarea"
+                label="COM_VEL_FIELD_IMPACT_LABEL"
+                description="COM_VEL_FIELD_IMPACT_DESC"
+                rows="4"
+                filter="string"
+        />
+
+        <field
+                name="actively_exploited"
+                type="list"
+                label="COM_VEL_FIELD_ACTIVELY_EXPLOITED_LABEL"
+                default="unknown"
+        >
+            <option value="unknown">COM_VEL_EXPLOITED_UNKNOWN</option>
+            <option value="no">COM_VEL_EXPLOITED_NO</option>
+            <option value="yes">COM_VEL_EXPLOITED_YES</option>
+        </field>
+
+        <field
+                name="publicly_disclosed"
+                type="radio"
+                label="COM_VEL_FIELD_PUBLICLY_DISCLOSED_LABEL"
+                description="COM_VEL_FIELD_PUBLICLY_DISCLOSED_DESC"
+                layout="joomla.form.field.radio.switcher"
+                default="0"
+                filter="integer"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field
+                name="disclosure_url"
+                type="url"
+                label="COM_VEL_FIELD_DISCLOSURE_URL_LABEL"
+                maxlength="255"
+                filter="url"
+                validate="url"
+                showon="publicly_disclosed:1"
+        />
+
+        <field
+                name="tracking_reference"
+                type="text"
+                label="COM_VEL_FIELD_TRACKING_REFERENCE_LABEL"
+                description="COM_VEL_FIELD_TRACKING_REFERENCE_DESC"
+                maxlength="255"
+                filter="string"
+        />
+    </fieldset>
+
+    <fieldset name="developer" label="COM_VEL_REPORT_FIELDSET_DEVELOPER">
+        <field
+                name="developer_contact_status"
+                type="list"
+                label="COM_VEL_FIELD_DEVELOPER_CONTACT_STATUS_LABEL"
+                default="not_contacted"
+        >
+            <option value="not_contacted">COM_VEL_CONTACT_STATUS_NOT_CONTACTED</option>
+            <option value="contacted_no_reply">COM_VEL_CONTACT_STATUS_CONTACTED_NO_REPLY</option>
+            <option value="contacted_replied">COM_VEL_CONTACT_STATUS_CONTACTED_REPLIED</option>
+            <option value="i_am_developer">COM_VEL_CONTACT_STATUS_I_AM_DEVELOPER</option>
+            <option value="fixed_publicly">COM_VEL_CONTACT_STATUS_FIXED_PUBLICLY</option>
+        </field>
+
+        <field
+                name="fixed_version"
+                type="text"
+                label="COM_VEL_FIELD_FIXED_VERSION_LABEL"
+                maxlength="50"
+                filter="string"
+                showon="developer_contact_status:fixed_publicly,i_am_developer"
+        />
+
+        <field
+                name="patch_url"
+                type="url"
+                label="COM_VEL_FIELD_PATCH_URL_LABEL"
+                maxlength="255"
+                filter="url"
+                validate="url"
+                showon="developer_contact_status:fixed_publicly,i_am_developer"
+        />
+
+        <field
+                name="additional_info"
+                type="textarea"
+                label="COM_VEL_FIELD_ADDITIONAL_INFO_LABEL"
+                rows="4"
+                filter="string"
+        />
+    </fieldset>
+
+    <fieldset name="attachments" label="COM_VEL_REPORT_FIELDSET_ATTACHMENTS">
+        <field
+                name="attachments"
+                type="file"
+                label="COM_VEL_FIELD_ATTACHMENTS_LABEL"
+                description="COM_VEL_FIELD_ATTACHMENTS_DESC"
+                multiple="true"
+        />
+    </fieldset>
+
+    <fieldset name="consent" label="COM_VEL_REPORT_FIELDSET_CONSENT">
+        <field
+                name="share_with_developer"
+                type="radio"
+                label="COM_VEL_FIELD_SHARE_WITH_DEVELOPER_LABEL"
+                description="COM_VEL_FIELD_SHARE_WITH_DEVELOPER_DESC"
+                layout="joomla.form.field.radio.switcher"
+                default="1"
+                filter="integer"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <!--
+            A checkbox, not a yes/no list: consent is the lawful basis for keeping the row at
+            all (com_abandonware's reasoning), so it is either given or the form is refused.
+        -->
+        <field
+                name="consent_to_process"
+                type="checkbox"
+                label="COM_VEL_FIELD_CONSENT_LABEL"
+                description="COM_VEL_FIELD_CONSENT_DESC"
+                value="1"
+                filter="integer"
+                required="true"
+        />
+
+        <field
+                name="captcha"
+                type="captcha"
+                label="COM_VEL_FIELD_CAPTCHA_LABEL"
+                validate="captcha"
+                namespace="com_vel"
+        />
+
+        <!-- The honeypot: hidden by CSS, must stay empty. -->
+        <field
+                name="website"
+                type="text"
+                label="COM_VEL_FIELD_HONEYPOT_LABEL"
+                class="com-vel-hp"
+                autocomplete="off"
+                tabindex="-1"
+                filter="string"
+        />
+    </fieldset>
+</form>

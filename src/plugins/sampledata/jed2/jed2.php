@@ -25,7 +25,7 @@ use Joomla\Event\SubscriberInterface;
  *
  * Creates a set of "mainmenu" menu items exercising the com_jed site views, including the
  * Top Rated / Most Reviewed / New / Recently Updated / Compatible with J4-J5-J6 presets of the
- * Extensions list view, plus the com_abandonware and com_tickets entry points.
+ * Extensions list view, plus the ticket views and the com_abandonware entry points.
  *
  * @since  1.0.0
  */
@@ -90,12 +90,17 @@ class PlgSampledataJed2 extends CMSPlugin
             return;
         }
 
-        $db = Factory::getDbo();
+        // Sample data wipes and reloads the directory: Super Users only.
+        if (!$this->getApplication()->getIdentity()->authorise('core.admin')) {
+            throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
 
         $componentIds = [
             'com_jed'         => $this->getComponentId($db, 'com_jed'),
             'com_abandonware' => $this->getComponentId($db, 'com_abandonware'),
-            'com_tickets'     => $this->getComponentId($db, 'com_tickets'),
+            'com_vel'         => $this->getComponentId($db, 'com_vel'),
             'com_finder'      => $this->getComponentId($db, 'com_finder'),
             'com_users'       => $this->getComponentId($db, 'com_users'),
             'com_tags'        => $this->getComponentId($db, 'com_tags'),
@@ -198,10 +203,10 @@ class PlgSampledataJed2 extends CMSPlugin
                 // variable, because that is a filter of the ordinary list rather than a list of
                 // its own.
                 $item = [
-                    'title'        => $preset['title'],
-                    'alias'        => $preset['alias'],
-                    'path'         => 'browse-extensions/' . $preset['alias'],
-                    'link'         => 'index.php?option=com_jed&view=extensions'
+                    'title' => $preset['title'],
+                    'alias' => $preset['alias'],
+                    'path'  => 'browse-extensions/' . $preset['alias'],
+                    'link'  => 'index.php?option=com_jed&view=extensions'
                         . (isset($preset['query']) ? '&' . $preset['query'] : ''),
                     'component_id' => $componentIds['com_jed'],
                 ];
@@ -238,6 +243,36 @@ class PlgSampledataJed2 extends CMSPlugin
             'link'         => 'index.php?option=com_abandonware&view=report',
             'component_id' => $componentIds['com_abandonware'],
         ], 1, $messages);
+
+        // --- VEL ----------------------------------------------------------------------
+        // The path space the comment above reserves. The list is the menu item everything in
+        // com_vel routes through (advisories, the report forms, the case page, the API); the
+        // two forms get items of their own so they have titles in the menu.
+        if (!empty($componentIds['com_vel'])) {
+            $velId = $this->createMenuItem($db, [
+                'title'        => 'Vulnerable Extensions List',
+                'alias'        => 'vulnerable-extensions',
+                'path'         => 'vulnerable-extensions',
+                'link'         => 'index.php?option=com_vel&view=advisories',
+                'component_id' => $componentIds['com_vel'],
+            ], 1, $messages);
+
+            $this->createMenuItem($db, [
+                'title'        => 'Report a Vulnerability',
+                'alias'        => 'report',
+                'path'         => 'vulnerable-extensions/report',
+                'link'         => 'index.php?option=com_vel&view=report',
+                'component_id' => $componentIds['com_vel'],
+            ], $velId, $messages);
+
+            $this->createMenuItem($db, [
+                'title'        => 'Submit a Fix Notice',
+                'alias'        => 'fixnotice',
+                'path'         => 'vulnerable-extensions/fixnotice',
+                'link'         => 'index.php?option=com_vel&view=fixnotice',
+                'component_id' => $componentIds['com_vel'],
+            ], $velId, $messages);
+        }
 
         // --- Search / Login / Register / New Extension / Dashboard ----------------------
         $this->createMenuItem($db, [
@@ -298,16 +333,16 @@ class PlgSampledataJed2 extends CMSPlugin
             'title'        => 'Tickets',
             'alias'        => 'tickets',
             'path'         => 'tickets',
-            'link'         => 'index.php?option=com_tickets&view=tickets',
-            'component_id' => $componentIds['com_tickets'],
+            'link'         => 'index.php?option=com_jed&view=tickets',
+            'component_id' => $componentIds['com_jed'],
         ], 1, $messages);
 
         $this->createMenuItem($db, [
             'title'        => 'Ticketform',
             'alias'        => 'ticketform',
             'path'         => 'ticketform',
-            'link'         => 'index.php?option=com_tickets&view=ticketform',
-            'component_id' => $componentIds['com_tickets'],
+            'link'         => 'index.php?option=com_jed&view=ticketform',
+            'component_id' => $componentIds['com_jed'],
         ], 1, $messages);
 
         foreach ($messages as $message) {
@@ -408,18 +443,18 @@ class PlgSampledataJed2 extends CMSPlugin
         // browse-list preset reaches the menu item rather than the URL (P1-13).
         $menuItem->params = json_encode(array_merge(
             [
-                'menu-anchor_title'    => '',
-                'menu-anchor_css'      => '',
-                'menu_image'           => '',
-                'menu_image_css'       => '',
-                'menu_text'            => 1,
-                'menu_show'            => 1,
-                'page_title'           => '',
-                'show_page_heading'    => '',
-                'page_heading'         => '',
-                'pageclass_sfx'        => '',
+                'menu-anchor_title'     => '',
+                'menu-anchor_css'       => '',
+                'menu_image'            => '',
+                'menu_image_css'        => '',
+                'menu_text'             => 1,
+                'menu_show'             => 1,
+                'page_title'            => '',
+                'show_page_heading'     => '',
+                'page_heading'          => '',
+                'pageclass_sfx'         => '',
                 'menu-meta_description' => '',
-                'robots'               => '',
+                'robots'                => '',
             ],
             isset($data['params']) ? (array) json_decode((string) $data['params'], true) : []
         ));

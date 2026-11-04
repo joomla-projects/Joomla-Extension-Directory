@@ -46,7 +46,7 @@ $extensionId = (int) ($this->item->extension_id ?: $this->item->id);
                 $isActive  = (int) $entry->active === 1;
                 $historyId = (int) $entry->id;
                 $date      = $entry->modified ?: $entry->created;
-            ?>
+                ?>
             <tr>
                 <td class="text-center">
                     <input type="checkbox" name="history[]" value="<?php echo $historyId; ?>"

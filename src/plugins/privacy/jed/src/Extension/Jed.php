@@ -34,10 +34,12 @@ use Throwable;
  * it sits next to the data model it describes and can be tested without a request cycle. This
  * class connects that to three events and does no deciding of its own.
  *
- * The one setting it does own is how reviews are handled, because 8.17 leaves that open and the
- * two answers are both defensible: anonymising keeps a public score honest, deleting is the
- * stricter reading of an erasure claim. Anonymise is the default; either way, the aggregates the
- * JED shows stay correct.
+ * The two settings it does own are how reviews and how tickets are handled. For reviews 8.17
+ * leaves that open and the two answers are both defensible: anonymising keeps a public score
+ * honest, deleting is the stricter reading of an erasure claim. Anonymise is the default; either
+ * way, the aggregates the JED shows stay correct. For tickets the default is the other way round -
+ * a ticket is correspondence with a person, nothing is computed from it, so it goes - and
+ * anonymising the thread is the option.
  *
  * @since 4.0.0
  */
@@ -166,10 +168,12 @@ final class Jed extends PrivacyPlugin implements SubscriberInterface
             return;
         }
 
-        $handling = (string) $this->params->get('review_handling', PrivacyDeterminations::ANONYMISE);
-        $actor    = (int) ($this->getApplication()->getIdentity()->id ?? 0);
+        $reviewHandling = (string) $this->params->get('review_handling', PrivacyDeterminations::ANONYMISE);
+        $ticketHandling = (string) $this->params->get('ticket_handling', PrivacyDeterminations::DELETE);
+        $actor          = (int) ($this->getApplication()->getIdentity()->id ?? 0);
 
-        $report = (new PrivacyRemovalService($this->getDatabase()))->remove((int) $user->id, $handling, $actor);
+        $report = (new PrivacyRemovalService($this->getDatabase()))
+            ->remove((int) $user->id, $reviewHandling, $actor, $ticketHandling);
 
         try {
             Log::add(

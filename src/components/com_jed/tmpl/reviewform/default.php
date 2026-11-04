@@ -51,7 +51,7 @@ echo LayoutHelper::render('review.guidelines', $this->extension_details);
                     // public form in the first place (9.2). Naming the one fieldset means a
                     // field added to "moderation" later cannot leak onto this page by default.
                     echo $this->form->renderFieldset('review');
-                    ?>
+?>
 
 
                     <div class="control-group">

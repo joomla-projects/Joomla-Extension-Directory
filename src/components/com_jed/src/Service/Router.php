@@ -110,6 +110,15 @@ class Router extends RouterView
         $reviewform->setParent($extension);
         $this->registerView($reviewform);
 
+        // Tickets
+        $tickets = new RouterViewConfiguration('tickets');
+        $this->registerView($tickets);
+        $ticket = new RouterViewConfiguration('ticket');
+        $ticket->setKey('id')->setParent($tickets);
+        $this->registerView($ticket);
+        $ticketform = new RouterViewConfiguration('ticketform');
+        $this->registerView($ticketform);
+
         $this->attachRule(new MenuRules($this));
         $this->attachRule(new StandardRules($this));
         $this->attachRule(new NomenuRules($this));
@@ -294,6 +303,36 @@ class Router extends RouterView
 
 
     public function getReviewSegment($id, $query)
+    {
+        return [$id];
+    }
+
+    /**
+     * Method to get the id for a ticket
+     *
+     * @param string $segment Segment to retrieve the ID for
+     * @param array  $query   The request that is parsed right now
+     *
+     * @return mixed
+     *
+     * @since 4.0.0
+     */
+    public function getTicketId($segment, $query)
+    {
+        return $segment;
+    }
+
+    /**
+     * Method to get the segment(s) for a ticket
+     *
+     * @param string $id    ID of the ticket to retrieve the segments for
+     * @param array  $query The request that is built right now
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    public function getTicketSegment($id, $query)
     {
         return [$id];
     }

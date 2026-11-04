@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One CWE id / description pair (brief §3.1.D). -->
+<form addfieldprefix="Jed\Component\Vel\Administrator\Field">
+    <field name="id" type="hidden" filter="integer" default="0"/>
+
+    <field
+            name="cwe_id"
+            type="cwe"
+            label="COM_VEL_FIELD_CWE_ID_LABEL"
+            description="COM_VEL_FIELD_CWE_ID_DESC"
+            required="true"
+    />
+
+    <field
+            name="description"
+            type="text"
+            label="COM_VEL_FIELD_CWE_DESCRIPTION_LABEL"
+            description="COM_VEL_FIELD_CWE_DESCRIPTION_DESC"
+            maxlength="255"
+            filter="string"
+    />
+</form>

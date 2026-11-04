@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One affected range, both bounds inclusive, "*" for unbounded (brief §3.1.E). -->
+<form>
+    <field name="id" type="hidden" filter="integer" default="0"/>
+
+    <field
+            name="version_from"
+            type="text"
+            label="COM_VEL_FIELD_VERSION_FROM_LABEL"
+            description="COM_VEL_FIELD_VERSION_FROM_DESC"
+            maxlength="50"
+            filter="string"
+            default="*"
+            hint="1.0.0"
+    />
+
+    <field
+            name="version_to"
+            type="text"
+            label="COM_VEL_FIELD_VERSION_TO_LABEL"
+            description="COM_VEL_FIELD_VERSION_TO_DESC"
+            maxlength="50"
+            filter="string"
+            default="*"
+            hint="2.3.4"
+    />
+
+    <field
+            name="version_type"
+            type="list"
+            label="COM_VEL_FIELD_VERSION_TYPE_LABEL"
+            default="custom"
+    >
+        <option value="custom">COM_VEL_VERSION_TYPE_CUSTOM</option>
+        <option value="semver">COM_VEL_VERSION_TYPE_SEMVER</option>
+    </field>
+</form>

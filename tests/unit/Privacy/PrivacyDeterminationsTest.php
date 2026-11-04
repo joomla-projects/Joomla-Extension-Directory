@@ -11,7 +11,6 @@ namespace Jed\Tests\Unit\Privacy;
 
 use Jed\Component\Jed\Administrator\Privacy\PrivacyDeterminations;
 use Jed\Component\Jed\Administrator\Privacy\PrivacyRemovalService;
-use Jed\Component\Tickets\Administrator\Privacy\TicketPrivacyService;
 use PHPUnit\Framework\TestCase;
 
 /**

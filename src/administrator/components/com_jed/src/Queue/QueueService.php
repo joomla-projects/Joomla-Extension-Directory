@@ -225,9 +225,17 @@ class QueueService
                 ->set($db->quoteName('status') . ' = :status')
                 ->set($db->quoteName('attempts') . ' = :attempts')
                 ->where($db->quoteName('id') . ' = :id')
+                // Only the row that was listed: a worker may have finished the job (or another
+                // reclaim may have reset it) since the select, and that result must not be undone.
+                ->where($db->quoteName('status') . ' = :running')
+                ->where($db->quoteName('attempts') . ' = :oldAttempts')
+                ->where($db->quoteName('started_time') . ' < :cutoff')
                 ->bind(':status', $newStatus, ParameterType::STRING)
                 ->bind(':attempts', $newAttempts, ParameterType::INTEGER)
-                ->bind(':id', $id, ParameterType::INTEGER);
+                ->bind(':id', $id, ParameterType::INTEGER)
+                ->bind(':running', $running, ParameterType::STRING)
+                ->bind(':oldAttempts', $row->attempts, ParameterType::INTEGER)
+                ->bind(':cutoff', $cutoff, ParameterType::STRING);
 
             $db->setQuery($update)->execute();
         }

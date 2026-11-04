@@ -133,6 +133,11 @@ class ExtensionController extends FormController
     {
         $this->checkToken();
 
+        // Switching the live revision is moderation, same right as approving one.
+        if (!Factory::getApplication()->getIdentity()->authorise('jed.approve', 'com_jed')) {
+            throw new \Exception(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 403);
+        }
+
         $extensionId = (int) $this->input->getInt('extension_id');
         $historyId   = (int) $this->input->getInt('id');
 

@@ -124,7 +124,7 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                             <td class="text-center">
                                 <?php
                                 $isPending = !empty($item->latest_history_id) && (int) $item->latest_history_id !== (int) $item->entry_version;
-                                ?>
+                        ?>
                                 <?php if ($isPending) : ?>
                                     <a href="<?php echo Route::_('index.php?option=com_jed&view=extension&layout=compare&id=' . $item->id); ?>"
                                        title="<?php echo Text::_('COM_JED_EXTENSION_PENDING_DESC'); ?>"
@@ -161,14 +161,14 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                                 </div>
                             </td>
                             <td>
-                                <?php echo $item->category; ?>
+                                <?php echo $this->escape($item->category); ?>
                             </td>
 
                             <td>
-                                <?php echo $item->developer; ?>
+                                <?php echo $this->escape($item->developer); ?>
                             </td>
                             <td>
-                                <?php echo  $item->type; ?>
+                                <?php echo $this->escape($item->type); ?>
                             </td>
                             <td>
                                 <?php echo $item->reviewCount; ?>
@@ -178,17 +178,17 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                             </td>
                             <td>
                                 <?php
-                                echo JedHelper::prettyDate($item->modified);
+                        echo JedHelper::prettyDate($item->modified);
 
-                                ?>
+                        ?>
                             </td>
                             <td>
 
                                 <?php
 
-                                echo JedHelper::prettyDate($item->created);
+                        echo JedHelper::prettyDate($item->created);
 
-                                ?>
+                        ?>
                             </td>
                             <td>
                                 <?php echo $item->id; ?>

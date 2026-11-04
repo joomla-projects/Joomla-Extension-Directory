@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field name="search" type="text" label="JSEARCH_FILTER" hint="COM_VEL_FEEDITEMS_SEARCH_HINT"/>
+
+        <field name="decision" type="list" label="COM_VEL_FILTER_DECISION" default="pending" onchange="this.form.submit();">
+            <option value="pending">COM_VEL_FEED_DECISION_PENDING</option>
+            <option value="created">COM_VEL_FEED_DECISION_CREATED</option>
+            <option value="merged">COM_VEL_FEED_DECISION_MERGED</option>
+            <option value="ignored">COM_VEL_FEED_DECISION_IGNORED</option>
+            <option value="all">JALL</option>
+        </field>
+
+        <field name="classification" type="list" label="COM_VEL_FILTER_CLASSIFICATION" onchange="this.form.submit();">
+            <option value="">COM_VEL_FILTER_CLASSIFICATION_ALL</option>
+            <option value="joomla_cna">COM_VEL_FEED_CLASS_JOOMLA_CNA</option>
+            <option value="joomla_extension_other_cna">COM_VEL_FEED_CLASS_JOOMLA_EXTENSION_OTHER_CNA</option>
+            <option value="joomla_core">COM_VEL_FEED_CLASS_JOOMLA_CORE</option>
+            <option value="unknown">COM_VEL_FEED_CLASS_UNKNOWN</option>
+        </field>
+
+        <field name="source" type="list" label="COM_VEL_FILTER_FEED_SOURCE" onchange="this.form.submit();">
+            <option value="">COM_VEL_FILTER_FEED_SOURCE_ALL</option>
+            <option value="cna">COM_VEL_FEED_SOURCE_CNA</option>
+            <option value="nvd">COM_VEL_FEED_SOURCE_NVD</option>
+        </field>
+    </fields>
+
+    <fields name="list">
+        <field name="fullordering" type="list" label="JGLOBAL_SORT_BY" default="a.fetched DESC" onchange="this.form.submit();">
+            <option value="a.fetched DESC">COM_VEL_SORT_FETCHED_DESC</option>
+            <option value="a.fetched ASC">COM_VEL_SORT_FETCHED_ASC</option>
+            <option value="a.external_updated DESC">COM_VEL_SORT_EXTERNAL_UPDATED_DESC</option>
+            <option value="a.external_id ASC">COM_VEL_SORT_CVE_ASC</option>
+            <option value="a.external_id DESC">COM_VEL_SORT_CVE_DESC</option>
+        </field>
+        <field name="limit" type="limitbox" label="JGLOBAL_LIST_LIMIT" default="25" onchange="this.form.submit();"/>
+    </fields>
+</form>

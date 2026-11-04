@@ -125,7 +125,10 @@ describe('Workflow part 2: reviewer writes a review, admin moderates it', { test
       add('jform[ip_address]', '203.0.113.99')
     })
 
-    const probeTitle = `Bypass probe ${timestamp}`
+    // The markup is deliberate: this is the title the review ends up with (a reviewer has one review
+    // per extension, so this save replaces the first), and a title is user text - every page that
+    // shows it has to show it as text.
+    const probeTitle = `Bypass probe <i id="markup-probe">${timestamp}</i>`
     cy.get('#jform_title').clear().type(probeTitle)
     cy.get('#jform_used_for').clear().type('testing the moderation boundary')
     cy.get('#jform_version').clear().type('1.0')
@@ -174,5 +177,15 @@ describe('Workflow part 2: reviewer writes a review, admin moderates it', { test
   it('shows no report link to a logged-out reader', () => {
     cy.visit('index.php?option=com_jed&view=reviews')
     cy.contains('Report this review').should('not.exist')
+  })
+
+  it('shows markup in a review title as text on the public extension page', () => {
+    cy.then(() => {
+      cy.visit(`index.php?option=com_jed&view=extension&catid=${extension.extensionCatId}&id=${extension.extensionId}`)
+    })
+
+    cy.contains('Bypass probe').should('exist')
+    cy.get('#markup-probe').should('not.exist')
+    cy.contains('<i id="markup-probe">').should('exist')
   })
 })

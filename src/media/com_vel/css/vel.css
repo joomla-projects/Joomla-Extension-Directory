@@ -1,0 +1,23 @@
+/**
+ * @package JED
+ * @subpackage VEL
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ *
+ * Public VEL pages. Severity is always colour plus text (badge label), never colour alone.
+ */
+.com-vel-tabs { margin-bottom: 1rem; }
+.com-vel-tabs .nav-link .badge { font-weight: normal; margin-left: .25rem; }
+.com-vel-filters label { font-size: .875rem; margin-bottom: .125rem; }
+.com-vel-table th[scope="row"] { font-weight: normal; }
+.com-vel-table th[scope="row"] a { font-weight: 600; }
+.com-vel-section { margin-bottom: 1.5rem; }
+.com-vel-advisory .badge.fs-6 { font-weight: 500; }
+.com-vel-advisory .progress { background: rgba(0,0,0,.08); }
+.com-vel-case .com-vel-message { border-left: 3px solid var(--bs-border-color, #dee2e6); padding-left: .75rem; margin-bottom: 1rem; }
+.com-vel-case .com-vel-message.is-team { border-left-color: var(--bs-primary, #0d6efd); }
+.com-vel-case .com-vel-message.is-mine { border-left-color: var(--bs-success, #198754); }
+.com-vel-case .com-vel-message .meta { font-size: .8125rem; color: var(--bs-secondary-color, #6c757d); }
+.com-vel-report fieldset { margin-bottom: 1.5rem; }
+.com-vel-report legend { font-size: 1.125rem; }
+.com-vel-pgp { font-family: var(--bs-font-monospace, monospace); font-size: .75rem; white-space: pre-wrap; max-height: 12rem; overflow: auto; }

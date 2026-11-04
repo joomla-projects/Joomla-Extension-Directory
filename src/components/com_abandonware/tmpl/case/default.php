@@ -71,7 +71,7 @@ $listingVisible = (int) ($item->extension_id ?? 0) > 0
      * The legacy `abandoneditem` view printed `reporter_fullname` here. That is the one thing from
      * the old page that is deliberately not carried over.
      */
-    ?>
+?>
     <div class="alert alert-warning">
         <p class="mb-0"><?php echo Text::_('COM_ABANDONWARE_CASE_PUBLIC_NOTE'); ?></p>
     </div>
