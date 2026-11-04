@@ -1,0 +1,8 @@
+{
+  "name": "jed-j3-client-harness",
+  "private": true,
+  "description": "Runs Joomla 3's Install from Web script against com_apps in jsdom",
+  "dependencies": {
+    "jsdom": "^24.1.3"
+  }
+}
