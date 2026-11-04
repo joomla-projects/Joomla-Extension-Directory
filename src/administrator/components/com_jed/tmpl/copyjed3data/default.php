@@ -71,7 +71,7 @@ HTMLHelper::_('bootstrap.tooltip');
                     }
                 }
             }
-            ?>
+?>
 
         </div>
     </div>

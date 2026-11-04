@@ -1,0 +1,17 @@
+/**
+ * @package JED
+ * @subpackage VEL
+ * @copyright (C) 2006-2026 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license   GNU General Public License version 2 or later; see LICENSE.txt
+ */
+.com-vel-dashboard .card { transition: box-shadow .15s; }
+.com-vel-dashboard .card:hover { box-shadow: 0 .25rem .5rem rgba(0,0,0,.1); }
+.com-vel-thread .com-vel-message { border-left: 3px solid #dee2e6; padding-left: .75rem; margin-bottom: 1rem; }
+.com-vel-thread .com-vel-message.dir-in { border-left-color: #fd7e14; }
+.com-vel-thread .com-vel-message.dir-out { border-left-color: #0d6efd; }
+.com-vel-thread .com-vel-message.dir-internal { border-left-color: #6c757d; background: #f8f9fa; }
+.com-vel-thread .com-vel-message .meta { font-size: .8125rem; color: #6c757d; }
+.com-vel-thread .com-vel-message .body { white-space: pre-wrap; }
+.subform-repeatable-group .subform-repeatable-group { background: #f8f9fa; }
+.com-vel-diff del { background: #ffe3e3; text-decoration: none; }
+.com-vel-diff ins { background: #e3ffe3; text-decoration: none; }

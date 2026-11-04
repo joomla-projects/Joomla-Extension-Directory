@@ -75,6 +75,8 @@ class ReviewController extends BaseController
      */
     public function publish(): void
     {
+        $this->checkToken('request');
+
         // Initialise variables.
         /* @var $app \Joomla\CMS\Application\SiteApplication */
         $app = Factory::getApplication();

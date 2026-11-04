@@ -630,6 +630,13 @@ class PlgSampledataJed_Migrate extends CMSPlugin
         // resolves each report's free-text extension name against #__jed_extensions (P1-19).
         $plan[++$next] = ['file' => 'abandonware.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_ABANDONWARE_SUCCESS'];
 
+        // The VEL's legacy intake (forms 5/10/11 and 7/12), after rsforms.sql for the same reason
+        // and after the listings for the same name resolution (VEL2-PRD M-02). Skipped cleanly
+        // when com_vel is not installed: the step is a no-op without its tables.
+        if ($this->tableExists('#__vel_reports')) {
+            $plan[++$next] = ['file' => 'vel_reports.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_VEL_REPORTS_SUCCESS'];
+        }
+
         // After history_baseline.sql, because it writes the two link columns onto the active
         // baseline revision and that revision does not exist until the baseline has run (P1-23).
         $plan[++$next] = ['file' => 'linked.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_LINKED_SUCCESS'];
@@ -645,6 +652,28 @@ class PlgSampledataJed_Migrate extends CMSPlugin
         $plan[++$next] = ['file' => 'cleanup.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_CLEANUP_SUCCESS'];
 
         return $plan;
+    }
+
+    /**
+     * Whether a table exists in this installation - for steps that belong to an optional
+     * sibling component.
+     *
+     * @param   string  $table  The table name with the #__ prefix.
+     *
+     * @return  bool
+     *
+     * @since   4.0.0
+     */
+    private function tableExists(string $table): bool
+    {
+        try {
+            $db     = $this->getDatabase();
+            $tables = $db->getTableList();
+
+            return \in_array($db->replacePrefix($table), $tables, true);
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     /**
@@ -812,7 +841,7 @@ class PlgSampledataJed_Migrate extends CMSPlugin
             if (!$table->rebuild()) {
                 return Text::sprintf(
                     'PLG_SAMPLEDATA_JED_MIGRATE_ERROR_CATEGORY_REBUILD',
-                    $table->getError() ?: 'unknown error'
+                    'unknown error'
                 );
             }
         } catch (\Throwable $e) {
@@ -943,7 +972,7 @@ class PlgSampledataJed_Migrate extends CMSPlugin
             if (!$table->rebuild()) {
                 return Text::sprintf(
                     'PLG_SAMPLEDATA_JED_MIGRATE_ERROR_TAG_REBUILD',
-                    $table->getError() ?: 'unknown error'
+                    'unknown error'
                 );
             }
         } catch (\Throwable $e) {

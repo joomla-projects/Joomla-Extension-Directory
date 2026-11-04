@@ -177,8 +177,8 @@ if ($gtmId && !$hasCookieControl) : ?>
                     <?php if ($this->debug) : ?>
                         <div>
                             <?php echo $this->renderBacktrace(); ?>
-                            <?php // Check if there are more Exceptions and render their data as well ?>
-                            <?php // The chain is walked with a local variable; setError() is still called for each one because renderBacktrace() reads the document's current error ?>
+                            <?php // Check if there are more Exceptions and render their data as well?>
+                            <?php // The chain is walked with a local variable; setError() is still called for each one because renderBacktrace() reads the document's current error?>
                             <?php $previous = $this->error->getPrevious(); ?>
                             <?php while ($previous !== null) : ?>
                                 <?php $this->setError($previous); ?>
@@ -189,7 +189,7 @@ if ($gtmId && !$hasCookieControl) : ?>
                                 <?php echo $this->renderBacktrace(); ?>
                                 <?php $previous = $previous->getPrevious(); ?>
                             <?php endwhile; ?>
-                            <?php // Reset the main error object to the base error ?>
+                            <?php // Reset the main error object to the base error?>
                             <?php $this->setError($this->error); ?>
                         </div>
                     <?php endif; ?>

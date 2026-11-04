@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One affected product (brief §3.1.E/F, §5.3). Several per advisory, one vendor.
+-->
+<form addfieldprefix="Jed\Component\Vel\Administrator\Field">
+    <fieldset name="identity" label="COM_VEL_PRODUCT_FIELDSET_IDENTITY">
+        <field name="id" type="hidden" filter="integer" default="0"/>
+
+        <field
+                name="extension_id"
+                type="jedlisting"
+                label="COM_VEL_FIELD_EXTENSION_ID_LABEL"
+                description="COM_VEL_FIELD_EXTENSION_ID_DESC"
+                maxlength="255"
+        />
+
+        <field
+                name="vendor"
+                type="text"
+                label="COM_VEL_FIELD_VENDOR_LABEL"
+                description="COM_VEL_FIELD_VENDOR_DESC"
+                required="true"
+                maxlength="255"
+                filter="string"
+                hint="regularlabs.com"
+        />
+
+        <field
+                name="product"
+                type="text"
+                label="COM_VEL_FIELD_PRODUCT_LABEL"
+                description="COM_VEL_FIELD_PRODUCT_DESC"
+                required="true"
+                maxlength="255"
+                filter="string"
+                hint="Modals"
+        />
+
+        <field
+                name="supplier_url"
+                type="url"
+                label="COM_VEL_FIELD_SUPPLIER_URL_LABEL"
+                description="COM_VEL_FIELD_SUPPLIER_URL_DESC"
+                maxlength="255"
+                filter="url"
+                validate="url"
+        />
+    </fieldset>
+
+    <fieldset name="joomla" label="COM_VEL_PRODUCT_FIELDSET_JOOMLA">
+        <field
+                name="ext_type"
+                type="list"
+                label="COM_VEL_FIELD_EXT_TYPE_LABEL"
+                description="COM_VEL_FIELD_EXT_TYPE_DESC"
+        >
+            <option value="">COM_VEL_FIELD_EXT_TYPE_UNKNOWN</option>
+            <option value="component">COM_VEL_EXT_TYPE_COMPONENT</option>
+            <option value="module">COM_VEL_EXT_TYPE_MODULE</option>
+            <option value="plugin">COM_VEL_EXT_TYPE_PLUGIN</option>
+            <option value="template">COM_VEL_EXT_TYPE_TEMPLATE</option>
+            <option value="library">COM_VEL_EXT_TYPE_LIBRARY</option>
+            <option value="package">COM_VEL_EXT_TYPE_PACKAGE</option>
+            <option value="file">COM_VEL_EXT_TYPE_FILE</option>
+            <option value="language">COM_VEL_EXT_TYPE_LANGUAGE</option>
+        </field>
+
+        <field
+                name="element"
+                type="text"
+                label="COM_VEL_FIELD_ELEMENT_LABEL"
+                description="COM_VEL_FIELD_ELEMENT_DESC"
+                maxlength="100"
+                filter="string"
+                hint="com_foo / mod_foo / foo"
+                class="font-monospace"
+        />
+
+        <field
+                name="folder"
+                type="text"
+                label="COM_VEL_FIELD_FOLDER_LABEL"
+                description="COM_VEL_FIELD_FOLDER_DESC"
+                maxlength="50"
+                filter="string"
+                hint="system"
+                class="font-monospace"
+                showon="ext_type:plugin"
+        />
+
+        <field
+                name="client_id"
+                type="list"
+                label="COM_VEL_FIELD_CLIENT_ID_LABEL"
+                description="COM_VEL_FIELD_CLIENT_ID_DESC"
+        >
+            <option value="">COM_VEL_FIELD_CLIENT_ID_ANY</option>
+            <option value="0">JSITE</option>
+            <option value="1">JADMINISTRATOR</option>
+        </field>
+    </fieldset>
+
+    <fieldset name="fix" label="COM_VEL_PRODUCT_FIELDSET_FIX">
+        <field
+                name="fixed_version"
+                type="text"
+                label="COM_VEL_FIELD_FIXED_VERSION_LABEL"
+                description="COM_VEL_FIELD_FIXED_VERSION_DESC"
+                maxlength="50"
+                filter="string"
+        />
+
+        <field
+                name="patch_url"
+                type="url"
+                label="COM_VEL_FIELD_PATCH_URL_LABEL"
+                description="COM_VEL_FIELD_PATCH_URL_DESC"
+                maxlength="255"
+                filter="url"
+                validate="url"
+        />
+
+        <field
+                name="default_status"
+                type="list"
+                label="COM_VEL_FIELD_DEFAULT_STATUS_LABEL"
+                description="COM_VEL_FIELD_DEFAULT_STATUS_DESC"
+                default="unaffected"
+        >
+            <option value="unaffected">COM_VEL_DEFAULT_STATUS_UNAFFECTED</option>
+            <option value="affected">COM_VEL_DEFAULT_STATUS_AFFECTED</option>
+            <option value="unknown">COM_VEL_DEFAULT_STATUS_UNKNOWN</option>
+        </field>
+    </fieldset>
+
+    <fieldset name="versions" label="COM_VEL_PRODUCT_FIELDSET_VERSIONS">
+        <field
+                name="versions"
+                type="subform"
+                label="COM_VEL_FIELD_VERSIONS_LABEL"
+                description="COM_VEL_FIELD_VERSIONS_DESC"
+                formsource="administrator/components/com_vel/forms/version.xml"
+                multiple="true"
+                layout="joomla.form.field.subform.repeatable-table"
+                min="0"
+                max="20"
+                buttons="add,remove,move"
+        />
+    </fieldset>
+</form>

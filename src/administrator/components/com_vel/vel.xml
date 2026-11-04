@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    VEL 2 - the Vulnerable Extension List as its own component (VEL2-PRD D-1).
+
+    A sibling of com_abandonware inside pkg_jed: same namespace root, same build placeholders,
+    same install/update path (P1-30). It shares com_jed's extension table, ticket table and abuse
+    controls, and nothing else - the advisories, reports and correspondence are its own tables
+    under its own ACL, because the one thing a vulnerability list must never do is let an embargoed
+    report be read by somebody who only came to approve a listing.
+-->
+<extension type="component" method="upgrade">
+    <name>COM_VEL</name>
+    <author>Joomla! Project</author>
+    <creationDate>##DATE##</creationDate>
+    <copyright>(C) ##YEAR## Open Source Matters, Inc.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>admin@joomla.org</authorEmail>
+    <authorUrl>www.joomla.org</authorUrl>
+    <version>##VERSION##</version>
+    <description>COM_VEL_XML_DESCRIPTION</description>
+    <namespace path="src">Jed\Component\Vel</namespace>
+    <scriptfile>script.php</scriptfile>
+
+    <files folder="components/com_vel">
+        ##FRONTEND_COMPONENT_FILES##
+    </files>
+
+    <languages folder="language">
+        ##FRONTEND_LANGUAGE_FILES##
+    </languages>
+
+    <media destination="com_vel" folder="media/com_vel">
+        ##MEDIA_FILES##
+    </media>
+
+    <administration>
+        <menu view="dashboard" img="class:shield">
+            COM_VEL
+        </menu>
+
+        <submenu>
+            <menu link="option=com_vel&amp;view=dashboard" view="dashboard">COM_VEL_SUBMENU_DASHBOARD</menu>
+            <menu link="option=com_vel&amp;view=advisories" view="advisories">COM_VEL_SUBMENU_ADVISORIES</menu>
+            <menu link="option=com_vel&amp;view=reports" view="reports">COM_VEL_SUBMENU_REPORTS</menu>
+            <menu link="option=com_vel&amp;view=feeditems" view="feeditems">COM_VEL_SUBMENU_FEEDITEMS</menu>
+            <menu link="option=com_vel&amp;view=feedruns" view="feedruns">COM_VEL_SUBMENU_FEEDRUNS</menu>
+            <menu link="option=com_vel&amp;view=cwes" view="cwes">COM_VEL_SUBMENU_CWES</menu>
+        </submenu>
+
+        <files folder="administrator/components/com_vel">
+            ##BACKEND_COMPONENT_FILES##
+        </files>
+
+        <languages folder="administrator/components/com_vel/language">
+            ##BACKEND_LANGUAGE_FILES##
+        </languages>
+    </administration>
+
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+
+    <!-- P1-30: the schema update path. See jed.xml for why this element is not optional. -->
+    <update>
+        <schemas>
+            <schemapath type="mysql">sql/updates/mysql</schemapath>
+        </schemas>
+    </update>
+</extension>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Five actions beyond the core set (VEL2-PRD §4.4), and the split is the point.
+
+    Editing an advisory - drafting, classifying, scoring, moving it to "ready" - is ordinary team
+    work and rides on core.edit / core.edit.state. Putting it in public is not: `vel.publish` puts
+    a statement about somebody's product on the site and into every feed and checker that reads
+    it. Same reasoning as abandonware.mark and jed.block being separate from core.edit.
+
+    `vel.communicate` is the confidentiality gate: reporter identities, attachments and the case
+    correspondence are readable only with it. `core.manage` alone gets the advisory data.
+-->
+<access component="com_vel">
+    <section name="component">
+        <action name="core.admin" title="JACTION_ADMIN" description="JACTION_ADMIN"/>
+        <action name="core.manage" title="JACTION_MANAGE" description="JACTION_MANAGE"/>
+        <action name="core.create" title="JACTION_CREATE" description="JACTION_CREATE"/>
+        <action name="core.delete" title="JACTION_DELETE" description="JACTION_DELETE"/>
+        <action name="core.edit" title="JACTION_EDIT" description="JACTION_EDIT"/>
+        <action name="core.edit.state" title="JACTION_EDITSTATE" description="JACTION_EDITSTATE"/>
+
+        <!-- ready -> published, published -> retired, and back. -->
+        <action name="vel.publish" title="COM_VEL_ACTION_PUBLISH" description="COM_VEL_ACTION_PUBLISH_DESC"/>
+
+        <!-- Generate CVE JSON, reserve ids and submit records to CVE Services. -->
+        <action name="vel.cve" title="COM_VEL_ACTION_CVE" description="COM_VEL_ACTION_CVE_DESC"/>
+
+        <!-- Run the inbound feeds by hand and accept or ignore what they bring. -->
+        <action name="vel.feeds" title="COM_VEL_ACTION_FEEDS" description="COM_VEL_ACTION_FEEDS_DESC"/>
+
+        <!-- Read and write the case correspondence; see reporter identities and attachments. -->
+        <action name="vel.communicate" title="COM_VEL_ACTION_COMMUNICATE" description="COM_VEL_ACTION_COMMUNICATE_DESC"/>
+
+        <!-- Hand the JED team an action on a listing (a ticket, a block request). -->
+        <action name="vel.jed" title="COM_VEL_ACTION_JED" description="COM_VEL_ACTION_JED_DESC"/>
+    </section>
+</access>

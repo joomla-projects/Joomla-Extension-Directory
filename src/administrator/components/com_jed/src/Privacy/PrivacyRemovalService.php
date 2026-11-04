@@ -120,13 +120,21 @@ final class PrivacyRemovalService
      * @param string $reviewHandling {@see PrivacyDeterminations::ANONYMISE} or ::DELETE.
      * @param int    $actorId        The administrator processing the request, for the audit
      *                               columns. Zero when it is not run from a request cycle.
+     * @param string $ticketHandling {@see PrivacyDeterminations::DELETE} or ::ANONYMISE, for the
+     *                               person's tickets. Delete is the default - see
+     *                               {@see TicketPrivacyService} for why it is the other way round
+     *                               from reviews.
      *
      * @return array<string, int|string>  A per-data-set tally, for the action log and the tests.
      *
      * @since 4.0.0
      */
-    public function remove(int $userId, string $reviewHandling = PrivacyDeterminations::ANONYMISE, int $actorId = 0): array
-    {
+    public function remove(
+        int $userId,
+        string $reviewHandling = PrivacyDeterminations::ANONYMISE,
+        int $actorId = 0,
+        string $ticketHandling = PrivacyDeterminations::DELETE
+    ): array {
         if ($userId <= 0) {
             return [];
         }
@@ -172,6 +180,9 @@ final class PrivacyRemovalService
 
         // Privileges and bans, per the rule above.
         $report['user_access'] = $this->handleUserAccess($userId);
+
+        // The person's correspondence with the JED team, and their name on anybody else's.
+        $report += (new TicketPrivacyService($this->db))->remove($userId, $ticketHandling);
 
         return $report;
     }

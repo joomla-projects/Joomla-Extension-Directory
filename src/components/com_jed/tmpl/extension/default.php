@@ -14,7 +14,7 @@
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
 use Jed\Component\Jed\Site\Helper\JedtrophyHelper;
-use Jed\Component\Tickets\Administrator\Enum\TicketType;
+use Jed\Component\Jed\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -68,15 +68,22 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
 <?php endif; ?>
 <div class="jed-cards-wrapper mb-4">
     <article class="container mb-5">
+        <?php
+        // The VEL's warning while a published advisory names this listing (VEL2-PRD §6.9.1).
+        // Guarded on the class so a JED without com_vel renders nothing here.
+        if (class_exists('\\Jed\\Component\\Vel\\Site\\Helper\\VelBadge')) {
+            echo \Jed\Component\Vel\Site\Helper\VelBadge::render((int) $item->id);
+        }
+?>
         <header class="row gap-2">
             <div class="col d-flex flex-column gap-2 mb-3">
                 <h2 class="fs-1 m-0 d-flex flex-row gap-2 align-items-center">
                     <?php echo $this->escape($item->name); ?>
                     <?php if (JedHelper::isLoggedIn()) : ?>
                         <?php echo LayoutHelper::render('elements.favoritebutton', [
-                            'extensionId' => (int) $item->id,
-                            'isFavorited' => (bool) $item->is_favorited,
-                        ]); ?>
+                    'extensionId' => (int) $item->id,
+                    'isFavorited' => (bool) $item->is_favorited,
+                ]); ?>
                     <?php endif; ?>
                 </h2>
                 <div class="d-flex flex-row gap-3">
@@ -148,7 +155,7 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
                          * where the visitor already is, instead of costing them a click and losing
                          * a share of them on the way (P1-12).
                          */
-                        ?>
+                    ?>
                         <small class="jed-download__note d-block text-muted mt-1">
                             <?php echo Text::_('COM_JED_EXTENSION_DOWNLOAD_NOTE'); ?>
                             <?php if (!empty($item->requires_registration)) : ?>
@@ -172,7 +179,7 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
 
                 <p class="btn-group">
                     <a href="<?php echo Route::_(
-                        'index.php?option=com_tickets&view=ticketform&litem=' . TicketType::Extension->value
+                        'index.php?option=com_jed&view=ticketform&litem=' . TicketType::Extension->value
                         . '&lid=' . (int) $item->id . '&vr=' . (int) $item->id
                     ); ?>" class="btn btn-secondary">
                         <?php echo Text::_('COM_JED_EXTENSION_REPORT'); ?>
@@ -210,7 +217,7 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
                  * forbids displaying a metric that cannot be substantiated. Views and download
                  * clicks are what P1-12 can honestly add.
                  */
-                ?>
+?>
 
                 <dl class="row">
                     <dt class="col-6"><h2 class="h5 m-0"><?php echo Text::_('COM_JED_EXTENSION_SCORE_OVERALL'); ?></h2></dt>
@@ -299,15 +306,15 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
                     <?php
                     echo HTMLHelper::_('bootstrap.endSlide');
                 endforeach;
-                echo HTMLHelper::_('bootstrap.endAccordion');
-            endif; ?>
+echo HTMLHelper::_('bootstrap.endAccordion');
+endif; ?>
         </section>
 
         <?php if (!empty($item->linked)) : ?>
             <?php echo LayoutHelper::render('extension.linked', [
-                'linked'      => $item->linked,
-                'extensionId' => (int) $item->id,
-            ]); ?>
+    'linked'      => $item->linked,
+    'extensionId' => (int) $item->id,
+]); ?>
         <?php endif; ?>
 
         <?php if (!empty($item->more_by_developer)) : ?>
@@ -317,7 +324,7 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
                 </h2>
                 <ul class="jed-grid jed-grid--1-1-1">
                     <?php foreach ($item->more_by_developer as $other) : ?>
-                        <?php // One card, one mapping (P1-14). See JedHelper::cardData(). ?>
+                        <?php // One card, one mapping (P1-14). See JedHelper::cardData().?>
                         <?php echo LayoutHelper::render('cards.extension', JedHelper::cardData($other)); ?>
                     <?php endforeach; ?>
                 </ul>

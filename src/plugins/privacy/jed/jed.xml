@@ -30,6 +30,17 @@
 					<option value="anonymise">PLG_PRIVACY_JED_FIELD_REVIEW_HANDLING_ANONYMISE</option>
 					<option value="delete">PLG_PRIVACY_JED_FIELD_REVIEW_HANDLING_DELETE</option>
 				</field>
+				<field
+					name="ticket_handling"
+					type="list"
+					label="PLG_PRIVACY_JED_FIELD_TICKET_HANDLING_LABEL"
+					description="PLG_PRIVACY_JED_FIELD_TICKET_HANDLING_DESC"
+					default="delete"
+					validate="options"
+				>
+					<option value="delete">PLG_PRIVACY_JED_FIELD_TICKET_HANDLING_DELETE</option>
+					<option value="anonymise">PLG_PRIVACY_JED_FIELD_TICKET_HANDLING_ANONYMISE</option>
+				</field>
 			</fieldset>
 		</fields>
 	</config>

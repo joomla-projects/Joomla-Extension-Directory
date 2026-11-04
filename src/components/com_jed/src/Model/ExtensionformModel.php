@@ -19,8 +19,8 @@ use Exception;
 use Jed\Component\Jed\Administrator\Access\JedAccessHelper;
 use Jed\Component\Jed\Administrator\Access\Privilege;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
-use Jed\Component\Tickets\Administrator\Enum\TicketType;
-use Jed\Component\Tickets\Administrator\Traits\TicketHandlingTrait;
+use Jed\Component\Jed\Administrator\Enum\TicketType;
+use Jed\Component\Jed\Administrator\Traits\TicketHandlingTrait;
 use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
@@ -311,7 +311,7 @@ class ExtensionformModel extends FormModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem(int $id = null): stdClass|bool
+    public function getItem(?int $id = null): stdClass|bool
     {
         if ($this->item !== null) {
             return $this->item;

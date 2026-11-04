@@ -20,7 +20,7 @@ use Joomla\CMS\Language\Text;
 
 $item    = $displayData['data'];
 $display = $item->text;
-$app = Factory::getApplication();
+$app     = Factory::getApplication();
 
 switch ((string) $item->text) {
     // Check for "Start" item
@@ -29,19 +29,19 @@ switch ((string) $item->text) {
         $aria = Text::_('JLIB_HTML_GOTO_POSITION_START');
         break;
 
-    // Check for "Prev" item
+        // Check for "Prev" item
     case $item->text === Text::_('JPREV'):
         $icon = $app->getLanguage()->isRtl() ? 'icon-angle-right' : 'icon-angle-left';
         $aria = Text::_('JLIB_HTML_GOTO_POSITION_PREVIOUS');
         break;
 
-    // Check for "Next" item
+        // Check for "Next" item
     case Text::_('JNEXT'):
         $icon = $app->getLanguage()->isRtl() ? 'icon-angle-left' : 'icon-angle-right';
         $aria = Text::_('JLIB_HTML_GOTO_POSITION_NEXT');
         break;
 
-    // Check for "End" item
+        // Check for "End" item
     case Text::_('JLIB_HTML_END'):
         $icon = $app->getLanguage()->isRtl() ? 'icon-angle-double-left' : 'icon-angle-double-right';
         $aria = Text::_('JLIB_HTML_GOTO_POSITION_END');
@@ -77,9 +77,9 @@ if ($displayData['active']) {
 
 ?>
 <?php if ($displayData['active']) : ?>
-    <?php // JUI CHANGE: Hide numbers (except active page) on mobiles so page numbers don't overflow ?>
+    <?php // JUI CHANGE: Hide numbers (except active page) on mobiles so page numbers don't overflow?>
     <li class="page-item<?php echo ($icon === null) ? ' d-none d-sm-block' : '' ?>">
-        <?php // END JUI CHANGE ?>
+        <?php // END JUI CHANGE?>
         <a aria-label="<?php echo $aria; ?>" <?php echo $link; ?> class="page-link">
             <?php echo $display; ?>
         </a>

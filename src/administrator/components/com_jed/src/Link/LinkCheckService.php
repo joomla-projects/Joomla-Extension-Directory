@@ -17,7 +17,7 @@ use Jed\Component\Jed\Administrator\Log\JedActionLog;
 use Jed\Component\Jed\Administrator\Url\UrlCheckResult;
 use Jed\Component\Jed\Administrator\Url\UrlFormat;
 use Jed\Component\Jed\Administrator\Url\UrlValidatorRegistry;
-use Jed\Component\Tickets\Administrator\Enum\TicketType;
+use Jed\Component\Jed\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
@@ -605,7 +605,7 @@ class LinkCheckService
                 'URL'           => $url,
                 'REASON'        => Text::_($result->message),
                 'SINCE'         => (string) ($link->first_failed ?? ''),
-                'TICKETLINK'    => 'index.php?option=com_tickets&view=ticket&id=' . $ticketId,
+                'TICKETLINK'    => 'index.php?option=com_jed&view=ticket&id=' . $ticketId,
             ]);
             $mailer->addRecipient($owner->email, $owner->name);
             $mailer->send();

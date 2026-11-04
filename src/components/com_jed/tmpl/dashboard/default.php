@@ -14,7 +14,7 @@
 
 use Jed\Component\Jed\Administrator\Listing\ListingStatus;
 use Jed\Component\Jed\Site\Helper\JedHelper;
-use Jed\Component\Tickets\Administrator\Enum\TicketType;
+use Jed\Component\Jed\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -119,7 +119,7 @@ $wa->useScript('com_jed.favorite');
                             <label class="form-label" for="jed-transfer-email">
                                 <?php echo Text::_('COM_JED_TRANSFER_FORM_EMAIL'); ?>
                             </label>
-                            <?php // The account address of the new owner. They must already have one. ?>
+                            <?php // The account address of the new owner. They must already have one.?>
                             <input type="email" class="form-control" id="jed-transfer-email"
                                    name="recipient_email" required
                                    placeholder="<?php echo $this->escape(Text::_('COM_JED_TRANSFER_FORM_EMAIL_HINT')); ?>">
@@ -228,18 +228,18 @@ $wa->useScript('com_jed.favorite');
                                         } catch (Exception) {
                                         }
                                     }
-                                    ?>
+                            ?>
                                 </td>
                                 <td>
                                     <?php
-                                    if ((int) $item->state === -2) {
-                                        echo Text::_('JTRASHED');
-                                    } elseif ((int) $item->state === 1) {
-                                        echo Text::_('JPUBLISHED');
-                                    } else {
-                                        echo Text::_('JUNPUBLISHED');
-                                    }
-                                    ?>
+                            if ((int) $item->state === -2) {
+                                echo Text::_('JTRASHED');
+                            } elseif ((int) $item->state === 1) {
+                                echo Text::_('JPUBLISHED');
+                            } else {
+                                echo Text::_('JUNPUBLISHED');
+                            }
+                            ?>
                                 </td>
                                 <td class="text-nowrap">
                                     <?php if ($isOwnReviewRow && (int) $item->state !== -2) : ?>
@@ -258,7 +258,7 @@ $wa->useScript('com_jed.favorite');
                                     <?php endif; ?>
                                     <?php if ($isOwnExtensionRow) : ?>
                                         <a class="btn btn-outline-secondary btn-sm"
-                                           href="<?php echo Route::_('index.php?option=com_tickets&view=ticketform&litem=' . TicketType::Review->value . '&lid=' . (int) $item->id . '&vr=' . (int) $item->extension_id); ?>">
+                                           href="<?php echo Route::_('index.php?option=com_jed&view=ticketform&litem=' . TicketType::Review->value . '&lid=' . (int) $item->id . '&vr=' . (int) $item->extension_id); ?>">
                                             <?php echo Text::_('COM_JED_DASHBOARD_REPORT_REVIEW'); ?>
                                         </a>
                                     <?php endif; ?>
@@ -313,13 +313,13 @@ $wa->useScript('com_jed.favorite');
                                 <td><?php echo $this->escape($item->category_title ?? '—'); ?></td>
                                 <td>
                                     <?php
-                                    if (!empty($item->created)) {
-                                        try {
-                                            echo (new DateTime($item->created))->format('d M Y');
-                                        } catch (Exception) {
-                                        }
-                                    }
-                                    ?>
+                            if (!empty($item->created)) {
+                                try {
+                                    echo (new DateTime($item->created))->format('d M Y');
+                                } catch (Exception) {
+                                }
+                            }
+                            ?>
                                 </td>
                                 <td>
                                     <button type="button" class="jed-favorite-remove-btn btn btn-danger btn-sm"
@@ -383,13 +383,13 @@ $wa->useScript('com_jed.favorite');
                                 <td><?php echo $this->escape($item->category_title ?? '—'); ?></td>
                                 <td>
                                     <?php
-                                    if (!empty($item->created)) {
-                                        try {
-                                            echo (new DateTime($item->created))->format('d M Y');
-                                        } catch (Exception) {
-                                        }
-                                    }
-                                    ?>
+                            if (!empty($item->created)) {
+                                try {
+                                    echo (new DateTime($item->created))->format('d M Y');
+                                } catch (Exception) {
+                                }
+                            }
+                            ?>
                                 </td>
                                 <?php
                                 // Six states, not two. "Unpublished" used to cover waiting for
@@ -397,7 +397,7 @@ $wa->useScript('com_jed.favorite');
                                 // lists exactly that as a design gap, and it is the one thing a
                                 // developer opens this page to find out.
                                 $status = ListingStatus::forItem($item);
-                                ?>
+                            ?>
                                 <td>
                                     <span class="badge <?php echo $status->badgeClass(); ?>">
                                         <?php echo Text::_($status->label()); ?>
@@ -428,7 +428,7 @@ $wa->useScript('com_jed.favorite');
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h3 class="mb-0"><?php echo Text::_('COM_JED_DASHBOARD_TICKETS_HEADER'); ?></h3>
-            <a href="<?php echo Route::_('index.php?option=com_tickets&view=ticketform'); ?>" class="btn btn-primary btn-sm">
+            <a href="<?php echo Route::_('index.php?option=com_jed&view=ticketform'); ?>" class="btn btn-primary btn-sm">
                 <?php echo Text::_('COM_JED_DASHBOARD_CREATE_TICKET'); ?>
             </a>
         </div>
@@ -455,19 +455,19 @@ $wa->useScript('com_jed.favorite');
                             <tr class="row<?php echo $i % 2; ?>">
                                 <td><?php echo $this->escape($item->categorytype_string ?? '—'); ?></td>
                                 <td>
-                                    <a href="<?php echo Route::_('index.php?option=com_tickets&task=ticket.edit&id=' . (int) $item->id); ?>">
+                                    <a href="<?php echo Route::_('index.php?option=com_jed&view=ticket&id=' . (int) $item->id); ?>">
                                         <?php echo $this->escape($item->ticket_subject); ?>
                                     </a>
                                 </td>
                                 <td>
                                     <?php
-                                    if (!empty($item->created_on)) {
-                                        try {
-                                            echo (new DateTime($item->created_on))->format('d M Y H:i');
-                                        } catch (Exception) {
-                                        }
+                                if (!empty($item->created_on)) {
+                                    try {
+                                        echo (new DateTime($item->created_on))->format('d M Y H:i');
+                                    } catch (Exception) {
                                     }
-                                    ?>
+                                }
+                            ?>
                                 </td>
                                 <td><?php echo $this->escape($item->ticket_status); ?></td>
                             </tr>

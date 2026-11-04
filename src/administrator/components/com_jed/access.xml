@@ -44,6 +44,18 @@
         <!-- Suspending a user account's ability to submit, review or report (P1-05). -->
         <action name="jed.user.ban" title="COM_JED_ACTION_USER_BAN" description="COM_JED_ACTION_USER_BAN_DESC"/>
     </section>
+    <!--
+        The ticket system. Site-side, core.manage on the component is what separates the JED team
+        (every ticket, internal notes, internal messages) from a developer (their own tickets);
+        this section is what the admin Tickets toolbar reads.
+    -->
+    <section name="ticket">
+        <action name="core.create" title="JACTION_CREATE" description="JACTION_CREATE"/>
+        <action name="core.delete" title="JACTION_DELETE" description="JACTION_DELETE"/>
+        <action name="core.edit" title="JACTION_EDIT" description="JACTION_EDIT"/>
+        <action name="core.edit.state" title="JACTION_EDITSTATE" description="JACTION_EDITSTATE"/>
+        <action name="core.edit.own" title="JACTION_EDITOWN" description="JACTION_EDITOWN"/>
+    </section>
     <section name="category">
         <action name="core.create" title="JACTION_CREATE" description="COM_CATEGORIES_ACCESS_CREATE_DESC"/>
         <action name="core.delete" title="JACTION_DELETE" description="COM_CATEGORIES_ACCESS_DELETE_DESC"/>

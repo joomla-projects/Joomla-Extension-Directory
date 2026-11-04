@@ -71,7 +71,7 @@ $heading = ($catid && !empty($this->items)) ? $this->items[0]->category_title . 
 
         <ul class="jed-grid jed-grid--1-1-1">
             <?php foreach ($this->items as $item) : ?>
-                <?php // One card, one mapping (P1-14). See JedHelper::cardData(). ?>
+                <?php // One card, one mapping (P1-14). See JedHelper::cardData().?>
                 <?php echo LayoutHelper::render('cards.extension', JedHelper::cardData($item)); ?>
             <?php endforeach; ?>
         </ul>

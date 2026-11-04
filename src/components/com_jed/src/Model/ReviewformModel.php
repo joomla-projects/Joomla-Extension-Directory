@@ -17,8 +17,8 @@ namespace Jed\Component\Jed\Site\Model;
 use Exception;
 use Jed\Component\Jed\Administrator\Access\JedAccessHelper;
 use Jed\Component\Jed\Site\Helper\JedHelper;
-use Jed\Component\Tickets\Administrator\Enum\TicketType;
-use Jed\Component\Tickets\Administrator\Traits\TicketHandlingTrait;
+use Jed\Component\Jed\Administrator\Enum\TicketType;
+use Jed\Component\Jed\Administrator\Traits\TicketHandlingTrait;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
@@ -178,7 +178,7 @@ class ReviewformModel extends FormModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem(int $id = null)
+    public function getItem(?int $id = null)
     {
         if ($this->item === null) {
             $this->item = false;
