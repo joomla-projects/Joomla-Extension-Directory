@@ -16,6 +16,8 @@ namespace Jed\Component\Abandonware\Administrator\Controller;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Exception;
+use Jed\Component\Jed\Administrator\Helper\ViewAccess;
 use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
@@ -31,4 +33,20 @@ class DisplayController extends BaseController
      * @since 4.0.0
      */
     protected $default_view = 'cases';
+
+    /**
+     * @param bool  $cachable
+     * @param array $urlparams
+     *
+     * @return static
+     * @throws Exception
+     *
+     * @since 4.0.0
+     */
+    public function display($cachable = false, $urlparams = [])
+    {
+        ViewAccess::check($this->app->getIdentity(), 'com_abandonware', $this->input->get('layout', 'default', 'string'));
+
+        return parent::display($cachable, $urlparams);
+    }
 }
