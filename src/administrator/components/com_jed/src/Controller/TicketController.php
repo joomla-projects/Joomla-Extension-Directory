@@ -22,14 +22,16 @@ use Jed\Component\Jed\Administrator\Checker\JedCheckerService;
 use Jed\Component\Jed\Administrator\Enum\TicketType;
 use Jed\Component\Jed\Administrator\Helper\JedemailHelper;
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Joomla\CMS\Component\ComponentHelper;
 use Jed\Component\Jed\Administrator\Model\TicketinternalnoteModel;
 use Jed\Component\Jed\Administrator\Model\TicketModel;
 use Jed\Component\Jed\Administrator\Ticket\TicketTypeHandlerRegistry;
-use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
+use Joomla\Database\ParameterType;
 
 /**
  * JED Ticket Controller class
@@ -58,16 +60,20 @@ class TicketController extends FormController
      */
     public function getTemplate(): void
     {
-        //  Session::checkToken('post') or die;
-        $app        = Factory::getApplication();
+        $app = Factory::getApplication();
+
+        if (! $app->getIdentity()->authorise('core.edit', 'com_tickets')) {
+            echo '||';
+            $app->close();
+        }
         $templateId = $app->getInput()->get('itemId', '', 'string');
         $db         = Factory::getContainer()->get('DatabaseDriver');
 
         $querySelect = $db->getQuery(true)
             ->select($db->qn(['subject', 'htmlbody', 'params']))
             ->from($db->quoteName('#__mail_templates'))
-            ->where($db->qn('template_id') . ' = ' . $db->quote($templateId))
-            ->where($db->qn('extension') . ' = ' . $db->quote('com_jed'));
+            ->where($db->qn('template_id').' = '.$db->quote($templateId))
+            ->where($db->qn('extension').' = '.$db->quote('com_jed'));
         $db->setQuery($querySelect);
         $result = $db->loadObject();
 
@@ -77,10 +83,10 @@ class TicketController extends FormController
             return;
         }
 
-        $params       = json_decode((string) $result->params, true) ?: [];
+        $params       = json_decode((string)$result->params, true) ?: [];
         $ticketStatus = $params['ticket_status'] ?? '';
 
-        echo $result->subject . '|' . $result->htmlbody . '|' . $ticketStatus;
+        echo $result->subject.'|'.$result->htmlbody.'|'.$ticketStatus;
     }
 
     /**
@@ -89,28 +95,38 @@ class TicketController extends FormController
      * @since  4.0.0
      * @throws \PHPMailer\PHPMailer\Exception
      */
-    public function sendMessage(): void
+    public function sendMessage()
     {
-        $this->task = $_POST['task'];
+        $this->checkToken();
 
+        $user = $this->app->getIdentity();
 
-        if ($this->task == "ticket.sendmessage") {
-            /* Functionality
-            1 - Verify
-            2 - Send email with message
-            3 - Store message to database
-            4 - Redirect back to ticket so message history reloads
-            */
-            // var_dump($_POST['jform']);exit();
-            $subject = $_POST['jform']['message_subject'];
-            $message = $_POST['jform']['message_text'];
-
-            $id          = $_POST['jform']['id'];
-            $ticket_user = JedHelper::getUserById($_POST['jform']['created_by_num']);
-            JedemailHelper::sendEmail($subject, $message, $ticket_user, 'dummy@joomla.org');
-            $this->storeMessage($id, $subject, $message);
-            $this->setRedirect(Route::_('index.php?option=com_jed&view=ticket&layout=edit&id=' . (int)$id, false));
+        if (!$user->authorise('core.edit', 'com_tickets')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
+
+        $jform   = $this->input->post->get('jform', [], 'array');
+        $id      = (int) ($jform['id'] ?? 0);
+        $subject = trim((string) InputFilter::getInstance()->clean($jform['message_subject'] ?? '', 'string'));
+        $message = ComponentHelper::filterText((string) ($jform['message_text'] ?? ''));
+
+        // The recipient is whoever opened the ticket, never a value posted with the form.
+        $db        = Factory::getContainer()->get('DatabaseDriver');
+        $createdBy = (int) $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName('created_by'))
+                ->from($db->quoteName('#__jed_tickets'))
+                ->where($db->quoteName('id') . ' = :id')
+                ->bind(':id', $id, ParameterType::INTEGER)
+        )->loadResult();
+
+        if ($id <= 0 || $createdBy <= 0 || $subject === '' || $message === '') {
+            throw new Exception(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 400);
+        }
+
+        JedemailHelper::sendEmail($subject, $message, JedHelper::getUserById($createdBy), $user->name);
+        $this->storeMessage($id, $subject, $message);
+        $this->setRedirect(Route::_('index.php?option=com_tickets&view=ticket&layout=edit&id=' . $id, false));
     }
 
     /**

@@ -65,7 +65,7 @@ $userFactory = $container->get('user.factory');
 
         </div>
 
-    </div> <!-- end div class  com_jed_ticket -->
+    </div> <!-- end div class com_jed_ticket -->
 
 
     <br/>
@@ -99,7 +99,7 @@ foreach ($this->ticket_messages as $ticketMessage) {
         $inout = "jed-ticket-message-in";
     }
 
-    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' . $ticketMessage->subject . ' - ' . JedHelper::prettyDate($ticketMessage->created_on) . '</span>', 'ticket_messages_group' . '_slide' . ($slideid++));
+    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' .  htmlspecialchars((string) $ticketMessage->subject) . ' - ' . JedHelper::prettyDate($ticketMessage->created_on) . '</span>', 'ticket_messages_group' . '_slide' . ($slideid++));
     echo  $ticketMessage->message ;
     echo HTMLHelper::_('bootstrap.endSlide');
 }
