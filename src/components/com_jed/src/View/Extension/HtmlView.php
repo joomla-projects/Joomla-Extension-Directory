@@ -18,6 +18,7 @@ use Exception;
 use Jed\Component\Jed\Administrator\Hit\HitRecorder;
 use Jed\Component\Jed\Administrator\Hit\HitType;
 use Jed\Component\Jed\Administrator\Listing\ListingAccess;
+use Jed\Component\Jed\Site\Helper\CanonicalRedirect;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Joomla\Database\DatabaseInterface;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
@@ -86,8 +87,44 @@ class HtmlView extends BaseHtmlView
             $tpl = null;
         }
 
+        $this->redirectToCanonicalUrl();
+
         $this->prepareDocument();
         parent::display($tpl);
+    }
+
+    /**
+     * Sends a request for an old alias or category, or for the bare id, to the listing's own URL.
+     *
+     * @return void
+     *
+     * @throws Exception
+     *
+     * @since 4.0.0
+     */
+    protected function redirectToCanonicalUrl(): void
+    {
+        $app = Factory::getApplication();
+
+        if (
+            $this->_layout !== 'default'
+            || $app->getInput()->getMethod() !== 'GET'
+            || $app->getInput()->getCmd('format', 'html') !== 'html'
+            || empty($this->item->id)
+        ) {
+            return;
+        }
+
+        $uri       = Uri::getInstance();
+        $canonical = (string) parse_url(
+            Route::_('index.php?option=com_jed&view=extension&catid=' . (int) $this->item->catid . '&id=' . (int) $this->item->id, false),
+            PHP_URL_PATH
+        );
+        $target    = CanonicalRedirect::target($uri->getPath(), $canonical, $uri->getQuery());
+
+        if ($target !== null) {
+            $app->redirect($target, 301);
+        }
     }
 
     /**
