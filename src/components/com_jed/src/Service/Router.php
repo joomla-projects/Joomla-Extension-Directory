@@ -93,6 +93,9 @@ class Router extends RouterView
         $newextension = new RouterViewConfiguration('newextension');
         $this->registerView($newextension);
 
+        $identityclaim = new RouterViewConfiguration('identityclaim');
+        $this->registerView($identityclaim);
+
         $dashboard = new RouterViewConfiguration('dashboard');
         $this->registerView($dashboard);
 
