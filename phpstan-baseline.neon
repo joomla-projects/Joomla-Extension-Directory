@@ -2,6 +2,17 @@ parameters:
 	ignoreErrors:
 		-
 			message: '''
+				#^Call to deprecated method setError\(\) of class Joomla\\CMS\\MVC\\Model\\BaseModel\:
+				3\.1\.4 will be removed in 7\.0
+				             Will be removed without replacement
+				             Throw an Exception instead of using setError$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/administrator/components/com_jed/src/Model/TicketinternalnoteModel.php
+
+		-
+			message: '''
 				#^Call to method getDispatcher\(\) of deprecated interface Joomla\\CMS\\Application\\EventAwareInterface\:
 				4\.3 will be removed in 7\.0
 				             This interface will be removed without replacement as the Joomla 3\.x compatibility layer will be removed$#
@@ -11,16 +22,42 @@ parameters:
 			path: src/administrator/components/com_jed/src/Service/ScoreCalculationService.php
 
 		-
-			message: '''
-				#^Call to deprecated method getDbo\(\) of class Joomla\\CMS\\Factory\:
-				4\.3 will be removed in 7\.0
-				             Use the database service in the DI container
-				             Example\:
-				             Factory\:\:getContainer\(\)\-\>get\(DatabaseInterface\:\:class\);$#
-			'''
-			identifier: staticMethod.deprecated
+			message: '#^Instantiated class Webklex\\PHPIMAP\\ClientManager not found\.$#'
+			identifier: class.notFound
 			count: 1
-			path: src/administrator/components/com_tickets/src/View/Ticket/HtmlView.php
+			path: src/administrator/components/com_vel/src/Mail/ImapFetcher.php
+
+		-
+			message: '''
+				#^Call to deprecated method setError\(\) of class Joomla\\CMS\\MVC\\Model\\BaseModel\:
+				3\.1\.4 will be removed in 7\.0
+				             Will be removed without replacement
+				             Throw an Exception instead of using setError$#
+			'''
+			identifier: method.deprecated
+			count: 3
+			path: src/administrator/components/com_vel/src/Model/AdvisoryModel.php
+
+		-
+			message: '''
+				#^Call to method getDispatcher\(\) of deprecated interface Joomla\\CMS\\Application\\EventAwareInterface\:
+				4\.3 will be removed in 7\.0
+				             This interface will be removed without replacement as the Joomla 3\.x compatibility layer will be removed$#
+			'''
+			identifier: method.deprecatedInterface
+			count: 1
+			path: src/administrator/components/com_vel/src/Service/VelService.php
+
+		-
+			message: '''
+				#^Call to deprecated method setError\(\) of class Joomla\\CMS\\Table\\Table\:
+				3\.1\.4 will be removed in 7\.0
+				             Will be removed without replacement
+				             Throw an Exception instead of using setError$#
+			'''
+			identifier: method.deprecated
+			count: 2
+			path: src/administrator/components/com_vel/src/Table/AdvisoryTable.php
 
 		-
 			message: '#^Class Jed\\Component\\Jed\\Site\\Field\\ForeignKeyField has an uninitialized readonly property \$limit\. Assign it in the constructor\.$#'
@@ -40,28 +77,22 @@ parameters:
 			path: src/components/com_jed/src/Model/CategoriesModel.php
 
 		-
-			message: '''
-				#^Call to deprecated method getDbo\(\) of class Joomla\\CMS\\Factory\:
-				4\.3 will be removed in 7\.0
-				             Use the database service in the DI container
-				             Example\:
-				             Factory\:\:getContainer\(\)\-\>get\(DatabaseInterface\:\:class\);$#
-			'''
-			identifier: staticMethod.deprecated
+			message: '#^Parameter \$event of method Joomla\\Plugin\\Privacy\\Vel\\Extension\\Vel\:\:onPrivacyCollectAdminCapabilities\(\) has invalid type Joomla\\Component\\Privacy\\Administrator\\Event\\CollectCapabilitiesEvent\.$#'
+			identifier: class.notFound
 			count: 1
-			path: src/components/com_tickets/src/Controller/TicketController.php
+			path: src/plugins/privacy/vel/src/Extension/Vel.php
 
 		-
-			message: '''
-				#^Call to deprecated method getDbo\(\) of class Joomla\\CMS\\Factory\:
-				4\.3 will be removed in 7\.0
-				             Use the database service in the DI container
-				             Example\:
-				             Factory\:\:getContainer\(\)\-\>get\(DatabaseInterface\:\:class\);$#
-			'''
-			identifier: staticMethod.deprecated
+			message: '#^Parameter \$event of method Joomla\\Plugin\\Privacy\\Vel\\Extension\\Vel\:\:onPrivacyExportRequest\(\) has invalid type Joomla\\Component\\Privacy\\Administrator\\Event\\ExportRequestEvent\.$#'
+			identifier: class.notFound
 			count: 1
-			path: src/components/com_tickets/src/Service/Router.php
+			path: src/plugins/privacy/vel/src/Extension/Vel.php
+
+		-
+			message: '#^Parameter \$event of method Joomla\\Plugin\\Privacy\\Vel\\Extension\\Vel\:\:onPrivacyRemoveData\(\) has invalid type Joomla\\Component\\Privacy\\Administrator\\Event\\RemoveDataEvent\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/plugins/privacy/vel/src/Extension/Vel.php
 
 		-
 			message: '''
@@ -84,15 +115,3 @@ parameters:
 			identifier: method.deprecated
 			count: 1
 			path: src/plugins/sampledata/jed/jed.php
-
-		-
-			message: '''
-				#^Call to deprecated method getDbo\(\) of class Joomla\\CMS\\Factory\:
-				4\.3 will be removed in 7\.0
-				             Use the database service in the DI container
-				             Example\:
-				             Factory\:\:getContainer\(\)\-\>get\(DatabaseInterface\:\:class\);$#
-			'''
-			identifier: staticMethod.deprecated
-			count: 1
-			path: src/plugins/sampledata/jed2/jed2.php

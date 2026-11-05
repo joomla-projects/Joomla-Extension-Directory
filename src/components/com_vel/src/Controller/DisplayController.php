@@ -65,7 +65,6 @@ class DisplayController extends BaseController
                 'limitstart' => 'UINT',
                 'start'      => 'UINT',
                 'format'     => 'CMD',
-                'type'       => 'CMD',
                 'Itemid'     => 'INT',
                 'lang'       => 'CMD',
             ];
