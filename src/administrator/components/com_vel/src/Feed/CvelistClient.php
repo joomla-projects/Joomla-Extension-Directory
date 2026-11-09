@@ -77,16 +77,20 @@ final class CvelistClient
     public const COURTESY_PAUSE = 0.2;
 
     /**
-     * @param Http $http           HTTP client.
-     * @param int  $rangeMaxBytes  Cap on the Range read.
+     * @param Http $http              HTTP client.
+     * @param int  $rangeMaxBytes     Cap on the Range read.
      * @param int  $fullFetchMaxBytes Cap on an unranged read when Range is ignored.
+     * @param int  $timeout           Seconds per request. A run driven from the browser passes
+     *                                less than the default so one slow request cannot outlast
+     *                                the web server's gateway timeout.
      *
      * @since 4.0.0
      */
     public function __construct(
         private readonly Http $http,
         private readonly int $rangeMaxBytes = 2 * 1024 * 1024,
-        private readonly int $fullFetchMaxBytes = 64 * 1024 * 1024
+        private readonly int $fullFetchMaxBytes = 64 * 1024 * 1024,
+        private readonly int $timeout = 60
     ) {
     }
 
@@ -144,6 +148,216 @@ final class CvelistClient
     }
 
     /**
+     * How much of the log the first slice of a read asks for: enough for the gap at the measured
+     * rate, with a margin, between MIN_RANGE_BYTES and the range cap.
+     *
+     * @param \DateTimeImmutable|null $since Where the read has to reach back to.
+     *
+     * @return int  Bytes.
+     *
+     * @since 4.0.0
+     */
+    public function firstSliceBytes(?\DateTimeImmutable $since): int
+    {
+        $hours = $since === null ? 72.0 : max(1.0, (time() - $since->getTimestamp()) / 3600);
+
+        return (int) max(self::MIN_RANGE_BYTES, min($this->rangeMaxBytes, ceil($hours * self::ENTRIES_PER_HOUR * self::BYTES_PER_ENTRY * 1.5)));
+    }
+
+    /**
+     * @return int  Bytes per slice after the first: the range cap.
+     *
+     * @since 4.0.0
+     */
+    public function sliceBytes(): int
+    {
+        return max(self::MIN_RANGE_BYTES, $this->rangeMaxBytes);
+    }
+
+    /**
+     * @return int  The largest slice a single entry may force (the unranged-read cap).
+     *
+     * @since 4.0.0
+     */
+    public function maxSliceBytes(): int
+    {
+        return max($this->sliceBytes(), $this->fullFetchMaxBytes);
+    }
+
+    /**
+     * One slice of `deltaLog.json`, from byte `$offset`, as complete entries. A read of the log
+     * is a series of these, each starting where the last complete entry of the one before ended,
+     * so a gap of any length up to the log's 30 days can be read without holding it in memory.
+     *
+     * Strict, because a log that does not load must not look like an empty one: anything that
+     * is not a well-formed array of entries with a `fetchTime` throws. The one exception is a
+     * continuation slice that does not start at an entry (`aligned` false): the file changed
+     * between two slices and the caller reads it again from the top.
+     *
+     * @param int         $offset The first byte (0, or a `next` from the slice before).
+     * @param int         $bytes  How many bytes to ask for.
+     * @param string|null $etag   If-None-Match, for the first slice only.
+     *
+     * @return array{not_modified: bool, entries: list<array>, next: ?int, aligned: bool, whole: bool, etag: ?string, bytes: int}
+     *         `next` is the byte offset to continue from, or null at the end of the log;
+     *         `whole` says the server ignored the Range and sent the whole file.
+     *
+     * @throws RuntimeException  When the log cannot be fetched or does not parse.
+     *
+     * @since 4.0.0
+     */
+    public function deltaSlice(int $offset, int $bytes, ?string $etag = null): array
+    {
+        $result = $this->rangeRead(self::RAW_BASE . 'cves/deltaLog.json', $bytes, $offset === 0 ? $etag : null, $offset);
+        $slice  = ['not_modified' => false, 'entries' => [], 'next' => null, 'aligned' => true, 'whole' => false, 'etag' => $result['etag'], 'bytes' => \strlen($result['body'])];
+
+        if ($result['not_modified']) {
+            return ['not_modified' => true, 'etag' => $etag] + $slice;
+        }
+
+        if (!empty($result['unsatisfiable'])) {
+            return ['aligned' => false] + $slice;
+        }
+
+        if ($result['complete_body']) {
+            $decoded = json_decode($result['body'], true);
+
+            if (!\is_array($decoded) || !array_is_list($decoded)) {
+                throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_CVELIST_DELTA_INVALID', json_last_error() !== JSON_ERROR_NONE ? json_last_error_msg() : 'not a JSON array'));
+            }
+
+            foreach ($decoded as $i => $entry) {
+                self::assertEntry($entry, $i);
+            }
+
+            return ['entries' => $decoded, 'whole' => true] + $slice;
+        }
+
+        $parsed = self::parseSlice($result['body'], $offset === 0);
+
+        return [
+            'entries' => $parsed['entries'],
+            'next'    => $parsed['next'] === null ? null : $offset + $parsed['next'],
+            'aligned' => $parsed['aligned'],
+        ] + $slice;
+    }
+
+    /**
+     * Parse a slice of the pretty-printed JSON array of delta entries: every complete top-level
+     * entry, and where the first incomplete one begins.
+     *
+     * @param string $text    The bytes read.
+     * @param bool   $atStart Whether they start at the top of the file (the `[`), or at an entry.
+     *
+     * @return array{entries: list<array>, next: ?int, aligned: bool}
+     *         `next`: offset within `$text` to continue from; null when the array ended here.
+     *         `aligned`: false when a continuation does not start at a delta entry.
+     *
+     * @throws RuntimeException  When the slice is not a well-formed part of the log.
+     *
+     * @since 4.0.0
+     */
+    public static function parseSlice(string $text, bool $atStart): array
+    {
+        $length = \strlen($text);
+        $i      = strspn($text, " \t\r\n");
+
+        if ($atStart) {
+            if ($i >= $length || $text[$i] !== '[') {
+                throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_CVELIST_DELTA_INVALID', 'not a JSON array'));
+            }
+
+            $i++;
+        } elseif ($i >= $length || $text[$i] !== '{') {
+            return ['entries' => [], 'next' => null, 'aligned' => false];
+        }
+
+        $entries  = [];
+        $depth    = 0;
+        $inString = false;
+        $escape   = false;
+        $entryAt  = -1;
+
+        for (; $i < $length; $i++) {
+            $c = $text[$i];
+
+            if ($inString) {
+                if ($escape) {
+                    $escape = false;
+                } elseif ($c === '\\') {
+                    $escape = true;
+                } elseif ($c === '"') {
+                    $inString = false;
+                }
+
+                continue;
+            }
+
+            if ($depth === 0) {
+                // Between entries only separators may appear.
+                if ($c === '{') {
+                    $entryAt = $i;
+                    $depth   = 1;
+                } elseif ($c === ']') {
+                    return ['entries' => $entries, 'next' => null, 'aligned' => true];
+                } elseif ($c !== ',' && !ctype_space($c)) {
+                    throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_CVELIST_DELTA_INVALID', 'unexpected "' . $c . '" between entries'));
+                }
+
+                continue;
+            }
+
+            if ($c === '"') {
+                $inString = true;
+            } elseif ($c === '{' || $c === '[') {
+                $depth++;
+            } elseif ($c === '}' || $c === ']') {
+                $depth--;
+
+                if ($depth === 0) {
+                    $entry = json_decode(substr($text, $entryAt, $i - $entryAt + 1), true);
+
+                    if (!$atStart && $entries === [] && !(\is_array($entry) && isset($entry['fetchTime']))) {
+                        // A continuation that starts at some inner object: the file moved.
+                        return ['entries' => [], 'next' => null, 'aligned' => false];
+                    }
+
+                    $entries[] = self::assertEntry($entry, \count($entries));
+                    $entryAt   = -1;
+                }
+            }
+        }
+
+        // Cut: continue from the entry that did not fit, or from the end when none had begun.
+        return ['entries' => $entries, 'next' => $entryAt >= 0 ? $entryAt : $length, 'aligned' => true];
+    }
+
+    /**
+     * @param mixed $entry A decoded delta entry.
+     * @param int   $index Its position, for the message.
+     *
+     * @return array  The entry.
+     *
+     * @throws RuntimeException  When it is not one.
+     *
+     * @since 4.0.0
+     */
+    private static function assertEntry(mixed $entry, int $index): array
+    {
+        if (!\is_array($entry) || !isset($entry['fetchTime']) || !\is_string($entry['fetchTime']) || strtotime($entry['fetchTime']) === false) {
+            throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_CVELIST_DELTA_INVALID', 'entry ' . ($index + 1) . ' has no valid fetchTime'));
+        }
+
+        foreach (['new', 'updated'] as $bucket) {
+            if (isset($entry[$bucket]) && !\is_array($entry[$bucket])) {
+                throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_CVELIST_DELTA_INVALID', 'entry ' . ($index + 1) . ' has a malformed "' . $bucket . '" list'));
+            }
+        }
+
+        return $entry;
+    }
+
+    /**
      * The single newest delta window - a liveness probe.
      *
      * @return array|null
@@ -197,7 +411,7 @@ final class CvelistClient
         try {
             $decoded = $this->getJson($url);
         } catch (RuntimeException $e) {
-            if (str_contains($e->getMessage(), ' 404')) {
+            if ($e->getCode() === 404) {
                 return null;
             }
 
@@ -228,22 +442,23 @@ final class CvelistClient
     /**
      * Read the first bytes of a resource.
      *
-     * @param string      $url   The URL.
-     * @param int         $bytes How many.
-     * @param string|null $etag  If-None-Match.
+     * @param string      $url    The URL.
+     * @param int         $bytes  How many.
+     * @param string|null $etag   If-None-Match.
+     * @param int         $offset The first byte.
      *
-     * @return array{body: string, etag: ?string, not_modified: bool, complete_body: bool}
+     * @return array{body: string, etag: ?string, not_modified: bool, complete_body: bool, unsatisfiable?: bool}
      *
      * @throws RuntimeException
      *
      * @since 4.0.0
      */
-    private function rangeRead(string $url, int $bytes, ?string $etag): array
+    private function rangeRead(string $url, int $bytes, ?string $etag, int $offset = 0): array
     {
         $headers = [
             'Accept'     => 'application/json',
             'User-Agent' => 'Joomla-VEL/2.0 (+https://extensions.joomla.org/vulnerable-extensions)',
-            'Range'      => 'bytes=0-' . ($bytes - 1),
+            'Range'      => 'bytes=' . $offset . '-' . ($offset + $bytes - 1),
         ];
 
         if ($etag !== null && $etag !== '') {
@@ -251,7 +466,7 @@ final class CvelistClient
         }
 
         try {
-            $response = $this->http->get($url, $headers, 60);
+            $response = $this->http->get($url, $headers, $this->timeout);
         } catch (\Throwable $e) {
             throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_CVELIST_REQUEST_FAILED', $e->getMessage()), 0, $e);
         }
@@ -261,6 +476,11 @@ final class CvelistClient
 
         if ($status === 304) {
             return ['body' => '', 'etag' => $etag, 'not_modified' => true, 'complete_body' => false];
+        }
+
+        if ($status === 416 && $offset > 0) {
+            // Past the end: the file is shorter than when the read began (it changed).
+            return ['body' => '', 'etag' => $newEtag, 'not_modified' => false, 'complete_body' => false, 'unsatisfiable' => true];
         }
 
         if ($status === 206) {
@@ -371,7 +591,7 @@ final class CvelistClient
         $headers = ['Accept' => 'application/json', 'User-Agent' => 'Joomla-VEL/2.0 (+https://extensions.joomla.org/vulnerable-extensions)'];
 
         try {
-            $response = $this->http->get($url, $headers, 30);
+            $response = $this->http->get($url, $headers, min(30, $this->timeout));
         } catch (\Throwable $e) {
             throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_CVELIST_REQUEST_FAILED', $e->getMessage()), 0, $e);
         }
@@ -379,7 +599,8 @@ final class CvelistClient
         $status = $response->getStatusCode();
 
         if ($status >= 400) {
-            throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_CVELIST_STATUS', $status, $url));
+            // The status is the code, so callers need not read it out of a translated message.
+            throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_CVELIST_STATUS', $status, $url), $status);
         }
 
         $decoded = json_decode((string) $response->getBody(), true);

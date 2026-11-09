@@ -465,15 +465,50 @@ CREATE TABLE IF NOT EXISTS `#__vel_feed_runs`
 	`items_seen`    int unsigned NOT NULL DEFAULT '0',
 	`items_new`     int unsigned NOT NULL DEFAULT '0',
 	`items_updated` int unsigned NOT NULL DEFAULT '0',
-	-- running | ok | partial | failed. `partial` has three meanings (fetch cap reached, delta
-	-- range under-sized, gap older than the log's retention) and `message` says which.
+	-- running | ok | partial | failed. `partial` has several meanings (fetch cap reached, delta
+	-- range under-sized, gap older than the log's retention, time budget, stopped, interrupted)
+	-- and `message` says which.
 	`status`        varchar(8)   NOT NULL DEFAULT 'running',
 	`message`       text         NOT NULL,
-	-- Source-specific resume state: the delta log's ETag for the CVE feed.
+	-- Source-specific resume state. CVE feed: its position in the delta log as JSON,
+	-- {"etag": ETag of the last complete read, "top": fetchTime of the newest entry it read};
+	-- the next run reads the entries after `top`. (A plain string is an ETag from before.)
 	`cursor`        varchar(255) NOT NULL DEFAULT '',
+	-- While `running`: the run's plan and how far it has got (JSON), so that it can be done in
+	-- short steps driven from the browser. NULL once the run is closed.
+	`progress`      mediumtext,
+	-- While a step is working on the run: when it took the lock. NULL between steps.
+	`heartbeat`     datetime     DEFAULT NULL,
 
 	PRIMARY KEY (`id`),
 	KEY `IDX_vel_feed_runs_source` (`source`, `started`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+
+-- The CVE feed's work queue: every CVE id the delta log listed whose record has not been dealt
+-- with yet. A run reads the log, queues what it lists, then fetches from the queue; an id leaves
+-- only when its record has been handled, so a run cut short (fetch cap, Stop, timeout) loses
+-- nothing - the next run carries on with what is left.
+CREATE TABLE IF NOT EXISTS `#__vel_feed_backlog`
+(
+	`id`          int unsigned NOT NULL AUTO_INCREMENT,
+	`source`      varchar(8)   NOT NULL,
+	`external_id` varchar(32)  NOT NULL,
+	-- The record's raw URL from the delta log (`githubLink`), when it gave one.
+	`url`         varchar(255) NOT NULL DEFAULT '',
+	-- The delta entry that listed it (newest first is the fetch order).
+	`fetch_time`  datetime     DEFAULT NULL,
+	`queued`      datetime     NOT NULL,
+	-- Failed fetches so far; at FeedBacklog::MAX_ATTEMPTS the id is set aside until it changes again.
+	`attempts`    int unsigned NOT NULL DEFAULT '0',
+	`last_error`  varchar(255) NOT NULL DEFAULT '',
+	-- The run whose read of the log is still in progress. Staged ids are only committed (set
+	-- NULL) once that read has loaded to the end, and are deleted if it does not.
+	`staged_by`   int unsigned DEFAULT NULL,
+
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `UQ_vel_feed_backlog_external` (`source`, `external_id`),
+	KEY `IDX_vel_feed_backlog_next` (`source`, `staged_by`, `attempts`, `fetch_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 

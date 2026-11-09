@@ -59,14 +59,42 @@ final class NvdClient
     private float $lastRequest = 0.0;
 
     /**
-     * @param Http   $http   HTTP client.
-     * @param string $apiKey Optional API key.
+     * @param Http   $http    HTTP client.
+     * @param string $apiKey  Optional API key.
+     * @param int    $timeout Seconds per request.
      *
      * @since 4.0.0
      */
-    public function __construct(private readonly Http $http, private readonly string $apiKey = '')
+    public function __construct(private readonly Http $http, private readonly string $apiKey = '', private readonly int $timeout = 60)
     {
         $this->pause = $apiKey !== '' ? 1.0 : 6.5;
+    }
+
+    /**
+     * When the last request was sent (Unix time, 0.0 for never). A run split over several web
+     * requests builds a new client for each one; carrying this over keeps the rate limit.
+     *
+     * @return float
+     *
+     * @since 4.0.0
+     */
+    public function lastRequestAt(): float
+    {
+        return $this->lastRequest;
+    }
+
+    /**
+     * Continue the throttle of an earlier client (see {@see self::lastRequestAt()}).
+     *
+     * @param float $at Unix time of the last request.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    public function resumeThrottle(float $at): void
+    {
+        $this->lastRequest = max($this->lastRequest, $at);
     }
 
     /**
@@ -197,7 +225,7 @@ final class NvdClient
         $url = self::BASE . '?' . http_build_query($query);
 
         try {
-            $response = $this->http->get($url, $headers, 60);
+            $response = $this->http->get($url, $headers, $this->timeout);
         } catch (\Throwable $e) {
             throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_NVD_REQUEST_FAILED', $e->getMessage()), 0, $e);
         }

@@ -91,7 +91,6 @@ $wa->useScript('table.columns')->useScript('multiselect');
 
                 <input type="hidden" name="task" value=""/>
                 <input type="hidden" name="boxchecked" value="0"/>
-                <input type="hidden" name="source" id="feed-source" value=""/>
                 <?php echo HTMLHelper::_('form.token'); ?>
             </div>
         </div>

@@ -17,12 +17,17 @@ namespace Jed\Component\Vel\Administrator\View\Feedruns;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Vel\Administrator\Feed\FeedRunner;
+use Jed\Component\Vel\Administrator\Service\VelService;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\Database\DatabaseInterface;
 use Joomla\Registry\Registry;
 
 /**
@@ -44,6 +49,16 @@ class HtmlView extends BaseHtmlView
      * @since 4.0.0
      */
     public array $can = [];
+
+    /**
+     * The run named by `&run=` in the URL (where the run buttons send the browser), as
+     * {@see FeedRunner::report()} describes it; null for the plain list.
+     *
+     * @var array|null
+     *
+     * @since 4.0.0
+     */
+    public ?array $progress = null;
 
     /**
      * @param string|null $tpl The template name.
@@ -70,9 +85,65 @@ class HtmlView extends BaseHtmlView
             'admin' => (bool) $user->authorise('core.admin', 'com_vel'),
         ];
 
+        $runId = Factory::getApplication()->getInput()->getInt('run', 0);
+
+        if ($runId > 0 && $this->can['feeds']) {
+            $this->prepareProgress($runId);
+        }
+
         $this->addToolbar();
 
         parent::display($tpl);
+    }
+
+    /**
+     * The progress panel of one run: its state now, and the script that steps it while the page
+     * is open (media/com_vel/js/feedrun.js).
+     *
+     * @param int $runId The run.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    protected function prepareProgress(int $runId): void
+    {
+        $db     = Factory::getContainer()->get(DatabaseInterface::class);
+        $runner = new FeedRunner($db, new VelService($db));
+        $run    = $runner->load($runId);
+
+        if ($run === null) {
+            return;
+        }
+
+        $this->progress = $runner->report($run);
+
+        foreach (
+            [
+                'COM_VEL_FEEDRUN_STOPPING', 'COM_VEL_FEEDRUN_CONFIRM_STOP', 'COM_VEL_FEEDRUN_BUSY', 'COM_VEL_FEEDRUN_RETRY',
+                'COM_VEL_FEEDRUN_GAVE_UP', 'COM_VEL_FEEDRUN_BAD_RESPONSE', 'COM_VEL_FEEDRUN_LEAVE_WARNING',
+                'COM_VEL_FEEDRUN_EVENT_NEW', 'COM_VEL_FEEDRUN_EVENT_UPDATED',
+            ] as $key
+        ) {
+            Text::script($key);
+        }
+
+        // The step requests carry the token in a header (checked by Session::checkToken()).
+        HTMLHelper::_('form.csrf');
+
+        $document = $this->getDocument();
+
+        $document->addScriptOptions('com_vel.feedrun', [
+            'id'      => $runId,
+            'report'  => $this->progress,
+            'stepUrl' => Route::_('index.php?option=com_vel&task=feeditems.step&format=json', false),
+            'stopUrl' => Route::_('index.php?option=com_vel&task=feeditems.stop&format=json', false),
+            'listUrl' => Route::_('index.php?option=com_vel&view=feedruns', false),
+        ]);
+
+        // media/com_vel/joomla.asset.json is registered by the administrator application for
+        // the component being dispatched.
+        $document->getWebAssetManager()->useScript('com_vel.feedrun');
     }
 
     /**
@@ -85,10 +156,11 @@ class HtmlView extends BaseHtmlView
         $toolbar = $this->getDocument()->getToolbar();
 
         ToolbarHelper::title(Text::_('COM_VEL_FEEDRUNS_TITLE'), 'shield');
+      //  $bar->linkButton('tickets')->text(Text::_('COM_JED_TITLE_TICKETS'))->url('index.php?option=com_jed&view=tickets')->icon('fa fa-ticket-alt');
 
         if ($this->can['feeds']) {
-            $toolbar->standardButton('run-cna', 'COM_VEL_TOOLBAR_RUN_CNA', 'feeditems.run')->icon('icon-sync')->listCheck(false)->onclick("document.getElementById('feed-source').value='cna'; Joomla.submitbutton('feeditems.run');");
-            $toolbar->standardButton('run-nvd', 'COM_VEL_TOOLBAR_RUN_NVD', 'feeditems.run')->icon('icon-sync')->listCheck(false)->onclick("document.getElementById('feed-source').value='nvd'; Joomla.submitbutton('feeditems.run');");
+            $toolbar->standardButton('run-cna', 'COM_VEL_TOOLBAR_RUN_CNA', 'feeditems.runCna')->icon('icon-sync')->listCheck(false);
+            $toolbar->standardButton('run-nvd', 'COM_VEL_TOOLBAR_RUN_NVD', 'feeditems.runNvd')->icon('icon-sync')->listCheck(false);
             $toolbar->confirmButton('seed', 'COM_VEL_TOOLBAR_SEED', 'feeditems.seed')->message('COM_VEL_CONFIRM_SEED')->icon('icon-database')->listCheck(false);
         }
 

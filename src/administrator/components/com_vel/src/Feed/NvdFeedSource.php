@@ -62,6 +62,20 @@ final class NvdFeedSource implements FeedSourceInterface
     }
 
     /**
+     * The widest window the API accepts, less a day of margin.
+     *
+     * @since 4.0.0
+     */
+    public const WINDOW_DAYS = 119;
+
+    /**
+     * Results per discovery page.
+     *
+     * @since 4.0.0
+     */
+    public const PER_PAGE = 500;
+
+    /**
      * @param DateTimeImmutable $from     Window start.
      * @param DateTimeImmutable $to       Window end.
      * @param callable          $deadline Budget check.
@@ -76,7 +90,7 @@ final class NvdFeedSource implements FeedSourceInterface
         $cursor = $from;
 
         while ($cursor < $to) {
-            $end   = min($to, $cursor->modify('+119 days'));
+            $end   = min($to, $cursor->modify('+' . self::WINDOW_DAYS . ' days'));
             $start = 0;
 
             do {
@@ -84,40 +98,65 @@ final class NvdFeedSource implements FeedSourceInterface
                     return;
                 }
 
-                try {
-                    $page = $this->client->search($this->keyword, $cursor, $end, $start, 500);
-                } catch (\Throwable $e) {
-                    // A refused request is our bug (404 + message) or a rate limit; either way
-                    // the run must say so, not report a clean empty window.
-                    throw new \RuntimeException(Text::sprintf('COM_VEL_ERROR_NVD_DISCOVERY', $e->getMessage()), 0, $e);
-                }
+                $page = $this->page($cursor, $end, $start);
 
-                $items = (array) ($page['vulnerabilities'] ?? []);
+                yield from $page['records'];
 
-                foreach ($items as $item) {
-                    if (!\is_array($item)) {
-                        continue;
-                    }
-
-                    $mapped = NvdRecordMapper::map($item);
-
-                    if ($mapped === null) {
-                        continue;
-                    }
-
-                    $this->classifier->classify($mapped);
-
-                    if ($this->classifier->worthKeeping($mapped->classification)) {
-                        yield $mapped;
-                    }
-                }
-
-                $total = (int) ($page['totalResults'] ?? 0);
-                $start += max(1, \count($items));
-            } while ($items !== [] && $start < $total);
+                $start += max(1, $page['count']);
+            } while ($page['count'] > 0 && $start < $page['total']);
 
             $cursor = $end;
         }
+    }
+
+    /**
+     * One page of discovery: a single request, so a run split into short steps can do one at
+     * a time and remember `startIndex` in between.
+     *
+     * @param DateTimeImmutable $from  Window start (at most {@see self::WINDOW_DAYS} before `$to`).
+     * @param DateTimeImmutable $to    Window end.
+     * @param int               $start `startIndex`.
+     *
+     * @return array{records: list<FeedRecord>, count: int, total: int}
+     *         `records` holds the ones worth keeping; `count` is how many the page carried in
+     *         all, which is what advances `startIndex`.
+     *
+     * @throws \RuntimeException  When the NVD refuses or fails the request.
+     *
+     * @since 4.0.0
+     */
+    public function page(DateTimeImmutable $from, DateTimeImmutable $to, int $start): array
+    {
+        try {
+            $page = $this->client->search($this->keyword, $from, $to, $start, self::PER_PAGE);
+        } catch (\Throwable $e) {
+            // A refused request is our bug (404 + message) or a rate limit; either way
+            // the run must say so, not report a clean empty window.
+            throw new \RuntimeException(Text::sprintf('COM_VEL_ERROR_NVD_DISCOVERY', $e->getMessage()), 0, $e);
+        }
+
+        $items   = (array) ($page['vulnerabilities'] ?? []);
+        $records = [];
+
+        foreach ($items as $item) {
+            if (!\is_array($item)) {
+                continue;
+            }
+
+            $mapped = NvdRecordMapper::map($item);
+
+            if ($mapped === null) {
+                continue;
+            }
+
+            $this->classifier->classify($mapped);
+
+            if ($this->classifier->worthKeeping($mapped->classification)) {
+                $records[] = $mapped;
+            }
+        }
+
+        return ['records' => $records, 'count' => \count($items), 'total' => (int) ($page['totalResults'] ?? 0)];
     }
 
     /**

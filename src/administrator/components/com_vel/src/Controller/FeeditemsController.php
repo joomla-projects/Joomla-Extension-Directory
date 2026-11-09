@@ -23,6 +23,7 @@ use Jed\Component\Vel\Administrator\Service\VelService;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Router\Route;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
@@ -30,7 +31,7 @@ use Joomla\Utilities\ArrayHelper;
 use Throwable;
 
 /**
- * The feed queue: run a feed now, ignore items in bulk.
+ * The feed queue: run a feed now (in steps, see {@see self::step()}), ignore items in bulk.
  *
  * @since 4.0.0
  */
@@ -51,7 +52,34 @@ class FeeditemsController extends AdminController
     }
 
     /**
-     * Run a feed synchronously with a short budget (VEL2-PRD §6.6.3).
+     * Run the CVE Program (CNA) feed now. Toolbar task: feeditems.runCna
+     *
+     * The feed is chosen by the task name, not by a form field, because Joomla's toolbar
+     * buttons never render a custom onclick when a task is set.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    public function runCna(): void
+    {
+        $this->begin(FeedSource::CNA, FeedRunner::MODE_DELTA);
+    }
+
+    /**
+     * Run the NVD feed now. Toolbar task: feeditems.runNvd
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    public function runNvd(): void
+    {
+        $this->begin(FeedSource::NVD, FeedRunner::MODE_DELTA);
+    }
+
+    /**
+     * Run a feed named by the posted "source" value (kept for any caller that posts it).
      *
      * @return void
      *
@@ -59,39 +87,17 @@ class FeeditemsController extends AdminController
      */
     public function run(): void
     {
-        $this->checkToken();
-
-        $return = Route::_('index.php?option=com_vel&view=feedruns', false);
-
-        if (!$this->app->getIdentity()->authorise('vel.feeds', 'com_vel')) {
-            $this->setRedirect($return, Text::_('JERROR_ALERTNOAUTHOR'), 'error');
-
-            return;
-        }
 
         $source = FeedSource::tryFrom((string) $this->input->getCmd('source', ''));
 
         if ($source === null) {
-            $this->setRedirect($return, Text::_('COM_VEL_ERROR_FEED_SOURCE'), 'error');
+            $this->checkToken();
+            $this->setRedirect(Route::_('index.php?option=com_vel&view=feedruns', false), Text::_('COM_VEL_ERROR_FEED_SOURCE'), 'error');
 
             return;
         }
 
-        try {
-            $db  = Factory::getContainer()->get(DatabaseInterface::class);
-            $run = (new FeedRunner($db, new VelService($db)))->run($source, 60);
-        } catch (Throwable $e) {
-            $this->setRedirect($return, $e->getMessage(), 'error');
-
-            return;
-        }
-
-        $this->setRedirect(
-            $return,
-            Text::sprintf('COM_VEL_MSG_FEED_RUN', Text::_($source->label()), Text::_('COM_VEL_FEED_RUN_STATUS_' . strtoupper((string) $run->status)), (int) $run->items_seen, (int) $run->items_new, (int) $run->items_updated)
-            . ((string) $run->message !== '' ? ' ' . $run->message : ''),
-            (string) $run->status === 'failed' ? 'error' : ((string) $run->status === 'partial' ? 'warning' : 'message')
-        );
+        $this->begin($source, FeedRunner::MODE_DELTA);
     }
 
     /**
@@ -106,6 +112,52 @@ class FeeditemsController extends AdminController
      */
     public function seed(): void
     {
+        $this->begin(FeedSource::CNA, FeedRunner::MODE_SEED);
+    }
+
+    /**
+     * AJAX: do one step of a run (a few seconds of work) and report where it is. Called in a
+     * loop by media/com_vel/js/feedrun.js until the report says `done`.
+     *
+     * POST index.php?option=com_vel&task=feeditems.step&format=json, with `id` and the form token.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    public function step(): void
+    {
+        $this->respond(static fn (FeedRunner $runner, int $id): array => $runner->step($id, FeedRunner::STEP_SECONDS));
+    }
+
+    /**
+     * AJAX: stop a run where it is, as partial; the next run of the feed resumes from there.
+     *
+     * POST index.php?option=com_vel&task=feeditems.stop&format=json, with `id` and the form token.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    public function stop(): void
+    {
+        $this->respond(static fn (FeedRunner $runner, int $id): array => $runner->stop($id, 'stopped'));
+    }
+
+    /**
+     * Start a run and send the browser to the page that steps it and shows its progress. The
+     * work itself happens in {@see self::step()}: a single request doing all of it outlasts the
+     * web server's gateway timeout and shows nothing until it fails.
+     *
+     * @param FeedSource $source Which feed.
+     * @param string     $mode   {@see FeedRunner::MODE_DELTA} or {@see FeedRunner::MODE_SEED}.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    private function begin(FeedSource $source, string $mode): void
+    {
         $this->checkToken();
 
         $return = Route::_('index.php?option=com_vel&view=feedruns', false);
@@ -117,20 +169,75 @@ class FeeditemsController extends AdminController
         }
 
         try {
-            $db  = Factory::getContainer()->get(DatabaseInterface::class);
-            $run = (new FeedRunner($db, new VelService($db)))->seed(60);
+            $run = $this->runner()->start($source, $mode);
         } catch (Throwable $e) {
             $this->setRedirect($return, $e->getMessage(), 'error');
 
             return;
         }
 
-        $this->setRedirect(
-            $return,
-            Text::sprintf('COM_VEL_MSG_FEED_SEED', Text::_('COM_VEL_FEED_RUN_STATUS_' . strtoupper((string) $run->status)), (int) $run->items_seen, (int) $run->items_new, (int) $run->items_updated)
-            . ((string) $run->message !== '' ? ' ' . $run->message : ''),
-            (string) $run->status === 'failed' ? 'error' : ((string) $run->status === 'partial' ? 'warning' : 'message')
-        );
+        if ((string) $run->status !== 'running') {
+            // The feed is disabled: nothing to step.
+            $this->setRedirect($return, (string) $run->message, 'warning');
+
+            return;
+        }
+
+        $this->setRedirect(Route::_('index.php?option=com_vel&view=feedruns&run=' . (int) $run->id, false));
+    }
+
+    /**
+     * The JSON side of step/stop: token, permission, one call, one JsonResponse.
+     *
+     * @param callable(FeedRunner, int): array $action The work.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    private function respond(callable $action): void
+    {
+        $this->app->setHeader('Content-Type', 'application/json; charset=utf-8', true);
+        $this->app->setHeader('Cache-Control', 'no-store', true);
+
+        try {
+            if (!$this->checkToken('post', false)) {
+                throw new \RuntimeException(Text::_('JINVALID_TOKEN'), 403);
+            }
+
+            if (!$this->app->getIdentity()->authorise('vel.feeds', 'com_vel')) {
+                throw new \RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+
+            // A step that is cut off half way wastes its work; let it finish and save even when
+            // the browser stops waiting for it.
+            if (\function_exists('ignore_user_abort')) {
+                ignore_user_abort(true);
+            }
+
+            $response = new JsonResponse($action($this->runner(), $this->input->post->getInt('id', 0)));
+        } catch (Throwable $e) {
+            $this->app->setHeader('Status', (string) (\in_array($e->getCode(), [403, 404], true) ? $e->getCode() : 500), true);
+            $response = new JsonResponse($e);
+        }
+
+        $this->app->sendHeaders();
+
+        echo $response;
+
+        $this->app->close();
+    }
+
+    /**
+     * @return FeedRunner  A runner whose requests time out well inside a gateway timeout.
+     *
+     * @since 4.0.0
+     */
+    private function runner(): FeedRunner
+    {
+        $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+        return new FeedRunner($db, new VelService($db), FeedRunner::STEP_HTTP_TIMEOUT);
     }
 
     /**

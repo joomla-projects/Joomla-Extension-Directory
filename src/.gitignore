@@ -1,0 +1,14 @@
+### Composer vendor folder
+/src/administrator/components/com_jed/vendor/
+/vendor/
+/dist/
+### Node.JS build dependencies
+/node_modules/
+### Installation packages built through Phing
+/release/
+/.idea
+## JoRobo config file
+jorobo.ini
+/cc/
+/joomla/
+/.phpunit.result.cache

@@ -237,13 +237,17 @@ class ThreadResolver
 
         // Record the mail's Message-ID on the system message so the sender's next mail threads.
         if ($mail->messageId !== null) {
+            // bind() takes its value by reference, and a reference to a readonly property is an
+            // Error ("Cannot modify readonly property"): bind a copy.
+            $headerMessageId = $mail->messageId;
+
             $this->db->setQuery(
                 $this->db->getQuery(true)->update($this->db->quoteName('#__vel_messages'))
                     ->set($this->db->quoteName('message_id') . ' = :mid')
                     ->set($this->db->quoteName('channel') . ' = ' . $this->db->quote('email'))
                     ->where($this->db->quoteName('report_id') . ' = :rid')
                     ->where($this->db->quoteName('message_id') . ' IS NULL')
-                    ->bind(':mid', $mail->messageId)
+                    ->bind(':mid', $headerMessageId)
                     ->bind(':rid', $reportId, ParameterType::INTEGER)
             )->execute();
         }
