@@ -647,7 +647,11 @@ class PlgSampledataJed_Migrate extends CMSPlugin
 
         // Last of the data sets: the tickets reference extensions and reviews by id, so both have
         // to be in place, and nothing else references the tickets.
-        $plan[++$next] = ['file' => 'tickets.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_TICKETS_SUCCESS'];
+        $plan[++$next] = [
+            'file'  => 'tickets.sql',
+            'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_TICKETS_SUCCESS',
+            'after' => 'readableTicketEvents',
+        ];
 
         $plan[++$next] = ['file' => 'cleanup.sql', 'label' => 'PLG_SAMPLEDATA_JED_MIGRATE_CLEANUP_SUCCESS'];
 
@@ -846,6 +850,112 @@ class PlgSampledataJed_Migrate extends CMSPlugin
             }
         } catch (\Throwable $e) {
             return Text::sprintf('PLG_SAMPLEDATA_JED_MIGRATE_ERROR_CATEGORY_REBUILD', $e->getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Turn the RSTicketsPro events among the imported ticket messages into text.
+     *
+     * RSTicketsPro logs its own events - status, department and staff changes, auto-close - as
+     * ticket messages with user_id -1, and their text is a serialized PHP array such as
+     * `a:4:{s:4:"type";s:6:"status";s:4:"from";s:1:"1";s:2:"to";i:2;s:7:"user_id";s:5:"12345";}`.
+     * tickets.sql copies that text as it is, so the ticket view would show the array. This writes
+     * a sentence instead - "Status changed from Open to Closed by Jane Doe." - with the names of
+     * the RSTicketsPro statuses and departments and of the (migrated) users. A PHP step because
+     * the text is serialized PHP; the sentences are English, like the rest of the ticket history.
+     *
+     * @return  string|null  An error message, or null on success.
+     *
+     * @since   4.0.0
+     */
+    private function readableTicketEvents(): ?string
+    {
+        try {
+            $db = $this->getDatabase();
+
+            // The RSTicketsPro messages are the ones above the 100000 offset of tickets.sql
+            $rows = $db->setQuery(
+                $db->getQuery(true)
+                    ->select($db->quoteName(['id', 'message']))
+                    ->from($db->quoteName('#__jed_ticket_messages'))
+                    ->where($db->quoteName('id') . ' > 100000')
+                    ->where($db->quoteName('message') . ' LIKE ' . $db->quote('a:%'))
+            )->loadAssocList('id', 'message');
+
+            $statuses = $db->setQuery($this->applySourcePrefix(
+                'SELECT id, name FROM ' . self::SOURCE_PLACEHOLDER . 'rsticketspro_statuses'
+            ))->loadAssocList('id', 'name');
+            $departments = $db->setQuery($this->applySourcePrefix(
+                'SELECT id, name FROM ' . self::SOURCE_PLACEHOLDER . 'rsticketspro_departments'
+            ))->loadAssocList('id', 'name');
+
+            $events  = [];
+            $userIds = [];
+
+            foreach ((array) $rows as $id => $message) {
+                $event = @unserialize((string) $message, ['allowed_classes' => false]);
+
+                if (!\is_array($event) || !isset($event['type'])) {
+                    continue;
+                }
+
+                $events[$id] = $event;
+                $userIds[]   = (int) ($event['user_id'] ?? 0);
+
+                if ($event['type'] === 'staff') {
+                    $userIds[] = (int) ($event['from'] ?? 0);
+                    $userIds[] = (int) ($event['to'] ?? 0);
+                }
+            }
+
+            $userIds = array_values(array_filter(array_unique($userIds)));
+            $users   = $userIds ? $db->setQuery(
+                $db->getQuery(true)
+                    ->select($db->quoteName(['id', 'name']))
+                    ->from($db->quoteName('#__users'))
+                    ->whereIn($db->quoteName('id'), $userIds)
+            )->loadAssocList('id', 'name') : [];
+
+            $name = static fn (int $userId): string => $users[$userId] ?? 'user ' . $userId;
+            $by   = static fn (array $event): string => (int) ($event['user_id'] ?? 0) ? ' by ' . $name((int) $event['user_id']) : '';
+            $done = 0;
+
+            foreach ($events as $id => $event) {
+                $from = (int) ($event['from'] ?? 0);
+                $to   = (int) ($event['to'] ?? 0);
+                $text = match ($event['type']) {
+                    'status'     => 'Status changed from ' . ($statuses[$from] ?? $from) . ' to ' . ($statuses[$to] ?? $to) . $by($event) . '.',
+                    'department' => 'Department changed from ' . ($departments[$from] ?? $from) . ' to ' . ($departments[$to] ?? $to) . $by($event) . '.',
+                    'staff'      => match (true) {
+                        $to === 0   => 'Unassigned from ' . $name($from) . $by($event) . '.',
+                        $from === 0 => 'Assigned to ' . $name($to) . $by($event) . '.',
+                        default     => 'Reassigned from ' . $name($from) . ' to ' . $name($to) . $by($event) . '.',
+                    },
+                    'autoclose'  => 'Closed automatically after ' . (int) ($event['days'] ?? 0) . ' days without a reply.',
+                    default      => null,
+                };
+
+                if ($text === null) {
+                    continue;
+                }
+
+                $db->setQuery(
+                    $db->getQuery(true)
+                        ->update($db->quoteName('#__jed_ticket_messages'))
+                        ->set($db->quoteName('message') . ' = ' . $db->quote($text))
+                        ->where($db->quoteName('id') . ' = ' . (int) $id)
+                )->execute();
+
+                $done++;
+            }
+
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf('PLG_SAMPLEDATA_JED_MIGRATE_TICKET_EVENTS', $done, \count((array) $rows) - $done)
+            );
+        } catch (\Throwable $e) {
+            return Text::sprintf('PLG_SAMPLEDATA_JED_MIGRATE_ERROR_TICKET_EVENTS', $e->getMessage());
         }
 
         return null;
