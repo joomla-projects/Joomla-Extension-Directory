@@ -52,25 +52,26 @@ PRIMARY KEY (id),
 KEY idx_core_content_id (core_content_id)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8mb4;
 
--- Remove duplicate UCM rows in the source database. JED3 can hold more than one wqyh6_ucm_content row per
--- extension or review (an old defect around JED and VEL items), and because the staging table below is keyed on
--- the extension id, a surplus row makes the whole migration abort on a duplicate key. One row per
--- (core_type_alias, core_content_item_id) survives, chosen in this order: a published row first, then the most
--- recently modified, then the highest core_content_id as the tie breaker. Published is tested explicitly rather
--- than sorting on core_state, because the Joomla state values are not a ranking - archived is 2 and trashed is
--- -2, so a plain descending sort would keep an archived row over the live one. Only the two JED type aliases are
--- touched. Duplicates belonging to com_content and friends are left alone: core_content_item_id is only unique
--- within a type alias, so widening this would delete unrelated rows. WARNING - this is the only step in the
--- whole migration that WRITES TO THE SOURCE DATABASE. Run the migration against a copy of the JED3 database,
--- never against the live one. To see what it would remove before running it, execute the same statement with
--- "DELETE FROM wqyh6_ucm_content WHERE core_content_id IN (" replaced by "SELECT * FROM wqyh6_ucm_content WHERE
--- core_content_id IN (".
-DELETE FROM wqyh6_ucm_content WHERE core_content_id IN (SELECT core_content_id FROM (SELECT core_content_id, ROW_NUMBER() OVER (PARTITION BY core_type_alias, core_content_item_id ORDER BY (core_state = 1) DESC, core_modified_time DESC, core_content_id DESC) AS rn FROM wqyh6_ucm_content WHERE core_type_alias IN ('com_jed.extension', 'com_jed.review')) ranked WHERE ranked.rn > 1);
+-- De-duplicate the UCM rows into a staging table. JED3 can hold more than one wqyh6_ucm_content row per extension or
+-- review (an old defect around JED and VEL items), and because the staging table below is keyed on the extension id,
+-- a surplus row makes the whole migration abort on a duplicate key. One row per (core_type_alias,
+-- core_content_item_id) is kept, chosen in this order: a published row first, then the most recently modified, then
+-- the highest core_content_id as the tie breaker. Published is tested explicitly rather than sorting on core_state,
+-- because the Joomla state values are not a ranking - archived is 2 and trashed is -2, so a plain descending sort
+-- would keep an archived row over the live one. Only the two JED type aliases are taken: core_content_item_id is only
+-- unique within a type alias.
+--
+-- The surplus rows used to be DELETEd from wqyh6_ucm_content, which made this the one step that wrote to the source
+-- database: a second run read different data than the first, and a run against the live database destroyed rows.
+-- combine_jed_ucm holds the surviving rows instead, and the listing insert below and the review insert in step10.sql
+-- read the UCM content from it. The source is only read.
+DROP TABLE IF EXISTS combine_jed_ucm;
+CREATE TABLE combine_jed_ucm (KEY idx_item (core_type_alias, core_content_item_id)) ENGINE = INNODB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci SELECT ranked.* FROM (SELECT c.*, ROW_NUMBER() OVER (PARTITION BY core_type_alias, core_content_item_id ORDER BY (core_state = 1) DESC, core_modified_time DESC, core_content_id DESC) AS rn FROM wqyh6_ucm_content c WHERE core_type_alias IN ('com_jed.extension', 'com_jed.review')) ranked WHERE ranked.rn = 1;
 
 -- Join wqyh6_jed_extensions with its UCM content. Zero dates become NULL so the copy does not fail under strict
 -- SQL mode, and approved is resolved against wqyh6_jed_approval_status - in JED3 that column is a status id, not
 -- a boolean.
-INSERT INTO combine_jed_extensions (id, core_content_id, core_title, core_alias, core_body, core_state, core_created_user_id, core_created_time, core_catid, core_checked_out_time, core_checked_out_user_id, core_modified_user_id, core_modified_time, homepage_link, download_link, demo_link, support_link, documentation_link, license_link, versions, popular, requires_registration, type, license, jed_note, update_url, tags, language_code, video, version, uses_updater, includes, score, approved, approval_label, approved_time, extension_file, second_contact_email, functionality, ease_of_use, support, documentation, value_for_money, num_reviews) SELECT e.id, u.core_content_id, u.core_title, u.core_alias, u.core_body, u.core_state, u.core_created_user_id, NULLIF(u.core_created_time, '0000-00-00 00:00:00'), u.core_catid, u.core_checked_out_time, u.core_checked_out_user_id, u.core_modified_user_id, NULLIF(u.core_modified_time, '0000-00-00 00:00:00'), e.homepage_link, e.download_link, e.demo_link, e.support_link, e.documentation_link, e.license_link, e.versions, IFNULL(e.popular, 0), IFNULL(e.requires_registration, 0), e.type, e.license, e.jed_note, e.update_url, e.tags, e.language_code, e.video, e.version, IFNULL(e.uses_updater, 0), e.includes, e.score, IFNULL(e.approved, 0), a.label, NULLIF(e.approved_time, '0000-00-00 00:00:00'), e.extension_file, e.second_contact_email, IFNULL(e.functionality, 0), IFNULL(e.ease_of_use, 0), IFNULL(e.support, 0), IFNULL(e.documentation, 0), IFNULL(e.value_for_money, 0), IFNULL(e.num_reviews, 0) FROM wqyh6_jed_extensions e INNER JOIN wqyh6_ucm_content u ON u.core_content_item_id = e.id AND u.core_type_alias = 'com_jed.extension' LEFT JOIN wqyh6_jed_approval_status a ON a.id = e.approved ORDER BY e.id ASC;
+INSERT INTO combine_jed_extensions (id, core_content_id, core_title, core_alias, core_body, core_state, core_created_user_id, core_created_time, core_catid, core_checked_out_time, core_checked_out_user_id, core_modified_user_id, core_modified_time, homepage_link, download_link, demo_link, support_link, documentation_link, license_link, versions, popular, requires_registration, type, license, jed_note, update_url, tags, language_code, video, version, uses_updater, includes, score, approved, approval_label, approved_time, extension_file, second_contact_email, functionality, ease_of_use, support, documentation, value_for_money, num_reviews) SELECT e.id, u.core_content_id, u.core_title, u.core_alias, u.core_body, u.core_state, u.core_created_user_id, NULLIF(u.core_created_time, '0000-00-00 00:00:00'), u.core_catid, u.core_checked_out_time, u.core_checked_out_user_id, u.core_modified_user_id, NULLIF(u.core_modified_time, '0000-00-00 00:00:00'), e.homepage_link, e.download_link, e.demo_link, e.support_link, e.documentation_link, e.license_link, e.versions, IFNULL(e.popular, 0), IFNULL(e.requires_registration, 0), e.type, e.license, e.jed_note, e.update_url, e.tags, e.language_code, e.video, e.version, IFNULL(e.uses_updater, 0), e.includes, e.score, IFNULL(e.approved, 0), a.label, NULLIF(e.approved_time, '0000-00-00 00:00:00'), e.extension_file, e.second_contact_email, IFNULL(e.functionality, 0), IFNULL(e.ease_of_use, 0), IFNULL(e.support, 0), IFNULL(e.documentation, 0), IFNULL(e.value_for_money, 0), IFNULL(e.num_reviews, 0) FROM wqyh6_jed_extensions e INNER JOIN combine_jed_ucm u ON u.core_content_item_id = e.id AND u.core_type_alias = 'com_jed.extension' LEFT JOIN wqyh6_jed_approval_status a ON a.id = e.approved ORDER BY e.id ASC;
 
 -- Attach the logo file names from wqyh6_jed_extension_logos
 UPDATE combine_jed_extensions cj INNER JOIN wqyh6_jed_extension_logos jl ON jl.extension_id = cj.id SET cj.logo = jl.file;
