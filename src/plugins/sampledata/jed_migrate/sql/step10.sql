@@ -28,6 +28,11 @@ UPDATE combine_jed_review_texts SET value_for_money_comment = REPLACE(REPLACE(IF
 UPDATE #__jed_reviews njr INNER JOIN combine_jed_review_texts cjt ON njr.id = cjt.id SET njr.functionality_comment = cjt.functionality_comment, njr.ease_of_use_comment = cjt.ease_of_use_comment, njr.support_comment = cjt.support_comment, njr.documentation_comment = cjt.documentation_comment, njr.value_for_money_comment = cjt.value_for_money_comment;
 UPDATE #__jed_reviews SET body = 'Old Review System - No overall field' WHERE body LIKE '%{functionality}%';
 
+-- The developer replies. In JED3 a reply is a wqyh6_jed_reviews row whose parent_id is the review it answers, with its
+-- text, author, date and state in UCM like a review. The schema has one developer response per review, so the first
+-- reply (the lowest id) becomes it. Later replies to the same review have no carrier and are not imported.
+UPDATE #__jed_reviews r INNER JOIN (SELECT p.parent_id, MIN(p.id) AS reply_id FROM wqyh6_jed_reviews p INNER JOIN wqyh6_ucm_content pu ON pu.core_content_item_id = p.id AND pu.core_type_alias = 'com_jed.review' WHERE p.parent_id > 0 GROUP BY p.parent_id) f ON f.parent_id = r.id INNER JOIN wqyh6_ucm_content u ON u.core_content_item_id = f.reply_id AND u.core_type_alias = 'com_jed.review' SET r.developer_response = u.core_body, r.developer_responded_on = NULLIF(u.core_created_time, '0000-00-00 00:00:00'), r.developer_response_published = CASE WHEN u.core_state = 1 THEN 1 ELSE 0 END;
+
 -- Recompute score_count from the reviews that were actually imported, instead of trusting the JED3 num_reviews
 -- counter
 UPDATE #__jed_extensions e SET e.score_count = (SELECT COUNT(*) FROM #__jed_reviews r WHERE r.extension_id = e.id);
