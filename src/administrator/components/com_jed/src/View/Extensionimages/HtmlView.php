@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Administrator\View\Extensionimages;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Jed\Component\Jed\Administrator\Model\ExtensionimagesModel;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
@@ -127,5 +128,31 @@ class HtmlView extends BaseHtmlView
             'a.`state`'    => Text::_('JSTATUS'),
             'a.`ordering`' => Text::_('JGRID_HEADING_ORDERING'),
         ];
+    }
+
+    /**
+     * Execute and display a template script.
+     *
+     * @param string $tpl The name of the template file to parse; automatically searches through the template paths.
+     *
+     * @return void
+     *
+     * @since  4.0.0
+     * @throws \Exception
+     */
+    public function display($tpl = null): void
+    {
+        /** @var ExtensionimagesModel $model */
+        $model               = $this->getModel();
+        $model->setUseExceptions(true);
+        $this->state         = $model->getState();
+        $this->items         = $model->getItems();
+        $this->pagination    = $model->getPagination();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
+
+        $this->addToolbar();
+
+        parent::display($tpl);
     }
 }

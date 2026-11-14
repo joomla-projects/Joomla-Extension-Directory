@@ -18,6 +18,7 @@ use Jed\Component\Jed\Administrator\Queue\QueueService;
 use Jed\Component\Jed\Administrator\Transfer\TransferService;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
 use Joomla\Database\DatabaseInterface;
@@ -120,6 +121,26 @@ class ExtensionController extends FormController
     }
 
     /**
+     * The extension form drops `id` on purpose (it is the revision id and a save always creates a
+     * new revision), but FormController::save() reads it from the validated data afterwards.
+     *
+     * Joomla 6.1 calls this hook; earlier releases never do, which only means the warning stays.
+     *
+     * @param BaseDatabaseModel $model     The data model object.
+     * @param array             $validData The validated data.
+     *
+     * @return array
+     *
+     * @since 4.0.0
+     */
+    protected function preSaveHook(BaseDatabaseModel $model, array $validData = []): array
+    {
+        $validData['id'] ??= 0;
+
+        return $validData;
+    }
+
+    /**
      * Activate a specific history version for an extension.
      *
      * Sets the given history entry to active = 1 and all others for the same
@@ -132,6 +153,11 @@ class ExtensionController extends FormController
     public function activateVersion(): bool
     {
         $this->checkToken();
+
+        // Switching the live revision is moderation, same right as approving one.
+        if (!Factory::getApplication()->getIdentity()->authorise('jed.approve', 'com_jed')) {
+            throw new \Exception(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 403);
+        }
 
         $extensionId = (int) $this->input->getInt('extension_id');
         $historyId   = (int) $this->input->getInt('id');

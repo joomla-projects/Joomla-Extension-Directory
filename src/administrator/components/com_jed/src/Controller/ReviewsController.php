@@ -72,6 +72,10 @@ class ReviewsController extends AdminController
     {
         $this->checkToken();
 
+        if (!Factory::getApplication()->getIdentity()->authorise('core.edit.state', 'com_jed')) {
+            throw new Exception(Text::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'), 403);
+        }
+
         $pks = $this->input->post->get('cid', [], 'array');
         ArrayHelper::toInteger($pks);
 
@@ -97,6 +101,10 @@ class ReviewsController extends AdminController
     public function deleteResponse(): void
     {
         $this->checkToken();
+
+        if (!Factory::getApplication()->getIdentity()->authorise('core.edit.state', 'com_jed')) {
+            throw new Exception(Text::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'), 403);
+        }
 
         $pks = $this->input->post->get('cid', [], 'array');
         ArrayHelper::toInteger($pks);
@@ -140,6 +148,9 @@ class ReviewsController extends AdminController
      */
     public function saveOrderAjax(): void
     {
+        // Same check as core's saveOrderAjax(); the draggable list sends the token with its request.
+        $this->checkToken();
+
         // Get the input
         $input = Factory::getApplication()->input;
         $pks   = $input->post->get('cid', [], 'array');

@@ -26,6 +26,7 @@ use Jed\Component\Jed\Administrator\Transfer\TransferService;
 use Jed\Component\Jed\Site\Helper\JedHelper as SiteJedHelper;
 use Jed\Component\Jed\Site\Helper\JedscoreHelper;
 use Joomla\CMS\Date\Date;
+use Joomla\CMS\Event\Model\AfterChangeStateEvent;
 use Joomla\CMS\Event\Model\AfterSaveEvent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
@@ -632,6 +633,18 @@ class ExtensionModel extends AdminModel
         }
 
         $table->publish($pks, $value, $user->id);
+
+        // AdminModel::publish() announces the change; this override has to as well, or Smart
+        // Search keeps an unpublished listing in its results.
+        PluginHelper::importPlugin('content', null, true, $this->getDispatcher());
+        $this->getDispatcher()->dispatch(
+            'onContentChangeState',
+            new AfterChangeStateEvent('onContentChangeState', [
+                'context' => 'com_jed.extension',
+                'subject' => array_values($pks),
+                'value'   => (int) $value,
+            ])
+        );
 
         return true;
     }

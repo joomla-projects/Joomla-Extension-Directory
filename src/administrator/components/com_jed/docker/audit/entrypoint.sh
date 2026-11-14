@@ -21,6 +21,8 @@ vendor/bin/jorobo init < /dev/null
 # 2. Unzip the extension under test into src/.
 mkdir -p src
 unzip -q /audit/input/extension.zip -d src/
+# Symlinks in an untrusted zip would be followed by the host when it reads the output back.
+find src -type l -delete
 
 # 3. Unzip the baked-in latest stable Joomla core package into joomla/.
 mkdir -p joomla

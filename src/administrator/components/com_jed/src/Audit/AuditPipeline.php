@@ -21,7 +21,7 @@ use Joomla\CMS\Mail\MailTemplate;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
 use Joomla\Filesystem\Folder;
-use Joomla\Http\Http;
+use Jed\Component\Jed\Administrator\Url\SafeHttpFetcher;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
@@ -38,8 +38,14 @@ use Throwable;
 class AuditPipeline
 {
     /**
+     * Largest extension zip the pipeline will download (50 MB).
+     *
+     * @since 4.0.0
+     */
+    private const MAX_ZIP_BYTES = 52428800;
+
+    /**
      * @param DatabaseInterface $db                    The database connector object.
-     * @param Http               $http                 The HTTP client used to download the extension zip.
      * @param DockerRunner       $dockerRunner          Runs the sandboxed audit container.
      * @param ClaudeAuditor      $claudeAuditor         Runs the Claude security review.
      * @param string             $workspaceRoot         Directory for transient per-job input/output.
@@ -50,7 +56,6 @@ class AuditPipeline
      */
     public function __construct(
         private readonly DatabaseInterface $db,
-        private readonly Http $http,
         private readonly DockerRunner $dockerRunner,
         private readonly ClaudeAuditor $claudeAuditor,
         private readonly string $workspaceRoot,
@@ -103,6 +108,7 @@ class AuditPipeline
 
             $reportDir = rtrim($this->reportsRoot, '/\\') . '/' . $job->id;
             Folder::create($reportDir);
+            $this->denyWebAccess(rtrim($this->reportsRoot, '/\\'));
 
             $phpstanReportPath = $reportDir . '/phpstan.txt';
             file_put_contents($phpstanReportPath, $phpstanReportText);
@@ -119,6 +125,30 @@ class AuditPipeline
             ];
         } finally {
             Folder::delete($jobWorkspace);
+        }
+    }
+
+    /**
+     * Reports describe unpatched vulnerabilities in third-party extensions: keep the folder
+     * out of reach of the web server.
+     *
+     * @param string $dir The reports root.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    private function denyWebAccess(string $dir): void
+    {
+        $rules = [
+            '.htaccess'  => "Require all denied\n",
+            'web.config' => '<?xml version="1.0" encoding="UTF-8"?><configuration><system.webServer><authorization><deny users="*" /></authorization></system.webServer></configuration>' . "\n",
+        ];
+
+        foreach ($rules as $name => $content) {
+            if (!is_file($dir . '/' . $name)) {
+                file_put_contents($dir . '/' . $name, $content);
+            }
         }
     }
 
@@ -158,13 +188,18 @@ class AuditPipeline
             throw new RuntimeException(Text::_('COM_JED_AUDIT_NO_DOWNLOAD_URL'));
         }
 
-        $response = $this->http->get($url, [], 60);
+        // The URL comes from a developer's own update feed: same guard as every other outbound fetch.
+        $result = (new SafeHttpFetcher(self::MAX_ZIP_BYTES, 60))->fetch($url);
+
+        if ($result->refused) {
+            throw new RuntimeException(\sprintf('Refused to download extension zip: %s', $result->reason));
+        }
 
         if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
             throw new RuntimeException(Text::sprintf('COM_JED_AUDIT_DOWNLOAD_FAILED', $response->getStatusCode()));
         }
 
-        file_put_contents($destination, (string) $response->getBody());
+        file_put_contents($destination, $result->body);
     }
 
     /**
@@ -186,7 +221,8 @@ class AuditPipeline
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sourceDir, FilesystemIterator::SKIP_DOTS));
 
         foreach ($iterator as $file) {
-            if (!$file->isFile()) {
+            // A symlink in a developer's zip must never be followed out of the sandbox output.
+            if ($file->isLink() || !$file->isFile()) {
                 continue;
             }
 

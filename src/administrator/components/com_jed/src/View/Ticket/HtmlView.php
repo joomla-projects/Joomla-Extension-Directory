@@ -70,6 +70,15 @@ class HtmlView extends BaseHtmlView
     protected string $linked_item_type_name = 'Other';
 
     /**
+     * Index of the last inbound message, used to open that tab
+     *
+     * @var int
+     *
+     * @since 4.0.0
+     */
+    protected ?int $latest_ticket_message = null;
+
+    /**
      * A list of messages sent / received for this ticket
      *
      * @var mixed

@@ -17,7 +17,6 @@ use Joomla\CMS\Installer\Installer;
 use Joomla\CMS\Language\Text;
 use RuntimeException;
 use SimpleXMLElement;
-use ZipArchive;
 
 /**
  * Parser that reads a Joomla extension manifest from a local zip file.

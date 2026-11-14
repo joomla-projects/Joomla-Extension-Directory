@@ -161,14 +161,14 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                                 </div>
                             </td>
                             <td>
-                                <?php echo $item->category; ?>
+                                <?php echo $this->escape($item->category); ?>
                             </td>
 
                             <td>
-                                <?php echo $item->developer; ?>
+                                <?php echo $this->escape($item->developer); ?>
                             </td>
                             <td>
-                                <?php echo  $item->type; ?>
+                                <?php echo $this->escape($item->type); ?>
                             </td>
                             <td>
                                 <?php echo $item->reviewCount; ?>

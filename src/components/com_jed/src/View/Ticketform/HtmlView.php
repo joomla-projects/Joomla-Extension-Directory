@@ -176,7 +176,7 @@ class HtmlView extends BaseHtmlView
             // stays attached to the right listing. Without this, two reports about different
             // reviews of the same extension arrive with identical subjects.
             $subject = $linked_item === TicketType::Review->value
-                ? (JedHelper::getReviewTitle($linked_id) ?: $this->item->extension_title)
+                ? ((JedHelper::canViewReviewById($linked_id) ? JedHelper::getReviewTitle($linked_id) : '') ?: $this->item->extension_title)
                 : $this->item->extension_title;
 
             $this->item->ticket_title = Text::sprintf('COM_JED_TICKETFORM_REPORTING_TITLE', $ticket_type, $subject);

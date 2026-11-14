@@ -4,6 +4,7 @@
 -- that the JED3 free-text tag field is empty in every row and that core tags are the only source,
 -- so the tag import (tags_vocab.sql) does not read this table at all.
 DROP TABLE IF EXISTS combine_jed_review_texts;
+DROP TABLE IF EXISTS combine_jed_ucm;
 DROP TABLE IF EXISTS combine_jed_tag_ucm;
 DROP TABLE IF EXISTS combine_jed_history_map;
 DROP TABLE IF EXISTS combine_jed_history_cfg;

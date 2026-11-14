@@ -178,7 +178,7 @@ class ReviewformModel extends FormModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem(int $id = null)
+    public function getItem(?int $id = null)
     {
         if ($this->item === null) {
             $this->item = false;

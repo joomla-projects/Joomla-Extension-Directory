@@ -39,7 +39,9 @@ final class PrivacyExportService
      *
      * Two reasons only, and both are narrow. A hash of a *third party's* address is not the
      * requester's data and returning it would turn an export into an oracle; a token hash is a
-     * credential, which is why the core user plugin withholds `password` in the same way.
+     * credential, which is why the core user plugin withholds `password` in the same way. A listing
+     * row is shared by everyone who ever touched it, so the download key (a credential) and the
+     * JED team's own notes are withheld from every export, not handed to whoever last edited it.
      *
      * @var array<string, string[]>
      *
@@ -47,6 +49,8 @@ final class PrivacyExportService
      */
     private const WITHHELD = [
         '#__jed_extension_transfers' => ['from_token_hash', 'to_token_hash'],
+        '#__jed_extensions'          => ['download_key', 'internal_download_url', 'internal_note', 'approved_notes'],
+        '#__jed_extensions_history'  => ['download_key', 'internal_download_url', 'internal_note', 'approved_notes'],
     ];
 
     /**
@@ -90,6 +94,7 @@ final class PrivacyExportService
             'jed_reviews'             => $this->reviews($userId),
             'jed_review_responses'    => $this->reviewResponses($userId),
             'jed_favourites'          => $this->favourites($userId),
+            'jed_identity_link'       => $this->identityLink($userId),
             'jed_privileges_and_bans' => $this->privileges($userId),
             'jed_review_bans'         => $this->reviewBans($userId),
             'jed_ownership_transfers' => $this->transfers($userId),
@@ -321,6 +326,26 @@ final class PrivacyExportService
             ->order($this->db->quoteName('f.id') . ' ASC');
 
         return $this->rows($query, '#__jed_favorites');
+    }
+
+    /**
+     * The tie between the account and the person's Identity Portal identifier.
+     *
+     * @param int $userId The subject of the request.
+     *
+     * @return array<int, array<string, mixed>>
+     *
+     * @since 4.0.0
+     */
+    private function identityLink(int $userId): array
+    {
+        $query = $this->db->getQuery(true)
+            ->select('*')
+            ->from($this->db->quoteName('#__jed_identity_links'))
+            ->where($this->db->quoteName('user_id') . ' = :uid')
+            ->bind(':uid', $userId, ParameterType::INTEGER);
+
+        return $this->rows($query, '#__jed_identity_links');
     }
 
     /**

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" method="upgrade">
+    <name>COM_APPS</name>
+    <author>Joomla! Project</author>
+    <creationDate>##DATE##</creationDate>
+    <copyright>(C) ##YEAR## Open Source Matters, Inc.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>admin@joomla.org</authorEmail>
+    <authorUrl>www.joomla.org</authorUrl>
+    <version>##VERSION##</version>
+    <description>COM_APPS_XML_DESCRIPTION</description>
+    <namespace path="src">Jed\Component\Apps</namespace>
+
+    <files folder="components/com_apps">
+        ##FRONTEND_COMPONENT_FILES##
+    </files>
+
+    <languages folder="language">
+        ##FRONTEND_LANGUAGE_FILES##
+    </languages>
+
+    <administration>
+        <files folder="administrator/components/com_apps">
+            ##BACKEND_COMPONENT_FILES##
+        </files>
+
+        <languages folder="administrator/components/com_apps/language">
+            ##BACKEND_LANGUAGE_FILES##
+        </languages>
+    </administration>
+</extension>

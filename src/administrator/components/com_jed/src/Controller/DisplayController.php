@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Administrator\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Helper\ViewAccess;
 use Joomla\CMS\MVC\Controller\BaseController;
 
 use function defined;
@@ -53,6 +54,8 @@ class DisplayController extends BaseController
         $vName   = $this->input->get('view', $this->default_view);
         $vFormat = $document->getType();
         $lName   = $this->input->get('layout', 'default', 'string');
+
+        ViewAccess::check($this->app->getIdentity(), 'com_jed', $lName);
 
         // Get and render the view.
         if ($view = $this->getView($vName, $vFormat)) {

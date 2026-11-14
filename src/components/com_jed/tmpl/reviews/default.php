@@ -191,10 +191,10 @@ $wa->useStyle('com_jed.list');
                         <?php endif; ?>
                     </td>
                     <td>
-                        <?php echo $item->alias; ?>
+                        <?php echo $this->escape($item->alias); ?>
                     </td>
                     <td>
-                        <?php echo $item->body; ?>
+                        <?php echo $this->escape($item->body); ?>
                     </td>
                     <td>
                         <?php echo number_format((float) $item->functionality, 1); ?>
@@ -206,25 +206,25 @@ $wa->useStyle('com_jed.list');
                         <?php echo number_format((float) $item->support, 1); ?>
                     </td>
                     <td>
-                        <?php echo $item->support_comment; ?>
+                        <?php echo $this->escape($item->support_comment); ?>
                     </td>
                     <td>
                         <?php echo number_format((float) $item->documentation, 1); ?>
                     </td>
                     <td>
-                        <?php echo $item->documentation_comment; ?>
+                        <?php echo $this->escape($item->documentation_comment); ?>
                     </td>
                     <td>
                         <?php echo number_format((float) $item->value_for_money, 1); ?>
                     </td>
                     <td>
-                        <?php echo $item->value_for_money_comment; ?>
+                        <?php echo $this->escape($item->value_for_money_comment); ?>
                     </td>
                     <td>
                         <?php echo number_format((float) $item->overall_score, 1); ?>
                     </td>
                     <td>
-                        <?php echo $item->used_for; ?>
+                        <?php echo $this->escape($item->used_for); ?>
                     </td>
                     <td>
                         <?php echo $item->state; ?>
@@ -243,7 +243,7 @@ $wa->useStyle('com_jed.list');
                                 <a href="<?php echo Route::_('index.php?option=com_jed&task=review.edit&id=' . $item->id, false, 2); ?>" class="btn btn-mini" type="button"><i class="icon-edit" ></i></a>
                             <?php endif; ?>
                             <?php if ($canDelete) : ?>
-                                <a href="<?php echo Route::_('index.php?option=com_jed&task=reviewform.remove&id=' . $item->id, false, 2); ?>" class="btn btn-mini delete-button" type="button"><i class="icon-trash" ></i></a>
+                                <a href="<?php echo Route::_('index.php?option=com_jed&task=review.remove&id=' . (int) $item->id . '&' . Session::getFormToken() . '=1', false); ?>" class="btn btn-mini delete-button" type="button"><i class="icon-trash" ></i></a>
                             <?php endif; ?>
                         </td>
                     <?php endif; ?>

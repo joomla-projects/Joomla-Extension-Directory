@@ -7,7 +7,21 @@ module.exports = defineConfig({
   viewportHeight: 1000,
   viewportWidth: 1200,
   e2e: {
-    setupNodeEvents(on, config) {},
+    setupNodeEvents(on, config) {
+      // Used by the accessibility spec to print what axe found
+      on('task', {
+        log(message) {
+          console.log(message)
+
+          return null
+        },
+        table(rows) {
+          console.table(rows)
+
+          return null
+        },
+      })
+    },
     baseUrl: 'http://localhost/',
     specPattern: [
       'tests/cypress/integration/install/*.cy.{js,jsx,ts,tsx}',
