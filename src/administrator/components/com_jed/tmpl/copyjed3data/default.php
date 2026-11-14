@@ -8,7 +8,7 @@
  */
 use Jed\Component\Jed\Administrator\Helper\JedmigrateHelper;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
 
 /** @var \Jed\Component\Jed\Administrator\View\Copyjed3data\HtmlView $this */
 
@@ -26,31 +26,23 @@ HTMLHelper::_('bootstrap.tooltip');
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <p>Clicking GO below will load a list of database commands which will extract JED 3 data into the new JED 4
-                data structures.</p>
+            <p><?php echo Text::_('COM_JED_COPYJED3DATA_INTRO'); ?></p>
         </div>
     </div>
 </div>
 
 <div class="container">
     <div class="row" id="fields-row">
-        <div class="col-md-4" ><label class="form-label dbdefinitions">JED 3 Database
-                Host:&nbsp;</label><?php echo $this->params->get('jed3_db_host'); ?></div>
-        <div class="col-md-4"><label class="form-label dbdefinitions">JED 3 Database
-                Name:&nbsp;</label><?php echo $this->params->get('jed3_db_database_name'); ?></div>
-        <div class="col-md-4"><label class="form-label dbdefinitions">JED 3 Table
-                Prefix:&nbsp;</label><?php echo $this->params->get('jed3_db_prefix'); ?></div>
+        <div class="col-md-4" ><label class="form-label dbdefinitions"><?php echo Text::_('COM_JED_COPYJED3DATA_DB_HOST'); ?>&nbsp;</label><?php echo $this->params->get('jed3_db_host'); ?></div>
+        <div class="col-md-4"><label class="form-label dbdefinitions"><?php echo Text::_('COM_JED_COPYJED3DATA_DB_NAME'); ?>&nbsp;</label><?php echo $this->params->get('jed3_db_database_name'); ?></div>
+        <div class="col-md-4"><label class="form-label dbdefinitions"><?php echo Text::_('COM_JED_COPYJED3DATA_DB_PREFIX'); ?>&nbsp;</label><?php echo $this->params->get('jed3_db_prefix'); ?></div>
     </div>
 </div>
 <div class="container">
     <div class="row">
-        <div class="col-md-12">
-            <form action="<?php echo Route::_('index.php?option=com_jed&view=copyjed3data'); ?>" method="post">
-                <input type="hidden" name="task" value="GO">
-                <?php echo HTMLHelper::_('form.token'); ?>
-                <button class="btn btn-primary" type="submit">Go</button>
-            </form>
-        </div>
+        <div class="col-md-12"><a href="<?php echo $_SERVER['REQUEST_URI'] . '&task=GO'; ?>"
+            <button class="btn btn-primary" type="button"><?php echo Text::_('COM_JED_COPYJED3DATA_GO'); ?></button>
+            </a></div>
     </div>
 </div>
 <div class="container">
@@ -71,7 +63,7 @@ HTMLHelper::_('bootstrap.tooltip');
                     }
                 }
             }
-?>
+            ?>
 
         </div>
     </div>

@@ -7,13 +7,23 @@ The code in this repository was written without a PHP runtime available, so ever
 below has had its structure checked but has not been executed. The first task on a Joomla
 installation is to install the package, run the unit tests, and walk the five journeys in Q-05.
 
+The feed research (R-01/R-02) was run separately with network access on 2026-11-05 and its
+corrections have been applied to the code; the build notes against each amendment are in
+`feeds/VEL2-Feeds-PRD.md` §9 and the PRD at the repository root carries `[VERIFIED]` /
+`[CORRECTED]` markers.
+
+Deferred from the amendments, deliberately: the dashboard id-quota tile (an outbound HTTP call
+on every dashboard load; do it with a cached value once the CNA credentials are in use), and
+storing *every* rejected record (only rejections of our own CVEs, or ones matching an existing
+advisory, are kept — the rest are noise).
+
 ## Phase 0 — decisions and research
 
 | ID | Status | Notes |
 |---|---|---|
 | R-00 | done | D-1…D-10 approved; recorded in the PRD header |
-| R-01 | open (needs internet) | `feeds/nvd.md` carries the checklist and what is assumed |
-| R-02 | open (needs internet + CNA credentials) | `feeds/cve.md` carries the checklist; `schema/README.md` says where the schema goes |
+| R-01 | done (2026-11-05) | measured against the live NVD API; `feeds/nvd.md` and `feeds/VEL2-Feeds-PRD.md`; fixtures in `tests/fixtures/vel/nvd/` |
+| R-02 | done (2026-11-05), except the authenticated CVE Services calls | cvelistV5 and the public CVE Services endpoints measured; `feeds/cve.md`; fixtures in `tests/fixtures/vel/cve/`; the authenticated `POST /cve-id`, `POST /cve/{id}/cna` and `GET /cve-id` calls are written to the published OpenAPI document and still need a first run against the **test** environment with the CNA credentials |
 | R-03 | partly | 150 CWEs seeded by the install SQL; *Refresh from MITRE* in the CWE list loads the full set |
 | R-04 | open (needs the JED3 database) | `migration/vel-legacy.md` carries the checklist |
 | R-05 | open (infrastructure) | options exist for every value |
@@ -59,7 +69,7 @@ installation is to install the package, run the unit tests, and walk the five jo
 |---|---|---|
 | C-01 | done | builder tested against the brief's example; structural validator |
 | C-02 | needs install | CVE tab: preview, download both shapes, validation display |
-| C-03 | needs install + credentials | reserve / submit / fetch through `CveServicesClient` |
+| C-03 | needs install + credentials | reserve (query params, `batch_type`, 206 = partial) / submit (`{cnaContainer}`, `erlcheck`, warnings surfaced) / fetch through `CveServicesClient` |
 | C-04 | done | `cve-workflow.md` |
 
 ## Phase 4 — feeds, migration, legacy
@@ -67,9 +77,9 @@ installation is to install the package, run the unit tests, and walk the five jo
 | ID | Status | Notes |
 |---|---|---|
 | F-01 | needs install | runner, runs/items tables, review views, *Run now* |
-| F-02 | needs install + internet | cvelistV5 delta polling, mapper (tested), classifier (tested), merger, auto-draft |
-| F-03 | needs install + internet | NVD discovery and enrichment, mapper (tested), throttling |
-| F-04 | done | `feeds/cve.md`, `feeds/nvd.md` |
+| F-02 | needs install + internet | cvelistV5 `deltaLog.json` polling with ETag + HTTP Range and escalation, per-record fetch via `githubLink`, the ten-rule classifier with reason/confidence (tested on five live fixtures), merger, auto-draft, REJECTED handling; the one-off **Seed** action (NVD id lists + `GET /cve-id`, resumable) |
+| F-03 | needs install + internet | NVD `sourceIdentifier` + keyword discovery, version-first CVSS pick, NVD-CWE placeholder filter, tag map, `Deferred` status shown (tested on five live fixtures), throttling |
+| F-04 | done | `feeds/cve.md`, `feeds/nvd.md`, `feeds/VEL2-Feeds-PRD.md` |
 | M-01 | open (needs R-04) | plan in `migration/vel-legacy.md` |
 | M-02 | done | `vel_reports.sql` step in `plg_sampledata_jed_migrate` |
 | M-03 | open (decision + R-04) | RSTicketsPro department 5 |

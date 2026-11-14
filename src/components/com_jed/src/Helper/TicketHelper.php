@@ -16,6 +16,7 @@ defined('_JEXEC') or die;
 use Exception;
 use Jed\Component\Jed\Administrator\Enum\TicketType;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 /**
  * Ticket Helper
@@ -69,7 +70,7 @@ class TicketHelper
 
 
         $ticket['ticket_category_type'] = 3;
-        $ticket['ticket_subject']       = "A new Review";
+        $ticket['ticket_subject']       = Text::_('COM_JED_TICKET_SUBJECT_NEW_REVIEW');
         $ticket['linked_item_type']     = TicketType::Review->value;
 
 
@@ -122,7 +123,7 @@ class TicketHelper
             <option value="5">Updated</option>
 
         */
-        $ticket['ticket_text']    = '<p>Please see linked review</p>';
+        $ticket['ticket_text']    = '<p>' . Text::_('COM_JED_TICKET_TEXT_SEE_LINKED_REVIEW') . '</p>';
         $ticket['internal_notes'] = '';
 
         $ticket['uploaded_files_preview']  = '';
@@ -174,7 +175,7 @@ class TicketHelper
 
 
         $ticket['ticket_category_type'] = 2;
-        $ticket['ticket_subject']       = "A new Extension";
+        $ticket['ticket_subject']       = Text::_('COM_JED_TICKET_SUBJECT_NEW_EXTENSION');
         $ticket['linked_item_type']     = TicketType::Extension->value;
 
 
@@ -227,7 +228,7 @@ class TicketHelper
             <option value="5">Updated</option>
 
         */
-        $ticket['ticket_text']    = '<p>Please see linked extension</p>';
+        $ticket['ticket_text']    = '<p>' . Text::_('COM_JED_TICKET_TEXT_SEE_LINKED_EXTENSION') . '</p>';
         $ticket['internal_notes'] = '';
 
         $ticket['uploaded_files_preview']  = '';

@@ -147,27 +147,30 @@ class HtmlView extends BaseHtmlView
         $linked_item   = $input->get('litem', -1, 'int');
         $vr            = $input->get('vr', -1, 'int');
 
-        $this->item->ticket_title = "Submit Ticket";
+        // Whether this is a fresh ticket or a report about something; the header layout reads it.
+        $this->item->isReport     = false;
+        $this->item->ticket_title = Text::_('COM_JED_TICKETFORM_SUBMIT_TICKET');
         if ($linked_id <> -1) {
-            $this->item->linked_item_type  = $linked_item;
-            $this->item->linked_item_id    = $linked_id;
-            $this->item->vr                = $vr;
-            $ticket_type                   = "Unknown";
+            $this->item->isReport = true;
+            $this->item->linked_item_type = $linked_item;
+            $this->item->linked_item_id   = $linked_id;
+            $this->item->vr               = $vr;
+            $ticket_type                  = Text::_('COM_JED_TICKETS_LINKED_ITEM_TYPE_OPTION_UNKNOWN');
             $ticket_selector               = 1;
             if ($linked_item === TicketType::Extension->value) {
-                $ticket_type                 = "Extension";
-                $ticket_selector             = 10;
+                $ticket_type = Text::_('COM_JED_TICKETS_LINKED_ITEM_TYPE_OPTION_EXTENSION');
+                $ticket_selector  = 10;
                 $this->item->allocated_group = 3; //listing specialist
             }
 
             if ($linked_item === TicketType::Review->value) {
-                $ticket_type      = "Review";
+                $ticket_type = Text::_('COM_JED_TICKETS_LINKED_ITEM_TYPE_OPTION_REVIEW');
                 $ticket_selector  = 9;
 
                 $this->item->allocated_group = 4; //review specialist
             }
             $this->item->ticket_category_type = $ticket_selector;
-            $this->item->extension_title      = JedHelper::getExtensionTitle($vr) ? JedHelper::getExtensionTitle($vr) : '';
+            $this->item->extension_title = JedHelper::getExtensionTitle($vr);
 
             // A review report names the review; `vr` still carries the extension so the ticket
             // stays attached to the right listing. Without this, two reports about different
@@ -176,7 +179,7 @@ class HtmlView extends BaseHtmlView
                 ? ((JedHelper::canViewReviewById($linked_id) ? JedHelper::getReviewTitle($linked_id) : '') ?: $this->item->extension_title)
                 : $this->item->extension_title;
 
-            $this->item->ticket_title = "Reporting " . $ticket_type . ' - ' . $subject;
+            $this->item->ticket_title = Text::sprintf('COM_JED_TICKETFORM_REPORTING_TITLE', $ticket_type, $subject);
 
             // ticket_title was computed here and consumed nowhere - the form rendered an empty
             // subject box, so the ticket queue filled with untitled reports and a moderator had

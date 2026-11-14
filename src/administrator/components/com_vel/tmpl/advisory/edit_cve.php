@@ -35,7 +35,7 @@ $id       = (int) $item->id;
             <div class="mb-2">
                 <label class="form-label" for="cve_id"><?php echo Text::_('COM_VEL_FIELD_CVE_ID_LABEL'); ?></label>
                 <input type="text" class="form-control font-monospace" id="cve_id" name="cve_id" maxlength="20"
-                       pattern="CVE-[0-9]{4}-[0-9]{4,}" placeholder="CVE-2026-12345"
+                       pattern="CVE-[0-9]{4}-[0-9]{4,}" placeholder="<?php echo $this->escape(Text::_('COM_VEL_PLACEHOLDER_CVE_ID')); ?>"
                        value="<?php echo $this->escape((string) $item->cve_id); ?>">
             </div>
             <div class="mb-2">
@@ -54,7 +54,7 @@ $id       = (int) $item->id;
             </div>
             <div class="mb-2">
                 <label class="form-label" for="date_reserved"><?php echo Text::_('COM_VEL_FIELD_DATE_RESERVED_LABEL'); ?></label>
-                <input type="text" class="form-control" id="date_reserved" name="date_reserved" placeholder="YYYY-MM-DD HH:MM:SS"
+                <input type="text" class="form-control" id="date_reserved" name="date_reserved" placeholder="<?php echo $this->escape(Text::_('COM_VEL_PLACEHOLDER_DATETIME')); ?>"
                        value="<?php echo $this->escape((string) ($item->date_reserved ?? '')); ?>">
                 <div class="form-text"><?php echo Text::_('COM_VEL_FIELD_DATE_RESERVED_DESC'); ?></div>
             </div>

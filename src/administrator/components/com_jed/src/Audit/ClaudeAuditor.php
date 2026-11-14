@@ -13,6 +13,8 @@ namespace Jed\Component\Jed\Administrator\Audit;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\Http\Http;
 use Throwable;
 
@@ -61,7 +63,7 @@ class ClaudeAuditor
     public function audit(string $extensionName, string $version, array $sourceFiles, string $phpstanSummary): ClaudeAuditResult
     {
         if ($this->apiKey === '') {
-            return new ClaudeAuditResult('Claude audit unavailable: no Anthropic API key configured.', false);
+            return new ClaudeAuditResult($this->text('COM_JED_AUDIT_CLAUDE_NO_API_KEY'), false);
         }
 
         $body = json_encode(
@@ -89,11 +91,11 @@ class ClaudeAuditor
                 120
             );
         } catch (Throwable $e) {
-            return new ClaudeAuditResult('Claude audit unavailable: ' . $e->getMessage(), false);
+            return new ClaudeAuditResult($this->text('COM_JED_AUDIT_CLAUDE_UNAVAILABLE', $e->getMessage()), false);
         }
 
         if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
-            return new ClaudeAuditResult(\sprintf('Claude audit unavailable: HTTP %d', $response->getStatusCode()), false);
+            return new ClaudeAuditResult($this->text('COM_JED_AUDIT_CLAUDE_HTTP_ERROR', $response->getStatusCode()), false);
         }
 
         $data = json_decode((string) $response->getBody(), true);
@@ -101,24 +103,44 @@ class ClaudeAuditor
         $stopReason = $data['stop_reason'] ?? null;
 
         if ($stopReason === 'refusal') {
-            return new ClaudeAuditResult('Claude declined to audit this extension.', false);
+            return new ClaudeAuditResult($this->text('COM_JED_AUDIT_CLAUDE_REFUSED'), false);
         }
 
         $text = $data['content'][0]['text'] ?? null;
 
         if (!\is_string($text) || $text === '') {
-            return new ClaudeAuditResult('Claude audit returned no content.', false);
+            return new ClaudeAuditResult($this->text('COM_JED_AUDIT_CLAUDE_NO_CONTENT'), false);
         }
 
         if ($stopReason === 'max_tokens') {
-            $text .= "\n\n_(Report truncated: reached the maximum output length.)_";
+            $text .= "\n\n_" . $this->text('COM_JED_AUDIT_CLAUDE_TRUNCATED') . "_";
         }
 
         return new ClaudeAuditResult($text, true);
     }
 
     /**
-     * @return string The fixed security-auditor persona/instructions.
+     * A translated message for the report. The audit runs from the queue worker, outside the
+     * administrator, so the component's strings are loaded here on first use.
+     *
+     * @param string $key  Language key.
+     * @param mixed  ...$args Arguments for Text::sprintf.
+     *
+     * @return string
+     *
+     * @since 4.0.0
+     */
+    private function text(string $key, mixed ...$args): string
+    {
+        Factory::getApplication()->getLanguage()->load('com_jed', JPATH_ADMINISTRATOR . '/components/com_jed');
+
+        return $args === [] ? Text::_($key) : Text::sprintf($key, ...$args);
+    }
+
+    /**
+     * @return string The fixed security-auditor persona/instructions. English by design: it is
+     *                an instruction to the model, not text for a person, and the report it asks
+     *                for is read by the JED team in the language the model writes.
      *
      * @since 4.0.0
      */

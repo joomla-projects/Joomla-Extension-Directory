@@ -188,7 +188,7 @@ $field = function (string $label, ?string $value, bool $pre = false): void {
                                         <?php endforeach; ?>
                                     </select>
                                 <?php endif; ?>
-                                <input type="text" class="form-control mb-2" name="advisory_reference" placeholder="VEL-0042 / CVE-2026-12345" aria-label="COM_VEL_ATTACH_REFERENCE">
+                                <input type="text" class="form-control mb-2" name="advisory_reference" placeholder="<?php echo $this->escape(Text::_('COM_VEL_PLACEHOLDER_ADVISORY_OR_CVE')); ?>" aria-label="<?php echo $this->escape(Text::_('COM_VEL_ATTACH_REFERENCE')); ?>">
                                 <button type="button" class="btn btn-outline-primary w-100" onclick="Joomla.submitbutton('report.attach')">
                                     <span class="icon-link" aria-hidden="true"></span> <?php echo Text::_('COM_VEL_BUTTON_ATTACH'); ?>
                                 </button>

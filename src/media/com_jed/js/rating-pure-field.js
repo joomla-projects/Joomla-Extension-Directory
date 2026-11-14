@@ -68,15 +68,15 @@
 		function ratingText(rating) {
 			switch(true) {
 				case (rating > 0 && rating <= 1):
-					return 'Very poor';
+					return Joomla.Text._('COM_JED_RATING_VERY_POOR');
 				case (rating > 1 && rating <= 2):
-					return 'Poor';
+					return Joomla.Text._('COM_JED_RATING_POOR');
 				case (rating > 2 && rating <= 3):
-					return 'Ok';
+					return Joomla.Text._('COM_JED_RATING_OK');
 				case (rating > 3 && rating <= 4):
-					return 'Good';
+					return Joomla.Text._('COM_JED_RATING_GOOD');
 				case (rating > 4 && rating <= 5):
-					return 'Excellent';
+					return Joomla.Text._('COM_JED_RATING_EXCELLENT');
 				default:
 					return '';
 			}

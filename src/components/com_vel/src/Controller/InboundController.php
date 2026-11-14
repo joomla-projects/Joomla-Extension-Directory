@@ -20,6 +20,7 @@ use Jed\Component\Vel\Administrator\Mail\ThreadResolver;
 use Jed\Component\Vel\Administrator\Mail\WebhookReceiver;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\Database\DatabaseInterface;
@@ -77,7 +78,7 @@ class InboundController extends BaseController
             $mail   = WebhookReceiver::parse($payload);
             $result = (new ThreadResolver(Factory::getContainer()->get(DatabaseInterface::class)))->handle($mail);
         } catch (\InvalidArgumentException $e) {
-            $this->answer(400, ['error' => 'bad_payload', 'message' => $e->getMessage()]);
+            $this->answer(400, ['error' => 'bad_payload', 'message' => Text::_($e->getMessage())]);
 
             return;
         } catch (Throwable $e) {

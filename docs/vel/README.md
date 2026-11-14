@@ -1,7 +1,7 @@
 # VEL 2 — implementation notes
 
 `com_vel` is the Vulnerable Extension List rebuilt as its own component inside `pkg_jed`
-(see `VEL2-PRD.md` for the requirements and decisions D-1…D-10).
+(see `VEL2-PRD.md` at the repository root for the requirements and decisions D-1…D-10).
 
 | Document | What it covers |
 |---|---|
@@ -9,8 +9,10 @@
 | [admin-guide.md](admin-guide.md) | The VEL team's workflow end to end |
 | [cve-workflow.md](cve-workflow.md) | CVE record conventions, generation, CVE Services |
 | [api.md](api.md) | The public JSON v2 API, the check endpoint, the RSS feeds, the legacy feed |
-| [feeds/cve.md](feeds/cve.md) | The CVE Program feed: sources, mapping, runbook, research checklist R-02 |
-| [feeds/nvd.md](feeds/nvd.md) | The NVD feed: API, rate limits, mapping, runbook, research checklist R-01 |
+| [feeds/VEL2-Feeds-PRD.md](feeds/VEL2-Feeds-PRD.md) | The feed subsystem's own PRD: what the live services actually do (R-01/R-02, measured 2026-11-05) and the amendments that followed |
+| [feeds/cve.md](feeds/cve.md) | The CVE Program feed: cvelistV5 delta polling, seed, mapping, CVE Services, runbook |
+| [feeds/nvd.md](feeds/nvd.md) | The NVD feed: API, rate limits, mapping, runbook |
+| [feeds/RESEARCH-PROGRESS.md](feeds/RESEARCH-PROGRESS.md) | The research log behind the two feed documents; the scripts and corpus are in `.tmp-research/` |
 | [migration/vel-legacy.md](migration/vel-legacy.md) | Legacy data (R-04), the report import (M-02), the advisory import (M-01), removing the old code (M-04) |
 | [security-review.md](security-review.md) | The Q-02 checklist |
 
@@ -37,13 +39,17 @@ tests/unit/Vel/                        PHPUnit for the framework-free classes
    used, housekeeping daily).
 3. In *VEL › Options*: disclosure policy, the public contact address and PGP key, the CNA details,
    the CVE Services credentials (test environment first), the NVD API key, the from address.
+   Then, once, *Feed runs › Seed CNA Back Catalogue* — repeat until the message says complete —
+   so the hourly delta poll starts from a full queue rather than from 29,000 strangers' records.
 4. Run the sample data plugin `jed2` (or create the menu items by hand): the advisories list must
    sit at `/vulnerable-extensions` with the report and fix-notice items under it.
 5. Give the VEL team group `core.manage`, `core.create`, `core.edit`, `core.edit.state`,
    `vel.communicate`, `vel.feeds`, `vel.jed` on com_vel; the lead also `vel.publish` and `vel.cve`.
-6. Optional: drop the CVE JSON schema into `administrator/components/com_vel/schema/cve-record.json`
-   and `composer require opis/json-schema` in the component folder for full schema validation;
-   `composer require webklex/php-imap` there for IMAP polling.
+6. Optional: drop the CVE JSON schema (`schema/CVE_Record_Format.json` from the `v5.2.0` tag of
+   `CVEProject/cve-schema`, CC0, draft-07, one self-contained file) into
+   `administrator/components/com_vel/schema/cve-record.json` and `composer require opis/json-schema`
+   in the component folder for full schema validation; `composer require webklex/php-imap` there
+   for IMAP polling.
 
 ## Running the tests
 
@@ -54,4 +60,5 @@ vendor/bin/phpunit -c tests/phpunit.xml.dist
 
 The unit tests need no Joomla installation and no database: they cover CVSS scoring, version
 matching, the CVE record builder and validator against the brief's example, the feed mappers and
-classifier, and inbound mail parsing.
+classifier (on hand-made records and on the live-captured fixtures in `tests/fixtures/vel/`),
+the delta-log head parser, and inbound mail parsing.

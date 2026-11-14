@@ -49,18 +49,18 @@ class JedHelper extends ContentHelper
      */
     public static function addConfigToolbar(Toolbar $bar, string $caller=''): void
     {
-        if ($caller == '') {
+        if($caller == '') {
             $bar->linkButton('tickets')->text(Text::_('COM_JED_TITLE_TICKETS'))->url('index.php?option=com_jed&view=tickets')->icon('fa fa-ticket-alt');
         }
 
-        $bar->linkButton('vulnerable')->text('Vulnerable Items')->url('index.php?option=com_jed&view=velvulnerableitems')->icon('fa fa-bug');
-        $bar->linkButton('extensions')->text('Extensions')->url('index.php?option=com_jed&view=extensions')->icon('fa fa-puzzle-piece');
+        $bar->linkButton('vulnerable')->text(Text::_('COM_JED_TITLE_VEL_VULNERABLEITEMS'))->url('index.php?option=com_jed&view=velvulnerableitems')->icon('fa fa-bug');
+        $bar->linkButton('extensions')->text(Text::_('COM_JED_EXTENSIONS'))->url('index.php?option=com_jed&view=extensions')->icon('fa fa-puzzle-piece');
 
 
         /*
          * Only for finally moving live to test
          */
-        if ($caller == '') {
+        if($caller == '') {
             $bar->linkButton('copyjed3data')->text('COM_JED_TITLE_COPY_JED3_DATA')->icon('fa fa-link')->url('index.php?option=com_jed&view=copyjed3data');
         }
 
@@ -797,7 +797,7 @@ class JedHelper extends ContentHelper
 
                 return $d->format("d M y H:i");
             } catch (Exception) {
-                return 'Sorry an error occured';
+                return Text::_('COM_JED_ERROR_DATE_UNREADABLE');
             }
         } else {
             return "";

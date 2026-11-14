@@ -62,8 +62,8 @@ if (JedHelper::isLoggedIn()) {
          data-csrf-token="<?php echo Session::getFormToken(); ?>"></div>
 <?php endif; ?>
 <?php // The subcategories of the category being viewed. $this->items holds extensions, not the
-// category tree - reading ->children off it was what produced two warnings per page load
-// and left this whole block empty.?>
+      // category tree - reading ->children off it was what produced two warnings per page load
+      // and left this whole block empty. ?>
 <?php if ($this->children) : ?>
     <div class="jed-home-categories">
         <div class="container">
@@ -78,14 +78,14 @@ if (JedHelper::isLoggedIn()) {
                                 </a>
                             </h4>
                             <?php // getNumItems() without the recursive flag: numitems already covers the
-                            // subtree (JedcategoryHelper), so recursing again would double-count.?>
+                                  // subtree (JedcategoryHelper), so recursing again would double-count. ?>
                             <span class="badge rounded-pill float-end"><?php echo (int) $c->getNumItems(); ?></span>
                         </div>
                         <div class="card-body">
                             <?php
-                      $visibleChildren = array_values(array_filter($c->getChildren(), fn ($sc) => $sc->getNumItems() > 0));
-                    $shownChildren     = array_slice($visibleChildren, 0, $childrenLimit);
-                    ?>
+                            $visibleChildren = array_values(array_filter($c->getChildren(), fn ($sc) => $sc->getNumItems() > 0));
+                            $shownChildren   = array_slice($visibleChildren, 0, $childrenLimit);
+                            ?>
                             <ul class="list-group list-group-flush">
                                 <?php foreach ($shownChildren as $sc) : ?>
                                     <li class="list-group-item">
@@ -113,15 +113,15 @@ if (JedHelper::isLoggedIn()) {
 <div class="jed-cards-wrapper mb-4">
     <div class="jed-container">
         <?php // A category can legitimately hold no listings of its own while its children do,
-              // so the heading is taken from the category rather than from the first extension.?>
-        <h2 class="heading heading--m"><?php echo $this->escape($this->categoryTitle); ?> Extensions</h2>
+              // so the heading is taken from the category rather than from the first extension. ?>
+        <h2 class="heading heading--m"><?php echo Text::sprintf('COM_JED_CATEGORY_EXTENSIONS_HEADING', $this->escape($this->categoryTitle)); ?></h2>
         <?php if ($this->categoryHierarchy !== '') : ?>
             <p class="font-size-s"><?php echo $this->categoryHierarchy; ?></p>
         <?php endif; ?>
         <?php if ($this->items) : ?>
             <ul class="jed-grid jed-grid--1-1-1">
                 <?php foreach ($this->items as $item) : ?>
-                    <?php // One card, one mapping (P1-14). See JedHelper::cardData().?>
+                    <?php // One card, one mapping (P1-14). See JedHelper::cardData(). ?>
                     <?php echo LayoutHelper::render('cards.extension', JedHelper::cardData($item)); ?>
                 <?php endforeach; ?>
             </ul>

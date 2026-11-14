@@ -9,6 +9,9 @@
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -23,16 +26,9 @@
 
 <div id="ticket-guidelines">
 
-    <p><b>This support system is primarily for developers that have listings on this site. If you need support with a specific extension please contact the developer or try the Joomla Forum. </b>If you have found an extension that no longer exists, please use the <a href="index.php?option=com_jed&view=velabandonedreportform">VEL abandoned report</a>.</p>
-    <?php
-    if ($displayData->ticket_title == "Submit Ticket") { ?>
-
-        <p>To submit a new extension, always <span style="color: #ff0000;"><strong>check</strong></span> your extensions with <a href="http://extensions.joomla.org/extension/jedchecker" target="_blank" rel="noopener noreferrer">JED Checker</a> and then use <a href="index.php?option=com_jed&view=extensionform">this link</a> . Extensions with errors are rejected.</p>
-        <p>For extension support, including how to use it or reporting a bug, please contact the extension developer directly.</p>
-
-        <?php
-    } else { ?>
-            <p><!-- Descriptive text to go here --></p>
-        <?php
-    } ?>
+    <p><?php echo Text::sprintf('COM_JED_TICKETFORM_INTRO', Route::_('index.php?option=com_jed&view=velabandonedreportform')); ?></p>
+    <?php if (empty($displayData->isReport)) : ?>
+        <p><?php echo Text::sprintf('COM_JED_TICKETFORM_NEW_EXTENSION_HINT', Route::_('index.php?option=com_jed&view=extensionform')); ?></p>
+        <p><?php echo Text::_('COM_JED_TICKETFORM_SUPPORT_HINT'); ?></p>
+    <?php endif; ?>
 </div>

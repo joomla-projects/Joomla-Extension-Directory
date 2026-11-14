@@ -98,8 +98,8 @@
             the broken-link notice) are system notifications with language-key subjects and must
             not be offered here.
         -->
-        <field name="messagetemplates" key_field="id" value_field="title" header="-Select-" type="sql"
-               query="SELECT template_id AS id, subject AS title FROM #__mail_templates WHERE extension = 'com_jed'  ORDER BY subject ASC"
+        <field name="messagetemplates" key_field="id" value_field="title" header="JSELECT" type="sql" translate="true"
+               query="SELECT template_id AS id, subject AS title FROM #__mail_templates WHERE extension = 'com_jed' AND params LIKE '%&quot;canned_reply&quot;:1%' ORDER BY subject ASC"
                label="COM_JED_GENERAL_TEMPLATE_LABEL"/>
         <!--
             The "Add Note" box. Deliberately NOT named after the `internal_notes` column: that column
@@ -120,7 +120,7 @@
                description="COM_JED_TICKETS_TICKET_SUBJECT_DESCR"
                hint="COM_JED_GENERAL_SUBJECT_LABEL"/>
         <field name="message_text" editor="tinymce" buttons="false" filter="JComponentHelper::filterText" type="editor"
-               label="Message"
+               label="COM_JED_TICKETS_MESSAGE_LABEL"
         />
     </fieldset>
 </form>

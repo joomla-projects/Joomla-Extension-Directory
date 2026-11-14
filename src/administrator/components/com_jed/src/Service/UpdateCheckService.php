@@ -17,6 +17,7 @@ use Jed\Component\Jed\Administrator\Queue\QueueService;
 use Jed\Component\Jed\Administrator\Update\UpdateServerXmlParser;
 use Jed\Component\Jed\Administrator\Url\SafeHttpFetcher;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
 use RuntimeException;
@@ -47,6 +48,9 @@ class UpdateCheckService
         private readonly ExtensionVersionUpdater $versionUpdater,
         private readonly QueueService $queueService
     ) {
+        // Check errors are stored on the listing and shown in the administrator; the task runs
+        // outside it, where the component's strings are not loaded by default.
+        Factory::getApplication()->getLanguage()->load('com_jed', JPATH_ADMINISTRATOR . '/components/com_jed');
     }
 
     /**
@@ -106,21 +110,21 @@ class UpdateCheckService
         $response = $this->fetcher->fetch((string) $row->update_url);
 
         if ($response->refused) {
-            throw new RuntimeException(\sprintf('Update server URL refused: %s', $response->reason));
+            throw new RuntimeException(Text::sprintf('COM_JED_UPDATECHECK_REFUSED', Text::_('COM_JED_URLCHECK_REFUSED_' . strtoupper($response->reason))));
         }
 
         if (!$response->isOk()) {
             throw new RuntimeException(
                 $response->status === 0
-                    ? \sprintf('Update server could not be reached (%s)', $response->reason)
-                    : \sprintf('Update server responded with HTTP %d', $response->status)
+                    ? Text::sprintf('COM_JED_UPDATECHECK_UNREACHABLE', Text::_('COM_JED_URLCHECK_FAILED_' . strtoupper($response->reason ?: 'failed')))
+                    : Text::sprintf('COM_JED_UPDATECHECK_HTTP_STATUS', $response->status)
             );
         }
 
         $result = $this->parser->parse($response->body);
 
         if ($result === null) {
-            $this->stampCheck($extensionId, 'Update feed contained no <update> entries.');
+            $this->stampCheck($extensionId, Text::_('COM_JED_UPDATECHECK_NO_ENTRIES'));
 
             return false;
         }

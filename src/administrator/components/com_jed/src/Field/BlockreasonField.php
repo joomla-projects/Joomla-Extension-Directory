@@ -64,7 +64,7 @@ class BlockreasonField extends ListField
             $options[] = HTMLHelper::_(
                 'select.option',
                 $row['code'],
-                $row['code'] . ' - ' . $row['title']
+                $row['code'] . ' - ' . Text::_($row['title'])
             );
         }
 

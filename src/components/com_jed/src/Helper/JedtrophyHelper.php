@@ -62,30 +62,22 @@ class JedtrophyHelper
         $output = ''; //<div class="trophies versions">';
         foreach ($trophies as $v) {
             $title = Text::_('COM_JED_VERSION_' . $v);
-            $txt   = '';
-            switch ($v) {
-                case '30':
-                    $txt = '<span class="fab fa-joomla"></span>&nbsp;3&nbsp;';
-                    break;
-                case '40':
-                    $txt = '<span class="fab fa-joomla"></span>&nbsp;4&nbsp;';
-                    break;
-                case '41':
-                    $txt = '<span class="fab fa-joomla"></span>&nbsp;4.1&nbsp;';
-                    break;
-                case '50':
-                    $txt = '<span class="fab fa-joomla"></span>&nbsp;5&nbsp;';
-                    break;
-                case '51':
-                    $txt = '<span class="fab fa-joomla"></span>&nbsp;5 (b/c)&nbsp;';
-                    break;
-                case '60':
-                    $txt = '<span class="fab fa-joomla"></span>&nbsp;6&nbsp;';
-                    break;
-                case '61':
-                    $txt = '<span class="fab fa-joomla"></span>&nbsp;6 (b/c)&nbsp;';
-                    break;
+            // Version number, with the "backward-compatibility plugin" marker on the x.1 rows.
+            $txt   = match ($v) {
+                '30'    => '3',
+                '40'    => '4',
+                '41'    => '4.1',
+                '50'    => '5',
+                '51'    => '5 ' . Text::_('COM_JED_VERSION_BADGE_BC'),
+                '60'    => '6',
+                '61'    => '6 ' . Text::_('COM_JED_VERSION_BADGE_BC'),
+                default => '',
+            };
+
+            if ($txt !== '') {
+                $txt = '<span class="fab fa-joomla"></span>&nbsp;' . $txt . '&nbsp;';
             }
+
             $output .= '<span title="' . $title . '" class="joomla-version-badge">' . $txt . '</span>';
         }
 

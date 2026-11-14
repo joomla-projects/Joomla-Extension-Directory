@@ -9,6 +9,16 @@
 tasks start. Every item marked **[VERIFY]** is a fact about an external system taken from memory, to be
 confirmed against the live service during the research task that owns it (R-01 … R-04).
 
+**R-01 and R-02 are complete (2026-11-05).** Every external fact about the NVD API and the CVE
+Program has been measured against the live service. The `[VERIFY R-01]` / `[VERIFY R-02]` markers
+below are resolved and replaced with `[VERIFIED R-01]` / `[VERIFIED R-02]`, and where the live
+service contradicted the assumption the text has been corrected in place and marked
+**[CORRECTED]**. The measurements, the feed subsystem's own PRD, and the operator documents are
+in `docs/vel/feeds/` — see [`VEL2-Feeds-PRD.md`](docs/vel/feeds/VEL2-Feeds-PRD.md),
+[`cve.md`](docs/vel/feeds/cve.md), [`nvd.md`](docs/vel/feeds/nvd.md) and
+[`RESEARCH-PROGRESS.md`](docs/vel/feeds/RESEARCH-PROGRESS.md). `[VERIFY R-03]` / `[VERIFY R-04]` are
+untouched.
+
 ---
 
 ## Table of contents
@@ -387,10 +397,19 @@ subject token second.
 
 - `#__vel_feed_runs(id, source enum(cna, nvd), started, finished, window_from, window_to,
   items_seen, items_new, items_updated, status enum(ok, partial, failed), message)`.
+  `message` is **not optional when `status = partial`**: R-02 gives `partial` three distinct
+  meanings (per-run fetch cap reached, delta range under-sized, gap older than the log's 30-day
+  retention) and the operator must be able to tell them apart.
 - `#__vel_feed_items(id, source, external_id varchar(32) (the CVE id), assigner varchar(64),
   fetched, external_updated, content_hash char(64), payload json, classification enum(joomla_cna,
-  joomla_extension_other_cna, joomla_core, unrelated, unknown), decision enum(pending, created,
-  merged, ignored), advisory_id NULL, decided_by, decided_time)`. UNIQUE `(source, external_id)`.
+  joomla_extension_other_cna, joomla_core, rejected, unclassified, unrelated, unknown),
+  classification_reason varchar(32), confidence enum(high, medium, low), decision enum(pending,
+  created, merged, ignored), advisory_id NULL, decided_by, decided_time)`.
+  UNIQUE `(source, external_id)`.
+  **[CORRECTED R-02]** `rejected`, `unclassified`, `classification_reason` and `confidence` are
+  added: the classification rules are now a ten-step ordered cascade (§6.6.2) and an editor
+  needs to see *which* rule fired and how confident it was. `unknown` previously did duty for
+  both "rejected record" and "mentions Joomla, needs a human", which are different queues.
 
 #### 6.1.10 `#__vel_advisory_history`
 
@@ -482,12 +501,25 @@ components feel like one product.
 | CVE | `cna_org_id` | `6ff30186-7fb7-4ad9-be33-533e7b05e586` |
 | | `cna_short_name` | `Joomla` |
 | | `cve_services_env` (`test, prod`), `cve_api_org`, `cve_api_user`, `cve_api_key` | test |
-| | `cve_data_version` | `5.1` or `5.2` (D-6 / R-02) |
-| | `title_prefix` | `Joomla Extension - {vendor} - ` |
-| | `product_suffix` | ` extension for Joomla` |
+| | `cve_data_version` — **[VERIFIED R-02]** affects **downloaded records only**; a CVE Services submission body is a bare container with no `dataVersion` field | **`5.2`** |
+| | `cve_erlcheck` — **[NEW R-02]** stricter CVE Services validation against the enrichment-data bar | Yes for `test` |
+| | `title_prefix` — **[VERIFIED R-02]** matches the CNA's live output exactly | `Joomla Extension - {vendor} - ` |
+| | `product_suffix` — **[VERIFIED R-02]** ditto | ` extension for Joomla` |
 | Feeds | `nvd_api_key`, `nvd_enabled`, `nvd_lookback_days` | —, Yes, 7 |
-| | `cna_enabled`, `cna_source` (`cvelist_github, cve_services`), `cna_lookback_days` | Yes, `cvelist_github`, 7 |
+| | `cna_enabled`, `cna_lookback_days` | Yes, 7 |
+| | `cna_range_max_kb` — **[NEW R-02]** cap on the `deltaLog.json` HTTP `Range` request (§6.6.1) | 2048 |
+| | `cna_full_fetch_max_mb` — **[NEW R-02]** cap on the fallback unranged fetch | 64 |
+| | `cna_max_records_per_run` — **[NEW R-02]** per-run record-fetch cap | 400 |
+| | `cna_seed_years` — **[NEW R-02]** bounds the one-off seed run (§6.6.1) | current + previous |
 | | `feed_auto_create` (create `draft` automatically for `joomla_cna` items) | Yes |
+
+**[CORRECTED R-02] Two options are removed.** `cna_source` had the values
+`cvelist_github, cve_services`; the CVE Services listing endpoint requires the *Secretariat* or
+*Bulk Download* role, which an ordinary CNA does not have, so only one value is reachable and
+the option serves no purpose. The *GitHub token* option is removed because
+`raw.githubusercontent.com` is served by Fastly, returns no rate-limit headers, and is not
+governed by the GitHub REST API quota — a token buys nothing and invites an operator to store a
+credential for no benefit.
 | Public | `list_limit`, `show_cvss_in_list`, `legacy_feed_enabled`, `legacy_feed_sunset_date` | 25, Yes, Yes, go-live + 12 months |
 | | `api_cache_seconds` | 300 |
 | JED | `jed_badge_enabled`, `jed_open_ticket_on_publish` (`never, ask, always`) | Yes, ask |
@@ -557,17 +589,36 @@ mapping in Appendix C). Principles:
   `problemTypes` from CWEs. `metrics` from CVSS when present. `source.discovery` from `discovery`.
   `providerMetadata`/`cveMetadata` from options and the advisory's dates. `x_generator.engine` =
   `Joomla VEL <version>`.
-- **Validate before you hand it over.** The CVE 5.x JSON schema (MIT-licensed, from
-  `CVEProject/cve-schema`) is bundled under `administrator/components/com_vel/schema/` and the
-  output is validated with `justinrainbow/json-schema` or `opis/json-schema` (added to
-  `composer.json`). Validation errors are shown inline; a record that does not validate can still be
-  downloaded but is labelled.
+- **Validate before you hand it over.** **[CORRECTED R-02]** The CVE 5.x JSON schema is
+  **CC0-1.0**, not MIT (more permissive; bundling is fine). It is one self-contained draft-07
+  file, 72,841 bytes, with **no external `$ref`s**, so no bundling step is needed — take
+  `schema/CVE_Record_Format.json` from the `v5.2.0` tag of `CVEProject/cve-schema` (default
+  branch is `main`, not `master`) into `administrator/components/com_vel/schema/`. The validator
+  is **`opis/json-schema`**, not a choice between it and `justinrainbow/json-schema`: the schema
+  is draft-07 and `justinrainbow` is draft-04-centric. Because `cnaPublishedContainer` is a named
+  definition in the same file, both output shapes validate against the one schema — the full
+  record at the root, the CNA container at `#/definitions/cnaPublishedContainer`. Validation
+  errors are shown inline; a record that does not validate can still be downloaded but is
+  labelled.
 - **Two shapes.** *CNA container only* (what CVE Services `POST /cve/{id}/cna` expects) and *full
   record* (what the brief's example shows and what Vulnogram opens). Both downloadable; both
   available at `GET /vulnerable-extensions/api/v2/cve/CVE-YYYY-NNNNN.json` for published advisories.
+  **[VERIFIED R-02]** The Joomla CNA's live records carry `x_generator.engine =
+  "Vulnogram 0.1.0-dev"` — the team works in Vulnogram today, so the *full record* is the
+  toolbar default and direct submission is the second button (see §10 Q4).
+  **[CORRECTED R-02]** `providerMetadata`, `datePublished` and `assignerShortName` are
+  **server-set and overwritten if supplied**, so they are stripped from the CNA-container shape
+  and kept only in the full record.
 - **Phase 3, behind `vel.cve`:** *Reserve CVE ID* (`POST /cve-id`) writes `cve_id`, `cve_state =
   reserved`, `date_reserved`; *Submit record* (`POST`/`PUT /cve/{id}/cna`) on publish, with the
   response stored in `published_json`. Test environment first (`cve_services_env`).
+  **[CORRECTED R-02]** Three details the original text missed: `POST /cve-id` takes its
+  parameters in the **query string** and requires **`batch_type`** (`sequential` /
+  `non-sequential`) whenever `amount > 1`; **HTTP 206** is a success-with-partial-fulfilment
+  (the id quota ran out mid-request) and must be handled distinctly from an error; and the
+  submission's 200 body is `{valid, warnings[], message, created}`, so **`warnings` must be
+  surfaced to the editor** — a submission can succeed and still have something to say. Call
+  `GET /org/{shortname}/id_quota` before reserving and show the remaining quota on the dashboard.
 
 ### 6.6 Inbound feeds (brief §3.2)
 
@@ -579,50 +630,182 @@ one becomes `pending` again with a diff against the linked advisory.
 
 #### 6.6.1 CNA feed — records assigned by the Joomla CNA (and other CNAs' Joomla-extension records)
 
-- **Source (default):** the `CVEProject/cvelistV5` GitHub repository. Poll `cves/deltaLog.json`
-  (hourly deltas, ~30 days retained) [VERIFY R-02], collect `new`/`updated` CVE ids since the last
-  run's `window_to`, fetch each record's JSON from the raw GitHub URL. No credentials required;
-  a GitHub token is optional for rate limit headroom.
-- **Alternative:** CVE Services `GET /api/cve?assigner_short_name=Joomla&time_modified.gt=…`
-  (requires the CNA credentials) [VERIFY R-02].
-- **Classification:** `joomla_cna` when `cveMetadata.assignerShortName == "Joomla"` (or
-  `assignerOrgId` == our org id) and no affected product is Joomla core; `joomla_core` when
-  affected vendor/product is `Joomla`/`Joomla! CMS` (ignored — JSST's domain); `joomla_extension_
-  other_cna` when another CNA's record mentions Joomla in `affected[].platforms`,
-  `affected[].collectionURL`, product name, or description; otherwise `unrelated` (not stored).
-- **Mapping:** Appendix C in reverse. ADP containers (`containers.adp[]`, e.g. CISA Vulnrichment)
-  are read for CVSS/CWE when the CNA container has none, with the provenance noted.
+**[VERIFIED R-02]** Measured 2026-11-05. Full detail in
+[`VEL2-Feeds-PRD.md` §3](docs/vel/feeds/VEL2-Feeds-PRD.md) and [`cve.md`](docs/vel/feeds/cve.md).
+
+- **Source:** the `CVEProject/cvelistV5` GitHub repository, unauthenticated. **This is the only
+  source.** **[CORRECTED R-02]** The "alternative" below has been deleted: CVE Services
+  `GET /cve` and `GET /cve_cursor` require the **Secretariat** or **Bulk Download** role, which
+  an ordinary CNA does not have, so `GET /api/cve?assigner_short_name=Joomla` returns 403 for us.
+  The correct authenticated path to our own records is `GET /cve-id` (filters `state`,
+  `cve_id_year`, `time_modified.lt/gt`, `page`; 500 per page) paired with the **public,
+  unauthenticated** `GET /cve/{id}` — used by the seed run below, not by the hourly poll.
+- **[CORRECTED R-02] `cves/deltaLog.json` is 37 MB, not a modest hourly log**, and it updates
+  every ~11 minutes (p50; p90 30 min), not hourly. Retention is exactly 30 rolling days ✔ and
+  the array is **newest-first and pretty-printed**, so the newest entries are the *first* bytes.
+  The server sends `Accept-Ranges: bytes`, `ETag` and `Cache-Control: max-age=300`.
+  `CvelistClient` therefore sends `If-None-Match` (a 304 ends the run as a no-op), then
+  `Range: bytes=0-<n>` sized from the gap since the last run at ~13.6 KB/entry and clamped to
+  `cna_range_max_kb`, expects **206**, parses forward to the last *complete* entry, and stops at
+  the first entry older than `window_to`. If the oldest entry in the range is still newer than
+  `window_to` the range was under-sized: it doubles and retries to the cap, then records the run
+  `partial` and leaves `window_to` unmoved. It never silently skips. A gap longer than 30 days
+  cannot be served by the log at all and is reported as `partial` with a backfill message.
+  ⚠ `cves/delta.json` is **980 bytes and holds only the single newest ~11-minute window** — an
+  hourly poll of it would lose ~80% of changes. It is a liveness probe, not a source.
+- **Fetching records:** each delta item carries **`githubLink`**, the complete raw URL, so the
+  `<NNNxxx>` bucket arithmetic is unnecessary (the layout is confirmed as a fallback: bucket is
+  `floor(sequence/1000)`, **not** zero-padded; 6-digit sequences work). Per-run cap
+  `cna_max_records_per_run`; hitting it marks the run `partial` and leaves `window_to` at the
+  oldest unprocessed entry. Records are fetched newest-first so a capped run still delivers the
+  most relevant items. A 200 ms courtesy delay between fetches — **not** a GitHub token, which
+  buys nothing here.
+- **[NEW R-02] Seed run.** With `cna_lookback_days = 7` a first run would see ~29,000 changed
+  records across all CNAs. The first run therefore does **not** use the delta log: a separate,
+  explicitly-invoked *Seed* action in the Feed runs view builds the id list and fetches each
+  record from the mirror, bounded by `cna_seed_years`. Afterwards `window_to` is set to now and
+  ordinary delta polling takes over.
+  **[BUILD NOTE]** The id list does not come from scanning the repository's `cves/<year>/`
+  directories as the feeds PRD first proposed: `raw.githubusercontent.com` serves no directory
+  listings, and the GitHub *trees* API needs a token and returns ~40,000 entries a year. The
+  build takes the ids from the NVD instead — `sourceIdentifier=security@joomla.org` for our
+  own records (558, one page) and `keywordSearch=Joomla` for everybody else's (1,633, one
+  page) — and, when the CNA credentials are configured, unions in `GET /cve-id` so a record the
+  NVD has not yet indexed is still seeded. The seed is resumable: ids already in the queue are
+  skipped, and the run reports `partial` with "run Seed again" until it completes.
+- **Classification:** see §6.6.2 — one ordered cascade now serves both feeds.
+  **[CORRECTED R-02]** The core test in the original text was wrong on the vendor string: the
+  live value is **`Joomla! Project`**, not `Joomla` (product `Joomla! CMS` ✔).
+- **Mapping:** Appendix C in reverse. **[CORRECTED R-02]** ADP containers are still read for
+  CVSS/CWE when the CNA container has none, but the expectation should be low: both 2026
+  fixtures carry exactly one ADP container (`CISA-ADP`) whose `metrics[0].other.type` is
+  **`ssvc`** — no CVSS, no `problemTypes`. CISA Vulnrichment fills gaps, and the Joomla CNA
+  leaves none. The SSVC block is stored in `payload` and not mapped.
+  The parser must also survive: `problemTypes[].descriptions[].type = "text"` with **no
+  `cweId`** (pre-2026 Joomla records), `x_refsource_*` legacy reference tags, `dataVersion`
+  of **either `5.1` or `5.2`** (it tracks the assigner's last write, not the repository), and
+  the REJECTED shape — `containers` = `[cna]` only, with just `providerMetadata`,
+  `rejectedReasons` and `x_generator`, no `descriptions` and no `affected`.
+- **[NEW R-02] The CNA's house style.** In 2026 the Joomla CNA went from ~2 records/month to
+  ~30 (2026: **326** records, 43 vendor domains), and 315 of them follow one of two templates:
+  `Joomla Extension - <vendor-domain> - <summary> in <product> <range>` (289) and
+  `Joomla! Core - [YYYYMMDD] - <summary> in Joomla <range>` (26). These are the strongest
+  classification signal available and are used as such in §6.6.2. Two things follow for the
+  builder: `descriptions[0].value` really is *title* + `" - "` + text with the HTML in
+  `supportingMedia` (§6.5's rule, **confirmed in production**), and `affected[].vendor` is the
+  vendor's **domain**, not a display name. See Appendix C.
 - **Matching to existing advisories:** by `cve_id`; else by (vendor host + product name +
   overlapping version range) fuzzy match, shown as a suggestion, never auto-merged.
 
 #### 6.6.2 NVD feed — enrichment and discovery
 
+**[VERIFIED R-01]** Measured 2026-11-05 over the complete 1,633-record `keywordSearch=Joomla`
+corpus (a census, not a sample). Full detail in
+[`VEL2-Feeds-PRD.md` §6](docs/vel/feeds/VEL2-Feeds-PRD.md) and [`nvd.md`](docs/vel/feeds/nvd.md).
+
 - **Source:** NVD API 2.0 `https://services.nvd.nist.gov/rest/json/cves/2.0` with
-  `lastModStartDate`/`lastModEndDate` windows (≤120 days), `resultsPerPage` up to 2000, `apiKey`
-  header; rate limits 5 req/30 s without key, 50 req/30 s with key — the routine sleeps ≥6 s
-  between calls regardless [VERIFY R-01].
-- **Discovery query:** `keywordSearch=Joomla` over the window; post-filter: drop records whose
-  CPE vendor is `joomla` and product `joomla\!` (core); keep records with any
-  `configurations[].nodes[].cpeMatch[].criteria` whose `target_sw` component is `joomla`, or whose
-  description matches `/joomla/i` and `/(extension|component|module|plugin|template)/i`
-  [VERIFY R-01: whether `virtualMatchString` can express "target_sw = joomla" and replace the
-  keyword query].
+  `lastModStartDate`/`lastModEndDate` windows (≤120 days ✔ enforced), `resultsPerPage` up to
+  2000 ✔ enforced, `apiKey` header ✔; rate limits 5 req/30 s without key, 50 req/30 s with key —
+  the routine sleeps ≥6 s between calls regardless. **[VERIFIED R-01]** The documented limits
+  hold as the design basis (observed enforcement is lenient), and there are **no rate-limit
+  headers of any kind** — no `X-RateLimit-*`, no `Retry-After` — so backoff is a fixed sleep
+  and a 403 trips the run. The date format is lenient: bare, `+00:00`, `Z` and `.000Z` all
+  parse identically with a missing offset read as UTC; emit `…Z`.
+  **[NEW R-01]** `sourceIdentifier` is a supported query parameter that the original list
+  omitted: `?sourceIdentifier=security@joomla.org` returns 558 records NVD-wide and is a
+  cleaner way to recognise our own records than matching by id.
+- **⚠ [CORRECTED R-01] Error handling.** **NVD reports parameter errors as HTTP 404 with an
+  empty body and the reason in a `message` HTTP response header** (`Date range cannot exceed 120
+  days.`, `resultsPerPage parameter cannot exceed 2000.`, `Both lastModStartDate and
+  lastModEndDate are required when either is present.`). There is no JSON error body.
+  `NvdClient` must read the `message` header on every non-200 and must distinguish
+  *404-with-message* (our bug — fail the run loudly) from *404-without-message* (no such CVE —
+  skip quietly). A client that treats 404 as "not found" mis-handles every malformed request
+  and reports a clean run.
+- **Discovery query:** `keywordSearch=Joomla` over the window, then the classification cascade
+  below. **[VERIFIED R-01] `virtualMatchString` was tested and rejected — do not re-open.** It
+  *can* express `target_sw = joomla` and the filter genuinely applies, but the data does not
+  exist: `target_sw=joomla` returns **13** records against `keywordSearch=Joomla`'s **1,633**.
+  The control proves the parameter is not broken — `target_sw=wordpress` returns **16,254**.
+  NVD simply does not tag Joomla extension CPEs the way it does WordPress ones. Adopting it
+  would cut recall by 99.2%. It is retained as classifier rule 6 below.
+- **⚠ [CORRECTED R-01] Classification cannot lead with CPE.** Records carrying any CPE with
+  vendor `joomla`, by year: `…2022:13 2023:5 2024:0 2025:0 2026:27`. Zero in 2024 and 2025 —
+  the enrichment backlog. Of the 326 Joomla CNA records published in 2026 only **94** have any
+  `configurations`, and 209 are `Deferred`. Two further CPE corrections: core is spelled **two
+  ways** (product `joomla\!` 3,301 rows *and* product `joomla` 622 rows — matching only the
+  first misses 622), and CPE vendor `joomla` is **not** proof of core (`rs_gallery2`,
+  `com_yvcomment`, `bsq_sitestats`, `com_user`, `com_eventing`, `ignitegallery` all sit under
+  that vendor and are **extensions**, so the product test is mandatory).
+
+  `RecordClassifier` therefore runs one ordered cascade for both feeds; first match wins, and
+  the rule is recorded on the feed item as `classification_reason` with a `confidence`:
+
+  | # | Test | Result |
+  |---|---|---|
+  | 1 | `cveMetadata.state == REJECTED` / `vulnStatus == Rejected` | `rejected` — stored, never an advisory; flagged loudly if it matches one |
+  | 2 | assigner is ours **and** any `affected[]` vendor ∈ {`Joomla! Project`, `Joomla`} and product ∈ {`Joomla! CMS`, `Joomla!`, `Joomla`} | `joomla_core` |
+  | 3 | assigner is ours **and** title matches `/^Joomla!? Core\s*-\s*\[\d{8}\]/` | `joomla_core` |
+  | 4 | assigner is ours (`assignerShortName == Joomla`, `assignerOrgId` == ours, or `sourceIdentifier == security@joomla.org`) | `joomla_cna` — `/^Joomla Extension - /` raises confidence to *high* |
+  | 5 | CPE vendor `joomla` **and** product ∈ {`joomla\!`, `joomla`} | `joomla_core` |
+  | 6 | any CPE `target_sw == joomla` | `joomla_extension_other_cna`, *high* |
+  | 7 | `affected[].platforms` has `Joomla`, or `collectionURL` is `extensions.joomla.org`, or product matches `/joomla/i` | `joomla_extension_other_cna` |
+  | 8 | description matches `/joomla/i` **and** `/(extension\|component\|module\|plugin\|template)/i` | `joomla_extension_other_cna`, *low* |
+  | 9 | description matches `/joomla/i` only | `unclassified` — **queued for a human, not discarded** |
+  | 10 | otherwise | `unrelated` — not stored |
+
+  Rule 2 precedes rule 4 so a core record never becomes an extension draft; rules 5–8 never
+  apply to our own records, so another CNA's mis-tagged CPE cannot reclassify something we
+  assigned. The regression test for rule ordering is CVE-2024-32788, **"FG Joomla to
+  WordPress"** — a *WordPress* plugin whose name contains "Joomla". It satisfies rule 8's first
+  half and must not be auto-created. The corpus holds at least a dozen of these (XCloner,
+  FG PrestaShop to WooCommerce, WP-Cumulus).
 - **Enrichment of our own records:** for every published advisory with a `cve_id`, fetch
-  `?cveId=` and copy, when we have none, `cvssMetricV31`/`cvssMetricV40` (Primary first, then
-  Secondary), `weaknesses` (CWE ids), CPE-derived version bounds (`versionStartIncluding`,
-  `versionEndIncluding`, `versionEndExcluding` → our inclusive `version_to` by decrementing only
-  when the editor confirms), and references with tags. Shown as a pending merge.
-- **Caveat to document:** since early 2024 the NVD has a large enrichment backlog; many recent
-  CVEs carry no NVD CPE or CVSS for weeks or months. The CNA feed is therefore the primary source
-  of truth; NVD is secondary.
+  `?cveId=` and copy, when we have none, CVSS, `weaknesses` (CWE ids), CPE-derived version
+  bounds (`versionStartIncluding`, `versionEndIncluding`, `versionEndExcluding` → our inclusive
+  `version_to` by decrementing only when the editor confirms), and references with tags. Shown
+  as a pending merge. Four corrections to this list:
+  - **⚠ [CORRECTED R-01] "Primary first" would discard every CVSS 4.0 score.** `cvssMetricV40`
+    is Secondary in **375 of 375** cases — NVD produces no v4.0 analysis of its own, so all
+    v4.0 comes from CNAs, including every 2026 Joomla record. The rule is **version first,
+    then type**: `4.0 → 3.1 → 3.0`, ignore v2, and prefer Primary over Secondary *within* the
+    chosen version. Record which container and type won.
+  - **⚠ [CORRECTED R-01] `cvssMetricV30` exists** (199 records) and was not handled; map it.
+    **`ssvcV203`** (473 records) is **not a CVSS block** — the parser must not iterate
+    `metrics` assuming every key is one.
+  - **⚠ [CORRECTED R-01] `NVD-CWE-Other` (88) and `NVD-CWE-noinfo` (53) are not CWE ids** and
+    would fail `#__vel_advisory_cwes.cwe_id` validation. Filter them explicitly.
+  - **⚠ [CORRECTED R-01] NVD reference tags are its own Title Case vocabulary**, not the CVE
+    5.x lowercase list in §6.1.5 — `Exploit` (2368), `Vendor Advisory` (1565), `Third Party
+    Advisory` (1036), `VDB Entry` (640), `Patch` (341), `Product` (225) and ten more. A mapping
+    table is required (it lives in `NvdRecordMapper` and in [`nvd.md`](docs/vel/feeds/nvd.md)). **`VDB
+    Entry` and `URL Repurposed` have no CVE 5.x equivalent: keep the reference, drop the tag.**
+
+  `matchCriteriaId` is present on all 5,899 `cpeMatch` rows and is the stable key for a CPE
+  match — worth storing with an imported range. **287 of 1,633 records (17.6%) have no
+  `configurations` key at all**, so its absence is normal, not an error.
+- **Caveat to document — now quantified.** Of the 326 Joomla CNA records published in 2026,
+  only **94** carry any CPE; the status spread is `Deferred` 209, `Analyzed` 89, `Awaiting
+  Analysis` 23, `Modified` 5. Only 75 of our 446 `security@joomla.org` records have any
+  `joomla:joomla*` CPE. **[NEW R-01] `Deferred` is a state this document did not mention and is
+  the modal status for our own records** — it means NVD has stopped enriching. Enrichment will
+  come back empty for most recent records, so the *Feed items* view must say "NVD has not
+  enriched this record (`Deferred`)" rather than show an empty merge offer, or editors will
+  conclude the feed is broken. The CNA feed is the primary source of truth; NVD is secondary.
 
 #### 6.6.3 Common
 
 - Every run is logged in `#__vel_feed_runs`; failures raise a Joomla `Log` warning under category
   `com_vel` and show on the dashboard.
 - A *Run now* button (`vel.feeds`) triggers a single run synchronously with a 60-second budget.
-- Research tasks R-01/R-02 deliver the exact endpoints, parameters, sample payloads and fixtures
-  checked into `tests/fixtures/` before the parser tasks start.
+  Its pre-flight check for the CNA feed is a GET of `cves/delta.json` (980 bytes) — cheap, and
+  it proves the mirror is live before a Range request is attempted.
+- **[DONE] Research tasks R-01 and R-02 are complete (2026-11-05).** The endpoints, parameters,
+  measured payload shapes and corrections are in
+  [`docs/vel/feeds/VEL2-Feeds-PRD.md`](docs/vel/feeds/VEL2-Feeds-PRD.md), with operator documents
+  [`cve.md`](docs/vel/feeds/cve.md) and [`nvd.md`](docs/vel/feeds/nvd.md) and raw measurements
+  [`RESEARCH-PROGRESS.md`](docs/vel/feeds/RESEARCH-PROGRESS.md). The 12 fixtures are checked in at
+  **`tests/fixtures/vel/nvd/`** and **`tests/fixtures/vel/cve/`** (not `tests/fixtures/`).
 
 ### 6.7 Public frontend (brief §4.1–4.2)
 
@@ -930,7 +1113,9 @@ Processed UIDs/ids are recorded so a re-run never duplicates.
 
 ### 8.8 Dependencies to add (`administrator/components/com_vel/composer.json`, vendored like `com_jed`)
 
-`opis/json-schema` (or `justinrainbow/json-schema`) for CVE validation; `webklex/php-imap`
+**`opis/json-schema` 2.6.0** (Apache-2.0, `php: ^7.4 || ^8.0`) for CVE validation —
+**[CORRECTED R-02]** not a choice: the CVE schema is **draft-07** and `justinrainbow/json-schema`
+is draft-04-centric, so it is not a viable alternative. `webklex/php-imap`
 (Phase 2 only). Both permissively licensed. HTTP through Joomla's `Joomla\Http\HttpFactory`.
 
 ---
@@ -947,8 +1132,9 @@ week, XL > 1 week) for one engineer familiar with the package.
 | ID | Task | Size | Depends | Done when |
 |---|---|---|---|---|
 | R-00 | Reviewer signs off D-1…D-10 and the open questions in §10 | — | — | This document updated to "APPROVED" with decisions recorded. |
-| R-01 | **NVD API research**: confirm endpoint, parameters (`keywordSearch`, `virtualMatchString` semantics, date windows), rate limits, response shape for CVSS 3.1/4.0, weaknesses, CPE version bounds, reference tags; obtain an API key; capture 5 fixtures (a Joomla-extension CVE with CPE, one without, a core CVE, an unrelated "Joomla" keyword hit, a rejected CVE). Write `docs/feeds/nvd.md`. | M | — | Document + fixtures committed; §6.6.2 [VERIFY] items resolved. |
-| R-02 | **CVE Program research**: confirm `cvelistV5` delta mechanism and retention, raw URL pattern, record schema version in use (5.1.x vs 5.2), CVE Services endpoints for reserve/publish/update and list-by-assigner, test-environment credentials from the Joomla CNA; download the JSON schema; capture fixtures (the brief's example, a record with ADP metrics, a record from another CNA about a Joomla extension). Write `docs/feeds/cve.md` and `docs/cve-conventions.md` (title/product/description conventions, reference tags). | M | — | Document + fixtures + schema committed; D-6 confirmed. |
+| R-01 | ✅ **DONE 2026-11-05. NVD API research**: endpoint, parameters, rate limits, response shape, reference tags confirmed over a 1,633-record census; `virtualMatchString` tested and rejected with a control; 5 fixtures in `tests/fixtures/vel/nvd/`. Six corrections, the most important being the **404 + `message` header** error convention and **version-first CVSS selection**. [`nvd.md`](docs/vel/feeds/nvd.md) written. | M | — | ✅ Document + fixtures committed; §6.6.2 markers resolved. *Outstanding: obtain a production API key (operational, not research).* |
+| R-02 | ✅ **DONE 2026-11-05. CVE Program research**: `deltaLog.json` measured (37 MB, ~11-min cadence, 30-day rolling, Range-capable), raw URL pattern confirmed, `dataVersion` resolved (emit `5.2`, parse `5.1` and `5.2`), CVE Services verified against OpenAPI 2.9.2, schema downloaded (draft-07, CC0-1.0, self-contained); 7 fixtures in `tests/fixtures/vel/cve/`. One major correction (**`GET /cve` needs Secretariat/Bulk Download — the alternative source does not exist**) and the discovery that the CNA already runs a 326-record/year extension programme with a machine-readable house style. [`cve.md`](docs/vel/feeds/cve.md) written. | M | — | ✅ Document + fixtures + schema findings committed; D-6 confirmed (the CNA's own records use the single-string range style). *Outstanding: test-environment credentials from the Joomla CNA (operational); `docs/cve-conventions.md` folded into `cve.md` §"The CNA's house style".* |
+| R-02b | **[NEW]** Apply the 14 amendments listed in [`VEL2-Feeds-PRD.md` §9](docs/vel/feeds/VEL2-Feeds-PRD.md) and get reviewer sign-off on its §10 open questions (seed scope, `collectionURL`/`platforms` policy, `erlcheck` in prod). | S | R-01, R-02 | ✅ Amendments applied to this document; §10 of the feeds PRD answered. |
 | R-03 | **CWE source**: pick the MITRE download (`cwec_latest.xml.zip`) and the subset to seed; write the seed SQL and the refresh parser spec. | S | — | `sql/seed_cwe.sql` with ≥ 400 entries. |
 | R-04 | **Legacy inventory**: on the live JED3 database identify where published VEL entries live, their fields and URL patterns, the exact shape of `/vulnerable-extensions/json-feed/`, and known consumers of it; count RSTicketsPro department-5 rows. Write `docs/migration/vel-legacy.md` with the field mapping (Appendix A completed). | M | — | Document with samples; D-8 window confirmed. |
 | R-05 | Infrastructure: mailbox for `vel@…`, IMAP or webhook availability, private attachment path, outbound mail domain/DKIM. | S | — | Values for `config.xml` known. |
@@ -1008,8 +1194,8 @@ can be demonstrated on sample data.)
 | ID | Task | Size | Depends | Done when |
 |---|---|---|---|---|
 | F-01 | `FeedRunner`, `#__vel_feed_runs/items`, `RecordClassifier`, Feed items and Feed runs views, *Run now*. | M | S-03 | A fixture run produces classified pending items. |
-| F-02 | `CnaFeedSource` + `CvelistClient` (deltaLog polling, per-record fetch, hashing, resume markers); `AdvisoryMerger` (create draft / merge with field-level accept); `vel.feed_cna` routine; auto-create for `joomla_cna`. | L | F-01, C-01, R-02 | Joomla CNA records appear as drafts within one run; re-runs are no-ops. |
-| F-03 | `NvdFeedSource` + `NvdClient` (windows, paging, rate limiting, key), discovery query + post-filter, enrichment of our CVE ids; `vel.feed_nvd` routine. | L | F-01, R-01 | NVD CVSS/CWE/CPE bounds offered as merges; backlog caveat surfaced in UI. |
+| F-02 | `CnaFeedSource` + `CvelistClient` (**ETag + HTTP `Range` deltaLog polling with escalation**, per-record fetch via `githubLink`, hashing, resume markers); `AdvisoryMerger` (create draft / merge with field-level accept); `vel.feed_cna` routine; auto-create for `joomla_cna`. **+2 days [R-02]:** the one-off **seed run** (§6.6.1) — a first delta-log run would see ~29,000 records, so the initial corpus comes from the NVD id lists (`sourceIdentifier` + keyword) plus `GET /cve-id` when credentials are configured — see §6.6.1 build note. | L**+** | F-01, C-01, R-02 | Joomla CNA records appear as drafts within one run; re-runs are no-ops; a 304 is a clean no-op; an under-sized Range escalates rather than skipping; the 5 CVE fixtures (incl. REJECTED, `dataVersion` 5.1, and `type:"text"` with no `cweId`) all parse. |
+| F-03 | `NvdFeedSource` + `NvdClient` (windows, paging, rate limiting, key, **`message`-header error handling**), discovery query + the §6.6.2 classification cascade, enrichment of our CVE ids (**version-first CVSS**, `NVD-CWE-*` filtering, **reference-tag mapping table**); `vel.feed_nvd` routine. | L | F-01, R-01 | NVD CVSS/CWE/CPE bounds offered as merges; a 404-with-`message` fails loudly and a 404-without passes quietly; `nvd-unrelated-keyword-hit.json` ("FG Joomla to WordPress") classifies as `unclassified`, never auto-created; `Deferred` records show "not enriched", not an empty merge. |
 | F-04 | Feed documentation `docs/feeds/*.md` finalised with operational runbook (keys, schedules, failure handling). | S | F-02, F-03 | |
 | M-01 | Legacy advisory migration step in `plg_sampledata_jed_migrate` (from R-04), with a per-row parse report and `com_redirect` rows for old URLs. | L | R-04, A-02 | ≥ 95 % of legacy entries import as `published` with ranges; the rest as `draft` with raw text. |
 | M-02 | RSForms staging → `#__vel_reports` (forms 5/10/11 → vulnerability, 7/12 → fix_notice), idempotent. | M | I-01, R-04 | Counts match staging; re-run does not duplicate. |
@@ -1048,11 +1234,18 @@ can be demonstrated on sample data.)
    creation afterwards to keep following their report.
 2. **Where does the VEL team work day-to-day?** If they will keep an external mailbox/helpdesk
    regardless, Phase 2's inbound mail (I-10) may be deferred in favour of `external_ticket_url`.
-3. **CVE data version** to emit by default (5.1.x vs 5.2) and whether CVE Services currently
-   accepts 5.2 for the Joomla CNA (R-02).
-4. **Vulnogram**: is the team's current tool; should the generator optimise for "open in
-   Vulnogram" (full record) or for direct API submission (CNA container)? Both are planned; which
-   is the toolbar default?
+3. ✅ **ANSWERED by R-02. CVE data version: emit `5.2`.** The question also partly dissolves —
+   a CVE Services submission body is `{"cnaContainer": …}`, a bare container with **no
+   `dataVersion` field**, so the option cannot affect what we submit; it labels only the full
+   record we download or hand to Vulnogram. `cve-schema` v5.2.0 (2025-10-29) is current and its
+   `dataVersion` default is `5.2.0`; every record written in 2026 carries `5.2`. The **parser**
+   must accept `5.1` too, because the repository does not normalise historic records forward
+   (CERT-PL, VulDB and INCIBE records untouched since 2025 are still `5.1`).
+4. ✅ **EVIDENCE SUPPLIED by R-02; decision still the reviewer's.** Every sampled Joomla CNA
+   record carries `x_generator.engine = "Vulnogram 0.1.0-dev"` — Vulnogram is demonstrably the
+   live workflow, not just the team's preference. **Recommendation: the *full record* download
+   is the toolbar default** (it is the existing practice and must not regress), with direct API
+   submission as the second button — the improvement being offered, not the one being imposed.
 5. **Anonymity policy**: default credit = named unless the reporter opts out, or anonymous unless
    they opt in?
 6. **Publishing advisories with no fix and an unresponsive vendor**: after `disclosure_days`, is
@@ -1061,9 +1254,19 @@ can be demonstrated on sample data.)
 7. **Joomla core CVEs**: ignored entirely, or listed read-only with a link to the Security Centre
    so the list is "one place"? The brief's principle of centralisation argues for a read-only
    mirror; the JSST may prefer otherwise.
+   **[R-02 costing]** The volume is **26 records in 2026**, and they are trivially identifiable —
+   the title template `Joomla! Core - [YYYYMMDD] - …` matched 26 of 26, and `affected[].vendor`
+   is consistently `Joomla! Project`. Each already carries a `vendor-advisory` reference to the
+   exact Security Centre page. The cost argument against a read-only mirror has gone; this is
+   now purely a question of whether the JSST wants it.
 8. **Other ecosystems' CNAs** (VulDB, Patchstack, INCIBE, …) publish Joomla-extension CVEs. Are
    those imported as advisories (`cve_assigner` ≠ Joomla) or only linked as references? The design
    allows both; recommended: import, clearly marked "CVE assigned by X".
+   **[R-02 costing]** **79 non-Joomla-CNA Joomla records since 2024**, dominated by VulnCheck
+   (69 — mostly 2026 back-fills of 2019-era component bugs), then CERT.PL (3), VulDB (3),
+   Patchstack (2), INCIBE (1). That is a handful a month at current rates: low enough to import
+   and mark, as recommended. Note VulnCheck's back-fill pattern — a burst of old CVEs appearing
+   as *new* delta entries — which the look-back and de-duplication must tolerate.
 9. **Should the audit pipeline** (`Audit\AuditPipeline`) be offered as a one-click "run a code
    audit on the reported version" from a report? Cheap to wire, but the Claude/Docker cost and
    the legal position on downloading a reported third-party package need a policy.
@@ -1198,61 +1401,169 @@ listed so the site can warn conservatively.
 
 ## Appendix C — Internal model → CVE Record 5.x mapping
 
+**[VERIFIED R-02]** Checked against the Joomla CNA's own live records (`CVE-2026-105606`
+extension, `CVE-2026-73337` core; fixtures in `tests/fixtures/vel/cve/`). Most of the mapping is
+confirmed — including, notably, the `descriptions[0]` derivation, `title_prefix` and
+`product_suffix`, all of which match production exactly. Five rows needed changing:
+
+| Row | Finding |
+|---|---|
+| `collectionURL` | ⚠ **not emitted by any sampled Joomla CNA record.** Valid CVE 5.x and arguably an improvement, but emitting it is a change of editorial practice, not a technical decision. **Default off**; raise with the VEL team separately. |
+| `platforms: ["Joomla"]` | ⚠ **same — not emitted. Default off.** |
+| `packageName` | ⚠ not emitted either, but it is genuinely new information the hand-written records lack. **Emit whenever the advisory has a Joomla `element`.** |
+| `affected[].vendor` | ⚠ the CNA uses the vendor's **domain** (`joomlaboat.com`), not a display name. Core uses **`Joomla! Project`**, not `Joomla`. |
+| `providerMetadata` | ⚠ **server-set and overwritten on submission.** Strip it from the CNA-container shape; keep it in the full record. Same for `datePublished` and `assignerShortName`. |
+| `impacts[]` | **[NEW]** the core record carries `{capecId: "CAPEC-115", descriptions: [{lang, value}]}`. Add as optional. |
+
 | CVE path | From |
 |---|---|
 | `dataType` | `"CVE_RECORD"` |
-| `dataVersion` | option `cve_data_version` |
+| `dataVersion` | option `cve_data_version` (default `5.2`; **full record only** — a submitted container has no such field) |
 | `cveMetadata.cveId` | `cve_id` |
 | `cveMetadata.assignerOrgId` / `assignerShortName` | options `cna_org_id` / `cna_short_name` (or `cve_assigner` when foreign, in which case the record is not ours and the builder refuses with a message) |
 | `cveMetadata.state` | `cve_state` upper-cased (`RESERVED`/`PUBLISHED`) |
 | `cveMetadata.dateReserved` / `datePublished` / `dateUpdated` | `date_reserved` / `date_published` / `date_updated` (UTC, ms precision) |
-| `containers.cna.providerMetadata` | `{ orgId, shortName, dateUpdated }` |
+| `containers.cna.providerMetadata` | `{ orgId, shortName, dateUpdated }` — **[CORRECTED R-02] full record only.** CVE Services sets it server-side and overwrites whatever is supplied |
 | `containers.cna.title` | `title_prefix` (rendered with first product's vendor) + `title` |
 | `containers.cna.descriptions[0]` | `{ lang: "en", value: <title> + " - " + strip_tags(description), supportingMedia: [{ type: "text/html", base64: false, value: description_html }] }` |
-| `containers.cna.affected[]` | one per product: `{ vendor, product: product + product_suffix, defaultStatus, versions: [ { version: from, lessThanOrEqual: to, status: "affected", versionType } … ], collectionURL: "https://extensions.joomla.org", packageName: element (when set), platforms: ["Joomla"] }` — D-6 decides the `versions` shape |
-| `containers.cna.problemTypes[0].descriptions[]` | one per CWE: `{ lang: "en", type: "CWE", cweId, description }` |
+| `containers.cna.affected[]` | one per product: `{ vendor, product: product + product_suffix, defaultStatus: "unaffected", versions: [ { version: from, lessThanOrEqual: to, status: "affected", versionType } … ], packageName: element (when set) }`, plus `collectionURL: "https://extensions.joomla.org"` and `platforms: ["Joomla"]` **only when the (default-off) options are enabled** — see the table above. D-6 decides the `versions` shape; **[VERIFIED R-02]** the CNA's own current records use the single-string style (`"version": "1.0-3.7.7"`), so the string option must exist |
+| `containers.cna.impacts[]` | **[NEW R-02]** optional, one per CAPEC: `{ capecId, descriptions: [{ lang: "en", value }] }` — the CNA emits this on core records |
+| `containers.cna.problemTypes[0].descriptions[]` | one per CWE: `{ lang: "en", type: "CWE", cweId, description }` — **[VERIFIED R-02]** the CNA repeats the id inside the text (`"CWE-434 Unrestricted Upload of File with Dangerous Type"`); match that. The *parser* must also accept the pre-2026 form `{ type: "text", description }` with **no `cweId`** |
 | `containers.cna.metrics[]` | when `cvss_vector`: `{ format: "CVSS", scenarios: [{ lang: "en", value: "GENERAL" }], cvssV3_1 | cvssV4_0: { version, vectorString, baseScore, baseSeverity } }` |
 | `containers.cna.references[]` | stored references + `{ url: JED listing, tags: ["product", "x_jed"] }` per linked listing + `{ url: VEL canonical URL, tags: ["third-party-advisory"] }` |
 | `containers.cna.credits[]` | public credits `{ lang: "en", value: name, type: role }` (role `remediation_developer` → `"remediation developer"` etc.) |
-| `containers.cna.source` | `{ discovery }` |
+| `containers.cna.source` | `{ discovery }` — **[VERIFIED R-02]** the CNA emits `{ "discovery": "UNKNOWN" }` when unset, rather than omitting the container |
 | `containers.cna.solutions[]` / `workarounds[]` | `solution` / `workaround` when set |
 | `containers.cna.timeline[]` | reported, vendor notified, fixed, published (when set) |
 | `containers.cna.datePublic` | `date_public` when set |
 | `containers.cna.x_generator` | `{ engine: "Joomla VEL <version>" }` |
 
-## Appendix D — External API research notes (to be confirmed in R-01/R-02)
+## Appendix D — External API research notes
 
-**NVD API 2.0** — base `https://services.nvd.nist.gov/rest/json/cves/2.0`; parameters used:
-`cveId`, `keywordSearch`, `keywordExactMatch`, `virtualMatchString`, `lastModStartDate`,
-`lastModEndDate` (ISO-8601 with offset; window ≤ 120 days), `pubStartDate`/`pubEndDate`,
-`resultsPerPage` (≤ 2000), `startIndex`, `noRejected`; header `apiKey`. Rate limits: 5 requests per
-rolling 30 s without key, 50 with; HTTP 403 when exceeded. Response: `vulnerabilities[].cve` with
-`id`, `sourceIdentifier`, `published`, `lastModified`, `vulnStatus`, `descriptions[]`,
-`metrics.cvssMetricV31[] / cvssMetricV40[]` (`type: Primary|Secondary`, `cvssData.vectorString`,
-`baseScore`, `baseSeverity`), `weaknesses[].description[].value` (CWE ids), `configurations[]
-.nodes[].cpeMatch[]` (`criteria` CPE 2.3, `vulnerable`, `versionStartIncluding`,
-`versionEndIncluding`, `versionEndExcluding`), `references[]` (`url`, `source`, `tags[]`). CPE 2.3
-field order: `cpe:2.3:part:vendor:product:version:update:edition:language:sw_edition:target_sw:
-target_hw:other` — Joomla extensions typically carry `target_sw = joomla`.
+**[VERIFIED R-01 / R-02 — 2026-11-05.]** This appendix was written from memory and is now
+replaced with measurements. The NVD figures come from a complete census of the 1,633-record
+`keywordSearch=Joomla` corpus; the CVE Program figures from the live mirror and the official
+OpenAPI 2.9.2 specification. Narrative and design consequences:
+[`VEL2-Feeds-PRD.md`](docs/vel/feeds/VEL2-Feeds-PRD.md). Operator documents: [`cve.md`](docs/vel/feeds/cve.md),
+[`nvd.md`](docs/vel/feeds/nvd.md). Raw measurements: [`RESEARCH-PROGRESS.md`](docs/vel/feeds/RESEARCH-PROGRESS.md).
+`[VERIFY R-03]` (CWE) and `[VERIFY R-04]` (legacy) below are **not** yet confirmed.
 
-**CVE Program** — CVE Services API `https://cveawg.mitre.org/api/` (prod) and
-`https://cveawg-test.mitre.org/api/` (test); auth headers `CVE-API-ORG`, `CVE-API-USER`,
-`CVE-API-KEY`; endpoints `GET /cve/{id}` (public), `GET /cve-id?state=…&cve_id_year=…` (own ids),
-`POST /cve-id` (reserve; `amount`, `cve_year`, `short_name`), `POST /cve/{id}/cna` (publish CNA
-container), `PUT /cve/{id}/cna` (update), `POST /cve/{id}/reject`. Record format: CVE JSON 5.1.x;
-5.2 introduced later (the brief's example says `5.2`). Schema: `CVEProject/cve-schema` on GitHub.
-Public bulk data: `CVEProject/cvelistV5` — `cves/<year>/<NNNxxx>/CVE-<id>.json`, `cves/delta.json`
-(latest hour), `cves/deltaLog.json` (recent history), plus release zips. Joomla CNA:
-orgId `6ff30186-7fb7-4ad9-be33-533e7b05e586`, shortName `Joomla`; partner page
-`https://www.cve.org/PartnerInformation/ListofPartners/partner/Joomla` (scope text to be copied
-into `docs/feeds/cve.md`). Vulnogram: the CVE Program's open-source record editor; opens a full
-record JSON.
+### NVD API 2.0 — confirmed
 
-**CWE** — `https://cwe.mitre.org/data/xml/cwec_latest.xml.zip`; views 699 (Software Development)
-and 1425 (Top 25 2024) identify the practical subset.
+Base `https://services.nvd.nist.gov/rest/json/cves/2.0`. Parameters confirmed in use: `cveId`,
+`keywordSearch`, `keywordExactMatch`, `virtualMatchString`, `lastModStartDate`/`lastModEndDate`,
+`pubStartDate`/`pubEndDate`, `resultsPerPage`, `startIndex`, `noRejected`, and
+**`sourceIdentifier`** (not previously listed — `security@joomla.org` returns 558 records).
+`apiKey` is a request **header**.
 
-**CVSS** — FIRST specifications 3.1 and 4.0; reference calculators are open source (BSD) and can be
-vendored for the backend form.
+| Limit | Measured |
+|---|---|
+| Window | **120 days**, enforced |
+| `resultsPerPage` | **2000**, enforced |
+| Rate | documented 5/30 s (no key), 50/30 s (key); **no rate-limit headers exist** |
+| Date format | **lenient** — bare, `+00:00`, `Z`, `.000Z` all identical; missing offset = UTC |
+
+⚠ **Errors are HTTP 404 with an empty body and the reason in a `message` response header.**
+There is no JSON error body. This is the single most important client-implementation fact on
+the NVD side.
+
+⚠ **`virtualMatchString` with `target_sw=joomla` returns 13 records** against
+`keywordSearch=Joomla`'s **1,633**. The control `target_sw=wordpress` returns **16,254**, so the
+parameter works and the Joomla data simply does not exist. Tested, rejected, closed.
+
+Response: `vulnerabilities[].cve` with `id`, `sourceIdentifier`, `published`, `lastModified`,
+`vulnStatus`, `descriptions[]`, `metrics`, `weaknesses[]`, `configurations[]`, `references[]`.
+
+| `metrics` container | Records | Primary | Secondary |
+|---|---|---|---|
+| `cvssMetricV2` | 1151 | 1146 | 5 |
+| `ssvcV203` (**not CVSS**) | 473 | — | — |
+| `cvssMetricV31` | 405 | 259 | 164 |
+| `cvssMetricV40` | 375 | **0** | **375** |
+| `cvssMetricV30` | 199 | 194 | 5 |
+
+⚠ All v4.0 is Secondary, so "prefer Primary" discards it. Select **version first** (4.0 → 3.1 →
+3.0, ignore v2), then Primary within the version.
+
+`weaknesses[].description[].value`: real CWE ids 1,591; **`NVD-CWE-Other` 88 and
+`NVD-CWE-noinfo` 53 are not ids** and must be filtered.
+
+`configurations[].nodes[].cpeMatch[]` over 5,899 rows: `criteria`, `vulnerable`,
+**`matchCriteriaId`** always present; `versionEndIncluding` 320, `versionStartIncluding` 241,
+`versionEndExcluding` 234, `versionStartExcluding` 0 (handle anyway). **287 of 1,633 records
+(17.6%) have no `configurations` key at all.**
+
+`references[].tags` use NVD's own Title Case vocabulary, **not** the CVE 5.x list in §6.1.5 —
+`Exploit` 2368, `Vendor Advisory` 1565, `Third Party Advisory` 1036, `VDB Entry` 640, `Patch`
+341, `Product` 225, `Mailing List` 78, `Broken Link` 58, `Release Notes` 51, `URL Repurposed`
+32, `Issue Tracking` 28, `US Government Resource` 8, `Not Applicable` 6, `Technical Description`
+4, `Permissions Required` 4, `Mitigation` 2. `VDB Entry` and `URL Repurposed` have no CVE 5.x
+equivalent.
+
+`vulnStatus`: Modified 1189, **Deferred 263**, Analyzed 157, Awaiting Analysis 23, Rejected 1.
+
+CPE 2.3 field order is as stated:
+`cpe:2.3:part:vendor:product:version:update:edition:language:sw_edition:target_sw:target_hw:other`.
+⚠ But the claim that "Joomla extensions typically carry `target_sw = joomla`" is **false** — 13
+records do, corpus-wide. Core is spelled **both** `joomla:joomla\!` (3,301 rows) and
+`joomla:joomla` (622 rows), and CPE vendor `joomla` also covers extensions (`rs_gallery2`,
+`com_yvcomment`, `bsq_sitestats`, …), so the product test is mandatory.
+
+### CVE Program — confirmed, with one major correction
+
+CVE Services `https://cveawg.mitre.org/api/` (prod) and `https://cveawg-test.mitre.org/api/`
+(test, separate dataset) — both live. Auth headers `CVE-API-ORG`, `CVE-API-USER`, `CVE-API-KEY`
+confirmed, required per-operation.
+
+| Endpoint | Status |
+|---|---|
+| `GET /cve/{id}` | ✔ **public, no auth** |
+| `GET /cve`, `GET /cve_cursor` | ⚠ **requires the Secretariat or Bulk Download role — not available to the Joomla CNA.** The §6.6.1 "alternative source" built on this does not exist |
+| `GET /cve-id` | ✔ "registered users"; filters `state`, `cve_id_year`, `time_reserved/modified.lt/gt`, `page`; 500/page. **This is the correct path to our own records**, paired with the public `GET /cve/{id}` |
+| `POST /cve-id` | ✔ **query-string** params `amount`, `cve_year`, `short_name`, and **`batch_type`** when `amount > 1`. **206 = partial fulfilment**, not an error |
+| `POST`/`PUT /cve/{id}/cna` | ✔ body `{"cnaContainer": …}`; minimum `descriptions[]` + `affected[]` + `references[]`; optional `?erlcheck`; 200 body `{valid, warnings[], message, created}`. `providerMetadata`, `datePublished`, `assignerShortName` are **server-set** |
+| `POST`/`PUT /cve/{id}/reject`, `PUT /cve/{id}/adp`, `POST /cve-id-range/{year}`, `GET /org/{shortname}/id_quota`, `GET /health-check` | available for later phases |
+
+**Record format:** `dataVersion` tracks the **assigner's last write, not the repository** —
+records untouched since ~2025 are still `5.1` (CERT-PL, VulDB, INCIBE and mitre samples all
+confirmed), everything written in 2026 is `5.2`. Emit `5.2`; parse `^5\.\d+(\.\d+)?$`.
+
+**Schema:** `CVEProject/cve-schema` **v5.2.0 (2025-10-29)**, default branch `main`.
+`schema/CVE_Record_Format.json` is 72,841 bytes, **draft-07**, **no external `$ref`s**, 46
+definitions including `cnaPublishedContainer` / `cnaRejectedContainer` / `adpContainer`,
+licensed **CC0-1.0** (⚠ not MIT, as §6.5 previously said). Draft-07 settles the validator:
+**`opis/json-schema`**.
+
+**Public bulk data:** `CVEProject/cvelistV5`.
+`cves/<year>/<floor(sequence/1000)>xxx/CVE-<id>.json` — bucket **not** zero-padded; 6-digit
+sequences work. `cves/deltaLog.json` is **37 MB**, newest-first, pretty-printed, rolling
+**30.00 days**, updated every **~11 min** (p50; p90 30 min, max 229 min), ~4,130 changed
+records/day, with `Accept-Ranges: bytes` + `ETag` + `max-age=300`. Entry keys `fetchTime`,
+`numberOfChanges`, `new[]`, `updated[]`, `error[]`; item keys `cveId`, `dateUpdated`,
+`cveOrgLink`, **`githubLink`** (the ready-made raw URL). ⚠ `cves/delta.json` is **980 bytes and
+holds one ~11-minute window**, not "the latest hour". `raw.githubusercontent.com` is served by
+Fastly, exposes **no rate-limit headers**, and is not governed by the GitHub REST API quota — a
+token buys nothing.
+
+**Joomla CNA:** orgId `6ff30186-7fb7-4ad9-be33-533e7b05e586` ✔, shortName `Joomla` ✔, `cnaID`
+`CNA-2020-0036`, organizationName **`Joomla! Project`**, contact `security@joomla.org`, TLR
+MITRE. Scope, verbatim: *"Core Joomla! CMS, the Joomla Framework, and Joomla! Extensions issues
+only."* — **extensions are explicitly in scope.**
+
+**[NEW] The CNA's output, by year:** 2020:7, 2021:24, 2022:16, 2023:24, 2024:6, 2025:43,
+**2026:326** across 43 vendor domains. 315 of the 2026 records follow
+`Joomla Extension - <vendor-domain> - <summary> in <product> <range>` (289) or
+`Joomla! Core - [YYYYMMDD] - <summary> in Joomla <range>` (26). `x_generator.engine` is
+`Vulnogram 0.1.0-dev` throughout. ADP containers are `CISA-ADP` carrying **SSVC, not CVSS**.
+
+### CWE and CVSS — still from memory, not yet verified
+
+**CWE** `[VERIFY R-03]` — `https://cwe.mitre.org/data/xml/cwec_latest.xml.zip`; views 699
+(Software Development) and 1425 (Top 25 2024) identify the practical subset.
+
+**CVSS** `[VERIFY R-03]` — FIRST specifications 3.1 and 4.0; reference calculators are open
+source (BSD) and can be vendored for the backend form. Note from R-01 that **CVSS 4.0 is now the
+Joomla CNA's only metric** on 2026 extension records, so the 4.0 calculator is not optional.
 
 ## Appendix E — Glossary
 

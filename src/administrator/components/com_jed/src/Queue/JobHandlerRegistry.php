@@ -13,6 +13,8 @@ namespace Jed\Component\Jed\Administrator\Queue;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Language\Text;
+
 /**
  * Maps a #__jed_queue_jobs `type` string to the JobHandlerInterface that processes it.
  *
@@ -59,7 +61,7 @@ class JobHandlerRegistry
     public function get(string $type): JobHandlerInterface
     {
         if (!isset($this->handlers[$type])) {
-            throw new \RuntimeException(\sprintf('No job handler registered for queue job type "%s".', $type));
+            throw new \RuntimeException(Text::sprintf('COM_JED_QUEUE_NO_HANDLER', $type));
         }
 
         return $this->handlers[$type];

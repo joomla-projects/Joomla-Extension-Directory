@@ -13,6 +13,7 @@ namespace Jed\Component\Jed\Administrator\Audit;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Language\Text;
 use RuntimeException;
 
 /**
@@ -49,7 +50,7 @@ class ProcessRunner
         $process = proc_open($command, $descriptors, $pipes, $cwd);
 
         if (!\is_resource($process)) {
-            throw new RuntimeException('Failed to start process: ' . implode(' ', $command));
+            throw new RuntimeException(Text::sprintf('COM_JED_AUDIT_PROCESS_START_FAILED', implode(' ', $command)));
         }
 
         fclose($pipes[0]);
@@ -76,11 +77,7 @@ class ProcessRunner
                 fclose($pipes[2]);
                 proc_close($process);
 
-                throw new RuntimeException(\sprintf(
-                    'Process timed out after %d seconds: %s',
-                    $timeoutSeconds,
-                    implode(' ', $command)
-                ));
+                throw new RuntimeException(Text::sprintf('COM_JED_AUDIT_PROCESS_TIMEOUT', $timeoutSeconds, implode(' ', $command)));
             }
 
             usleep(100000);

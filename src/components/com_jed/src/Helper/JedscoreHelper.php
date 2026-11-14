@@ -13,6 +13,8 @@ namespace Jed\Component\Jed\Site\Helper;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+use Joomla\CMS\Language\Text;
+
 /**
  * JED Extension Score Helper
  *
@@ -33,7 +35,7 @@ class JedscoreHelper
         // null means the criterion was never rated. Both that and a rated zero render as
         // "not rated" rather than an empty star row.
         if ($score === null || $score == 0) {
-            return 'Not Rated';
+            return Text::_('COM_JED_SCORE_NOT_RATED');
         }
 
         if (!is_numeric($score)) {

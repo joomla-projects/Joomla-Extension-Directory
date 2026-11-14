@@ -9,12 +9,12 @@
 
 let templates = document.getElementById("jform_messagetemplates"); //The Joomla SQL Field
 let textbox = document.getElementById("jform_message_text"); //TinyMCE field
-textbox.textContent = 'Select a template from above or start typing!';
+textbox.textContent = Joomla.Text._('COM_JED_TICKET_JS_SELECT_TEMPLATE');
 templates.addEventListener('change', function () {
     tinyMCE.get('jform_message_text').execCommand('SelectAll');
     tinyMCE.get('jform_message_text').execCommand('Delete');
 
-    tinyMCE.get('jform_message_text').execCommand('mceInsertContent', false, 'Fetching content - Please Wait!');
+    tinyMCE.get('jform_message_text').execCommand('mceInsertContent', false, Joomla.Text._('COM_JED_TICKET_JS_FETCHING'));
     let messageContent = setMessageContent('Ticket.getTemplate', templates.value)
 })
 
@@ -32,7 +32,7 @@ async function setMessageContent(itemTask, itemId) {
     //alert(itemId);
     let response = await fetch(url, options);
     if (!response.ok) {
-        throw new Error(Joomla.Text._('COM_MYCOMPONENT_JS_ERROR_STATUS') + `${response.status}`);
+        throw new Error(Joomla.Text._('COM_JED_JS_ERROR_STATUS') + `${response.status}`);
     } else {
         let result = await response.text();
 

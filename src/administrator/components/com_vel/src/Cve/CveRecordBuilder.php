@@ -32,8 +32,10 @@ use Joomla\CMS\Component\ComponentHelper;
  * computed here from the lean internal model, which is the brief's point (§3: "keep the input
  * model lean and derive the final JSON structure from the stored data").
  *
- * Two shapes come out: the full record (what Vulnogram opens, what the brief's appendix shows)
- * and the CNA container alone (what CVE Services `POST /cve/{id}/cna` accepts).
+ * Two shapes come out: the full record (what Vulnogram opens - the team's tool today, R-02 -
+ * and what the brief's appendix shows) and the CNA container alone (what CVE Services
+ * `POST /cve/{id}/cna` accepts, minus the members the server sets itself). `dataVersion` is on
+ * the full record only; a submission carries none.
  *
  * Framework-light on purpose: everything configurable is passed in, so the class can be unit
  * tested against the brief's example without a Joomla application.
@@ -57,6 +59,10 @@ final class CveRecordBuilder
      * @param string             $titlePrefix   Rendered with {vendor}.
      * @param string             $productSuffix Appended to each product name.
      * @param string             $versionsStyle "structured" or "string".
+     * @param bool               $extraAffectedFields Emit collectionURL / platforms / packageName
+     *                                                on affected products. The Joomla CNA's
+     *                                                published records do not (R-02), so off by
+     *                                                default.
      *
      * @since 4.0.0
      */
@@ -64,10 +70,11 @@ final class CveRecordBuilder
         private readonly AdvisorySerializer $serializer,
         private readonly string $orgId = '6ff30186-7fb7-4ad9-be33-533e7b05e586',
         private readonly string $shortName = 'Joomla',
-        private readonly string $dataVersion = '5.1',
+        private readonly string $dataVersion = '5.2',
         private readonly string $titlePrefix = 'Joomla Extension - {vendor} - ',
         private readonly string $productSuffix = ' extension for Joomla',
-        private readonly string $versionsStyle = 'structured'
+        private readonly string $versionsStyle = 'structured',
+        private readonly bool $extraAffectedFields = false
     ) {
     }
 
@@ -88,10 +95,11 @@ final class CveRecordBuilder
             $serializer,
             (string) $params->get('cna_org_id', '6ff30186-7fb7-4ad9-be33-533e7b05e586'),
             (string) $params->get('cna_short_name', 'Joomla'),
-            (string) $params->get('cve_data_version', '5.1'),
+            (string) $params->get('cve_data_version', '5.2'),
             (string) $params->get('title_prefix', 'Joomla Extension - {vendor} - '),
             (string) $params->get('product_suffix', ' extension for Joomla'),
-            (string) $params->get('cve_versions_style', 'structured')
+            (string) $params->get('cve_versions_style', 'structured'),
+            (int) $params->get('cve_extra_affected_fields', 0) === 1
         );
     }
 
@@ -287,19 +295,23 @@ final class CveRecordBuilder
                 'vendor'        => (string) $product->vendor,
                 'product'       => (string) $product->product . $this->productSuffix,
                 'defaultStatus' => \in_array((string) ($product->default_status ?? ''), ['affected', 'unaffected', 'unknown'], true) ? (string) $product->default_status : 'unaffected',
-                'platforms'     => ['Joomla'],
             ];
 
             if ($versions !== []) {
                 $entry['versions'] = $versions;
             }
 
-            if ((string) ($product->element ?? '') !== '') {
-                $entry['packageName'] = (string) $product->element;
-            }
+            // Beyond the CNA's current practice; an editorial decision, off by default.
+            if ($this->extraAffectedFields) {
+                $entry['platforms'] = ['Joomla'];
 
-            if (!empty($product->extension_id)) {
-                $entry['collectionURL'] = 'https://extensions.joomla.org';
+                if ((string) ($product->element ?? '') !== '') {
+                    $entry['packageName'] = (string) $product->element;
+                }
+
+                if (!empty($product->extension_id)) {
+                    $entry['collectionURL'] = 'https://extensions.joomla.org';
+                }
             }
 
             $affected[] = $entry;
@@ -470,6 +482,9 @@ final class CveRecordBuilder
     {
         $timeline = [];
 
+        // English on purpose, like every other string this class writes: the record is
+        // published with `lang: en` and read by the CVE Program, not by a site visitor, so the
+        // site language must not leak into it.
         foreach ([
             'date_reported'        => 'Reported to the Joomla VEL',
             'date_vendor_notified' => 'Vendor notified',
@@ -484,6 +499,25 @@ final class CveRecordBuilder
         usort($timeline, static fn (array $a, array $b): int => strcmp($a['time'], $b['time']));
 
         return $timeline;
+    }
+
+    /**
+     * The CNA container as CVE Services wants it: without the members the server sets itself
+     * (`providerMetadata`, `datePublished`, `assignerShortName`), which it would overwrite.
+     *
+     * @param object $advisory An advisory with children.
+     *
+     * @return array<string, mixed>
+     *
+     * @since 4.0.0
+     */
+    public function submissionContainer(object $advisory): array
+    {
+        $container = $this->cnaContainer($advisory);
+
+        unset($container['providerMetadata'], $container['datePublished'], $container['assignerShortName']);
+
+        return $container;
     }
 
     /**

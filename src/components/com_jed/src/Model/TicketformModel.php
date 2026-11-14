@@ -19,7 +19,6 @@ defined('_JEXEC') or die;
 
 use Exception;
 use Jed\Component\Jed\Site\Helper\JedHelper;
-use Jed\Component\Jed\Administrator\Enum\TicketType;
 use Jed\Component\Jed\Site\Helper\TicketHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
@@ -127,7 +126,7 @@ class TicketformModel extends FormModel
      * @since  4.0.0
      * @throws Exception
      */
-    public function getItem(?int $id = null): mixed
+    public function getItem(int $id = null): mixed
     {
         if ($this->item === null) {
             $this->item = false;
@@ -313,18 +312,12 @@ class TicketformModel extends FormModel
      */
     public function save(array $data)
     {
-        // echo "<pre>";print_r($data);echo "</pre>";exit();
+       // echo "<pre>";print_r($data);echo "</pre>";exit();
         $isLoggedIn      = JedHelper::isLoggedIn();
         $data['user_ip'] = $_SERVER['REMOTE_ADDR'];
         $user            = Factory::getApplication()->getIdentity();
         if ($isLoggedIn) {
             /* Any logged-in user can make a new ticket */
-            if (!$user->authorise('core.manage', 'com_tickets.ticket')) {
-                $data = $this->restrictToRequester($data, (int) $user->id);
-            } elseif (empty($data['id']) && empty($data['created_by'])) {
-                $data['created_by'] = (int) $user->id;
-            }
-
             $table = $this->getTable();
 
             if ($table->save($data) === true) {
@@ -372,50 +365,6 @@ class TicketformModel extends FormModel
         $query = $db->getQuery(true);
         $query->select('categorytype')->from($db->quoteName('#__jed_ticket_categories'))->where('id = ' . $db->quote($categoryId));
 
-        return (string) $db->setQuery($query)->loadResult();
+        return $db->setQuery($query)->loadResult();
     }
-
-    /**
-     * Reduces posted ticket data to what a requester may set.
-     *
-     * Requesters only ever open new tickets: the id, owner, status, allocation, internal notes
-     * and parent are the team's. A linked item is kept only when the requester may see it.
-     *
-     * @param array $data   The validated form data.
-     * @param int   $userId The requester.
-     *
-     * @return array
-     *
-     * @since 4.0.0
-     */
-    private function restrictToRequester(array $data, int $userId): array
-    {
-        foreach (
-            ['ticket_status', 'allocated_to', 'allocated_group', 'internal_notes', 'state',
-                'parent_id', 'created_on', 'modified_by', 'modified_on', 'checked_out', 'checked_out_time'] as $field
-        ) {
-            unset($data[$field]);
-        }
-
-        // A requester only ever opens a new ticket: id 0, owned by them.
-        $data['id']         = 0;
-        $data['created_by'] = $userId;
-
-        $type = (int) ($data['linked_item_type'] ?? 0);
-        $id   = (int) ($data['linked_item_id'] ?? 0);
-
-        $allowed = match ($type) {
-            TicketType::Extension->value => JedHelper::canViewExtensionById($id),
-            TicketType::Review->value    => JedHelper::canViewReviewById($id),
-            default                      => false,
-        };
-
-        if (!$allowed) {
-            $data['linked_item_type'] = TicketType::Other->value;
-            $data['linked_item_id']   = 0;
-        }
-
-        return $data;
-    }
-
 }

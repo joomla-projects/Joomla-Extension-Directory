@@ -21,6 +21,7 @@ use Jed\Component\Jed\Administrator\Privacy\PrivacyRetentionService;
 use Jed\Component\Jed\Administrator\Queue\JobHandlerRegistry;
 use Jed\Component\Jed\Administrator\Queue\QueueService;
 use Jed\Component\Jed\Administrator\Service\UpdateCheckService;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Component\Scheduler\Administrator\Event\ExecuteTaskEvent;
 use Joomla\Component\Scheduler\Administrator\Task\Status as TaskStatus;
@@ -150,13 +151,13 @@ final class Jed extends CMSPlugin implements SubscriberInterface
         try {
             $result = $this->updateCheckService->run($batchSize, $force);
         } catch (Throwable $e) {
-            $this->logTask('jed.updatecheck failed: ' . $e->getMessage(), 'error');
+            $this->logTask(Text::sprintf('PLG_TASK_JED_LOG_ROUTINE_FAILED', 'jed.updatecheck', $e->getMessage()), 'error');
 
             return TaskStatus::KNOCKOUT;
         }
 
-        $this->logTask(\sprintf(
-            'jed.updatecheck: checked %d, updated %d, errors %d.',
+        $this->logTask(Text::sprintf(
+            'PLG_TASK_JED_LOG_UPDATECHECK_RESULT',
             $result['checked'],
             $result['updated'],
             $result['errors']
@@ -200,11 +201,11 @@ final class Jed extends CMSPlugin implements SubscriberInterface
             } catch (Throwable $e) {
                 $failures++;
                 $this->queueService->markFailed((int) $job->id, $e->getMessage());
-                $this->logTask(\sprintf('Queue job #%d (%s) failed: %s', $job->id, $job->type, $e->getMessage()), 'error');
+                $this->logTask(Text::sprintf('PLG_TASK_JED_LOG_QUEUE_JOB_FAILED', (int) $job->id, (string) $job->type, $e->getMessage()), 'error');
             }
         }
 
-        $this->logTask(\sprintf('jed.queueworker: processed %d, failed %d.', \count($jobs), $failures));
+        $this->logTask(Text::sprintf('PLG_TASK_JED_LOG_QUEUEWORKER_RESULT', \count($jobs), $failures));
 
         return $failures > 0 && $failures === \count($jobs) ? TaskStatus::KNOCKOUT : TaskStatus::OK;
     }
@@ -233,13 +234,13 @@ final class Jed extends CMSPlugin implements SubscriberInterface
         try {
             $result = $this->linkCheckService->run($batchSize, $force);
         } catch (Throwable $e) {
-            $this->logTask('jed.linkcheck failed: ' . $e->getMessage(), 'error');
+            $this->logTask(Text::sprintf('PLG_TASK_JED_LOG_ROUTINE_FAILED', 'jed.linkcheck', $e->getMessage()), 'error');
 
             return TaskStatus::KNOCKOUT;
         }
 
-        $this->logTask(\sprintf(
-            'jed.linkcheck: checked %d (ok %d, hard %d, soft %d, semantic %d), %d developer tickets, %d escalated, %d recovered.',
+        $this->logTask(Text::sprintf(
+            'PLG_TASK_JED_LOG_LINKCHECK_RESULT',
             $result['checked'],
             $result['ok'],
             $result['hard'],
@@ -275,13 +276,13 @@ final class Jed extends CMSPlugin implements SubscriberInterface
         try {
             $result = $this->hitAggregator->run($days);
         } catch (Throwable $e) {
-            $this->logTask('jed.hitaggregate failed: ' . $e->getMessage(), 'error');
+            $this->logTask(Text::sprintf('PLG_TASK_JED_LOG_ROUTINE_FAILED', 'jed.hitaggregate', $e->getMessage()), 'error');
 
             return TaskStatus::KNOCKOUT;
         }
 
-        $this->logTask(\sprintf(
-            'jed.hitaggregate: %d day(s) recomputed, %d listing buckets written, %d raw rows pruned.',
+        $this->logTask(Text::sprintf(
+            'PLG_TASK_JED_LOG_HITAGGREGATE_RESULT',
             $result['days'],
             $result['rows'],
             $result['pruned']
@@ -315,13 +316,13 @@ final class Jed extends CMSPlugin implements SubscriberInterface
                 isset($params->url_check_days) ? (int) $params->url_check_days : null
             );
         } catch (Throwable $e) {
-            $this->logTask('jed.privacyprune failed: ' . $e->getMessage(), 'error');
+            $this->logTask(Text::sprintf('PLG_TASK_JED_LOG_ROUTINE_FAILED', 'jed.privacyprune', $e->getMessage()), 'error');
 
             return TaskStatus::KNOCKOUT;
         }
 
-        $this->logTask(\sprintf(
-            'jed.privacyprune: %d review address(es) cleared, %d lookup row(s) and %d URL check(s) deleted.',
+        $this->logTask(Text::sprintf(
+            'PLG_TASK_JED_LOG_PRIVACYPRUNE_RESULT',
             $result['review_ips'],
             $result['transfer_lookups'],
             $result['url_checks']
@@ -358,14 +359,13 @@ final class Jed extends CMSPlugin implements SubscriberInterface
             $result       = $this->signalScanner->run($batchSize);
             $transferred  = $this->signalScanner->closeTransferredCases();
         } catch (Throwable $e) {
-            $this->logTask('jed.abandonware failed: ' . $e->getMessage(), 'error');
+            $this->logTask(Text::sprintf('PLG_TASK_JED_LOG_ROUTINE_FAILED', 'jed.abandonware', $e->getMessage()), 'error');
 
             return TaskStatus::KNOCKOUT;
         }
 
-        $this->logTask(\sprintf(
-            'jed.abandonware: %d from link checks, %d from update checks, %d from inactivity, '
-            . '%d grace periods expired, %d closed by transfer, %d errors.',
+        $this->logTask(Text::sprintf(
+            'PLG_TASK_JED_LOG_ABANDONWARE_RESULT',
             $result['linkcheck'],
             $result['updatecheck'],
             $result['inactivity'],

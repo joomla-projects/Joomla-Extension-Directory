@@ -245,7 +245,7 @@
         <field
             name="cve_data_version"
             type="list"
-            default="5.1"
+            default="5.2"
             label="COM_VEL_CONFIG_CVE_DATA_VERSION_LABEL"
             description="COM_VEL_CONFIG_CVE_DATA_VERSION_DESC"
         >
@@ -262,6 +262,30 @@
         >
             <option value="structured">COM_VEL_CONFIG_CVE_VERSIONS_STYLE_STRUCTURED</option>
             <option value="string">COM_VEL_CONFIG_CVE_VERSIONS_STYLE_STRING</option>
+        </field>
+
+        <field
+            name="cve_erlcheck"
+            type="radio"
+            default="1"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_VEL_CONFIG_CVE_ERLCHECK_LABEL"
+            description="COM_VEL_CONFIG_CVE_ERLCHECK_DESC"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field
+            name="cve_extra_affected_fields"
+            type="radio"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_VEL_CONFIG_CVE_EXTRA_AFFECTED_FIELDS_LABEL"
+            description="COM_VEL_CONFIG_CVE_EXTRA_AFFECTED_FIELDS_DESC"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
         </field>
 
         <field
@@ -311,19 +335,59 @@
             <option value="1">JYES</option>
         </field>
 
+        <!--
+            No source option: cvelistV5 over raw HTTPS is the only source. CVE Services' listing
+            endpoint needs the Secretariat or Bulk Download role, which a CNA does not have
+            (R-02). No GitHub token either: raw.githubusercontent.com is served by Fastly outside
+            the API quota, so a token buys nothing and would be a credential stored for no benefit.
+        -->
         <field
-            name="cna_source"
-            type="list"
-            default="cvelist_github"
-            label="COM_VEL_CONFIG_CNA_SOURCE_LABEL"
-            description="COM_VEL_CONFIG_CNA_SOURCE_DESC"
+            name="cna_range_max_kb"
+            type="number"
+            default="2048"
+            min="64"
+            max="36000"
+            filter="integer"
+            label="COM_VEL_CONFIG_CNA_RANGE_MAX_KB_LABEL"
+            description="COM_VEL_CONFIG_CNA_RANGE_MAX_KB_DESC"
             showon="cna_enabled:1"
-        >
-            <option value="cvelist_github">COM_VEL_CONFIG_CNA_SOURCE_CVELIST</option>
-            <option value="cve_services">COM_VEL_CONFIG_CNA_SOURCE_SERVICES</option>
-        </field>
+        />
 
-        <field name="github_token" type="password" default="" filter="raw" label="COM_VEL_CONFIG_GITHUB_TOKEN_LABEL" description="COM_VEL_CONFIG_GITHUB_TOKEN_DESC" showon="cna_enabled:1"/>
+        <field
+            name="cna_full_fetch_max_mb"
+            type="number"
+            default="64"
+            min="1"
+            max="256"
+            filter="integer"
+            label="COM_VEL_CONFIG_CNA_FULL_FETCH_MAX_MB_LABEL"
+            description="COM_VEL_CONFIG_CNA_FULL_FETCH_MAX_MB_DESC"
+            showon="cna_enabled:1"
+        />
+
+        <field
+            name="cna_max_records_per_run"
+            type="number"
+            default="400"
+            min="10"
+            max="5000"
+            filter="integer"
+            label="COM_VEL_CONFIG_CNA_MAX_RECORDS_PER_RUN_LABEL"
+            description="COM_VEL_CONFIG_CNA_MAX_RECORDS_PER_RUN_DESC"
+            showon="cna_enabled:1"
+        />
+
+        <field
+            name="cna_seed_years"
+            type="number"
+            default="2"
+            min="1"
+            max="30"
+            filter="integer"
+            label="COM_VEL_CONFIG_CNA_SEED_YEARS_LABEL"
+            description="COM_VEL_CONFIG_CNA_SEED_YEARS_DESC"
+            showon="cna_enabled:1"
+        />
 
         <field
             name="cna_lookback_days"

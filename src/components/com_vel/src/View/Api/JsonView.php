@@ -21,6 +21,7 @@ use Jed\Component\Vel\Administrator\Service\AdvisoryRepository;
 use Jed\Component\Vel\Site\Helper\VelHelper;
 use Jed\Component\Vel\Site\Model\ApiModel;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\AbstractView;
 use Joomla\Database\DatabaseInterface;
 use Throwable;
@@ -67,7 +68,7 @@ class JsonView extends AbstractView
                         $one = $model->getOne($id);
 
                         if ($one === null) {
-                            $this->error(404, 'not_found', 'No published advisory matches ' . $id . '.');
+                            $this->error(404, 'not_found', Text::sprintf('COM_VEL_API_ERROR_NOT_FOUND', $id));
 
                             return;
                         }
@@ -99,7 +100,7 @@ class JsonView extends AbstractView
                     return;
 
                 default:
-                    $this->error(404, 'unknown_resource', 'Unknown resource: ' . $resource . '.');
+                    $this->error(404, 'unknown_resource', Text::sprintf('COM_VEL_API_ERROR_UNKNOWN_RESOURCE', $resource));
 
                     return;
             }
@@ -107,7 +108,7 @@ class JsonView extends AbstractView
             $this->error(400, 'bad_request', $e->getMessage());
         } catch (Throwable $e) {
             \Joomla\CMS\Log\Log::add('VEL API: ' . $e->getMessage(), \Joomla\CMS\Log\Log::ERROR, 'com_vel');
-            $this->error(500, 'server_error', 'The request could not be completed.');
+            $this->error(500, 'server_error', Text::_('COM_VEL_API_ERROR_SERVER'));
         }
     }
 
@@ -121,7 +122,7 @@ class JsonView extends AbstractView
     private function cve(string $id): void
     {
         if (!preg_match('/^CVE-\d{4}-\d{4,}$/i', $id)) {
-            $this->error(400, 'bad_request', 'A CVE id is required.');
+            $this->error(400, 'bad_request', Text::_('COM_VEL_API_ERROR_CVE_ID_REQUIRED'));
 
             return;
         }
@@ -130,13 +131,13 @@ class JsonView extends AbstractView
         $advisory   = $repository->findByCve($id, true);
 
         if ($advisory === null) {
-            $this->error(404, 'not_found', 'No published advisory carries ' . strtoupper($id) . '.');
+            $this->error(404, 'not_found', Text::sprintf('COM_VEL_API_ERROR_NO_CVE', strtoupper($id)));
 
             return;
         }
 
         if (!class_exists(CveRecordBuilder::class)) {
-            $this->error(501, 'not_implemented', 'CVE record generation is not available.');
+            $this->error(501, 'not_implemented', Text::_('COM_VEL_API_ERROR_CVE_UNAVAILABLE'));
 
             return;
         }
@@ -159,7 +160,7 @@ class JsonView extends AbstractView
         $app = Factory::getApplication();
 
         if ($app->getInput()->getMethod() !== 'POST') {
-            $this->error(405, 'method_not_allowed', 'POST a JSON body with an "extensions" array.', ['Allow' => 'POST, OPTIONS']);
+            $this->error(405, 'method_not_allowed', Text::_('COM_VEL_API_ERROR_METHOD'), ['Allow' => 'POST, OPTIONS']);
 
             return;
         }
@@ -175,7 +176,7 @@ class JsonView extends AbstractView
         }
 
         if (!\is_array($body)) {
-            $this->error(400, 'bad_request', 'The body is not valid JSON.');
+            $this->error(400, 'bad_request', Text::_('COM_VEL_API_ERROR_BAD_JSON'));
 
             return;
         }

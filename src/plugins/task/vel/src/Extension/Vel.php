@@ -20,6 +20,7 @@ use Jed\Component\Vel\Administrator\Service\ReportService;
 use Jed\Component\Vel\Administrator\Service\VelService;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Component\Scheduler\Administrator\Event\ExecuteTaskEvent;
 use Joomla\Component\Scheduler\Administrator\Task\Status as TaskStatus;
@@ -143,7 +144,7 @@ final class Vel extends CMSPlugin implements SubscriberInterface
         $budget = max(30, (int) ($params->budget_seconds ?? 240));
 
         if (!ComponentHelper::isEnabled('com_vel')) {
-            $this->logTask('com_vel is not enabled.', 'warning');
+            $this->logTask(Text::_('PLG_TASK_VEL_LOG_COMPONENT_DISABLED'), 'warning');
 
             return TaskStatus::KNOCKOUT;
         }
@@ -153,15 +154,15 @@ final class Vel extends CMSPlugin implements SubscriberInterface
 
             $run = (new FeedRunner($this->db, new VelService($this->db)))->run($source, $budget);
         } catch (Throwable $e) {
-            $this->logTask('vel.feed_' . $source->value . ' failed: ' . $e->getMessage(), 'error');
+            $this->logTask(Text::sprintf('PLG_TASK_VEL_LOG_ROUTINE_FAILED', 'vel.feed_' . $source->value, $e->getMessage()), 'error');
 
             return TaskStatus::KNOCKOUT;
         }
 
-        $this->logTask(\sprintf(
-            'vel.feed_%s: %s - seen %d, new %d, updated %d. %s',
-            $source->value,
-            (string) $run->status,
+        $this->logTask(Text::sprintf(
+            'PLG_TASK_VEL_LOG_FEED_RESULT',
+            'vel.feed_' . $source->value,
+            Text::_('COM_VEL_FEED_RUN_STATUS_' . strtoupper((string) $run->status)),
             (int) $run->items_seen,
             (int) $run->items_new,
             (int) $run->items_updated,
@@ -184,7 +185,7 @@ final class Vel extends CMSPlugin implements SubscriberInterface
         $limit  = max(1, (int) ($params->batch_size ?? 50));
 
         if ((string) ComponentHelper::getParams('com_vel')->get('inbound_mode', 'off') !== 'imap') {
-            $this->logTask('vel.mailfetch: inbound mode is not IMAP; nothing to do.');
+            $this->logTask(Text::_('PLG_TASK_VEL_LOG_MAILFETCH_NOT_IMAP'));
 
             return TaskStatus::OK;
         }
@@ -194,13 +195,13 @@ final class Vel extends CMSPlugin implements SubscriberInterface
 
             $stats = (new ImapFetcher($this->db))->run($limit);
         } catch (Throwable $e) {
-            $this->logTask('vel.mailfetch failed: ' . $e->getMessage(), 'error');
+            $this->logTask(Text::sprintf('PLG_TASK_VEL_LOG_ROUTINE_FAILED', 'vel.mailfetch', $e->getMessage()), 'error');
 
             return TaskStatus::KNOCKOUT;
         }
 
-        $this->logTask(\sprintf(
-            'vel.mailfetch: fetched %d - replies %d, new reports %d, duplicates %d, skipped %d.',
+        $this->logTask(Text::sprintf(
+            'PLG_TASK_VEL_LOG_MAILFETCH_RESULT',
             $stats['fetched'],
             $stats['replies'],
             $stats['reports'],
@@ -228,12 +229,12 @@ final class Vel extends CMSPlugin implements SubscriberInterface
             $auto    = $this->publishOnEmbargo($service);
             $synced  = $this->reconcileAbandonware($service);
         } catch (Throwable $e) {
-            $this->logTask('vel.housekeeping failed: ' . $e->getMessage(), 'error');
+            $this->logTask(Text::sprintf('PLG_TASK_VEL_LOG_ROUTINE_FAILED', 'vel.housekeeping', $e->getMessage()), 'error');
 
             return TaskStatus::KNOCKOUT;
         }
 
-        $this->logTask(\sprintf('vel.housekeeping: purged %d unverified reports, published %d on embargo, reconciled %d abandonware statuses.', $purged, $auto, $synced));
+        $this->logTask(Text::sprintf('PLG_TASK_VEL_LOG_HOUSEKEEPING_RESULT', $purged, $auto, $synced));
 
         return TaskStatus::OK;
     }
@@ -275,7 +276,7 @@ final class Vel extends CMSPlugin implements SubscriberInterface
                 $service->transition((int) $id, AdvisoryState::PUBLISHED, 0);
                 $done++;
             } catch (Throwable $e) {
-                $this->logTask('vel.housekeeping: advisory ' . $id . ' not published: ' . $e->getMessage(), 'warning');
+                $this->logTask(Text::sprintf('PLG_TASK_VEL_LOG_EMBARGO_NOT_PUBLISHED', (int) $id, $e->getMessage()), 'warning');
             }
         }
 
@@ -329,5 +330,8 @@ final class Vel extends CMSPlugin implements SubscriberInterface
         } catch (Throwable $e) {
             // Listeners are a convenience; the routine does not depend on them.
         }
+
+        // The feed run messages quote the component's strings (run status, reasons).
+        Factory::getApplication()->getLanguage()->load('com_vel', JPATH_ADMINISTRATOR . '/components/com_vel');
     }
 }

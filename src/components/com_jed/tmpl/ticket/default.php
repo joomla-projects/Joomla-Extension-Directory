@@ -60,38 +60,38 @@ echo LayoutHelper::render('ticket.ticket_edit_header', $this->item);
                             $this->linkedItemData,
                             JPATH_ADMINISTRATOR . '/components/com_jed/layouts'
                         );
-?>
+                        ?>
                     </div>
                 </div>
                 <div class="widget ticket-header-row">
-                    <h1 class="ticket-header-16">Message History</h1>
+                    <h1 class="ticket-header-16"><?php echo Text::_('COM_JED_TICKET_MESSAGE_HISTORY'); ?></h1>
                     <div class="container">
                         <div class="row">
                             <?php
-    $slidesOptions = ["active" => 'ticket_messages_group_slide0'];
-echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_messages_group', $slidesOptions);
+                            $slidesOptions = ["active" => 'ticket_messages_group_slide0'];
+                            echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_messages_group', $slidesOptions);
 
-$slideid = 0;
-foreach ($this->messages as $ticketMessage) {
-    if ($ticketMessage->message_direction == 0) {
-        $inout = "jed-ticket-message-out";
-    } else {
-        $inout = "jed-ticket-message-in";
-    }
+                            $slideid = 0;
+                            foreach ($this->messages as $ticketMessage) {
+                                if ($ticketMessage->message_direction == 0) {
+                                    $inout = "jed-ticket-message-out";
+                                } else {
+                                    $inout = "jed-ticket-message-in";
+                                }
 
-    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' . htmlspecialchars((string) $ticketMessage->subject, ENT_QUOTES, 'UTF-8') . ' - ' . JedHelper::prettyDate($ticketMessage->created_on) . '</span>', 'ticket_messages_group' . '_slide' . ($slideid++), $ticketMessage->internal ? 'text-bg-danger' : '');
-    echo  $ticketMessage->message ;
-    echo HTMLHelper::_('bootstrap.endSlide');
-}
-echo HTMLHelper::_('bootstrap.endAccordion');
-?>
+                                echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' . $ticketMessage->subject . ' - ' . JedHelper::prettyDate($ticketMessage->created_on) . '</span>', 'ticket_messages_group' . '_slide' . ($slideid++), $ticketMessage->internal ? 'text-bg-danger' : '');
+                                echo  $ticketMessage->message ;
+                                echo HTMLHelper::_('bootstrap.endSlide');
+                            }
+                            echo HTMLHelper::_('bootstrap.endAccordion');
+                            ?>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-12">
                         <div class="widget">
-                            <h1 class="ticket-header-16">Reply?</h1>
+                            <h1 class="ticket-header-16"><?php echo Text::_('COM_JED_TICKET_REPLY'); ?></h1>
                             <div class="container">
                                 <div class="row">
                                     <?php echo $this->form->renderFieldset('message'); ?>
@@ -106,7 +106,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
                         <button type="submit" class="validate btn btn-primary">
                             <span class="fas fa-check" aria-hidden="true"></span>
                             <?php
-echo Text::_('JSUBMIT'); ?>
+                            echo Text::_('JSUBMIT'); ?>
                         </button>
                     </div>
                 </div>

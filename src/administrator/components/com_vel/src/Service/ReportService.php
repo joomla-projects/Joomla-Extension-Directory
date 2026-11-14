@@ -663,11 +663,11 @@ class ReportService
         $title     = Text::sprintf('COM_VEL_DRAFT_TITLE_FROM_REPORT', $extension);
 
         $advisoryId = $service->createDraft([
-            'title'          => mb_substr($title, 0, 255),
-            'description'    => '<p>' . nl2br(htmlspecialchars((string) $report->description, ENT_QUOTES, 'UTF-8')) . '</p>',
-            'date_reported'  => $report->created,
-            'exploited'      => (string) $report->actively_exploited,
-            'discovery'      => (string) $report->reporter_role === 'developer' ? 'INTERNAL' : ((string) $report->reporter_role === 'researcher' ? 'EXTERNAL' : 'USER'),
+            'title'         => mb_substr($title, 0, 255),
+            'description'   => '<p>' . nl2br(htmlspecialchars((string) $report->description, ENT_QUOTES, 'UTF-8')) . '</p>',
+            'date_reported' => $report->created,
+            'exploited'     => (string) $report->actively_exploited,
+            'discovery'     => (string) $report->reporter_role === 'developer' ? 'INTERNAL' : ((string) $report->reporter_role === 'researcher' ? 'EXTERNAL' : 'USER'),
             'internal_notes' => Text::sprintf('COM_VEL_NOTE_CREATED_FROM_REPORT', \sprintf('VELR-%05d', $reportId)),
         ], AdvisorySource::REPORT, $actorId);
 

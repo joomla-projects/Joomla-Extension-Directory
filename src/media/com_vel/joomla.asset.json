@@ -6,6 +6,7 @@
   "license": "GPL-2.0-or-later",
   "assets": [
     { "name": "com_vel.site", "type": "style", "uri": "com_vel/css/vel.css" },
-    { "name": "com_vel.admin", "type": "style", "uri": "com_vel/css/admin.css" }
+    { "name": "com_vel.admin", "type": "style", "uri": "com_vel/css/admin.css" },
+    { "name": "com_vel.feedrun", "type": "script", "uri": "media/com_vel/js/feedrun.js", "dependencies": ["core"], "attributes": { "defer": true } }
   ]
 }

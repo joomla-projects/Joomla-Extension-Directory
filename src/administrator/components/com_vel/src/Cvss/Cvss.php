@@ -16,7 +16,6 @@ namespace Jed\Component\Vel\Administrator\Cvss;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use InvalidArgumentException;
 
 /**
  * The one entry point the rest of the component uses: hand it whatever vector was typed or
@@ -33,7 +32,7 @@ final class Cvss
      *
      * @return CvssResult
      *
-     * @throws InvalidArgumentException
+     * @throws CvssException
      *
      * @since 4.0.0
      */
@@ -51,17 +50,13 @@ final class Cvss
             // A typed score that disagrees with the vector is a typo in one of them, and the
             // record must not carry both. The vector wins, and the caller is told.
             if ($suppliedScore !== null && abs(round($suppliedScore, 1) - $result->score) > 0.05) {
-                throw new InvalidArgumentException(\sprintf(
-                    'The CVSS score %.1f does not match the vector (%.1f).',
-                    $suppliedScore,
-                    $result->score
-                ));
+                throw new CvssException('COM_VEL_CVSS_ERROR_SCORE_MISMATCH', [number_format($suppliedScore, 1), number_format($result->score, 1)]);
             }
 
             return $result;
         }
 
-        throw new InvalidArgumentException('Unrecognised CVSS vector: ' . $vector);
+        throw new CvssException('COM_VEL_CVSS_ERROR_UNRECOGNISED', [$vector]);
     }
 
     /**
@@ -83,7 +78,7 @@ final class Cvss
             }
 
             return true;
-        } catch (InvalidArgumentException $e) {
+        } catch (CvssException $e) {
             return false;
         }
     }

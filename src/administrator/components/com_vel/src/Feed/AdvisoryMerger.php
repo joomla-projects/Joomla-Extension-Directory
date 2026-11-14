@@ -17,6 +17,7 @@ namespace Jed\Component\Vel\Administrator\Feed;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Vel\Administrator\Cvss\Cvss;
+use Jed\Component\Vel\Administrator\Cvss\CvssException;
 use Jed\Component\Vel\Administrator\Enum\AdvisorySource;
 use Jed\Component\Vel\Administrator\Enum\CreditRole;
 use Jed\Component\Vel\Administrator\Enum\CveState;
@@ -146,6 +147,8 @@ final class AdvisoryMerger
      */
     public function merge(FeedRecord $record, int $advisoryId, int $actorId = 0): array
     {
+        Factory::getApplication()->getLanguage()->load('com_vel', JPATH_ADMINISTRATOR . '/components/com_vel');
+
         $advisory = (new AdvisoryRepository($this->db))->find($advisoryId);
 
         if ($advisory === null) {
@@ -171,7 +174,7 @@ final class AdvisoryMerger
                 }
 
                 $this->db->setQuery($query)->execute();
-                $added[] = 'CVSS ' . $columns['cvss_vector'] . ' (' . ($n['cvss']['from'] ?? '') . ')';
+                $added[] = Text::sprintf('COM_VEL_MERGED_CVSS', $columns['cvss_vector'], (string) ($n['cvss']['from'] ?? ''));
             }
         }
 
@@ -185,14 +188,14 @@ final class AdvisoryMerger
         $newCwes      = $this->addCwes($advisoryId, (array) ($n['cwes'] ?? []), $existingCwes);
 
         if ($newCwes > 0) {
-            $added[] = $newCwes . ' CWE';
+            $added[] = Text::plural('COM_VEL_MERGED_N_CWES', $newCwes);
         }
 
         $existingUrls  = array_map(static fn (object $r): string => (string) $r->url, (array) $advisory->references);
         $newReferences = $this->addReferences($advisoryId, (array) ($n['references'] ?? []), $existingUrls);
 
         if ($newReferences > 0) {
-            $added[] = $newReferences . ' references';
+            $added[] = Text::plural('COM_VEL_MERGED_N_REFERENCES', $newReferences);
         }
 
         // Products with no ranges get the record's ranges when the product names match.
@@ -219,7 +222,7 @@ final class AdvisoryMerger
                 }
 
                 if ($ordering > 0) {
-                    $added[] = 'versions for ' . $product->product;
+                    $added[] = Text::sprintf('COM_VEL_MERGED_VERSIONS_FOR', $product->product);
                 }
 
                 if ((string) $product->fixed_version === '' && (string) ($candidate['fixed'] ?? '') !== '') {
@@ -230,14 +233,14 @@ final class AdvisoryMerger
                             ->where($this->db->quoteName('id') . ' = :id')
                             ->bind(':fixed', $fixed)->bind(':id', $product->id, ParameterType::INTEGER)
                     )->execute();
-                    $added[] = 'fixed version for ' . $product->product;
+                    $added[] = Text::sprintf('COM_VEL_MERGED_FIXED_VERSION_FOR', $product->product);
                 }
             }
         }
 
         if ((array) $advisory->products === []) {
             $this->addProducts($advisoryId, (array) ($n['affected'] ?? []));
-            $added[] = \count((array) ($n['affected'] ?? [])) . ' products';
+            $added[] = Text::plural('COM_VEL_MERGED_N_PRODUCTS', \count((array) ($n['affected'] ?? [])));
         }
 
         if ($added !== []) {
@@ -267,12 +270,12 @@ final class AdvisoryMerger
         // 3.0 vectors are accepted by the 3.1 parser and re-stamped 3.1; the score is recomputed.
         try {
             $result = Cvss::evaluate($vector, isset($cvss['score']) ? (float) $cvss['score'] : null);
-        } catch (\InvalidArgumentException $e) {
+        } catch (CvssException $e) {
             // A mismatch between the record's score and its vector: keep the vector's truth
             // for 3.x, and the supplied score for 4.0 which cannot be recomputed here.
             try {
                 $result = str_starts_with($vector, 'CVSS:4.0/') ? Cvss::evaluate($vector, (float) ($cvss['score'] ?? 0)) : Cvss::evaluate($vector, null);
-            } catch (\InvalidArgumentException $e2) {
+            } catch (CvssException $e2) {
                 return [];
             }
         }
@@ -330,7 +333,7 @@ final class AdvisoryMerger
                     str_starts_with($product->element, 'tpl_') => 'template',
                     str_starts_with($product->element, 'lib_') => 'library',
                     str_starts_with($product->element, 'pkg_') => 'package',
-                    default                                    => null,
+                    default                                     => null,
                 };
 
                 if ($product->ext_type === 'plugin' && preg_match('/^plg_([a-z0-9\-]+)_([a-z0-9_\-]+)$/', $product->element, $m)) {

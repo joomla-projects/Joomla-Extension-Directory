@@ -55,7 +55,7 @@ $wa->useScript('table.columns')->useScript('multiselect');
                         <tbody>
                         <?php foreach ($this->items as $i => $item) : ?>
                             <?php
-                            $classification = FeedClassification::tryFrom((string) $item->classification) ?? FeedClassification::UNKNOWN;
+                            $classification = FeedClassification::tryFrom((string) $item->classification) ?? FeedClassification::UNCLASSIFIED;
                             $decision       = FeedDecision::tryFrom((string) $item->decision) ?? FeedDecision::PENDING;
                             ?>
                             <tr class="row<?php echo $i % 2; ?>">
@@ -66,12 +66,11 @@ $wa->useScript('table.columns')->useScript('multiselect');
                                 </td>
                                 <th scope="row"><?php echo $this->escape($item->title); ?></th>
                                 <td class="small"><?php echo $this->escape($item->assigner); ?></td>
-                                <td><span class="badge bg-<?php echo match ($classification) {
-                                    FeedClassification::JOOMLA_CNA => 'primary', FeedClassification::JOOMLA_EXTENSION_OTHER_CNA => 'info', FeedClassification::JOOMLA_CORE => 'secondary', default => 'light text-dark'
-                                }; ?>"><?php echo Text::_($classification->label()); ?></span></td>
-                                <td><span class="badge bg-<?php echo match ($decision) {
-                                    FeedDecision::PENDING => 'warning text-dark', FeedDecision::CREATED, FeedDecision::MERGED => 'success', default => 'secondary'
-                                }; ?>"><?php echo Text::_($decision->label()); ?></span></td>
+                                <td><span class="badge bg-<?php echo $classification->badge(); ?>"><?php echo Text::_($classification->label()); ?></span>
+                                    <?php if (!empty($item->confidence)) : ?>
+                                        <div class="small text-muted"><?php echo Text::_('COM_VEL_FEED_CONFIDENCE_' . strtoupper((string) $item->confidence)); ?></div>
+                                    <?php endif; ?></td>
+                                <td><span class="badge bg-<?php echo match ($decision) { FeedDecision::PENDING => 'warning text-dark', FeedDecision::CREATED, FeedDecision::MERGED => 'success', default => 'secondary' }; ?>"><?php echo Text::_($decision->label()); ?></span></td>
                                 <td class="d-none d-md-table-cell small">
                                     <?php if ($item->advisory_id) : ?>
                                         <?php $aState = AdvisoryState::tryFrom((string) $item->advisory_state) ?? AdvisoryState::DRAFT; ?>
@@ -92,7 +91,6 @@ $wa->useScript('table.columns')->useScript('multiselect');
 
                 <input type="hidden" name="task" value=""/>
                 <input type="hidden" name="boxchecked" value="0"/>
-                <input type="hidden" name="source" id="feed-source" value=""/>
                 <?php echo HTMLHelper::_('form.token'); ?>
             </div>
         </div>

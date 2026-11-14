@@ -16,6 +16,7 @@ namespace Jed\Component\Jed\Administrator\Helper;
 
 use Exception;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 use function defined;
 
@@ -53,8 +54,7 @@ class JedmigrateHelper
             $db->setQuery($query);
             $db->execute();
         } catch (Exception) {
-            echo "An Error Occurred - Failed SQL - " . htmlspecialchars($sql);
-            exit();
+            throw new \RuntimeException(Text::sprintf('COM_JED_MIGRATE_SQL_FAILED', $sql));
         }
     }
 }

@@ -86,7 +86,10 @@ class TicketController extends FormController
         $params       = json_decode((string)$result->params, true) ?: [];
         $ticketStatus = $params['ticket_status'] ?? '';
 
-        echo $result->subject.'|'.$result->htmlbody.'|'.$ticketStatus;
+        // Subject and body are language keys (script.php seeds them that way, and a team member
+        // may have overridden one with literal text in Mail Templates - Text::_() returns an
+        // unknown key unchanged, so both cases come out as text).
+        echo Text::_($result->subject) . '|' . Text::_($result->htmlbody) . '|' . $ticketStatus;
     }
 
     /**
@@ -95,7 +98,7 @@ class TicketController extends FormController
      * @since  4.0.0
      * @throws \PHPMailer\PHPMailer\Exception
      */
-    public function sendMessage()
+    public function sendMessage(): void
     {
         $this->checkToken();
 
@@ -178,7 +181,7 @@ class TicketController extends FormController
         if ($saved) {
             $app->enqueueMessage(Text::_('COM_JED_TICKET_INTERNAL_NOTE_SAVED'));
         } else {
-            $app->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+            $app->enqueueMessage($model->getError() ?: Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
         }
 
         $this->setRedirect($redirect);

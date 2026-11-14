@@ -47,7 +47,6 @@ $class = $class ? ' ' . $class : '';
 
 $sublayout = empty($groupByFieldset) ? 'section' : 'section-byfieldsets';
 ?>
-<h1>Hello</h1>
 <div class="subform-repeatable-wrapper subform-layout">
     <joomla-field-subform class="subform-repeatable<?php echo $class; ?>" name="<?php echo $name; ?>"
         button-add=".group-add" button-remove=".group-remove" button-move="<?php echo empty($buttons['move']) ? '' : '.group-move' ?>"

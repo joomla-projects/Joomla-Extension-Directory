@@ -7,6 +7,7 @@
 
 SET FOREIGN_KEY_CHECKS = 0;
 
+DROP TABLE IF EXISTS `#__vel_feed_backlog`;
 DROP TABLE IF EXISTS `#__vel_feed_items`;
 DROP TABLE IF EXISTS `#__vel_feed_runs`;
 DROP TABLE IF EXISTS `#__vel_attachments`;
