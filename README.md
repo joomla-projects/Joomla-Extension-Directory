@@ -1,6 +1,9 @@
 Joomla! Extensions Directory
 ============================
 
+FOR THE NEXT SEVEN DAYS PLEASE DO NOT POST PRs AS MERGE CONFLICTS WILL PROBABLY TAKE PLACE. 
+I AM GOING TO TEST AND RESTRUCTURE MENU SYSTEM / SAMPLE DATA / ALL USER FUNCTIONALITY. IF YOU FIND SOMETHING PLEASE POST AN ISSUE AND IDEALLY A CODE FIX. THANKS. MF 14-Nov-26
+
 Build Status
 ---------------------
 [![CI](https://github.com/joomla-projects/Joomla-Extension-Directory/actions/workflows/ci.yml/badge.svg)](https://github.com/joomla-projects/Joomla-Extension-Directory/actions/workflows/ci.yml)
