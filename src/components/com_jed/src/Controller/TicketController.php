@@ -57,7 +57,7 @@ class TicketController extends BaseController
             throw new Exception(Text::_('COM_JED_ITEM_DOESNT_EXIST'), 404);
         }
 
-        $db    = Factory::getDbo();
+        $db    = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
             ->select($db->quoteName(['created_by', 'ticket_subject']))
             ->from($db->quoteName('#__jed_tickets'))

@@ -1,0 +1,15 @@
+{
+  "name": "jed-vel-cypress",
+  "private": true,
+  "description": "Cypress tests of the VEL Feed Runs page against a real Joomla site - see vel_tests/README.md",
+  "scripts": {
+    "open": "cypress open",
+    "test:setup": "cypress run --spec e2e/feedrun-setup.cy.js",
+    "test:ui": "cypress run --spec e2e/feedrun-ui.cy.js",
+    "test:live": "cypress run --spec e2e/feedrun-live.cy.js",
+    "test": "cypress run --spec e2e/feedrun-setup.cy.js,e2e/feedrun-ui.cy.js"
+  },
+  "devDependencies": {
+    "cypress": "^13.17.0"
+  }
+}

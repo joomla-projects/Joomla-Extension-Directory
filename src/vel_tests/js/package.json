@@ -1,0 +1,12 @@
+{
+  "name": "jed-vel-feedrun-browser-tests",
+  "private": true,
+  "description": "Browser tests (jsdom) of media/com_vel/js/feedrun.js - see vel_tests/README.md",
+  "scripts": {
+    "test": "node feedrun.test.js",
+    "fixtures": "php build-fixtures.php"
+  },
+  "devDependencies": {
+    "jsdom": "^24.1.0"
+  }
+}

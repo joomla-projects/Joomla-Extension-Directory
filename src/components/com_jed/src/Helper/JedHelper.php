@@ -809,6 +809,62 @@ class JedHelper
     }
 
     /**
+     * Whether the current user may see the extension with this id.
+     *
+     * @param int $extensionId The extension PK in #__jed_extensions.
+     *
+     * @return bool
+     *
+     * @since  4.0.0
+     * @throws Exception
+     */
+    public static function canViewExtensionById(int $extensionId): bool
+    {
+        if ($extensionId <= 0) {
+            return false;
+        }
+
+        $db   = Factory::getContainer()->get('DatabaseDriver');
+        $item = $db->setQuery(
+            $db->getQuery(true)
+                ->select('*')
+                ->from($db->quoteName('#__jed_extensions'))
+                ->where($db->quoteName('id') . ' = :eid')
+                ->bind(':eid', $extensionId, ParameterType::INTEGER)
+        )->loadObject();
+
+        return $item !== null && self::canViewExtension($item);
+    }
+
+    /**
+     * Whether the current user may see the review with this id.
+     *
+     * @param int $reviewId The review PK in #__jed_reviews.
+     *
+     * @return bool
+     *
+     * @since  4.0.0
+     * @throws Exception
+     */
+    public static function canViewReviewById(int $reviewId): bool
+    {
+        if ($reviewId <= 0) {
+            return false;
+        }
+
+        $db   = Factory::getContainer()->get('DatabaseDriver');
+        $item = $db->setQuery(
+            $db->getQuery(true)
+                ->select('*')
+                ->from($db->quoteName('#__jed_reviews'))
+                ->where($db->quoteName('id') . ' = :rid')
+                ->bind(':rid', $reviewId, ParameterType::INTEGER)
+        )->loadObject();
+
+        return $item !== null && self::canViewReview($item);
+    }
+
+    /**
      * What the public detail page should do with this listing.
      *
      * Wraps {@see ListingAccess::forItem()} with the owner/maintainer lookup, so callers do not

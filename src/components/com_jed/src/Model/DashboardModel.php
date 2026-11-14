@@ -368,6 +368,7 @@ class DashboardModel extends ItemModel
             ->innerJoin($db->quoteName('#__jed_extensions', 'e'), $db->quoteName('e.id') . ' = ' . $db->quoteName('f.extension_id'))
             ->leftJoin($db->quoteName('#__categories', 'cat'), $db->quoteName('cat.id') . ' = ' . $db->quoteName('e.catid'))
             ->where($db->quoteName('f.user_id') . ' = ' . $db->quote($userId))
+            ->where(JedHelper::getExtensionVisibilityCondition($db, 'e'))
             ->order($db->quoteName('f.created') . ' DESC');
 
         $this->favoritesTotal = $this->countTotal($query);
