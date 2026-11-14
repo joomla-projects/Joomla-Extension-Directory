@@ -2,3 +2,4 @@
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS combine_jed_extensions;
 DROP TABLE IF EXISTS combine_jed_review_texts;
+DROP TABLE IF EXISTS combine_jed_ucm;
