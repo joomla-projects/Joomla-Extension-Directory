@@ -20,11 +20,11 @@
         <field name="internal" type="checkbox" default="0" label="COM_JED_TICKETMESSAGE_INTERNAL_LABEL"
                description="COM_JED_TICKETMESSAGE_INTERNAL_DESCR"
                hint="COM_JED_TICKETMESSAGE_INTERNAL_LABEL"/>
-        <field name="subject" filter="safehtml" type="text" required="true" message="Please enter a subject"
+        <field name="subject" filter="safehtml" type="text" required="true" message="COM_JED_FORM_ENTER_SUBJECT"
                label="COM_JED_GENERAL_SUBJECT_LABEL"
                hint="COM_JED_GENERAL_SUBJECT_LABEL"/>
         <field name="message" editor="jce|codemirror||" buttons="false" filter="JComponentHelper::filterText"
-               type="editor" required="true" message="Please enter a message"
+               type="editor" required="true" message="COM_JED_FORM_ENTER_MESSAGE"
                label="COM_JED_EXTENSION_MESSAGE_LABEL"
                hint="COM_JED_EXTENSION_MESSAGE_LABEL"/>
         <field name="ticket_id" type="foreignkey" label="COM_JED_TICKETMESSAGE_TICKET_ID_LABEL"

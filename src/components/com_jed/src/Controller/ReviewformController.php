@@ -122,7 +122,7 @@ class ReviewformController extends FormController
         $data = $model->validate($form, $data);
         // Check for errors.
         if ($data === false) {
-            $this->app->enqueueMessage('An error occured saving your data. Please go back and try again', 'warning');
+            $this->app->enqueueMessage(Text::_('COM_JED_ERROR_SAVING_DATA'), 'warning');
 
             $jform = $this->input->get('jform', [], 'ARRAY');
 
@@ -146,7 +146,7 @@ class ReviewformController extends FormController
 
             // Redirect back to the edit screen.
             $id = (int) $app->getUserState('com_jed.edit.review.id');
-            $this->setMessage(Text::_('Save failed'), 'warning');
+            $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_SAVE_FAILED'), 'warning');
             $this->setRedirect(Route::_('index.php?option=com_jed&view=reviewform&id=' . $id, false));
 
             return;

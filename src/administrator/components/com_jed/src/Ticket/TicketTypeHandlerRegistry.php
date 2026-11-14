@@ -54,6 +54,7 @@ final class TicketTypeHandlerRegistry
         $registry->register(new DeveloperresponseTicketHandler($db));
         $registry->register(new LinkcheckTicketHandler($db));
         $registry->register(new AbandonwareTicketHandler($db));
+        $registry->register(new VulnerabilityTicketHandler($db));
         $registry->register(new OtherTicketHandler($db));
 
         return $registry;

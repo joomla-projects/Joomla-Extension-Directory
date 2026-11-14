@@ -19,6 +19,7 @@ use Jed\Component\Jed\Administrator\Url\Validator\DownloadValidator;
 use Jed\Component\Jed\Administrator\Url\Validator\GitValidator;
 use Jed\Component\Jed\Administrator\Url\Validator\ReachableValidator;
 use Jed\Component\Jed\Administrator\Url\Validator\UpdateServerValidator;
+use Joomla\CMS\Language\Text;
 use RuntimeException;
 
 /**
@@ -103,7 +104,7 @@ class UrlValidatorRegistry
     public function get(string $key): UrlValidatorInterface
     {
         if (!isset($this->validators[$key])) {
-            throw new RuntimeException(\sprintf('No URL validator registered for "%s".', $key));
+            throw new RuntimeException(Text::sprintf('COM_JED_URLCHECK_NO_VALIDATOR', $key));
         }
 
         return $this->validators[$key];

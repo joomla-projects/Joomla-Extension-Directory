@@ -33,7 +33,7 @@ async function setPublished(itemTask, optionId, itemId) {
     //alert(itemId);
     let response = await fetch(url, options);
     if (!response.ok) {
-        throw new Error(Joomla.Text._('COM_MYCOMPONENT_JS_ERROR_STATUS') + `${response.status}`);
+        throw new Error(Joomla.Text._('COM_JED_JS_ERROR_STATUS') + `${response.status}`);
     } else {
         let result = await response.text();
 //alert(result);

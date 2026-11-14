@@ -243,7 +243,7 @@ class CaseModel extends FormModel
         $team = (string) (Factory::getApplication()->getParams('com_vel')->get('contact_email', '') ?: Factory::getApplication()->getParams('com_vel')->get('from_address', ''));
 
         if ($team !== '') {
-            $messages->sendTemplate('com_vel.message', $team, 'VEL team', [
+            $messages->sendTemplate('com_vel.message', $team, Text::_('COM_VEL_TEAM_NAME'), [
                 'REFERENCE' => $this->getReference(),
                 'SUBJECT'   => Text::sprintf('COM_VEL_MSG_REPLY_FROM', (string) ($participant->name ?: $participant->email)),
                 'MESSAGE'   => $body,

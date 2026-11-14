@@ -39,7 +39,7 @@ $retired   = $this->state === AdvisoryState::RETIRED;
 $solution = (string) ($item->solution ?? '');
 
 if ($solution === '') {
-    $fixed    = array_values(array_filter(array_map(static fn ($p): string => (string) $p->fixed_version, (array) $item->products)));
+    $fixed = array_values(array_filter(array_map(static fn ($p): string => (string) $p->fixed_version, (array) $item->products)));
     $solution = $fixed !== []
         ? Text::sprintf('COM_VEL_SOLUTION_DEFAULT_UPDATE', implode(', ', array_unique($fixed)))
         : Text::_('COM_VEL_SOLUTION_DEFAULT_NO_FIX');

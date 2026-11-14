@@ -30,11 +30,11 @@ use Joomla\Registry\Registry;
  */
 class HtmlView extends BaseHtmlView
 {
-    public ?Form $form          = null;
-    public ?Registry $params    = null;
-    public bool $guestsAllowed  = true;
+    public ?Form $form       = null;
+    public ?Registry $params = null;
+    public bool $guestsAllowed = true;
     public string $contactEmail = '';
-    public string $pgpKey       = '';
+    public string $pgpKey = '';
 
     /**
      * @param string|null $tpl The template name.

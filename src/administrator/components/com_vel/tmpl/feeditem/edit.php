@@ -35,14 +35,22 @@ $range = static fn (array $r): string => (string) VersionRange::fromStrings((str
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <span class="font-monospace fs-5"><?php echo $this->escape($item->external_id); ?></span>
         <span class="badge bg-light text-dark"><?php echo Text::_('COM_VEL_FEED_SOURCE_' . strtoupper((string) $item->source)); ?></span>
-        <span class="badge bg-info"><?php echo Text::_($this->classification->label()); ?></span>
-        <span class="badge bg-<?php echo match ($this->decision) {
-            FeedDecision::PENDING => 'warning text-dark', FeedDecision::CREATED, FeedDecision::MERGED => 'success', default => 'secondary'
-        }; ?>"><?php echo Text::_($this->decision->label()); ?></span>
+        <span class="badge bg-<?php echo $this->classification->badge(); ?>"><?php echo Text::_($this->classification->label()); ?></span>
+        <?php if (!empty($item->confidence)) : ?>
+            <span class="small text-muted" title="<?php echo $this->escape(Text::sprintf('COM_VEL_FEED_CLASSIFIED_BY', (string) ($item->classification_reason ?: '—'))); ?>"><?php echo Text::_('COM_VEL_FEED_CONFIDENCE_' . strtoupper((string) $item->confidence)); ?> &middot; <code><?php echo $this->escape((string) $item->classification_reason); ?></code></span>
+        <?php endif; ?>
+        <span class="badge bg-<?php echo match ($this->decision) { FeedDecision::PENDING => 'warning text-dark', FeedDecision::CREATED, FeedDecision::MERGED => 'success', default => 'secondary' }; ?>"><?php echo Text::_($this->decision->label()); ?></span>
         <?php if (!empty($n['source_url'])) : ?>
             <a class="ms-auto small" href="<?php echo $this->escape($n['source_url']); ?>" target="_blank" rel="noopener"><?php echo Text::_('COM_VEL_FEED_VIEW_SOURCE'); ?></a>
         <?php endif; ?>
     </div>
+
+    <?php if ($this->classification === FeedClassification::REJECTED) : ?>
+        <div class="alert alert-danger"><span class="icon-warning" aria-hidden="true"></span> <?php echo Text::_('COM_VEL_FEED_REJECTED_WARNING'); ?></div>
+    <?php endif; ?>
+    <?php if ((string) $item->source === 'nvd' && !empty($n['nvd_status']) && !\in_array((string) $n['nvd_status'], ['Analyzed', 'Modified'], true)) : ?>
+        <div class="alert alert-secondary small"><?php echo Text::sprintf('COM_VEL_FEED_NVD_DEFERRED', $this->escape((string) $n['nvd_status'])); ?></div>
+    <?php endif; ?>
 
     <div class="row">
         <div class="col-lg-6">
@@ -57,7 +65,7 @@ $range = static fn (array $r): string => (string) VersionRange::fromStrings((str
                         <dt class="col-4"><?php echo Text::_('COM_VEL_HEADING_CVSS'); ?></dt>
                         <dd class="col-8"><?php echo !empty($n['cvss']) ? $this->escape((string) $n['cvss']['score'] . ' ' . strtoupper((string) $n['cvss']['severity']) . ' — ' . $n['cvss']['vector'] . ' (' . ($n['cvss']['from'] ?? '') . ')') : '—'; ?></dd>
                         <dt class="col-4"><?php echo Text::_('COM_VEL_HEADING_WEAKNESS'); ?></dt>
-                        <dd class="col-8"><?php echo !empty($n['cwes']) ? $this->escape(implode(', ', array_map(static fn ($c) => (string) $c['id'], $n['cwes']))) : '—'; ?></dd>
+                        <dd class="col-8"><?php echo !empty($n['cwes']) ? $this->escape(implode(', ', array_map(static fn ($c) => (string) $c['id'], $n['cwes']))) : $this->escape((string) ($n['problem_text'] ?? '—')); ?></dd>
                     </dl>
                     <p class="text-prewrap"><?php echo nl2br($this->escape((string) ($n['description'] ?? ''))); ?></p>
                     <h4 class="h6"><?php echo Text::_('COM_VEL_HEADING_AFFECTED'); ?></h4>
@@ -90,16 +98,16 @@ $range = static fn (array $r): string => (string) VersionRange::fromStrings((str
                     <?php if ($advisory === null) : ?>
                         <p class="text-muted"><?php echo Text::_('COM_VEL_FEED_NO_ADVISORY'); ?></p>
                         <?php if ($this->canDecide && $this->decision === FeedDecision::PENDING) : ?>
-                            <?php if ($this->classification !== FeedClassification::JOOMLA_CORE) : ?>
+                            <?php if ($this->classification === FeedClassification::JOOMLA_CORE) : ?>
+                                <div class="alert alert-secondary"><?php echo Text::_('COM_VEL_FEED_CORE_NOTE'); ?></div>
+                            <?php elseif ($this->classification !== FeedClassification::REJECTED) : ?>
                                 <button type="button" class="btn btn-primary mb-3" onclick="Joomla.submitbutton('feeditem.create')">
                                     <span class="icon-plus" aria-hidden="true"></span> <?php echo Text::_('COM_VEL_BUTTON_FEED_CREATE'); ?>
                                 </button>
-                            <?php else : ?>
-                                <div class="alert alert-secondary"><?php echo Text::_('COM_VEL_FEED_CORE_NOTE'); ?></div>
                             <?php endif; ?>
                             <fieldset class="mb-3">
                                 <legend class="fs-6"><?php echo Text::_('COM_VEL_LEGEND_MERGE_INTO'); ?></legend>
-                                <input type="text" class="form-control mb-2" name="advisory_reference" placeholder="VEL-0042">
+                                <input type="text" class="form-control mb-2" name="advisory_reference" placeholder="<?php echo $this->escape(Text::_('COM_VEL_PLACEHOLDER_ADVISORY_REFERENCE')); ?>" aria-label="<?php echo $this->escape(Text::_('COM_VEL_ATTACH_REFERENCE')); ?>">
                                 <button type="button" class="btn btn-outline-primary" onclick="Joomla.submitbutton('feeditem.merge')"><?php echo Text::_('COM_VEL_BUTTON_FEED_MERGE'); ?></button>
                             </fieldset>
                         <?php endif; ?>

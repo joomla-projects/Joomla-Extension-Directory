@@ -18,6 +18,7 @@ namespace Jed\Component\Vel\Administrator\Model;
 
 use InvalidArgumentException;
 use Jed\Component\Vel\Administrator\Cvss\Cvss;
+use Jed\Component\Vel\Administrator\Cvss\CvssException;
 use Jed\Component\Vel\Administrator\Enum\AdvisoryState;
 use Jed\Component\Vel\Administrator\Enum\AdvisoryStatus;
 use Jed\Component\Vel\Administrator\Enum\CreditRole;
@@ -249,8 +250,8 @@ class AdvisoryModel extends AdminModel
         if ($vector !== '') {
             try {
                 $result = Cvss::evaluate($vector, $score);
-            } catch (InvalidArgumentException $e) {
-                $this->setError(Text::sprintf('COM_VEL_ERROR_CVSS', $e->getMessage()));
+            } catch (CvssException $e) {
+                $this->setError(Text::sprintf('COM_VEL_ERROR_CVSS', Text::sprintf($e->getMessage(), ...$e->args)));
 
                 return false;
             }

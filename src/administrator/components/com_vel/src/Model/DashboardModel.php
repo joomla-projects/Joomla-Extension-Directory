@@ -78,16 +78,16 @@ class DashboardModel extends BaseDatabaseModel
         $pending   = FeedDecision::PENDING->value;
 
         return [
-            'reports_new'       => $count('#__vel_reports', [$db->quoteName('state') . ' = :s'], [':s' => [$new, ParameterType::STRING]]),
-            'reports_verifying' => $count('#__vel_reports', [$db->quoteName('state') . ' = :s'], [':s' => [$verifying, ParameterType::STRING]]),
-            'drafts'            => $count('#__vel_advisories', [$db->quoteName('state') . ' = :s'], [':s' => [$draft, ParameterType::STRING]]),
-            'ready'             => $count('#__vel_advisories', [$db->quoteName('state') . ' = :s'], [':s' => [$ready, ParameterType::STRING]]),
-            'published_live'    => $count('#__vel_advisories', [$db->quoteName('state') . ' = :s', $db->quoteName('status') . ' = :st'], [':s' => [$published, ParameterType::STRING], ':st' => [$live, ParameterType::STRING]]),
-            'published_total'   => $count('#__vel_advisories', [$db->quoteName('state') . ' = :s'], [':s' => [$published, ParameterType::STRING]]),
-            'embargo_due'       => $count('#__vel_advisories', [$db->quoteName('state') . ' IN (:a, :b)', $db->quoteName('date_public') . ' IS NOT NULL', $db->quoteName('date_public') . ' <= :soon'], [':a' => [$draft, ParameterType::STRING], ':b' => [$ready, ParameterType::STRING], ':soon' => [$soon, ParameterType::STRING]]),
-            'embargo_passed'    => $count('#__vel_advisories', [$db->quoteName('state') . ' IN (:a, :b)', $db->quoteName('date_public') . ' IS NOT NULL', $db->quoteName('date_public') . ' < :today'], [':a' => [$draft, ParameterType::STRING], ':b' => [$ready, ParameterType::STRING], ':today' => [$today, ParameterType::STRING]]),
-            'vendor_overdue'    => $count('#__vel_advisories', [$db->quoteName('state') . ' IN (:a, :b)', $db->quoteName('status') . ' = :st', $db->quoteName('date_vendor_notified') . ' IS NOT NULL', $db->quoteName('date_vendor_notified') . ' < :window', $db->quoteName('date_fixed') . ' IS NULL'], [':a' => [$draft, ParameterType::STRING], ':b' => [$ready, ParameterType::STRING], ':st' => [$live, ParameterType::STRING], ':window' => [$window, ParameterType::STRING]]),
-            'feed_pending'      => $count('#__vel_feed_items', [$db->quoteName('decision') . ' = :d'], [':d' => [$pending, ParameterType::STRING]]),
+            'reports_new'        => $count('#__vel_reports', [$db->quoteName('state') . ' = :s'], [':s' => [$new, ParameterType::STRING]]),
+            'reports_verifying'  => $count('#__vel_reports', [$db->quoteName('state') . ' = :s'], [':s' => [$verifying, ParameterType::STRING]]),
+            'drafts'             => $count('#__vel_advisories', [$db->quoteName('state') . ' = :s'], [':s' => [$draft, ParameterType::STRING]]),
+            'ready'              => $count('#__vel_advisories', [$db->quoteName('state') . ' = :s'], [':s' => [$ready, ParameterType::STRING]]),
+            'published_live'     => $count('#__vel_advisories', [$db->quoteName('state') . ' = :s', $db->quoteName('status') . ' = :st'], [':s' => [$published, ParameterType::STRING], ':st' => [$live, ParameterType::STRING]]),
+            'published_total'    => $count('#__vel_advisories', [$db->quoteName('state') . ' = :s'], [':s' => [$published, ParameterType::STRING]]),
+            'embargo_due'        => $count('#__vel_advisories', [$db->quoteName('state') . ' IN (:a, :b)', $db->quoteName('date_public') . ' IS NOT NULL', $db->quoteName('date_public') . ' <= :soon'], [':a' => [$draft, ParameterType::STRING], ':b' => [$ready, ParameterType::STRING], ':soon' => [$soon, ParameterType::STRING]]),
+            'embargo_passed'     => $count('#__vel_advisories', [$db->quoteName('state') . ' IN (:a, :b)', $db->quoteName('date_public') . ' IS NOT NULL', $db->quoteName('date_public') . ' < :today'], [':a' => [$draft, ParameterType::STRING], ':b' => [$ready, ParameterType::STRING], ':today' => [$today, ParameterType::STRING]]),
+            'vendor_overdue'     => $count('#__vel_advisories', [$db->quoteName('state') . ' IN (:a, :b)', $db->quoteName('status') . ' = :st', $db->quoteName('date_vendor_notified') . ' IS NOT NULL', $db->quoteName('date_vendor_notified') . ' < :window', $db->quoteName('date_fixed') . ' IS NULL'], [':a' => [$draft, ParameterType::STRING], ':b' => [$ready, ParameterType::STRING], ':st' => [$live, ParameterType::STRING], ':window' => [$window, ParameterType::STRING]]),
+            'feed_pending'       => $count('#__vel_feed_items', [$db->quoteName('decision') . ' = :d'], [':d' => [$pending, ParameterType::STRING]]),
         ];
     }
 

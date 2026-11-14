@@ -835,18 +835,18 @@ class VelService
         $now = Factory::getDate()->toSql();
 
         $row = (object) array_merge([
-            'title'        => '',
-            'alias'        => '',
-            'state'        => AdvisoryState::DRAFT->value,
-            'status'       => AdvisoryStatus::LIVE->value,
-            'description'  => '',
-            'exploited'    => 'unknown',
-            'discovery'    => 'UNKNOWN',
-            'cve_state'    => CveState::NONE->value,
-            'cve_assigner' => '',
-            'source'       => $source->value,
-            'created'      => $now,
-            'created_by'   => $actorId,
+            'title'         => '',
+            'alias'         => '',
+            'state'         => AdvisoryState::DRAFT->value,
+            'status'        => AdvisoryStatus::LIVE->value,
+            'description'   => '',
+            'exploited'     => 'unknown',
+            'discovery'     => 'UNKNOWN',
+            'cve_state'     => CveState::NONE->value,
+            'cve_assigner'  => '',
+            'source'        => $source->value,
+            'created'       => $now,
+            'created_by'    => $actorId,
         ], $data);
 
         $row->source = $source->value;

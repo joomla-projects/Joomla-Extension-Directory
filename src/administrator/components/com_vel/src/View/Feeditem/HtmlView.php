@@ -31,10 +31,10 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
  */
 class HtmlView extends BaseHtmlView
 {
-    public mixed $item                        = null;
-    public FeedClassification $classification = FeedClassification::UNKNOWN;
-    public FeedDecision $decision             = FeedDecision::PENDING;
-    public bool $canDecide                    = false;
+    public mixed $item = null;
+    public FeedClassification $classification = FeedClassification::UNCLASSIFIED;
+    public FeedDecision $decision = FeedDecision::PENDING;
+    public bool $canDecide = false;
 
     /**
      * @param string|null $tpl The template name.
@@ -53,7 +53,7 @@ class HtmlView extends BaseHtmlView
             throw new Exception(Text::_('COM_VEL_ERROR_FEED_ITEM_NOT_FOUND'), 404);
         }
 
-        $this->classification = FeedClassification::tryFrom((string) $this->item->classification) ?? FeedClassification::UNKNOWN;
+        $this->classification = FeedClassification::tryFrom((string) $this->item->classification) ?? FeedClassification::UNCLASSIFIED;
         $this->decision       = FeedDecision::tryFrom((string) $this->item->decision) ?? FeedDecision::PENDING;
         $this->canDecide      = (bool) Factory::getApplication()->getIdentity()->authorise('vel.feeds', 'com_vel');
 

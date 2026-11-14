@@ -120,7 +120,7 @@ class PlgSampledataJed2 extends CMSPlugin
 
         // --- Home -----------------------------------------------------------------------
         $this->createMenuItem($db, [
-            'title'        => 'Show Categories',
+            'title'        => Text::_('PLG_SAMPLEDATA_JED2_MENU_SHOW_CATEGORIES'),
             'alias'        => 'show-categories',
             'path'         => 'show-categories',
             'link'         => 'index.php?option=com_jed&view=categories&id=0',
@@ -129,7 +129,7 @@ class PlgSampledataJed2 extends CMSPlugin
 
         // --- Browse Extensions (parent, plain "#" url) + its 7 children -----------------
         $browseExtensionsId = $this->createMenuItem($db, [
-            'title'        => 'Browse Extensions',
+            'title'        => Text::_('PLG_SAMPLEDATA_JED2_MENU_BROWSE_EXTENSIONS'),
             'alias'        => 'browse-extensions',
             'path'         => 'browse-extensions',
             'link'         => '#',
@@ -144,47 +144,47 @@ class PlgSampledataJed2 extends CMSPlugin
             // name mean different things without anything noticing.
             $presets = [
                 [
-                    'title'  => 'Top Rated',
+                    'title'  => Text::_('PLG_SAMPLEDATA_JED2_MENU_TOP_RATED'),
                     'alias'  => 'top-rated',
                     'browse' => 'top-rated',
                 ],
                 [
-                    'title'  => 'Most Reviewed',
+                    'title'  => Text::_('PLG_SAMPLEDATA_JED2_MENU_MOST_REVIEWED'),
                     'alias'  => 'most-reviewed',
                     'browse' => 'most-reviewed',
                 ],
                 [
-                    'title'  => 'Recently Added',
+                    'title'  => Text::_('PLG_SAMPLEDATA_JED2_MENU_RECENTLY_ADDED'),
                     'alias'  => 'recently-added',
                     'browse' => 'recently-added',
                 ],
                 [
-                    'title'  => 'New & Noteworthy',
+                    'title'  => Text::_('PLG_SAMPLEDATA_JED2_MENU_NEW_NOTEWORTHY'),
                     'alias'  => 'new-noteworthy',
                     'browse' => 'new-noteworthy',
                 ],
                 [
-                    'title'  => 'Recently updated',
+                    'title'  => Text::_('PLG_SAMPLEDATA_JED2_MENU_RECENTLY_UPDATED'),
                     'alias'  => 'recently-updated',
                     'browse' => 'recently-updated',
                 ],
                 [
-                    'title' => 'Compatible with J4',
+                    'title' => Text::_('PLG_SAMPLEDATA_JED2_MENU_COMPATIBLE_WITH_J4'),
                     'alias' => 'compatible-with-j4',
                     'query' => 'filter_joomla_version=40',
                 ],
                 [
-                    'title' => 'Compatible with J5',
+                    'title' => Text::_('PLG_SAMPLEDATA_JED2_MENU_COMPATIBLE_WITH_J5'),
                     'alias' => 'compatible-with-j5',
                     'query' => 'filter_joomla_version=50',
                 ],
                 [
-                    'title' => 'Compatible with J5 (B/C plugin)',
+                    'title' => Text::_('PLG_SAMPLEDATA_JED2_MENU_COMPATIBLE_WITH_J5_B_C_PLUGIN'),
                     'alias' => 'compatible-with-j5-bc',
                     'query' => 'filter_joomla_version=51',
                 ],
                 [
-                    'title' => 'Compatible with J6',
+                    'title' => Text::_('PLG_SAMPLEDATA_JED2_MENU_COMPATIBLE_WITH_J6'),
                     'alias' => 'compatible-with-j6',
                     'query' => 'filter_joomla_version=60',
                 ],
@@ -192,7 +192,7 @@ class PlgSampledataJed2 extends CMSPlugin
                 // the legacy site had entry pages for them. Without these the ids exist in the
                 // data and nothing ever links to them (P1-13 item 7).
                 [
-                    'title' => 'Compatible with J6 (B/C plugin)',
+                    'title' => Text::_('PLG_SAMPLEDATA_JED2_MENU_COMPATIBLE_WITH_J6_B_C_PLUGIN'),
                     'alias' => 'compatible-with-j6-bc',
                     'query' => 'filter_joomla_version=61',
                 ],
@@ -203,10 +203,10 @@ class PlgSampledataJed2 extends CMSPlugin
                 // variable, because that is a filter of the ordinary list rather than a list of
                 // its own.
                 $item = [
-                    'title' => $preset['title'],
-                    'alias' => $preset['alias'],
-                    'path'  => 'browse-extensions/' . $preset['alias'],
-                    'link'  => 'index.php?option=com_jed&view=extensions'
+                    'title'        => $preset['title'],
+                    'alias'        => $preset['alias'],
+                    'path'         => 'browse-extensions/' . $preset['alias'],
+                    'link'         => 'index.php?option=com_jed&view=extensions'
                         . (isset($preset['query']) ? '&' . $preset['query'] : ''),
                     'component_id' => $componentIds['com_jed'],
                 ];
@@ -229,7 +229,7 @@ class PlgSampledataJed2 extends CMSPlugin
         // the new VEL, which serves it from this same installation, and the JED's one obligation
         // there is to stay out of the way (P0-04 question 2).
         $this->createMenuItem($db, [
-            'title'        => 'Abandoned Extensions',
+            'title'        => Text::_('PLG_SAMPLEDATA_JED2_MENU_ABANDONED_EXTENSIONS'),
             'alias'        => 'abandoned-extensions',
             'path'         => 'abandoned-extensions',
             'link'         => 'index.php?option=com_abandonware&view=abandoned',
@@ -237,7 +237,7 @@ class PlgSampledataJed2 extends CMSPlugin
         ], 1, $messages);
 
         $this->createMenuItem($db, [
-            'title'        => 'Report an Abandoned Extension',
+            'title'        => Text::_('PLG_SAMPLEDATA_JED2_MENU_REPORT_AN_ABANDONED_EXTENSION'),
             'alias'        => 'report-abandoned-extension',
             'path'         => 'report-abandoned-extension',
             'link'         => 'index.php?option=com_abandonware&view=report',
@@ -250,7 +250,7 @@ class PlgSampledataJed2 extends CMSPlugin
         // two forms get items of their own so they have titles in the menu.
         if (!empty($componentIds['com_vel'])) {
             $velId = $this->createMenuItem($db, [
-                'title'        => 'Vulnerable Extensions List',
+                'title'        => Text::_('PLG_SAMPLEDATA_JED2_MENU_VULNERABLE_EXTENSIONS_LIST'),
                 'alias'        => 'vulnerable-extensions',
                 'path'         => 'vulnerable-extensions',
                 'link'         => 'index.php?option=com_vel&view=advisories',
@@ -258,7 +258,7 @@ class PlgSampledataJed2 extends CMSPlugin
             ], 1, $messages);
 
             $this->createMenuItem($db, [
-                'title'        => 'Report a Vulnerability',
+                'title'        => Text::_('PLG_SAMPLEDATA_JED2_MENU_REPORT_A_VULNERABILITY'),
                 'alias'        => 'report',
                 'path'         => 'vulnerable-extensions/report',
                 'link'         => 'index.php?option=com_vel&view=report',
@@ -266,7 +266,7 @@ class PlgSampledataJed2 extends CMSPlugin
             ], $velId, $messages);
 
             $this->createMenuItem($db, [
-                'title'        => 'Submit a Fix Notice',
+                'title'        => Text::_('PLG_SAMPLEDATA_JED2_MENU_SUBMIT_A_FIX_NOTICE'),
                 'alias'        => 'fixnotice',
                 'path'         => 'vulnerable-extensions/fixnotice',
                 'link'         => 'index.php?option=com_vel&view=fixnotice',
@@ -276,7 +276,7 @@ class PlgSampledataJed2 extends CMSPlugin
 
         // --- Search / Login / Register / New Extension / Dashboard ----------------------
         $this->createMenuItem($db, [
-            'title'        => 'Search',
+            'title'        => Text::_('PLG_SAMPLEDATA_JED2_MENU_SEARCH'),
             'alias'        => 'search',
             'path'         => 'search',
             'link'         => 'index.php?option=com_finder&view=search',
@@ -290,7 +290,7 @@ class PlgSampledataJed2 extends CMSPlugin
         // natively for every imported tag. Nothing to redirect, and nothing for P1-25 to map -
         // but also nothing that may take the "tags" alias away from this item.
         $this->createMenuItem($db, [
-            'title'        => 'Tags',
+            'title'        => Text::_('PLG_SAMPLEDATA_JED2_MENU_TAGS'),
             'alias'        => 'tags',
             'path'         => 'tags',
             'link'         => 'index.php?option=com_tags&view=tags',
@@ -298,7 +298,7 @@ class PlgSampledataJed2 extends CMSPlugin
         ], 1, $messages);
 
         $this->createMenuItem($db, [
-            'title'        => 'Login',
+            'title'        => Text::_('PLG_SAMPLEDATA_JED2_MENU_LOGIN'),
             'alias'        => 'login',
             'path'         => 'login',
             'link'         => 'index.php?option=com_users&view=login',
@@ -306,7 +306,7 @@ class PlgSampledataJed2 extends CMSPlugin
         ], 1, $messages);
 
         $this->createMenuItem($db, [
-            'title'        => 'Register',
+            'title'        => Text::_('PLG_SAMPLEDATA_JED2_MENU_REGISTER'),
             'alias'        => 'register',
             'path'         => 'register',
             'link'         => 'index.php?option=com_users&view=registration',
@@ -314,7 +314,7 @@ class PlgSampledataJed2 extends CMSPlugin
         ], 1, $messages);
 
         $this->createMenuItem($db, [
-            'title'        => 'New Extension',
+            'title'        => Text::_('PLG_SAMPLEDATA_JED2_MENU_NEW_EXTENSION'),
             'alias'        => 'new-extension',
             'path'         => 'new-extension',
             'link'         => 'index.php?option=com_jed&view=newextension',
@@ -322,7 +322,7 @@ class PlgSampledataJed2 extends CMSPlugin
         ], 1, $messages);
 
         $this->createMenuItem($db, [
-            'title'        => 'Dashboard',
+            'title'        => Text::_('PLG_SAMPLEDATA_JED2_MENU_DASHBOARD'),
             'alias'        => 'dashboard',
             'path'         => 'dashboard',
             'link'         => 'index.php?option=com_jed&view=dashboard',
@@ -330,7 +330,7 @@ class PlgSampledataJed2 extends CMSPlugin
         ], 1, $messages);
 
         $this->createMenuItem($db, [
-            'title'        => 'Tickets',
+            'title'        => Text::_('PLG_SAMPLEDATA_JED2_MENU_TICKETS'),
             'alias'        => 'tickets',
             'path'         => 'tickets',
             'link'         => 'index.php?option=com_jed&view=tickets',
@@ -338,7 +338,7 @@ class PlgSampledataJed2 extends CMSPlugin
         ], 1, $messages);
 
         $this->createMenuItem($db, [
-            'title'        => 'Ticketform',
+            'title'        => Text::_('PLG_SAMPLEDATA_JED2_MENU_TICKETFORM'),
             'alias'        => 'ticketform',
             'path'         => 'ticketform',
             'link'         => 'index.php?option=com_jed&view=ticketform',
@@ -401,7 +401,7 @@ class PlgSampledataJed2 extends CMSPlugin
 
         $menuType              = new MenuTypeTable($db);
         $menuType->menutype    = 'mainmenu';
-        $menuType->title       = 'Main Menu';
+        $menuType->title       = Text::_('PLG_SAMPLEDATA_JED2_MENU_MAIN_MENU');
         $menuType->description = '';
         $menuType->client_id   = 0;
         $menuType->store();
@@ -443,18 +443,18 @@ class PlgSampledataJed2 extends CMSPlugin
         // browse-list preset reaches the menu item rather than the URL (P1-13).
         $menuItem->params = json_encode(array_merge(
             [
-                'menu-anchor_title'     => '',
-                'menu-anchor_css'       => '',
-                'menu_image'            => '',
-                'menu_image_css'        => '',
-                'menu_text'             => 1,
-                'menu_show'             => 1,
-                'page_title'            => '',
-                'show_page_heading'     => '',
-                'page_heading'          => '',
-                'pageclass_sfx'         => '',
+                'menu-anchor_title'    => '',
+                'menu-anchor_css'      => '',
+                'menu_image'           => '',
+                'menu_image_css'       => '',
+                'menu_text'            => 1,
+                'menu_show'            => 1,
+                'page_title'           => '',
+                'show_page_heading'    => '',
+                'page_heading'         => '',
+                'pageclass_sfx'        => '',
                 'menu-meta_description' => '',
-                'robots'                => '',
+                'robots'               => '',
             ],
             isset($data['params']) ? (array) json_decode((string) $data['params'], true) : []
         ));

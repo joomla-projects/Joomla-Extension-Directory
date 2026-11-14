@@ -80,7 +80,9 @@ final class WebhookReceiver
         }
 
         if (!\is_array($from) || empty($from['email'])) {
-            throw new InvalidArgumentException('The payload carries no sender.');
+            // A language key: this class runs without Joomla (it is unit-tested that way), so the
+            // controller translates it.
+            throw new InvalidArgumentException('COM_VEL_ERROR_WEBHOOK_NO_SENDER');
         }
 
         $headers = [];

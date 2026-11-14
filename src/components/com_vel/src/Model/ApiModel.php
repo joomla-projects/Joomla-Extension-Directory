@@ -26,6 +26,7 @@ use Jed\Component\Vel\Site\Helper\VelHelper;
 use Joomla\CMS\Cache\CacheControllerFactoryInterface;
 use Joomla\CMS\Cache\Controller\CallbackController;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
@@ -87,9 +88,9 @@ class ApiModel extends BaseDatabaseModel
         $root = rtrim(\Joomla\CMS\Uri\Uri::root(), '/') . VelHelper::listPath();
 
         return [
-            'name'      => 'Joomla Vulnerable Extension List API',
-            'version'   => '2.0',
-            'endpoints' => [
+            'name'        => Text::_('COM_VEL_API_NAME'),
+            'version'     => '2.0',
+            'endpoints'   => [
                 'advisories' => $root . '/api/v2/advisories.json',
                 'advisory'   => $root . '/api/v2/advisories/{id|VEL-0042|CVE-YYYY-NNNN}.json',
                 'cve'        => $root . '/api/v2/cve/{CVE-YYYY-NNNN}.json',
@@ -99,12 +100,12 @@ class ApiModel extends BaseDatabaseModel
                 'atom'       => $root . '?format=feed&type=atom',
                 'html'       => $root,
             ],
-            'filters' => ['status', 'search', 'severity', 'cvss_min', 'cvss_max', 'vendor', 'type', 'element', 'cve', 'from', 'to', 'updated_since', 'include_withdrawn', 'sort', 'dir', 'limit', 'limitstart'],
-            'dataset' => [
+            'filters'     => ['status', 'search', 'severity', 'cvss_min', 'cvss_max', 'vendor', 'type', 'element', 'cve', 'from', 'to', 'updated_since', 'include_withdrawn', 'sort', 'dir', 'limit', 'limitstart'],
+            'dataset'     => [
                 'etag'                  => $this->getDatasetVersion(),
                 'retired_included_days' => (int) VelHelper::option('retired_in_dataset_days', 365),
             ],
-            'check' => [
+            'check'       => [
                 'method'      => 'POST',
                 'max_entries' => (int) VelHelper::option('check_max_entries', 500),
             ],
@@ -221,13 +222,13 @@ class ApiModel extends BaseDatabaseModel
         $entries = $body['extensions'] ?? null;
 
         if (!\is_array($entries)) {
-            throw new \InvalidArgumentException('The body must carry an "extensions" array.');
+            throw new \InvalidArgumentException(Text::_('COM_VEL_API_ERROR_NO_EXTENSIONS'));
         }
 
         $max = (int) VelHelper::option('check_max_entries', 500);
 
         if (\count($entries) > $max) {
-            throw new \InvalidArgumentException(\sprintf('At most %d extensions per call.', $max));
+            throw new \InvalidArgumentException(Text::sprintf('COM_VEL_API_ERROR_TOO_MANY', $max));
         }
 
         $identities = [];
@@ -240,7 +241,7 @@ class ApiModel extends BaseDatabaseModel
 
             $identity = Identity::normalise($entry['type'] ?? null, $entry['element'] ?? null, $entry['folder'] ?? null, $entry['client_id'] ?? null);
             $parsed[] = [
-                'input' => [
+                'input'    => [
                     'type'      => $identity->type?->value,
                     'element'   => $identity->element,
                     'folder'    => $identity->folder,
@@ -324,7 +325,7 @@ class ApiModel extends BaseDatabaseModel
         }
 
         return [
-            'meta' => [
+            'meta'    => [
                 'checked'      => \count($results),
                 'generated'    => gmdate('Y-m-d\TH:i:s\Z'),
                 'dataset_etag' => $this->getDatasetVersion(),

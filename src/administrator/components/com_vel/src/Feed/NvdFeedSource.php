@@ -17,17 +17,21 @@ namespace Jed\Component\Vel\Administrator\Feed;
 // phpcs:enable PSR1.Files.SideEffects
 
 use DateTimeImmutable;
-use Jed\Component\Vel\Administrator\Enum\FeedClassification;
 use Jed\Component\Vel\Administrator\Enum\FeedSource;
-use Joomla\CMS\Log\Log;
+use Joomla\CMS\Language\Text;
 
 /**
  * The NVD feed (VEL2-PRD §6.6.2): discovery by keyword, enrichment by id.
  *
- * The NVD's own source identifier for a record is an address, not a CNA short name, so the
- * classifier's "ours" test cannot fire here; what the NVD contributes for our own records is
- * enrichment, done by {@see self::fetchOne()} for every advisory with a CVE id. Discovery keeps
- * other-CNA records that name a Joomla extension.
+ * The classifier recognises our own records by the NVD's `sourceIdentifier`
+ * (`security@joomla.org`). What the NVD contributes for them is enrichment - CVSS, CWE, CPE
+ * bounds - done by {@see self::fetchOne()} for every advisory with a CVE id, and it comes back
+ * empty for most recent records (`Deferred`: 209 of the 326 records of 2026). Discovery keeps
+ * other CNAs' records that name a Joomla extension and queues mere mentions for a person.
+ *
+ * Errors: the NVD answers a bad request with 404 and a `message` header; `NvdClient` turns
+ * that into an exception, and this source lets it end the run loudly rather than as "nothing
+ * found".
  *
  * @since 4.0.0
  */
@@ -58,6 +62,20 @@ final class NvdFeedSource implements FeedSourceInterface
     }
 
     /**
+     * The widest window the API accepts, less a day of margin.
+     *
+     * @since 4.0.0
+     */
+    public const WINDOW_DAYS = 119;
+
+    /**
+     * Results per discovery page.
+     *
+     * @since 4.0.0
+     */
+    public const PER_PAGE = 500;
+
+    /**
      * @param DateTimeImmutable $from     Window start.
      * @param DateTimeImmutable $to       Window end.
      * @param callable          $deadline Budget check.
@@ -72,7 +90,7 @@ final class NvdFeedSource implements FeedSourceInterface
         $cursor = $from;
 
         while ($cursor < $to) {
-            $end   = min($to, $cursor->modify('+119 days'));
+            $end   = min($to, $cursor->modify('+' . self::WINDOW_DAYS . ' days'));
             $start = 0;
 
             do {
@@ -80,46 +98,65 @@ final class NvdFeedSource implements FeedSourceInterface
                     return;
                 }
 
-                try {
-                    $page = $this->client->search($this->keyword, $cursor, $end, $start, 500);
-                } catch (\Throwable $e) {
-                    Log::add('VEL NVD feed: ' . $e->getMessage(), Log::WARNING, 'com_vel');
+                $page = $this->page($cursor, $end, $start);
 
-                    return;
-                }
+                yield from $page['records'];
 
-                $items = (array) ($page['vulnerabilities'] ?? []);
-
-                foreach ($items as $item) {
-                    if (!\is_array($item)) {
-                        continue;
-                    }
-
-                    $mapped = NvdRecordMapper::map($item);
-
-                    if ($mapped === null) {
-                        continue;
-                    }
-
-                    $mapped->classification = $this->classifier->classify($mapped);
-
-                    // Core and "mentions Joomla somewhere" are the NVD's only useful verdicts;
-                    // a description that merely contains the word is the one to review.
-                    if ($mapped->classification === FeedClassification::UNRELATED && (bool) ($mapped->normalised['mentions_joomla'] ?? false)) {
-                        $mapped->classification = FeedClassification::UNKNOWN;
-                    }
-
-                    if ($mapped->classification !== FeedClassification::UNRELATED && $this->classifier->worthKeeping($mapped->classification) || $mapped->classification === FeedClassification::UNKNOWN) {
-                        yield $mapped;
-                    }
-                }
-
-                $total = (int) ($page['totalResults'] ?? 0);
-                $start += max(1, \count($items));
-            } while ($items !== [] && $start < $total);
+                $start += max(1, $page['count']);
+            } while ($page['count'] > 0 && $start < $page['total']);
 
             $cursor = $end;
         }
+    }
+
+    /**
+     * One page of discovery: a single request, so a run split into short steps can do one at
+     * a time and remember `startIndex` in between.
+     *
+     * @param DateTimeImmutable $from  Window start (at most {@see self::WINDOW_DAYS} before `$to`).
+     * @param DateTimeImmutable $to    Window end.
+     * @param int               $start `startIndex`.
+     *
+     * @return array{records: list<FeedRecord>, count: int, total: int}
+     *         `records` holds the ones worth keeping; `count` is how many the page carried in
+     *         all, which is what advances `startIndex`.
+     *
+     * @throws \RuntimeException  When the NVD refuses or fails the request.
+     *
+     * @since 4.0.0
+     */
+    public function page(DateTimeImmutable $from, DateTimeImmutable $to, int $start): array
+    {
+        try {
+            $page = $this->client->search($this->keyword, $from, $to, $start, self::PER_PAGE);
+        } catch (\Throwable $e) {
+            // A refused request is our bug (404 + message) or a rate limit; either way
+            // the run must say so, not report a clean empty window.
+            throw new \RuntimeException(Text::sprintf('COM_VEL_ERROR_NVD_DISCOVERY', $e->getMessage()), 0, $e);
+        }
+
+        $items   = (array) ($page['vulnerabilities'] ?? []);
+        $records = [];
+
+        foreach ($items as $item) {
+            if (!\is_array($item)) {
+                continue;
+            }
+
+            $mapped = NvdRecordMapper::map($item);
+
+            if ($mapped === null) {
+                continue;
+            }
+
+            $this->classifier->classify($mapped);
+
+            if ($this->classifier->worthKeeping($mapped->classification)) {
+                $records[] = $mapped;
+            }
+        }
+
+        return ['records' => $records, 'count' => \count($items), 'total' => (int) ($page['totalResults'] ?? 0)];
     }
 
     /**
@@ -140,7 +177,7 @@ final class NvdFeedSource implements FeedSourceInterface
         $mapped = NvdRecordMapper::map($item);
 
         if ($mapped !== null) {
-            $mapped->classification = $this->classifier->classify($mapped);
+            $this->classifier->classify($mapped);
         }
 
         return $mapped;

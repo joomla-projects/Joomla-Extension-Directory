@@ -112,6 +112,14 @@ class FeeditemController extends FormController
             return;
         }
 
+        // A rejected CVE never becomes an advisory (feeds PRD §5.1 rule 2). The button is not
+        // rendered for one, but the task is reachable by URL.
+        if ($loaded['record']->classification === FeedClassification::REJECTED) {
+            $this->fail($id, Text::_('COM_VEL_ERROR_FEED_REJECTED'));
+
+            return;
+        }
+
         try {
             $db         = Factory::getContainer()->get(DatabaseInterface::class);
             $merger     = new AdvisoryMerger($db, new VelService($db));

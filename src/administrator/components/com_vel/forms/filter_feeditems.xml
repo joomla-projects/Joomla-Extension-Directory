@@ -16,7 +16,8 @@
             <option value="joomla_cna">COM_VEL_FEED_CLASS_JOOMLA_CNA</option>
             <option value="joomla_extension_other_cna">COM_VEL_FEED_CLASS_JOOMLA_EXTENSION_OTHER_CNA</option>
             <option value="joomla_core">COM_VEL_FEED_CLASS_JOOMLA_CORE</option>
-            <option value="unknown">COM_VEL_FEED_CLASS_UNKNOWN</option>
+            <option value="rejected">COM_VEL_FEED_CLASS_REJECTED</option>
+            <option value="unclassified">COM_VEL_FEED_CLASS_UNCLASSIFIED</option>
         </field>
 
         <field name="source" type="list" label="COM_VEL_FILTER_FEED_SOURCE" onchange="this.form.submit();">

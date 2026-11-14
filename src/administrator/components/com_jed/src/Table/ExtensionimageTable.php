@@ -155,13 +155,13 @@ class ExtensionimageTable extends Table
                 if ($fileError > 0 && $fileError != 4) {
                     switch ($fileError) {
                         case 1:
-                            $message = Text::_('File size exceeds allowed by the server');
+                            $message = Text::_('COM_JED_UPLOAD_ERROR_INI_SIZE');
                             break;
                         case 2:
-                            $message = Text::_('File size exceeds allowed by the html form');
+                            $message = Text::_('COM_JED_UPLOAD_ERROR_FORM_SIZE');
                             break;
                         case 3:
-                            $message = Text::_('Partial upload error');
+                            $message = Text::_('COM_JED_UPLOAD_ERROR_PARTIAL');
                             break;
                     }
 
@@ -185,7 +185,7 @@ class ExtensionimageTable extends Table
 
                     if (!file_exists($uploadPath)) {
                         if (!File::upload($fileTemp, $uploadPath)) {
-                            $app->enqueueMessage('Error moving file', 'warning');
+                            $app->enqueueMessage(Text::_('COM_JED_UPLOAD_ERROR_MOVE'), 'warning');
 
                             return false;
                         }

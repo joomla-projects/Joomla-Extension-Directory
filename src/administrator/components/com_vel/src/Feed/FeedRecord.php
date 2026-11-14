@@ -27,24 +27,28 @@ use Jed\Component\Vel\Administrator\Enum\FeedSource;
  * The `normalised` array:
  *
  *   cve_id, assigner, state, title, description, description_html,
- *   affected[]   {vendor, product, versions[] {from, to, fixed}, platforms[], collection_url, package}
+ *   affected[]   {vendor, product, versions[] {from, to}, fixed, platforms[], collection_url, package}
+ *   cpes[]       {vendor, product, target_sw}     (NVD only)
  *   cwes[]       {id, description}
+ *   problem_text string                           (a problemType with no CWE id, legacy records)
  *   cvss         {version, vector, score, severity} | null
  *   references[] {url, tags[]}
  *   credits[]    {name, role}
  *   dates        {reserved, published, updated}  (SQL datetimes, UTC)
- *   source_url, mentions_joomla (bool), is_core (bool)
+ *   source_url, mentions_joomla (bool), is_core (bool), nvd_status (NVD only), data_version
  *
  * @since 4.0.0
  */
 final class FeedRecord
 {
     /**
-     * @param FeedSource              $source         Which feed.
-     * @param string                  $externalId     The CVE id.
-     * @param array                   $normalised     See the class comment.
-     * @param array                   $payload        The record as received.
-     * @param FeedClassification|null $classification Set by the classifier.
+     * @param FeedSource              $source               Which feed.
+     * @param string                  $externalId           The CVE id.
+     * @param array                   $normalised           See the class comment.
+     * @param array                   $payload              The record as received.
+     * @param FeedClassification|null $classification       Set by the classifier.
+     * @param string                  $classificationReason The cascade rule that fired.
+     * @param string                  $confidence           high | medium | low.
      *
      * @since 4.0.0
      */
@@ -53,8 +57,28 @@ final class FeedRecord
         public readonly string $externalId,
         public readonly array $normalised,
         public readonly array $payload,
-        public ?FeedClassification $classification = null
+        public ?FeedClassification $classification = null,
+        public string $classificationReason = '',
+        public string $confidence = 'low'
     ) {
+    }
+
+    /**
+     * Record the classifier's verdict.
+     *
+     * @param FeedClassification $classification The verdict.
+     * @param string             $reason         The rule.
+     * @param string             $confidence     high | medium | low.
+     *
+     * @return void
+     *
+     * @since 4.0.0
+     */
+    public function classify(FeedClassification $classification, string $reason, string $confidence): void
+    {
+        $this->classification       = $classification;
+        $this->classificationReason = $reason;
+        $this->confidence           = $confidence;
     }
 
     /**

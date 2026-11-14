@@ -17,6 +17,7 @@ namespace Jed\Component\Vel\Administrator\Mail;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\Database\DatabaseInterface;
 use RuntimeException;
@@ -75,14 +76,14 @@ class ImapFetcher
     public function run(int $limit = 50): array
     {
         if (!self::available()) {
-            throw new RuntimeException('The IMAP library (webklex/php-imap) is not installed in administrator/components/com_vel/vendor.');
+            throw new RuntimeException(Text::_('COM_VEL_ERROR_IMAP_LIBRARY_MISSING'));
         }
 
         $params = ComponentHelper::getParams('com_vel');
         $host   = trim((string) $params->get('imap_host', ''));
 
         if ($host === '' || trim((string) $params->get('imap_username', '')) === '') {
-            throw new RuntimeException('IMAP is not configured in the VEL options.');
+            throw new RuntimeException(Text::_('COM_VEL_ERROR_IMAP_NOT_CONFIGURED'));
         }
 
         $manager = new \Webklex\PHPIMAP\ClientManager([]);
@@ -103,7 +104,7 @@ class ImapFetcher
         $folder     = $client->getFolderByPath($folderName);
 
         if ($folder === null) {
-            throw new RuntimeException('IMAP folder not found: ' . $folderName);
+            throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_IMAP_FOLDER_NOT_FOUND', $folderName));
         }
 
         try {

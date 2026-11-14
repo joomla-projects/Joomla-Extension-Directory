@@ -11,6 +11,8 @@
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -23,16 +25,16 @@ $fieldhiddenoptions = ['hidden' => true];
 
     <div class="row ticket-header-row">
         <div class="col-md-12 ticket-header">
-            <h1>Subject</h1>
+            <h1><?php echo Text::_('COM_JED_GENERAL_SUBJECT_LABEL'); ?></h1>
 
             <h7><?php
-                echo htmlspecialchars((string) $displayData->ticket_subject, ENT_QUOTES, "UTF-8"); ?></h7>
+                echo $displayData->ticket_subject; ?></h7>
         </div>
     </div>
     <div class="row ticket-header-row">
         <div class="col-md-12 ticket-header">
 
-            <h1>Category</h1>
+            <h1><?php echo Text::_('COM_JED_LAYOUT_TICKET_CATEGORY'); ?></h1>
             <h7><?php
                 echo $displayData->ticket_category_type; ?></h7>
         </div>
@@ -40,7 +42,7 @@ $fieldhiddenoptions = ['hidden' => true];
     <div class="row ticket-header-row">
         <div class="col-md-12 ticket-header">
 
-            <h1>Ticket Status</h1>
+            <h1><?php echo Text::_('COM_JED_LAYOUT_TICKET_STATUS'); ?></h1>
             <h7><?php
                 echo $displayData->ticket_status; ?></h7>
         </div>

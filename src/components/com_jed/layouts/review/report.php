@@ -9,6 +9,8 @@
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
@@ -19,11 +21,10 @@
 ?>
 <hr>
 
-<h2>Do you want to report this extension?</h2>
-<p>If you need to report a listing, you must use the <b>Report Extension</b> button on the listing, and not this review page.</p>
-<h2>Are you having problems with this extension?</h2>
-<?php $supportUrl = (string) ($displayData->support_url ?? ''); ?>
-<p>If you're having problems with the extension, please contact the developer<?php if ($supportUrl !== '') : ?> through their website (<a href="<?php echo htmlspecialchars($supportUrl, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($supportUrl, ENT_QUOTES, 'UTF-8'); ?></a>)<?php endif; ?>.</p>
+<h2><?php echo Text::_('COM_JED_REVIEW_REPORT_HEADING'); ?></h2>
+<p><?php echo Text::_('COM_JED_REVIEW_REPORT_USE_LISTING_BUTTON'); ?></p>
+<h2><?php echo Text::_('COM_JED_REVIEW_REPORT_PROBLEMS_HEADING'); ?></h2>
+<p><?php echo Text::sprintf('COM_JED_REVIEW_REPORT_CONTACT_DEVELOPER', htmlspecialchars((string) $displayData->developer_email, ENT_QUOTES, 'UTF-8'), htmlspecialchars((string) $displayData->developer_company, ENT_QUOTES, 'UTF-8'), htmlspecialchars((string) $displayData->support_link, ENT_QUOTES, 'UTF-8')); ?></p>
 <p><br></p>
 <div class="alert alert-info">
-    Please remember, the Joomla! Extensions Directory is not responsible for any extensions listed, nor does the JED Team provide support for extensions. All reviews submissions are subject to the <a href=/community/terms-of-service>Terms of Service</a></div>
+    <?php echo Text::_('COM_JED_REVIEW_REPORT_DISCLAIMER'); ?></div>

@@ -30,7 +30,7 @@ use Joomla\CMS\Session\Session;
                 <strong><?php echo Text::_('COM_VEL_CVEPREVIEW_INVALID'); ?></strong>
                 <ul class="mb-0">
                     <?php foreach ($this->problems as $problem) : ?>
-                        <li><?php echo $this->escape($problem); ?></li>
+                        <li><?php echo $this->escape(Text::sprintf(...(array) $problem)); ?></li>
                     <?php endforeach; ?>
                 </ul>
             </div>

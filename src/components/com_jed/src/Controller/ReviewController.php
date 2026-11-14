@@ -96,7 +96,7 @@ class ReviewController extends BaseController
 
             // Check for errors.
             if ($return === false) {
-                $this->setMessage(Text::_('Save failed'), 'warning');
+                $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_SAVE_FAILED'), 'warning');
             }
 
             // Clear the profile id from the session.

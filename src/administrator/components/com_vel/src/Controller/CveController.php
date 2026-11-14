@@ -132,7 +132,7 @@ class CveController extends BaseController
 
         $shape    = $this->input->getCmd('shape', 'record') === 'cna' ? 'cna' : 'record';
         $builder  = $this->builder();
-        $document = $shape === 'cna' ? ['cnaContainer' => $builder->cnaContainer($advisory)] : $builder->record($advisory);
+        $document = $shape === 'cna' ? ['cnaContainer' => $builder->submissionContainer($advisory)] : $builder->record($advisory);
         $json     = CveRecordBuilder::encode($document);
         $name     = ((string) ($advisory->cve_id ?? '') !== '' ? (string) $advisory->cve_id : \sprintf('VEL-%04d', $id)) . ($shape === 'cna' ? '-cna' : '') . '.json';
 
@@ -173,11 +173,16 @@ class CveController extends BaseController
         }
 
         try {
-            $client = CveServicesClient::fromOptions();
-            $cveId  = $client->reserve();
+            $client   = CveServicesClient::fromOptions();
+            $reserved = $client->reserve(1);
+            $cveId    = $reserved['ids'][0];
 
             $this->service()->setCve($id, $cveId, CveState::RESERVED, (string) $this->service()->option('cna_short_name', 'Joomla'), null, (int) $this->app->getIdentity()->id);
             $this->service()->appendNote($id, Text::sprintf('COM_VEL_NOTE_CVE_RESERVED', $cveId, $client->isProduction() ? 'production' : 'test'));
+
+            if ($reserved['partial']) {
+                $this->app->enqueueMessage(Text::_('COM_VEL_MSG_CVE_QUOTA_PARTIAL'), 'warning');
+            }
         } catch (Throwable $e) {
             $this->fail($id, $e->getMessage());
 
@@ -218,11 +223,11 @@ class CveController extends BaseController
         }
 
         $builder   = $this->builder();
-        $container = $builder->cnaContainer($advisory);
-        $problems  = (new CveRecordValidator())->validateCna($container);
+        $container = $builder->submissionContainer($advisory);
+        $problems  = (new CveRecordValidator())->validateCna($builder->cnaContainer($advisory));
 
         if ($problems !== []) {
-            $this->fail($id, Text::_('COM_VEL_ERROR_CVE_INVALID') . ' ' . implode(' ', $problems));
+            $this->fail($id, Text::_('COM_VEL_ERROR_CVE_INVALID') . ' ' . implode(' ', array_map(static fn (array $problem): string => Text::sprintf(...$problem), $problems)));
 
             return;
         }
@@ -230,9 +235,14 @@ class CveController extends BaseController
         try {
             $client   = CveServicesClient::fromOptions();
             $state    = CveState::tryFrom((string) $advisory->cve_state) ?? CveState::RESERVED;
-            $response = $client->submitCna((string) $advisory->cve_id, $container, $state === CveState::PUBLISHED);
+            $erlcheck = (int) $this->service()->option('cve_erlcheck', 1) === 1;
+            $response = $client->submitCna((string) $advisory->cve_id, $container, $state === CveState::PUBLISHED, $erlcheck);
 
-            $this->service()->storePublishedJson($id, CveRecordBuilder::encode($response));
+            $this->service()->storePublishedJson($id, CveRecordBuilder::encode($response['created'] ?: $response));
+
+            foreach ($response['warnings'] as $warning) {
+                $this->app->enqueueMessage(Text::sprintf('COM_VEL_MSG_CVE_WARNING', $warning), 'warning');
+            }
             $this->service()->setCve($id, (string) $advisory->cve_id, CveState::PUBLISHED, (string) $advisory->cve_assigner ?: (string) $this->service()->option('cna_short_name', 'Joomla'), $advisory->date_reserved ?: null, (int) $this->app->getIdentity()->id);
             $this->service()->appendNote($id, Text::sprintf('COM_VEL_NOTE_CVE_SUBMITTED', (string) $advisory->cve_id, $client->isProduction() ? 'production' : 'test'));
         } catch (Throwable $e) {

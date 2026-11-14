@@ -79,12 +79,12 @@ $now       = time();
                         <tbody>
                         <?php foreach ($this->items as $i => $item) : ?>
                             <?php
-                            $state      = AdvisoryState::tryFrom((string) $item->state) ?? AdvisoryState::DRAFT;
-                            $status     = AdvisoryStatus::tryFrom((string) $item->status) ?? AdvisoryStatus::LIVE;
-                            $severity   = $item->severity ? Severity::tryFrom((string) $item->severity) : null;
-                            $source     = AdvisorySource::tryFrom((string) $item->source) ?? AdvisorySource::MANUAL;
+                            $state    = AdvisoryState::tryFrom((string) $item->state) ?? AdvisoryState::DRAFT;
+                            $status   = AdvisoryStatus::tryFrom((string) $item->status) ?? AdvisoryStatus::LIVE;
+                            $severity = $item->severity ? Severity::tryFrom((string) $item->severity) : null;
+                            $source   = AdvisorySource::tryFrom((string) $item->source) ?? AdvisorySource::MANUAL;
                             $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $user->id || is_null($item->checked_out);
-                            $embargo    = !$state->isPublic() && !empty($item->date_public) && strtotime((string) $item->date_public) < $now;
+                            $embargo  = !$state->isPublic() && !empty($item->date_public) && strtotime((string) $item->date_public) < $now;
                             ?>
                             <tr class="row<?php echo $i % 2; ?>">
                                 <td class="text-center">

@@ -1,0 +1,1413 @@
+{
+    "html": "<form action=\"/administrator/index.php?option=com_vel&view=feedruns\" method=\"post\" name=\"adminForm\" id=\"adminForm\">\n    <div class=\"row\">\n        <div class=\"col-md-12\">\n            <div id=\"j-main-container\" class=\"j-main-container\">\n                                                                            <section id=\"vel-feedrun\" class=\"card mb-4\" aria-labelledby=\"vel-feedrun-title\">\n                        <div class=\"card-body\">\n                            <div class=\"d-flex flex-wrap align-items-center gap-2 mb-2\">\n                                <h2 id=\"vel-feedrun-title\" class=\"h4 m-0\">CVE Program</h2>\n                                <span id=\"vel-feedrun-status\" class=\"badge bg-info\">Running</span>\n                                <span class=\"ms-auto small text-muted\">\n                                    Elapsed: <span id=\"vel-feedrun-elapsed\">&mdash;</span>\n                                </span>\n                            </div>\n\n                            <p id=\"vel-feedrun-activity\" class=\"mb-2\" role=\"status\" aria-live=\"polite\">Reading the CVE Program&#039;s delta log…</p>\n\n                            <div id=\"vel-feedrun-progress\" class=\"progress mb-3\" role=\"progressbar\" aria-labelledby=\"vel-feedrun-activity\" aria-valuemin=\"0\" aria-valuemax=\"100\">\n                                <div id=\"vel-feedrun-bar\" class=\"progress-bar progress-bar-striped progress-bar-animated w-100\"></div>\n                            </div>\n\n                            <dl class=\"d-flex flex-wrap gap-4 mb-2\">\n                                <div><dt class=\"small text-muted\">Seen</dt><dd id=\"vel-feedrun-seen\" class=\"fs-4 m-0\">0</dd></div>\n                                <div><dt class=\"small text-muted\">New</dt><dd id=\"vel-feedrun-new\" class=\"fs-4 m-0\">0</dd></div>\n                                <div><dt class=\"small text-muted\">Updated</dt><dd id=\"vel-feedrun-updated\" class=\"fs-4 m-0\">0</dd></div>\n                            </dl>\n\n                            <div id=\"vel-feedrun-message\" class=\"alert d-none\" role=\"alert\"></div>\n\n                            <details id=\"vel-feedrun-details\" open>\n                                <summary class=\"small\">Activity</summary>\n                                <ol id=\"vel-feedrun-log\" class=\"list-unstyled small font-monospace mb-0 mt-2 overflow-auto\"></ol>\n                            </details>\n\n                            <div class=\"mt-3 d-flex gap-2\">\n                                <button type=\"button\" id=\"vel-feedrun-stop\" class=\"btn btn-outline-danger\">Stop</button>\n                                <button type=\"button\" id=\"vel-feedrun-continue\" class=\"btn btn-primary d-none\">Continue</button>\n                                <a id=\"vel-feedrun-close\" class=\"btn btn-secondary d-none\" href=\"/administrator/index.php?option=com_vel&view=feedruns\">Close</a>\n                            </div>\n\n                                                                                            <div id=\"vel-feedrun-waiting\" class=\"alert alert-warning mt-3 mb-0\">Waiting for the progress script to start. If this message stays, the script did not run: open the browser's developer tools (F12), and look in Console for an error and in Network for media/com_vel/js/feedrun.js.</div>\n                            \n                            <noscript><div class=\"alert alert-warning mt-3 mb-0\">The progress of a feed run is shown with JavaScript. Without it the run does not advance.</div></noscript>\n                        </div>\n                    </section>\n                \n                <p class=\"text-muted\">Every pass of a feed: the window it covered and what it found. Run the feeds by hand from the toolbar; the scheduled tasks run them on a timer.</p>\n\n                                    <table class=\"table table-striped\">\n                        <caption class=\"visually-hidden\">VEL: Feed Runs</caption>\n                        <thead>\n                        <tr>\n                            <th scope=\"col\">Feed</th>\n                            <th scope=\"col\">Started</th>\n                            <th scope=\"col\">Finished</th>\n                            <th scope=\"col\">Window</th>\n                            <th scope=\"col\">Result</th>\n                            <th scope=\"col\">JSTATUS</th>\n                        </tr>\n                        </thead>\n                        <tbody>\n                                                    <tr>\n                                <td>CVE Program</td>\n                                <td>2026-11-08 19:31:09</td>\n                                <td>&mdash;</td>\n                                <td class=\"small\">2026-11-08 19:29:04 &rarr; 2026-11-08 19:31:09</td>\n                                <td class=\"small\">0 seen, 0 new, 0 updated</td>\n                                <td>\n                                    <span class=\"badge bg-info\">Running</span>\n                                                                            <a class=\"small ms-1\" href=\"/administrator/index.php?option=com_vel&view=feedruns&run=3\">Continue</a>\n                                                                                                        </td>\n                            </tr>\n                                                    <tr>\n                                <td>NVD</td>\n                                <td>2026-11-08 19:31:07</td>\n                                <td>2026-11-08 19:31:09</td>\n                                <td class=\"small\">2026-11-01 19:31:07 &rarr; 2026-11-08 19:31:07</td>\n                                <td class=\"small\">1100 seen, 880 new, 0 updated</td>\n                                <td>\n                                    <span class=\"badge bg-success\">OK</span>\n                                                                                                        </td>\n                            </tr>\n                                                    <tr>\n                                <td>CVE Program</td>\n                                <td>2026-11-08 19:31:05</td>\n                                <td>2026-11-08 19:31:07</td>\n                                <td class=\"small\">2026-11-01 19:31:05 &rarr; 2026-11-08 19:29:04</td>\n                                <td class=\"small\">6 seen, 5 new, 0 updated</td>\n                                <td>\n                                    <span class=\"badge bg-warning text-dark\">Partial</span>\n                                                                        <div class=\"small text-muted\">1 record is still queued; the next run carries on with it.</div>                                </td>\n                            </tr>\n                                                </tbody>\n                    </table>\n\n                                    \n                <input type=\"hidden\" name=\"task\" value=\"\"/>\n                <input type=\"hidden\" name=\"boxchecked\" value=\"0\"/>\n                <input type=\"hidden\" name=\"0123456789abcdef0123456789abcdef\" value=\"1\">            </div>\n        </div>\n    </div>\n</form>\n",
+    "report": {
+        "id": 3,
+        "source": "cna",
+        "label": "CVE Program",
+        "status": "running",
+        "statusLabel": "Running",
+        "done": false,
+        "busy": false,
+        "phase": "read",
+        "activity": "Reading the CVE Program's delta log…",
+        "current": 0,
+        "total": 125,
+        "seen": 0,
+        "new": 0,
+        "updated": 0,
+        "enriched": 0,
+        "message": "",
+        "window": "2026-11-08 19:29:04 → 2026-11-08 19:31:09",
+        "elapsed": 0,
+        "events": [],
+        "requests": [],
+        "requestsDropped": 0
+    },
+    "runId": 3,
+    "sequences": {
+        "cna": [
+            {
+                "id": 1,
+                "source": "cna",
+                "label": "CVE Program",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "read",
+                "activity": "Reading the CVE Program's delta log…",
+                "current": 0,
+                "total": 604800,
+                "seen": 0,
+                "new": 0,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:05 → 2026-11-08 19:31:05",
+                "elapsed": 0,
+                "events": [],
+                "requests": [],
+                "requestsDropped": 0
+            },
+            {
+                "id": 1,
+                "source": "cna",
+                "label": "CVE Program",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "records",
+                "activity": "Fetching queued CVE records: 0 of 12 this run (12 queued in all)",
+                "current": 0,
+                "total": 12,
+                "seen": 0,
+                "new": 0,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:05 → 2026-11-08 19:31:05",
+                "elapsed": 0,
+                "events": [],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/deltaLog.json",
+                        "range": "bytes=0-2097151",
+                        "status": 206,
+                        "bytes": 4962,
+                        "ms": 7,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            },
+            {
+                "id": 1,
+                "source": "cna",
+                "label": "CVE Program",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "records",
+                "activity": "Fetching queued CVE records: 1 of 12 this run (12 queued in all)",
+                "current": 1,
+                "total": 12,
+                "seen": 1,
+                "new": 1,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:05 → 2026-11-08 19:31:05",
+                "elapsed": 0,
+                "events": [
+                    {
+                        "id": "CVE-2026-90000",
+                        "outcome": "new",
+                        "title": "Test record CVE-2026-90000 (ours)"
+                    }
+                ],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/90xxx/CVE-2026-90000.json",
+                        "range": "",
+                        "status": 200,
+                        "bytes": 3624,
+                        "ms": 2,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            },
+            {
+                "id": 1,
+                "source": "cna",
+                "label": "CVE Program",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "records",
+                "activity": "Fetching queued CVE records: 2 of 12 this run (12 queued in all)",
+                "current": 2,
+                "total": 12,
+                "seen": 1,
+                "new": 1,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:05 → 2026-11-08 19:31:05",
+                "elapsed": 0,
+                "events": [],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/90xxx/CVE-2026-90002.json",
+                        "range": "",
+                        "status": 200,
+                        "bytes": 2107,
+                        "ms": 1,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            },
+            {
+                "id": 1,
+                "source": "cna",
+                "label": "CVE Program",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "records",
+                "activity": "Fetching queued CVE records: 3 of 12 this run (12 queued in all)",
+                "current": 3,
+                "total": 12,
+                "seen": 2,
+                "new": 2,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:05 → 2026-11-08 19:31:05",
+                "elapsed": 0,
+                "events": [
+                    {
+                        "id": "CVE-2026-90001",
+                        "outcome": "new",
+                        "title": "Test record CVE-2026-90001 (other)"
+                    }
+                ],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/90xxx/CVE-2026-90001.json",
+                        "range": "",
+                        "status": 200,
+                        "bytes": 4370,
+                        "ms": 1,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            },
+            {
+                "id": 1,
+                "source": "cna",
+                "label": "CVE Program",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "records",
+                "activity": "Fetching queued CVE records: 4 of 12 this run (12 queued in all)",
+                "current": 4,
+                "total": 12,
+                "seen": 2,
+                "new": 2,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:05 → 2026-11-08 19:31:05",
+                "elapsed": 0,
+                "events": [],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/90xxx/CVE-2026-90003.json",
+                        "range": "",
+                        "status": 200,
+                        "bytes": 2107,
+                        "ms": 0,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            },
+            {
+                "id": 1,
+                "source": "cna",
+                "label": "CVE Program",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "records",
+                "activity": "Fetching queued CVE records: 5 of 12 this run (12 queued in all)",
+                "current": 5,
+                "total": 12,
+                "seen": 3,
+                "new": 3,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:05 → 2026-11-08 19:31:05",
+                "elapsed": 1,
+                "events": [
+                    {
+                        "id": "CVE-2026-90005",
+                        "outcome": "new",
+                        "title": "Test record CVE-2026-90005 (other)"
+                    }
+                ],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/90xxx/CVE-2026-90005.json",
+                        "range": "",
+                        "status": 200,
+                        "bytes": 4370,
+                        "ms": 1,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            },
+            {
+                "id": 1,
+                "source": "cna",
+                "label": "CVE Program",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "records",
+                "activity": "Fetching queued CVE records: 6 of 12 this run (12 queued in all)",
+                "current": 6,
+                "total": 12,
+                "seen": 4,
+                "new": 4,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:05 → 2026-11-08 19:31:05",
+                "elapsed": 1,
+                "events": [
+                    {
+                        "id": "CVE-2026-90004",
+                        "outcome": "new",
+                        "title": "Test record CVE-2026-90004 (core)"
+                    }
+                ],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/90xxx/CVE-2026-90004.json",
+                        "range": "",
+                        "status": 200,
+                        "bytes": 2990,
+                        "ms": 0,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            },
+            {
+                "id": 1,
+                "source": "cna",
+                "label": "CVE Program",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "records",
+                "activity": "Fetching queued CVE records: 7 of 12 this run (12 queued in all)",
+                "current": 7,
+                "total": 12,
+                "seen": 4,
+                "new": 4,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:05 → 2026-11-08 19:31:05",
+                "elapsed": 1,
+                "events": [],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/90xxx/CVE-2026-90006.json",
+                        "range": "",
+                        "status": 200,
+                        "bytes": 2107,
+                        "ms": 1,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            },
+            {
+                "id": 1,
+                "source": "cna",
+                "label": "CVE Program",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "records",
+                "activity": "Fetching queued CVE records: 8 of 12 this run (12 queued in all)",
+                "current": 8,
+                "total": 12,
+                "seen": 5,
+                "new": 5,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:05 → 2026-11-08 19:31:05",
+                "elapsed": 1,
+                "events": [
+                    {
+                        "id": "CVE-2026-90008",
+                        "outcome": "new",
+                        "title": "Test record CVE-2026-90008 (ours)"
+                    }
+                ],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/90xxx/CVE-2026-90008.json",
+                        "range": "",
+                        "status": 200,
+                        "bytes": 3624,
+                        "ms": 1,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            },
+            {
+                "id": 1,
+                "source": "cna",
+                "label": "CVE Program",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "records",
+                "activity": "Fetching queued CVE records: 9 of 12 this run (12 queued in all)",
+                "current": 9,
+                "total": 12,
+                "seen": 5,
+                "new": 5,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:05 → 2026-11-08 19:31:05",
+                "elapsed": 1,
+                "events": [],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/90xxx/CVE-2026-90007.json",
+                        "range": "",
+                        "status": 404,
+                        "bytes": 9,
+                        "ms": 0,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            },
+            {
+                "id": 1,
+                "source": "cna",
+                "label": "CVE Program",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "records",
+                "activity": "Fetching queued CVE records: 10 of 12 this run (12 queued in all)",
+                "current": 10,
+                "total": 12,
+                "seen": 5,
+                "new": 5,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:05 → 2026-11-08 19:31:05",
+                "elapsed": 2,
+                "events": [],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/90xxx/CVE-2026-90009.json",
+                        "range": "",
+                        "status": 500,
+                        "bytes": 21,
+                        "ms": 0,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            },
+            {
+                "id": 1,
+                "source": "cna",
+                "label": "CVE Program",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "records",
+                "activity": "Fetching queued CVE records: 11 of 12 this run (12 queued in all)",
+                "current": 11,
+                "total": 12,
+                "seen": 6,
+                "new": 5,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:05 → 2026-11-08 19:31:05",
+                "elapsed": 2,
+                "events": [],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/90xxx/CVE-2026-90011.json",
+                        "range": "",
+                        "status": 200,
+                        "bytes": 1268,
+                        "ms": 1,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            },
+            {
+                "id": 1,
+                "source": "cna",
+                "label": "CVE Program",
+                "status": "partial",
+                "statusLabel": "Partial",
+                "done": true,
+                "busy": false,
+                "phase": "done",
+                "activity": "Finished.",
+                "current": null,
+                "total": null,
+                "seen": 6,
+                "new": 5,
+                "updated": 0,
+                "enriched": 0,
+                "message": "1 record is still queued; the next run carries on with it.",
+                "window": "2026-11-01 19:31:05 → 2026-11-08 19:29:04",
+                "elapsed": 2,
+                "events": [],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/90xxx/CVE-2026-90010.json",
+                        "range": "",
+                        "status": 200,
+                        "bytes": 2107,
+                        "ms": 1,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            }
+        ],
+        "nvd": [
+            {
+                "id": 2,
+                "source": "nvd",
+                "label": "NVD",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "discover",
+                "activity": "Searching the NVD…",
+                "current": null,
+                "total": null,
+                "seen": 0,
+                "new": 0,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:07 → 2026-11-08 19:31:07",
+                "elapsed": 0,
+                "events": [],
+                "requests": [],
+                "requestsDropped": 0
+            },
+            {
+                "id": 2,
+                "source": "nvd",
+                "label": "NVD",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "discover",
+                "activity": "Searching the NVD: 500 of 1100 results read",
+                "current": 500,
+                "total": 1100,
+                "seen": 500,
+                "new": 400,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:07 → 2026-11-08 19:31:07",
+                "elapsed": 1,
+                "events": [
+                    {
+                        "id": "CVE-2026-70000",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70001",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #1"
+                    },
+                    {
+                        "id": "CVE-2026-70002",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #2"
+                    },
+                    {
+                        "id": "CVE-2026-70003",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70005",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70006",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #6"
+                    },
+                    {
+                        "id": "CVE-2026-70007",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #7"
+                    },
+                    {
+                        "id": "CVE-2026-70008",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70010",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70011",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #11"
+                    },
+                    {
+                        "id": "CVE-2026-70012",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #12"
+                    },
+                    {
+                        "id": "CVE-2026-70013",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70015",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70016",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #16"
+                    },
+                    {
+                        "id": "CVE-2026-70017",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #17"
+                    },
+                    {
+                        "id": "CVE-2026-70018",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70020",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70021",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #21"
+                    },
+                    {
+                        "id": "CVE-2026-70022",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #22"
+                    },
+                    {
+                        "id": "CVE-2026-70023",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70025",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70026",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #26"
+                    },
+                    {
+                        "id": "CVE-2026-70027",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #27"
+                    },
+                    {
+                        "id": "CVE-2026-70028",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70030",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70031",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #31"
+                    },
+                    {
+                        "id": "CVE-2026-70032",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #32"
+                    },
+                    {
+                        "id": "CVE-2026-70033",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70035",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70036",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #36"
+                    },
+                    {
+                        "id": "CVE-2026-70037",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #37"
+                    },
+                    {
+                        "id": "CVE-2026-70038",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70040",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70041",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #41"
+                    },
+                    {
+                        "id": "CVE-2026-70042",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #42"
+                    },
+                    {
+                        "id": "CVE-2026-70043",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70045",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70046",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #46"
+                    },
+                    {
+                        "id": "CVE-2026-70047",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #47"
+                    },
+                    {
+                        "id": "CVE-2026-70048",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70050",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70051",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #51"
+                    },
+                    {
+                        "id": "CVE-2026-70052",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #52"
+                    },
+                    {
+                        "id": "CVE-2026-70053",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70055",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70056",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #56"
+                    },
+                    {
+                        "id": "CVE-2026-70057",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #57"
+                    },
+                    {
+                        "id": "CVE-2026-70058",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70060",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70061",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #61"
+                    }
+                ],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch=Joomla&lastModStartDate=2026-11-01T19%3A31%3A07.000Z&lastModEndDate=2026-11-08T19%3A31%3A07.000Z&resultsPerPage=500&startIndex=0",
+                        "range": "",
+                        "status": 200,
+                        "bytes": 1558067,
+                        "ms": 16,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            },
+            {
+                "id": 2,
+                "source": "nvd",
+                "label": "NVD",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "discover",
+                "activity": "Searching the NVD: 1000 of 1100 results read",
+                "current": 1000,
+                "total": 1100,
+                "seen": 1000,
+                "new": 800,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:07 → 2026-11-08 19:31:07",
+                "elapsed": 2,
+                "events": [
+                    {
+                        "id": "CVE-2026-70500",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70501",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #501"
+                    },
+                    {
+                        "id": "CVE-2026-70502",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #502"
+                    },
+                    {
+                        "id": "CVE-2026-70503",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70505",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70506",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #506"
+                    },
+                    {
+                        "id": "CVE-2026-70507",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #507"
+                    },
+                    {
+                        "id": "CVE-2026-70508",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70510",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70511",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #511"
+                    },
+                    {
+                        "id": "CVE-2026-70512",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #512"
+                    },
+                    {
+                        "id": "CVE-2026-70513",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70515",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70516",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #516"
+                    },
+                    {
+                        "id": "CVE-2026-70517",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #517"
+                    },
+                    {
+                        "id": "CVE-2026-70518",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70520",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70521",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #521"
+                    },
+                    {
+                        "id": "CVE-2026-70522",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #522"
+                    },
+                    {
+                        "id": "CVE-2026-70523",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70525",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70526",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #526"
+                    },
+                    {
+                        "id": "CVE-2026-70527",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #527"
+                    },
+                    {
+                        "id": "CVE-2026-70528",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70530",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70531",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #531"
+                    },
+                    {
+                        "id": "CVE-2026-70532",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #532"
+                    },
+                    {
+                        "id": "CVE-2026-70533",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70535",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70536",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #536"
+                    },
+                    {
+                        "id": "CVE-2026-70537",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #537"
+                    },
+                    {
+                        "id": "CVE-2026-70538",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70540",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70541",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #541"
+                    },
+                    {
+                        "id": "CVE-2026-70542",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #542"
+                    },
+                    {
+                        "id": "CVE-2026-70543",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70545",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70546",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #546"
+                    },
+                    {
+                        "id": "CVE-2026-70547",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #547"
+                    },
+                    {
+                        "id": "CVE-2026-70548",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70550",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70551",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #551"
+                    },
+                    {
+                        "id": "CVE-2026-70552",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #552"
+                    },
+                    {
+                        "id": "CVE-2026-70553",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70555",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70556",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #556"
+                    },
+                    {
+                        "id": "CVE-2026-70557",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #557"
+                    },
+                    {
+                        "id": "CVE-2026-70558",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-70560",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-70561",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #561"
+                    }
+                ],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch=Joomla&lastModStartDate=2026-11-01T19%3A31%3A07.000Z&lastModEndDate=2026-11-08T19%3A31%3A07.000Z&resultsPerPage=500&startIndex=500",
+                        "range": "",
+                        "status": 200,
+                        "bytes": 1558179,
+                        "ms": 61,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            },
+            {
+                "id": 2,
+                "source": "nvd",
+                "label": "NVD",
+                "status": "running",
+                "statusLabel": "Running",
+                "done": false,
+                "busy": false,
+                "phase": "enrich",
+                "activity": "Looking for advisories the NVD can enrich…",
+                "current": null,
+                "total": null,
+                "seen": 1100,
+                "new": 880,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:07 → 2026-11-08 19:31:07",
+                "elapsed": 2,
+                "events": [
+                    {
+                        "id": "CVE-2026-71000",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-71001",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #1001"
+                    },
+                    {
+                        "id": "CVE-2026-71002",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #1002"
+                    },
+                    {
+                        "id": "CVE-2026-71003",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-71005",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-71006",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #1006"
+                    },
+                    {
+                        "id": "CVE-2026-71007",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #1007"
+                    },
+                    {
+                        "id": "CVE-2026-71008",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-71010",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-71011",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #1011"
+                    },
+                    {
+                        "id": "CVE-2026-71012",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #1012"
+                    },
+                    {
+                        "id": "CVE-2026-71013",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-71015",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-71016",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #1016"
+                    },
+                    {
+                        "id": "CVE-2026-71017",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #1017"
+                    },
+                    {
+                        "id": "CVE-2026-71018",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-71020",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-71021",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #1021"
+                    },
+                    {
+                        "id": "CVE-2026-71022",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #1022"
+                    },
+                    {
+                        "id": "CVE-2026-71023",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-71025",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-71026",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #1026"
+                    },
+                    {
+                        "id": "CVE-2026-71027",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #1027"
+                    },
+                    {
+                        "id": "CVE-2026-71028",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-71030",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-71031",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #1031"
+                    },
+                    {
+                        "id": "CVE-2026-71032",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #1032"
+                    },
+                    {
+                        "id": "CVE-2026-71033",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-71035",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-71036",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #1036"
+                    },
+                    {
+                        "id": "CVE-2026-71037",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #1037"
+                    },
+                    {
+                        "id": "CVE-2026-71038",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-71040",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-71041",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #1041"
+                    },
+                    {
+                        "id": "CVE-2026-71042",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #1042"
+                    },
+                    {
+                        "id": "CVE-2026-71043",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-71045",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-71046",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #1046"
+                    },
+                    {
+                        "id": "CVE-2026-71047",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #1047"
+                    },
+                    {
+                        "id": "CVE-2026-71048",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-71050",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-71051",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #1051"
+                    },
+                    {
+                        "id": "CVE-2026-71052",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #1052"
+                    },
+                    {
+                        "id": "CVE-2026-71053",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-71055",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-71056",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #1056"
+                    },
+                    {
+                        "id": "CVE-2026-71057",
+                        "outcome": "new",
+                        "title": "Insertion of Sensitive Information into Log File vulnerability in Frédéric GILLES FG Joomla to WordPress.This issue affects FG Joomla to WordPress: from n/a through 4.20.2. #1057"
+                    },
+                    {
+                        "id": "CVE-2026-71058",
+                        "outcome": "new",
+                        "title": "Joomla Extension - joomlaboat.com - Unauthenticated arbitrary file upload in Custom Tables < 3.7.8 - An unauthenticated attacker can upload a polyglot file with an attacker-controlled extension to the"
+                    },
+                    {
+                        "id": "CVE-2026-71060",
+                        "outcome": "new",
+                        "title": "A vulnerability was found in JoomlaUX JUX Real Estate 3.4.0 on Joomla and classified as critical. This issue affects some unknown processing of the file /extensions/realestate/index.php/properties/lis"
+                    },
+                    {
+                        "id": "CVE-2026-71061",
+                        "outcome": "new",
+                        "title": "Joomla! Core - [20260807] - MFA Authentication Bypass in Joomla 4.0.0-5.4.7 and 6.0.0-6.1.2 - Insufficient state checks lead to a vector that allows to bypass 2FA checks. #1061"
+                    }
+                ],
+                "requests": [
+                    {
+                        "method": "GET",
+                        "url": "https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch=Joomla&lastModStartDate=2026-11-01T19%3A31%3A07.000Z&lastModEndDate=2026-11-08T19%3A31%3A07.000Z&resultsPerPage=500&startIndex=1000",
+                        "range": "",
+                        "status": 200,
+                        "bytes": 311800,
+                        "ms": 2,
+                        "error": ""
+                    }
+                ],
+                "requestsDropped": 0
+            },
+            {
+                "id": 2,
+                "source": "nvd",
+                "label": "NVD",
+                "status": "ok",
+                "statusLabel": "OK",
+                "done": true,
+                "busy": false,
+                "phase": "done",
+                "activity": "Finished.",
+                "current": null,
+                "total": null,
+                "seen": 1100,
+                "new": 880,
+                "updated": 0,
+                "enriched": 0,
+                "message": "",
+                "window": "2026-11-01 19:31:07 → 2026-11-08 19:31:07",
+                "elapsed": 2,
+                "events": [],
+                "requests": [],
+                "requestsDropped": 0
+            }
+        ]
+    }
+}

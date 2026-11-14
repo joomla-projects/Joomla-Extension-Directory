@@ -17,7 +17,7 @@ namespace Jed\Component\Vel\Administrator\Controller;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
-use Joomla\Http\HttpFactory;
+use Joomla\CMS\Http\HttpFactory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Router\Route;
@@ -53,10 +53,10 @@ class CwesController extends BaseController
         }
 
         try {
-            $response = (new HttpFactory())->getHttp(['timeout' => 120])->get(self::MITRE_URL, ['User-Agent' => 'Joomla-VEL/2.0']);
+            $response = HttpFactory::getHttp(['timeout' => 120])->get(self::MITRE_URL, ['User-Agent' => 'Joomla-VEL/2.0']);
 
             if ($response->code >= 400) {
-                throw new \RuntimeException('MITRE answered ' . $response->code);
+                throw new \RuntimeException(Text::sprintf('COM_VEL_ERROR_CWE_MITRE_STATUS', (int) $response->code));
             }
 
             $tmp = tempnam(sys_get_temp_dir(), 'cwe');
@@ -65,7 +65,7 @@ class CwesController extends BaseController
             $zip = new \ZipArchive();
 
             if ($zip->open($tmp) !== true || $zip->numFiles < 1) {
-                throw new \RuntimeException('The download is not a zip archive.');
+                throw new \RuntimeException(Text::_('COM_VEL_ERROR_CWE_NOT_ZIP'));
             }
 
             $xml = $zip->getFromIndex(0);
@@ -94,7 +94,7 @@ class CwesController extends BaseController
         $reader = new \XMLReader();
 
         if (!$reader->XML($xml)) {
-            throw new \RuntimeException('The XML could not be read.');
+            throw new \RuntimeException(Text::_('COM_VEL_ERROR_CWE_XML_UNREADABLE'));
         }
 
         $db    = Factory::getContainer()->get(DatabaseInterface::class);

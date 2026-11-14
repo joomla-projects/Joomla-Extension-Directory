@@ -39,17 +39,13 @@ $carry = array_filter([
     'cvss_max' => $f['cvss_max'],
     'vendor'   => $f['vendor'],
     'type'     => $f['type'],
-    'sort'     => $f['sort'] !== 'a.date_published' ? match ($f['sort']) {
-        'a.date_updated' => 'updated', 'a.title' => 'title', 'a.cvss_score' => 'score', default => ''
-    } : '',
-    'dir' => $f['dir'] !== 'DESC' ? 'asc' : '',
+    'sort'     => $f['sort'] !== 'a.date_published' ? match ($f['sort']) { 'a.date_updated' => 'updated', 'a.title' => 'title', 'a.cvss_score' => 'score', default => '' } : '',
+    'dir'      => $f['dir'] !== 'DESC' ? 'asc' : '',
 ], static fn ($v): bool => $v !== null && $v !== '');
 
 $tabUrl = static fn (string $status): string => $listUrl . '?' . http_build_query(array_merge(['status' => $status], $carry));
 
-$sortKey = match ($f['sort']) {
-    'a.date_updated' => 'updated', 'a.title' => 'title', 'a.cvss_score' => 'score', default => 'published'
-};
+$sortKey = match ($f['sort']) { 'a.date_updated' => 'updated', 'a.title' => 'title', 'a.cvss_score' => 'score', default => 'published' };
 $sortUrl = static function (string $key) use ($listUrl, $f, $carry, $sortKey): string {
     $dir = $sortKey === $key && $f['dir'] === 'DESC' ? 'asc' : 'desc';
 

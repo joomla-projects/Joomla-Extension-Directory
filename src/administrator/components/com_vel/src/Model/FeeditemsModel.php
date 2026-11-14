@@ -94,6 +94,8 @@ class FeeditemsModel extends ListModel
             $db->quoteName('a.fetched'),
             $db->quoteName('a.external_updated'),
             $db->quoteName('a.classification'),
+            $db->quoteName('a.classification_reason'),
+            $db->quoteName('a.confidence'),
             $db->quoteName('a.decision'),
             $db->quoteName('a.advisory_id'),
             $db->quoteName('adv.title', 'advisory_title'),

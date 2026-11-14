@@ -170,7 +170,7 @@ class TicketformController extends FormController
         $form = $model->getForm();
 
         if (!$form) {
-            throw new Exception('Could not validate data', 500);
+            throw new Exception(Text::_('COM_JED_ERROR_COULD_NOT_VALIDATE'), 500);
         }
 
         // Validate the posted data.
@@ -185,7 +185,7 @@ class TicketformController extends FormController
         }
         // Check for errors.
         if ($data === false) {
-            $this->app->enqueueMessage('An error occured saving your data. Please go back and try again', 'warning');
+            $this->app->enqueueMessage(Text::_('COM_JED_ERROR_SAVING_DATA'), 'warning');
 
             $jform = $this->input->get('jform', [], 'ARRAY');
 
@@ -208,7 +208,7 @@ class TicketformController extends FormController
 
             // Redirect back to the edit screen.
             $id = (int) $app->getUserState('com_jed.edit.ticket.id');
-            $this->setMessage(Text::_('Save failed'), 'warning');
+            $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_SAVE_FAILED'), 'warning');
             $this->setRedirect(Route::_('index.php?option=com_jed&view=ticketform&layout=edit&id=' . $id, false));
         }
 

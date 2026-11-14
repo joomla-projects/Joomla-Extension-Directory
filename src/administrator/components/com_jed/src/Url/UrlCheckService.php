@@ -14,6 +14,7 @@ namespace Jed\Component\Jed\Administrator\Url;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\User\User;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
@@ -103,7 +104,7 @@ class UrlCheckService
         }
 
         if (!$this->registry->has($validatorKey)) {
-            throw new RuntimeException(\sprintf('No URL validator registered for "%s".', $validatorKey));
+            throw new RuntimeException(Text::sprintf('COM_JED_URLCHECK_NO_VALIDATOR', $validatorKey));
         }
 
         // 2. A fresh answer for this URL and this check is reused whoever asked for it. The

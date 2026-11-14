@@ -88,8 +88,9 @@ class HtmlView extends BaseHtmlView
 
         if ($this->can['feeds']) {
             $toolbar->standardButton('ignore', 'COM_VEL_TOOLBAR_IGNORE', 'feeditems.ignore')->icon('icon-times')->listCheck(true);
-            $toolbar->standardButton('run-cna', 'COM_VEL_TOOLBAR_RUN_CNA', 'feeditems.run')->icon('icon-sync')->listCheck(false)->onclick("document.getElementById('feed-source').value='cna'; Joomla.submitbutton('feeditems.run');");
-            $toolbar->standardButton('run-nvd', 'COM_VEL_TOOLBAR_RUN_NVD', 'feeditems.run')->icon('icon-sync')->listCheck(false)->onclick("document.getElementById('feed-source').value='nvd'; Joomla.submitbutton('feeditems.run');");
+            $toolbar->standardButton('run-cna', 'COM_VEL_TOOLBAR_RUN_CNA', 'feeditems.runCna')->icon('icon-sync')->listCheck(false);
+            $toolbar->standardButton('run-nvd', 'COM_VEL_TOOLBAR_RUN_NVD', 'feeditems.runNvd')->icon('icon-sync')->listCheck(false);
+            $toolbar->confirmButton('seed', 'COM_VEL_TOOLBAR_SEED', 'feeditems.seed')->message('COM_VEL_CONFIRM_SEED')->icon('icon-database')->listCheck(false);
         }
 
         if ($this->can['admin']) {

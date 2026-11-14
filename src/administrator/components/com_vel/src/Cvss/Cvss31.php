@@ -16,7 +16,6 @@ namespace Jed\Component\Vel\Administrator\Cvss;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use InvalidArgumentException;
 use Jed\Component\Vel\Administrator\Enum\Severity;
 
 /**
@@ -60,7 +59,7 @@ final class Cvss31
      *
      * @return CvssResult
      *
-     * @throws InvalidArgumentException  Not a valid v3.x vector.
+     * @throws CvssException  Not a valid v3.x vector.
      *
      * @since 4.0.0
      */
@@ -114,7 +113,7 @@ final class Cvss31
      *
      * @return array<string, string>  Metric => value.
      *
-     * @throws InvalidArgumentException
+     * @throws CvssException
      *
      * @since 4.0.0
      */
@@ -123,28 +122,28 @@ final class Cvss31
         $vector = trim($vector);
 
         if (!preg_match('/^CVSS:3\.[01]\//', $vector)) {
-            throw new InvalidArgumentException('Not a CVSS v3.x vector: ' . $vector);
+            throw new CvssException('COM_VEL_CVSS_ERROR_NOT_V3', [$vector]);
         }
 
         $metrics = [];
 
         foreach (explode('/', substr($vector, 9)) as $part) {
             if (!preg_match('/^([A-Z]{1,3}):([A-Z])$/', $part, $m)) {
-                throw new InvalidArgumentException('Malformed CVSS metric: ' . $part);
+                throw new CvssException('COM_VEL_CVSS_ERROR_MALFORMED_METRIC', [$part]);
             }
 
             [, $key, $value] = $m;
 
             if (isset(self::BASE[$key])) {
                 if (!\in_array($value, self::BASE[$key], true)) {
-                    throw new InvalidArgumentException('Invalid value for ' . $key . ': ' . $value);
+                    throw new CvssException('COM_VEL_CVSS_ERROR_INVALID_VALUE', [$key, $value]);
                 }
             } elseif (!\in_array($key, self::OPTIONAL, true)) {
-                throw new InvalidArgumentException('Unknown CVSS metric: ' . $key);
+                throw new CvssException('COM_VEL_CVSS_ERROR_UNKNOWN_METRIC', [$key]);
             }
 
             if (isset($metrics[$key])) {
-                throw new InvalidArgumentException('Duplicate CVSS metric: ' . $key);
+                throw new CvssException('COM_VEL_CVSS_ERROR_DUPLICATE_METRIC', [$key]);
             }
 
             $metrics[$key] = $value;
@@ -152,7 +151,7 @@ final class Cvss31
 
         foreach (array_keys(self::BASE) as $key) {
             if (!isset($metrics[$key])) {
-                throw new InvalidArgumentException('Missing CVSS base metric: ' . $key);
+                throw new CvssException('COM_VEL_CVSS_ERROR_MISSING_METRIC', [$key]);
             }
         }
 

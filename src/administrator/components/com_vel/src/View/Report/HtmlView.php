@@ -31,9 +31,9 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
  */
 class HtmlView extends BaseHtmlView
 {
-    public mixed $item        = null;
+    public mixed $item = null;
     public ReportState $state = ReportState::NEW;
-    public ReportKind $kind   = ReportKind::VULNERABILITY;
+    public ReportKind $kind = ReportKind::VULNERABILITY;
 
     /**
      * @var array<string, bool>

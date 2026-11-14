@@ -21,6 +21,7 @@ use Jed\Component\Vel\Administrator\Service\AdvisoryRepository;
 use Jed\Component\Vel\Administrator\Service\AdvisorySerializer;
 use Jed\Component\Vel\Site\Helper\VelHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\AbstractView;
 use Joomla\Database\DatabaseInterface;
 
@@ -72,6 +73,7 @@ class JsonView extends AbstractView
 
         foreach ($rows as $row) {
             $status   = AdvisoryStatus::tryFrom((string) $row->status) ?? AdvisoryStatus::LIVE;
+            // Legacy category names: a consumer contract, not translated (see legacyRisk()).
             $category = match ($status) {
                 AdvisoryStatus::LIVE      => 'Live VEL',
                 AdvisoryStatus::PATCHED   => 'Resolved VEL',
@@ -122,7 +124,7 @@ class JsonView extends AbstractView
 
         $document = [
             '_deprecated' => [
-                'message' => 'This feed is deprecated. Use the v2 API.',
+                'message' => Text::_('COM_VEL_LEGACY_FEED_DEPRECATED'),
                 'api'     => rtrim(\Joomla\CMS\Uri\Uri::root(), '/') . VelHelper::listPath() . '/api/v2/index.json',
                 'sunset'  => $sunset !== '' ? $sunset : null,
             ],
@@ -160,12 +162,17 @@ class JsonView extends AbstractView
         $app->setHeader('Content-Type', 'application/json; charset=utf-8', true);
         $app->sendHeaders();
 
-        echo json_encode(['error' => ['code' => 'gone', 'message' => 'The legacy feed has been retired. Use the v2 API.', 'api' => rtrim(\Joomla\CMS\Uri\Uri::root(), '/') . VelHelper::listPath() . '/api/v2/index.json']]);
+        echo json_encode(['error' => ['code' => 'gone', 'message' => Text::_('COM_VEL_LEGACY_FEED_GONE'), 'api' => rtrim(\Joomla\CMS\Uri\Uri::root(), '/') . VelHelper::listPath() . '/api/v2/index.json']]);
 
         $app->close();
     }
 
     /**
+     * The vocabulary below ('Live VEL', 'Very High', 'SQL Injection', ...) is deliberately not
+     * translated: it reproduces the legacy feed's exact field values, which existing consumers
+     * compare against as strings. Changing them by language would break those consumers - which
+     * is the one thing a compatibility feed must not do.
+     *
      * @param string $severity A severity.
      *
      * @return string  The legacy risk level vocabulary.

@@ -528,7 +528,7 @@ class MessageService
     {
         $params = ComponentHelper::getParams('com_vel');
         $from   = trim((string) $params->get('from_address', ''));
-        $name   = trim((string) $params->get('from_name', 'Joomla! Vulnerable Extension List'));
+        $name   = trim((string) $params->get('from_name', Text::_('COM_VEL_DEFAULT_FROM_NAME')));
 
         if ($from === '') {
             return;

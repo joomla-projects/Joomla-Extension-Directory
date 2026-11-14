@@ -20,17 +20,48 @@ use Jed\Component\Vel\Administrator\Enum\FeedSource;
 use Jed\Component\Vel\Administrator\Enum\Severity;
 
 /**
- * NVD API 2.0 item -> {@see FeedRecord}.
+ * NVD API 2.0 item -> {@see FeedRecord}, written against a census of the 1,633-record
+ * `keywordSearch=Joomla` corpus (R-01.8, 2026-11-05):
  *
- * NVD adds what the VEL wants from it: CVSS from its own analysis (Primary) or the CNA's
- * (Secondary), CWE ids, and CPE configurations whose `target_sw` says "joomla" and whose
- * version bounds become ranges. Since 2024 many recent CVEs carry none of that for weeks; the
- * mapper copes with an item that is only a description.
+ *  - CVSS is chosen **version first** (4.0, then 3.1, then 3.0; v2 ignored), then Primary over
+ *    Secondary within the version. Every v4.0 score in the corpus is Secondary - NVD produces
+ *    none of its own - so "prefer Primary" would have discarded all 375 of them.
+ *  - `ssvcV203` sits under `metrics` and is not CVSS; it is skipped.
+ *  - `NVD-CWE-Other` and `NVD-CWE-noinfo` are placeholders, not ids (141 occurrences), and are
+ *    dropped.
+ *  - `references[].tags` use NVD's Title Case vocabulary and are mapped to the CVE 5.x list;
+ *    `VDB Entry` and `URL Repurposed` have no equivalent and are dropped (the reference stays).
+ *  - `configurations` is absent on 287 of 1,633 records and on most of ours (`Deferred`); the
+ *    CPE list is carried as corroboration for the classifier, never as the lead.
  *
  * @since 4.0.0
  */
 final class NvdRecordMapper
 {
+    /**
+     * NVD's reference tags onto CVE 5.x tags. Complete for the corpus; absent = drop the tag.
+     *
+     * @var array<string, string>
+     *
+     * @since 4.0.0
+     */
+    public const TAG_MAP = [
+        'exploit'                => 'exploit',
+        'vendor advisory'        => 'vendor-advisory',
+        'third party advisory'   => 'third-party-advisory',
+        'patch'                  => 'patch',
+        'product'                => 'product',
+        'mailing list'           => 'mailing-list',
+        'broken link'            => 'broken-link',
+        'release notes'          => 'release-notes',
+        'issue tracking'         => 'issue-tracking',
+        'us government resource' => 'government-resource',
+        'not applicable'         => 'not-applicable',
+        'technical description'  => 'technical-description',
+        'permissions required'   => 'permissions-required',
+        'mitigation'             => 'mitigation',
+    ];
+
     /**
      * @param array $item One `vulnerabilities[]` entry.
      *
@@ -55,7 +86,11 @@ final class NvdRecordMapper
             }
         }
 
+        $status   = (string) ($cve['vulnStatus'] ?? '');
+        $rejected = strtolower($status) === 'rejected';
+
         $affected = [];
+        $cpes     = [];
         $mentions = stripos($description, 'joomla') !== false;
         $isCore   = false;
         $seen     = [];
@@ -68,6 +103,8 @@ final class NvdRecordMapper
                     if ($parts === null || $parts['part'] !== 'a') {
                         continue;
                     }
+
+                    $cpes[] = ['vendor' => $parts['vendor'], 'product' => $parts['product'], 'target_sw' => $parts['target_sw']];
 
                     $ranges = VersionRangeMapper::fromCpeMatch($match);
 
@@ -82,7 +119,7 @@ final class NvdRecordMapper
                         $mentions = true;
                     }
 
-                    if (CveRecordMapper::isCoreProduct($vendor, $product)) {
+                    if ($parts['vendor'] === 'joomla' && ($parts['product'] === 'joomla!' || $parts['product'] === 'joomla')) {
                         $isCore = true;
                     }
 
@@ -121,60 +158,50 @@ final class NvdRecordMapper
             foreach ((array) ($weakness['description'] ?? []) as $entry) {
                 $id = strtoupper(trim((string) ($entry['value'] ?? '')));
 
+                // NVD-CWE-Other / NVD-CWE-noinfo are placeholders, not ids.
                 if (preg_match('/^CWE-\d+$/', $id) && !isset($cwes[$id])) {
                     $cwes[$id] = ['id' => $id, 'description' => $id];
                 }
             }
         }
 
-        $cvss = null;
-
-        foreach (['cvssMetricV40' => '4.0', 'cvssMetricV31' => '3.1', 'cvssMetricV30' => '3.0'] as $key => $version) {
-            $metrics = (array) ($cve['metrics'][$key] ?? []);
-
-            // Primary (NVD's own) before Secondary (the CNA's).
-            usort($metrics, static fn (array $a, array $b): int => strcmp((string) ($a['type'] ?? 'Z'), (string) ($b['type'] ?? 'Z')));
-
-            foreach ($metrics as $metric) {
-                $data = $metric['cvssData'] ?? null;
-
-                if (\is_array($data) && isset($data['vectorString'], $data['baseScore'])) {
-                    $score = (float) $data['baseScore'];
-                    $cvss  = [
-                        'version'  => $version,
-                        'vector'   => (string) $data['vectorString'],
-                        'score'    => $score,
-                        'severity' => strtolower((string) ($data['baseSeverity'] ?? $metric['baseSeverity'] ?? Severity::fromScore($score)->value)),
-                        'from'     => 'nvd:' . strtolower((string) ($metric['type'] ?? 'unknown')),
-                    ];
-
-                    break 2;
-                }
-            }
-        }
+        $cvss = self::pickCvss((array) ($cve['metrics'] ?? []));
 
         $references = [];
 
         foreach ((array) ($cve['references'] ?? []) as $reference) {
             $url = trim((string) ($reference['url'] ?? ''));
 
-            if ($url !== '') {
-                $references[] = ['url' => $url, 'tags' => array_values(array_map(static fn ($t): string => strtolower(str_replace(' ', '-', (string) $t)), (array) ($reference['tags'] ?? [])))];
+            if ($url === '') {
+                continue;
             }
-        }
 
-        $assigner = (string) ($cve['sourceIdentifier'] ?? '');
+            $tags = [];
+
+            foreach ((array) ($reference['tags'] ?? []) as $tag) {
+                $mapped = self::TAG_MAP[strtolower(trim((string) $tag))] ?? null;
+
+                if ($mapped !== null && !\in_array($mapped, $tags, true)) {
+                    $tags[] = $mapped;
+                }
+            }
+
+            $references[] = ['url' => $url, 'tags' => $tags];
+        }
 
         $normalised = [
             'cve_id'           => $cveId,
-            'assigner'         => $assigner,
+            'assigner'         => (string) ($cve['sourceIdentifier'] ?? ''),
             'assigner_org_id'  => '',
-            'state'            => strtoupper((string) ($cve['vulnStatus'] ?? 'PUBLISHED')) === 'REJECTED' ? 'REJECTED' : 'PUBLISHED',
+            'state'            => $rejected ? 'REJECTED' : 'PUBLISHED',
+            'data_version'     => '',
             'title'            => mb_substr($description, 0, 200),
             'description'      => $description,
             'description_html' => null,
             'affected'         => $affected,
+            'cpes'             => $cpes,
             'cwes'             => array_values($cwes),
+            'problem_text'     => '',
             'cvss'             => $cvss,
             'references'       => $references,
             'credits'          => [],
@@ -183,15 +210,55 @@ final class NvdRecordMapper
                 'published' => CveRecordMapper::sql($cve['published'] ?? null),
                 'updated'   => CveRecordMapper::sql($cve['lastModified'] ?? null),
             ],
-            'solution'        => '',
-            'workaround'      => '',
-            'discovery'       => 'UNKNOWN',
-            'source_url'      => 'https://nvd.nist.gov/vuln/detail/' . $cveId,
-            'mentions_joomla' => $mentions,
-            'is_core'         => $isCore,
-            'nvd_status'      => (string) ($cve['vulnStatus'] ?? ''),
+            'solution'         => '',
+            'workaround'       => '',
+            'discovery'        => 'UNKNOWN',
+            'source_url'       => 'https://nvd.nist.gov/vuln/detail/' . $cveId,
+            'mentions_joomla'  => $mentions,
+            'is_core'          => $isCore,
+            'nvd_status'       => $status,
         ];
 
         return new FeedRecord(FeedSource::NVD, $cveId, $normalised, $item);
+    }
+
+    /**
+     * Version first, then Primary within the version. v2 and SSVC are not candidates.
+     *
+     * @param array $metrics The `metrics` block.
+     *
+     * @return array|null  {version, vector, score, severity, from}.
+     *
+     * @since 4.0.0
+     */
+    public static function pickCvss(array $metrics): ?array
+    {
+        foreach (['cvssMetricV40' => '4.0', 'cvssMetricV31' => '3.1', 'cvssMetricV30' => '3.0'] as $key => $version) {
+            $candidates = (array) ($metrics[$key] ?? []);
+
+            if ($candidates === []) {
+                continue;
+            }
+
+            usort($candidates, static fn (array $a, array $b): int => strcmp((string) ($a['type'] ?? 'Z'), (string) ($b['type'] ?? 'Z')));
+
+            foreach ($candidates as $metric) {
+                $data = $metric['cvssData'] ?? null;
+
+                if (\is_array($data) && isset($data['vectorString'], $data['baseScore'])) {
+                    $score = (float) $data['baseScore'];
+
+                    return [
+                        'version'  => $version,
+                        'vector'   => (string) $data['vectorString'],
+                        'score'    => $score,
+                        'severity' => strtolower((string) ($data['baseSeverity'] ?? $metric['baseSeverity'] ?? Severity::fromScore($score)->value)),
+                        'from'     => 'nvd:' . strtolower((string) ($metric['type'] ?? 'unknown')),
+                    ];
+                }
+            }
+        }
+
+        return null;
     }
 }

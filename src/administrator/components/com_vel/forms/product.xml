@@ -22,7 +22,7 @@
                 required="true"
                 maxlength="255"
                 filter="string"
-                hint="regularlabs.com"
+                hint="COM_VEL_FIELD_VENDOR_HINT"
         />
 
         <field
@@ -33,7 +33,7 @@
                 required="true"
                 maxlength="255"
                 filter="string"
-                hint="Modals"
+                hint="COM_VEL_FIELD_PRODUCT_HINT"
         />
 
         <field
@@ -72,7 +72,7 @@
                 description="COM_VEL_FIELD_ELEMENT_DESC"
                 maxlength="100"
                 filter="string"
-                hint="com_foo / mod_foo / foo"
+                hint="COM_VEL_FIELD_ELEMENT_HINT"
                 class="font-monospace"
         />
 
@@ -83,7 +83,7 @@
                 description="COM_VEL_FIELD_FOLDER_DESC"
                 maxlength="50"
                 filter="string"
-                hint="system"
+                hint="COM_VEL_FIELD_FOLDER_HINT"
                 class="font-monospace"
                 showon="ext_type:plugin"
         />

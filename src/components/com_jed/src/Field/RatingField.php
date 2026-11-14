@@ -81,6 +81,11 @@ class RatingField extends ListField
             //  ->useScript('com_jed.rating-pure-field-js')
             ->useStyle('com_jed.raterJSstyle');
 
+        // The live rating label the script writes next to the stars.
+        foreach (['VERY_POOR', 'POOR', 'OK', 'GOOD', 'EXCELLENT'] as $label) {
+            Text::script('COM_JED_RATING_' . $label);
+        }
+
         $value = (float) $this->value;
         $value = $value <= 0 ? 0 : $value;
 
@@ -101,7 +106,7 @@ class RatingField extends ListField
 					<span class='fa fa-minus-circle'></span>
 				</a>
 				<span class='rating-stars'></span><span class='live-rating'></span>
-				<div class='no-score muted textInfo'><small>" . Text::_('Not Scored') . "</small></div>
+				<div class='no-score muted textInfo'><small>" . Text::_('COM_JED_SCORE_NOT_SCORED') . "</small></div>
 			</div>
 		";
     }

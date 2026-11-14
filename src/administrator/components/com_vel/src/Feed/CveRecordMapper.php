@@ -22,8 +22,10 @@ use Jed\Component\Vel\Administrator\Enum\Severity;
 /**
  * CVE Record Format 5.x -> {@see FeedRecord} (Appendix C in reverse).
  *
- * Reads the CNA container first and the ADP containers (CISA Vulnrichment and the like) for
- * what the CNA left out - CVSS and CWE most often - noting the provenance in the record.
+ * Reads the CNA container first and the ADP containers for what the CNA left out. On Joomla
+ * records the only ADP is CISA-ADP carrying SSVC, not CVSS or CWE (R-02 finding D), so the
+ * fallback rarely fires for ours; it is kept for other CNAs' records. `dataVersion` is carried
+ * but never branched on: untouched records are still 5.1, anything written today is 5.2.
  *
  * @since 4.0.0
  */
@@ -48,6 +50,50 @@ final class CveRecordMapper
         $cna  = $record['containers']['cna'] ?? [];
         $adps = (array) ($record['containers']['adp'] ?? []);
 
+        // A rejected record has a CNA container of `providerMetadata`, `rejectedReasons` and
+        // `x_generator` only - no descriptions, no affected. It is mapped to the little it has.
+        if (strtoupper((string) ($meta['state'] ?? '')) === 'REJECTED') {
+            $reason = '';
+
+            foreach ((array) ($cna['rejectedReasons'] ?? []) as $entry) {
+                $reason = (string) ($entry['value'] ?? '');
+
+                if (($entry['lang'] ?? 'en') === 'en') {
+                    break;
+                }
+            }
+
+            return new FeedRecord(FeedSource::CNA, $cveId, [
+                'cve_id'           => $cveId,
+                'assigner'         => (string) ($meta['assignerShortName'] ?? ''),
+                'assigner_org_id'  => (string) ($meta['assignerOrgId'] ?? ''),
+                'state'            => 'REJECTED',
+                'data_version'     => (string) ($record['dataVersion'] ?? ''),
+                'title'            => 'REJECTED: ' . $cveId,
+                'description'      => $reason,
+                'description_html' => null,
+                'affected'         => [],
+                'cpes'             => [],
+                'cwes'             => [],
+                'problem_text'     => '',
+                'cvss'             => null,
+                'references'       => [],
+                'credits'          => [],
+                'dates'            => [
+                    'reserved'  => self::sql($meta['dateReserved'] ?? null),
+                    'published' => self::sql($meta['datePublished'] ?? null),
+                    'updated'   => self::sql($meta['dateUpdated'] ?? null),
+                    'rejected'  => self::sql($meta['dateRejected'] ?? null),
+                ],
+                'solution'         => '',
+                'workaround'       => '',
+                'discovery'        => 'UNKNOWN',
+                'source_url'       => 'https://www.cve.org/CVERecord?id=' . $cveId,
+                'mentions_joomla'  => false,
+                'is_core'          => false,
+            ], $record);
+        }
+
         $description = '';
         $html        = null;
 
@@ -68,16 +114,16 @@ final class CveRecordMapper
         $isCore   = false;
 
         foreach ((array) ($cna['affected'] ?? []) as $product) {
-            $vendor   = trim((string) ($product['vendor'] ?? ''));
-            $name     = trim((string) ($product['product'] ?? ''));
-            $ranges   = VersionRangeMapper::fromCve((array) ($product['versions'] ?? []));
+            $vendor  = trim((string) ($product['vendor'] ?? ''));
+            $name    = trim((string) ($product['product'] ?? ''));
+            $ranges  = VersionRangeMapper::fromCve((array) ($product['versions'] ?? []));
             $haystack = strtolower($vendor . ' ' . $name . ' ' . implode(' ', (array) ($product['platforms'] ?? [])) . ' ' . (string) ($product['collectionURL'] ?? ''));
 
             if (str_contains($haystack, 'joomla')) {
                 $mentions = true;
             }
 
-            if (self::isCoreProduct($vendor, $name)) {
+            if (RecordClassifier::isCoreProduct($vendor, $name)) {
                 $isCore = true;
             }
 
@@ -97,7 +143,8 @@ final class CveRecordMapper
             $mentions = true;
         }
 
-        $cwes = [];
+        $cwes        = [];
+        $problemText = '';
 
         foreach (array_merge([$cna], $adps) as $container) {
             foreach ((array) ($container['problemTypes'] ?? []) as $type) {
@@ -110,6 +157,10 @@ final class CveRecordMapper
 
                     if ($id !== '' && !isset($cwes[$id])) {
                         $cwes[$id] = ['id' => $id, 'description' => trim((string) ($entry['description'] ?? $id))];
+                    } elseif ($id === '' && $problemText === '') {
+                        // Pre-2026 Joomla records carry `type: "text"` with no CWE id
+                        // ("Information Disclosure"). Kept for the editor, never as a CWE.
+                        $problemText = trim((string) ($entry['description'] ?? ''));
                     }
                 }
             }
@@ -167,11 +218,14 @@ final class CveRecordMapper
             'assigner'         => $assigner,
             'assigner_org_id'  => (string) ($meta['assignerOrgId'] ?? ''),
             'state'            => strtoupper((string) ($meta['state'] ?? 'PUBLISHED')),
+            'data_version'     => (string) ($record['dataVersion'] ?? ''),
             'title'            => (string) ($cna['title'] ?? mb_substr($description, 0, 200)),
             'description'      => $description,
             'description_html' => $html,
             'affected'         => $affected,
+            'cpes'             => [],
             'cwes'             => array_values($cwes),
+            'problem_text'     => $problemText,
             'cvss'             => $cvss,
             'references'       => $references,
             'credits'          => $credits,
@@ -180,19 +234,20 @@ final class CveRecordMapper
                 'published' => self::sql($meta['datePublished'] ?? null),
                 'updated'   => self::sql($meta['dateUpdated'] ?? null),
             ],
-            'solution'        => (string) (($cna['solutions'][0]['value'] ?? '')),
-            'workaround'      => (string) (($cna['workarounds'][0]['value'] ?? '')),
-            'discovery'       => (string) ($cna['source']['discovery'] ?? 'UNKNOWN'),
-            'source_url'      => 'https://www.cve.org/CVERecord?id=' . $cveId,
-            'mentions_joomla' => $mentions,
-            'is_core'         => $isCore,
+            'solution'         => (string) (($cna['solutions'][0]['value'] ?? '')),
+            'workaround'       => (string) (($cna['workarounds'][0]['value'] ?? '')),
+            'discovery'        => (string) ($cna['source']['discovery'] ?? 'UNKNOWN'),
+            'source_url'       => 'https://www.cve.org/CVERecord?id=' . $cveId,
+            'mentions_joomla'  => $mentions,
+            'is_core'          => $isCore,
         ];
 
         return new FeedRecord(FeedSource::CNA, $cveId, $normalised, $record);
     }
 
     /**
-     * Whether a vendor/product pair is Joomla itself rather than an extension.
+     * Whether a vendor/product pair is Joomla itself. Delegates to the classifier, which owns
+     * the vocabulary (`Joomla! Project` / `Joomla! CMS` live).
      *
      * @param string $vendor  Vendor.
      * @param string $product Product.
@@ -203,15 +258,7 @@ final class CveRecordMapper
      */
     public static function isCoreProduct(string $vendor, string $product): bool
     {
-        $v = strtolower(trim($vendor));
-        $p = strtolower(trim($product));
-
-        if (!str_contains($v, 'joomla') && !str_contains($p, 'joomla')) {
-            return false;
-        }
-
-        return (bool) preg_match('/^joomla!?(\s*(cms|core|framework|platform))?$/', $p)
-            || (str_contains($v, 'joomla') && (bool) preg_match('/^(cms|core|joomla!?)$/', $p));
+        return RecordClassifier::isCoreProduct($vendor, $product);
     }
 
     /**

@@ -132,7 +132,9 @@ final class VersionRangeMapper
         if (!empty($match['versionStartIncluding'])) {
             $from = (string) $match['versionStartIncluding'];
         } elseif (!empty($match['versionStartExcluding'])) {
-            // Exclusive lower bound: the next version up is unknown; keep the bound, note it.
+            // Exclusive lower bound (absent from the Joomla corpus, present in NVD generally):
+            // the next version up is unknown, so the bound itself is kept - one version too
+            // wide on the safe side.
             $from = (string) $match['versionStartExcluding'];
         }
 

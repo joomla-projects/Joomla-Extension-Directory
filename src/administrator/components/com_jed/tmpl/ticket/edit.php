@@ -31,11 +31,14 @@ HTMLHelper::_('jquery.framework');
 $wa = $this->getDocument()->getWebAssetManager();
 
 $wa->useStyle('com_jed.tickets');
-//->useStyle('com_jed.jquery_dataTables');
+    //->useStyle('com_jed.jquery_dataTables');
 $wa->useScript('keepalive')
     ->useScript('form.validate')
     ->useScript('com_jed.ticketGetmessagetemplate');
-//->useScript('com_jed.jquery_dataTables');
+Text::script('COM_JED_TICKET_JS_SELECT_TEMPLATE');
+Text::script('COM_JED_TICKET_JS_FETCHING');
+Text::script('COM_JED_JS_ERROR_STATUS');
+    //->useScript('com_jed.jquery_dataTables');
 if ($this->linked_item_type === TicketType::Review->value) {
     $wa->useScript('com_jed.ticketPublishUnPublishReview');
 }
@@ -65,7 +68,7 @@ $userFactory = $container->get('user.factory');
 
         </div>
 
-    </div> <!-- end div class com_jed_ticket -->
+    </div> <!-- end div class  com_jed_ticket -->
 
 
     <br/>
@@ -74,7 +77,7 @@ $userFactory = $container->get('user.factory');
     // recall: the JED Checker run and the internal note both post and come back to this screen,
     // and the tab the team was on is the one they want to land on.
     echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'ticket', 'recall' => true]);
-?>
+    ?>
 
     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'ticket', Text::_('COM_JED_TAB_TICKET', true)); ?>
     <!-- Ticket Summary Tab -->
@@ -82,30 +85,30 @@ $userFactory = $container->get('user.factory');
         <div class="col-8">
 
             <div class="widget">
-                <h1>Message History</h1>
+                <h1><?php echo Text::_('COM_JED_TICKET_MESSAGE_HISTORY'); ?></h1>
                 <div class="container">
                     <div class="row">
                         <?php
 
-                    $slidesOptions = ["active" => 'ticket_messages_group' . '_slide' . $this->latest_ticket_message, // It is the ID of the active tab.
-                    ];
-echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_messages_group', $slidesOptions);
+                        $slidesOptions = ["active" => 'ticket_messages_group' . '_slide' . $this->latest_ticket_message, // It is the ID of the active tab.
+                        ];
+                        echo HTMLHelper::_('bootstrap.startAccordion', 'ticket_messages_group', $slidesOptions);
 
-$slideid = 0;
-foreach ($this->ticket_messages as $ticketMessage) {
-    if ($ticketMessage->message_direction == 0) {
-        $inout = "jed-ticket-message-out";
-    } else {
-        $inout = "jed-ticket-message-in";
-    }
+                        $slideid = 0;
+                        foreach ($this->ticket_messages as $ticketMessage) {
+                            if ($ticketMessage->message_direction == 0) {
+                                $inout = "jed-ticket-message-out";
+                            } else {
+                                $inout = "jed-ticket-message-in";
+                            }
 
-    echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' .  htmlspecialchars((string) $ticketMessage->subject) . ' - ' . JedHelper::prettyDate($ticketMessage->created_on) . '</span>', 'ticket_messages_group' . '_slide' . ($slideid++));
-    echo  $ticketMessage->message ;
-    echo HTMLHelper::_('bootstrap.endSlide');
-}
-echo HTMLHelper::_('bootstrap.endAccordion');
+                            echo HTMLHelper::_('bootstrap.addSlide', 'ticket_messages_group', '<span class="' . $inout . '">' . $ticketMessage->subject . ' - ' . JedHelper::prettyDate($ticketMessage->created_on) . '</span>', 'ticket_messages_group' . '_slide' . ($slideid++));
+                            echo  $ticketMessage->message ;
+                            echo HTMLHelper::_('bootstrap.endSlide');
+                        }
+                        echo HTMLHelper::_('bootstrap.endAccordion');
 
-?>
+                        ?>
 
 
                     </div>
@@ -114,7 +117,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
             </div>
 
             <div class="widget">
-                <h1>Message Templates</h1>
+                <h1><?php echo Text::_('COM_JED_TICKET_MESSAGE_TEMPLATES'); ?></h1>
                 <div class="container">
                     <div class="row">
                         <?php echo $this->form->renderField('messagetemplates', null, null, $headerlabeloptions); ?>
@@ -124,7 +127,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
             </div>
 
             <div class="widget">
-                <h1>Compose Message</h1>
+                <h1><?php echo Text::_('COM_JED_TICKET_COMPOSE_MESSAGE'); ?></h1>
                 <div class="container">
                     <div class="row">
                         <?php echo $this->form->renderField('message_subject', null, null, $headerlabeloptions); ?>
@@ -134,7 +137,7 @@ echo HTMLHelper::_('bootstrap.endAccordion');
                                 onclick="Joomla.submitbutton('ticket.sendmessage')">
 
 
-                            <?php echo Text::_('Send Message'); ?>
+                            <?php echo Text::_('COM_JED_TICKET_SEND_MESSAGE'); ?>
 
                         </button>
 
@@ -147,17 +150,11 @@ echo HTMLHelper::_('bootstrap.endAccordion');
         </div>
         <div class="col-4">
             <div class="widget">
-                <h1>Created By</h1>
+                <h1><?php echo Text::_('COM_JED_GENERAL_CREATED_BY_LABEL'); ?></h1>
                 <div class="container">
                     <div class="row">
                         <div class="col"><?php echo $this->form->renderField('created_by', null, null, $headerlabeloptions); ?></div>
-                        <div class="col"><?php
-    echo 'on ';
-
-echo JedHelper::prettyDate($this->item->created_on);
-
-
-?></div>
+                        <div class="col"><?php echo Text::sprintf('COM_JED_TICKET_CREATED_ON_DATE', JedHelper::prettyDate($this->item->created_on)); ?></div>
                     </div>
 
                 </div>
@@ -167,7 +164,7 @@ echo JedHelper::prettyDate($this->item->created_on);
             <div class="widget">
                 <h1><?php echo Text::_('COM_JED_TICKETS_LINKED_ITEM_TYPE_LABEL'); ?></h1>
                 <div class="container">
-                    <p><?php echo Text::_('COM_JED_TICKETS_LINKED_ITEM_TYPE_OPTION_' . strtoupper($this->linked_item_type_name)) . " is displayed in 'Linked ". Text::_('COM_JED_TICKETS_LINKED_ITEM_TYPE_OPTION_' . strtoupper($this->linked_item_type_name))."' tab.";?></p>
+                    <p><?php echo Text::sprintf('COM_JED_TICKET_LINKED_ITEM_TAB_HINT', Text::_('COM_JED_TICKETS_LINKED_ITEM_TYPE_OPTION_' . strtoupper($this->linked_item_type_name))); ?></p>
                 </div>
             </div>
 
@@ -236,42 +233,42 @@ echo JedHelper::prettyDate($this->item->created_on);
     <div class="position-absolute top-0 end-0 p-3 m-3 bg-light border rounded shadow" style="max-width: 320px; z-index: 1050;">
 
    <!-- <div class="row jed-ticket-actions mt-2">-->
-        <?php // echo "<pre>";print_r($this->linkedItemActions);echo "</pre>";?>
+        <?php // echo "<pre>";print_r($this->linkedItemActions);echo "</pre>"; ?>
         <?php foreach ($this->linkedItemActions as $action) :
             /** @var TicketAction $action */
             echo LayoutHelper::render('ticket.action_button', ['action' => $action]);
         endforeach; ?>
     </div></div>
     <?php endif;
-echo LayoutHelper::render($this->linkedItemLayout, $this->linkedItemData);
-echo HTMLHelper::_('uitab.endTab');
-
-if ($this->canManage && $this->extensionId !== null) {
-    // JED Checker: the rules the JED team reviews every package with, run against the
-    // listing this ticket is about. Anything that resolves to a listing - an extension
-    // ticket, a review, a link-check ticket, an abandonware case - gets the tab.
-    $jedCheckerCounts = $this->jedChecker['result']['totals'] ?? null;
-    $jedCheckerBadge  = $jedCheckerCounts === null
-        ? ''
-        : ' <span class="badge ' . ($jedCheckerCounts['errors'] > 0 ? 'bg-danger' : ($jedCheckerCounts['warnings'] > 0 ? 'bg-warning text-dark' : 'bg-success')) . '">'
-            . (int) $jedCheckerCounts['errors'] . '/' . (int) $jedCheckerCounts['warnings'] . '</span>';
-
-    echo HTMLHelper::_('uitab.addTab', 'myTab', 'jedchecker', Text::_('COM_JED_JEDCHECKER_TAB') . $jedCheckerBadge);
-
-    echo LayoutHelper::render('ticket.jedchecker', $this->jedChecker + ['ticketId' => (int) $this->item->id]);
-
+    echo LayoutHelper::render($this->linkedItemLayout, $this->linkedItemData);
     echo HTMLHelper::_('uitab.endTab');
-}
 
-if ($this->canManage && !empty($this->item->id)) {
-    // Ticket Help: who opened the ticket and what else the JED knows about them.
-    echo HTMLHelper::_('uitab.addTab', 'myTab', 'tickethelp', Text::_('COM_JED_TICKET_HELP_TAB'));
+    if ($this->canManage && $this->extensionId !== null) {
+        // JED Checker: the rules the JED team reviews every package with, run against the
+        // listing this ticket is about. Anything that resolves to a listing - an extension
+        // ticket, a review, a link-check ticket, an abandonware case - gets the tab.
+        $jedCheckerCounts = $this->jedChecker['result']['totals'] ?? null;
+        $jedCheckerBadge  = $jedCheckerCounts === null
+            ? ''
+            : ' <span class="badge ' . ($jedCheckerCounts['errors'] > 0 ? 'bg-danger' : ($jedCheckerCounts['warnings'] > 0 ? 'bg-warning text-dark' : 'bg-success')) . '">'
+                . (int) $jedCheckerCounts['errors'] . '/' . (int) $jedCheckerCounts['warnings'] . '</span>';
 
-    echo LayoutHelper::render('ticket.ticket_help', $this->ticketHelp);
+        echo HTMLHelper::_('uitab.addTab', 'myTab', 'jedchecker', Text::_('COM_JED_JEDCHECKER_TAB') . $jedCheckerBadge);
 
-    echo HTMLHelper::_('uitab.endTab');
-}
-?>
+        echo LayoutHelper::render('ticket.jedchecker', $this->jedChecker + ['ticketId' => (int) $this->item->id]);
+
+        echo HTMLHelper::_('uitab.endTab');
+    }
+
+    if ($this->canManage && !empty($this->item->id)) {
+        // Ticket Help: who opened the ticket and what else the JED knows about them.
+        echo HTMLHelper::_('uitab.addTab', 'myTab', 'tickethelp', Text::_('COM_JED_TICKET_HELP_TAB'));
+
+        echo LayoutHelper::render('ticket.ticket_help', $this->ticketHelp);
+
+        echo HTMLHelper::_('uitab.endTab');
+    }
+    ?>
 
     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'Publishing', Text::_('COM_JED_TAB_PUBLISHING', true)); ?>
     <div class="row-fluid">
@@ -279,7 +276,7 @@ if ($this->canManage && !empty($this->item->id)) {
             <fieldset class="adminform">
                 <legend><?php echo Text::_('COM_JED_GENERAL_PUBLISHING_LABEL'); ?></legend>
                 <!-- The below field does not make sense, it should be a published/unpublished state but as all tickets should be shown regardless of state. I am hiding it for now. MF -->
-                <?php //echo $this->form->renderField('state');?>
+                <?php //echo $this->form->renderField('state'); ?>
 
                 <?php echo $this->form->renderField('created_on'); ?>
                 <?php echo $this->form->renderField('modified_by'); ?>
