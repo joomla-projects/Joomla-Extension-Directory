@@ -139,7 +139,9 @@ INSERT INTO #__jed_tickets (id, ticket_origin, ticket_category_type, ticket_subj
 
 -- Every message except the first, which is already the ticket body. RSTicketsPro does record the
 -- direction, in submitted_by_staff, so it is used rather than inferred.
-INSERT INTO #__jed_ticket_messages (id, ticket_id, subject, message, message_direction, internal, created_by, created_on) SELECT 100000 + m.id, 100000 + m.ticket_id, '', m.message, CASE WHEN IFNULL(m.submitted_by_staff, 0) = 1 THEN 0 ELSE 1 END, 0, IFNULL(m.user_id, 0), NULLIF(m.date, '0000-00-00 00:00:00') FROM wqyh6_rsticketspro_ticket_messages m INNER JOIN combine_jed_rsp c ON c.ticket_id = m.ticket_id WHERE m.id <> c.first_message_id;
+-- RSTicketsPro logs its own events (status, department and staff changes, auto-close) as messages with user_id -1.
+-- created_by is unsigned, so they are stored with user 0; in strict SQL mode -1 stops the import ("Out of range value").
+INSERT INTO #__jed_ticket_messages (id, ticket_id, subject, message, message_direction, internal, created_by, created_on) SELECT 100000 + m.id, 100000 + m.ticket_id, '', m.message, CASE WHEN IFNULL(m.submitted_by_staff, 0) = 1 THEN 0 ELSE 1 END, 0, GREATEST(IFNULL(m.user_id, 0), 0), NULLIF(m.date, '0000-00-00 00:00:00') FROM wqyh6_rsticketspro_ticket_messages m INNER JOIN combine_jed_rsp c ON c.ticket_id = m.ticket_id WHERE m.id <> c.first_message_id;
 
 DROP TABLE IF EXISTS combine_jed_rsp;
 
