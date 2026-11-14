@@ -21,12 +21,12 @@ use Jed\Component\Vel\Administrator\Feed\FeedRunner;
 use Jed\Component\Vel\Administrator\Service\VelService;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\WebAsset\Exception\UnknownAssetException;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Registry\Registry;
 
@@ -59,6 +59,15 @@ class HtmlView extends BaseHtmlView
      * @since 4.0.0
      */
     public ?array $progress = null;
+
+    /**
+     * Why the progress panel cannot work on this server, when it cannot.
+     *
+     * @var string
+     *
+     * @since 4.0.0
+     */
+    public string $progressProblem = '';
 
     /**
      * @param string|null $tpl The template name.
@@ -122,16 +131,31 @@ class HtmlView extends BaseHtmlView
             [
                 'COM_VEL_FEEDRUN_STOPPING', 'COM_VEL_FEEDRUN_CONFIRM_STOP', 'COM_VEL_FEEDRUN_BUSY', 'COM_VEL_FEEDRUN_RETRY',
                 'COM_VEL_FEEDRUN_GAVE_UP', 'COM_VEL_FEEDRUN_BAD_RESPONSE', 'COM_VEL_FEEDRUN_LEAVE_WARNING',
-                'COM_VEL_FEEDRUN_EVENT_NEW', 'COM_VEL_FEEDRUN_EVENT_UPDATED',
+                'COM_VEL_FEEDRUN_EVENT_NEW', 'COM_VEL_FEEDRUN_EVENT_UPDATED', 'COM_VEL_FEEDRUN_SCRIPT_FAILED',
+                'COM_VEL_FEEDRUN_REQUESTS_DROPPED',
             ] as $key
         ) {
             Text::script($key);
         }
 
-        // The step requests carry the token in a header (checked by Session::checkToken()).
-        HTMLHelper::_('form.csrf');
-
+        // The step requests carry the token in a header (checked by Session::checkToken()). It
+        // reaches the page as the `csrf.token` script option, which the core asset adds for us:
+        // Text::script() above has already pulled `core` in.
         $document = $this->getDocument();
+
+        // media/com_vel/joomla.asset.json is registered by the administrator application for
+        // the component being dispatched.
+        $wa = $document->getWebAssetManager();
+
+        // The panel is drawn here but only the script moves it: a missing script file is a page
+        // that silently never updates (Joomla drops an asset whose file it cannot find), so say so.
+        try {
+            $wa->useScript('com_vel.feedrun');
+
+            $scriptMissing = $wa->getAsset('script', 'com_vel.feedrun')->getUri() === '';
+        } catch (UnknownAssetException $e) {
+            $scriptMissing = true;
+        }
 
         $document->addScriptOptions('com_vel.feedrun', [
             'id'      => $runId,
@@ -140,10 +164,11 @@ class HtmlView extends BaseHtmlView
             'stopUrl' => Route::_('index.php?option=com_vel&task=feeditems.stop&format=json', false),
             'listUrl' => Route::_('index.php?option=com_vel&view=feedruns', false),
         ]);
+        if ($scriptMissing) {
+            $this->progressProblem = Text::sprintf('COM_VEL_FEEDRUN_SCRIPT_MISSING', 'media/com_vel/js/feedrun.js', 'media/com_vel/joomla.asset.json');
 
-        // media/com_vel/joomla.asset.json is registered by the administrator application for
-        // the component being dispatched.
-        $document->getWebAssetManager()->useScript('com_vel.feedrun');
+            Factory::getApplication()->enqueueMessage($this->progressProblem, 'error');
+        }
     }
 
     /**

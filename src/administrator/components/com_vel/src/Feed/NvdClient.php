@@ -224,13 +224,21 @@ final class NvdClient
 
         $url = self::BASE . '?' . http_build_query($query);
 
+        $start = microtime(true);
+
         try {
             $response = $this->http->get($url, $headers, $this->timeout);
         } catch (\Throwable $e) {
+            // The API key travels in a header, never in the URL, so the URL is safe to show.
+            FeedTrace::record('GET', $url, 0, 0, $start, '', $e->getMessage());
+
             throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_NVD_REQUEST_FAILED', $e->getMessage()), 0, $e);
         }
 
         $status  = $response->getStatusCode();
+        $body    = (string) $response->getBody();
+
+        FeedTrace::record('GET', $url, $status, \strlen($body), $start);
         $message = trim($response->getHeaderLine('message'));
 
         if ($status === 403 || $status === 429) {
@@ -254,7 +262,7 @@ final class NvdClient
             throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_NVD_STATUS', $status, $message));
         }
 
-        $decoded = json_decode((string) $response->getBody(), true);
+        $decoded = json_decode($body, true);
 
         if (!\is_array($decoded)) {
             throw new RuntimeException(Text::_('COM_VEL_ERROR_NVD_INVALID_JSON'));

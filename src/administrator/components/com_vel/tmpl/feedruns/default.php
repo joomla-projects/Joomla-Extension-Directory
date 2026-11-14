@@ -61,6 +61,13 @@ use Joomla\CMS\Router\Route;
                                 <a id="vel-feedrun-close" class="btn btn-secondary d-none" href="<?php echo Route::_('index.php?option=com_vel&view=feedruns'); ?>"><?php echo Text::_('COM_VEL_FEEDRUN_CLOSE'); ?></a>
                             </div>
 
+                            <?php if ($this->progressProblem !== '') : ?>
+                                <div class="alert alert-danger mt-3 mb-0"><?php echo $this->escape($this->progressProblem); ?></div>
+                            <?php elseif (!$report['done']) : ?>
+                                <?php // Removed by feedrun.js when it starts: if it stays, the script did not run. ?>
+                                <div id="vel-feedrun-waiting" class="alert alert-warning mt-3 mb-0"><?php echo Text::_('COM_VEL_FEEDRUN_WAITING_FOR_SCRIPT'); ?></div>
+                            <?php endif; ?>
+
                             <noscript><div class="alert alert-warning mt-3 mb-0"><?php echo Text::_('COM_VEL_FEEDRUN_NOSCRIPT'); ?></div></noscript>
                         </div>
                     </section>

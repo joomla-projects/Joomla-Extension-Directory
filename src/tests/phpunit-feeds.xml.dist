@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Feed tests: the VEL's CVE / NVD feed runner, end to end against SQLite and fake cvelistV5 and
+    NVD servers (nothing is fetched from the internet). Separate from phpunit.xml.dist because
+    they stand in for some CMS classes, which must never share a process with the real ones.
+
+    Needs a Joomla 5/6 "libraries" folder and pdo_sqlite; see tests/README.md.
+
+    Run from the repository root:
+        vendor/bin/phpunit -c tests/phpunit-feeds.xml.dist
+        JOOMLA_LIBRARIES=/path/to/joomla/libraries vendor/bin/phpunit -c tests/phpunit-feeds.xml.dist
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         bootstrap="feeds/bootstrap.php"
+         colors="true"
+         failOnWarning="true">
+    <testsuites>
+        <testsuite name="vel-feeds">
+            <directory>feeds</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

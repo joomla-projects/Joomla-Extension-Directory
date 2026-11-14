@@ -62,12 +62,31 @@
   /** A failure that retrying will not mend: no permission, bad token, session gone. */
   class FatalError extends Error {}
 
+  /** Shortens the URL of a request the server made, for the activity log. */
+  const describeRequest = (request) => {
+    const url = String(request.url || '')
+      .replace('https://raw.githubusercontent.com/CVEProject/cvelistV5/main/', 'cvelistV5/')
+      .replace('https://services.nvd.nist.gov/rest/json/cves/2.0', 'NVD');
+    const range = request.range ? ` [${request.range}]` : '';
+    const size = request.bytes >= 1024 ? `${(request.bytes / 1024).toFixed(1)} KB` : `${request.bytes} B`;
+    const outcome = request.status ? `${request.status} · ${size}` : `failed: ${request.error}`;
+
+    return `  ${request.method} ${url}${range} → ${outcome} · ${request.ms} ms`;
+  };
+
   const init = () => {
     const panel = document.getElementById('vel-feedrun');
     const options = Joomla.getOptions('com_vel.feedrun');
 
     if (!panel || !options || !options.id) {
       return;
+    }
+
+    // The script runs: the server-side "waiting for the script" note can go.
+    const waiting = document.getElementById('vel-feedrun-waiting');
+
+    if (waiting) {
+      waiting.remove();
     }
 
     const el = (id) => document.getElementById(`vel-feedrun-${id}`);
@@ -191,6 +210,14 @@
         if (!report.done) {
           log(report.activity, 'text-muted');
         }
+      }
+
+      (report.requests || []).forEach((request) => {
+        log(describeRequest(request), request.status >= 200 && request.status < 400 ? 'text-muted' : 'text-danger');
+      });
+
+      if (report.requestsDropped > 0) {
+        log(`  ${text('COM_VEL_FEEDRUN_REQUESTS_DROPPED', report.requestsDropped)}`, 'text-muted');
       }
 
       (report.events || []).forEach((event) => {
@@ -449,9 +476,26 @@
     step();
   };
 
+  /** Any error while starting is shown in the panel, not only in the console. */
+  const start = () => {
+
+    try {
+      init();
+    } catch (error) {
+      const box = document.getElementById('vel-feedrun-message') || document.getElementById('vel-feedrun-waiting');
+
+      if (box) {
+        box.className = 'alert alert-danger';
+        box.textContent = text('COM_VEL_FEEDRUN_SCRIPT_FAILED', error && error.message ? error.message : String(error));
+      }
+
+      throw error;
+    }
+  };
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', start);
   } else {
-    init();
+    start();
   }
 })(document, Joomla);

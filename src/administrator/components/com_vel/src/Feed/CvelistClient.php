@@ -465,11 +465,19 @@ final class CvelistClient
             $headers['If-None-Match'] = $etag;
         }
 
+        $start = microtime(true);
+
         try {
             $response = $this->http->get($url, $headers, $this->timeout);
         } catch (\Throwable $e) {
+            FeedTrace::record('GET', $url, 0, 0, $start, $headers['Range'], $e->getMessage());
+
             throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_CVELIST_REQUEST_FAILED', $e->getMessage()), 0, $e);
         }
+
+        $body = (string) $response->getBody();
+
+        FeedTrace::record('GET', $url, $response->getStatusCode(), \strlen($body), $start, $headers['Range']);
 
         $status  = $response->getStatusCode();
         $newEtag = trim($response->getHeaderLine('ETag')) ?: null;
@@ -484,13 +492,12 @@ final class CvelistClient
         }
 
         if ($status === 206) {
-            return ['body' => (string) $response->getBody(), 'etag' => $newEtag, 'not_modified' => false, 'complete_body' => false];
+            return ['body' => $body, 'etag' => $newEtag, 'not_modified' => false, 'complete_body' => false];
         }
 
         if ($status === 200) {
             // The Range was ignored. Acceptable only for a modest file.
             $length = (int) $response->getHeaderLine('Content-Length');
-            $body   = (string) $response->getBody();
 
             if (($length > 0 ? $length : \strlen($body)) > $this->fullFetchMaxBytes) {
                 throw new RuntimeException(Text::_('COM_VEL_ERROR_CVELIST_RANGE_IGNORED'));
@@ -590,20 +597,27 @@ final class CvelistClient
     {
         $headers = ['Accept' => 'application/json', 'User-Agent' => 'Joomla-VEL/2.0 (+https://extensions.joomla.org/vulnerable-extensions)'];
 
+        $start = microtime(true);
+
         try {
             $response = $this->http->get($url, $headers, min(30, $this->timeout));
         } catch (\Throwable $e) {
+            FeedTrace::record('GET', $url, 0, 0, $start, '', $e->getMessage());
+
             throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_CVELIST_REQUEST_FAILED', $e->getMessage()), 0, $e);
         }
 
         $status = $response->getStatusCode();
+        $body   = (string) $response->getBody();
+
+        FeedTrace::record('GET', $url, $status, \strlen($body), $start);
 
         if ($status >= 400) {
             // The status is the code, so callers need not read it out of a translated message.
             throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_CVELIST_STATUS', $status, $url), $status);
         }
 
-        $decoded = json_decode((string) $response->getBody(), true);
+        $decoded = json_decode($body, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new RuntimeException(Text::sprintf('COM_VEL_ERROR_CVELIST_INVALID_JSON', $url));

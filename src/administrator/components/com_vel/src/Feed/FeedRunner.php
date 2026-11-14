@@ -125,6 +125,15 @@ final class FeedRunner
     private array $events = [];
 
     /**
+     * The outbound requests of the current step ({@see FeedTrace}).
+     *
+     * @var array{requests: list<array>, dropped: int}
+     *
+     * @since 4.0.0
+     */
+    private array $requests = ['requests' => [], 'dropped' => 0];
+
+    /**
      * The NVD client of the current step, whose throttle is carried to the next one.
      *
      * @since 4.0.0
@@ -390,6 +399,9 @@ final class FeedRunner
         $beat     = $start;
         $deadline = static fn (): bool => (microtime(true) - $start) > $budgetSeconds;
 
+        // Only this step's requests go to the page.
+        FeedTrace::take();
+
         try {
             $feed = $this->feedFor($run, $progress);
 
@@ -424,6 +436,8 @@ final class FeedRunner
         if ($this->nvd !== null) {
             $progress['nvd_last'] = $this->nvd->lastRequestAt();
         }
+
+        $this->requests = FeedTrace::take();
 
         $this->save($run, (string) $run->status === 'running' ? $progress : null);
 
@@ -479,7 +493,8 @@ final class FeedRunner
      * @return array{id: int, source: string, label: string, status: string, statusLabel: string,
      *               done: bool, busy: bool, phase: string, activity: string, current: ?int,
      *               total: ?int, seen: int, new: int, updated: int, enriched: int,
-     *               message: string, window: string, elapsed: int, events: array}
+     *               message: string, window: string, elapsed: int, events: array,
+     *               requests: array, requestsDropped: int}
      *
      * @since 4.0.0
      */
@@ -550,6 +565,9 @@ final class FeedRunner
             'window'      => $run->window_from ? $run->window_from . ' → ' . ($run->window_to ?? '') : '',
             'elapsed'     => $started !== false ? max(0, time() - $started) : 0,
             'events'      => $this->events,
+            // What this step asked of cvelistV5 / the NVD: method, url, range, status, bytes, ms, error.
+            'requests'    => $this->requests['requests'],
+            'requestsDropped' => $this->requests['dropped'],
         ];
     }
 

@@ -87,7 +87,6 @@ class FeeditemsController extends AdminController
      */
     public function run(): void
     {
-
         $source = FeedSource::tryFrom((string) $this->input->getCmd('source', ''));
 
         if ($source === null) {
