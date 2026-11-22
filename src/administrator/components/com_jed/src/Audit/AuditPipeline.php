@@ -44,13 +44,16 @@ class AuditPipeline
      */
     private const MAX_ZIP_BYTES = 52428800;
 
+    private readonly SafeHttpFetcher $fetcher;
+
     /**
-     * @param DatabaseInterface $db                    The database connector object.
-     * @param DockerRunner       $dockerRunner          Runs the sandboxed audit container.
-     * @param ClaudeAuditor      $claudeAuditor         Runs the Claude security review.
-     * @param string             $workspaceRoot         Directory for transient per-job input/output.
-     * @param string             $reportsRoot           Directory where persisted reports are written.
-     * @param int                $dockerTimeoutSeconds  Maximum time to allow the audit container to run.
+     * @param DatabaseInterface    $db                    The database connector object.
+     * @param DockerRunner         $dockerRunner          Runs the sandboxed audit container.
+     * @param ClaudeAuditor        $claudeAuditor         Runs the Claude security review.
+     * @param string               $workspaceRoot         Directory for transient per-job input/output.
+     * @param string               $reportsRoot           Directory where persisted reports are written.
+     * @param int                  $dockerTimeoutSeconds  Maximum time to allow the audit container to run.
+     * @param SafeHttpFetcher|null $fetcher               The guarded ZIP downloader.
      *
      * @since 4.0.0
      */
@@ -60,8 +63,10 @@ class AuditPipeline
         private readonly ClaudeAuditor $claudeAuditor,
         private readonly string $workspaceRoot,
         private readonly string $reportsRoot,
-        private readonly int $dockerTimeoutSeconds = 900
+        private readonly int $dockerTimeoutSeconds = 900,
+        ?SafeHttpFetcher $fetcher = null
     ) {
+        $this->fetcher = $fetcher ?? new SafeHttpFetcher(self::MAX_ZIP_BYTES, 60);
     }
 
     /**
@@ -189,14 +194,17 @@ class AuditPipeline
         }
 
         // The URL comes from a developer's own update feed: same guard as every other outbound fetch.
-        $result = (new SafeHttpFetcher(self::MAX_ZIP_BYTES, 60))->fetch($url);
+        $result = $this->fetcher->fetch($url);
 
         if ($result->refused) {
             throw new RuntimeException(\sprintf('Refused to download extension zip: %s', $result->reason));
         }
 
-        if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
-            throw new RuntimeException(Text::sprintf('COM_JED_AUDIT_DOWNLOAD_FAILED', $response->getStatusCode()));
+        if (!$result->isOk()) {
+            $language = Factory::getApplication()->getLanguage();
+            $language->load('com_jed', JPATH_ADMINISTRATOR . '/components/com_jed');
+
+            throw new RuntimeException(\sprintf($language->_('COM_JED_AUDIT_DOWNLOAD_FAILED'), $result->status));
         }
 
         file_put_contents($destination, $result->body);
