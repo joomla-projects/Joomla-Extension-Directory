@@ -2,7 +2,7 @@
 
 /**
  * Registers a new "owner" user from the front end, has them submit a brand-new extension via
- * the Newextension wizard's manual-entry path, then logs in as admin to approve and publish it.
+ * the Newextension wizard's manual-entry path, then approves it as admin.
  *
  * Saves { ownerUsername, extensionId, extensionCatId, extensionName } to
  * tests/cypress/output/extension-submission.json for parts 3 and 4 to pick up.
@@ -47,7 +47,7 @@ describe('Workflow part 1: extension owner registers and submits a new extension
     // extension out of them. Use the wizard's manual-entry path instead, which needs no
     // external repository at all.
     cy.visit('index.php?option=com_jed&view=newextension')
-    cy.contains('.newextension-picker a', 'Create Manually').click()
+    cy.get('.newextension-picker .newextension-manual a').click()
 
     cy.get('#jform_name', { timeout: 10000 }).type(state.extensionName)
 
@@ -84,6 +84,8 @@ describe('Workflow part 1: extension owner registers and submits a new extension
       expect(state.extensionId, 'new extension id').to.not.be.null
     })
 
+    cy.visit('index.php?option=com_jed&view=dashboard')
+    cy.contains('.com-jed-dashboard tr', state.extensionName).find('.badge').should('contain.text', 'Awaiting approval')
     cy.doFrontendLogout()
   })
 
@@ -106,41 +108,51 @@ describe('Workflow part 1: extension owner registers and submits a new extension
     })
   })
 
-  it('approves and publishes the new extension as admin', () => {
+  it('approves the new extension as admin', () => {
     cy.doAdministratorLogin(Cypress.env('username'), Cypress.env('password'), false)
 
     // The compare/approve screen for a specific extension can be reached directly - it's
     // exactly where the Pending-column icon on the Extensions list links to.
     cy.visit(`administrator/index.php?option=com_jed&view=extension&layout=compare&id=${state.extensionId}`)
 
-    // Approve copies the pending submission's content onto the live row (it does not, by
-    // itself, publish it - the new row is created unpublished).
     cy.contains('button, a', 'Approve').click()
-    cy.get('#system-message-container .alert-message').should('be.visible')
-
-    // Publish it via the Extensions list's bulk "Change Status" action.
-    cy.visit('administrator/index.php?option=com_jed&view=extensions')
-    cy.searchForItem(state.extensionName)
-    cy.get('#cb0').click()
-    cy.clickToolbarButton('action')
-    cy.clickToolbarButton('publish')
-    cy.checkForSystemMessage('published')
+    cy.checkForSystemMessage('The selected version has been approved.')
 
     cy.doAdministratorLogout()
 
     cy.saveJsonState('extension-submission', state)
   })
 
-  it('it shows the extension to guests once approved', () => {
+  it('shows the extension to guests immediately after approval', () => {
     const detailUrl = `index.php?option=com_jed&view=extension&catid=${state.extensionCatId}` +
       `&id=${state.extensionId}`
 
-    cy.request({ url: detailUrl, failOnStatusCode: false }).its('status').should('eq', 200)
+    cy.request(detailUrl).then(({ status, body }) => {
+      expect(status).to.eq(200)
+      expect(body).to.contain(state.extensionName)
+    })
+  })
 
-    // Nor does it appear in the public catalogue.
-    // TODO: Currently too many items in the sample data for it to show on the first page of results
-    // cy.request('index.php?option=com_jed&view=extensions').then((response) => {
-    //   expect(response.body).to.contain(`id=${state.extensionId}"`)
-    // })
+  it('shows the listing as online in the owner dashboard', () => {
+    cy.doFrontendLogin(owner.username, owner.password, false)
+    cy.visit('index.php?option=com_jed&view=dashboard')
+    cy.contains('.com-jed-dashboard tr', state.extensionName).find('.badge').should('contain.text', 'Online')
+    cy.doFrontendLogout()
+  })
+
+  it('tells the developer that the listing is now public', function () {
+    const mailpitUrl = Cypress.expose('mailpitUrl')
+
+    if (!mailpitUrl) {
+      this.skip()
+    }
+
+    cy.request({ url: `${mailpitUrl}/api/v1/search`, qs: { query: `to:${owner.email}` } }).then(({ body }) => {
+      const subject = `Your extension ${state.extensionName} is now listed`
+      const approval = body.messages.find((message) => message.Subject === subject)
+      expect(approval, 'approval email').to.exist
+
+      cy.request(`${mailpitUrl}/api/v1/message/${approval.ID}`).its('body.Text').should('contain', 'is now listed')
+    })
   })
 })
