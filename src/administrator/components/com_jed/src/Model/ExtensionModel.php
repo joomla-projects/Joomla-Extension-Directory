@@ -17,6 +17,7 @@ defined('_JEXEC') or die;
 
 use Exception;
 use InvalidArgumentException;
+use Jed\Component\Jed\Administrator\Listing\ListingAccess;
 use Jed\Component\Jed\Administrator\Log\JedActionLog;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Table\ExtensionHistoryTable;
@@ -231,7 +232,7 @@ class ExtensionModel extends AdminModel
     /**
      * Approve a pending history entry: overwrite the live `#__jed_extensions` row
      * with that entry's content, mark it the active history row, and point
-     * `entry_version` at it.
+     * `entry_version` at it. The first approval of a submitted listing also publishes it.
      *
      * @param int $extensionId The extension id.
      * @param int $historyId   The `#__jed_extensions_history` id to promote to live.
@@ -273,7 +274,7 @@ class ExtensionModel extends AdminModel
         // Without this, approving a pending edit would copy the `blocked` value the revision was
         // snapshotted with over the live one - so approving an edit made before a block would
         // silently lift that block, which is exactly what the separate carriers exist to prevent.
-        // `state` goes the same way: online/offline is the developer's, not a moderation outcome.
+        // Keep the listing's current state instead of restoring the revision's snapshot.
         // `parent_confirmed` (P1-23) travels with them for the same reason: the developer's
         // claim about which product their add-on extends is theirs to make, but whether that
         // claim also appears on the other product's page is the team's to decide. It is not a
@@ -300,6 +301,18 @@ class ExtensionModel extends AdminModel
 
         if (!$liveTable->load($extensionId)) {
             throw new Exception(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
+        }
+
+        // New submissions start with an offline placeholder and no promoted version. Release
+        // that placeholder on approval of the active submission, including a resubmission.
+        if ((int) $historyTable->active === 1
+            && (int) $liveTable->entry_version === 0
+            && (int) $liveTable->approved === 0
+            && (int) $liveTable->state === 0
+            && (int) $liveTable->blocked === 0
+            && (int) $liveTable->deleted === 0
+        ) {
+            $liveData['state'] = 1;
         }
 
         $liveTable->bind($liveData);
@@ -463,19 +476,21 @@ class ExtensionModel extends AdminModel
 
         $listing = $db->setQuery(
             $db->getQuery(true)
-                ->select($db->quoteName(['name', 'owner']))
+                ->select($db->quoteName(['name', 'owner', 'state', 'approved', 'blocked', 'deleted']))
                 ->from($db->quoteName('#__jed_extensions'))
                 ->where($db->quoteName('id') . ' = :id')
                 ->bind(':id', $extensionId, ParameterType::INTEGER)
-        )->loadAssoc();
+        )->loadObject();
 
-        if ($listing === null || (int) $listing['owner'] <= 0) {
+        if ($listing === null || (int) $listing->owner <= 0) {
             return;
         }
 
-        $template = 'com_jed.listing_approved';
-
-        if (!$approved) {
+        if ($approved) {
+            $template = ListingAccess::forItem($listing) === ListingAccess::VISIBLE
+                ? 'com_jed.listing_approved'
+                : 'com_jed.listing_approved_unlisted';
+        } else {
             $template = (string) $db->setQuery(
                 $db->getQuery(true)
                     ->select($db->quoteName('mail_template'))
@@ -485,7 +500,7 @@ class ExtensionModel extends AdminModel
             )->loadResult() ?: 'com_jed.listing_rejected';
         }
 
-        $owner = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById((int) $listing['owner']);
+        $owner = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById((int) $listing->owner);
 
         if (empty($owner->email)) {
             return;
@@ -494,7 +509,7 @@ class ExtensionModel extends AdminModel
         try {
             $mailer = new MailTemplate($template, Factory::getApplication()->getLanguage()->getTag());
             $mailer->addTemplateData([
-                'EXTENSIONNAME' => (string) $listing['name'],
+                'EXTENSIONNAME' => (string) $listing->name,
                 'REASONCODE'    => $reasonCode,
                 'REASONNOTES'   => $notes,
                 'SITENAME'      => (string) Factory::getApplication()->get('sitename'),

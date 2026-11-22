@@ -405,7 +405,7 @@ class Com_JedInstallerScript
                 // The marker the ticket edit screen's template picker selects on. com_jed also
                 // owns mail templates that are not canned replies (the audit report, the broken
                 // link notice, seeded by install.mysql.utf8.sql), and those must not be offered.
-                $params = ['canned_reply' => 1];
+                $params = ['canned_reply' => $template['canned_reply'] ?? 1];
 
                 if (!empty($template['ticket_status'])) {
                     $params['ticket_status'] = $template['ticket_status'];
@@ -434,7 +434,7 @@ class Com_JedInstallerScript
     /**
      * The ticket mail templates, migrated from the former #__jed_message_templates table rows.
      *
-     * All of them are offered as canned replies on the ticket edit screen; selecting one carrying
+     * The templates marked as canned replies are offered on the ticket edit screen. Selecting one carrying
      * a `ticket_status` entry also updates the ticket status accordingly (see
      * TicketController::getTemplate()), mirroring the old `#__jed_message_templates.ticket_status`
      * column.
@@ -446,7 +446,7 @@ class Com_JedInstallerScript
     private function getDefaultMailTemplates(): array
     {
         return [
-            // The four moderation outcome mails P1-02 adds. JED3 told a developer that their
+            // The moderation outcome mails P1-02 adds. JED3 told a developer that their
             // submission had arrived and, when it failed, which error code it failed on - but it
             // never told anyone that something had been *approved*, and it never told a reviewer
             // anything at all. These close that loop. The per-error-code rejection templates
@@ -458,6 +458,13 @@ class Com_JedInstallerScript
 <p>Good news - <strong>{EXTENSIONNAME}</strong> has passed our review and is now listed on {SITENAME}.</p>
 <p>You can take it offline again at any time from your dashboard, and any change you make from now on goes through the same review before it becomes public.</p>
 HTML,
+            ],
+            'com_jed.listing_approved_unlisted' => [
+                'subject' => 'Your extension {EXTENSIONNAME} has been approved',
+                'body'    => <<<'HTML'
+<p><strong>{EXTENSIONNAME}</strong> has passed our review. The extension is currently not listed in the public catalogue on {SITENAME}.</p>
+HTML,
+                'canned_reply' => 0,
             ],
             'com_jed.listing_rejected' => [
                 'subject' => 'Your extension {EXTENSIONNAME} was not accepted',
