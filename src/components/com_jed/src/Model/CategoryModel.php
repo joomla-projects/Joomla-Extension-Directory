@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Listing\DeveloperName;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Jed\Site\Helper\JedcategoryHelper;
@@ -245,9 +246,7 @@ class CategoryModel extends ListModel
         $query->select('uc.name AS uEditor');
         $query->leftJoin($db->quoteName('#__users', 'uc'), 'uc.id=a.checked_out');
 
-        // Join over the created by field 'created_by'
-        $query->select('created_by.name AS developer');
-        $query->leftJoin($db->quoteName('#__users', 'created_by'), 'created_by.id = a.created_by');
+        $query->select(DeveloperName::listingExpression($db) . ' AS ' . $db->quoteName('developer'));
 
         // Join over the created by field 'modified_by'
         $query->leftJoin($db->quoteName('#__users', 'modified_by'), 'modified_by.id = a.modified_by');

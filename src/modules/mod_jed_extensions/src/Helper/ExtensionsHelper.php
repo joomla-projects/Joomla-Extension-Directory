@@ -16,6 +16,7 @@ namespace Jed\Module\Extensions\Site\Helper;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Jed\Component\Jed\Administrator\Browse\BrowseList;
+use Jed\Component\Jed\Administrator\Listing\DeveloperName;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Site\Helper\JedHelper;
 use Jed\Component\Jed\Site\Helper\JedtrophyHelper;
@@ -67,10 +68,9 @@ class ExtensionsHelper
                 'a.type', 'a.modified',
             ]))
             ->select($db->quoteName('cat.title', 'category_title'))
-            ->select($db->quoteName('u.name', 'developer'))
+            ->select(DeveloperName::listingExpression($db) . ' AS ' . $db->quoteName('developer'))
             ->from($db->quoteName('#__jed_extensions', 'a'))
-            ->innerJoin($db->quoteName('#__categories', 'cat'), 'cat.id = a.catid')
-            ->leftJoin($db->quoteName('#__users', 'u'), 'u.id = a.created_by');
+            ->innerJoin($db->quoteName('#__categories', 'cat'), 'cat.id = a.catid');
 
         // The same rule the pages use. A module is not a moderation view and must not become a
         // way to see a listing that is blocked, unapproved or offline (4.8).

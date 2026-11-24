@@ -15,6 +15,7 @@ namespace Jed\Component\Jed\Site\Model;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Exception;
+use Jed\Component\Jed\Administrator\Listing\DeveloperName;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
 use Jed\Component\Jed\Administrator\Traits\ExtensionUtilities;
 use Jed\Component\Jed\Site\Helper\JedHelper;
@@ -104,6 +105,7 @@ class ProfileModel extends ListModel
         $query->from($db->quoteName('#__jed_extensions', 'a'));
 
         $query->select('cat.title AS category_title');
+        $query->select(DeveloperName::listingExpression($db) . ' AS ' . $db->quoteName('developer'));
         $query->innerJoin($db->quoteName('#__categories', 'cat'), 'cat.id = a.catid');
 
         // Flag whether the current visitor has bookmarked each extension, for the card's
@@ -196,24 +198,15 @@ class ProfileModel extends ListModel
             throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 404);
         }
 
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true)
-            ->select($db->quoteName(['id', 'name']))
-            ->from($db->quoteName('#__users'))
-            ->where($db->quoteName('id') . ' = :id')
-            ->bind(':id', $ownerId, ParameterType::INTEGER);
+        $developerName = DeveloperName::forOwner($this->getDatabase(), $ownerId);
 
-        $user = $db->setQuery($query)->loadObject();
-
-        if (!$user || !$this->hasActiveExtension($ownerId)) {
+        if ($developerName === '' || !$this->hasActiveExtension($ownerId)) {
             throw new Exception(Text::_('COM_JED_ITEM_NOT_LOADED'), 404);
         }
 
-        $developerName = $this->getDeveloperName($ownerId);
-
         $developer          = new stdClass();
         $developer->id      = $ownerId;
-        $developer->name    = $developerName !== '' ? $developerName : $user->name;
+        $developer->name    = $developerName;
         // Placeholder profile picture/website - see the method docblock above.
         $developer->logo    = Uri::root() . 'media/com_jed/images/developer-placeholder.svg';
         $developer->website = 'https://example.com';

@@ -11,6 +11,7 @@
 namespace Joomla\Plugin\Finder\Jed\Extension;
 
 use Jed\Component\Jed\Administrator\Helper\JedHelper;
+use Jed\Component\Jed\Administrator\Listing\DeveloperName;
 use Jed\Component\Jed\Site\Helper\RouteHelper;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Event\Finder as FinderEvent;
@@ -278,9 +279,6 @@ final class Jed extends Adapter implements SubscriberInterface
             $item->imageAlt = $item->title ?? '';
         }
 
-        // Prefer the extension's JED developer identity over the raw Joomla username.
-        $item->author = !empty($item->developer_name) ? $item->developer_name : $item->author;
-
         // Resolve the free/paid/freemium/cloud type to a human-readable label.
         $item->typeLabel = !empty(self::TYPE_LABELS[$item->type])
             ? Text::_(self::TYPE_LABELS[$item->type])
@@ -485,8 +483,7 @@ final class Jed extends Adapter implements SubscriberInterface
             ->select('a.type, a.extension_types, a.joomla_versions, a.license')
             ->select('a.logo, a.popular')
             ->select('c.title AS category, c.published AS cat_state, c.access AS cat_access')
-            ->select('u.name AS author')
-            ->select('d.value AS developer_name')
+            ->select(DeveloperName::listingExpression($db) . ' AS ' . $db->quoteName('author'))
             // The listing's tags, newline-joined so one row still carries them all. A correlated
             // subquery rather than a join, because joining the map would multiply the listing row
             // by its tag count and every other aggregate would have to defend against that.
@@ -499,14 +496,7 @@ final class Jed extends Adapter implements SubscriberInterface
                 . ' AND ' . $db->quoteName('t.published') . ' = 1) AS ' . $db->quoteName('tagTitles')
             )
             ->from($db->quoteName('#__jed_extensions', 'a'))
-            ->leftJoin($db->quoteName('#__categories', 'c'), 'c.id = a.catid')
-            ->leftJoin($db->quoteName('#__users', 'u'), 'u.id = a.created_by')
-            ->leftJoin(
-                $db->quoteName('#__fields', 'f'),
-                'f.context = ' . $db->quote('com_users.user')
-                    . ' AND f.name = ' . $db->quote('developer_name')
-            )
-            ->leftJoin($db->quoteName('#__fields_values', 'd'), 'd.field_id = f.id AND d.item_id = a.created_by');
+            ->leftJoin($db->quoteName('#__categories', 'c'), 'c.id = a.catid');
 
         return $query;
     }
