@@ -87,13 +87,15 @@ $extensionUrl = Route::_('index.php?option=com_jed&view=extension&catid=' . (int
                     <?php endif; ?>
                 </h2>
                 <div class="d-flex flex-row gap-3">
-                    <div class="jed-extension-header__developer">
-                        <?php echo Text::sprintf(
-                            'COM_JED_EXTENSION_BY_DEVELOPER',
-                            '<a href="' . Route::_('index.php?option=com_jed&view=profile&id=' . (int) $item->owner) . '">'
-                            . $this->escape($item->created_by_name) . '</a>'
-                        ); ?>
-                    </div>
+                    <?php if ($item->developer !== '') : ?>
+                        <div class="jed-extension-header__developer">
+                            <?php echo Text::sprintf(
+                                'COM_JED_EXTENSION_BY_DEVELOPER',
+                                '<a href="' . Route::_('index.php?option=com_jed&view=profile&id=' . (int) $item->owner) . '">'
+                                . $this->escape($item->developer) . '</a>'
+                            ); ?>
+                        </div>
+                    <?php endif; ?>
                     <div class="stars-wrapper">
                         <?php echo JedscoreHelper::getStars($item->score_overall); ?>
                         <span class="text-muted"><?php echo $item->review_string; ?></span>
@@ -317,10 +319,10 @@ endif; ?>
 ]); ?>
         <?php endif; ?>
 
-        <?php if (!empty($item->more_by_developer)) : ?>
+        <?php if ($item->developer !== '' && !empty($item->more_by_developer)) : ?>
             <section class="jed-extension-more mt-5">
                 <h2 class="heading heading--m">
-                    <?php echo Text::sprintf('COM_JED_EXTENSION_MORE_BY_DEVELOPER', $this->escape($item->created_by_name)); ?>
+                    <?php echo Text::sprintf('COM_JED_EXTENSION_MORE_BY_DEVELOPER', $this->escape($item->developer)); ?>
                 </h2>
                 <ul class="jed-grid jed-grid--1-1-1">
                     <?php foreach ($item->more_by_developer as $other) : ?>
@@ -330,7 +332,7 @@ endif; ?>
                 </ul>
                 <p>
                     <a href="<?php echo Route::_('index.php?option=com_jed&view=profile&id=' . (int) $item->owner); ?>">
-                        <?php echo Text::sprintf('COM_JED_EXTENSION_MORE_BY_DEVELOPER_ALL', $this->escape($item->created_by_name)); ?>
+                        <?php echo Text::sprintf('COM_JED_EXTENSION_MORE_BY_DEVELOPER_ALL', $this->escape($item->developer)); ?>
                     </a>
                 </p>
             </section>

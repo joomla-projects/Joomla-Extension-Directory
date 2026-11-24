@@ -16,6 +16,7 @@ namespace Jed\Component\Jed\Site\Model;
 
 use DateInterval;
 use Exception;
+use Jed\Component\Jed\Administrator\Listing\DeveloperName;
 use Jed\Component\Jed\Administrator\Listing\LinkedExtensions;
 use Jed\Component\Jed\Administrator\Listing\ListingAccess;
 use Jed\Component\Jed\Administrator\MediaHandling\ImageSize;
@@ -146,7 +147,7 @@ class ExtensionModel extends ItemModel
             $this->item->logo       = JedHelper::formatImage($this->item->logo, ImageSize::SMALL);
         }
 
-        //$this->item->developer_company = $this->getDeveloperName($this->item->created_by);
+        $this->item->developer = DeveloperName::forOwner($this->getDatabase(), (int) $this->item->owner);
 
         $this->item->tags = (new TagsHelper())->getItemTags('com_jed.extension', $this->item->id);
 
@@ -277,10 +278,9 @@ class ExtensionModel extends ItemModel
                 'a.type', 'a.modified', 'a.created',
             ]))
             ->select($db->quoteName('cat.title', 'category_title'))
-            ->select($db->quoteName('u.name', 'developer'))
+            ->select(DeveloperName::listingExpression($db) . ' AS ' . $db->quoteName('developer'))
             ->from($db->quoteName('#__jed_extensions', 'a'))
             ->innerJoin($db->quoteName('#__categories', 'cat'), 'cat.id = a.catid')
-            ->leftJoin($db->quoteName('#__users', 'u'), 'u.id = a.created_by')
             ->where($db->quoteName('a.owner') . ' = :owner')
             ->where($db->quoteName('a.id') . ' <> :exclude')
             // The public half of the four-carrier rule (4.8), spelled out for the same reason the
@@ -358,10 +358,9 @@ class ExtensionModel extends ItemModel
                     'a.type', 'a.modified', 'a.created',
                 ]))
                 ->select($db->quoteName('cat.title', 'category_title'))
-                ->select($db->quoteName('u.name', 'developer'))
+                ->select(DeveloperName::listingExpression($db) . ' AS ' . $db->quoteName('developer'))
                 ->from($db->quoteName('#__jed_extensions', 'a'))
-                ->innerJoin($db->quoteName('#__categories', 'cat'), 'cat.id = a.catid')
-                ->leftJoin($db->quoteName('#__users', 'u'), 'u.id = a.created_by');
+                ->innerJoin($db->quoteName('#__categories', 'cat'), 'cat.id = a.catid');
         };
 
         // The parent: a single hop through this listing's own parent_id.
